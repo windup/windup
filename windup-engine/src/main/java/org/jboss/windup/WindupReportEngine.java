@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.reporting.ReportEngine;
@@ -104,8 +105,9 @@ public class WindupReportEngine {
 		if (output != null) {
 			actualOutput = output;
 		} else {
-			String outputPathLoc = input.getPath() +"-doc";
-			
+			String outputPathLoc = StringUtils.substringBeforeLast(input.getAbsolutePath(), ".");
+			outputPathLoc += "-" + StringUtils.substringAfterLast(input.getAbsolutePath(), ".") + "-doc";
+
 			//create output path...
 			actualOutput = new File(outputPathLoc);
 			

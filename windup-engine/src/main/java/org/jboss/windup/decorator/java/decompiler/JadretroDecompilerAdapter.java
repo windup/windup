@@ -97,7 +97,7 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter {
         	if(!sol.exists()) {
     			LOG.error("Expected decompiled source: "+sol.getAbsolutePath()+"; did not find file.  This likey means that the decompiler did not successfully decompile the class.");
     		}
-        	
+        	LOG.debug("Decompiled to: "+sol.getAbsolutePath());
         } catch (IOException e) {
             LOG.error("Error running jad decompiler: " + e);
         } catch (InterruptedException e) {

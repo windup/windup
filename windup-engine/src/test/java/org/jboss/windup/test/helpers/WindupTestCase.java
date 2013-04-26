@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.WindupEnvironment;
 import org.jboss.windup.WindupMetaEngine;
 import org.jboss.windup.WindupReportEngine;
@@ -165,7 +166,8 @@ public class WindupTestCase {
 
 		//if not output specified the engine will append -doc
 		if(outputPath == null) {
-			outputPath = input.getPath() + "-doc";
+			outputPath = StringUtils.substringBeforeLast(input.getAbsolutePath(), ".");
+			outputPath += "-" + StringUtils.substringAfterLast(input.getAbsolutePath(), ".") + "-doc";
 		}
 		
 		// compare generated report to expected report
