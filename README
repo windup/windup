@@ -10,8 +10,6 @@ usage: java -jar windup-cli.jar
  - output <dir>        directory where to generate windup report 
 
 For a more detailed list of Windup commands, or for documentation on writing Windup rules, please see the documentation at:
- - https://github.com/jboss-cake/cake/wiki
-
-Note: The Github is still set to JBoss Cake.  It will be changed sometime soon!
+ - https://github.com/jboss-windup/windup
 
 
