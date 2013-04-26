@@ -10,6 +10,6 @@ usage: java -jar windup-cli.jar
  - output <dir>        directory where to generate windup report 
 
 For a more detailed list of Windup commands, or for documentation on writing Windup rules, please see the documentation at:
- - https://github.com/jboss-windup/windup
+ - https://github.com/jboss-windup/windup/wiki
 
 
