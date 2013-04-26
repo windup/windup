@@ -86,6 +86,12 @@ public class WindupMain {
 				if (line.hasOption("javaPkgs")) {
 					settings.setPackageSignature(line.getOptionValue("javaPkgs"));
 				}
+				else {
+					LOG.error("Must provide the javaPkgs parameter.");
+					HELP_FORMATTER.printHelp(WINDUP_COMMAND, options);
+					return;
+				}
+				
 				if (line.hasOption("excludePkgs")) {
 					settings.setExcludeSignature(line.getOptionValue("excludePkgs"));
 				}
