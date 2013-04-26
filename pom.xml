@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.windup</groupId>
-	<artifactId>jboss-windup</artifactId>
-	<version>0.6.6</version>
-	<name>JBoss Windup</name>
+	<artifactId>windup-parent</artifactId>
+	<version>0.6.8</version>
+	<name>Windup Parent</name>
 	<description>Red Hat Migration Tooling</description>
 	<build>
 		<pluginManagement>
