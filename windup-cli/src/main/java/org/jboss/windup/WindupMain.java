@@ -41,8 +41,13 @@ public class WindupMain {
 
 		Options options = new Options();
 		Option input = OptionBuilder.withArgName("file / dir").hasArg().isRequired().withDescription("file to generate windup report (required)").create("input");
-		Option output = OptionBuilder.withArgName("dir").hasArg().withDescription("directory where to generate windup report (required)").create("output");
+		input.setRequired(true);
+		
+		
 		Option javaPkgs = OptionBuilder.withArgName("string").hasArg().withDescription("client Java packages to target for inspection").create("javaPkgs");
+		javaPkgs.setRequired(true);
+		
+		Option output = OptionBuilder.withArgName("dir").hasArg().withDescription("directory where to generate windup report (required)").create("output");
 		Option excludePkgs = OptionBuilder.withArgName("string").hasArg().withDescription("client Java packages to target for inspection").create("excludePkgs");
 		Option logLevel = OptionBuilder.withArgName("string").hasArg().withDescription("log level for root logger (defaults to info)").create("logLevel");
 		Option captureLog = OptionBuilder.withArgName("boolean").hasArg().withDescription("persist to file").create("captureLog");
