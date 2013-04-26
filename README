@@ -1,0 +1,17 @@
+JBoss Windup
+=====================
+What is Windup?
+- JBoss Windup is a framework for migrating software between different technologies; it was conceived to help with migrations from Weblogic and Websphere to JBoss, but has many more potential applications!
+
+How do I run Windup?
+usage: java -jar windup-cli.jar
+ - input <file>        file to generate windup report (required)
+ - javaPkgs <string>   client Java packages to target for inspection (required)
+ - output <dir>        directory where to generate windup report 
+
+For a more detailed list of Windup commands, or for documentation on writing Windup rules, please see the documentation at:
+ - https://github.com/jboss-cake/cake/wiki
+
+Note: The Github is still set to JBoss Cake.  It will be changed sometime soon!
+
+

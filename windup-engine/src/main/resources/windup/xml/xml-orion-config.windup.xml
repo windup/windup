@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="XML" id="xml-orion-decorators">
+		<windup:xpath-classification description="Oracle Application Platform EJB Descriptor" xpath="/orion-ejb-jar" effort="3"/>
+		<windup:xpath-classification description="Oracle Application Platform Web Descriptor " xpath="/orion-web-app" effort="3"/>
+		<windup:xpath-classification description="Oracle Application Platform EAR Descriptor " xpath="/orion-application" effort="3"/>
+	</windup:pipeline>
+</beans>
+ 

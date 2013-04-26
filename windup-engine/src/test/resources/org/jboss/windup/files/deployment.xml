@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appdeployment:Deployment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" 
+xmlns:appdeployment="http://www.ibm.com/websphere/appserver/schemas/5.0/appdeployment.xmi">
+   <deployedObject xmi:type="appdeployment:ApplicationDeployment" startingWeight="7">
+    <modules xmi:type="appdeployment:WebModuleDeployment" uri="my-web-module.war">
+      <classloader>
+        <libraries libraryName="MySharedLib" />
+      </classloader>
+    </modules>
+  </deployedObject>
+</appdeployment:Deployment>

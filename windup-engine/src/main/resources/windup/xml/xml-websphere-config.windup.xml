@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="XML" id="xml-websphere-decorators">
+		<windup:xpath-classification description="IBM Process Server Rules 6.0" xpath="/rl:RuleSet">
+			<windup:namespace prefix="rl" uri="http://www.ibm.com/xmlns/prod/websphere/wbi/br/6.0.0" />
+			<windup:decorators>
+				
+				<windup:xslt-transform location="transformations/xslt/websphere-psrules-to-drools.xsl"
+					description="Drools (Windup-Generated)"
+					extension="-drools-example.drl"/>
+
+			</windup:decorators>
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="Websphere EAR Application Binding" xpath="/applicationbnd:ApplicationBinding">
+			<windup:namespace prefix="applicationbnd" uri="applicationbnd.xmi" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="Websphere Web Application Extension" xpath="/webappext:WebAppExtension">
+			<windup:namespace prefix="webappext" uri="webappext.xmi" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="Websphere Web Extension" xpath="/ext:web-ext" effort="3">
+			<windup:namespace prefix="ext" uri="http://websphere.ibm.com/xml/ns/javaee" />
+			<windup:decorators>
+
+				<windup:xslt-transform location="transformations/xslt/websphere-jboss5-web-xml.xsl"
+					description="JBoss Web EAP5 (Windup-Generated)"
+					extension="-jboss-web.xml"/>
+
+			</windup:decorators>
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="Websphere Web Binding Extension" xpath="/ext:web-bnd">
+			<windup:namespace prefix="ext" uri="http://websphere.ibm.com/xml/ns/javaee" />
+		</windup:xpath-classification>
+
+		<windup:xpath-classification description="Websphere Web Application Binding" xpath="/webappbnd:WebAppBinding">
+			<windup:namespace prefix="webappbnd" uri="webappbnd.xmi" />
+		</windup:xpath-classification>
+
+		<windup:xpath-classification description="Websphere ETools WSClient Extension" xpath="/com.ibm.etools.webservice.wscext:WsClientExtension">
+			<windup:namespace prefix="com.ibm.etools.webservice.wscext" uri="http://www.ibm.com/websphere/appserver/schemas/5.0.2/wscext.xmi" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="Websphere ETools WSClient Binding" xpath="/com.ibm.etools.webservice.wscbnd:ClientBinding">
+			<windup:namespace prefix="com.ibm.etools.webservice.wscbnd" uri="http://www.ibm.com/websphere/appserver/schemas/5.0.2/wscbnd.xmi" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="IBM Deployment Descriptor" xpath="/appdeployment:Deployment">
+			<windup:namespace prefix="appdeployment" uri="http://www.ibm.com/websphere/appserver/schemas/5.0/appdeployment.xmi" />
+		</windup:xpath-classification>
+	</windup:pipeline>
+</beans>
+ 

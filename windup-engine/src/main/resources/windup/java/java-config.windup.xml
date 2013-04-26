@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<!--  beta. 
+	<bean id="asyncDecompilerAdapter" class="org.jboss.windup.decorator.java.decompiler.AsyncDecompilerAdapter">
+		<property name="decompilerAdapter" ref="syncDecompilerAdapter">
+		<property name="timeoutSeconds" value="3"/>
+	</bean>
+	 -->
+	 
+	 
+	<bean id="blacklistPackageResolver" class="org.jboss.windup.util.BlacklistPackageResolver">
+		<property name="generatedBlacklists">
+			<list>
+				<value>com.ibm.ws.webservices</value>
+				<value>jrun.ejb</value>
+				<value>jrunx.ejb</value>
+				<value>weblogic.ejb.container.interfaces.WLEnterpriseBean</value>
+				<value>weblogic.ejb.container.internal</value>
+				<value>weblogic.ejb.container.persistence.spi.EloWrapper</value>
+				<value>weblogic.ejb20.interfaces</value>
+				<value>weblogic.ejb20.internal</value>
+				<value>weblogic.ejbgen</value>
+				<value>weblogic.ejb20.persistence.spi.CMPBean</value>
+				<value>weblogic.ejb20.persistence.spi.EoWrapper</value>
+				<value>weblogic.wsee.tools.clientgen</value>
+				<value>weblogic.rmi.internal</value>
+				<value>weblogic.utils.PlatformConstants</value>
+				<value>weblogic.webservice.core.rpc</value>
+				<value>weblogic.security</value>
+				<value>oracle.jbo</value>
+			</list>
+		</property>
+		<property name="classBlacklists" ref="blacklistedClasses" />
+	</bean>
+
+	<!--  <bean id="syncDecompilerAdapter" class="org.jboss.windup.decorator.java.decompiler.NullDecompilerAdapter" />-->
+
+	<bean id="syncDecompilerAdapter" class="org.jboss.windup.decorator.java.decompiler.JadretroDecompilerAdapter" />
+
+	<bean id="javaInterrogator" class="org.jboss.windup.interrogator.impl.JavaInterrogator">
+		<property name="extensions">
+			<set>
+				<value>java</value>
+			</set>
+		</property>
+		<property name="customerPackageResolver" ref="customerPackageResolver" />
+		<property name="blacklistPackageResolver" ref="blacklistPackageResolver" />
+		<property name="decoratorPipeline" ref="javaPipeline" />
+	</bean>
+
+	<bean id="classToJavaInterrogator" class="org.jboss.windup.interrogator.impl.ClassInterrogator">
+		<property name="extensions">
+			<set>
+				<value>class</value>
+			</set>
+		</property>
+		<property name="decompiler" ref="syncDecompilerAdapter" />
+		<property name="customerPackageResolver" ref="customerPackageResolver" />
+		<property name="blacklistPackageResolver" ref="blacklistPackageResolver" />
+		<property name="decoratorPipeline" ref="javaPipeline" />
+	</bean>
+
+	<bean id="javaPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list>
+				<!-- Java language dependencies -->
+				<bean class="org.jboss.windup.decorator.java.JavaASTDecorator">
+					<property name="javaLangDependencies" ref="javaLangQualified" />
+				</bean>
+				
+				<!-- First, remove all non-important things -->
+		
+				<bean class="org.jboss.windup.decorator.WhitelistDecorator" id="whitelistDecorator">
+					<property name="whitelistProcessors">
+						<list>
+							<windup:java-whitelist source-type="TYPE" regex="amx_"/>
+							<windup:java-whitelist source-type="METHOD" regex="amx_"/>
+							<windup:java-whitelist source-type="IMPORT" regex="((javax.naming.InitialContext)|(javax.naming.Context))$"/>
+							<windup:java-whitelist source-type="METHOD" regex="((javax.naming.InitialContext)|(javax.naming.Context)).close"/>
+							<windup:java-whitelist source-type="TYPE" regex="((javax.naming.InitialContext)|(javax.naming.Context))$"/>
+							<windup:java-whitelist source-type="CONSTRUCT" regex="javax.naming.InitialContext\(\)"/>
+							<windup:java-whitelist source-type="IMPORT" regex="javax.ejb.+$"/>
+							<windup:java-whitelist regex="(javax.ejb.EntityContext.*)|(javax.ejb.RemoveException.*)|(javax.ejb.SessionContext.*)|(javax.ejb.EJBException.*)|(javax.ejb.CreateException$)|(javax.ejb.FinderException$)"/>
+							<windup:java-whitelist source-type="IMPORT" regex="javax.sql.+$"/>
+							<windup:java-whitelist source-type="IMPORT" regex="javax.management.+$"/>
+							<windup:java-whitelist source-type="TYPE" regex="javax.management.+$"/>
+							<windup:java-whitelist source-type="METHOD" regex="javax.management.remote.JMXConnector.close.+$"/>
+							<windup:java-whitelist source-type="METHOD" regex="javax.management.remote.JMXConnector.getMBeanServerConnection\(\)"/>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Hint Processors -->
+
+	<bean id="hintProcessors" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<windup:java-hint regex="edu.oswego.cs.dl.util.concurrent" hint="Upgrade to javax.util.concurrent in Java 5+" effort="0"/>
+				<windup:java-hint regex="edu.emory.mathcs.backport.java.util" hint="Upgrade to javax.util.concurrent in Java 5+" effort="0"/>
+				<!-- Java classes -->
+				<windup:java-hint source-type="METHOD" regex="java.lang.Class.classForName" hint="Ensure class is available to JBoss" effort="1"/>
+		
+				<!-- Oracle SQL -->
+				<windup:java-hint source-type="TYPE" regex="oracle.sql.*" hint="Oracle-specific SQL code" effort="1"/>
+		
+				
+				<!-- OSOA SCA -->
+				<windup:java-hint source-type="IMPORT" regex="org.osoa.sca.annotations.+" hint="Remove import"/>
+				<windup:java-hint source-type="TYPE" regex="org.osoa.sca.annotations.Property" hint="SCA Property Injection; replace with Spring Property Injection"/>
+				<windup:java-hint source-type="TYPE" regex="org.osoa.sca.annotations.Reference" hint="SCA Bean Injection; replace with Spring Bean Injection"/>
+				<windup:java-hint source-type="TYPE" regex="org.osoa.sca.annotations.Init" hint="SCA Initialization Hook; Use the property: init-method='example' on the Spring Bean, where example is the initialization method"/>
+				<windup:java-hint source-type="TYPE" regex="org.osoa.sca.annotations.Destroy" hint="SCA Destroy Hook; Use the property: destroy-method='example' on the Spring Bean, where example is the destroy method"/>
+				
+
+				<!-- IBM CICS Adapter -->
+				<windup:java-hint source-type="TYPE" regex="com.ibm.ctg.client.JavaGateway" hint="IBM CICS Adapter" effort="0"/>
+		
+				<!-- Initial Context -->
+				<windup:java-hint source-type="METHOD" regex="((javax.naming.InitialContext)|(javax.naming.Context)).lookup" effort="1"> 
+				<![CDATA[
+				Ensure that the JNDI Name does not need to change for JBoss
+				
+				*For Example:*
+				
+				```java
+				(ConnectionFactory)initialContext.lookup("weblogic.jms.ConnectionFactory");
+				```
+				
+				*should become:*
+				
+				```java
+				(ConnectionFactory)initialContext.lookup("/ConnectionFactory");
+				```
+				
+				
+				]]>
+				</windup:java-hint>
+				
+				
+				<windup:java-hint source-type="CONSTRUCT" regex="javax.naming.InitialContext\(.+\)" hint="Ensure that the InitialContext connection properties do not need to change for JBoss" effort="1"/>
+				
+				
+				<!-- JMX -->
+				<windup:java-hint source-type="CONSTRUCT" regex="javax.management.remote.JMXServiceURL\(.+\)" hint="Ensure that the connection properties do not need to change for JBoss"/>
+				<windup:java-hint source-type="CONSTRUCT" regex="javax.management.ObjectName\(.+\)" hint="Ensure that the ObjectName exists in JBoss" effort="1" />
+				<windup:java-hint source-type="METHOD" regex="javax.management.remote.JMXConnectorFactory.connect\(.+\)" hint="Ensure that the connection properties do not need to change for JBoss"/>
+				
+	
+				<!-- Java SQL -->
+				<windup:java-hint source-type="METHOD" regex="java.sql.DriverManager" hint="Move to a JCA Connector unless this class is used for batch processes, then refactor as necessary"/>
+				<windup:java-hint source-type="IMPORT" regex="java.sql.DriverManager$" hint="Migrate to JCA Connector"/>
+				
+				<!-- TIBCO -->
+				<windup:java-hint source-type="IMPORT" regex="amx_.+" hint="Tibco ActiveMatrix Stub; regenerate the SOAP Client for the class"/>
+				<windup:java-hint regex="com.tibco.matrix.java.annotations.WebParam$" hint="Tibco specific annotation; replace with javax.jws.WebParam"/>
+				<windup:java-hint regex="com.tibco.amf.platform.runtime.extension.exception.SOAPCode$" hint="Tibco specific annotation"/>
+				<windup:java-hint regex="com.tibco.matrix.java.annotations.WebServiceInterface$" hint="Tibco specific annotation; replace with javax.jws.WebService"/>
+				<windup:java-hint regex="com.tibco.matrix.java.annotations.WebMethod$" hint="Tibco specific annotation; replace with javax.jws.WebMethod"/>
+				<windup:java-hint regex="com.tibco.matrix.java.annotations.WebFault$" hint="Tibco specific annotation; replace with javax.xml.ws.WebFault"/>
+				
+	
+				<!-- Mule ESB -->
+				<windup:java-hint regex="org.mule.transformers.AbstractTransformer$" hint="Mule specific; replace with org.apache.camel.Converter annotation"/>
+				<windup:java-hint source-type="METHOD" regex="org.mule.umo.UMOMessage.getPayload.+" hint="Mule specific; replace with org.apache.camel.Message.getBody()"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="javaLangQualified" class="java.util.HashSet">
+		<constructor-arg>
+			<set>
+				<value>java.lang.AbstractMethodError</value>
+				<value>java.lang.AbstractStringBuilder</value>
+				<value>java.lang.Appendable</value>
+				<value>java.lang.ApplicationShutdownHooks</value>
+				<value>java.lang.ArithmeticException</value>
+				<value>java.lang.ArrayIndexOutOfBoundsException</value>
+				<value>java.lang.ArrayStoreException</value>
+				<value>java.lang.AssertionError</value>
+				<value>java.lang.AssertionStatusDirectives</value>
+				<value>java.lang.Boolean</value>
+				<value>java.lang.Byte</value>
+				<value>java.lang.Byte$ByteCache</value>
+				<value>java.lang.CharSequence</value>
+				<value>java.lang.Character</value>
+				<value>java.lang.Character$CharacterCache</value>
+				<value>java.lang.Character$Subset</value>
+				<value>java.lang.Character$UnicodeBlock</value>
+				<value>java.lang.CharacterData00</value>
+				<value>java.lang.CharacterData01</value>
+				<value>java.lang.CharacterData02</value>
+				<value>java.lang.CharacterData0E</value>
+				<value>java.lang.CharacterDataLatin1</value>
+				<value>java.lang.CharacterDataPrivateUse</value>
+				<value>java.lang.CharacterDataUndefined</value>
+				<value>java.lang.Class</value>
+				<value>java.lang.Class$1</value>
+				<value>java.lang.Class$2</value>
+				<value>java.lang.Class$3</value>
+				<value>java.lang.Class$4</value>
+				<value>java.lang.Class$EnclosingMethodInfo</value>
+				<value>java.lang.Class$MethodArray</value>
+				<value>java.lang.ClassCastException</value>
+				<value>java.lang.ClassCircularityError</value>
+				<value>java.lang.ClassFormatError</value>
+				<value>java.lang.ClassLoader</value>
+				<value>java.lang.ClassLoader$1</value>
+				<value>java.lang.ClassLoader$2</value>
+				<value>java.lang.ClassLoader$3</value>
+				<value>java.lang.ClassLoader$NativeLibrary</value>
+				<value>java.lang.ClassNotFoundException</value>
+				<value>java.lang.CloneNotSupportedException</value>
+				<value>java.lang.Cloneable</value>
+				<value>java.lang.Comparable</value>
+				<value>java.lang.Compiler</value>
+				<value>java.lang.Compiler$1</value>
+				<value>java.lang.ConditionalSpecialCasing</value>
+				<value>java.lang.ConditionalSpecialCasing$Entry</value>
+				<value>java.lang.Deprecated</value>
+				<value>java.lang.Double</value>
+				<value>java.lang.Enum</value>
+				<value>java.lang.EnumConstantNotPresentException</value>
+				<value>java.lang.Error</value>
+				<value>java.lang.Exception</value>
+				<value>java.lang.ExceptionInInitializerError</value>
+				<value>java.lang.Float</value>
+				<value>java.lang.IllegalAccessError</value>
+				<value>java.lang.IllegalAccessException</value>
+				<value>java.lang.IllegalArgumentException</value>
+				<value>java.lang.IllegalMonitorStateException</value>
+				<value>java.lang.IllegalStateException</value>
+				<value>java.lang.IllegalThreadStateException</value>
+				<value>java.lang.IncompatibleClassChangeError</value>
+				<value>java.lang.IndexOutOfBoundsException</value>
+				<value>java.lang.InheritableThreadLocal</value>
+				<value>java.lang.InstantiationError</value>
+				<value>java.lang.InstantiationException</value>
+				<value>java.lang.Integer</value>
+				<value>java.lang.Integer$IntegerCache</value>
+				<value>java.lang.InternalError</value>
+				<value>java.lang.InterruptedException</value>
+				<value>java.lang.Iterable</value>
+				<value>java.lang.LinkageError</value>
+				<value>java.lang.Long</value>
+				<value>java.lang.Long$LongCache</value>
+				<value>java.lang.Math</value>
+				<value>java.lang.NegativeArraySizeException</value>
+				<value>java.lang.NoClassDefFoundError</value>
+				<value>java.lang.NoSuchFieldError</value>
+				<value>java.lang.NoSuchFieldException</value>
+				<value>java.lang.NoSuchMethodError</value>
+				<value>java.lang.NoSuchMethodException</value>
+				<value>java.lang.NullPointerException</value>
+				<value>java.lang.Number</value>
+				<value>java.lang.NumberFormatException</value>
+				<value>java.lang.Object</value>
+				<value>java.lang.OutOfMemoryError</value>
+				<value>java.lang.Override</value>
+				<value>java.lang.Package</value>
+				<value>java.lang.Package$1</value>
+				<value>java.lang.Package$1PackageInfoProxy</value>
+				<value>java.lang.Process</value>
+				<value>java.lang.ProcessBuilder</value>
+				<value>java.lang.ProcessEnvironment</value>
+				<value>java.lang.ProcessEnvironment$ExternalData</value>
+				<value>java.lang.ProcessEnvironment$StringEntry</value>
+				<value>java.lang.ProcessEnvironment$StringEntrySet</value>
+				<value>java.lang.ProcessEnvironment$StringEntrySet$1</value>
+				<value>java.lang.ProcessEnvironment$StringEntrySet$2</value>
+				<value>java.lang.ProcessEnvironment$StringEnvironment</value>
+				<value>java.lang.ProcessEnvironment$StringKeySet</value>
+				<value>java.lang.ProcessEnvironment$StringKeySet$1</value>
+				<value>java.lang.ProcessEnvironment$StringValues</value>
+				<value>java.lang.ProcessEnvironment$StringValues$1</value>
+				<value>java.lang.ProcessEnvironment$Value</value>
+				<value>java.lang.ProcessEnvironment$Variable</value>
+				<value>java.lang.ProcessImpl</value>
+				<value>java.lang.Readable</value>
+				<value>java.lang.Runnable</value>
+				<value>java.lang.Runtime</value>
+				<value>java.lang.RuntimeException</value>
+				<value>java.lang.RuntimePermission</value>
+				<value>java.lang.SecurityException</value>
+				<value>java.lang.SecurityManager</value>
+				<value>java.lang.SecurityManager$1</value>
+				<value>java.lang.SecurityManager$2</value>
+				<value>java.lang.Short</value>
+				<value>java.lang.Short$ShortCache</value>
+				<value>java.lang.Shutdown</value>
+				<value>java.lang.Shutdown$1</value>
+				<value>java.lang.Shutdown$Lock</value>
+				<value>java.lang.StackOverflowError</value>
+				<value>java.lang.StackTraceElement</value>
+				<value>java.lang.StrictMath</value>
+				<value>java.lang.String</value>
+				<value>java.lang.String$1</value>
+				<value>java.lang.String$CaseInsensitiveComparator</value>
+				<value>java.lang.StringBuffer</value>
+				<value>java.lang.StringBuilder</value>
+				<value>java.lang.StringCoding</value>
+				<value>java.lang.StringCoding$1</value>
+				<value>java.lang.StringCoding$StringDecoder</value>
+				<value>java.lang.StringCoding$StringEncoder</value>
+				<value>java.lang.StringIndexOutOfBoundsException</value>
+				<value>java.lang.SuppressWarnings</value>
+				<value>java.lang.System</value>
+				<value>java.lang.System$1</value>
+				<value>java.lang.System$2</value>
+				<value>java.lang.SystemClassLoaderAction</value>
+				<value>java.lang.Terminator</value>
+				<value>java.lang.Terminator$1</value>
+				<value>java.lang.Thread</value>
+				<value>java.lang.Thread$1</value>
+				<value>java.lang.Thread$State</value>
+				<value>java.lang.Thread$UncaughtExceptionHandler</value>
+				<value>java.lang.ThreadDeath</value>
+				<value>java.lang.ThreadGroup</value>
+				<value>java.lang.ThreadLocal</value>
+				<value>java.lang.ThreadLocal$1</value>
+				<value>java.lang.ThreadLocal$ThreadLocalMap</value>
+				<value>java.lang.ThreadLocal$ThreadLocalMap$Entry</value>
+				<value>java.lang.Throwable</value>
+				<value>java.lang.TypeNotPresentException</value>
+				<value>java.lang.UNIXProcess</value>
+				<value>java.lang.UNIXProcess$1</value>
+				<value>java.lang.UNIXProcess$1$1$1</value>
+				<value>java.lang.UNIXProcess$Gate</value>
+				<value>java.lang.UnknownError</value>
+				<value>java.lang.UnsatisfiedLinkError</value>
+				<value>java.lang.UnsupportedClassVersionError</value>
+				<value>java.lang.UnsupportedOperationException</value>
+				<value>java.lang.VerifyError</value>
+				<value>java.lang.VirtualMachineError</value>
+				<value>java.lang.Void</value>
+			</set>
+		</constructor-arg>
+	</bean>
+
+</beans>

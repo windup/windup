@@ -1,0 +1,1024 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="manifestInterrogator" class="org.jboss.windup.interrogator.impl.ManifestInterrogator">
+		<property name="extensions">
+				<set>
+					<value>MF</value>
+				</set>
+		</property>
+		<property name="decoratorPipeline" ref="manifestPipeline" />
+	</bean>
+
+	<bean name="manifestPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list> 
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Chain"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="Commons Chain"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons File Upload"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="commons-fileupload"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Lucene"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.lucene"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Collections"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="org.apache.commons.collections"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Joda Time"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.joda.time"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="SLF4J API"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="slf4j-api"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="SLF4J Simple Binding"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="slf4j-simple"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Beanutils"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="Jakarta Commons Beanutils"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="JSTL Interface"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="JavaServer Pages Standard Tag Library API"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Codec"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="Jakarta Commons Codec"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Discovery"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.commons.discovery"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Discovery"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="org.apache.commons.discovery"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons HTTPClient"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.commons.httpclient"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Digester"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.commons.digester"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons IO"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.commons.io"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="JDOM"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.jdom"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Taglibs Log"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.taglibs.log"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="ColdFusion/Flex Messaging Adapter"/>
+					<property name="matchVersion" value="8" />
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="ColdFusion/Flex Messaging Adapter"/>
+							<entry key="Implementation-Version" value="ColdFusion 8.+"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Validator"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.commons.validator"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Database Connection Pooling"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Package" value="org.apache.commons.dbcp"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Object Pooling Library"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Package" value="org.apache.commons.pool"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons XMLResolver"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.xml.resolver.+"/>
+						</map>
+					</property>
+				</bean>
+
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="jConnect JDBC Driver"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="jConnect.+"/>
+							<entry key="Implementation-Vendor" value="Sybase.+"/>
+						</map>
+					</property>
+				</bean>
+						
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Big Faces PDF Library"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="bfopdf"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Taglibs JSTL Implementation"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="org.apache.taglibs.standard"/>
+							<entry key="Implementation-Title" value=".+JSTL"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Struts Mailreader"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Vendor" value="Apache.+"/>
+							<entry key="Implementation-Title" value="Struts Mailreader DAO"/>
+						</map>
+					</property>
+				</bean>
+				
+				<!-- 
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Java Excel API"/>
+					<property name="attributeNameToRegex">
+						<map>
+ 							<entry key="Main-Class" value="jxl.demo.Demo"/>
+						</map>
+					</property>
+				</bean>
+				 -->
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Struts Framework"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="Struts Framework"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Jakarta ORO"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.oro"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="XMLBeans"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.xmlbeans"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="XFire JSR-181"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="xfire-jsr181-api"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Log4j"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="log4j"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Commons Logging"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="org.apache.commons.logging"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="XMLBeans"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="org.apache.commons"/>
+							<entry key="Extension-Name" value="XmlSchema"/>
+						</map>
+					</property>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="FreeMarker"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="FreeMarker"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="StAX"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="StAX"/>
+							<entry key="Specification-Vendor" value="JCP-173"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="WoodSToX XML Processor"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="WoodSToX.+"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Weblogic Server"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="WebLogic Server 10.+"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Weblogic Server"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="WebLogic Server 9.2.+"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Weblogic JPA Implementation"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Bundle-Name" value="javax.persistence"/>
+							<entry key="Bundle-Vendor" value="BEA"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Weblogic EJB Implementation"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Bundle-Name" value="javax.ejb"/>
+							<entry key="Bundle-Vendor" value="BEA"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="JS Optimizer Core"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="js-optimizer-core"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Seam"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="jboss-seam$"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Seam Mail"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="jboss-seam-mail"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Seam Remoting"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="jboss-seam-remoting"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="International Components for Unicode"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="ICU4J"/>
+							<entry key="Implementation-Vendor-Id" value="com.ibm"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Ajax4JSF"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="Java Server Faces AJAX framework"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="JavaBeans(TM) Activation Framework Specification"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="javax.activation"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="JavaMail(TM) API Design Specification"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="javax.mail"/>
+						</map>
+					</property>
+				</bean>
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="AspectJ Runtime Classes"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Vendor" value="aspectj.org"/>
+							<entry key="Implementation-Title" value="org.aspectj.tools"/>
+							
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="AspectJ Weaver Classes"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Vendor" value="aspectj.org"/>
+							<entry key="Implementation-Title" value="org.aspectj.weaver"/>
+							
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="JBoss Cache"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="JBossCache"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="JDBC Standard Extension"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="JDBC Standard Extension"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="SAAJ Logging"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="SAAJ"/>
+							
+						</map>
+					</property>
+				</bean>
+			
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Bouncy Castle Encryption Provider"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="org.bouncycastle.bcprovider"/>
+							
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Bouncy Castle Encryption Interface"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="org.bouncycastle.bcjcer"/>
+							
+						</map>
+					</property>
+				</bean>
+				
+				
+				
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="C3PO JDBC Connection Pooling"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="com.mchange.v2.c3p0"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Spring Security"/>
+					<property name="versionPriority">
+						<list>
+							<value>Specification-Version</value>
+							<value>Implementation-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Extension-Name" value="acegi-security"/>
+							
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="namePriority">
+						<list>
+							<value>Specification-Title</value>
+							<value>Implementation-Title</value>
+						</list>
+					</property>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Specification-Title" value="IBM WebSphere ILOG.+"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="namePriority">
+						<list>
+							<value>Implementation-Title</value>
+							<value>Specification-Title</value>
+						</list>
+					</property>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="ILOG JRules.*"/>
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="matchName" value="Spring Framework"/>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Spring-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Title" value="Spring Framework"/>
+							
+						</map>
+					</property>
+				</bean>
+				
+				<!-- Business Objects -->				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionMapperDecorator"> 
+					<property name="namePriority">
+						<list>
+							<value>Implementation-Title</value>
+							<value>Product-Name</value>
+						</list>
+					</property>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Spring-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+					<property name="attributeNameToRegex">
+						<map>
+							<entry key="Implementation-Vendor" value="Business Objects.*"/>
+							
+						</map>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestVersionDecorator"> 
+					<property name="namePriority">
+						<list>
+							
+							<value>Implementation-Title</value>
+							<value>Specification-Title</value>
+							<value>Extension-Title</value>
+							<value>Extension-Name</value>
+							<value>Name</value>
+						</list>
+					</property>
+					<property name="versionPriority">
+						<list>
+							<value>Implementation-Version</value>
+							<value>Specification-Version</value>
+						</list>
+					</property>
+				</bean>
+				
+				<bean class="org.jboss.windup.decorator.archive.ManifestLinkDecorator">
+					<property name="linkPriority">
+						<list>
+							<value>Implementation-URL</value>
+							<value>Implementation-Vendor-URL</value>
+							<value>Bundle-DocURL</value>
+							<value>Bundle-DocUrl</value>
+							<value>Specification-URL</value>
+							<value>Specification-Vendor-URL</value>
+						</list>
+					</property>
+				</bean>
+
+				<bean class="org.jboss.windup.decorator.archive.ManifestDescriptionDecorator">
+					<property name="descriptionPriority">
+						<value>Bundle-Description</value>
+					</property>
+				</bean>
+			</list>
+		</property>	
+	
+	</bean>
+</beans>

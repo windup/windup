@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-weblogic-decorators">
+		<windup:java-classification source-type="INHERITANCE" regex="javax.xml.rpc.handler.GenericHandler" description="JAX-RPC Generic Handler"/>
+		
+		
+		<windup:java-gate regex="weblogic.security.Security.*">
+			<windup:hints>
+				<windup:java-hint source-type="TYPE" regex="weblogic.security.Security$" hint="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation"/>
+				<windup:java-hint source-type="TYPE" regex="weblogic.security.Security$" hint="Migrate to JBoss EAP 6: org.jboss.security.SecurityContextAssociation"/>
+				<windup:java-hint source-type="METHOD" regex="weblogic.security.Security.getCurrentSubject" hint="Migrate to JBoss EAP 6: org.jboss.security.SecurityContextAssociation.getCurrentContext().getCurrentPrincipal()" effort="3"/>
+				<windup:java-hint source-type="METHOD" regex="weblogic.security.Security.getCurrentSubject" hint="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation.getPrincipal().getName()" effort="3"/>
+			</windup:hints>
+			<windup:decorators>
+				<windup:link url="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html" description="Security Context - JBoss 6" />
+			</windup:decorators>
+		</windup:java-gate>
+	</windup:pipeline>
+
+	   <windup:pipeline type="JAVA" id="java-extension-decorators">
+    	<windup:java-classification source-type="INHERITANCE" regex="weblogic.application.ApplicationLifecycleListener$" description="Weblogic ApplicationLifecycleListener, proprietary class, must be migrated." effort="3">
+    		<windup:decorators>
+    		    <windup:link url="http://www.mastertheboss.com/ejb-3/ejb-31-tutorial" description="Master the JBoss Tutorial: EJB 3.1 Tutorial"/>    		    
+    		    <windup:link url="http://blog.caucho.com/2009/10/06/servlet-30-tutorial-weblistener-webservlet-webfilter-and-webinitparam/" description="Caucho.com Tutorial: ServletContextListener, @WebListener tutorial"/>  
+    		    <windup:link url="http://www.roseindia.net/servlets/servlet3/WebListener_annotation.shtml" description="Rose India Tutorial: ServletContextListener, @WebListener tutorial"/>      			
+    			</windup:decorators>
+    	</windup:java-classification>
+    </windup:pipeline>
+	<windup:java-hints id="weblogic-hints-ra">
+		<windup:java-hint source-type="IMPORT" regex="weblogic.application.ApplicationLifecycleListener$" hint="This class is proprietary to Weblogic, remove." effort="2"/>     
+	    <windup:java-hint source-type="INHERITANCE" regex="weblogic.application.ApplicationLifecycleListener$" hint="Use a javax.servlet.ServletContextListener with @javax.annotation.servlet.WebListener, or EJB 3.1 @javax.ejb.Startup @javax.ejb.Singleton service bean." effort="2"/> 
+	 	<windup:java-hint source-type="IMPORT" regex="weblogic.application.ApplicationLifecycleEvent$" hint="This class is proprietary to Weblogic, remove." effort="2"/>     
+	    <windup:java-hint source-type="TYPE" regex="weblogic.application.ApplicationLifecycleEvent$">
+    	<![CDATA[
+    		Using a ServletContextListener, you can use an ServletContextEvent to access the properties of the web application container.  Or, use an EJB 3.1 with annotated methods with @javax.annotation.PostContruct and @javax.annotation.PreDestory	
+    	'''java
+    	import javax.servlet.ServletContext;
+		import javax.servlet.ServletContextEvent;
+		import javax.servlet.ServletContextListener;
+		import javax.servlet.annotation.WebListener;
+ 
+		@WebListener
+		public class ContextListener implements ServletContextListener
+		{
+		     @Override
+	          public void contextDestroyed(ServletContextEvent evt)
+	          {
+	          }
+ 
+		     @Override
+	          public void contextInitialized(ServletContextEvent evt)
+	          {
+	          }
+		}
+'''
+
+'''java
+		import javax.annotation.PostConstruct;
+		import javax.annotation.PreDestroy;
+		import javax.ejb.Singleton;
+		import javax.ejb.Startup;
+		 
+		@Startup
+		@Singleton
+		public class StartupBean
+		{
+		          @PostConstruct
+		          void startup()
+		          {
+		          }
+		 
+		  		  @PreDestroy
+		          void shutdown()
+		          {
+		          }
+		}
+'''
+    	
+    	
+    	]]>
+    </windup:java-hint>
+    </windup:java-hints>
+	
+	
+</beans>

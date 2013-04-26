@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-websphere-decorators">
+	
+		<windup:java-classification source-type="INHERITANCE" regex="com.ibm.websphere.asynchbeans.Work" description="Websphere Asyncronous Work" effort="2"/>
+	
+		
+	
+		<windup:java-classification source-type="INHERITANCE" regex="((com.ibm.websphere.startupservice.AppStartUpHome)|(com.ibm.websphere.startupservice.AppStartUp)|(com.ibm.websphere.startupservice.ModStartUpHome)|(com.ibm.websphere.startupservice.ModStartUp))$" description="Websphere Startup Service" effort="4">
+			<windup:hints>
+				<windup:java-hint regex="com.ibm.websphere.startupservice.AppStartUpHome" hint="Replace with EJB 3.1 @Singleton / @Startup annotations."/>
+			</windup:hints>
+			<windup:decorators>
+				<windup:link url="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/>
+				<windup:link url="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean"/>
+			</windup:decorators>
+		</windup:java-classification>
+	</windup:pipeline>
+	
+	<windup:java-hints id="java-websphere-hints">
+		<windup:java-hint regex="com.ibm.websphere.asynchbeans.WorkManager" hint="Migrate to JBoss JCA Work Manager" effort="1"/>
+	</windup:java-hints>
+</beans>

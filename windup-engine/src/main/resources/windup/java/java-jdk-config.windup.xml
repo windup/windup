@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-jdk-decorators">
+    	<windup:java-classification source-type="TYPE" regex="java.lang.ClassLoader$" description="Java Classloader, must be migrated." effort="1">
+    		<windup:decorators>
+    		    <windup:link url="https://access.redhat.com/knowledge/solutions/239033" description="Red Hat Customer Portal: How to get resources via the ClassLoader in a JavaEE application in JBoss EAP"/>    		    
+    			</windup:decorators>
+    	</windup:java-classification>
+    </windup:pipeline>
+
+	<windup:java-hints id="java-jdk-hints">
+		<!-- JDK 6 Deprecated Classes -->
+		<windup:java-hint source-type="INHERITANCE" regex="org.xml.sax.HandlerBase" effort="8"
+			hint="Deprecated By JDK 6, replace with DefaultHandler" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="org.xml.sax.AttributeList" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="java.security.Certificate" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.+"
+			hint="Deprecated by JDK 6, replace with org.omg.DynamicAny.*" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="java.rmi.server.LoaderHandler" hint="Deprecated By JDK 6 (No Replacement)" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="org.xml.sax.Parser" hint="Deprecated By JDK 6, replaced by SAX2 XMLReader" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="java.rmi.registry.RegistryHandler" hint="Deprecated By JDK 6 (No Replacement)" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="java.rmi.server.RemoteCall" hint="Deprecated By JDK 6 (No Replacement)" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="java.rmi.server.Skeleton" hint="Deprecated By JDK 6 (No Replacement)" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="javax.xml.bind.Validator" hint="Deprecated By JDK 6, use JAXB2.0" />
+
+		<windup:java-hint source-type="INHERITANCE" regex="org.xml.sax.HandlerBase$"
+			hint="HandlerBase is a deprecated class used to customize a SAX parser, replace with org.xml.sax.helpers.DefaultHandler and update the method parameters accordingly: http://docs.oracle.com/javase/1.4.2/docs/api/org/xml/sax/helpers/DefaultHandler.html" />
+
+		<windup:java-hint source-type="TYPE" regex="javax.management.DefaultLoaderRepository"
+			hint="Deprecated By JDK 6, use MBeanServer.getClassLoaderRepository()" />
+
+		<windup:java-hint source-type="TYPE" regex="javax.accessibility.AccessibleResourceBundle" hint="Deprecated By JDK 6 (No Replacement)" />
+
+		<windup:java-hint source-type="TYPE" regex="org.xml.sax.helpers.AttributeListImpl" hint="Deprecated By JDK 6, replace with SAX2" />
+
+		<windup:java-hint source-type="TYPE" regex="javax.management.loading.DefaultLoaderRepository"
+			hint="Deprecated By JDK 6, use MBeanServer.getClassLoaderRepository()" />
+
+		<windup:java-hint source-type="TYPE" regex="javax.swing.text.DefaultTextUI" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="java.security.Identity"
+			hint="Deprecated By JDK 6, replaced by java.security.KeyStore, java.security.cert package, and java.security.Principal" />
+
+		<windup:java-hint source-type="TYPE" regex="java.security.IdentityScope" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="java.io.LineNumberInputStream" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="java.rmi.server.LogStream" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.metal.MetalComboBoxUI.MetalComboPopup"
+			hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="java.rmi.server.Operation" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="org.xml.sax.helpers.ParserFactory" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="javax.security.auth.Policy" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="java.security.Signer" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="javax.xml.soap.SOAPElementFactory" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="java.io.StringBufferInputStream" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="TYPE" regex="javax.swing.text.TableView.TableCell" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="IMPORT" regex="java.rmi.RMISecurityException" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="IMPORT" regex="java.rmi.ServerRuntimeException" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="IMPORT" regex="java.rmi.server.SkeletonMismatchException" hint="Deprecated By JDK 6" />
+
+		<windup:java-hint source-type="IMPORT" regex="java.rmi.server.SkeletonNotFoundException" hint="Deprecated By JDK 6" />
+
+
+		<!-- REDHAT.COM -->
+		<windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.Service" hint="Migrated to org.jboss.ejb3.annotation.Service"/>
+		
+		<windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.Management" hint="Migrated to org.jboss.ejb3.annotation.Management"/>
+		
+		<windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.LocalBinding" hint="Migrated to org.jboss.ejb3.annotation.LocalBinding"/>
+		
+		<windup:java-hint source-type="TYPE" regex="org.jboss.annotation.ejb.Depends" hint="Validate that JBoss 6 Dependency exists."/>
+
+		<!-- Classloader -->
+	    <windup:java-hint source-type="TYPE" regex="java.lang.ClassLoader$" hint="Replace with JBoss EAP's Classloader: Thread.currentThread().getContextClassLoader()" effort="1"/>
+	    <windup:java-hint source-type="METHOD" regex="Classloader.getSystemResourceAsStream()$" hint="Use JBoss EAP 6 Classloader: Thread.currentThread().getContextClassLoader().getResourceAsStream(...);" effort="1"/>
+    </windup:java-hints>
+	
+</beans>

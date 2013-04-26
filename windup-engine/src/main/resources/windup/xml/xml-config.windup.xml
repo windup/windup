@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<bean id="xmlPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list>
+				<!-- Maven POM -->
+				<ref bean="pomClassifier" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="xmlInterrogator" class="org.jboss.windup.interrogator.impl.XmlInterrogator">
+		<property name="extensions">
+			<set>
+				<value>.xml</value>
+				<value>.tld</value>
+				<value>.bpel</value>
+				<value>.wsdl</value>
+				<value>.wsdd</value>
+				<value>.bpelex</value>
+				<value>.mon</value>
+				<value>.xmi</value>
+				<value>.export</value>
+				<value>.import</value>
+				<value>.bcfg</value>
+				<value>.map</value>
+				<value>.brg</value>
+				<value>.brgt</value>
+				<value>.ruleset</value>
+				<value>.module</value>
+				<value>.modulex</value>
+				<value>.composite</value>
+				<value>.requirements</value>
+			</set>
+		</property>
+		<property name="decoratorPipeline" ref="xmlPipeline"/>
+	</bean>
+
+</beans>

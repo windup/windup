@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-base-decorators">
+		<!-- CommonJ Classifiers -->
+		<windup:java-classification source-type="INHERITANCE" regex="commonj.timers.Timer.*" description="Commonj Timer">
+			<windup:hints>
+				<windup:java-hint
+					regex="commonj.timers.Timer.*"
+					hint="Migrate to JBoss WorkManager" 
+					effort="8" 
+					source-type="INHERITANCE"/>
+			</windup:hints>
+		</windup:java-classification>
+		
+	
+		<windup:java-classification source-type="INHERITANCE" regex="commonj.work.Work" description="Commonj Work" effort="2">
+			<windup:hints>
+				<windup:java-hint
+					regex="commonj.work.Work"
+					hint="Migrate to JBoss JCA WorkManager"
+					effort="2"/>
+			</windup:hints>
+		</windup:java-classification>
+		
+					
+		<!-- SCA Classifier -->
+		<windup:java-classification source-type="TYPE" regex="org.osoa.sca.annotations.Property" description="SCA Class" />
+		
+		<!-- Mule ESB Classifiers -->
+		<windup:java-classification source-type="INHERITANCE" regex="org.mule.umo.UMOFilter$" description="Mule ESB Message Filter">
+			<windup:decorators>
+				<windup:link url="http://camel.apache.org/message-filter.html" description="Camel Message Filter" />
+				<windup:link url="http://camel.apache.org/bean-language.html" description="Camel Message Bean Filter" />
+			</windup:decorators>
+		</windup:java-classification>
+		
+		<windup:java-classification source-type="INHERITANCE" regex="javax.management.StandardMBean$" description="JMX MBean"/>
+		
+		<windup:java-classification regex="org.jboss.wsf.*" description="JBoss Web Services Specific">
+			<windup:decorators>
+				<windup:link url="https://community.jboss.org/wiki/JBossWS4MigrationGuide" description="JBoss Web Service (EAP4) Migration Guide" />
+			</windup:decorators>
+		</windup:java-classification>
+		
+		<windup:java-classification source-type="INHERITANCE" regex="org.mule.transformers.AbstractTransformer$" description="Mule ESB Transformer">
+			<windup:decorators>
+				<windup:link url="http://camel.apache.org/type-converter.html" description="Camel Converter" />
+			</windup:decorators>
+		</windup:java-classification>
+		
+		<!-- If it is important, determine if a hint should be applied -->
+
+		<bean class="org.jboss.windup.decorator.HintDecorator">
+			<property name="hintProcessors" ref="hintProcessors" />
+		</bean>
+
+	</windup:pipeline> 
+</beans>

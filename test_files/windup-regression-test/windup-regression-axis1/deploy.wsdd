@@ -1,0 +1,19 @@
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+<service name="SimpleBean" provider="java:EJB">
+    <parameter name="beanJndiName" value="local/SimpleBeanEJB"/>
+    <parameter name="homeInterfaceName" value="samples.ejb.SimpleBeanHome"/>
+    <parameter name="remoteInterfaceName" value="samples.ejb.SimpleBean"/>
+    <parameter name="allowedMethods" value="sayHello"/>
+</service>
+<service name="NiceThingsBean" provider="java:EJB">
+    <parameter name="beanJndiName" value="ejb/NiceThingsBeanEJB"/>
+    <parameter name="homeInterfaceName" value="samples.ejb.NiceThingsBeanHome"/>
+    <parameter name="remoteInterfaceName" value="samples.ejb.NiceThingsBean"/>
+    <parameter name="allowedMethods" value="sayHello findNiceThingsFor updateNiceThingsFor"/>
+    <beanMapping xmlns:ns="urn:NiceThingsBean" qname="ns:NiceThings"
+         languageSpecificType="java:samples.ejb.NiceThings"/>
+</service>
+
+</deployment>

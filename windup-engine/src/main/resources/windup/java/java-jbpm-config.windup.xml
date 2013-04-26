@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-jbpm3-to-jbpm5-decorators">
+
+	</windup:pipeline>
+
+
+
+	<windup:java-hints id="java-jbpm3-to-jbpm5-hints">
+		<windup:java-hint source-type="INHERITANCE" regex="org.jbpm.graph.def.ActionHandler$" hint="Migrate to jBPM 5 org.drools.runtime.process.WorkItemHandler." effort="2" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession$" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession" effort="4"/>
+		<windup:java-hint regex="org.jbpm.JbpmContext.getTaskInstance\(.+\)" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" 	/>
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.getTaskInstance\( " hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.loadTaskInstance\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstances\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksOwned(String userId, String language)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstances\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksOwned(String userId, List&gt;Status&lt; status, String language)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstancesByProcessInstance\("
+			hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksByStatusByProcessId(long processInstanceId, List&gt;Status&lt; status, String language)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstancesByProcessInstance\("
+			hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksByStatusByProcessIdByTaskName(long processInstanceId, List&gt;Status&lt; status, String taskName, String language)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstancesByToken\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTaskByWorkItemId(long workItemId)" />
+		<windup:java-hint regex="org.jbpm.JbpmConfiguration$" hint="Migrate to jBPM 5: Replace with creation of org.drools.KnowledgeBase." effort="1"/>
+		<windup:java-hint regex="org.jbpm.JbpmConfiguration.createJbpmContext\(\)" hint="Migrate to jBPM 5: Replace with instantiation of org.drools.runtime.StatefulKnowledgeSession." effort="1"/>
+		<windup:java-hint regex="org.jbpm.JbpmContext.newProcessInstance" hint="Migrate to jBPM 5: org.drools.runtime.StatefulKnowledgeSession.startProcess(String processId)" effort="1"/>
+	</windup:java-hints>
+</beans>

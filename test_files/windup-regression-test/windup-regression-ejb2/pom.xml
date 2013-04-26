@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>windup-regression-test</artifactId>
+    <groupId>com.jboss.windup.test</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.jboss.windup.test</groupId>
+  <artifactId>windup-regression-ejb2</artifactId>
+  <name>windup-regression-ejb2</name>
+  <packaging>ejb</packaging>
+  <description />
+  <dependencies>
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>ejb-api</artifactId>
+    </dependency>
+	<dependency>
+		<groupId>org.jboss.spec.javax.annotation</groupId>
+		<artifactId>jboss-annotations-api_1.1_spec</artifactId>
+		<version>1.0.1.Final</version>
+		<scope>provided</scope>
+	</dependency>
+	<dependency>
+	  <groupId>org.jboss.spec.javax.jms</groupId>
+	  <artifactId>jboss-jms-api_1.1_spec</artifactId>
+	  <version>1.0.1.Final</version>
+	</dependency>
+  </dependencies>
+</project>

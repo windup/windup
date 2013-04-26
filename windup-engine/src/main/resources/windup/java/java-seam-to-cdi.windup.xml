@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="seam-to-cdi-decorators">
+		<windup:java-classification regex="org.jboss.seam" description="SEAM Component" effort="1">
+			<windup:decorators>
+				<windup:link url="http://www.seamframework.org/Seam3/Seam2ToSeam3MigrationNotes" description="Seam 2 to Seam 3 Migration Notes" />
+				<windup:link url="http://docs.jboss.org/weld/reference/latest/en-US/html/example.html" description="JSF Web Application Example" />
+				<windup:link url="http://docs.jboss.org/weld/reference/latest/en-US/html/contexts.html" description="JBoss Context Documentation" />
+				<windup:link url="http://www.andygibson.net/blog/tutorial/cdi-conversations-part-2/" description="CDI Conversations Blog Post" />
+			</windup:decorators>
+		</windup:java-classification>
+		
+		<!-- These classifications are used so that the effort is added only once per class, rather than once per use of the object or annotation -->
+		<windup:java-classification source-type="IMPORT" regex="org.jboss.seam.annotations.Out" description="Uses Outjection" effort="1" />
+		<windup:java-classification source-type="IMPORT" regex="org.jboss.seam.core.Conversation" description="Uses Seam's Conversation object" effort="1" />
+		<windup:java-classification source-type="IMPORT" regex="org.jboss.seam.core.Context" description="Uses Seam's Context object" effort="1" />
+		<windup:java-classification source-type="IMPORT" regex="org.jboss.seam.Seam" description="Uses Seam's Seam object" effort="1" />
+		<windup:java-classification source-type="IMPORT" regex="org.jboss.seam.core.ConversationEntries" description="Uses Seam's ConversationEntries object" effort="1" />
+		<windup:java-classification source-type="IMPORT" regex="org.jboss.seam.faces.Switcher" description="Uses Seam's Switcher object" effort="1" />
+	</windup:pipeline>
+	
+	<windup:java-hints id="seam-to-cdi-hints">
+		<windup:java-hint regex="org.jboss.seam.annotations.Name" hint="Rework injection, note that CDI is static injection.  @Named only if accessed in EL" />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.Scope" hint="Convert to a valid CDI scope. For example, @Scope(ScopeType.SESSION) should be @javax.enterprise.context.SessionScoped. See the 'Seam 2 to Seam 3 Migration Notes' link." />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.In$" hint="Convert Seam @In to CDI @javax.inject.Inject" />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.Out" hint="No Out-jection, rework using @javax.enterprise.inject.Produces. See the 'JSF Web Application Example' link." />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.Startup" hint="Use with @javax.ejb.Singleton" />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.Create" hint="Rework with @javax.annotation.PostConstruct" />
+		
+		<windup:java-hint regex="org.jboss.seam.international.LocaleSelector" hint="Rework with java.util.Locale" />
+		
+		<windup:java-hint regex="org.jboss.seam.Component" hint="Replace use of getInstance with @javax.inject.Inject." />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.Redirect" hint="Rework so that when the annotated error is thrown, the viewID page is be displayed." />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.Install" hint="Rework with @javax.enterprise.inject.Alternative instead of @Install(false), @Requires instead of dependencies, and @javax.enterprise.inject.Alternative or @javax.enterprise.inject.Specializes instead of precedence. See the 'Seam 2 to Seam 3 Migration Notes' link." />
+		
+		<windup:java-hint regex="org.jboss.seam.web.AbstractFilter" hint="Rework with a different filter interface" />
+		
+		<windup:java-hint regex="org.jboss.seam.core.Conversation" hint="Rework with CDI's conversation context" />
+		
+		<windup:java-hint regex="org.jboss.seam.contexts.Context" hint="Rework using CDI's injected contexts. See the 'JBoss Context Documentation' link." />
+		
+		<windup:java-hint regex="org.jboss.seam.Seam" hint="Replace with CDI functionality" />
+		
+		<windup:java-hint regex="org.jboss.seam.core.ConversationEntries" hint="Rework. No native CDI support for tracking conversations, but it can be implemented. See the 'CDI Conversations Blog Post' link." />
+		
+		<windup:java-hint regex="org.jboss.seam.faces.Switcher" hint="Rework. No native CDI support for multiple conversations, but it can be implemented. See the 'CDI Conversations Blog Post' link." />
+		
+		<windup:java-hint regex="org.jboss.seam.core.ConversationEntry" hint="Rework with CDI conversation context. See the 'JBoss Context Documentation' link." />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.Begin" hint="Rework with javax.enterprise.context.Conversation.begin()" />
+		
+		<windup:java-hint regex="org.jboss.seam.annotations.End" hint="Rework with javax.enterprise.context.Conversation.end()" />
+	</windup:java-hints>				
+	
+</beans>	
+			
