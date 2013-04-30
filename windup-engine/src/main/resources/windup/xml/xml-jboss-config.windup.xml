@@ -38,16 +38,50 @@
 				<windup:xpath-classification description="JBoss 5 Classloader Configuration" xpath="//*[local-name()='classloading']" />
 			</windup:decorators>
 		</windup:file-gate>
-		
-		
-		
+
+		<windup:file-gate regex="jboss-deployment-structure.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss Module and Classloading Configuration (since AS7)" xpath="//*[local-name()='jboss-deployment-structure']" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:file-gate regex="jbosscmp-jdbc.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss EJB2 CMP Deployment Descriptor" xpath="//*[local-name()='jbosscmp-jdbc']" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<!-- JBoss 4/5 to JBoss AS7/EAP6 -->
+		<windup:file-gate regex="jboss.xml">
+			<windup:decorators>
+			  <windup:xpath-classification description="JBoss EJB Deployment Descriptor (prior to AS7)" xpath="//*[local-name()='jboss']" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:xpath-summary description="AS7 Specific" xpath="//*[local-name()='jboss']" effort="1">
+			<windup:hints>
+				<windup:regex-hint regex="jboss" hint="If migrating to JBoss AS7 or EAP6 the &quot;jboss.xml&quot; descriptor is ignored in deployments. Replace with &quot;jboss-ejb3.xml&quot;"/>
+			</windup:hints>
+		</windup:xpath-summary>
+
+		<windup:file-gate regex="jboss-ejb3.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss EJB3 Deployment Descriptor (since AS7)" xpath="//*[local-name()='ejb-jar']" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:file-gate regex="jboss-webservices.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss Webservices Deployment Descriptor (since AS7)" xpath="//*[local-name()='webservices']" />
+			</windup:decorators>
+		</windup:file-gate>
 
 		<windup:file-gate regex=".+.page.xml">
 			<windup:decorators>
 				<windup:xpath-classification description="JBoss Seam Page" xpath="/page" />
 			</windup:decorators>
 		</windup:file-gate>
-		
+
         <!-- JBoss 4 to JBoss 5 -->
 		<windup:xpath-classification description="Jboss App Descriptor" xpath="jboss-app">
 			<windup:decorators>
