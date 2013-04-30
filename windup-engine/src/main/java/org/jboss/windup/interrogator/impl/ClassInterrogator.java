@@ -139,12 +139,11 @@ public class ClassInterrogator extends ExtensionInterrogator<JavaMeta> {
 			return javaMeta;
 		}
 		catch (Exception e) {
-			LOG.error(e);
-			
 			if(e instanceof FatalWindupException) {
 				throw (FatalWindupException)e;
 			}
 			
+			LOG.error(e);
 			return null;
 		}
 	}

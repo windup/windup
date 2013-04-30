@@ -81,10 +81,11 @@ public class ZipDecorator implements MetaDecorator<ZipMeta> {
 			}
 		}
 		catch (Exception e) {
-			LOG.error("Exception processing archive: " + archive.getName(), e);
 			if(e instanceof FatalWindupException) {
 				throw (FatalWindupException)e;
 			}
+			
+			LOG.error("Exception processing archive: " + archive.getName(), e);
 		}
 	}
 
