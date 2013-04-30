@@ -210,7 +210,7 @@ public class ScorecardReporter implements Reporter {
 		t1.setCellStyle(titleCell);
 
 		XSSFCell t2 = row.createCell(1);
-		t2.setCellValue("Effort (Hours)");
+		t2.setCellValue("Effort (Points)");
 		t2.setCellStyle(titleCell);
 
 		XSSFCell t3 = row.createCell(2);
