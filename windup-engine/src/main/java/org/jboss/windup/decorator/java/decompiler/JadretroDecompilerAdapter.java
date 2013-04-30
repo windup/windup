@@ -17,6 +17,7 @@ import java.io.IOException;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.windup.util.FatalWindupException;
 import org.jboss.windup.util.LogController;
 
 /**
@@ -41,8 +42,19 @@ import org.jboss.windup.util.LogController;
 public class JadretroDecompilerAdapter implements DecompilerAdapter {
 	private static final Log LOG = LogFactory.getLog(JadretroDecompilerAdapter.class);
 
+	private final String APP_NAME;
+	
 	public JadretroDecompilerAdapter() {
 		LogController.LoggingAdapter.tieSystemOutAndErrToLog();
+		
+
+		
+		if(SystemUtils.IS_OS_WINDOWS) {
+			APP_NAME = "jad.exe";
+		}
+		else {
+			APP_NAME = "jad";
+		}
 	}
 
 	/*
@@ -73,16 +85,10 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter {
 	
 	private void executeJad(String classLocation, String sourceOutputLocation) {
 		
-		String appName = "jad";
-		if(SystemUtils.IS_OS_WINDOWS) {
-			appName = "jad.exe";
-		}
-		
-		Process process = null;
 		try {
 			// Build command array
-			String[] cmdArray = new String[] {appName,"-d",sourceOutputLocation,"-f","-o","-s","java",classLocation};
-            process = Runtime.getRuntime().exec(cmdArray);
+			String[] cmdArray = new String[] {APP_NAME,"-d",sourceOutputLocation,"-f","-o","-s","java",classLocation};
+            Runtime.getRuntime().exec(cmdArray);
             
         	File sol = new File(sourceOutputLocation);
         	
@@ -99,7 +105,7 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter {
     		}
         	LOG.debug("Decompiled to: "+sol.getAbsolutePath());
         } catch (IOException e) {
-            LOG.error("Error running jad decompiler: " + e);
+            throw new FatalWindupException("Error running "+APP_NAME+" decompiler.  Validate that "+APP_NAME+" is on your PATH.", e);
         } catch (InterruptedException e) {
         	LOG.error("Error running jad decompiler: " + e);
 		}		

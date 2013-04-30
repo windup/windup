@@ -34,6 +34,7 @@ import org.jboss.windup.resource.type.ZipEntryMeta;
 import org.jboss.windup.resource.type.archive.ZipMeta;
 import org.jboss.windup.util.BlacklistPackageResolver;
 import org.jboss.windup.util.CustomerPackageResolver;
+import org.jboss.windup.util.FatalWindupException;
 
 
 public class ClassInterrogator extends ExtensionInterrogator<JavaMeta> {
@@ -139,6 +140,11 @@ public class ClassInterrogator extends ExtensionInterrogator<JavaMeta> {
 		}
 		catch (Exception e) {
 			LOG.error(e);
+			
+			if(e instanceof FatalWindupException) {
+				throw (FatalWindupException)e;
+			}
+			
 			return null;
 		}
 	}

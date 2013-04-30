@@ -23,6 +23,7 @@ import org.jboss.windup.interrogator.Interrogator;
 import org.jboss.windup.interrogator.util.KnownArchiveProfiler;
 import org.jboss.windup.resource.type.ZipEntryMeta;
 import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.util.FatalWindupException;
 
 
 public class ZipDecorator implements MetaDecorator<ZipMeta> {
@@ -81,6 +82,9 @@ public class ZipDecorator implements MetaDecorator<ZipMeta> {
 		}
 		catch (Exception e) {
 			LOG.error("Exception processing archive: " + archive.getName(), e);
+			if(e instanceof FatalWindupException) {
+				throw (FatalWindupException)e;
+			}
 		}
 	}
 
