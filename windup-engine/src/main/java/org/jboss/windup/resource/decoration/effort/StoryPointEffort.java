@@ -39,8 +39,8 @@ public class StoryPointEffort extends Effort {
 			return "Unknown";
 		}
 		if (hours == 1) {
-			return hours.toString() + " Hour";
+			return hours.toString() + " Point";
 		}
-		return hours.toString() + " Hours";
+		return hours.toString() + " Points";
 	}
 }
