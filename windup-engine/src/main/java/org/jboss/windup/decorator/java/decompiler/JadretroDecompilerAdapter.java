@@ -88,18 +88,18 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter {
 		try {
 			// Build command array
 			String[] cmdArray = new String[] {APP_NAME,"-d",sourceOutputLocation,"-f","-o","-s","java",classLocation};
-            Runtime.getRuntime().exec(cmdArray);
+            Process process = Runtime.getRuntime().exec(cmdArray);
             
         	File sol = new File(sourceOutputLocation);
         	
         	//if the file does not exist, try for 2.5 seconds to wait for it..
         	int cancelAfterFive = 0;
-        	while(!sol.exists() && cancelAfterFive < 5) {
+        	while(!sol.exists() && cancelAfterFive < 10) {
         		
         		Thread.sleep(500);
         		cancelAfterFive++;
         	}
-
+        	
         	if(!sol.exists()) {
     			LOG.error("Expected decompiled source: "+sol.getAbsolutePath()+"; did not find file.  This likey means that the decompiler did not successfully decompile the class.");
     		}

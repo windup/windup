@@ -19,8 +19,11 @@ import org.jboss.windup.config.spring.namespace.java.JavaAddHintsBeanParser;
 import org.jboss.windup.config.spring.namespace.java.JavaClassificationBeanParser;
 import org.jboss.windup.config.spring.namespace.java.JavaHintBeanParser;
 import org.jboss.windup.config.spring.namespace.java.JavaWhitelistBeanParser;
+import org.jboss.windup.config.spring.namespace.simple.ClassificationBeanParser;
+import org.jboss.windup.config.spring.namespace.simple.GlobalBeanParser;
 import org.jboss.windup.config.spring.namespace.simple.LinkBeanParser;
 import org.jboss.windup.config.spring.namespace.simple.RegexHintBeanParser;
+import org.jboss.windup.config.spring.namespace.simple.SummaryBeanParser;
 import org.jboss.windup.config.spring.namespace.xml.DTDClassifyingBeanParser;
 import org.jboss.windup.config.spring.namespace.xml.XPathClassifyingBeanParser;
 import org.jboss.windup.config.spring.namespace.xml.XPathSummaryBeanParser;
@@ -45,6 +48,9 @@ public class WindupNamespaceHandler extends NamespaceHandlerSupport {
 		registerBeanDefinitionParser("dtd-classification", new DTDClassifyingBeanParser());
 		registerBeanDefinitionParser("xslt-transform", new XSLTBeanParser());
 
+		registerBeanDefinitionParser("classification", new ClassificationBeanParser());
+		registerBeanDefinitionParser("global", new GlobalBeanParser());
+		registerBeanDefinitionParser("summary", new SummaryBeanParser());
 		registerBeanDefinitionParser("link", new LinkBeanParser());
 		registerBeanDefinitionParser("regex-hint", new RegexHintBeanParser());
 		registerBeanDefinitionParser("regex-gate", new RegexPatternGateBeanParser());

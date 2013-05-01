@@ -54,10 +54,13 @@
 			<xs:attribute name="base-uri-regex" use="optional" type="xs:string" />
 		</xs:complexType>
 	</xs:element>
-	
-		
 
-	
+	<xs:element name="classification">
+		<xs:complexType>
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="effort" type="xs:int" />
+		</xs:complexType>
+	</xs:element>	
 	
 	<xs:element name="java-classification">
 		<xs:complexType>
@@ -115,6 +118,20 @@
 		</xs:complexType>
 	</xs:element>
 		
+	<xs:element name="summary">
+		<xs:complexType>
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="effort" type="xs:int" />
+		</xs:complexType>
+	</xs:element>		
+	
+	<xs:element name="global">
+		<xs:complexType>
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="effort" type="xs:int" />
+		</xs:complexType>
+	</xs:element>	
+	
 	<xs:element name="link">
 		<xs:complexType>
 			<xs:attribute name="url" use="required" type="xs:string" />

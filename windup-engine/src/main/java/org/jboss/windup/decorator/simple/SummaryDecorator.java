@@ -12,28 +12,28 @@
 package org.jboss.windup.decorator.simple;
 
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.resource.decoration.Global;
+import org.jboss.windup.resource.decoration.Summary;
 import org.jboss.windup.resource.decoration.effort.Effort;
 import org.jboss.windup.resource.decoration.effort.UnknownEffort;
 import org.jboss.windup.resource.type.FileMeta;
 
-public class GlobalDecorator implements MetaDecorator<FileMeta> {
+public class SummaryDecorator implements MetaDecorator<FileMeta> {
 	protected String description;
 	protected Effort effort = new UnknownEffort();
 
 	public void setEffort(Effort effort) {
 		this.effort = effort;
 	}
-
+	
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	public void processMeta(FileMeta file) {
-		Global gr = new Global();
+		Summary gr = new Summary();
 		gr.setDescription(description);
 		gr.setEffort(effort);
-		
+
 		file.getDecorations().add(gr);
 	}
 }

@@ -54,7 +54,12 @@
 		<!-- JBoss 4/5 to JBoss AS7/EAP6 -->
 		<windup:file-gate regex="jboss.xml">
 			<windup:decorators>
-			  <windup:xpath-classification description="JBoss EJB Deployment Descriptor (prior to AS7)" xpath="//*[local-name()='jboss']" />
+				<windup:xpath-classification description="JBoss EJB Deployment Descriptor (prior to AS7)" xpath="//*[local-name()='jboss']">
+					<windup:decorators>
+						<windup:global description="If migrating to JBoss AS7 or EAP6 the &quot;jboss.xml&quot; descriptor is ignored in deployments. Replace with &quot;jboss-ejb3.xml&quot;"
+							effort="1" />
+					</windup:decorators>
+				</windup:xpath-classification>
 			</windup:decorators>
 		</windup:file-gate>
 
