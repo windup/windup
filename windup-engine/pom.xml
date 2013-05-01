@@ -212,5 +212,10 @@
 			<artifactId>jadretro</artifactId>
 			<version>1.6.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-exec</artifactId>
+			<version>1.1</version>
+		</dependency>
 	</dependencies>
 </project>

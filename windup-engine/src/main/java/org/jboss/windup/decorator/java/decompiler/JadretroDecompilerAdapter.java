@@ -7,13 +7,18 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  *  
  *  Contributors:
- *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
+ *      Brad Davis - bradsdavis@gmail.com - Modification to meet execution demands on Mac and Linux.
 */
 package org.jboss.windup.decorator.java.decompiler;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,7 +71,7 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter {
 	public void decompile(String className, String classLocation, String sourceOutputLocation) {
 		LOG.info("Decompiling: " + className);
 		net.sf.jadretro.Main.main(new String [] {classLocation}); 
-		executeJad(classLocation,sourceOutputLocation);
+		executeJad(new File(classLocation), new File(sourceOutputLocation));
 		LOG.info("... Complete");
 	}
 
@@ -79,35 +84,45 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter {
 	public void decompile(String className, File classLocation, File sourceOutputLocation) {
 		LOG.info("Decompiling: " + className + " to: "+sourceOutputLocation.getAbsolutePath());
 		net.sf.jadretro.Main.main(new String [] {classLocation.getAbsolutePath()}); 
-		executeJad(classLocation.getAbsolutePath(),sourceOutputLocation.getAbsolutePath());
+		executeJad(classLocation,sourceOutputLocation);
 		LOG.info("... Complete");
 	}
 	
-	private void executeJad(String classLocation, String sourceOutputLocation) {
+	private void executeJad(File classLocation, File sourceOutputLocation) {
 		
 		try {
 			// Build command array
-			String[] cmdArray = new String[] {APP_NAME,"-d",sourceOutputLocation,"-f","-o","-s","java",classLocation};
-            Process process = Runtime.getRuntime().exec(cmdArray);
-            
-        	File sol = new File(sourceOutputLocation);
-        	
-        	//if the file does not exist, try for 2.5 seconds to wait for it..
-        	int cancelAfterFive = 0;
-        	while(!sol.exists() && cancelAfterFive < 10) {
-        		
-        		Thread.sleep(500);
-        		cancelAfterFive++;
+			CommandLine cmdLine = new CommandLine(APP_NAME);
+			cmdLine.addArgument("-d");
+			cmdLine.addArgument("${outputLocation}");
+			cmdLine.addArgument("-f");
+			cmdLine.addArgument("-o");
+			cmdLine.addArgument("-s");
+			cmdLine.addArgument("java");
+			cmdLine.addArgument("${classLocation}");
+			
+			Map<String, Object> argMap = new HashMap<String, Object>();
+			argMap.put("outputLocation", sourceOutputLocation);
+			argMap.put("classLocation", classLocation);
+			cmdLine.setSubstitutionMap(argMap);
+			
+			DefaultExecutor executor = new DefaultExecutor();
+			executor.setExitValue(0);
+			ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
+			executor.setWatchdog(watchdog);
+			int exitValue = executor.execute(cmdLine);
+			
+			LOG.debug("Decompiler exited with exit code: "+exitValue);
+			
+        	if(!sourceOutputLocation.exists()) {
+    			LOG.error("Expected decompiled source: "+sourceOutputLocation.getAbsolutePath()+"; did not find file.  This likey means that the decompiler did not successfully decompile the class.");
+    		}
+        	else {
+        		LOG.debug("Decompiled to: "+sourceOutputLocation.getAbsolutePath());
         	}
         	
-        	if(!sol.exists()) {
-    			LOG.error("Expected decompiled source: "+sol.getAbsolutePath()+"; did not find file.  This likey means that the decompiler did not successfully decompile the class.");
-    		}
-        	LOG.debug("Decompiled to: "+sol.getAbsolutePath());
         } catch (IOException e) {
             throw new FatalWindupException("Error running "+APP_NAME+" decompiler.  Validate that "+APP_NAME+" is on your PATH.", e);
-        } catch (InterruptedException e) {
-        	LOG.error("Error running jad decompiler: " + e);
-		}		
+        }
 	}
 }
