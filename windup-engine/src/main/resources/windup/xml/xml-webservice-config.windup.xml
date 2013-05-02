@@ -61,7 +61,6 @@
 		<windup:xpath-classification description="WSDL Definition" xpath="/wsdl:definitions" effort="0">
 			<windup:namespace prefix="wsdl" uri="http://schemas.xmlsoap.org/wsdl/" />
 			<windup:decorators>
-			
 				<windup:xslt-transform location="transformations/xslt/wsdl-pom-plugin.xsl"
 						description="WSDL2JAVA POM Plugin - JAXB (Windup-Generated sample)"
 						extension="-sample-cxf-wsdl2java-pom-plugin.xml"/>

@@ -314,11 +314,13 @@ public class WindupMetaEngine {
 		if (StringUtils.isNotBlank(settings.getPackageSignature())) {
 			System.setProperty("package.signature", settings.getPackageSignature());
 		}
-		if (StringUtils.isNotBlank(settings.getExcludeSignature())) {
-			System.setProperty("exclude.signature", settings.getExcludeSignature());
-		} else {
+		else {
 			LOG.warn("WARNING: Consider specifying javaPkgs.  Otherwise, the Java code will not be inspected.");
 		}
+		
+		if (StringUtils.isNotBlank(settings.getExcludeSignature())) {
+			System.setProperty("exclude.signature", settings.getExcludeSignature());
+		} 
 
 		if (StringUtils.isNotBlank(settings.getTargetPlatform())) {
 			System.setProperty("target.platform", settings.getTargetPlatform());
