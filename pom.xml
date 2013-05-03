@@ -66,5 +66,7 @@
 	<modules>
 		<module>windup-engine</module>
 		<module>windup-cli</module>
+		
+		<module>windup-rules</module>
 	</modules>
 </project>

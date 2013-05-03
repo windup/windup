@@ -24,11 +24,23 @@
         </fileSet>
         <fileSet>
             <directory>src/main/assembly/extensions</directory>
-            <outputDirectory>extensions</outputDirectory>
+            <outputDirectory>rules/extensions</outputDirectory>
             <includes>
                 <include>*.xml</include>
             </includes>
         </fileSet>
+        
+        <fileSet>
+            <directory>../windup-rules/src/main/resources</directory>
+            <outputDirectory>rules/base</outputDirectory>
+            <includes>
+                <include>*.xml</include>
+                <include>**/*.xml</include>
+            </includes>
+        </fileSet>
+        
+        
+        
         <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory></outputDirectory>

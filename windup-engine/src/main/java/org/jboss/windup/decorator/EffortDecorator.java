@@ -45,7 +45,7 @@ public class EffortDecorator implements MetaDecorator<FileMeta> {
 				// if it matches, set it.
 				if (hp.process(dr)) {
 					if (LOG.isDebugEnabled()) {
-						LOG.info("Matched.  Setting Notification: " + notificationLevel);
+						LOG.debug("Matched.  Setting Notification: " + notificationLevel);
 					}
 					dr.setLevel(notificationLevel);
 				}

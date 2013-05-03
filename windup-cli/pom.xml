@@ -22,7 +22,8 @@
 						<mainClass>org.jboss.windup.WindupMain</mainClass>
 					</manifest>
 					<manifestEntries>
-			            <Class-Path>extensions/</Class-Path>
+			            <Class-Path>rules/extensions/</Class-Path>
+			            <Class-Path>rules/base/</Class-Path>
 			        </manifestEntries>
 				</archive>
 				<descriptorRefs>
