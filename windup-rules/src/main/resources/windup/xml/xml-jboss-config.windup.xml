@@ -6,9 +6,6 @@
            http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
 
 	<windup:pipeline type="XML" id="xml-jboss-specific-decorators">
-		<windup:xpath-classification description="JBoss EAR Configuration" xpath="/jboss-app" effort="1" />
-		<windup:xpath-classification description="JBoss Web Application Descriptor" xpath="/jboss-web" effort="1" />
-		<windup:xpath-classification description="JBoss Deployment Descriptor" xpath="/jboss-deployment-structure" effort="1" />
 		<windup:xpath-classification description="JBoss Cache" xpath="//mbean[@code='org.jboss.cache.TreeCache']" effort="1" />
 		
 		<windup:dtd-classification description="JBoss 5.x EAR Descriptor" effort="0" public-id-regex="JBoss.+DTD Java EE.+5" />
@@ -27,9 +24,15 @@
 			<windup:namespace prefix="sp" uri="http://jboss.com/products/seam/pages" />
 		</windup:xpath-classification>
 
+		<windup:file-gate regex="jboss-app.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss EAR Configuration" xpath="//*[local-name()='jboss-app']" effort="1" />
+			</windup:decorators>
+		</windup:file-gate>
+
 		<windup:file-gate regex="jboss-web.xml">
 			<windup:decorators>
-				<windup:xpath-classification description="JBoss Web Application Descriptor" xpath="//*[local-name()='jboss-web']" />
+				<windup:xpath-classification description="JBoss Web Application Descriptor" xpath="//*[local-name()='jboss-web']" effort="1" />
 			</windup:decorators>
 		</windup:file-gate>
 		
@@ -41,7 +44,7 @@
 
 		<windup:file-gate regex="jboss-deployment-structure.xml">
 			<windup:decorators>
-				<windup:xpath-classification description="JBoss Module and Classloading Configuration (since AS7)" xpath="//*[local-name()='jboss-deployment-structure']" />
+				<windup:xpath-classification description="JBoss Module and Classloading Configuration (since AS7/EAP6)" xpath="//*[local-name()='jboss-deployment-structure']" effort="1" />
 			</windup:decorators>
 		</windup:file-gate>
 
@@ -54,7 +57,7 @@
 		<!-- JBoss 4/5 to JBoss AS7/EAP6 -->
 		<windup:file-gate regex="jboss.xml">
 			<windup:decorators>
-				<windup:xpath-classification description="JBoss EJB Deployment Descriptor (prior to AS7)" xpath="//*[local-name()='jboss']">
+				<windup:xpath-classification description="JBoss EJB Deployment Descriptor (prior to AS7/EAP6)" xpath="//*[local-name()='jboss']">
 					<windup:decorators>
 						<windup:global description="If migrating to JBoss AS7 or EAP6 the &quot;jboss.xml&quot; descriptor is ignored in deployments. Replace with &quot;jboss-ejb3.xml&quot;"
 							effort="1" />
@@ -63,21 +66,33 @@
 			</windup:decorators>
 		</windup:file-gate>
 
-		<windup:xpath-summary description="AS7 Specific" xpath="//*[local-name()='jboss']" effort="1">
+		<windup:xpath-value description="JBoss AS7/EAP6 Specific" xpath="//*[local-name()='security-domain' ][starts-with(., 'java:/jaas/')]/text()">
 			<windup:hints>
-				<windup:regex-hint regex="jboss" hint="If migrating to JBoss AS7 or EAP6 the &quot;jboss.xml&quot; descriptor is ignored in deployments. Replace with &quot;jboss-ejb3.xml&quot;"/>
+				<windup:regex-hint regex="java\:\/jaas\/" hint="Remove the &quot;java:/jaas/&quot; prefix for security-domain elements in AS7/EAP6." effort="1" />
 			</windup:hints>
-		</windup:xpath-summary>
+		</windup:xpath-value>
+
+		<windup:file-gate regex="login-config.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss Security Configuration Descriptor (prior to AS7/EAP6)" xpath="//*[local-name()='policy']">
+					<windup:decorators>
+						<windup:global description="If migrating to JBoss AS7 or EAP6 the &quot;login-config.xml&quot; descriptor is no longer supported. Security is now configured in the security-domain element inside the server configuration."
+									   effort="1" />
+					</windup:decorators>
+				</windup:xpath-classification>
+			</windup:decorators>
+		</windup:file-gate>
+
 
 		<windup:file-gate regex="jboss-ejb3.xml">
 			<windup:decorators>
-				<windup:xpath-classification description="JBoss EJB3 Deployment Descriptor (since AS7)" xpath="//*[local-name()='ejb-jar']" />
+				<windup:xpath-classification description="JBoss EJB3 Deployment Descriptor (since AS7/EAP6)" xpath="//*[local-name()='ejb-jar']" />
 			</windup:decorators>
 		</windup:file-gate>
 
 		<windup:file-gate regex="jboss-webservices.xml">
 			<windup:decorators>
-				<windup:xpath-classification description="JBoss Webservices Deployment Descriptor (since AS7)" xpath="//*[local-name()='webservices']" />
+				<windup:xpath-classification description="JBoss Webservices Deployment Descriptor (since AS7/EAP6)" xpath="//*[local-name()='webservices']" />
 			</windup:decorators>
 		</windup:file-gate>
 
