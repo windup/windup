@@ -44,9 +44,19 @@
         <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory></outputDirectory>
+            <excludes>
+                <exclude>windup-cli-nodeps.jar</exclude>
+            </excludes>
             <includes>
                 <include>*.jar</include>
             </includes>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>${project.build.directory}/windup-cli-nodeps.jar</source>
+            <outputDirectory></outputDirectory>
+            <destName>windup-cli.jar</destName>
+        </file>
+    </files>
 </assembly>
