@@ -32,8 +32,8 @@ import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.decorator.xml.util.MapContext;
 import org.jboss.windup.decorator.xml.util.PositionalXmlReader;
 import org.jboss.windup.hint.ResultProcessor;
-import org.jboss.windup.resource.decoration.Line;
 import org.jboss.windup.resource.decoration.Summary;
+import org.jboss.windup.resource.decoration.XmlLine;
 import org.jboss.windup.resource.decoration.effort.Effort;
 import org.jboss.windup.resource.type.XmlMeta;
 import org.springframework.beans.factory.InitializingBean;
@@ -114,7 +114,7 @@ public class XPathSummaryDecorator implements MetaDecorator<XmlMeta>, Initializi
 					Integer lineNumber = (Integer) PositionalXmlReader.getLineNumber(nodes.item(i));
 					String match = convertNode(nodes.item(i));
 					if (inline && lineNumber != null) {
-						createLineNumberMeta(meta, lineNumber, this.matchDescription, match);
+						createLineNumberMeta(meta, lineNumber, this.matchDescription, nodes.item(i));
 					}
 					else {
 						createSummaryMeta(meta, this.matchDescription, match);
@@ -138,10 +138,17 @@ public class XPathSummaryDecorator implements MetaDecorator<XmlMeta>, Initializi
 		meta.getDecorations().add(result);
 	}
 
-	protected void createLineNumberMeta(final XmlMeta meta, Integer lineNumber, String descripiton, String match) {
-		Line result = new Line();
+	protected void createLineNumberMeta(final XmlMeta meta, Integer lineNumber, String descripiton, Node match) {
+		XmlLine result = new XmlLine();
 		result.setDescription(descripiton);
-		result.setPattern(match);
+
+		try {
+			result.setPattern(convertNode(match));
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
+		
+		result.setMatchedNode(match);
 		result.setLineNumber(lineNumber);
 		result.setEffort(effort);
 		for (ResultProcessor hint : hints) {

@@ -106,7 +106,19 @@
 			<xs:attribute name="id" use="required" type="xs:string" />
 		</xs:complexType>
 	</xs:element>
+
 	
+	
+	<xs:element name="hint">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="regexHintType">
+					<xs:attribute name="source-type" type="sourceTypeEnum" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+			
 	
 	<xs:element name="java-hint">
 		<xs:complexType>

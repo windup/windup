@@ -6,7 +6,7 @@
            http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
 
 	<windup:pipeline type="JAVA" id="java-ejb-decorators">
-
+		
 		<bean class="org.jboss.windup.decorator.NotificationLevelDecorator">
 			<property name="notificationLevel" value="INFO" />
 			<property name="matchingProcessors">

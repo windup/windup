@@ -11,7 +11,9 @@
 */
 package org.jboss.windup.resource.decoration;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,12 +29,17 @@ import org.jboss.windup.resource.decoration.hint.Hint;
 @XmlSeeAlso({Classification.class, Global.class, Hash.class, JavaLine.class, Line.class, Link.class, Summary.class})
 public abstract class AbstractDecoration implements Comparable<AbstractDecoration> {
 
+	protected final Map<String, Object> context = new HashMap<String, Object>();
 	protected Effort effort = new UnknownEffort();
 	protected Set<Hint> hints = new HashSet<Hint>();
 	protected String description;
 	protected NotificationLevel level = NotificationLevel.WARNING;
 	protected String pattern;
 
+	public Map<String, Object> getContext() {
+		return context;
+	}
+	
 	public Set<Hint> getHints() {
 		return hints;
 	}

@@ -144,7 +144,6 @@
 				]]>
 				</windup:java-hint>
 				
-				
 				<windup:java-hint source-type="CONSTRUCT" regex="javax.naming.InitialContext\(.+\)" hint="Ensure that the InitialContext connection properties do not need to change for JBoss" effort="1"/>
 				
 				

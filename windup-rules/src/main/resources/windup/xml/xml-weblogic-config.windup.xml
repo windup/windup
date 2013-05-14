@@ -22,7 +22,18 @@
 						extension="-jboss.xml"/>
 			</windup:decorators>
 		</windup:xpath-classification>
-		
+
+
+		<windup:xpath-classification description="Weblogic EJB XML" xpath="/wl9:weblogic-ejb-jar" effort="3">
+			<windup:namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+			<windup:decorators>
+				<windup:xslt-transform location="transformations/xslt/weblogic9-ejb-to-jboss.xsl"
+						description="JBoss EJB Descriptor (Windup-Generated)"
+						extension="-jboss.xml"/>
+			</windup:decorators>
+		</windup:xpath-classification>
+
+				
 		<windup:xpath-classification description="Weblogic EJB XML" xpath="/wl10:weblogic-ejb-jar" effort="3">
 			<windup:namespace prefix="wl10" uri="http://www.bea.com/ns/weblogic/10.0" />
 			<windup:decorators>

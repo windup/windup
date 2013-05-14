@@ -9,6 +9,8 @@
 		<windup:java-classification source-type="INHERITANCE" regex="javax.xml.rpc.handler.GenericHandler" description="JAX-RPC Generic Handler"/>
 		
 		
+		
+		
 		<windup:java-gate regex="weblogic.security.Security.*">
 			<windup:hints>
 				<windup:java-hint source-type="TYPE" regex="weblogic.security.Security$" hint="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation"/>
@@ -37,53 +39,34 @@
 	 	<windup:java-hint source-type="IMPORT" regex="weblogic.application.ApplicationLifecycleEvent$" hint="This class is proprietary to Weblogic, remove." effort="2"/>     
 	    <windup:java-hint source-type="TYPE" regex="weblogic.application.ApplicationLifecycleEvent$">
     	<![CDATA[
-    		Using a ServletContextListener, you can use an ServletContextEvent to access the properties of the web application container.  Or, use an EJB 3.1 with annotated methods with @javax.annotation.PostContruct and @javax.annotation.PreDestory	
-    	'''java
-    	import javax.servlet.ServletContext;
-		import javax.servlet.ServletContextEvent;
-		import javax.servlet.ServletContextListener;
-		import javax.servlet.annotation.WebListener;
- 
+    	Using a ServletContextListener, you can use an ServletContextEvent to access the properties of the web application container.  Or, use an EJB 3.1 with annotated methods with javax.annotation.PostContruct and javax.annotation.PreDestory
+    			
+		*Example leveraging WebListener annotations:*
+		
+    	```java
 		@WebListener
-		public class ContextListener implements ServletContextListener
-		{
-		     @Override
-	          public void contextDestroyed(ServletContextEvent evt)
-	          {
-	          }
- 
-		     @Override
-	          public void contextInitialized(ServletContextEvent evt)
-	          {
-	          }
-		}
-'''
-
-'''java
-		import javax.annotation.PostConstruct;
-		import javax.annotation.PreDestroy;
-		import javax.ejb.Singleton;
-		import javax.ejb.Startup;
-		 
+		public class ContextListener implements ServletContextListener { ... }
+		```
+		
+		*Example leveraging Startup and Singleton annotations:*
+		
+		```java
 		@Startup
 		@Singleton
-		public class StartupBean
-		{
-		          @PostConstruct
-		          void startup()
-		          {
-		          }
-		 
-		  		  @PreDestroy
-		          void shutdown()
-		          {
-		          }
-		}
-'''
-    	
-    	
+		public class StartupBean { ... }
+		```
     	]]>
     </windup:java-hint>
+    <windup:java-hint source-type="CONSTRUCT" regex="weblogic.i18n.logging.NonCatalogLogger\(.+\)" effort="1">
+		<![CDATA[
+		Migrate the NonCatalogLogger to Apache Log4j.
+
+		```java
+		Logger LOG = Logger.getLog("Example");
+		```
+
+		]]>	
+	</windup:java-hint>
     </windup:java-hints>
 	
 	

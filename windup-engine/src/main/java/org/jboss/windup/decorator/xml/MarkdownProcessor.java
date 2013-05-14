@@ -3,10 +3,9 @@ package org.jboss.windup.decorator.xml;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jboss.windup.hint.ResultProcessor;
 import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.XmlLine;
-import org.w3c.dom.Node;
+import org.jboss.windup.resource.decoration.hint.MarkdownHint;
 
-public class XmlMarkdownProcessor implements ResultProcessor {
+public class MarkdownProcessor implements ResultProcessor {
 
 	private String markdown;
 	
@@ -16,10 +15,11 @@ public class XmlMarkdownProcessor implements ResultProcessor {
 	
 	@Override
 	public void process(AbstractDecoration result) {
-		XmlLine line = (XmlLine)result;
-		Node node = line.getMatchedNode();
+		StrSubstitutor xpathSubstitutor = new StrSubstitutor(result.getContext());
+		String rst = xpathSubstitutor.replace(markdown);
 		
-		XPathPropertyReplacer xpr = new XPathPropertyReplacer();
-		StrSubstitutor xpathSubstitutor = new StrSubstitutor(xpr);
+		MarkdownHint mdh = new MarkdownHint();
+		mdh.setMarkdown(rst);
+		result.getHints().add(mdh);
 	}
 }

@@ -37,10 +37,10 @@ public class WindupNamespaceHandler extends NamespaceHandlerSupport {
 	public void init() {
 		registerBeanDefinitionParser("java-classification", new JavaClassificationBeanParser());
 		registerBeanDefinitionParser("java-whitelist", new JavaWhitelistBeanParser());
+		
 		registerBeanDefinitionParser("java-hint", new JavaHintBeanParser());
 		registerBeanDefinitionParser("java-hints", new JavaAddHintsBeanParser());
 		registerBeanDefinitionParser("java-gate", new JavaPatternGateBeanParser());
-
 		registerBeanDefinitionParser("xpath-gate", new XPathClassifyingBeanParser());
 		registerBeanDefinitionParser("xpath-classification", new XPathClassifyingBeanParser());
 		registerBeanDefinitionParser("xpath-value", new XPathValueBeanParser());
@@ -48,6 +48,7 @@ public class WindupNamespaceHandler extends NamespaceHandlerSupport {
 		registerBeanDefinitionParser("dtd-classification", new DTDClassifyingBeanParser());
 		registerBeanDefinitionParser("xslt-transform", new XSLTBeanParser());
 
+		registerBeanDefinitionParser("hint", new JavaHintBeanParser());
 		registerBeanDefinitionParser("classification", new ClassificationBeanParser());
 		registerBeanDefinitionParser("global", new GlobalBeanParser());
 		registerBeanDefinitionParser("summary", new SummaryBeanParser());
