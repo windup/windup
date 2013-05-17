@@ -82,6 +82,23 @@
 							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
+
+                                        <execution>
+                                                <id>install-org.eclipse.cdt.core.jar</id>
+                                                <phase>initialize</phase>
+                                                <goals>
+                                                        <goal>install-file</goal>
+                                                </goals>
+                                                <configuration>
+                                                        <file>lib/org.eclipse.cdt.core_5.4.1.201209170703.jar</file>
+                                                        <groupId>org.eclipse.cdt</groupId>
+                                                        <artifactId>org.eclipse.cdt.core</artifactId>
+                                                        <packaging>jar</packaging>
+                                                        <version>5.4.1</version>
+                                                        <generatePom>true</generatePom>
+                                                        <createChecksum>true</createChecksum>
+                                                </configuration>
+                                        </execution>
 				</executions>
 			</plugin>
 
@@ -223,5 +240,22 @@
 			<version>0.6.8</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- CDT Related Dependencies -->
+                <dependency>
+                        <groupId>org.eclipse.equinox</groupId>
+                        <artifactId>org.eclipse.equinox.common</artifactId>
+                        <version>3.6.0.v20100503</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.eclipse.cdt</groupId>
+                        <artifactId>org.eclipse.cdt.core</artifactId>
+                        <version>5.4.1</version>
+                </dependency>
+                <dependency>
+                        <groupId>com.ibm.icu</groupId>
+                        <artifactId>icu4j</artifactId>
+                        <version>50.1</version>
+                </dependency>
 	</dependencies>
 </project>
