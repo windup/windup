@@ -27,6 +27,7 @@
 							<ref bean="javaInterrogator" />
 							<ref bean="classToJavaInterrogator" />
 							<ref bean="jspInterrogator" />
+							<ref bean="cInterrogator" />
 						</list>
 					</property>
 				</bean>	

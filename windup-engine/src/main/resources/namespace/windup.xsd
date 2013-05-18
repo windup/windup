@@ -96,7 +96,16 @@
 	
 	<xs:element name="regex-hint" type="regexHintType"/>
 	
-	
+	<xs:element name="ccpp-hint">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="regexHintType">
+					<xs:attribute name="source-type" type="ccppSourceTypeEnum" />
+					<xs:attribute name="language" type="ccppLanguageEnum" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>	
 	
 	<xs:element name="java-hints">
 		<xs:complexType>
@@ -228,4 +237,19 @@
 		</xs:restriction>
 	</xs:simpleType>
 	
+	<xs:simpleType name="ccppSourceTypeEnum">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INCLUDE" />
+			<xs:enumeration value="FUNCTION" />
+			<xs:enumeration value="TYPE" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="ccppLanguageEnum">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="C" />
+			<xs:enumeration value="CPLUSPLUS" />
+			<xs:enumeration value="ALL" />
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>

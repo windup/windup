@@ -11,6 +11,7 @@
 */
 package org.jboss.windup.config.spring.namespace;
 
+import org.jboss.windup.config.spring.namespace.ccpp.CCPPHintBeanParser;
 import org.jboss.windup.config.spring.namespace.gate.JavaPatternGateBeanParser;
 import org.jboss.windup.config.spring.namespace.gate.RegexFileGateBeanParser;
 import org.jboss.windup.config.spring.namespace.gate.RegexPatternGateBeanParser;
@@ -56,7 +57,9 @@ public class WindupNamespaceHandler extends NamespaceHandlerSupport {
 		registerBeanDefinitionParser("regex-hint", new RegexHintBeanParser());
 		registerBeanDefinitionParser("regex-gate", new RegexPatternGateBeanParser());
 		registerBeanDefinitionParser("file-gate", new RegexFileGateBeanParser());
-
+		
+		registerBeanDefinitionParser("ccpp-hint", new CCPPHintBeanParser());
+		
 		registerBeanDefinitionParser("pipeline", new InterrogatorExtensionBeanParser());
 	}
 
