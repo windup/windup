@@ -311,6 +311,7 @@
 				<value>org.jboss.windup.reporting.transformers.JspMetaTransformer</value>
 				<value>org.jboss.windup.reporting.transformers.ManifestMetaTransformer</value>
 				<value>org.jboss.windup.reporting.transformers.XmlMetaTransformer</value>
+				<value>org.jboss.windup.reporting.transformers.CCPPMetaTransformer</value>
 			</list>
 		</property>
 	</bean>

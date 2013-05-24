@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<bean id="cInterrogator" class="org.jboss.windup.interrogator.impl.CCPPInterrogator">
+		<property name="extensions">
+			<set>
+				<value>[.]c</value>
+			</set>
+		</property>
+		<property name="decoratorPipeline" ref="cPipeline" />
+	</bean>
+
+	<bean id="cppInterrogator" class="org.jboss.windup.interrogator.impl.CCPPInterrogator">
+		<property name="extensions">
+			<set>
+				<value>[.]cpp</value>
+				<value>[.]cc</value>
+			</set>
+		</property>
+		<property name="decoratorPipeline" ref="cppPipeline" />
+	</bean>
+
+	<bean id="cPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list>
+				<bean class="org.jboss.windup.decorator.ccpp.c.CASTDecorator">
+					<property name="ignoredCDTErrors">
+						<set>
+							<value>Missing ';'</value>
+						</set>
+					</property>
+					<property name="blackListedIncludes">
+						<set>
+							<value>euc.h</value>
+							<value>widec.h</value>
+							<value>getwdith.h</value>
+							<value>time.h</value>
+							<value>thread.h</value>
+							<value>synch.h</value>
+							<value>syslog.h</value>
+							<value>tzfile.h</value>
+						</set>
+					</property>
+					<property name="blackListedFunctions">
+						<set>
+							<value>strlcat</value>
+							<value>strlcpy</value>
+							<value>getopt</value>
+							<value>csetcol</value>
+							<value>csetlen</value>
+							<value>csetno</value>
+							<value>euclen</value>
+							<value>euccol</value>
+							<value>eucscol</value>
+							<value>getwidth</value>
+							<value>crypt</value>
+							<value>des_crypt</value>
+							<value>des_encrypt</value>
+							<value>des_setkey</value>
+							<value>crypt</value>
+							<value>crypt_gensalt</value>
+							<value>crypt_genhash_impl</value>
+							<value>crypt_gensalt_impl</value>
+							<value>crypt_close</value>
+							<value>run_crypt</value>
+							<value>run_setkey</value>
+							<value>fork</value>
+							<value>thr_create</value>
+							<value>thr_join</value>
+							<value>thr_setconcurrency</value>
+							<value>thr_getconcurrency</value>
+							<value>thr_exit</value>
+							<value>thr_self</value>
+							<value>thr_sigsetmask</value>
+							<value>thr_stksegment</value>
+							<value>thr_main</value>
+							<value>thr_kill</value>
+							<value>thr_continue</value>
+							<value>thr_yield</value>
+							<value>thr_setprio</value>
+							<value>thr_getprio</value>
+							<value>thr_keycreate</value>
+							<value>thr_keycreate_once</value>
+							<value>thr_setspecific</value>
+							<value>thr_getspecific</value>
+							<value>thr_min_stack</value>
+							<value>processor_bind</value>
+							<value>getpwnam_r</value>
+							<value>getpwuid_r</value>
+							<value>acl</value>
+							<value>facl</value>
+							<value>acl_check</value>
+							<value>acl_get</value>
+							<value>acl_set</value>
+							<value>acl_free</value>
+							<value>aclsort</value>
+							<value>tzset</value>
+							<value>nonuserx</value>
+							<value>setuserx</value>
+						</set>
+					</property>
+					<property name="blackListedTypes">
+						<set>
+							<value>eucwidth_t</value>
+							<value>timespec_t</value>
+							<value>thread_t</value>
+							<value>lwp_mutex_t</value>
+							<value>lwp_cond_t</value>
+							<value>lwp_rwlock_t</value>
+							<value>mutex_t</value>
+							<value>cond_t</value>
+							<value>rwlock_t</value>
+							<value>ptrdiff_t</value>
+							<value>optind</value>
+							<value>opterr</value>
+							<value>optopt</value>
+							<value>uchar_t</value>
+							<value>ushort_t</value>
+							<value>ulong_t</value>
+							<value>utmpx</value>
+						</set>
+					</property>
+					<property name="decorators">
+						<list>
+							<bean class="org.jboss.windup.decorator.HintDecorator">
+								<property name="hintProcessors" ref="ccppHints" />
+							</bean>
+						</list>
+					</property>
+					<property name="keywords">
+						<set>
+							<value>const</value>
+							<value>extern</value>
+							<value>register</value>
+							<value>signed</value>
+							<value>static</value>
+							<value>unsigned</value>
+							<value>void</value>
+							<value>volatile</value>
+						</set>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!--  All of these cpp values are totally bogus, and should be replaced with actual ones -->
+	<bean id="cppPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list>
+				<bean class="org.jboss.windup.decorator.ccpp.cpp.CPPASTDecorator">
+					<property name="ignoredCDTErrors">
+						<set>
+							<value>Missing ';'</value>
+						</set>
+					</property>
+					<property name="blackListedIncludes">
+						<set>
+							<value>iostream</value>
+						</set>
+					</property>
+					<property name="blackListedFunctions">
+						<set>
+							<value>cout</value>
+						</set>
+					</property>
+					<property name="blackListedTypes">
+						<set>
+							<value>int</value>
+						</set>
+					</property>
+					<property name="decorators">
+						<list>
+							<bean class="org.jboss.windup.decorator.HintDecorator">
+								<property name="hintProcessors" ref="ccppHints" />
+							</bean>
+						</list>
+					</property>
+					<property name="keywords">
+						<set>
+							<value>return</value>
+						</set>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="ccppHints" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<windup:ccpp-hint language="ALL" source-type="INCLUDE"
+					regex="euc.h|widec.h|getwidth.h"
+					hint="EUC is not implemented in Linux.  Re-implement with types and functions from wchar.h" />
+				<windup:ccpp-hint language="ALL" source-type="INCLUDE"
+					regex="time.h"
+					hint="There are possible issues around timezone calculations when migrating from UNIX.  In particular, the 'altzone' variable is not defined on Linux."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="INCLUDE"
+					regex="thread.h"
+					hint="The inclusion of this header indicates a possible use of UNIX native threading instead of POSIX threads."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="INCLUDE"
+					regex="synch.h"
+					hint="The inclusion of this header indicates a possible use of UNIX native threading instead of POSIX threads."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="INCLUDE"
+					regex="syslog.h"
+					hint="Some syslog priorities (LOG_AUDIT in particular) available on UNIX may not be available on Linux."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="INCLUDE"
+					regex="tzfile.h"
+					hint="Functions and types from this header are unavailable on Linux.  See gdate.h from glib2 for possible alternatives."
+					effort="2" />
+				<windup:ccpp-hint language="ALL" source-type="TYPE"
+					regex="eucwidth_t"
+					hint="EUC is not implemented in Linux.  Re-implement with types and functions from wchar.h"
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="TYPE"
+					regex="timespec_t"
+					hint="timespec_t is undefined on Linux.  Consider adding: \'typedef struct timespec timespec_t\'"
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="TYPE"
+					regex="ptrdiff_t" hint="ptrdiff_t requires the inclusion of stddef.h on Linux."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="TYPE"
+					regex="thread_t"
+					hint="The usage of thread_t indicates the use of UNIX native threading instead of POSIX threads."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="TYPE"
+					regex=".*mutex_t|.*cond_t|.*rwlock_t"
+					hint="These types are used by UNIX native threading.  Re-implement with POSIX threads."
+					effort="1" />
+				<windup:ccpp-hint language="ALL" source-type="TYPE"
+					regex="opt(ind)|(err)|(opt)"
+					hint="These types require the inclusion of unistd.h or getopt.h in the glibc."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="TYPE"
+					regex="u(long)|(char)|(short)_t"
+					hint="These types are undefined in the glibc.  Consider adding typedef statements to local header files (i.e. typedef unsigned long   ulong_t;)."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="TYPE"
+					regex="utmpx"
+					hint="The utmpx structure has different members in Linux than on UNIX.  For example, ut_name on Solaris should be replaced with ut_user on Linux."
+					effort="2" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="strlcpy" hint="Function does not exist in the glibc."
+					effort="1" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="strlcat" hint="Function does not exist in the glibc."
+					effort="1" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="getopt"
+					hint="getopt() is defined in either unistd.h or getopt.h on Linux, but in stdio.h on Solaris."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="csetcol|csetlen|csetno|euclen|euccol|eucscol|getwidth"
+					hint="EUC is not implemented in Linux.  Re-implement with types and functions from wchar.h."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex=".*crypt.*|.*setkey.*"
+					hint="des_crypt() and associated functions are unavailable in the glibc.  Re-implement with the DES implementation in crypt.h or OpenSSL libraries. "
+					effort="2" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="thr_.*"
+					hint="These functions indicate the usage of UNIX native threading.  Re-implement with POSIX threads."
+					effort="4" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="fork"
+					hint="The behaviour of the fork() call is dependent on the threading implementation used.  For example, when called under native threading in Solaris, all threads are duplicated, whereas on Linux only the calling thread is duplicated."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="thr_.*|processor_bind"
+					hint="These functions indicate the usage of UNIX native threading.  Re-implement with POSIX threads."
+					effort="4" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="getpw.*_r"
+					hint="The POSIX versions of getpwnam_r() and getpwuid_r() take an additional argument (struct passwd **result) than on Solaris"
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="acl.*|facl"
+					hint="acl(), facl() and other ACL-related functionality needs to be ported to the POSIX ACL functions.  See the ACL(5) manual page on Linux for more information"
+					effort="4" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="tzset"
+					hint="The TZ environment variable is not set by default on Red Hat Enterprise Linux.  Programs which rely on this variable will need porting."
+					effort="0" />
+				<windup:ccpp-hint language="ALL" source-type="FUNCTION"
+					regex="(non)|(set)userx"
+					hint="The nonuserx() and setuserx() macros defined in utmpx.h on Solaris are not available on Linux.  Re-implement."
+					effort="2" />
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>
