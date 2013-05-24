@@ -13,7 +13,17 @@
 		</property>
 		<property name="decoratorPipeline" ref="cPipeline" />
 	</bean>
-	
+
+	<bean id="cppInterrogator" class="org.jboss.windup.interrogator.impl.CCPPInterrogator">
+		<property name="extensions">
+			<set>
+				<value>[.]cpp</value>
+				<value>[.]cc</value>
+			</set>
+		</property>
+		<property name="decoratorPipeline" ref="cppPipeline" />
+	</bean>
+
 	<bean id="cPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
 		<property name="decorators">
 			<list>
@@ -136,22 +146,50 @@
 				</bean>
 			</list>
 		</property>
-	
 	</bean>
 
-<!-- 	<bean id="cppPlatformInterrogator" class="org.jboss.windup.interrogator.impl.PlatformInterrogator"> -->
-<!-- 		<property name="extensions"> -->
-<!-- 			<set> -->
-<!-- 				<value>[.]cpp</value> -->
-<!-- 				<value>[.]cc</value> -->
-<!-- 			</set> -->
-<!-- 		</property> -->
-<!-- 		<property name="decorators"> -->
-<!-- 			<list> -->
-<!-- 				<bean class="org.jboss.windup.decorator.platform.cpp.CPPASTDecorator" /> -->
-<!-- 			</list> -->
-<!-- 		</property> -->
-<!-- 	</bean> -->
+	<!--  All of these cpp values are totally bogus, and should be replaced with actual ones -->
+	<bean id="cppPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list>
+				<bean class="org.jboss.windup.decorator.ccpp.cpp.CPPASTDecorator">
+					<property name="ignoredCDTErrors">
+						<set>
+							<value>Missing ';'</value>
+						</set>
+					</property>
+					<property name="blackListedIncludes">
+						<set>
+							<value>iostream</value>
+						</set>
+					</property>
+					<property name="blackListedFunctions">
+						<set>
+							<value>cout</value>
+						</set>
+					</property>
+					<property name="blackListedTypes">
+						<set>
+							<value>int</value>
+						</set>
+					</property>
+					<property name="decorators">
+						<list>
+							<bean class="org.jboss.windup.decorator.HintDecorator">
+								<property name="hintProcessors" ref="ccppHints" />
+							</bean>
+						</list>
+					</property>
+					<property name="keywords">
+						<set>
+							<value>return</value>
+						</set>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
 
 	<bean id="ccppHints" class="java.util.ArrayList">
 		<constructor-arg>

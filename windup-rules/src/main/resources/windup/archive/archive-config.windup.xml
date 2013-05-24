@@ -28,6 +28,7 @@
 							<ref bean="classToJavaInterrogator" />
 							<ref bean="jspInterrogator" />
 							<ref bean="cInterrogator" />
+							<ref bean="cppInterrogator" />
 						</list>
 					</property>
 				</bean>	
