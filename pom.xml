@@ -6,6 +6,12 @@
 	<version>0.6.8</version>
 	<name>Windup Parent</name>
 	<description>Red Hat Migration Tooling</description>
+	<licenses>
+	    <license>
+	        <name>Eclipse Public License 1.0</name>
+	        <url>http://www.eclipse.org/org/documents/epl-v10.html</url>
+	    </license>
+	</licenses>
 	<build>
 		<pluginManagement>
 			<plugins>
