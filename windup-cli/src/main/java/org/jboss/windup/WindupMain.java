@@ -45,7 +45,9 @@ public class WindupMain {
 		
 		
 		Option javaPkgs = OptionBuilder.withArgName("string").hasArg().withDescription("client Java packages to target for inspection").create("javaPkgs");
-		javaPkgs.setRequired(true);
+		javaPkgs.setRequired(false);
+		
+		Option csrc = OptionBuilder.withDescription("Start up Windup in C mode").create("csrc");
 		
 		Option output = OptionBuilder.withArgName("dir").hasArg().withDescription("directory where to generate windup report (required)").create("output");
 		Option excludePkgs = OptionBuilder.withArgName("string").hasArg().withDescription("client Java packages to target for inspection").create("excludePkgs");
@@ -57,6 +59,7 @@ public class WindupMain {
 		options.addOption(input);
 		options.addOption(output);
 		options.addOption(javaPkgs);
+		options.addOption(csrc);
 		options.addOption(logLevel);
 		options.addOption(captureLog);
 		options.addOption(fetchRemote);
@@ -88,26 +91,39 @@ public class WindupMain {
 			else {
 				// Map the environment settings from the input arguments.
 				WindupEnvironment settings = new WindupEnvironment();
-				if (line.hasOption("javaPkgs")) {
-					settings.setPackageSignature(line.getOptionValue("javaPkgs"));
-				}
-				else {
-					LOG.error("Must provide the javaPkgs parameter.");
-					HELP_FORMATTER.printHelp(WINDUP_COMMAND, options);
-					return;
-				}
 				
-				if (line.hasOption("excludePkgs")) {
-					settings.setExcludeSignature(line.getOptionValue("excludePkgs"));
-				}
-
 				
-				if (line.hasOption("targetPlatform")) {
-					settings.setTargetPlatform(line.getOptionValue("targetPlatform"));
-				}
+				if(line.hasOption("csrc")) {
+					settings.setPackageSignature(""); // Otherwise CustomerPackageResolver will complain
+					if (line.hasOption("javaPkgs") ||
+							line.hasOption("excludePkgs") ||
+							line.hasOption("targetPlatform") ||
+							line.hasOption("fetchRemote")) {
+						LOG.warn("Option csrc causes Windup to ignore javaPkgs, excludePkgs, targetPlatform, and fetchRemote options.");
+					}
+				} else {
+					if (line.hasOption("javaPkgs")) {
+						settings.setPackageSignature(line.getOptionValue("javaPkgs"));
+					}
+					else {
+						LOG.error("Must provide the javaPkgs parameter.");
+						HELP_FORMATTER.printHelp(WINDUP_COMMAND, options);
+						return;
+					}
+					
+					if (line.hasOption("excludePkgs")) {
+						settings.setExcludeSignature(line.getOptionValue("excludePkgs"));
+					}
 
-				if (line.hasOption("fetchRemote")) {
-					settings.setFetchRemote(line.getOptionValue("fetchRemote"));
+					
+					if (line.hasOption("targetPlatform")) {
+						settings.setTargetPlatform(line.getOptionValue("targetPlatform"));
+					}
+
+					if (line.hasOption("fetchRemote")) {
+						settings.setFetchRemote(line.getOptionValue("fetchRemote"));
+					}
+
 				}
 
 				String inputLocation = line.getOptionValue("input");
