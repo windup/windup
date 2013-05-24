@@ -27,27 +27,15 @@ public class CakeCodeReaderFactory extends AbstractCodeReaderFactory {
 
 	@Override
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
-		LOG.info("CRFTU PATH:  " + path);
+		LOG.debug("CRFTU PATH:  " + path);
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CodeReader createCodeReaderForInclusion(String path) {
-		LOG.info("CRFI PATH:  " + path);
-		String[] split = path.split("/");
-		String newPath = "/home/chale/ctest/" + split[split.length - 1];
-
-		/*
-		 * try {
-		 * return new CodeReader(newPath);
-		 * }
-		 * catch (IOException e) {
-		 * LOG.error("Cannot find #include:  " + newPath);
-		 * LOG.error(e);
-		 * return null;
-		 * }
-		 */
+		LOG.debug("CRFI PATH:  " + path);
+		//To Do Fill out.
 		return null;
 
 	}
@@ -60,7 +48,7 @@ public class CakeCodeReaderFactory extends AbstractCodeReaderFactory {
 
 	@Override
 	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) throws CoreException, IOException {
-		LOG.info("CRFI w/ IFL PATH:  " + astPath);
+		LOG.debug("CRFI w/ IFL PATH:  " + astPath);
 		// TODO Auto-generated method stub
 		return null;
 	}

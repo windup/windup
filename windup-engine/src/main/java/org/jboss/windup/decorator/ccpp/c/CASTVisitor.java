@@ -8,36 +8,35 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTForStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.parser.IToken;
 import org.jboss.windup.decorator.ccpp.shared.CCPPLineResult;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.decorator.ccpp.shared.SourceType;
 import org.jboss.windup.decorator.ccpp.shared.Language;
+import org.jboss.windup.decorator.ccpp.shared.SourceType;
+import org.jboss.windup.resource.decoration.AbstractDecoration;
 
 
+/**
+ * Visitor used for C IASTTranslationUnits produced by CDT. 
+ * 
+ * @author Clark Hale, Michael Solberg
+ *
+ */
 public class CASTVisitor extends ASTVisitor {
 
 	private static final Log LOG = LogFactory.getLog(CASTVisitor.class);

@@ -34,7 +34,13 @@ import org.jboss.windup.decorator.ccpp.shared.SourceType;
 import org.jboss.windup.resource.type.CCPPMeta;
 
 
-
+/**
+ * CASTDecorator uses the Eclipse Project's CDT library to parse 
+ * C source code and search for items.
+ * 
+ * @author Clark Hale
+ *
+ */
 public class CASTDecorator extends ChainingDecorator<CCPPMeta> {
 
 	private static final Log LOG = LogFactory.getLog(CASTDecorator.class);
@@ -49,8 +55,9 @@ public class CASTDecorator extends ChainingDecorator<CCPPMeta> {
 
 	@Override
 	public void processMeta(CCPPMeta meta) {
-		// Build IASTTranslationUnit
-
+		/*
+		 * Build initial IASTTranslationUnit 
+		 */
 		IASTTranslationUnit tu = buildIASTTranslationUnit(meta);
 		IASTPreprocessorIncludeStatement[] includeStatements = tu.getIncludeDirectives();
 
@@ -60,22 +67,33 @@ public class CASTDecorator extends ChainingDecorator<CCPPMeta> {
 		 */
 		if (includeStatements != null) {
 			for (IASTPreprocessorIncludeStatement statement : includeStatements) {
-				processName(meta, statement.getName(), "Include", statement.getFileLocation().getStartingLineNumber());
+				processIncludes(meta, statement.getName(), statement.getFileLocation().getStartingLineNumber());
 			}
 		}
 
 		/*
-		 * IASTPreprocessorIncludeStatement[] a = tu.getIncludeDirectives();
-		 * IASTNode[] b = tu.getChildren();
+		 * Parse out and visit source file.
 		 */
 		tu.accept(new CASTVisitor(tu, meta.getDecorations(), ignoredCDTErrors, blackListedFunctions, blackListedTypes, keywords));
 
+		/*
+		 * Continue on...
+		 */
 		super.chainDecorators(meta);
 	}
 
-	private void processName(CCPPMeta meta, IASTName name, String decoratorPrefix, int position) {
-		if (name == null)
+	/**
+	 * Process Include files searching for black-listed items.
+	 * @param meta
+	 * @param name
+	 * @param decoratorPrefix
+	 * @param position
+	 */
+	private void processIncludes(CCPPMeta meta, IASTName name, int position) {
+		
+		if (name == null) {
 			return;
+		}
 
 		int sourcePosition = position;
 		String sourceString = name.toString();
@@ -89,14 +107,19 @@ public class CASTDecorator extends ChainingDecorator<CCPPMeta> {
 				dr.setSourceType(SourceType.INCLUDE);
 				dr.setLanguage(Language.C);
 				dr.setPattern("Problem Include: " + badInclude);
-				// dr.setAstNode(name);
+				
 				meta.getDecorations().add(dr);
 			}
 		}
 	}
 
 
-	public IASTTranslationUnit buildIASTTranslationUnit(CCPPMeta meta) {
+	/**
+	 * Build the Translation Unit with reasonable parameters.
+	 * @param meta
+	 * @return
+	 */
+	private IASTTranslationUnit buildIASTTranslationUnit(CCPPMeta meta) {
 
 		/* Create Scanner */
 
@@ -162,6 +185,4 @@ public class CASTDecorator extends ChainingDecorator<CCPPMeta> {
 	public void setkeywords(Set<String> keywords) {
 		this.keywords = keywords;
 	}
-
-
 }
