@@ -30,7 +30,11 @@ public class ReportEngine implements Reporter {
 	@Override
 	public void process(ArchiveMeta archive, File reportDirectory) {
 		
-		LOG.info("Processing reports for: "+archive.getName());
+	    if (archive.getName() == null) {
+	        LOG.info("Processing reports for: " + archive.getFilePointer().toString());
+	    } else {
+	        LOG.info("Processing reports for: "+archive.getName());
+	    }
 		
 		if(reporters != null) {
 			for(Reporter reporter : reporters) {
