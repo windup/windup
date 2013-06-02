@@ -7,7 +7,7 @@ Maven Plugin for JBoss Windup Tool
 
 The following options are available for fine tuning the configuration of the plugin
 
-* packages [list] (Required) - List of packages to target for inspection
+* packages [List] (Required) - List of packages to target for inspection
 * excludePackages [List] - List of packages to exclude from inspection
 * input [File or Directory] - Base directory for which Windup will traverse (Defaults to Maven _basedir_)
 * output [Directory[ - Location to store the generated reports (Defaults to _target/site/windup/_)
