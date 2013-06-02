@@ -15,7 +15,7 @@ import org.jboss.windup.WindupEnvironment;
 import org.jboss.windup.WindupReportEngine;
 import org.jboss.windup.maven.plugin.util.WindupUtils;
 
-@Mojo(name = "windup", requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "windup", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator=true)
 @Execute(phase=LifecyclePhase.GENERATE_SOURCES)
 public class WindupMojo extends AbstractMojo {
 	
@@ -30,6 +30,9 @@ public class WindupMojo extends AbstractMojo {
 
 	@Parameter
 	private String[] excludePackages;
+	
+	@Parameter
+	private String logLevel;
 
 	@Parameter(defaultValue = "true")
 	private Boolean source;
@@ -69,6 +72,8 @@ public class WindupMojo extends AbstractMojo {
 			}
 
 			settings.setCaptureLog(captureLog);
+			
+			settings.setLogLevel(logLevel);
 
 			settings.setPackageSignature(inPackages);
 
