@@ -94,6 +94,7 @@
 		<module>windup-cli</module>
 
 		<module>windup-rules</module>
+		<module>windup-maven-plugin</module>
 	</modules>
 
 </project>
