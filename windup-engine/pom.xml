@@ -22,11 +22,12 @@
 				</configuration>
 			</plugin>
 
+			
 			<plugin>
 				<artifactId>maven-install-plugin</artifactId>
 				<version>2.4</version>
 				<executions>
-					
+					<!-- 					
 					<execution>
 						<id>install-pegdown.jar</id>
 						<phase>initialize</phase>
@@ -46,7 +47,8 @@
 							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
-					
+					 -->
+					 <!-- 
 					<execution>
 						<id>install-redline.jar</id>
 						<phase>initialize</phase>
@@ -65,7 +67,8 @@
 							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
-
+					
+					
 					<execution>
 						<id>install-jbpmmigration.jar</id>
 						<phase>initialize</phase>
@@ -82,6 +85,7 @@
 							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
+					-->
 				</executions>
 			</plugin>
 
@@ -154,7 +158,7 @@
 		<dependency>
 			<groupId>org.jbpm.jbpm5</groupId>
 			<artifactId>jbpmmigration</artifactId>
-			<version>0.12-SNAPSHOT</version>
+			<version>0.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -181,11 +185,22 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
+		
+		<!-- CENTRAL -->
+		<dependency>
+		    <groupId>org.redline-rpm</groupId>
+		    <artifactId>redline</artifactId>
+		    <version>1.1.12</version>
+		</dependency>
+		
+		<!-- 
 		<dependency>
 			<groupId>redline</groupId>
 			<artifactId>redline</artifactId>
 			<version>1.2</version>
 		</dependency>
+		 -->
+		 
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
@@ -197,11 +212,20 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- CENTRAL -->
+		<dependency>
+		    <groupId>org.pegdown</groupId>
+		    <artifactId>pegdown</artifactId>
+		    <version>1.2.1</version>
+		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>pegdown</groupId>
 			<artifactId>pegdown</artifactId>
 			<version>1.2.2-DAVIS</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
