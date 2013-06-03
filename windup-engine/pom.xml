@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>windup-parent</artifactId>
 		<groupId>org.jboss.windup</groupId>
-		<version>0.6.8</version>
+		<version>0.6.9</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>windup-engine</artifactId>

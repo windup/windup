@@ -1,21 +1,41 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.windup</groupId>
 	<artifactId>windup-parent</artifactId>
-	<version>0.6.8</version>
+	<version>0.6.9</version>
 	<name>Windup Parent</name>
 	<description>Red Hat Migration Tooling</description>
+	<url>http://windup.jboss.org</url>
 	<licenses>
-	    <license>
-	        <name>Eclipse Public License 1.0</name>
-	        <url>http://www.eclipse.org/org/documents/epl-v10.html</url>
-	    </license>
+		<license>
+			<name>Eclipse Public License 1.0</name>
+			<url>http://www.eclipse.org/org/documents/epl-v10.html</url>
+		</license>
 	</licenses>
+	<scm>
+		<url>https://github.com/windup/windup</url>
+		<connection>scm:git:https://github.com/windup/windup.git</connection>
+	</scm>
+	<developers>
+		<developer>
+			<id>bradsdavis</id>
+			<name>Brad Davis</name>
+			<email>bradsdavis@gmail.com</email>
+			<url>http://bradsdavis.com</url>
+			<organization>Red Hat</organization>
+			<organizationUrl>http://redhat.com</organizationUrl>
+			<roles>
+				<role>creator</role>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+	</developers>
 	<build>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -72,7 +92,8 @@
 	<modules>
 		<module>windup-engine</module>
 		<module>windup-cli</module>
-		
+
 		<module>windup-rules</module>
 	</modules>
+
 </project>

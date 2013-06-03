@@ -13,7 +13,6 @@ package org.jboss.windup.resource.type;
 
 import java.io.File;
 
-import org.apache.log4j.helpers.RelativeTimeDateFormat;
 import org.jboss.windup.resource.type.archive.ArchiveMeta;
 
 
