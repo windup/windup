@@ -61,6 +61,6 @@ public class TestWindupMetaEngineSourceDirectoryProcessing extends WindupTestCas
 			}
 		);
 		
-		this.runArchiveMetaTest("files/", null, entries, null);
+		this.runSourceDirectoryMetaTest("files/", null, entries, null);
 	}
 }

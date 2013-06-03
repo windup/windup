@@ -23,9 +23,8 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.WindupEngine;
 import org.jboss.windup.WindupEnvironment;
-import org.jboss.windup.WindupMetaEngine;
-import org.jboss.windup.WindupReportEngine;
 import org.jboss.windup.resource.decoration.AbstractDecoration;
 import org.jboss.windup.resource.decoration.Hash;
 import org.jboss.windup.resource.type.FileMeta;
@@ -69,7 +68,7 @@ public class WindupTestCase {
 			expectedArhciveDecorations = new String[0];
 		}
 
-		FileMeta meta = this.getFileMeta(fileName);
+		FileMeta meta = this.getMetaEngine().processFile(this.getResourcePath(fileName));
 
 		Assert.assertNotNull("Returned meta should not be null", meta);
 
@@ -124,6 +123,34 @@ public class WindupTestCase {
 	 * @throws IOException
 	 *             can happen when reading files
 	 */
+	protected void runSourceDirectoryMetaTest(String archivePath, String[] expectedArchiveDecorations, Map<String, String[]> expectedArchiveEntryDecorations, String outputPath) throws IOException {
+
+		File input = new File(this.getResourcePath(archivePath));
+		File output = new File(this.getResourcePath(outputPath));
+		ArchiveMeta archiveMeta = this.getMetaEngine().processSourceDirectory(input, output);
+
+		this.runArchiveMetaTest(archiveMeta, expectedArchiveDecorations, expectedArchiveEntryDecorations);
+	}
+
+	
+	/**
+	 * <p>
+	 * Run a test on a single archive.
+	 * </p>
+	 * 
+	 * @param archivePath
+	 *            path to the archive to test
+	 * @param expectedArchiveDecorations
+	 *            expected decorations on the archive
+	 * @param expectedArchiveEntryDecorations
+	 *            map of file paths to their expected decorations
+	 * @param outputPath
+	 *            Optional. The output directory to be used when generating the
+	 *            meta
+	 * 
+	 * @throws IOException
+	 *             can happen when reading files
+	 */
 	protected void runArchiveMetaTest(String archivePath, String[] expectedArchiveDecorations, Map<String, String[]> expectedArchiveEntryDecorations, String outputPath) throws IOException {
 
 		File input = new File(this.getResourcePath(archivePath));
@@ -160,9 +187,9 @@ public class WindupTestCase {
 		}
 
 		// generate report
-		WindupReportEngine reportEngine = new WindupReportEngine(this.getEnvironment());
+		WindupEngine reportEngine = new WindupEngine(this.getEnvironment());
 		File input = new File(this.getResourcePath(archivePath));
-		reportEngine.generateReport(input, output);
+		reportEngine.process(input, output);
 
 		//if not output specified the engine will append -doc
 		if(outputPath == null) {
@@ -212,10 +239,10 @@ public class WindupTestCase {
 
 		File input = new File(this.getResourcePath(parentPath));
 		File output = new File(this.getResourcePath(outputPath));
-		ArchiveMeta parentArchiveMeta = this.getArchiveMeta(input, output);
-		Assert.assertNotNull("Returned meta should not be null", parentArchiveMeta);
+		Collection<ArchiveMeta> parentArchiveMetas = this.getMetaEngine().processDirectory(input);
+		Assert.assertNotNull("Returned meta should not be null", parentArchiveMetas);
 
-		for (ArchiveMeta childArchiveMeta : parentArchiveMeta.getNestedArchives()) {
+		for (ArchiveMeta childArchiveMeta : parentArchiveMetas) {
 			String name = childArchiveMeta.getName();
 
 			this.runArchiveMetaTest(childArchiveMeta, expectedArchiveDecorations.get(name), expectedArchiveEntryDecorations.get(name));
@@ -225,9 +252,9 @@ public class WindupTestCase {
 	/**
 	 * @return a fully setup {@link WindupMetaEngine} for use during testing
 	 */
-	protected WindupMetaEngine getMetaEngine() {
+	protected WindupEngine getMetaEngine() {
 		WindupEnvironment settings = getEnvironment();
-		WindupMetaEngine metaEngine = new WindupMetaEngine(settings);
+		WindupEngine metaEngine = new WindupEngine(settings);
 
 		return metaEngine;
 	}
@@ -387,25 +414,6 @@ public class WindupTestCase {
 	}
 
 	/**
-	 * 
-	 * @param fileName
-	 *            name of the file relative to this test to get {@link FileMeta}
-	 *            for
-	 * 
-	 * @return {@link FileMeta} for the file with the given name located
-	 *         relative to this test
-	 * 
-	 * @throws IOException
-	 *             can happen when trying to read files
-	 */
-	private FileMeta getFileMeta(String fileName) throws IOException {
-		WindupMetaEngine engine = this.getMetaEngine();
-		FileMeta meta = engine.getFileMeta(new File(this.getResourcePath(fileName)));
-
-		return meta;
-	}
-
-	/**
 	 * <p>
 	 * Uses {@link WindupMetaEngine} to generate {@link ArchiveMeta} for the
 	 * given input.
@@ -423,8 +431,8 @@ public class WindupTestCase {
 	 *             can happen when trying to read files
 	 */
 	private ArchiveMeta getArchiveMeta(File input, File outputDir) throws IOException {
-		WindupMetaEngine engine = this.getMetaEngine();
-		ArchiveMeta meta = engine.getArchiveMeta(input, outputDir);
+		WindupEngine engine = this.getMetaEngine();
+		ArchiveMeta meta = engine.processArchive(input, outputDir);
 
 		return meta;
 	}

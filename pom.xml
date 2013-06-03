@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.windup</groupId>
 	<artifactId>windup-parent</artifactId>
-	<version>0.6.9</version>
+	<version>0.7.0</version>
 	<name>Windup Parent</name>
 	<description>Red Hat Migration Tooling</description>
 	<url>http://windup.jboss.org</url>

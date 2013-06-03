@@ -39,8 +39,8 @@ public class TestWindupMetaEngineSingleFileProcessing extends WindupTestCase {
 	@Test
 	public void testMeta_processSingleFile_FileDoesNotExist() throws IOException {
 		try {
-			WindupMetaEngine engine = this.getMetaEngine();
-			engine.getFileMeta(new File("DoesNotExist.xml"));
+			WindupEngine engine = this.getMetaEngine();
+			engine.processFile(new File("DoesNotExist.xml"));
 			
 			Assert.fail("Windup must thought the file existed when it should not have.");
 		} catch (FileNotFoundException e) {

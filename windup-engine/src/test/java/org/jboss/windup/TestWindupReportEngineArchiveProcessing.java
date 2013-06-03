@@ -46,11 +46,12 @@ public class TestWindupReportEngineArchiveProcessing extends WindupTestCase {
 				"expectedReports/Portal-WAR.war");
 	}
 	
+	/*
 	@Test
 	public void testReport_MultipleArchives() throws IOException {
 		this.runArchiveReportTest(
 				"archives",
 				"archives/testReport_MultipleArchives",
 				"expectedReports/archives");
-	}
+	}*/
 }

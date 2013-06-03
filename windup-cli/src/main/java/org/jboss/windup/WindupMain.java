@@ -41,13 +41,8 @@ public class WindupMain {
 
 		Options options = new Options();
 		Option input = OptionBuilder.withArgName("file / dir").hasArg().isRequired().withDescription("file to generate windup report (required)").create("input");
-		input.setRequired(true);
-		
-		
-		Option javaPkgs = OptionBuilder.withArgName("string").hasArg().withDescription("client Java packages to target for inspection").create("javaPkgs");
-		javaPkgs.setRequired(true);
-		
 		Option output = OptionBuilder.withArgName("dir").hasArg().withDescription("directory where to generate windup report (required)").create("output");
+		Option javaPkgs = OptionBuilder.withArgName("string").hasArg().withDescription("client Java packages to target for inspection").create("javaPkgs");
 		Option excludePkgs = OptionBuilder.withArgName("string").hasArg().withDescription("client Java packages to target for inspection").create("excludePkgs");
 		Option logLevel = OptionBuilder.withArgName("string").hasArg().withDescription("log level for root logger (defaults to info)").create("logLevel");
 		Option captureLog = OptionBuilder.withArgName("boolean").hasArg().withDescription("persist to file").create("captureLog");
@@ -91,12 +86,6 @@ public class WindupMain {
 				if (line.hasOption("javaPkgs")) {
 					settings.setPackageSignature(line.getOptionValue("javaPkgs"));
 				}
-				else {
-					LOG.error("Must provide the javaPkgs parameter.");
-					HELP_FORMATTER.printHelp(WINDUP_COMMAND, options);
-					return;
-				}
-				
 				if (line.hasOption("excludePkgs")) {
 					settings.setExcludeSignature(line.getOptionValue("excludePkgs"));
 				}
@@ -140,8 +129,8 @@ public class WindupMain {
 				settings.setLogLevel(logLevel);
 
 				// Run Windup.
-				WindupReportEngine engine = new WindupReportEngine(settings);
-				engine.generateReport(inputPath, outputPath);
+				WindupEngine engine = new WindupEngine(settings);
+				engine.process(inputPath, outputPath);
 			}
 		}
 		catch (FileNotFoundException e) {
