@@ -70,6 +70,7 @@
 
 
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.graph.exe.ExecutionContext.getVariable">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -78,10 +79,12 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.getVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 
 
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.graph.exe.ExecutionContext.setVariable">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -90,21 +93,25 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.setVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 
 
 
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.JbpmContext.getProcessInstance">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
 			ProcessContext kcontext = new ProcessContext(ksession);
             WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
 			```
+		]]>
 		</windup:java-hint>
 
 
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.getVariables">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -113,9 +120,11 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.getVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.setVariable" >
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -124,9 +133,11 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.setVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 		
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.getVariable">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -135,9 +146,11 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.getVariable(...);
 			```
+		]]>
 		</windup:java-hint>		
 		 
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableContainer.setVariable">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -146,8 +159,10 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.setVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableContainer.getVariable">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -156,10 +171,12 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.getVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 		
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableContainer.getContextInstance " hint="Migrate to jBPM 5: org.jbpm.process.instance.context.variable.VariableScopeInstance.getVariableScope"/>
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableContainer.setVariables">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -168,11 +185,13 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.setVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 		
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableInstance.getName" hint="Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getName"/>
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableInstance.getValue" hint="Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getValue"/>
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableInstance.setValue">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -181,11 +200,13 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.setVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 		
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableInstance.toString" hint="Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.toString"/>
 		
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.getVariable">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -194,9 +215,11 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.getVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 		
 		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.setVariable">
+		<![CDATA[
 			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
 
 			```java
@@ -205,6 +228,7 @@
             kcontext.setProcessInstance(processInstance);
             kcontext.setVariable(...);
 			```
+		]]>
 		</windup:java-hint>
 		
 		

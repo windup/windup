@@ -27,7 +27,6 @@
 				<artifactId>maven-install-plugin</artifactId>
 				<version>2.4</version>
 				<executions>
-					<!-- 					
 					<execution>
 						<id>install-pegdown.jar</id>
 						<phase>initialize</phase>
@@ -47,7 +46,6 @@
 							<createChecksum>true</createChecksum>
 						</configuration>
 					</execution>
-					 -->
 					 <!-- 
 					<execution>
 						<id>install-redline.jar</id>
@@ -213,19 +211,19 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- CENTRAL -->
+		<!-- CENTRAL - Waiting on fix for code.
 		<dependency>
 		    <groupId>org.pegdown</groupId>
 		    <artifactId>pegdown</artifactId>
 		    <version>1.2.1</version>
 		</dependency>
-		<!-- 
+		-->
+		
 		<dependency>
 			<groupId>pegdown</groupId>
 			<artifactId>pegdown</artifactId>
 			<version>1.2.2-DAVIS</version>
 		</dependency>
-		-->
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
