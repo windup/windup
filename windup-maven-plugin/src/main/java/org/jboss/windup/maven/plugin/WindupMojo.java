@@ -11,8 +11,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.jboss.windup.WindupEngine;
 import org.jboss.windup.WindupEnvironment;
-import org.jboss.windup.WindupReportEngine;
 import org.jboss.windup.maven.plugin.util.WindupUtils;
 
 @Mojo(name = "windup", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator=true)
@@ -80,8 +80,8 @@ public class WindupMojo extends AbstractMojo {
 			settings.setSource(source);
 
 			// Run Windup.
-			WindupReportEngine engine = new WindupReportEngine(settings);
-			engine.generateReport(inputDirectory, outputDirectory);
+			WindupEngine engine = new WindupEngine(settings);
+			engine.process(inputDirectory, outputDirectory);
 		
 		
 		} catch (IOException e) {
