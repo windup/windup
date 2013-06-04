@@ -64,8 +64,6 @@
 			</windup:decorators>
 		</windup:java-classification>
 		
-		
-		
 	</windup:pipeline>
 
 	<windup:java-hints id="java-webservice-hints">
