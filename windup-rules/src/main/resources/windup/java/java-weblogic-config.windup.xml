@@ -8,9 +8,6 @@
 	<windup:pipeline type="JAVA" id="java-weblogic-decorators">
 		<windup:java-classification source-type="INHERITANCE" regex="javax.xml.rpc.handler.GenericHandler" description="JAX-RPC Generic Handler"/>
 		
-		
-		
-		
 		<windup:java-gate regex="weblogic.security.Security.*">
 			<windup:hints>
 				<windup:java-hint source-type="TYPE" regex="weblogic.security.Security$" hint="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation"/>
@@ -30,9 +27,10 @@
     		    <windup:link url="http://www.mastertheboss.com/ejb-3/ejb-31-tutorial" description="Master the JBoss Tutorial: EJB 3.1 Tutorial"/>    		    
     		    <windup:link url="http://blog.caucho.com/2009/10/06/servlet-30-tutorial-weblistener-webservlet-webfilter-and-webinitparam/" description="Caucho.com Tutorial: ServletContextListener, @WebListener tutorial"/>  
     		    <windup:link url="http://www.roseindia.net/servlets/servlet3/WebListener_annotation.shtml" description="Rose India Tutorial: ServletContextListener, @WebListener tutorial"/>      			
-    			</windup:decorators>
+            </windup:decorators>
     	</windup:java-classification>
     </windup:pipeline>
+    
 	<windup:java-hints id="weblogic-hints-ra">
 		<windup:java-hint source-type="IMPORT" regex="weblogic.application.ApplicationLifecycleListener$" hint="This class is proprietary to Weblogic, remove." effort="2"/>     
 	    <windup:java-hint source-type="INHERITANCE" regex="weblogic.application.ApplicationLifecycleListener$" hint="Use a javax.servlet.ServletContextListener with @javax.annotation.servlet.WebListener, or EJB 3.1 @javax.ejb.Startup @javax.ejb.Singleton service bean." effort="2"/> 
@@ -68,6 +66,5 @@
 		]]>	
 	</windup:java-hint>
     </windup:java-hints>
-	
 	
 </beans>

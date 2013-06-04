@@ -35,11 +35,8 @@
 					<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
 					<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
 				</windup:xpath-value>
-				
-				
 			</windup:decorators>
 		</windup:xpath-classification>
-		
 		
 		
 		<!-- Apache CXF -->
