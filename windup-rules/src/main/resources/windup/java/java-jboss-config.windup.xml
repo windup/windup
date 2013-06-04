@@ -6,7 +6,7 @@
            http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
 
 	<windup:pipeline type="JAVA" id="java-jboss-decorators">
-	<!-- 
+        <!-- 
 		<windup:java-gate source-type="INHERITANCE" regex="javax.ejb.EJBHome$">
 			<windup:hints>
 				<windup:java-hint source-type="TYPE" regex="javax.persistence.JoinColumn" hint="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn" effort="0"/>
@@ -15,8 +15,8 @@
 				<windup:link url="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/>							
 			</windup:decorators>
 		</windup:java-gate>
-	 -->
-	 	<windup:java-classification source-type="TYPE" regex="org.jboss.ejb3.annotation.Management" description="JBoss 5 JMX ManagementBean"/>
+        -->
+        <windup:java-classification source-type="TYPE" regex="org.jboss.ejb3.annotation.Management" description="JBoss 5 JMX ManagementBean"/>
 	 	
 	</windup:pipeline>
 

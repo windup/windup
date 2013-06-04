@@ -9,7 +9,6 @@
 	</windup:pipeline>
 
 
-
 	<windup:java-hints id="java-jbpm3-to-jbpm5-hints">
 		<windup:java-hint source-type="INHERITANCE" regex="org.jbpm.graph.def.ActionHandler$" hint="Migrate to jBPM 5 org.drools.runtime.process.WorkItemHandler." effort="2" />
 		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession$" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession" effort="4"/>
