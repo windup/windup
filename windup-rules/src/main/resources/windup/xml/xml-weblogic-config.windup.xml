@@ -76,7 +76,7 @@
 				<windup:xslt-transform location="transformations/xslt/weblogic-jms-to-jboss-messaging.xsl"
 					description="JBoss Messaging Queue/Topic Configuration (Windup-Generated)"
 					extension="-jms-queuetopic-service.xml"/>
-					
+				
 			</windup:decorators>
 		</windup:xpath-classification>
 		
