@@ -5,6 +5,12 @@
 
 	<#list lineNumberSuggestions as dr>
 		<#assign lineNumber = dr.lineNumber>
+		$("<div id='${lineNumber?c}-inlines' class='inline-source-hint-group'><#t><#t><#rt>
+		").appendTo('ol.snippet-num li:nth-child(${lineNumber?c})');
+	</#list>
+	
+	<#list lineNumberSuggestions as dr>
+		<#assign lineNumber = dr.lineNumber>
 		
 		$("<a name='${dr.hashCode()?c}'></a><#t>
 			<div class='inline-source-comment green'><#rt><#rt>
@@ -18,7 +24,7 @@
 					</div><#t><#rt>
 				</#if>
 			</div><#t><#rt>
-		").appendTo('ol.snippet-num li:nth-child(${lineNumber?c})');<#t><#rt>
+		").appendTo('#${lineNumber?c}-inlines');<#t><#rt>
 	</#list>
 	
 	

@@ -371,7 +371,11 @@ div.inline-comment-heading h2.notification {
 	padding-left: 20px;
 	margin-left: 20px;
 	margin-top:2px;
-	margin-bottom:2px; 
+	margin-bottom:2px;
+}
+
+div.inline-source-hint-group {
+	white-space: normal;
 }
 
 div.inline-comment-heading h2.info {
