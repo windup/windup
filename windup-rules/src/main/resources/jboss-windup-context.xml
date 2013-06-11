@@ -287,10 +287,12 @@
 	<bean id="report-engine" class="org.jboss.windup.reporting.ReportEngine">
 		<property name="reporters">
 			<set>
+				<!-- 
 				<bean class="org.jboss.windup.reporting.data.ResourceDataReporter">
 					<property name="resolver" ref="metaTransformationResolver"/>
 				</bean>
-				
+				 -->
+				 
 				<bean class="org.jboss.windup.reporting.html.StaticHtmlReporter">
 					<property name="resolver" ref="metaTransformationResolver"/>
 				</bean>
