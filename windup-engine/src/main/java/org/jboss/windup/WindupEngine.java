@@ -72,6 +72,11 @@ public class WindupEngine {
 		supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));
 	}
 
+	/**
+	 * Sets up runtime properties for the context.
+	 * 
+	 * @param settings
+	 */
 	private void setupEnvironment(WindupEnvironment settings) {
 		// validate settings...
 		if (StringUtils.isNotBlank(settings.getPackageSignature())) {
@@ -131,7 +136,7 @@ public class WindupEngine {
 	 * Process a single file.
 	 * </p>
 	 * 
-	 * @param filePath
+	 * @param filePath - path to the single file path
 	 * @throws IOException
 	 */
 	public FileMeta processFile(String filePath) throws IOException {
@@ -171,6 +176,14 @@ public class WindupEngine {
 		}
 	}
 	
+	/**
+	 * Processes a directory, recursively, in source mode.  That is, it will not process zip archives, but will treat the directory as a project directory, for example.  
+	 * 
+	 * @param dirPath - path to the source directory
+	 * @param outputPath - path to the report output path
+	 * @return
+	 * @throws IOException
+	 */
 	public ArchiveMeta processSourceDirectory(File dirPath, File outputPath) throws IOException {
 		Validate.notNull(dirPath, "Directory input path must be provided.");
 		Validate.isTrue(dirPath.isDirectory(), "Input must be a directory.");
@@ -215,6 +228,12 @@ public class WindupEngine {
 		}
 	}
 
+	/**
+	 * Processes a directory of zip archives, producing reports for each archive.  This is non-recursive.
+	 * @param dirPath - path to "batch" zip directory
+	 * @return
+	 * @throws IOException
+	 */
 	public Collection<ArchiveMeta> processDirectory(File dirPath) throws IOException {
 		LOG.info("Processing directory: " + dirPath.getAbsolutePath());
 		List<File> archives = new LinkedList<File>(Arrays.asList(dirPath.listFiles((FilenameFilter) new SuffixFileFilter(supportedExtensions))));
@@ -249,6 +268,13 @@ public class WindupEngine {
 		return archiveMetas;
 	}
 
+	/**
+	 * Processes a zip archive and returns the meta information.  
+	 * 
+	 * @param archivePath - path to zip archive
+	 * @return
+	 * @throws IOException
+	 */
 	public ArchiveMeta processArchive(File archivePath) throws IOException {
 		String outputLoc = StringUtils.substringBeforeLast(archivePath.getAbsolutePath(), ".");
 		outputLoc += "-" + StringUtils.substringAfterLast(archivePath.getAbsolutePath(), ".") + "-doc";
@@ -260,6 +286,13 @@ public class WindupEngine {
 		return processArchive(archivePath, new File(outputLoc));
 	}
 
+	/**
+	 * Processes a zip archive and returns the meta information; the report will be output to the outputPath.
+	 * @param archivePath - path to zip archive
+	 * @param outputPath - report output path
+	 * @return
+	 * @throws IOException
+	 */
 	public ArchiveMeta processArchive(File archivePath, File outputPath) throws IOException {
 		if (!archivePath.exists()) {
 			throw new FileNotFoundException("ArchiveMeta not found.");

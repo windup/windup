@@ -11,6 +11,11 @@
 */
 package org.jboss.windup;
 
+/***
+ * Runtime configuration for the Windup environment
+ * @author bradsdavis
+ *
+ */
 public class WindupEnvironment {
 
 	private String excludeSignature;
