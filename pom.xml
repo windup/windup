@@ -1,100 +1,132 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.windup</groupId>
-	<artifactId>windup-parent</artifactId>
-	<version>0.7.0</version>
-	<name>Windup Parent</name>
-	<description>Red Hat Migration Tooling</description>
-	<url>http://windup.jboss.org</url>
-	<licenses>
-		<license>
-			<name>Eclipse Public License 1.0</name>
-			<url>http://www.eclipse.org/org/documents/epl-v10.html</url>
-		</license>
-	</licenses>
-	<scm>
-		<url>https://github.com/windup/windup</url>
-		<connection>scm:git:https://github.com/windup/windup.git</connection>
-	</scm>
-	<developers>
-		<developer>
-			<id>bradsdavis</id>
-			<name>Brad Davis</name>
-			<email>bradsdavis@gmail.com</email>
-			<url>http://bradsdavis.com</url>
-			<organization>Red Hat</organization>
-			<organizationUrl>http://redhat.com</organizationUrl>
-			<roles>
-				<role>creator</role>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>-5</timezone>
-		</developer>
-	</developers>
-	<build>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-install-plugin
-										</artifactId>
-										<versionRange>
-											[2.4,)
-										</versionRange>
-										<goals>
-											<goal>install-file</goal>
-											<goal>run</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-	<repositories>
-		<repository>
-			<id>jboss-snapshot</id>
-			<name>jboss-snapshot</name>
-			<url>http://snapshots.jboss.org/maven2/</url>
-		</repository>
-		<repository>
-			<id>fuin.org</id>
-			<name>Repository at fuin.org</name>
-			<url>http://www.fuin.org/maven-repository</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<packaging>pom</packaging>
-	<modules>
-		<module>windup-engine</module>
-		<module>windup-cli</module>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
 
-		<module>windup-rules</module>
-		<module>windup-maven-plugin</module>
-	</modules>
+   <parent>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-parent</artifactId>
+      <version>10</version>
+   </parent>
+
+
+   <groupId>org.jboss.windup</groupId>
+   <artifactId>windup-parent</artifactId>
+   <version>0.7.0</version>
+   <name>Windup Parent</name>
+   <description>Red Hat Migration Tooling</description>
+   <url>http://windup.jboss.org</url>
+   <licenses>
+      <license>
+         <name>Eclipse Public License 1.0</name>
+         <url>http://www.eclipse.org/org/documents/epl-v10.html</url>
+      </license>
+   </licenses>
+   <scm>
+      <url>https://github.com/windup/windup</url>
+      <connection>scm:git:https://github.com/windup/windup.git</connection>
+   </scm>
+   <developers>
+      <developer>
+         <id>bradsdavis</id>
+         <name>Brad Davis</name>
+         <email>bradsdavis@gmail.com</email>
+         <url>http://bradsdavis.com</url>
+         <organization>Red Hat</organization>
+         <organizationUrl>http://redhat.com</organizationUrl>
+         <roles>
+            <role>creator</role>
+            <role>architect</role>
+            <role>developer</role>
+         </roles>
+         <timezone>-5</timezone>
+      </developer>
+   </developers>
+   <build>
+      <pluginManagement>
+         <plugins>
+            <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven 
+               build itself. -->
+            <plugin>
+               <groupId>org.eclipse.m2e</groupId>
+               <artifactId>lifecycle-mapping</artifactId>
+               <version>1.0.0</version>
+               <configuration>
+                  <lifecycleMappingMetadata>
+                     <pluginExecutions>
+                        <pluginExecution>
+                           <pluginExecutionFilter>
+                              <groupId>
+                                 org.apache.maven.plugins
+                              </groupId>
+                              <artifactId>
+                                 maven-install-plugin
+                              </artifactId>
+                              <versionRange>
+                                 [2.4,)
+                              </versionRange>
+                              <goals>
+                                 <goal>install-file</goal>
+                                 <goal>run</goal>
+                              </goals>
+                           </pluginExecutionFilter>
+                           <action>
+                              <ignore></ignore>
+                           </action>
+                        </pluginExecution>
+                     </pluginExecutions>
+                  </lifecycleMappingMetadata>
+               </configuration>
+            </plugin>
+         </plugins>
+      </pluginManagement>
+   </build>
+   <repositories>
+      <repository>
+         <id>jboss-snapshots-repository-group</id>
+         <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
+         <layout>default</layout>
+         <releases>
+            <enabled>false</enabled>
+         </releases>
+         <snapshots>
+            <enabled>true</enabled>
+         </snapshots>
+      </repository>
+      <repository>
+         <id>jboss-public-repository-group</id>
+         <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+         <layout>default</layout>
+         <releases>
+            <enabled>true</enabled>
+         </releases>
+         <snapshots>
+            <enabled>false</enabled>
+         </snapshots>
+      </repository>
+      <repository>
+         <id>jboss-snapshot</id>
+         <name>jboss-snapshot</name>
+         <url>http://snapshots.jboss.org/maven2/</url>
+      </repository>
+      <repository>
+         <id>fuin.org</id>
+         <name>Repository at fuin.org</name>
+         <url>http://www.fuin.org/maven-repository</url>
+         <releases>
+            <enabled>true</enabled>
+         </releases>
+         <snapshots>
+            <enabled>false</enabled>
+         </snapshots>
+      </repository>
+   </repositories>
+   <packaging>pom</packaging>
+   <modules>
+      <module>windup-engine</module>
+      <module>windup-cli</module>
+
+      <module>windup-rules</module>
+      <module>windup-maven-plugin</module>
+   </modules>
 
 </project>
