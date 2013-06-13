@@ -245,5 +245,10 @@
 			<version>0.7.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.tattletale</groupId>
+			<artifactId>tattletale</artifactId>
+			<version>1.2.0.Beta2</version>
+		</dependency>
 	</dependencies>
 </project>

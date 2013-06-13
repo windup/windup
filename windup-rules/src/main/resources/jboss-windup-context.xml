@@ -4,7 +4,7 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	
 	<import resource="classpath*:/windup/**/*.windup.xml" />
-	<!--import resource="classpath:*.windup.xml" /-->
+	<import resource="classpath:/*.windup.xml" />
 	
 	<bean name="windupParsers" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
 		<property name="customEditors">
@@ -298,6 +298,8 @@
 				</bean>
 				
 				<bean class="org.jboss.windup.reporting.spreadsheet.ScorecardReporter"/>
+				
+				<bean class="org.jboss.windup.reporting.TattletaleReporter"/>
 			</set>
 		</property>
 	</bean>

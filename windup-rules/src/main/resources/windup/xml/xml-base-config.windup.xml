@@ -54,8 +54,9 @@
 		</windup:xpath-classification>
 		
 		<!-- jBPM -->
-		<windup:xpath-classification description="jBPM 3.x Process Definition" xpath="/jbpm:process-definition | /process-definition/start-state">
-			<windup:namespace prefix="jbpm" uri="urn:jbpm.org:jpdl-3.2" />
+		<windup:xpath-classification description="jBPM 3.x Process Definition" xpath="/jbpm31:process-definition | /process-definition/start-state | /jbpm32:process-definition">
+			<windup:namespace prefix="jbpm32" uri="urn:jbpm.org:jpdl-3.2" />
+			<windup:namespace prefix="jbpm31" uri="urn:jbpm.org:jpdl-3.1" />
 			<windup:decorators>
 				<bean class="org.jboss.windup.decorator.xml.XSLTDecorator">
 					<property name="xsltLocation" value="jpdl3-bpmn2.xsl" />

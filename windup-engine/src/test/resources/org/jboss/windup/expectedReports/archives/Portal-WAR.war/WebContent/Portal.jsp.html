@@ -60,12 +60,18 @@
 		$('pre').snippet('xml',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '3,4,5,6,7' });
 
 
+$("<div id='3-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(3)');
+$("<div id='4-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(4)');
+$("<div id='5-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(5)');
+$("<div id='6-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(6)');
+$("<div id='7-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(7)');
+	
 		
-%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-navigation</h2></div></div></div>"\).appendTo\('ol.snippet-num li:nth-child\(3\)'\);		
-%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-dynamicui</h2></div></div></div>"\).appendTo\('ol.snippet-num li:nth-child\(4\)'\);		
-%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-logic</h2></div></div></div>"\).appendTo\('ol.snippet-num li:nth-child\(5\)'\);		
-%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-core</h2></div></div></div>"\).appendTo\('ol.snippet-num li:nth-child\(6\)'\);		
-%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-fmt</h2></div></div></div>"\).appendTo\('ol.snippet-num li:nth-child\(7\)'\);	
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-navigation</h2></div></div></div>"\).appendTo\('#3-inlines'\);		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-dynamicui</h2></div></div></div>"\).appendTo\('#4-inlines'\);		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-logic</h2></div></div></div>"\).appendTo\('#5-inlines'\);		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-core</h2></div></div></div>"\).appendTo\('#6-inlines'\);		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-fmt</h2></div></div></div>"\).appendTo\('#7-inlines'\);	
 	
 		$('code[data-code-syntax]').each(function(){
 	         var codeSyntax = ($(this).data('code-syntax'));
