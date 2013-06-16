@@ -25,9 +25,9 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.JavaMeta;
-import org.jboss.windup.resource.type.ZipEntryMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.JavaMetadata;
+import org.jboss.windup.metadata.type.ZipEntryMetadata;
 import org.jboss.windup.util.BlacklistPackageResolver;
 import org.jboss.windup.util.CustomerPackageResolver;
 
@@ -35,12 +35,12 @@ import org.jboss.windup.util.CustomerPackageResolver;
 /**
  * Runs through all of the archives, comparing against the blacklist. If the class matches, looks for the source.
  * If the source does not exist, this interrogator will decompile the Class file into a Java file
- * Creates a JavaMeta object, and passes it down the decorator pipeline.
+ * Creates a JavaMetadata object, and passes it down the decorator pipeline.
  * 
  * @author bdavis
  * 
  */
-public class JavaInterrogator extends ExtensionInterrogator<JavaMeta> {
+public class JavaInterrogator extends ExtensionInterrogator<JavaMetadata> {
 	private static final Log LOG = LogFactory.getLog(JavaInterrogator.class);
 
 	private BlacklistPackageResolver blacklistPackageResolver;
@@ -56,10 +56,10 @@ public class JavaInterrogator extends ExtensionInterrogator<JavaMeta> {
 	}
 
 	@Override
-	public JavaMeta archiveEntryToMeta(ZipEntryMeta archiveEntry) {
+	public JavaMetadata archiveEntryToMeta(ZipEntryMetadata archiveEntry) {
 		File file = archiveEntry.getFilePointer();
 		
-		JavaMeta meta = new JavaMeta();
+		JavaMetadata meta = new JavaMetadata();
 		meta.setArchiveMeta(archiveEntry.getArchiveMeta());
 		meta.setFilePointer(file);
 		populateMeta(meta);
@@ -89,8 +89,8 @@ public class JavaInterrogator extends ExtensionInterrogator<JavaMeta> {
 	}
 
 	@Override
-	public JavaMeta fileEntryToMeta(FileMeta entry) {
-		JavaMeta meta = new JavaMeta();
+	public JavaMetadata fileEntryToMeta(FileMetadata entry) {
+		JavaMetadata meta = new JavaMetadata();
 		meta.setFilePointer(entry.getFilePointer());
 		meta.setArchiveMeta(entry.getArchiveMeta());
 		
@@ -114,7 +114,7 @@ public class JavaInterrogator extends ExtensionInterrogator<JavaMeta> {
 		return meta;
 	}
 	
-	public void populateMeta(JavaMeta meta) {
+	public void populateMeta(JavaMetadata meta) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setBindingsRecovery(true);
 		parser.setResolveBindings(true);

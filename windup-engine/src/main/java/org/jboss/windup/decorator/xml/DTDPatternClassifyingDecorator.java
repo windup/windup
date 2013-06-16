@@ -16,13 +16,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.decorator.ChainingDecorator;
-import org.jboss.windup.decorator.xml.util.LocationContentHandler;
-import org.jboss.windup.decorator.xml.util.LocationContentHandler.Doctype;
-import org.jboss.windup.resource.decoration.Classification;
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.decoration.Classification;
+import org.jboss.windup.metadata.type.XmlMetadata;
+import org.jboss.windup.metadata.util.LocationAwareContentHandler;
+import org.jboss.windup.metadata.util.LocationAwareContentHandler.Doctype;
 
 
-public class DTDPatternClassifyingDecorator extends ChainingDecorator<XmlMeta> {
+public class DTDPatternClassifyingDecorator extends ChainingDecorator<XmlMetadata> {
 	private String matchDescription;
 
 	private Pattern namePattern;
@@ -51,8 +51,8 @@ public class DTDPatternClassifyingDecorator extends ChainingDecorator<XmlMeta> {
 	}
 
 	@Override
-	public void processMeta(XmlMeta file) {
-		Doctype docType = (Doctype) file.getParsedDocument().getUserData(LocationContentHandler.DOCTYPE_KEY_NAME);
+	public void processMeta(XmlMetadata file) {
+		Doctype docType = (Doctype) file.getParsedDocument().getUserData(LocationAwareContentHandler.DOCTYPE_KEY_NAME);
 
 		if (docType != null && matchesAny(docType)) {
 			Classification cr = new Classification();

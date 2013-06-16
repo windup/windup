@@ -14,7 +14,7 @@ package org.jboss.windup.decorator.gate;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
 /**
@@ -25,7 +25,7 @@ import org.jboss.windup.resource.type.FileMeta;
  * @author bdavis@redhat.com
  * 
  */
-public class RegexFileGateDecorator extends GateDecorator<FileMeta> {
+public class RegexFileGateDecorator extends GateDecorator<FileMetadata> {
 	protected Pattern regexPattern;
 	protected boolean fullPath;
 
@@ -38,7 +38,7 @@ public class RegexFileGateDecorator extends GateDecorator<FileMeta> {
 	}
 
 	@Override
-	protected boolean continueProcessing(FileMeta meta) {
+	protected boolean continueProcessing(FileMetadata meta) {
 		String fileNameText = null;
 		if (fullPath) {
 			fileNameText = meta.getFilePointer().getAbsolutePath();

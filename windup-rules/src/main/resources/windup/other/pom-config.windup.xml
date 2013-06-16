@@ -29,7 +29,7 @@
 			</map>
 		</property>
 		<property name="effort">
-			<bean class="org.jboss.windup.resource.decoration.effort.StoryPointEffort">
+			<bean class="org.jboss.windup.metadata.decoration.effort.StoryPointEffort">
 				<property name="hours" value="0" />
 			</bean>
 		</property>

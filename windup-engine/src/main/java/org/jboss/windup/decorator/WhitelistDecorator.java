@@ -17,11 +17,11 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.hint.MatchingProcessor;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
-public class WhitelistDecorator implements MetaDecorator<FileMeta> {
+public class WhitelistDecorator implements MetaDecorator<FileMetadata> {
 	private static final Log LOG = LogFactory.getLog(WhitelistDecorator.class);
 
 	protected List<MatchingProcessor> whitelistProcessors;
@@ -31,7 +31,7 @@ public class WhitelistDecorator implements MetaDecorator<FileMeta> {
 	}
 
 	@Override
-	public void processMeta(FileMeta file) {
+	public void processMeta(FileMetadata file) {
 		List<AbstractDecoration> retractList = new LinkedList<AbstractDecoration>();
 
 		for (AbstractDecoration dr : file.getDecorations()) {

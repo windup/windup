@@ -15,7 +15,7 @@ import java.beans.PropertyEditorSupport;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.effort.StoryPointEffort;
+import org.jboss.windup.metadata.decoration.effort.StoryPointEffort;
 
 
 public class StoryPointEffortTypeEditor extends PropertyEditorSupport {

@@ -123,10 +123,11 @@
    <packaging>pom</packaging>
    <modules>
       <module>windup-engine</module>
+      <module>windup-reporting</module>
       <module>windup-cli</module>
-
       <module>windup-rules</module>
       <module>windup-maven-plugin</module>
+      <module>windup-metadata</module>
    </modules>
 
 </project>

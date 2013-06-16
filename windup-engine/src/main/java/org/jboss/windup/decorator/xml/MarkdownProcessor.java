@@ -2,8 +2,8 @@ package org.jboss.windup.decorator.xml;
 
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jboss.windup.hint.ResultProcessor;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.hint.MarkdownHint;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.hint.MarkdownHint;
 
 public class MarkdownProcessor implements ResultProcessor {
 

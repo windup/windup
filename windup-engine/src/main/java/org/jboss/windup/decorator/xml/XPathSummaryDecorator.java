@@ -29,20 +29,20 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.decorator.xml.util.MapContext;
-import org.jboss.windup.decorator.xml.util.PositionalXmlReader;
 import org.jboss.windup.hint.ResultProcessor;
-import org.jboss.windup.resource.decoration.Summary;
-import org.jboss.windup.resource.decoration.XmlLine;
-import org.jboss.windup.resource.decoration.effort.Effort;
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.decoration.Summary;
+import org.jboss.windup.metadata.decoration.XmlLine;
+import org.jboss.windup.metadata.decoration.effort.Effort;
+import org.jboss.windup.metadata.type.XmlMetadata;
+import org.jboss.windup.metadata.util.NamespaceMapContext;
+import org.jboss.windup.metadata.util.LocationAwareXmlReader;
 import org.springframework.beans.factory.InitializingBean;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class XPathSummaryDecorator implements MetaDecorator<XmlMeta>, InitializingBean {
+public class XPathSummaryDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
 	private static final Log LOG = LogFactory.getLog(XPathSummaryDecorator.class);
 	private static final XPathFactory factory = XPathFactory.newInstance();
 
@@ -90,7 +90,7 @@ public class XPathSummaryDecorator implements MetaDecorator<XmlMeta>, Initializi
 	}
 
 	@Override
-	public void processMeta(final XmlMeta meta) {
+	public void processMeta(final XmlMetadata meta) {
 		if (meta.getParsedDocument() == null) {
 			LOG.warn("Skipping XPathClassifyingDecorator: " + meta.getFilePointer().getAbsolutePath() + " because the document is unparsed.");
 			return;
@@ -111,7 +111,7 @@ public class XPathSummaryDecorator implements MetaDecorator<XmlMeta>, Initializi
 					LOG.debug("Found results for: " + meta.getFilePointer().getAbsolutePath());
 				}
 				for (int i = 0; i < nodes.getLength(); i++) {
-					Integer lineNumber = (Integer) PositionalXmlReader.getLineNumber(nodes.item(i));
+					Integer lineNumber = (Integer) LocationAwareXmlReader.getLineNumber(nodes.item(i));
 					String match = convertNode(nodes.item(i));
 					if (inline && lineNumber != null) {
 						createLineNumberMeta(meta, lineNumber, this.matchDescription, nodes.item(i));
@@ -127,7 +127,7 @@ public class XPathSummaryDecorator implements MetaDecorator<XmlMeta>, Initializi
 		}
 	}
 
-	protected void createSummaryMeta(final XmlMeta meta, String description, String match) {
+	protected void createSummaryMeta(final XmlMetadata meta, String description, String match) {
 		Summary result = new Summary();
 		result.setDescription(description);
 		result.setPattern(match);
@@ -138,7 +138,7 @@ public class XPathSummaryDecorator implements MetaDecorator<XmlMeta>, Initializi
 		meta.getDecorations().add(result);
 	}
 
-	protected void createLineNumberMeta(final XmlMeta meta, Integer lineNumber, String descripiton, Node match) {
+	protected void createLineNumberMeta(final XmlMetadata meta, Integer lineNumber, String descripiton, Node match) {
 		XmlLine result = new XmlLine();
 		result.setDescription(descripiton);
 
@@ -160,7 +160,7 @@ public class XPathSummaryDecorator implements MetaDecorator<XmlMeta>, Initializi
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.xpath = factory.newXPath();
-		MapContext context = new MapContext(namespaces);
+		NamespaceMapContext context = new NamespaceMapContext(namespaces);
 		xpath.setNamespaceContext(context);
 		expression = xpath.compile(xpathExpression);
 	}

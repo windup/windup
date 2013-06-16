@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.archive.DirectoryMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.archive.DirectoryMetadata;
 
 public class FileInterrogationEngine {
 	private static final Log LOG = LogFactory.getLog(FileInterrogationEngine.class);
@@ -27,11 +27,11 @@ public class FileInterrogationEngine {
 		this.interrogators = interrogators;
 	}
 	
-	public FileMeta process(File targetFile) {
-		FileMeta tempMeta = new FileMeta();
+	public FileMetadata process(File targetFile) {
+		FileMetadata tempMeta = new FileMetadata();
 		tempMeta.setFilePointer(targetFile);
 		
-		DirectoryMeta dirMeta = new DirectoryMeta();
+		DirectoryMetadata dirMeta = new DirectoryMetadata();
 		dirMeta.setRelativePath(targetFile.getParentFile().getPath());
 		tempMeta.setArchiveMeta(dirMeta);
 		
@@ -51,8 +51,8 @@ public class FileInterrogationEngine {
 		 * WARNING:
 		 * If the assumption that only one interrogator will ever match ever changes this bit
 		 * of code will break */
-		FileMeta result = null;
-		for(FileMeta archiveEntryMeta : tempMeta.getArchiveMeta().getEntries()) {
+		FileMetadata result = null;
+		for(FileMetadata archiveEntryMeta : tempMeta.getArchiveMeta().getEntries()) {
 			if(archiveEntryMeta.getFilePointer().equals(tempMeta.getFilePointer())) {
 				result = archiveEntryMeta;
 				break;

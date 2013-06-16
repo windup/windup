@@ -48,9 +48,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.JavaLine;
-import org.jboss.windup.resource.decoration.SourceType;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.JavaLine;
+import org.jboss.windup.metadata.decoration.SourceType;
 
 
 public class JavaASTVariableResolvingVisitor extends ASTVisitor {

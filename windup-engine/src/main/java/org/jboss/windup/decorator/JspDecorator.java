@@ -24,11 +24,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.hint.ResultProcessor;
-import org.jboss.windup.resource.decoration.Line;
-import org.jboss.windup.resource.type.JspMeta;
+import org.jboss.windup.metadata.decoration.Line;
+import org.jboss.windup.metadata.type.JspMetadata;
 import org.jboss.windup.util.NewLineUtil;
 
-public class JspDecorator implements MetaDecorator<JspMeta> {
+public class JspDecorator implements MetaDecorator<JspMetadata> {
 	private static final Log LOG = LogFactory.getLog(JspDecorator.class);
 
 	protected List<ResultProcessor> hints = new LinkedList<ResultProcessor>();
@@ -44,7 +44,7 @@ public class JspDecorator implements MetaDecorator<JspMeta> {
 	}
 
 	@Override
-	public void processMeta(JspMeta meta) {
+	public void processMeta(JspMetadata meta) {
 		try {
 			String jspContents = FileUtils.readFileToString(meta.getFilePointer());
 			findImports(jspContents, jspImport, meta);
@@ -68,7 +68,7 @@ public class JspDecorator implements MetaDecorator<JspMeta> {
 	 * @param meta
 	 *            Meta data for the results
 	 */
-	protected void findDeprecatedJspQuotes(String html, Pattern thePattern, JspMeta meta) {
+	protected void findDeprecatedJspQuotes(String html, Pattern thePattern, JspMetadata meta) {
 		Matcher matcher = thePattern.matcher(html);
 		while (matcher.find()) {
 			String matched = matcher.group(1);
@@ -88,7 +88,7 @@ public class JspDecorator implements MetaDecorator<JspMeta> {
 		}
 	}
 
-	protected void findImports(String html, Pattern thePattern, JspMeta meta) {
+	protected void findImports(String html, Pattern thePattern, JspMetadata meta) {
 		Matcher matcher = thePattern.matcher(html);
 		while (matcher.find()) {
 			String matched = matcher.group(1);
@@ -115,7 +115,7 @@ public class JspDecorator implements MetaDecorator<JspMeta> {
 		}
 	}
 
-	protected void findTaglib(String html, Pattern thePattern, JspMeta meta) {
+	protected void findTaglib(String html, Pattern thePattern, JspMetadata meta) {
 		Matcher matcher = thePattern.matcher(html);
 		while (matcher.find()) {
 			String matched = matcher.group(1);

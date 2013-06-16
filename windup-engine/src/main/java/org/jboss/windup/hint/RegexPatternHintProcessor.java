@@ -13,11 +13,11 @@ package org.jboss.windup.hint;
 
 import java.util.regex.Pattern;
 
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.AbstractDecoration.NotificationLevel;
-import org.jboss.windup.resource.decoration.effort.Effort;
-import org.jboss.windup.resource.decoration.effort.StoryPointEffort;
-import org.jboss.windup.resource.decoration.hint.MarkdownHint;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
+import org.jboss.windup.metadata.decoration.effort.Effort;
+import org.jboss.windup.metadata.decoration.effort.StoryPointEffort;
+import org.jboss.windup.metadata.decoration.hint.MarkdownHint;
 
 
 public class RegexPatternHintProcessor implements ResultProcessor {

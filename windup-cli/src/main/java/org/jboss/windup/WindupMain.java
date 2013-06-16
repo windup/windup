@@ -28,6 +28,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.windup.reporting.ReportEngine;
 
 public class WindupMain {
 	private static final Log LOG = LogFactory.getLog(WindupMain.class);
@@ -129,7 +130,7 @@ public class WindupMain {
 				settings.setLogLevel(logLevel);
 
 				// Run Windup.
-				WindupEngine engine = new WindupEngine(settings);
+				ReportEngine engine = new ReportEngine(settings);
 				engine.process(inputPath, outputPath);
 			}
 		}

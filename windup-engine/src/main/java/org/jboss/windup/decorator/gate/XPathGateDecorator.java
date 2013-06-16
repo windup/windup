@@ -20,12 +20,12 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.decorator.xml.util.MapContext;
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.type.XmlMetadata;
+import org.jboss.windup.metadata.util.NamespaceMapContext;
 import org.springframework.beans.factory.InitializingBean;
 
 
-public class XPathGateDecorator extends GateDecorator<XmlMeta> implements InitializingBean {
+public class XPathGateDecorator extends GateDecorator<XmlMetadata> implements InitializingBean {
 	private static final Log LOG = LogFactory.getLog(XPathGateDecorator.class);
 	private static final XPathFactory factory = XPathFactory.newInstance();
 
@@ -46,7 +46,7 @@ public class XPathGateDecorator extends GateDecorator<XmlMeta> implements Initia
 	public void afterPropertiesSet() throws Exception {
 		try {
 			this.xpath = factory.newXPath();
-			MapContext context = new MapContext(namespaces);
+			NamespaceMapContext context = new NamespaceMapContext(namespaces);
 			xpath.setNamespaceContext(context);
 			expression = xpath.compile(xpathExpression);
 		}
@@ -57,7 +57,7 @@ public class XPathGateDecorator extends GateDecorator<XmlMeta> implements Initia
 	}
 
 	@Override
-	protected boolean continueProcessing(XmlMeta meta) {
+	protected boolean continueProcessing(XmlMetadata meta) {
 		if (meta.getParsedDocument() == null) {
 			LOG.warn("Skipping XPathClassifyingDecorator; no parsed doc: " + meta.getFilePointer().getAbsolutePath());
 			return false;

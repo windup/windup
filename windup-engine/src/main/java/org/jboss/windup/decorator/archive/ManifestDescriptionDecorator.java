@@ -14,8 +14,8 @@ package org.jboss.windup.decorator.archive;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.resource.decoration.Summary;
-import org.jboss.windup.resource.type.ManifestMeta;
+import org.jboss.windup.metadata.decoration.Summary;
+import org.jboss.windup.metadata.type.ManifestMetadata;
 
 
 public class ManifestDescriptionDecorator extends ManifestDecorator {
@@ -27,7 +27,7 @@ public class ManifestDescriptionDecorator extends ManifestDecorator {
 	}
 
 	@Override
-	public void processMeta(ManifestMeta file) {
+	public void processMeta(ManifestMetadata file) {
 		// Look for default description information.
 		String description = extractValue(file.getManifest(), descriptionPriority);
 

@@ -12,11 +12,11 @@
 package org.jboss.windup.decorator.simple;
 
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.resource.decoration.Classification;
-import org.jboss.windup.resource.decoration.effort.StoryPointEffort;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.Classification;
+import org.jboss.windup.metadata.decoration.effort.StoryPointEffort;
+import org.jboss.windup.metadata.type.FileMetadata;
 
-public class ClassificationDecorator implements MetaDecorator<FileMeta> {
+public class ClassificationDecorator implements MetaDecorator<FileMetadata> {
 	protected String description;
 	protected Integer effort;
 
@@ -28,7 +28,7 @@ public class ClassificationDecorator implements MetaDecorator<FileMeta> {
 		this.description = description;
 	}
 
-	public void processMeta(FileMeta file) {
+	public void processMeta(FileMetadata file) {
 		Classification gr = new Classification();
 		gr.setDescription(description);
 

@@ -11,17 +11,17 @@
 */
 package org.jboss.windup.decorator.xml;
 
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.type.XmlMetadata;
 import org.w3c.dom.Node;
 
 public class XPathValueDecorator extends XPathSummaryDecorator {
 	@Override
-	protected void createLineNumberMeta(XmlMeta meta, Integer lineNumber, String descripiton, Node match) {
+	protected void createLineNumberMeta(XmlMetadata meta, Integer lineNumber, String descripiton, Node match) {
 		super.createLineNumberMeta(meta, lineNumber, descripiton + ": " + match, match);
 	}
 
 	@Override
-	protected void createSummaryMeta(XmlMeta meta, String description, String match) {
+	protected void createSummaryMeta(XmlMetadata meta, String description, String match) {
 		super.createSummaryMeta(meta, description + ": " + match, match);
 	}
 }

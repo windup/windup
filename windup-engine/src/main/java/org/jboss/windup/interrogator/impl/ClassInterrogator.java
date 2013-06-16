@@ -28,16 +28,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.java.decompiler.DecompilerAdapter;
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.JavaMeta;
-import org.jboss.windup.resource.type.ZipEntryMeta;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.JavaMetadata;
+import org.jboss.windup.metadata.type.ZipEntryMetadata;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 import org.jboss.windup.util.BlacklistPackageResolver;
 import org.jboss.windup.util.CustomerPackageResolver;
 import org.jboss.windup.util.FatalWindupException;
 
 
-public class ClassInterrogator extends ExtensionInterrogator<JavaMeta> {
+public class ClassInterrogator extends ExtensionInterrogator<JavaMetadata> {
 	private static final Log LOG = LogFactory.getLog(ClassInterrogator.class);
 	private DecompilerAdapter decompiler;
 
@@ -57,7 +57,7 @@ public class ClassInterrogator extends ExtensionInterrogator<JavaMeta> {
 	}
 
 	@Override
-	public JavaMeta archiveEntryToMeta(ZipEntryMeta archiveEntry) {
+	public JavaMetadata archiveEntryToMeta(ZipEntryMetadata archiveEntry) {
 		String className = extractClassName(archiveEntry.getZipEntry().getName());
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Class: " + className + " " + customerPackageResolver.isCustomerPkg(className));
@@ -94,14 +94,14 @@ public class ClassInterrogator extends ExtensionInterrogator<JavaMeta> {
 		return extractJavaFile(className, clzImports, archiveEntry);
 	}
 
-	private JavaMeta extractJavaFile(String className, Set<String> clzImports, ZipEntryMeta archiveEntry) {
-		JavaMeta javaMeta = new JavaMeta();
+	private JavaMetadata extractJavaFile(String className, Set<String> clzImports, ZipEntryMetadata archiveEntry) {
+		JavaMetadata javaMeta = new JavaMetadata();
 		try {
 			File clzFile;
 			File javaFile;
 
 			//TODO: make this work for directorymeta too.
-			ZipMeta zipMeta = (ZipMeta)archiveEntry.getArchiveMeta();
+			ZipMetadata zipMeta = (ZipMetadata)archiveEntry.getArchiveMeta();
 			ZipFile zipFile = zipMeta.getZipFile();
 			ZipEntry entry = archiveEntry.getZipEntry();
 			// check to see whether the Java version is packaged with the archive...
@@ -148,12 +148,12 @@ public class ClassInterrogator extends ExtensionInterrogator<JavaMeta> {
 		}
 	}
 
-	protected Set<String> extractImports(ZipEntryMeta archiveEntry) {
+	protected Set<String> extractImports(ZipEntryMetadata archiveEntry) {
 		try {
 			// otherwise, load the class and get its imports.
 
 			//TODO: make this work for directorymeta too.
-			ZipMeta zipMeta = (ZipMeta)archiveEntry.getArchiveMeta();
+			ZipMetadata zipMeta = (ZipMetadata)archiveEntry.getArchiveMeta();
 			ZipFile zipFile = zipMeta.getZipFile();
 			ZipEntry entry = archiveEntry.getZipEntry();
 			CtClass ctClz = new ClassPool().makeClass(zipFile.getInputStream(entry));
@@ -196,8 +196,8 @@ public class ClassInterrogator extends ExtensionInterrogator<JavaMeta> {
 	}
 
 	@Override
-	public JavaMeta fileEntryToMeta(FileMeta entry) {
-		JavaMeta javaMeta = new JavaMeta();
+	public JavaMetadata fileEntryToMeta(FileMetadata entry) {
+		JavaMetadata javaMeta = new JavaMetadata();
 		javaMeta.setArchiveMeta(entry.getArchiveMeta());
 		
 		FileInputStream fis = null;

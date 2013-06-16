@@ -38,7 +38,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.TypeLiteral;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
 
 
 public class JavaASTAnnotationVisitor extends ASTVisitor {

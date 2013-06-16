@@ -29,7 +29,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 
 
 public class RecursiveZipMetaFactory {
@@ -55,18 +55,18 @@ public class RecursiveZipMetaFactory {
 		FileUtils.deleteQuietly(this.startLocation);
 	}
 
-	public ZipMeta recursivelyExtract(ZipFile zip) {
+	public ZipMetadata recursivelyExtract(ZipFile zip) {
 
 		if (LOG.isDebugEnabled()) {
 			LOG.debug(zip.getName() + ": " + this.startLocation.getAbsolutePath());
 		}
-		ZipMeta archive = generateArchive(null, new File(zip.getName()));
+		ZipMetadata archive = generateArchive(null, new File(zip.getName()));
 		recursivelyExtract(archive, zip, this.startLocation);
 
 		return archive;
 	}
 
-	protected void recursivelyExtract(ZipMeta parent, ZipFile zip, File outputDirectory) {
+	protected void recursivelyExtract(ZipMetadata parent, ZipFile zip, File outputDirectory) {
 		String fileName = StringUtils.substringAfterLast(zip.getName(), File.separator);
 		File subOutputDir = new File(outputDirectory.getAbsolutePath() + File.separator + fileName);
 		ZipEntry entry;
@@ -82,8 +82,8 @@ public class RecursiveZipMetaFactory {
 						ZipFile zf = new ZipFile(extracted);
 
 						// we should know it is a valid zip here..
-						ZipMeta arch = generateArchive(parent, extracted);
-						LOG.info("Prepared ZipMeta: " + arch.getRelativePath());
+						ZipMetadata arch = generateArchive(parent, extracted);
+						LOG.info("Prepared ZipMetadata: " + arch.getRelativePath());
 						recursivelyExtract(arch, zf, new File(StringUtils.substringBeforeLast(zf.getName(), File.separator)));
 					}
 					catch (FileNotFoundException e1) {
@@ -103,7 +103,7 @@ public class RecursiveZipMetaFactory {
 		}
 	}
 
-	protected File unzipEntry(ZipMeta parent, ZipEntry entry, ZipFile zipfile, File archiveOutputDirectory) {
+	protected File unzipEntry(ZipMetadata parent, ZipEntry entry, ZipFile zipfile, File archiveOutputDirectory) {
 		BufferedOutputStream dest = null;
 		BufferedInputStream is = null;
 		String pathOutput = null;
@@ -161,7 +161,7 @@ public class RecursiveZipMetaFactory {
 		return false;
 	}
 
-	private ZipMeta generateArchive(ZipMeta parent, File entryOutput) {
+	private ZipMetadata generateArchive(ZipMetadata parent, File entryOutput) {
 		String relativePath = StringUtils.removeStart(entryOutput.getAbsolutePath(), this.startLocation.getAbsolutePath().toString());
 
 		if (LOG.isTraceEnabled()) {
@@ -186,7 +186,7 @@ public class RecursiveZipMetaFactory {
 			archiveName = StringUtils.substringAfterLast(relativePath, "/");
 		}
 
-		ZipMeta archive = new ZipMeta();
+		ZipMetadata archive = new ZipMetadata();
 		archive.setName(archiveName);
 		archive.setFilePointer(entryOutput);
 		archive.setRelativePath(relativePath);

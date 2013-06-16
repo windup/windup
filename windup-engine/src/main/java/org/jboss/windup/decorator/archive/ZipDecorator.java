@@ -21,12 +21,12 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.interrogator.Interrogator;
 import org.jboss.windup.interrogator.util.KnownArchiveProfiler;
-import org.jboss.windup.resource.type.ZipEntryMeta;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.type.ZipEntryMetadata;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 import org.jboss.windup.util.FatalWindupException;
 
 
-public class ZipDecorator implements MetaDecorator<ZipMeta> {
+public class ZipDecorator implements MetaDecorator<ZipMetadata> {
 
 	private static final Log LOG = LogFactory.getLog(ZipDecorator.class);
 
@@ -47,7 +47,7 @@ public class ZipDecorator implements MetaDecorator<ZipMeta> {
 	}
 
 	@Override
-	public void processMeta(ZipMeta archive) {
+	public void processMeta(ZipMetadata archive) {
 		try {
 
 			ZipEntry entry;
@@ -67,7 +67,7 @@ public class ZipDecorator implements MetaDecorator<ZipMeta> {
 				entry = (ZipEntry) e.nextElement();
 
 				// create the archive entry meta file.
-				ZipEntryMeta archiveEntry = new ZipEntryMeta();
+				ZipEntryMetadata archiveEntry = new ZipEntryMetadata();
 				archiveEntry.setArchiveMeta(archive);
 				archiveEntry.setZipEntry(entry);
 

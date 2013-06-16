@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
 
 
 public class RegexPatternWhitelistProcessor implements MatchingProcessor {

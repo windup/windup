@@ -82,7 +82,7 @@
 	</dependency>
 	<dependency>
 		<groupId>org.jboss.windup</groupId>
-		<artifactId>windup-engine</artifactId>
+		<artifactId>windup-reporting</artifactId>
 		<version>${project.version}</version>
 	</dependency>
 	<dependency>

@@ -27,12 +27,12 @@ import org.jboss.windup.decorator.integration.mvn.resp.MavenCentralSHA1VersionRe
 import org.jboss.windup.decorator.integration.mvn.resp.MavenCentralSHA1VersionResponseWrapper;
 import org.jboss.windup.interrogator.impl.XmlInterrogator;
 import org.jboss.windup.interrogator.util.KnownArchiveProfiler;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.Hash;
-import org.jboss.windup.resource.decoration.Hash.HashType;
-import org.jboss.windup.resource.decoration.archetype.version.PomVersion;
-import org.jboss.windup.resource.type.XmlMeta;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.Hash;
+import org.jboss.windup.metadata.decoration.Hash.HashType;
+import org.jboss.windup.metadata.decoration.archetype.version.PomVersion;
+import org.jboss.windup.metadata.type.XmlMetadata;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -42,7 +42,7 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.web.client.RestTemplate;
 
 
-public class MavenCentralSHA1VersionDecorator extends ChainingDecorator<ZipMeta> {
+public class MavenCentralSHA1VersionDecorator extends ChainingDecorator<ZipMetadata> {
 	private static final Log LOG = LogFactory.getLog(MavenCentralSHA1VersionDecorator.class);
 	private static final String MAVEN_API_URL = "http://search.maven.org/solrsearch/select?q=1:{query}&rows=1&wt=json";
 	private static final String MAVEN_API_FILEPULL_URL = "http://search.maven.org/remotecontent?filepath=";
@@ -64,7 +64,7 @@ public class MavenCentralSHA1VersionDecorator extends ChainingDecorator<ZipMeta>
 	}
 
 	@Override
-	public void processMeta(ZipMeta meta) {
+	public void processMeta(ZipMetadata meta) {
 		if (!active) {
 			return;
 		}
@@ -119,7 +119,7 @@ public class MavenCentralSHA1VersionDecorator extends ChainingDecorator<ZipMeta>
 					File outputPath = new File(outputDir + File.separator + "pom.xml");
 					IOUtils.copy(new InputStreamReader(resp.getBody()), new FileOutputStream(outputPath));
 
-					XmlMeta xmlMeta = new XmlMeta();
+					XmlMetadata xmlMeta = new XmlMetadata();
 					xmlMeta.setFilePointer(outputPath);
 					xmlMeta.setArchiveMeta(meta);
 

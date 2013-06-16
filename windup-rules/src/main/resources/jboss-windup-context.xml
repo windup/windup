@@ -9,11 +9,11 @@
 	<bean name="windupParsers" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
 		<property name="customEditors">
 			<map>
-				<entry key="org.jboss.windup.resource.decoration.SourceType" value="org.jboss.windup.config.spring.property.SourceTypeEditor"/>
-				<entry key="org.jboss.windup.resource.decoration.effort.Effort" value="org.jboss.windup.config.spring.property.StoryPointEffortTypeEditor"/>
+				<entry key="org.jboss.windup.metadata.decoration.SourceType" value="org.jboss.windup.config.spring.property.SourceTypeEditor"/>
+				<entry key="org.jboss.windup.metadata.decoration.effort.Effort" value="org.jboss.windup.config.spring.property.StoryPointEffortTypeEditor"/>
 				<entry key="org.jboss.windup.platform.PlatformType" value="org.jboss.windup.config.spring.property.PlatformTypeEditor"/>
 				<entry key="java.util.regex.Pattern" value="org.jboss.windup.config.spring.property.RegexPatternEditor"/>
-				<entry key="org.jboss.windup.resource.decoration.AbstractDecoration.NotificationLevel" value="org.jboss.windup.config.spring.property.NotificationLevelEditor"/>
+				<entry key="org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel" value="org.jboss.windup.config.spring.property.NotificationLevelEditor"/>
 			</map>
 		</property>
 	</bean>
@@ -284,26 +284,17 @@
 	</bean>
 
 	<!-- Last step.. write the report. -->
-	<bean id="report-engine" class="org.jboss.windup.reporting.ReportEngine">
-		<property name="reporters">
+	<bean id="reporters" class="java.util.HashSet">
+		<constructor-arg>
 			<set>
-				<!-- 
-				<bean class="org.jboss.windup.reporting.data.ResourceDataReporter">
-					<property name="resolver" ref="metaTransformationResolver"/>
-				</bean>
-				 -->
-				 
 				<bean class="org.jboss.windup.reporting.html.StaticHtmlReporter">
 					<property name="resolver" ref="metaTransformationResolver"/>
 				</bean>
-				
 				<bean class="org.jboss.windup.reporting.spreadsheet.ScorecardReporter"/>
-				
-				<bean class="org.jboss.windup.reporting.TattletaleReporter"/>
 			</set>
-		</property>
+		</constructor-arg>	
 	</bean>
-
+	
 	<bean id="metaTransformationResolver" class="org.jboss.windup.reporting.transformers.MetaResultTransformResolver">
 		<property name="defaultTransformer">
 			<bean class="org.jboss.windup.reporting.transformers.FileMetaTransformer"/>

@@ -12,9 +12,9 @@
 package org.jboss.windup.decorator.java;
 
 import org.jboss.windup.hint.RegexPatternWhitelistProcessor;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.JavaLine;
-import org.jboss.windup.resource.decoration.SourceType;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.JavaLine;
+import org.jboss.windup.metadata.decoration.SourceType;
 
 public class JavaWhitelistPatternProcessor extends RegexPatternWhitelistProcessor {
 	protected SourceType sourceType;

@@ -23,11 +23,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.decorator.xml.util.PositionalXmlReader;
-import org.jboss.windup.resource.decoration.Line;
-import org.jboss.windup.resource.decoration.effort.StoryPointEffort;
-import org.jboss.windup.resource.decoration.hint.MarkdownHint;
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.decoration.Line;
+import org.jboss.windup.metadata.decoration.effort.StoryPointEffort;
+import org.jboss.windup.metadata.decoration.hint.MarkdownHint;
+import org.jboss.windup.metadata.type.XmlMetadata;
+import org.jboss.windup.metadata.util.LocationAwareXmlReader;
 import org.jboss.windup.util.XmlElementUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.w3c.dom.Document;
@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
-public class EJBValidatingDecorator implements MetaDecorator<XmlMeta>, InitializingBean {
+public class EJBValidatingDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
 	private static final Log LOG = LogFactory.getLog(EJBValidatingDecorator.class);
 	private static final XPathFactory factory = XPathFactory.newInstance();
 
@@ -45,7 +45,7 @@ public class EJBValidatingDecorator implements MetaDecorator<XmlMeta>, Initializ
 	private XPathExpression ejbRelationshipExpression;
 
 	@Override
-	public void processMeta(XmlMeta meta) {
+	public void processMeta(XmlMetadata meta) {
 		// first, find any relationship elements...
 		Set<String> ejbNames = new HashSet<String>();
 
@@ -78,7 +78,7 @@ public class EJBValidatingDecorator implements MetaDecorator<XmlMeta>, Initializ
 				String ejbLookup = StringUtils.replace(XPATH_EJB_NAME_PROTOTYPE, "${entity-name}", ejbName);
 
 				Element ejbEntityNode = (Element) xpath.evaluate(ejbLookup, doc, XPathConstants.NODE);
-				Integer lineNumber = (Integer) PositionalXmlReader.getLineNumber(ejbEntityNode);
+				Integer lineNumber = (Integer) LocationAwareXmlReader.getLineNumber(ejbEntityNode);
 				// validate that the local and local-home tags exist.
 
 				Element localTag = XmlElementUtil.getChildByTagName(ejbEntityNode, "local");

@@ -21,9 +21,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.type.TemporarySourceFile;
-import org.jboss.windup.resource.type.archive.ArchiveMeta;
-import org.jboss.windup.resource.type.archive.DirectoryMeta;
+import org.jboss.windup.metadata.type.TempSourceMetadata;
+import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
+import org.jboss.windup.metadata.type.archive.DirectoryMetadata;
 import org.jboss.windup.util.RecursiveDirectoryMetaFactory;
 
 public class DirectoryInterrogationEngine {
@@ -34,20 +34,20 @@ public class DirectoryInterrogationEngine {
 		this.interrogators = interrogators;
 	}
 	
-	public DirectoryMeta process(File outputDirectory, File targetDirectory) {
+	public DirectoryMetadata process(File outputDirectory, File targetDirectory) {
 		//this will recurse all files from this directory; all but hidden directories.
 		
 		RecursiveDirectoryMetaFactory rdmf = new RecursiveDirectoryMetaFactory(targetDirectory);
-		List<DirectoryMeta> directories = new LinkedList<DirectoryMeta>();
+		List<DirectoryMetadata> directories = new LinkedList<DirectoryMetadata>();
 		
-		DirectoryMeta root = rdmf.recursivelyExtract();
+		DirectoryMetadata root = rdmf.recursivelyExtract();
 		unfoldRecursion(root, directories);
 
 
 		int i = 1;
 		int j = directories.size();
 		
-		for(DirectoryMeta directoryMeta : directories) {
+		for(DirectoryMetadata directoryMeta : directories) {
 			LOG.info("Interrogating (" + i + " of " + j + "): " + directoryMeta.getRelativePath());
 			Collection<File> files = FileUtils.listFiles(directoryMeta.getFilePointer(), TrueFileFilter.INSTANCE, null);
 			
@@ -65,7 +65,7 @@ public class DirectoryInterrogationEngine {
 				for(File file : files) {
 					if(file.isFile()) {
 						LOG.debug("Processing file: "+file.getAbsolutePath());
-						TemporarySourceFile fileMeta = new TemporarySourceFile(file);
+						TempSourceMetadata fileMeta = new TempSourceMetadata(file);
 						fileMeta.setArchiveMeta(directoryMeta);
 						LOG.debug("Set archive as: "+directoryMeta);
 						interrogator.processFile(fileMeta);
@@ -77,12 +77,12 @@ public class DirectoryInterrogationEngine {
 		return root;
 	}
 	
-	protected void unfoldRecursion(DirectoryMeta base, Collection<DirectoryMeta> archiveMetas) {
+	protected void unfoldRecursion(DirectoryMetadata base, Collection<DirectoryMetadata> archiveMetas) {
 		if(LOG.isDebugEnabled()) {
 			LOG.debug("Directory: "+base.getName()+" Children: "+base.getNestedArchives().size()+" Path: "+base.getFilePointer().getAbsolutePath());
 		}
-		for (ArchiveMeta meta : base.getNestedArchives()) {
-			DirectoryMeta child = (DirectoryMeta)meta;
+		for (ArchiveMetadata meta : base.getNestedArchives()) {
+			DirectoryMetadata child = (DirectoryMetadata)meta;
 			
 			unfoldRecursion(child, archiveMetas);
 		}

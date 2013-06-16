@@ -26,10 +26,10 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.jboss.windup.decorator.ChainingDecorator;
-import org.jboss.windup.resource.type.JavaMeta;
+import org.jboss.windup.metadata.type.JavaMetadata;
 
 
-public class JavaASTDecorator extends ChainingDecorator<JavaMeta> {
+public class JavaASTDecorator extends ChainingDecorator<JavaMetadata> {
 	private static final Log LOG = LogFactory.getLog(JavaASTDecorator.class);
 
 	protected Set<String> javaLangDependencies;
@@ -39,7 +39,7 @@ public class JavaASTDecorator extends ChainingDecorator<JavaMeta> {
 	}
 
 	@Override
-	public void processMeta(final JavaMeta meta) {
+	public void processMeta(final JavaMetadata meta) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setBindingsRecovery(true);
 		parser.setResolveBindings(true);

@@ -30,10 +30,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.interrogator.DirectoryInterrogationEngine;
 import org.jboss.windup.interrogator.FileInterrogationEngine;
 import org.jboss.windup.interrogator.ZipInterrogationEngine;
-import org.jboss.windup.reporting.ReportEngine;
-import org.jboss.windup.reporting.Reporter;
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.archive.ArchiveMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
 import org.jboss.windup.util.LogController;
 import org.jboss.windup.util.RPMToZipTransformer;
 import org.springframework.context.ApplicationContext;
@@ -51,7 +49,6 @@ public class WindupEngine {
 	private DirectoryInterrogationEngine directoryInterrogationEngine;
 	private FileInterrogationEngine fileInterrogationEngine;
 	
-	private Reporter reportEngine;
 	private WindupEnvironment settings;
 
 	public WindupEngine(WindupEnvironment settings) {
@@ -63,13 +60,15 @@ public class WindupEngine {
 
 		springContexts.add("jboss-windup-context.xml");
 		this.context = new ClassPathXmlApplicationContext(springContexts.toArray(new String[springContexts.size()]));
-
 		
 		interrogationEngine = (ZipInterrogationEngine) context.getBean("archive-interrogation-engine");
 		directoryInterrogationEngine = (DirectoryInterrogationEngine) context.getBean("directory-interrogation-engine");
 		fileInterrogationEngine = (FileInterrogationEngine) context.getBean("file-interrogation-engine");
-		reportEngine = (ReportEngine) context.getBean("report-engine");
 		supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));
+	}
+	
+	public ApplicationContext getContext() {
+		return context;
 	}
 
 	/**
@@ -82,12 +81,14 @@ public class WindupEngine {
 		if (StringUtils.isNotBlank(settings.getPackageSignature())) {
 			System.setProperty("package.signature", settings.getPackageSignature());
 		}
-		if (StringUtils.isNotBlank(settings.getExcludeSignature())) {
-			System.setProperty("exclude.signature", settings.getExcludeSignature());
-		}
 		else {
 			LOG.warn("WARNING: Consider specifying javaPkgs.  Otherwise, the Java code will not be inspected.");
 		}
+		
+		if (StringUtils.isNotBlank(settings.getExcludeSignature())) {
+			System.setProperty("exclude.signature", settings.getExcludeSignature());
+		}
+		
 
 		if (StringUtils.isNotBlank(settings.getTargetPlatform())) {
 			System.setProperty("target.platform", settings.getTargetPlatform());
@@ -111,9 +112,7 @@ public class WindupEngine {
 	 * @param filePath
 	 * @throws IOException
 	 */
-	public FileMeta processFile(File file) throws IOException {
-		FileMeta meta = null;
-		
+	public FileMetadata processFile(File file) throws IOException {
 		if(!settings.isSource()) {
 			throw new RuntimeException("Windup Engine must be set to source mode to process single files.");
 		}
@@ -126,9 +125,7 @@ public class WindupEngine {
 			throw new FileNotFoundException("given file path does not reference a file: " + file.getAbsolutePath());
 		}
 		
-		meta = fileInterrogationEngine.process(file);
-		
-		return meta;
+		return fileInterrogationEngine.process(file);
 	}
 	
 	/**
@@ -139,42 +136,11 @@ public class WindupEngine {
 	 * @param filePath - path to the single file path
 	 * @throws IOException
 	 */
-	public FileMeta processFile(String filePath) throws IOException {
+	public FileMetadata processFile(String filePath) throws IOException {
 		return processFile(new File(filePath));
 	}
 
-	public void process(File inputLocation, File outputLocation) throws IOException {
-		if (!inputLocation.exists()) {
-			throw new FileNotFoundException("ArchiveMeta not found: " + inputLocation);
-		}
-		
-		if(settings.isSource()) {
-			//validate input and output.
-			if(!inputLocation.exists() || !inputLocation.isDirectory())
-			{
-				throw new IllegalArgumentException("Source input must be directory.");
-			}			
-			processSourceDirectory(inputLocation, outputLocation);
-		}
-		
-		
-		if (inputLocation.isDirectory()) {
-			// must be batch mode!
-			if (outputLocation != null) {
-				LOG.warn("Ignoring output parameter as input is directory.");
-			}
-			processDirectory(inputLocation);
-		}
-		else {
-			// single archive processing.
-			if (outputLocation == null) {
-				processArchive(inputLocation);
-			}
-			else {
-				processArchive(inputLocation, outputLocation);
-			}
-		}
-	}
+
 	
 	/**
 	 * Processes a directory, recursively, in source mode.  That is, it will not process zip archives, but will treat the directory as a project directory, for example.  
@@ -184,9 +150,11 @@ public class WindupEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public ArchiveMeta processSourceDirectory(File dirPath, File outputPath) throws IOException {
+	public ArchiveMetadata processSourceDirectory(File dirPath, File outputPath) throws IOException {
 		Validate.notNull(dirPath, "Directory input path must be provided.");
-		Validate.isTrue(dirPath.isDirectory(), "Input must be a directory.");
+		Validate.notNull(dirPath.isDirectory(), "Input must be a directory.");
+		Validate.notNull(outputPath, "Directory output path must be provided.");
+		
 		
 		File logFile = null;
 		
@@ -216,10 +184,7 @@ public class WindupEngine {
 				logFile = new File(outputPath.getAbsolutePath() + File.separator + "windup.log");
 				LogController.addFileAppender(logFile);
 			}
-			ArchiveMeta meta = directoryInterrogationEngine.process(outputPath, dirPath);
-			reportEngine.process(meta, outputPath);
-			
-			return meta;
+			return directoryInterrogationEngine.process(outputPath, dirPath);
 		}
 		finally {
 			if (logFile != null && logFile.exists()) {
@@ -234,7 +199,10 @@ public class WindupEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public Collection<ArchiveMeta> processDirectory(File dirPath) throws IOException {
+	public Collection<ArchiveMetadata> processDirectory(File dirPath) throws IOException {
+		Validate.notNull(dirPath, "Directory Path is required, but null.");
+		Validate.isTrue(dirPath.isDirectory(), "Directory Path must be to directory.");
+		
 		LOG.info("Processing directory: " + dirPath.getAbsolutePath());
 		List<File> archives = new LinkedList<File>(Arrays.asList(dirPath.listFiles((FilenameFilter) new SuffixFileFilter(supportedExtensions))));
 
@@ -256,12 +224,12 @@ public class WindupEngine {
 			LOG.info("Found " + archives.size() + " Archives");
 		}
 
-		List<ArchiveMeta> archiveMetas = new LinkedList<ArchiveMeta>();
+		List<ArchiveMetadata> archiveMetas = new LinkedList<ArchiveMetadata>();
 		for (File archive : archives) {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Processing archive: " + archive.getAbsolutePath());
 			}
-			LOG.info("ArchiveMeta Path: " + archive.getAbsolutePath());
+			LOG.info("ArchiveMetadata Path: " + archive.getAbsolutePath());
 			archiveMetas.add(processArchive(archive));
 		}
 		
@@ -275,7 +243,7 @@ public class WindupEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public ArchiveMeta processArchive(File archivePath) throws IOException {
+	public ArchiveMetadata processArchive(File archivePath) throws IOException {
 		String outputLoc = StringUtils.substringBeforeLast(archivePath.getAbsolutePath(), ".");
 		outputLoc += "-" + StringUtils.substringAfterLast(archivePath.getAbsolutePath(), ".") + "-doc";
 
@@ -283,7 +251,10 @@ public class WindupEngine {
 			LOG.debug("Setting output location based on input: " + outputLoc);
 		}
 
-		return processArchive(archivePath, new File(outputLoc));
+		File outputLocation = new File(outputLoc);
+		FileUtils.forceMkdir(outputLocation);
+		
+		return processArchive(archivePath, outputLocation);
 	}
 
 	/**
@@ -293,9 +264,12 @@ public class WindupEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public ArchiveMeta processArchive(File archivePath, File outputPath) throws IOException {
+	public ArchiveMetadata processArchive(File archivePath, File outputPath) throws IOException {
+		Validate.notNull(archivePath, "Directory archivePath path must be provided.");
+		Validate.notNull(outputPath, "Directory outputPath must be provided.");
+		
 		if (!archivePath.exists()) {
-			throw new FileNotFoundException("ArchiveMeta not found.");
+			throw new FileNotFoundException("ArchiveMetadata not found.");
 		}
 
 		for (String ext : RPM_EXTENSIONS) {
@@ -324,10 +298,7 @@ public class WindupEngine {
 				logFile = new File(outputPath.getAbsolutePath() + File.separator + "windup.log");
 				LogController.addFileAppender(logFile);
 			} 
-			ArchiveMeta meta = interrogationEngine.process(outputPath, archivePath);
-			reportEngine.process(meta, outputPath);
-			
-			return meta;
+			return interrogationEngine.process(outputPath, archivePath);
 		}
 		finally {
 			if (logFile != null && logFile.exists()) {

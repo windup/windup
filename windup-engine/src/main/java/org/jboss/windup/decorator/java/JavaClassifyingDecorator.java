@@ -18,9 +18,9 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.gate.JavaPatternGateDecorator;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.Classification;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.Classification;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
 public class JavaClassifyingDecorator extends JavaPatternGateDecorator {
@@ -37,7 +37,7 @@ public class JavaClassifyingDecorator extends JavaPatternGateDecorator {
 	}
 
 	@Override
-	protected List<AbstractDecoration> matchResults(FileMeta meta) {
+	protected List<AbstractDecoration> matchResults(FileMetadata meta) {
 		// only process classification.
 		List<AbstractDecoration> matched = super.matchResults(meta);
 

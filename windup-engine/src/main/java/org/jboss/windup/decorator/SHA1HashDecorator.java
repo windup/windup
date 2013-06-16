@@ -15,17 +15,17 @@ import java.io.FileInputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.Hash;
-import org.jboss.windup.resource.decoration.Hash.HashType;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.Hash;
+import org.jboss.windup.metadata.decoration.Hash.HashType;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
-public class SHA1HashDecorator extends ChainingDecorator<FileMeta> {
+public class SHA1HashDecorator extends ChainingDecorator<FileMetadata> {
 
 	public static final Log LOG = LogFactory.getLog(SHA1HashDecorator.class);
 
 	@Override
-	public void processMeta(FileMeta meta) {
+	public void processMeta(FileMetadata meta) {
 		try {
 			FileInputStream fis = new FileInputStream(meta.getFilePointer());
 			String sha1 = org.apache.commons.codec.digest.DigestUtils.sha1Hex(fis);

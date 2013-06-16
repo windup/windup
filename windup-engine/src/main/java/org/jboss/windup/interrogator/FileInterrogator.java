@@ -11,17 +11,17 @@
 */
 package org.jboss.windup.interrogator;
 
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.ResourceMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.ResourceMetadata;
 
 /**
  * <p>
- * Defines a file interrogator for a specific type of {@link ResourceMeta} data.
+ * Defines a file interrogator for a specific type of {@link ResourceMetadata} data.
  * </p>
  * 
- * @param <T> the type of {@link ResourceMeta} this {@link FileInterrogator} is for
+ * @param <T> the type of {@link ResourceMetadata} this {@link FileInterrogator} is for
  */
-public interface FileInterrogator<T extends ResourceMeta> {
-	public abstract void processFile(FileMeta entry);
-	public abstract T fileEntryToMeta(FileMeta entry);
+public interface FileInterrogator<T extends ResourceMetadata> {
+	public abstract void processFile(FileMetadata entry);
+	public abstract T fileEntryToMeta(FileMetadata entry);
 }

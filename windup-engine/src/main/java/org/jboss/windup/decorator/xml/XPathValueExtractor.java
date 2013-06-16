@@ -18,16 +18,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.decorator.xml.util.MapContext;
-import org.jboss.windup.decorator.xml.util.PositionalXmlReader;
 import org.jboss.windup.hint.ResultProcessor;
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.type.XmlMetadata;
+import org.jboss.windup.metadata.util.NamespaceMapContext;
+import org.jboss.windup.metadata.util.LocationAwareXmlReader;
 import org.springframework.beans.factory.InitializingBean;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class XPathValueExtractor implements MetaDecorator<XmlMeta>, InitializingBean {
+public class XPathValueExtractor implements MetaDecorator<XmlMetadata>, InitializingBean {
 
 	private static final Log LOG = LogFactory.getLog(XPathSummaryDecorator.class);
 	private static final XPathFactory factory = XPathFactory.newInstance();
@@ -46,7 +46,7 @@ public class XPathValueExtractor implements MetaDecorator<XmlMeta>, Initializing
 	}
 	
 	@Override
-	public void processMeta(final XmlMeta meta) {
+	public void processMeta(final XmlMetadata meta) {
 		if (meta.getParsedDocument() == null) {
 			LOG.warn("Skipping XPathClassifyingDecorator: " + meta.getFilePointer().getAbsolutePath() + " because the document is unparsed.");
 			return;
@@ -67,7 +67,7 @@ public class XPathValueExtractor implements MetaDecorator<XmlMeta>, Initializing
 					LOG.debug("Found results for: " + meta.getFilePointer().getAbsolutePath());
 				}
 				for (int i = 0; i < nodes.getLength(); i++) {
-					Integer lineNumber = (Integer) PositionalXmlReader.getLineNumber(nodes.item(i));
+					Integer lineNumber = (Integer) LocationAwareXmlReader.getLineNumber(nodes.item(i));
 					String match = convertNode(nodes.item(i));
 					
 					if(StringUtils.isNotBlank(match)) {
@@ -94,7 +94,7 @@ public class XPathValueExtractor implements MetaDecorator<XmlMeta>, Initializing
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.xpath = factory.newXPath();
-		MapContext context = new MapContext(namespaces);
+		NamespaceMapContext context = new NamespaceMapContext(namespaces);
 		xpath.setNamespaceContext(context);
 		expression = xpath.compile(xpathExpression);
 	}

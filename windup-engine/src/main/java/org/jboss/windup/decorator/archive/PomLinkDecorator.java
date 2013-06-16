@@ -21,13 +21,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.resource.decoration.Link;
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.decoration.Link;
+import org.jboss.windup.metadata.type.XmlMetadata;
 import org.springframework.beans.factory.InitializingBean;
 import org.w3c.dom.Document;
 
 
-public class PomLinkDecorator implements MetaDecorator<XmlMeta>, InitializingBean {
+public class PomLinkDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
 	private static final Log LOG = LogFactory.getLog(PomVersionDecorator.class);
 
 	private static final XPathFactory factory = XPathFactory.newInstance();
@@ -36,7 +36,7 @@ public class PomLinkDecorator implements MetaDecorator<XmlMeta>, InitializingBea
 	protected XPathExpression linkXPath;
 
 	@Override
-	public void processMeta(XmlMeta file) {
+	public void processMeta(XmlMetadata file) {
 		Document doc = file.getParsedDocument();
 		try {
 			String link = extractStringValue(linkXPath, doc);

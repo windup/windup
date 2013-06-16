@@ -14,10 +14,10 @@ package org.jboss.windup.decorator.gate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.ChainingDecorator;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
-public abstract class GateDecorator<T extends FileMeta> extends ChainingDecorator<T> {
+public abstract class GateDecorator<T extends FileMetadata> extends ChainingDecorator<T> {
 	private static final Log LOG = LogFactory.getLog(GateDecorator.class);
 	private boolean negate;
 

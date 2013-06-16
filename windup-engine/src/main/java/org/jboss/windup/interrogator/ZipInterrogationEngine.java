@@ -20,13 +20,13 @@ import java.util.zip.ZipFile;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.interrogator.impl.DecoratorPipeline;
-import org.jboss.windup.resource.type.archive.ArchiveMeta;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 import org.jboss.windup.util.RecursiveZipMetaFactory;
 
 
 /**
- * Takes the Interrogators, and applies them against the ZipMeta. It then collects the results, which
+ * Takes the Interrogators, and applies them against the ZipMetadata. It then collects the results, which
  * are returned as an ArchiveResult.
  * 
  * @author bdavis
@@ -36,9 +36,9 @@ public class ZipInterrogationEngine {
 	private static final Log LOG = LogFactory.getLog(ZipInterrogationEngine.class);
 
 	protected RecursiveZipMetaFactory recursiveExtractor;
-	protected DecoratorPipeline<ZipMeta> decoratorPipeline;
+	protected DecoratorPipeline<ZipMetadata> decoratorPipeline;
 
-	public void setDecoratorPipeline(DecoratorPipeline<ZipMeta> decoratorPipeline) {
+	public void setDecoratorPipeline(DecoratorPipeline<ZipMetadata> decoratorPipeline) {
 		this.decoratorPipeline = decoratorPipeline;
 	}
 
@@ -46,9 +46,9 @@ public class ZipInterrogationEngine {
 		this.recursiveExtractor = recursiveExtractor;
 	}
 
-	public ZipMeta process(File outputDirectory, File targetArchive) {
+	public ZipMetadata process(File outputDirectory, File targetArchive) {
 
-		ZipMeta archiveMeta;
+		ZipMetadata archiveMeta;
 		LOG.info("Processing: " + targetArchive.getName());
 		try {
 			ZipFile zf = new ZipFile(targetArchive);
@@ -59,13 +59,13 @@ public class ZipInterrogationEngine {
 			return null;
 		}
 
-		List<ZipMeta> archiveMetas = new LinkedList<ZipMeta>();
+		List<ZipMetadata> archiveMetas = new LinkedList<ZipMetadata>();
 		unfoldRecursion(archiveMeta, archiveMetas);
 
 		int i = 1;
 		int j = archiveMetas.size();
 
-		for (ZipMeta archive : archiveMetas) {
+		for (ZipMetadata archive : archiveMetas) {
 			LOG.info("Interrogating (" + i + " of " + j + "): " + archive.getRelativePath());
 			File archiveOutputDirectory = new File(outputDirectory + File.separator + archive.getRelativePath());
 			archive.setArchiveOutputDirectory(archiveOutputDirectory);
@@ -78,9 +78,9 @@ public class ZipInterrogationEngine {
 		return archiveMeta;
 	}
 
-	protected void unfoldRecursion(ZipMeta base, Collection<ZipMeta> archiveMetas) {
-		for (ArchiveMeta meta : base.getNestedArchives()) {
-			ZipMeta zipMeta = (ZipMeta)meta;
+	protected void unfoldRecursion(ZipMetadata base, Collection<ZipMetadata> archiveMetas) {
+		for (ArchiveMetadata meta : base.getNestedArchives()) {
+			ZipMetadata zipMeta = (ZipMetadata)meta;
 			
 			unfoldRecursion(zipMeta, archiveMetas);
 		}

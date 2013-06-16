@@ -15,18 +15,18 @@ import java.io.File;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.Classification;
-import org.jboss.windup.resource.decoration.effort.StoryPointEffort;
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.ManifestMeta;
-import org.jboss.windup.resource.type.ZipEntryMeta;
+import org.jboss.windup.metadata.decoration.Classification;
+import org.jboss.windup.metadata.decoration.effort.StoryPointEffort;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.ManifestMetadata;
+import org.jboss.windup.metadata.type.ZipEntryMetadata;
 
 
-public class ManifestInterrogator extends ExtensionInterrogator<ManifestMeta> {
+public class ManifestInterrogator extends ExtensionInterrogator<ManifestMetadata> {
 	private static final Log LOG = LogFactory.getLog(ManifestInterrogator.class);
 
 	@Override
-	public ManifestMeta archiveEntryToMeta(ZipEntryMeta archiveEntry) {
+	public ManifestMetadata archiveEntryToMeta(ZipEntryMetadata archiveEntry) {
 		File file = archiveEntry.getFilePointer();
 
 		LOG.debug("Processing Manifest: " + file.getAbsolutePath().toString());
@@ -36,7 +36,7 @@ public class ManifestInterrogator extends ExtensionInterrogator<ManifestMeta> {
 			return null;
 		}
 		
-		ManifestMeta meta = new ManifestMeta();
+		ManifestMetadata meta = new ManifestMetadata();
 		meta.setArchiveMeta(archiveEntry.getArchiveMeta());
 		meta.setFilePointer(file);
 
@@ -44,14 +44,14 @@ public class ManifestInterrogator extends ExtensionInterrogator<ManifestMeta> {
 		StoryPointEffort he = new StoryPointEffort();
 		he.setHours(0);
 		classification.setEffort(he);
-		classification.setDescription("ArchiveMeta Manifest");
+		classification.setDescription("ArchiveMetadata Manifest");
 		meta.getDecorations().add(classification);
 
 		return meta;
 	}
 
 	@Override
-	public ManifestMeta fileEntryToMeta(FileMeta entry) {
+	public ManifestMetadata fileEntryToMeta(FileMetadata entry) {
 		File file = entry.getFilePointer();
 
 		LOG.debug("Processing Manifest: " + file.getAbsolutePath().toString());
@@ -61,7 +61,7 @@ public class ManifestInterrogator extends ExtensionInterrogator<ManifestMeta> {
 			return null;
 		}
 		
-		ManifestMeta meta = new ManifestMeta();
+		ManifestMetadata meta = new ManifestMetadata();
 		//meta.setArchiveMeta(archiveEntry.getArchiveMeta());
 		meta.setFilePointer(file);
 		meta.setArchiveMeta(entry.getArchiveMeta());
@@ -70,7 +70,7 @@ public class ManifestInterrogator extends ExtensionInterrogator<ManifestMeta> {
 		StoryPointEffort he = new StoryPointEffort();
 		he.setHours(0);
 		classification.setEffort(he);
-		classification.setDescription("ArchiveMeta Manifest");
+		classification.setDescription("ArchiveMetadata Manifest");
 		meta.getDecorations().add(classification);
 
 		return meta;

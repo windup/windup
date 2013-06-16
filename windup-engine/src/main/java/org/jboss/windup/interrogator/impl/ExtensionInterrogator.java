@@ -20,8 +20,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.interrogator.Interrogator;
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.ZipEntryMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.ZipEntryMetadata;
 
 
 /**
@@ -31,7 +31,7 @@ import org.jboss.windup.resource.type.ZipEntryMeta;
  * @author bdavis
  * 
  */
-public abstract class ExtensionInterrogator<T extends FileMeta> extends Interrogator<T> {
+public abstract class ExtensionInterrogator<T extends FileMetadata> extends Interrogator<T> {
 	private static final Log LOG = LogFactory.getLog(ExtensionInterrogator.class);
 
 	protected Set<Pattern> extensions;
@@ -55,7 +55,7 @@ public abstract class ExtensionInterrogator<T extends FileMeta> extends Interrog
 	}
 
 	@Override
-	public void processArchiveEntry(ZipEntryMeta archiveEntry) {
+	public void processArchiveEntry(ZipEntryMetadata archiveEntry) {
 		String entryName = archiveEntry.getZipEntry().getName();
 		
 		if(matchesExtension(entryName)) {
@@ -70,7 +70,7 @@ public abstract class ExtensionInterrogator<T extends FileMeta> extends Interrog
 	
  
 	@Override
-	public void processFile(FileMeta entry) {
+	public void processFile(FileMetadata entry) {
 		String path = StringUtils.replace(entry.getFilePointer().getAbsolutePath(), "\\", "/");
 		if(matchesExtension(path)) {
 			T meta = fileEntryToMeta(entry);

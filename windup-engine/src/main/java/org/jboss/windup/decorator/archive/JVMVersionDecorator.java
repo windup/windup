@@ -21,15 +21,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.resource.decoration.archetype.JVMBuildVersionResult;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.decoration.archetype.JVMBuildVersionResult;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 
 
-public class JVMVersionDecorator implements MetaDecorator<ZipMeta> {
+public class JVMVersionDecorator implements MetaDecorator<ZipMetadata> {
 	private static final Log LOG = LogFactory.getLog(JVMVersionDecorator.class);
 
 	@Override
-	public void processMeta(ZipMeta meta) {
+	public void processMeta(ZipMetadata meta) {
 		try {
 			ZipEntry entry;
 			Enumeration<?> e = meta.getZipFile().entries();

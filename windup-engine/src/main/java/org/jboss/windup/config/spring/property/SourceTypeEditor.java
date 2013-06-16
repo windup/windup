@@ -13,7 +13,7 @@ package org.jboss.windup.config.spring.property;
 
 import java.beans.PropertyEditorSupport;
 
-import org.jboss.windup.resource.decoration.SourceType;
+import org.jboss.windup.metadata.decoration.SourceType;
 
 
 public class SourceTypeEditor extends PropertyEditorSupport {

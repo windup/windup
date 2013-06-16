@@ -20,8 +20,8 @@ import java.util.zip.ZipEntry;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.archetype.VendorResult;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.decoration.archetype.VendorResult;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 import org.jboss.windup.util.CustomerPackageResolver;
 
 
@@ -57,7 +57,7 @@ public class KnownArchiveProfiler {
 		return target;
 	}
 
-	public boolean isKnownVendor(ZipMeta archive, String pkg) {
+	public boolean isKnownVendor(ZipMetadata archive, String pkg) {
 		for (Pattern cbl : knownPackages.keySet()) {
 			if (cbl.matcher(pkg).find()) {
 				if (LOG.isDebugEnabled()) {
@@ -75,7 +75,7 @@ public class KnownArchiveProfiler {
 		return false;
 	}
 
-	public boolean isExclusivelyKnownArchive(ZipMeta archive) {
+	public boolean isExclusivelyKnownArchive(ZipMetadata archive) {
 		String extension = archive.getFilePointer().getAbsolutePath();
 		extension = StringUtils.substringAfterLast(extension, ".");
 

@@ -15,11 +15,11 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.platform.PlatformType;
-import org.jboss.windup.resource.type.FileMeta;
 
 
-public class PlatformGateDecorator extends GateDecorator<FileMeta> {
+public class PlatformGateDecorator extends GateDecorator<FileMetadata> {
 	private static final Log LOG = LogFactory.getLog(PlatformGateDecorator.class);
 
 	private PlatformType targetContainer = null;
@@ -34,7 +34,7 @@ public class PlatformGateDecorator extends GateDecorator<FileMeta> {
 	}
 
 	@Override
-	protected boolean continueProcessing(FileMeta meta) {
+	protected boolean continueProcessing(FileMetadata meta) {
 		if (targetContainer == null) {
 			LOG.debug("No target specified; run for all target containers.");
 			return true;

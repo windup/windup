@@ -11,7 +11,7 @@
 */
 package org.jboss.windup.hint;
 
-import org.jboss.windup.resource.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
 
 public interface MatchingProcessor {
 	public boolean process(AbstractDecoration result);

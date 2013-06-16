@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.jboss.windup.hint.ResultProcessor;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
-public class RegexPatternGateProcessor extends GateDecorator<FileMeta> {
+public class RegexPatternGateProcessor extends GateDecorator<FileMetadata> {
 	protected Pattern regexPattern;
 	protected List<ResultProcessor> hints = new LinkedList<ResultProcessor>();
 
@@ -32,7 +32,7 @@ public class RegexPatternGateProcessor extends GateDecorator<FileMeta> {
 		this.regexPattern = regexPattern;
 	}
 
-	protected List<AbstractDecoration> matchResults(FileMeta meta) {
+	protected List<AbstractDecoration> matchResults(FileMetadata meta) {
 		List<AbstractDecoration> results = new LinkedList<AbstractDecoration>();
 
 		for (AbstractDecoration rst : meta.getDecorations()) {
@@ -44,7 +44,7 @@ public class RegexPatternGateProcessor extends GateDecorator<FileMeta> {
 	}
 
 	@Override
-	protected boolean continueProcessing(FileMeta meta) {
+	protected boolean continueProcessing(FileMetadata meta) {
 		List<AbstractDecoration> results = matchResults(meta);
 		if (results != null && results.size() > 0) {
 			if (hints != null) {

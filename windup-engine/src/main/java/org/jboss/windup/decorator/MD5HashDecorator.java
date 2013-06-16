@@ -15,17 +15,17 @@ import java.io.FileInputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.Hash;
-import org.jboss.windup.resource.decoration.Hash.HashType;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.Hash;
+import org.jboss.windup.metadata.decoration.Hash.HashType;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
-public class MD5HashDecorator extends ChainingDecorator<FileMeta> {
+public class MD5HashDecorator extends ChainingDecorator<FileMetadata> {
 
 	private static final Log LOG = LogFactory.getLog(MD5HashDecorator.class);
 
 	@Override
-	public void processMeta(FileMeta meta) {
+	public void processMeta(FileMetadata meta) {
 		try {
 			FileInputStream fis = new FileInputStream(meta.getFilePointer());
 			String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);

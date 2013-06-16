@@ -15,26 +15,26 @@ import java.io.File;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.Summary;
-import org.jboss.windup.resource.decoration.AbstractDecoration.NotificationLevel;
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.XmlMeta;
-import org.jboss.windup.resource.type.ZipEntryMeta;
+import org.jboss.windup.metadata.decoration.Summary;
+import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.XmlMetadata;
+import org.jboss.windup.metadata.type.ZipEntryMetadata;
 import org.w3c.dom.Document;
 
 
 /**
- * Interrogates XML files. Extracts the XML, and creates an XmlMeta object, which is passed down
+ * Interrogates XML files. Extracts the XML, and creates an XmlMetadata object, which is passed down
  * the decorator pipeline.
  * 
  * @author bdavis
  * 
  */
-public class XmlInterrogator extends ExtensionInterrogator<XmlMeta> {
+public class XmlInterrogator extends ExtensionInterrogator<XmlMetadata> {
 	private static final Log LOG = LogFactory.getLog(XmlInterrogator.class);
 
 	@Override
-	public void processMeta(XmlMeta fileMeta) {
+	public void processMeta(XmlMetadata fileMeta) {
 		Document document = fileMeta.getParsedDocument();
 		if (document == null) {
 			if (LOG.isDebugEnabled()) {
@@ -49,21 +49,21 @@ public class XmlInterrogator extends ExtensionInterrogator<XmlMeta> {
 	}
 
 	@Override
-	public boolean isOfInterest(XmlMeta fileMeta) {
+	public boolean isOfInterest(XmlMetadata fileMeta) {
 		return true;
 	}
 
 	@Override
-	public XmlMeta archiveEntryToMeta(ZipEntryMeta archiveEntry) {
+	public XmlMetadata archiveEntryToMeta(ZipEntryMetadata archiveEntry) {
 		File file = archiveEntry.getFilePointer();
 
 		LOG.debug("Processing XML: " + file.getAbsolutePath());
 
-		FileMeta meta = null;
+		FileMetadata meta = null;
 
 		if (file.length() > 1048576L * 1) {
 			LOG.warn("XML larger than 1 MB: " + file.getAbsolutePath() + "; Skipping processing.");
-			meta = new FileMeta();
+			meta = new FileMetadata();
 			meta.setArchiveMeta(archiveEntry.getArchiveMeta());
 			meta.setFilePointer(file);
 
@@ -73,7 +73,7 @@ public class XmlInterrogator extends ExtensionInterrogator<XmlMeta> {
 			meta.getDecorations().add(sr);
 		}
 		else {
-			XmlMeta xmlMeta = new XmlMeta();
+			XmlMetadata xmlMeta = new XmlMetadata();
 			xmlMeta.setArchiveMeta(archiveEntry.getArchiveMeta());
 			xmlMeta.setFilePointer(file);
 			meta = xmlMeta;
@@ -84,16 +84,16 @@ public class XmlInterrogator extends ExtensionInterrogator<XmlMeta> {
 	}
 
 	@Override
-	public XmlMeta fileEntryToMeta(FileMeta entry) {
+	public XmlMetadata fileEntryToMeta(FileMetadata entry) {
 		File file = entry.getFilePointer();
 
 		LOG.debug("Processing XML: " + file.getAbsolutePath());
 
-		FileMeta meta = null;
+		FileMetadata meta = null;
 
 		if (file.length() > 1048576L * 1) {
 			LOG.warn("XML larger than 1 MB: " + file.getAbsolutePath() + "; Skipping processing.");
-			meta = new FileMeta();
+			meta = new FileMetadata();
 			//meta.setArchiveMeta(archiveEntry.getArchiveMeta());
 			meta.setFilePointer(file);
 			meta.setArchiveMeta(entry.getArchiveMeta());
@@ -104,7 +104,7 @@ public class XmlInterrogator extends ExtensionInterrogator<XmlMeta> {
 			meta.getDecorations().add(sr);
 		}
 		else {
-			XmlMeta xmlMeta = new XmlMeta();
+			XmlMetadata xmlMeta = new XmlMetadata();
 			xmlMeta.setArchiveMeta(entry.getArchiveMeta());
 			xmlMeta.setFilePointer(file);
 			meta = xmlMeta;

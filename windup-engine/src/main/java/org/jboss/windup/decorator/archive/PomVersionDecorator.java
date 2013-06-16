@@ -22,15 +22,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.interrogator.util.KnownArchiveProfiler;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.archetype.version.PomVersion;
-import org.jboss.windup.resource.type.XmlMeta;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.archetype.version.PomVersion;
+import org.jboss.windup.metadata.type.XmlMetadata;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 import org.springframework.beans.factory.InitializingBean;
 import org.w3c.dom.Document;
 
 
-public class PomVersionDecorator implements MetaDecorator<XmlMeta>, InitializingBean {
+public class PomVersionDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
 	private static final Log LOG = LogFactory.getLog(PomVersionDecorator.class);
 
 	private static final XPathFactory factory = XPathFactory.newInstance();
@@ -58,7 +58,7 @@ public class PomVersionDecorator implements MetaDecorator<XmlMeta>, Initializing
 	}
 
 	@Override
-	public void processMeta(XmlMeta file) {
+	public void processMeta(XmlMetadata file) {
 		if (!isActive(file)) {
 			return;
 		}
@@ -107,7 +107,7 @@ public class PomVersionDecorator implements MetaDecorator<XmlMeta>, Initializing
 		return (String) expression.evaluate(doc, XPathConstants.STRING);
 	}
 
-	protected boolean isActive(XmlMeta file) {
+	protected boolean isActive(XmlMetadata file) {
 		for (AbstractDecoration dr : file.getArchiveMeta().getDecorations()) {
 			if (dr instanceof PomVersion) {
 				LOG.debug("Already has version result: " + dr.toString());
@@ -117,7 +117,7 @@ public class PomVersionDecorator implements MetaDecorator<XmlMeta>, Initializing
 		return true;
 	}
 
-	protected void createVersionResult(XmlMeta file, String groupId, String artifactId, String versionId, String name) {
+	protected void createVersionResult(XmlMetadata file, String groupId, String artifactId, String versionId, String name) {
 		PomVersion vr = new PomVersion();
 
 		// default to artifact ID if name isn't provided.
@@ -132,8 +132,8 @@ public class PomVersionDecorator implements MetaDecorator<XmlMeta>, Initializing
 
 		file.getArchiveMeta().getDecorations().add(vr);
 		
-		if(file.getArchiveMeta() instanceof ZipMeta) {
-			ZipMeta zip = (ZipMeta)file.getArchiveMeta();
+		if(file.getArchiveMeta() instanceof ZipMetadata) {
+			ZipMetadata zip = (ZipMetadata)file.getArchiveMeta();
 			knownArchiveProfiler.isKnownVendor(zip, groupId);
 		}
 		

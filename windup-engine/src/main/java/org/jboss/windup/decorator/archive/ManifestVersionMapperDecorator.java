@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.archetype.version.Version;
-import org.jboss.windup.resource.type.ManifestMeta;
+import org.jboss.windup.metadata.decoration.archetype.version.Version;
+import org.jboss.windup.metadata.type.ManifestMetadata;
 
 
 /**
@@ -58,7 +58,7 @@ public class ManifestVersionMapperDecorator extends ManifestVersionDecorator {
 	}
 
 	@Override
-	public void processMeta(ManifestMeta file) {
+	public void processMeta(ManifestMetadata file) {
 		if (matchesAll(file.getManifest())) {
 			Version vr = new Version();
 

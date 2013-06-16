@@ -38,12 +38,12 @@ public class XPathSummaryBeanParser extends AbstractBeanDefinitionParser {
 
 		if (element.hasAttribute("effort")) {
 			LOG.debug("Effort: " + element.getAttribute("effort"));
-			BeanDefinitionBuilder effortBean = BeanDefinitionBuilder.genericBeanDefinition("org.jboss.windup.resource.decoration.effort.StoryPointEffort");
+			BeanDefinitionBuilder effortBean = BeanDefinitionBuilder.genericBeanDefinition("org.jboss.windup.metadata.decoration.effort.StoryPointEffort");
 			effortBean.addPropertyValue("hours", element.getAttribute("effort"));
 			beanBuilder.addPropertyValue("effort", effortBean.getBeanDefinition());
 		}
 		else {
-			BeanDefinitionBuilder effortBean = BeanDefinitionBuilder.genericBeanDefinition("org.jboss.windup.resource.decoration.effort.UnknownEffort");
+			BeanDefinitionBuilder effortBean = BeanDefinitionBuilder.genericBeanDefinition("org.jboss.windup.metadata.decoration.effort.UnknownEffort");
 			beanBuilder.addPropertyValue("effort", effortBean.getBeanDefinition());
 		}
 

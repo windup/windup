@@ -29,14 +29,14 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.resource.decoration.Link;
-import org.jboss.windup.resource.decoration.effort.Effort;
-import org.jboss.windup.resource.decoration.effort.UnknownEffort;
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.decoration.Link;
+import org.jboss.windup.metadata.decoration.effort.Effort;
+import org.jboss.windup.metadata.decoration.effort.UnknownEffort;
+import org.jboss.windup.metadata.type.XmlMetadata;
 import org.springframework.beans.factory.InitializingBean;
 
 
-public class XSLTDecorator implements MetaDecorator<XmlMeta>, InitializingBean {
+public class XSLTDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
 	private static final Log LOG = LogFactory.getLog(XSLTDecorator.class);
 
 	private String xsltLocation;
@@ -74,7 +74,7 @@ public class XSLTDecorator implements MetaDecorator<XmlMeta>, InitializingBean {
 	}
 
 	@Override
-	public void processMeta(XmlMeta file) {
+	public void processMeta(XmlMetadata file) {
 		String relativeDirectory = StringUtils.substringBeforeLast(file.getFilePointer().getAbsolutePath(), File.separator);
 		String fileName = StringUtils.substringAfterLast(file.getFilePointer().getAbsolutePath(), File.separator);
 

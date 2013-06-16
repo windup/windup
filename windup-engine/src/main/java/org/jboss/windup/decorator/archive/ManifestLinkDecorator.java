@@ -14,8 +14,8 @@ package org.jboss.windup.decorator.archive;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.resource.decoration.Link;
-import org.jboss.windup.resource.type.ManifestMeta;
+import org.jboss.windup.metadata.decoration.Link;
+import org.jboss.windup.metadata.type.ManifestMetadata;
 
 
 public class ManifestLinkDecorator extends ManifestDecorator {
@@ -27,7 +27,7 @@ public class ManifestLinkDecorator extends ManifestDecorator {
 	}
 
 	@Override
-	public void processMeta(ManifestMeta file) {
+	public void processMeta(ManifestMetadata file) {
 		// Look for default description information.
 		String link = extractValue(file.getManifest(), linkPriority);
 

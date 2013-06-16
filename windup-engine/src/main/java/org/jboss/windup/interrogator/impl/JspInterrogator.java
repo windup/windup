@@ -15,39 +15,39 @@ import java.io.File;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.type.FileMeta;
-import org.jboss.windup.resource.type.JspMeta;
-import org.jboss.windup.resource.type.ZipEntryMeta;
+import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.metadata.type.JspMetadata;
+import org.jboss.windup.metadata.type.ZipEntryMetadata;
 
 
 /**
- * Interrogates JSP files. Extracts the JSP file, creates a JspMeta object, and passes it down the
+ * Interrogates JSP files. Extracts the JSP file, creates a JspMetadata object, and passes it down the
  * decorator pipeline.
  * 
  * @author bdavis
  * 
  */
-public class JspInterrogator extends ExtensionInterrogator<JspMeta> {
+public class JspInterrogator extends ExtensionInterrogator<JspMetadata> {
 
 	private static final Log LOG = LogFactory.getLog(JspInterrogator.class);
 
 	@Override
-	public JspMeta fileEntryToMeta(FileMeta entry) {
+	public JspMetadata fileEntryToMeta(FileMetadata entry) {
 		File file = entry.getFilePointer();
 		LOG.debug("Processing: " + file.getAbsolutePath());
 
-		JspMeta meta = new JspMeta();
+		JspMetadata meta = new JspMetadata();
 		meta.setArchiveMeta(entry.getArchiveMeta());
 		meta.setFilePointer(file);
 		return meta;
 	}
 	
 	@Override
-	public JspMeta archiveEntryToMeta(ZipEntryMeta archiveEntry) {
+	public JspMetadata archiveEntryToMeta(ZipEntryMetadata archiveEntry) {
 		File file = archiveEntry.getFilePointer();
 		LOG.debug("Processing: " + file.getAbsolutePath());
 
-		JspMeta meta = new JspMeta();
+		JspMetadata meta = new JspMetadata();
 		meta.setArchiveMeta(archiveEntry.getArchiveMeta());
 		meta.setFilePointer(file);
 		return meta;

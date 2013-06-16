@@ -12,10 +12,10 @@
 package org.jboss.windup.decorator.simple;
 
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.resource.decoration.Link;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.Link;
+import org.jboss.windup.metadata.type.FileMetadata;
 
-public class LinkDecorator implements MetaDecorator<FileMeta> {
+public class LinkDecorator implements MetaDecorator<FileMetadata> {
 	protected String link;
 	protected String description;
 
@@ -27,7 +27,7 @@ public class LinkDecorator implements MetaDecorator<FileMeta> {
 		this.link = link;
 	}
 
-	public void processMeta(FileMeta file) {
+	public void processMeta(FileMetadata file) {
 		Link lr = new Link();
 		lr.setDescription(description);
 		lr.setLink(link);

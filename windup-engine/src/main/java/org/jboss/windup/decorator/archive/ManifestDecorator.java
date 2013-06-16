@@ -19,10 +19,10 @@ import java.util.jar.Manifest;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.decorator.MetaDecorator;
-import org.jboss.windup.resource.type.ManifestMeta;
+import org.jboss.windup.metadata.type.ManifestMetadata;
 
 
-public abstract class ManifestDecorator implements MetaDecorator<ManifestMeta> {
+public abstract class ManifestDecorator implements MetaDecorator<ManifestMetadata> {
 
 	protected String extractValue(Manifest mf, List<String> priority) {
 		String val = findValueInAttribute(mf.getMainAttributes(), priority);

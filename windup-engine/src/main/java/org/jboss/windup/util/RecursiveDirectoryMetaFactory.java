@@ -16,7 +16,7 @@ import java.io.File;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.type.archive.DirectoryMeta;
+import org.jboss.windup.metadata.type.archive.DirectoryMetadata;
 
 public class RecursiveDirectoryMetaFactory {
 
@@ -28,8 +28,8 @@ public class RecursiveDirectoryMetaFactory {
 		this.start = dir;
 	}
 	
-	public DirectoryMeta recursivelyExtract() {
-		DirectoryMeta dirMeta = new DirectoryMeta();
+	public DirectoryMetadata recursivelyExtract() {
+		DirectoryMetadata dirMeta = new DirectoryMetadata();
 		dirMeta.setFilePointer(start);
 		dirMeta.setName(start.getName());
 		dirMeta.setRelativePath("windup");
@@ -38,7 +38,7 @@ public class RecursiveDirectoryMetaFactory {
 		return dirMeta;
 	}
 	
-	protected void populateChildren(DirectoryMeta parent) {
+	protected void populateChildren(DirectoryMetadata parent) {
 		File[] files = parent.getFilePointer().listFiles();
 		if(LOG.isDebugEnabled()) {
 			LOG.debug(files.length + " Children of "+parent.getFilePointer().getAbsolutePath());
@@ -51,7 +51,7 @@ public class RecursiveDirectoryMetaFactory {
 					continue;
 				}
 				
-				DirectoryMeta dirMeta = new DirectoryMeta();
+				DirectoryMetadata dirMeta = new DirectoryMetadata();
 				parent.getNestedArchives().add(dirMeta);
 				dirMeta.setArchiveMeta(parent);
 				dirMeta.setFilePointer(file);

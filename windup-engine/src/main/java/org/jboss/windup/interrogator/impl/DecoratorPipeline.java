@@ -12,9 +12,9 @@
 package org.jboss.windup.interrogator.impl;
 
 import org.jboss.windup.decorator.ChainingDecorator;
-import org.jboss.windup.resource.type.ResourceMeta;
+import org.jboss.windup.metadata.type.ResourceMetadata;
 
-public class DecoratorPipeline<T extends ResourceMeta> extends ChainingDecorator<T> {
+public class DecoratorPipeline<T extends ResourceMetadata> extends ChainingDecorator<T> {
 
 	@Override
 	public void processMeta(T meta) {

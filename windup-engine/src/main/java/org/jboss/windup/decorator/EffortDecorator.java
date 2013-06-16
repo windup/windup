@@ -16,12 +16,12 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.hint.MatchingProcessor;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.AbstractDecoration.NotificationLevel;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
-public class EffortDecorator implements MetaDecorator<FileMeta> {
+public class EffortDecorator implements MetaDecorator<FileMetadata> {
 	private static final Log LOG = LogFactory.getLog(EffortDecorator.class);
 
 	protected List<MatchingProcessor> matchingProcessors;
@@ -36,7 +36,7 @@ public class EffortDecorator implements MetaDecorator<FileMeta> {
 	}
 
 	@Override
-	public void processMeta(FileMeta file) {
+	public void processMeta(FileMetadata file) {
 		for (AbstractDecoration dr : file.getDecorations()) {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Applying notification to: " + matchingProcessors.size() + " for decoration: " + dr.getPattern());

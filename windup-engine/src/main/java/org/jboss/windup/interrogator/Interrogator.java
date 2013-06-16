@@ -13,10 +13,10 @@ package org.jboss.windup.interrogator;
 
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.interrogator.impl.DecoratorPipeline;
-import org.jboss.windup.resource.type.ResourceMeta;
+import org.jboss.windup.metadata.type.ResourceMetadata;
 
 
-public abstract class Interrogator<T extends ResourceMeta> implements ZipEntryInterrogator<T>, FileInterrogator<T>, MetaDecorator<T> {
+public abstract class Interrogator<T extends ResourceMetadata> implements ZipEntryInterrogator<T>, FileInterrogator<T>, MetaDecorator<T> {
 
 	protected DecoratorPipeline<T> decoratorPipeline;
 	

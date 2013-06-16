@@ -14,8 +14,8 @@ package org.jboss.windup.decorator.xml;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.decorator.gate.XPathGateDecorator;
-import org.jboss.windup.resource.decoration.Classification;
-import org.jboss.windup.resource.type.XmlMeta;
+import org.jboss.windup.metadata.decoration.Classification;
+import org.jboss.windup.metadata.type.XmlMetadata;
 import org.springframework.beans.factory.InitializingBean;
 
 
@@ -29,7 +29,7 @@ public class XPathClassifyingDecorator extends XPathGateDecorator implements Ini
 	}
 
 	@Override
-	protected void chainDecorators(XmlMeta meta) {
+	protected void chainDecorators(XmlMetadata meta) {
 		LOG.debug("chainDecorators: " + meta);
 		// this is only called when the XPathGate is true.
 		Classification result = new Classification();

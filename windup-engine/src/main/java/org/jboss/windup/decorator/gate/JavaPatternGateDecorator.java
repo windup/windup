@@ -15,10 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.JavaLine;
-import org.jboss.windup.resource.decoration.SourceType;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.JavaLine;
+import org.jboss.windup.metadata.decoration.SourceType;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
 public class JavaPatternGateDecorator extends RegexPatternGateProcessor {
@@ -34,7 +34,7 @@ public class JavaPatternGateDecorator extends RegexPatternGateProcessor {
 	}
 
 	@Override
-	protected List<AbstractDecoration> matchResults(FileMeta meta) {
+	protected List<AbstractDecoration> matchResults(FileMetadata meta) {
 		List<AbstractDecoration> results = new LinkedList<AbstractDecoration>();
 
 		for (AbstractDecoration dr : meta.getDecorations()) {

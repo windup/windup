@@ -14,11 +14,11 @@ package org.jboss.windup.decorator;
 import java.util.List;
 
 import org.jboss.windup.hint.ResultProcessor;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.type.FileMetadata;
 
 
-public class HintDecorator implements MetaDecorator<FileMeta> {
+public class HintDecorator implements MetaDecorator<FileMetadata> {
 	protected List<ResultProcessor> hintProcessors;
 
 	public void setHintProcessors(List<ResultProcessor> hintProcessors) {
@@ -34,7 +34,7 @@ public class HintDecorator implements MetaDecorator<FileMeta> {
 	}
 
 	@Override
-	public void processMeta(FileMeta file) {
+	public void processMeta(FileMetadata file) {
 		for (AbstractDecoration dr : file.getDecorations()) {
 			for (ResultProcessor hp : hintProcessors) {
 				hp.process(dr);

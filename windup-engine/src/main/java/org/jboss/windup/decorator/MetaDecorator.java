@@ -11,15 +11,15 @@
 */
 package org.jboss.windup.decorator;
 
-import org.jboss.windup.resource.type.ResourceMeta;
+import org.jboss.windup.metadata.type.ResourceMetadata;
 
 /*
- * Decorators are responsible for taking a FileMeta or subclass and adding Decorations
+ * Decorators are responsible for taking a FileMetadata or subclass and adding Decorations
  * 
  * @author bdavis
  * 
  * @param <T>
  */
-public interface MetaDecorator<T extends ResourceMeta> {
+public interface MetaDecorator<T extends ResourceMetadata> {
 	public abstract void processMeta(T meta);
 }

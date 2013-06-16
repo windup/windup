@@ -18,12 +18,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.Line;
-import org.jboss.windup.resource.type.FileMeta;
+import org.jboss.windup.metadata.decoration.Line;
+import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.util.NewLineUtil;
 
 
-public class RegexDecorator extends ChainingDecorator<FileMeta> {
+public class RegexDecorator extends ChainingDecorator<FileMetadata> {
 	private static final Log LOG = LogFactory.getLog(RegexDecorator.class);
 
 	protected Pattern regexPattern;
@@ -33,7 +33,7 @@ public class RegexDecorator extends ChainingDecorator<FileMeta> {
 	}
 
 	@Override
-	public void processMeta(FileMeta meta) {
+	public void processMeta(FileMetadata meta) {
 		try {
 			String contents = FileUtils.readFileToString(meta.getFilePointer());
 			Matcher matcher = regexPattern.matcher(contents);

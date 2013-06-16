@@ -16,10 +16,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.resource.decoration.AbstractDecoration;
-import org.jboss.windup.resource.decoration.archetype.version.PomVersion;
-import org.jboss.windup.resource.decoration.archetype.version.Version;
-import org.jboss.windup.resource.type.ManifestMeta;
+import org.jboss.windup.metadata.decoration.AbstractDecoration;
+import org.jboss.windup.metadata.decoration.archetype.version.PomVersion;
+import org.jboss.windup.metadata.decoration.archetype.version.Version;
+import org.jboss.windup.metadata.type.ManifestMetadata;
 
 
 /**
@@ -46,7 +46,7 @@ public class ManifestVersionDecorator extends ManifestDecorator {
 	}
 
 	@Override
-	public void processMeta(ManifestMeta file) {
+	public void processMeta(ManifestMetadata file) {
 		// check to see if a version already exists. Only process if no version exists..
 		for (AbstractDecoration dr : file.getArchiveMeta().getDecorations()) {
 			if (dr instanceof PomVersion) {

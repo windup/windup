@@ -36,14 +36,14 @@ import org.jboss.windup.graph.clz.GraphableClz;
 import org.jboss.windup.graph.clz.ProfileClz;
 import org.jboss.windup.graph.clz.UnknownClz;
 import org.jboss.windup.graph.profile.Profile;
-import org.jboss.windup.resource.decoration.ClassGraph;
-import org.jboss.windup.resource.type.archive.ArchiveMeta;
-import org.jboss.windup.resource.type.archive.ZipMeta;
+import org.jboss.windup.metadata.decoration.ClassGraph;
+import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
+import org.jboss.windup.metadata.type.archive.ZipMetadata;
 import org.jboss.windup.util.CustomerPackageResolver;
 import org.jboss.windup.util.ProfileResolver;
 
 
-public class ClassesProvidedDecorator implements MetaDecorator<ZipMeta> {
+public class ClassesProvidedDecorator implements MetaDecorator<ZipMetadata> {
 	public static String MISSING_DEPENDENCIES_TO_APPLICATION_CLASSES = "MISSING_DEPENDENCIES_TO_APPLICATION_CLASSES";
 	public static String PROVIDED_CLASS_LOCATIONS = "PROVIDED_CLASS_LOCATIONS";
 	
@@ -63,7 +63,7 @@ public class ClassesProvidedDecorator implements MetaDecorator<ZipMeta> {
 	}
 	
 	@Override
-	public void processMeta(ZipMeta meta) {
+	public void processMeta(ZipMetadata meta) {
 		if(true) return;
 		//recurse... only start at the top.
 		if(meta.getArchiveMeta() != null) {
@@ -162,7 +162,7 @@ public class ClassesProvidedDecorator implements MetaDecorator<ZipMeta> {
 		return className;
 	}
 	
-	protected void recursivelyCollectRequiredProvided(ZipMeta meta, Map<String, GraphableClz> provided) {
+	protected void recursivelyCollectRequiredProvided(ZipMetadata meta, Map<String, GraphableClz> provided) {
 		try {
 			ZipEntry entry;
 			Enumeration<?> e = meta.getZipFile().entries();
@@ -183,8 +183,8 @@ public class ClassesProvidedDecorator implements MetaDecorator<ZipMeta> {
 			LOG.error("Exception getting JDK version.", e);
 		}
 		
-		for(ArchiveMeta child : meta.getNestedArchives()) {
-			ZipMeta cast = (ZipMeta) child;
+		for(ArchiveMetadata child : meta.getNestedArchives()) {
+			ZipMetadata cast = (ZipMetadata) child;
 			this.recursivelyCollectRequiredProvided(cast, provided);
 		}
 	}
