@@ -13,16 +13,13 @@ package org.jboss.windup;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -33,13 +30,11 @@ import org.jboss.windup.interrogator.ZipInterrogationEngine;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
 import org.jboss.windup.util.LogController;
-import org.jboss.windup.util.RPMToZipTransformer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class WindupEngine {
-	private static final String[] RPM_EXTENSIONS = new String[] { ".rpm", ".rpm_" };
 	private static final Log LOG = LogFactory.getLog(WindupEngine.class);
 
 	private ApplicationContext context;
@@ -113,6 +108,8 @@ public class WindupEngine {
 	 * @throws IOException
 	 */
 	public FileMetadata processFile(File file) throws IOException {
+		Validate.notNull(file, "File is required, but provided as null.");
+		
 		if(!settings.isSource()) {
 			throw new RuntimeException("Windup Engine must be set to source mode to process single files.");
 		}
@@ -129,20 +126,6 @@ public class WindupEngine {
 	}
 	
 	/**
-	 * <p>
-	 * Process a single file.
-	 * </p>
-	 * 
-	 * @param filePath - path to the single file path
-	 * @throws IOException
-	 */
-	public FileMetadata processFile(String filePath) throws IOException {
-		return processFile(new File(filePath));
-	}
-
-
-	
-	/**
 	 * Processes a directory, recursively, in source mode.  That is, it will not process zip archives, but will treat the directory as a project directory, for example.  
 	 * 
 	 * @param dirPath - path to the source directory
@@ -155,29 +138,11 @@ public class WindupEngine {
 		Validate.notNull(dirPath.isDirectory(), "Input must be a directory.");
 		Validate.notNull(outputPath, "Directory output path must be provided.");
 		
-		
 		File logFile = null;
-		
-		if(outputPath == null) {
-			String outputName = dirPath.getName() +"-doc";
-			String outputPathLoc = dirPath.getParentFile().getAbsolutePath();
-			outputPathLoc = outputPathLoc + File.separator + outputName;
-			
-			//create output path...
-			outputPath = new File(outputPathLoc);
-			LOG.info("Creating output path: "+outputPath.getAbsolutePath());
-			LOG.info("  - To overwrite this in the future, use the -output parameter.");
-		}
-		
-		if (!outputPath.exists()) {
-			FileUtils.forceMkdir(outputPath);
-		}
-		
+				
 		if (StringUtils.isNotBlank(settings.getLogLevel())) {
 			LogController.setLogLevel(settings.getLogLevel());
 		}
-
-		
 		
 		try {
 			if (settings.isCaptureLog()) {
@@ -193,70 +158,7 @@ public class WindupEngine {
 		}
 	}
 
-	/**
-	 * Processes a directory of zip archives, producing reports for each archive.  This is non-recursive.
-	 * @param dirPath - path to "batch" zip directory
-	 * @return
-	 * @throws IOException
-	 */
-	public Collection<ArchiveMetadata> processDirectory(File dirPath) throws IOException {
-		Validate.notNull(dirPath, "Directory Path is required, but null.");
-		Validate.isTrue(dirPath.isDirectory(), "Directory Path must be to directory.");
-		
-		LOG.info("Processing directory: " + dirPath.getAbsolutePath());
-		List<File> archives = new LinkedList<File>(Arrays.asList(dirPath.listFiles((FilenameFilter) new SuffixFileFilter(supportedExtensions))));
-
-		File[] rpms = dirPath.listFiles((FilenameFilter) new SuffixFileFilter(RPM_EXTENSIONS));
-		if (rpms.length > 0) {
-			for (File rpm : rpms) {
-				try {
-					File zip = RPMToZipTransformer.convertRpmToZip(rpm);
-					archives.add(zip);
-				}
-				catch (Exception e) {
-					LOG.warn("Conversion of RPM: " + rpm.getAbsolutePath() + " to ZIP failed.");
-				}
-
-			}
-		}
-
-		if (LOG.isDebugEnabled()) {
-			LOG.info("Found " + archives.size() + " Archives");
-		}
-
-		List<ArchiveMetadata> archiveMetas = new LinkedList<ArchiveMetadata>();
-		for (File archive : archives) {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Processing archive: " + archive.getAbsolutePath());
-			}
-			LOG.info("ArchiveMetadata Path: " + archive.getAbsolutePath());
-			archiveMetas.add(processArchive(archive));
-		}
-		
-		return archiveMetas;
-	}
-
-	/**
-	 * Processes a zip archive and returns the meta information.  
-	 * 
-	 * @param archivePath - path to zip archive
-	 * @return
-	 * @throws IOException
-	 */
-	public ArchiveMetadata processArchive(File archivePath) throws IOException {
-		String outputLoc = StringUtils.substringBeforeLast(archivePath.getAbsolutePath(), ".");
-		outputLoc += "-" + StringUtils.substringAfterLast(archivePath.getAbsolutePath(), ".") + "-doc";
-
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Setting output location based on input: " + outputLoc);
-		}
-
-		File outputLocation = new File(outputLoc);
-		FileUtils.forceMkdir(outputLocation);
-		
-		return processArchive(archivePath, outputLocation);
-	}
-
+	
 	/**
 	 * Processes a zip archive and returns the meta information; the report will be output to the outputPath.
 	 * @param archivePath - path to zip archive
@@ -270,18 +172,6 @@ public class WindupEngine {
 		
 		if (!archivePath.exists()) {
 			throw new FileNotFoundException("ArchiveMetadata not found.");
-		}
-
-		for (String ext : RPM_EXTENSIONS) {
-			if (StringUtils.endsWithIgnoreCase(archivePath.getAbsolutePath(), ext)) {
-				try {
-					archivePath = RPMToZipTransformer.convertRpmToZip(archivePath);
-				}
-				catch (Exception e) {
-					LOG.error("Exception converting RPM: " + archivePath.getName() + " to ZIP.", e);
-					return null;
-				}
-			}
 		}
 
 		File logFile = null;

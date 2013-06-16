@@ -69,7 +69,8 @@ public class WindupTestCase {
 			expectedArhciveDecorations = new String[0];
 		}
 
-		FileMetadata meta = this.getMetaEngine().processFile(this.getResourcePath(fileName));
+		File inputFile = new File(this.getResourcePath(fileName));
+		FileMetadata meta = this.getMetaEngine().processFile(inputFile);
 
 		Assert.assertNotNull("Returned meta should not be null", meta);
 
@@ -241,7 +242,7 @@ public class WindupTestCase {
 
 		File input = new File(this.getResourcePath(parentPath));
 		File output = new File(this.getResourcePath(outputPath));
-		Collection<ArchiveMetadata> parentArchiveMetas = this.getMetaEngine().processDirectory(input);
+		Collection<ArchiveMetadata> parentArchiveMetas = this.getReportEngine().batchInputDirectory(input);
 		Assert.assertNotNull("Returned meta should not be null", parentArchiveMetas);
 
 		for (ArchiveMetadata childArchiveMeta : parentArchiveMetas) {
@@ -251,6 +252,18 @@ public class WindupTestCase {
 		}
 	}
 
+
+	/**
+	 * @return a fully setup {@link WindupMetaEngine} for use during testing
+	 */
+	protected ReportEngine getReportEngine() {
+		WindupEnvironment settings = getEnvironment();
+		ReportEngine metaEngine = new ReportEngine(settings);
+
+		return metaEngine;
+	}
+
+	
 	/**
 	 * @return a fully setup {@link WindupMetaEngine} for use during testing
 	 */
