@@ -24,7 +24,7 @@
         </fileSet>
         <fileSet>
             <directory>src/main/assembly/extensions</directory>
-            <outputDirectory>rules/extensions</outputDirectory>
+            <outputDirectory>rules/extensions/</outputDirectory>
             <includes>
                 <include>*.xml</include>
             </includes>
@@ -32,7 +32,7 @@
         
         <fileSet>
             <directory>../windup-rules/src/main/resources</directory>
-            <outputDirectory>rules/base</outputDirectory>
+            <outputDirectory>rules/base/</outputDirectory>
             <includes>
                 <include>*.xml</include>
                 <include>**/*.xml</include>

@@ -53,7 +53,7 @@ public class WindupEngine {
 		// sets environment variables needed for Spring configuration.
 		List<String> springContexts = new LinkedList<String>();
 
-		springContexts.add("jboss-windup-context.xml");
+		springContexts.add("/jboss-windup-context.xml");
 		this.context = new ClassPathXmlApplicationContext(springContexts.toArray(new String[springContexts.size()]));
 		
 		interrogationEngine = (ZipInterrogationEngine) context.getBean("archive-interrogation-engine");

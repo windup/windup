@@ -17,6 +17,7 @@
 				<finalName>${project.artifactId}</finalName>
 				<outputDirectory>${project.build.directory}/assembly-temp</outputDirectory>
 				<archive>
+					<index>false</index>
 					<manifest>
 						<addClasspath>true</addClasspath>
 						<classpathPrefix>lib/</classpathPrefix>
@@ -29,6 +30,7 @@
 				<descriptorRefs>
 					<descriptorRef>jar-with-dependencies</descriptorRef>
 				</descriptorRefs>
+				
 			</configuration>
 		</plugin>
 		<plugin>
