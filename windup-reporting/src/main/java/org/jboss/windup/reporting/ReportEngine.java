@@ -53,7 +53,7 @@ public class ReportEngine {
 	}
 	
 	/**
-	 * Main processing method.  This 
+	 * Main processing method. 
 	 * @param inputLocation
 	 * @param outputLocation
 	 * @throws IOException
