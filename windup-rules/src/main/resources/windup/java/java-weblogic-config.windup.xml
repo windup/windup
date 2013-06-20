@@ -66,5 +66,21 @@
 		]]>	
 	</windup:java-hint>
     </windup:java-hints>
+    
+    <windup:java-hint regex="oracle.jms.AQjmsConnectionFactory" hint="Migrate to: javax.jms.ConnectionFactory" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsQueueConnectionFactory" hint="Migrate to: javax.jms.QueueConnectionFactory" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsTopicConnectionFactory" hint="Migrate to: javax.jms.TopicConnectionFactory" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsDestination" hint="Migrate to: javax.jms.Destination" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsMessage" hint="Migrate to: javax.jms.Message" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsBytesMessage" hint="Migrate to: javax.jms.BytesMessage" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsMapMessage" hint="Migrate to: javax.jms.MapMessage" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsObjectMessage" hint="Migrate to: javax.jms.ObjectMessage" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsStreamMessage" hint="Migrate to: javax.jms.StreamMessage" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsTextMessage" hint="Migrate to: javax.jms.TextMessage" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsConnection" hint="Migrate to: javax.jms.Connection" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsConsumer" hint="Migrate to: javax.jms.MessageConsumer" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsProducer" hint="Migrate to: javax.jms.MessageProducer"  effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsQueueBrowser" hint="Migrate to: javax.jms.QueueBrowser" effort="1"/>
+	<windup:java-hint regex="oracle.jms.AQjmsSession" hint="Migrate to: javax.jms.Session" effort="1"/>
 	
 </beans>
