@@ -24,5 +24,31 @@
 	
 	<windup:java-hints id="java-websphere-hints">
 		<windup:java-hint regex="com.ibm.websphere.asynchbeans.WorkManager" hint="Migrate to JBoss JCA Work Manager" effort="1"/>
+		
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeConnection$" hint="Migrate to: javax.jms.Connection" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeQueueConnection$" hint="Migrate to: javax.jms.QueueConnection" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeConnectionFactory$" hint="Migrate to: javax.jms.ConnectionFactory" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeJNDIConnectionFactory$" hint="Migrate to: javax.jms.ConnectionFactory" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeJNDIQueueConnectionFactory$" hint="Migrate to: javax.jms.ConnectionFactory" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeQueueConnectionFactory$" hint="Migrate to: javax.jms.QueueConnectionFactory" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeConnectionMetaData$" hint="Migrate to: javax.jms.ConnectionMetaData" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeDestination$" hint="Migrate to: javax.jms.Destination" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeJMSQueue$" hint="Migrate to: javax.jms.Queue" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeJMSJNDIQueue$" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeTemporaryQueue$" hint="Migrate to: javax.jms.TemporaryQueue" effort="1"/>
+		
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeMessage$" hint="Migrate to: javax.jms.Message" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeBytesMessage$" hint="Migrate to: javax.jms.BytesMessage" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeMapMessage$" hint="Migrate to: javax.jms.MapMessage" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeObjectMessage$" hint="Migrate to: javax.jms.ObjectMessage" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeStreamMessage$" hint="Migrate to: javax.jms.StreamMessage" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeTextMessage$" hint="Migrate to: javax.jms.TextMessage" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeMessageConsumer$" hint="Migrate to: javax.jms.MessageConsumer" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeQueueReceiver$" hint="Migrate to: javax.jms.QueueReceiver" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeMessageProducer$" hint="Migrate to: javax.jms.MessageProducer" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeQueueSender$" hint="Migrate to: javax.jms.QueueSender" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeQueueBrowser$" hint="Migrate to: javax.jms.QueueBrowser" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeSession$" hint="Migrate to: javax.jms.Session" effort="1"/>
+		<windup:java-hint regex="com.ibm.mqe.jms.MQeQueueSession$" hint="Migrate to: javax.jms.QueueSession" effort="1"/>
 	</windup:java-hints>
 </beans>

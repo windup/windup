@@ -14,8 +14,6 @@ package org.jboss.windup.reporting.html;
 import org.jboss.windup.metadata.decoration.effort.Effort;
 import org.jboss.windup.reporting.data.ResourceData;
 
-
-
 public class ResourceReport extends ResourceData implements Comparable<ResourceReport> {
 	private String title;
 	private String summary;

@@ -173,11 +173,6 @@ public class ReportEngine {
 		
 		if(reporters != null) {
 			for(Reporter reporter : reporters) {
-				LOG.info("Report Directory: "+ reportDirectory);
-				LOG.info("Archive Directory: "+ archive.getArchiveOutputDirectory());
-				LOG.info("Archive: "+ archive);
-				LOG.info("Reporter: "+ reporter);
-				
 				reporter.process(archive, reportDirectory);
 			}
 		}
