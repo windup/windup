@@ -24,6 +24,11 @@
 		<!-- JBoss 4 to JBoss 5 -->
 		<windup:java-hint source-type="TYPE" regex="javax.jms.QueueConnectionFactory" hint="If migrating from JBoss 4, replace lookup string &quot;QueueConnectionFactory&quot; with &quot;ConnectionFactory&quot;" effort="1"/>
 		<windup:java-hint source-type="TYPE" regex="javax.persistence.JoinColumn" hint="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn" effort="0"/>
+	    <windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.Service" hint="Migrated to org.jboss.ejb3.annotation.Service"/>
+	    <windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.Management" hint="Migrated to org.jboss.ejb3.annotation.Management"/>
+	    <windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.LocalBinding" hint="Migrated to org.jboss.ejb3.annotation.LocalBinding"/>
+	    <windup:java-hint source-type="TYPE" regex="org.jboss.annotation.ejb.Depends" hint="Validate that JBoss 6 Dependency exists."/>
+
 	</windup:java-hints>
 
 </beans>
