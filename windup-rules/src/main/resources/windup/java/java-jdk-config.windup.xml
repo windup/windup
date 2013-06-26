@@ -512,26 +512,26 @@
 		</windup:java-hint>
 	<!-- Deprecated Methods - End -->
 	<!-- Deprecated Constructors - Begin -->
-		<windup:java-hint source-type="CONSTRUCT" regex="javax.management.AttributeValueExp" effort="0" hint="Deprecated By JDK 6. An instance created with this constructor cannot be used in a query." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Date" effort="0" hint="Deprecated By JDK 6. instead use the constructor Date(long date)" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date) or GregorianCalendar(year + 1900, month, date)." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min) or GregorianCalendar(year + 1900, month, date, hrs, min)." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min, sec)." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.parse(String s)." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.awt.event.KeyEvent" effort="0" hint="Deprecated By JDK 6. as of JDK1.1" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.server.Operation" effort="0" hint="Deprecated By JDK 6. no replacement" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.RMISecurityException" effort="0" hint="Deprecated By JDK 6. no replacement" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.RMISecurityException" effort="0" hint="Deprecated By JDK 6. no replacement" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.ServerRuntimeException" effort="0" hint="Deprecated By JDK 6. no replacement" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.server.SkeletonMismatchException" effort="0" hint="Deprecated By JDK 6. no replacement" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.net.Socket" effort="0" hint="Deprecated By JDK 6. Use DatagramSocket instead for UDP transport." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.net.Socket" effort="0" hint="Deprecated By JDK 6. Use DatagramSocket instead for UDP transport." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.lang.String" effort="0" hint="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String constructors that take a Charset, charset name, or that use the platform's default charset." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.lang.String" effort="0" hint="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String constructors that take a Charset, charset name, or that use the platform's default charset." />
-		<windup:java-hint source-type="CONSTRUCT" regex="org.omg.CORBA.TCKind" effort="0" hint="Deprecated By JDK 6. Do not use this constructor as this method should be private according to the OMG specification. Use TCKind.from_int(int) instead." />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Time" effort="0" hint="Deprecated By JDK 6. Use the constructor that takes a milliseconds value in place of this constructor" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Timestamp" effort="0" hint="Deprecated By JDK 6. instead use the constructor Timestamp(long millis)" />
-		<windup:java-hint source-type="CONSTRUCT" regex="java.io.StreamTokenizer" effort="0">
+		<windup:java-hint source-type="CONSTRUCT" regex="javax.management.AttributeValueExp\(\)" effort="0" hint="Deprecated By JDK 6. An instance created with this constructor cannot be used in a query." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Date\(int, int, int\)" effort="0" hint="Deprecated By JDK 6. instead use the constructor Date(long date)" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date\(int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date) or GregorianCalendar(year + 1900, month, date)." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date\(int, int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min) or GregorianCalendar(year + 1900, month, date, hrs, min)." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date\(int, int, int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min, sec)." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date\(java.lang.String\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.parse(String s)." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.awt.event.KeyEvent\(java.awt.Component, int, long, int, int\)" effort="0" hint="Deprecated By JDK 6. as of JDK1.1" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.server.Operation\(java.lang.String\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.RMISecurityException\(java.lang.String\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.RMISecurityException\(java.lang.String, java.lang.String\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.ServerRuntimeException\(java.lang.String, java.lang.Exception\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.server.SkeletonMismatchException\(java.lang.String\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.net.Socket\(java.net.InetAddress, int, boolean\)" effort="0" hint="Deprecated By JDK 6. Use DatagramSocket instead for UDP transport." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.net.Socket\(java.lang.String, int, boolean\)" effort="0" hint="Deprecated By JDK 6. Use DatagramSocket instead for UDP transport." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.lang.String\(byte\[\], int\)" effort="0" hint="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String constructors that take a Charset, charset name, or that use the platform's default charset." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.lang.String\(byte\[\], int, int, int\)" effort="0" hint="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String constructors that take a Charset, charset name, or that use the platform's default charset." />
+		<windup:java-hint source-type="CONSTRUCT" regex="org.omg.CORBA.TCKind\(int\)" effort="0" hint="Deprecated By JDK 6. Do not use this constructor as this method should be private according to the OMG specification. Use TCKind.from_int(int) instead." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Time\(int, int, int\)" effort="0" hint="Deprecated By JDK 6. Use the constructor that takes a milliseconds value in place of this constructor" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Timestamp\(int, int, int, int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. instead use the constructor Timestamp(long millis)" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.io.StreamTokenizer\(java.io.InputStream\)" effort="0">
 			<![CDATA[
 				 Deprecated By JDK 6 - As of JDK version 1.1, the preferred way to tokenize an input stream is to convert it into a character stream, for example:
 	
