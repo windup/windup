@@ -28,7 +28,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.windup.decorator.MetaDecorator;
+import org.jboss.windup.decorator.gate.GateDecorator;
 import org.jboss.windup.hint.ResultProcessor;
 import org.jboss.windup.metadata.decoration.Summary;
 import org.jboss.windup.metadata.decoration.XmlLine;
@@ -42,7 +42,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class XPathSummaryDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
+public class XPathSummaryDecorator extends GateDecorator<XmlMetadata> implements InitializingBean {
+
 	private static final Log LOG = LogFactory.getLog(XPathSummaryDecorator.class);
 	private static final XPathFactory factory = XPathFactory.newInstance();
 
@@ -89,43 +90,51 @@ public class XPathSummaryDecorator implements MetaDecorator<XmlMetadata>, Initia
 		this.xpathExpression = xpathExpression;
 	}
 
-	@Override
-	public void processMeta(final XmlMetadata meta) {
-		if (meta.getParsedDocument() == null) {
-			LOG.warn("Skipping XPathClassifyingDecorator: " + meta.getFilePointer().getAbsolutePath() + " because the document is unparsed.");
-			return;
-		}
 
-		try {
-			Document doc = meta.getParsedDocument();
-			if (doc == null) {
-				throw new NullPointerException();
-			}
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Processing: " + xpathExpression);
-			}
-			final NodeList nodes = (NodeList) expression.evaluate(doc, XPathConstants.NODESET);
+    @Override
+    protected boolean continueProcessing(XmlMetadata meta) {
+        boolean isProcessed = false;
 
-			if (nodes != null) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Found results for: " + meta.getFilePointer().getAbsolutePath());
-				}
-				for (int i = 0; i < nodes.getLength(); i++) {
-					Integer lineNumber = (Integer) LocationAwareXmlReader.getLineNumber(nodes.item(i));
-					String match = convertNode(nodes.item(i));
-					if (inline && lineNumber != null) {
-						createLineNumberMeta(meta, lineNumber, this.matchDescription, nodes.item(i));
-					}
-					else {
-						createSummaryMeta(meta, this.matchDescription, match);
-					}
-				}
-			}
-		}
-		catch (Exception e) {
-			LOG.error("Exception during XPath.", e);
-		}
-	}
+        if (meta.getParsedDocument() == null) {
+            LOG.warn("Skipping XPathClassifyingDecorator: " +
+                meta.getFilePointer().getAbsolutePath() +
+                " because the document is unparsed.");
+            return isProcessed;
+        }
+
+        try {
+            Document doc = meta.getParsedDocument();
+            if (doc == null) {
+                throw new NullPointerException();
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Processing: " + xpathExpression);
+            }
+            final NodeList nodes = (NodeList) expression.evaluate(doc, XPathConstants.NODESET);
+
+            if (nodes != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Found results for: " + meta.getFilePointer().getAbsolutePath());
+                }
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Integer lineNumber = (Integer) LocationAwareXmlReader.getLineNumber(nodes.item(i));
+                    String match = convertNode(nodes.item(i));
+                    if (inline && lineNumber != null) {
+                        createLineNumberMeta(meta, lineNumber, this.matchDescription, nodes.item(i));
+                    }
+                    else {
+                        createSummaryMeta(meta, this.matchDescription, match);
+                    }
+                }
+                isProcessed = true;
+            }
+        }
+        catch (Exception e) {
+            LOG.error("Exception during XPath.", e);
+        }
+        return isProcessed;
+    }
+
 
 	protected void createSummaryMeta(final XmlMetadata meta, String description, String match) {
 		Summary result = new Summary();
