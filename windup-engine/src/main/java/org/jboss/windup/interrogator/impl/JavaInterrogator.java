@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.metadata.type.JavaMetadata;
@@ -150,8 +151,15 @@ public class JavaInterrogator extends ExtensionInterrogator<JavaMetadata> {
 		@SuppressWarnings("unchecked")
 		List<TypeDeclaration> types = cu.types();
 		for(TypeDeclaration type : types) {
-			String fullPackage = cu.getPackage().getName().getFullyQualifiedName();
-			fullPackage = fullPackage +"."+type.getName().getFullyQualifiedName();
+			//if class is in package grab that
+			PackageDeclaration packageDeclaration = cu.getPackage();
+			String packageName = "";
+			if(packageDeclaration != null) {
+				packageName = cu.getPackage().getName().getFullyQualifiedName() + ".";
+			}
+			
+			//generate full class name
+			String fullPackage = packageName + type.getName().getFullyQualifiedName();
 			meta.setQualifiedClassName(fullPackage);
 			
 			if(LOG.isDebugEnabled()) {
