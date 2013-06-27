@@ -112,7 +112,7 @@ public class XPathSummaryDecorator extends GateDecorator<XmlMetadata> implements
             }
             final NodeList nodes = (NodeList) expression.evaluate(doc, XPathConstants.NODESET);
 
-            if (nodes != null) {
+            if (nodes != null && nodes.getLength() > 0) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Found results for: " + meta.getFilePointer().getAbsolutePath());
                 }
