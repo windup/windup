@@ -1,0 +1,26 @@
+ <!--
+<bean name="BootstrapProfileFactory" class="org.jboss.system.server.profileservice.StaticClusteredProfileFactory">
+      <property name="bindingsURI">${jboss.server.home.url}conf/bindingservice.beans</property>
+      <property name="bootstrapURI">${jboss.server.home.url}conf/jboss-service.xml</property>
+      <property name="deployersURI">${jboss.server.home.url}deployers</property>
+     -->
+      <property name="applicationURIs">
+         <list elementClass="java.net.URI">
+            <value>${jboss.server.home.url}deploy</value>
+         </list>
+      </property>
+      <!-- Optional list of URIs that will be kept in sync across the cluster.
+           Requires deploy/cluster/farm-deployment-jboss-beans.xml to be
+           deployed as well.
+      -->
+     <!--
+      <property name="farmURIs">
+         <list elementClass="java.net.URI">
+            <value>${jboss.server.home.url}farm</value>
+         </list>
+      </property>
+      <property name="attachmentStoreRoot">${jboss.server.data.dir}/attachments</property>
+      <property name="profileFactory"><inject bean="ProfileFactory" /></property>
+
+   </bean>
+  -->
