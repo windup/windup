@@ -157,11 +157,13 @@
 				<entry key="com.sap" value="SAP" />
 				<entry key="com.businessobjects" value="SAP" />
 				<entry key="com.mchange" value="Machinery For Change" />
-
+				<entry key="jcifs" value="Java CIFS Client Library"/>
 				<entry key="com.atlassian" value="Atlassian" />
 				<entry key="atlassian" value="Atlassian" />
 
 				<entry key="net.sf" value="SourceForge" />
+				
+				<entry key="com.aspose" value="Aspose" />
 
 				<!-- Known open source libraries. -->
 				<entry key="org.scannotation" value="Scannotation" />

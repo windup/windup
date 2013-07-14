@@ -34,6 +34,9 @@
 		
 		<windup:xpath-classification description="Struts Chain Of Responsibility Configuration" xpath="//catalog/chain | //catalog/chains" effort="0" />
 		
+		<windup:xpath-classification description="Maven Assembly Plugin Configuration" xpath="/mvna:assembly">
+			<windup:namespace prefix="mvna" uri="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"/>
+		</windup:xpath-classification>
 		
 		<!-- XSLT -->
 		<windup:xpath-classification description="XSLT Configuration" xpath="/xslt:stylesheet" effort="0">

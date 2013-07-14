@@ -91,6 +91,9 @@
 							<windup:java-whitelist source-type="TYPE" regex="javax.management.+$"/>
 							<windup:java-whitelist source-type="METHOD" regex="javax.management.remote.JMXConnector.close.+$"/>
 							<windup:java-whitelist source-type="METHOD" regex="javax.management.remote.JMXConnector.getMBeanServerConnection\(\)"/>
+							<windup:java-whitelist regex="com.ibm.icu.text.+$"/>
+							<windup:java-whitelist regex="(?m)^oracle.sql.+\.(?!(?:OracleDriver|OracleConnection))\w+\b$"/>  <!-- White list any oracle.sql that doesn't end in OracleDriver or OracleConnection -->
+							<windup:java-whitelist regex="(?m)^oracle.jdbc.+\.(?!(?:OracleDriver|OracleConnection))\w+\b$"/>  <!-- White list any oracle.jdbc that doesn't end in OracleDriver or OracleConnection -->
 						</list>
 					</property>
 				</bean>
