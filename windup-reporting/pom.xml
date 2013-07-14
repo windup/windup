@@ -43,11 +43,6 @@
 			<artifactId>resources-api</artifactId>
 			<version>${version.forge}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.windup</groupId>
-			<artifactId>windup-api</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
 		<!-- End dependencies for fetching Addons -->
 
 		<dependency>
