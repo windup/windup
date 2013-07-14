@@ -13,6 +13,9 @@ import org.jboss.windup.reporting.Reporter;
 
 public class SwitchyardReporter implements Reporter
 {
+   {
+      System.setProperty("modules.ignore.jdk.factory", "true");
+   }
 
    @Override
    public void process(ArchiveMetadata archive, File reportDirectory)
