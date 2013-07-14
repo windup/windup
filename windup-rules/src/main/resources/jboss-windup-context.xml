@@ -485,6 +485,7 @@
 					<property name="resolver" ref="metaTransformationResolver"/>
 				</bean>
 				<bean class="org.jboss.windup.reporting.spreadsheet.ScorecardReporter"/>
+				<bean class="org.jboss.windup.reporting.integration.forge.SwitchyardReporter"/>
 			</set>
 		</constructor-arg>	
 	</bean>

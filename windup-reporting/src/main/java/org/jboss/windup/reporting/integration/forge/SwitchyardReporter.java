@@ -3,6 +3,8 @@ package org.jboss.windup.reporting.integration.forge;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.se.FurnaceFactory;
@@ -12,6 +14,7 @@ import org.jboss.windup.reporting.Reporter;
 
 public class SwitchyardReporter implements Reporter
 {
+	private static final Log LOG = LogFactory.getLog(SwitchyardReporter.class);
    {
       System.setProperty("modules.ignore.jdk.factory", "true");
    }
@@ -27,13 +30,12 @@ public class SwitchyardReporter implements Reporter
          {
             FileUtils.forceMkdir(forgeOutput);
 
-            furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(OperatingSystemUtils.getUserHomeDir(),
-                     ".windup"));
+            furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(OperatingSystemUtils.getUserHomeDir(), ".windup"));
             furnace.startAsync();
 
             while (!furnace.getStatus().isStarted())
             {
-               System.out.println("FURNACE STATUS: " + furnace.getStatus());
+               LOG.info("FURNACE STATUS: " + furnace.getStatus());
                Thread.sleep(100);
             }
 
@@ -41,7 +43,7 @@ public class SwitchyardReporter implements Reporter
          finally
          {
             furnace.stop();
-            System.out.println("Furnace stopped.");
+            LOG.info("Furnace stopped.");
          }
 
       }
