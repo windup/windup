@@ -7,15 +7,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.manager.AddonManager;
-import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
-import org.jboss.forge.addon.manager.request.InstallRequest;
-import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
-import org.jboss.forge.addon.maven.addon.MavenAddonDependencyResolver;
-import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -26,6 +18,11 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.manager.AddonManager;
+import org.jboss.forge.furnace.manager.impl.AddonManagerImpl;
+import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
+import org.jboss.forge.furnace.manager.request.InstallRequest;
+import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.se.FurnaceFactory;
 import org.jboss.forge.furnace.util.Addons;
@@ -43,6 +40,7 @@ public class SwitchyardForgeController implements Reporter
       System.setProperty("modules.ignore.jdk.factory", "true");
    }
 
+   @Override
    @SuppressWarnings("unchecked")
    public void process(ArchiveMetadata archive, File reportDirectory)
    {
@@ -106,7 +104,6 @@ public class SwitchyardForgeController implements Reporter
    {
       try
       {
-         MavenDependencyResolver resolver = new MavenDependencyResolver();
          AddonDependencyResolver addonResolver = new MavenAddonDependencyResolver();
          AddonManager addonManager = new AddonManagerImpl(furnace, addonResolver, false);
 
@@ -120,13 +117,12 @@ public class SwitchyardForgeController implements Reporter
          {
             String coordinates = "org.jboss.forge.addon:" + addonCoordinates;
             CoordinateBuilder coordinate = CoordinateBuilder.create(coordinates);
-            List<Coordinate> versions = resolver.resolveVersions(DependencyQueryBuilder.create(coordinate));
-            if (versions.isEmpty())
+            AddonId[] versions = addonResolver.resolveVersions(coordinate.toString());
+            if (versions.length < 1)
             {
                throw new IllegalArgumentException("No Artifact version found for " + coordinate);
             }
-            Coordinate vCoord = versions.get(versions.size() - 1);
-            addon = AddonId.from(vCoord.getGroupId() + ":" + vCoord.getArtifactId(), vCoord.getVersion());
+            addon = versions[versions.length - 1];
          }
 
          InstallRequest request = addonManager.install(addon);

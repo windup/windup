@@ -45,19 +45,13 @@
 		<!-- Furnace dependencies enable us to fetch Furnace Addons for getting 
 			Windup Extensions -->
 		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>addon-manager-impl</artifactId>
+			<groupId>org.jboss.forge.furnace</groupId>
+			<artifactId>furnace-manager</artifactId>
 			<version>${version.forge}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>addon-manager-spi</artifactId>
-			<classifier>forge-addon</classifier>
-			<version>${version.forge}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>maven-impl</artifactId>
+			<groupId>org.jboss.forge.furnace</groupId>
+			<artifactId>furnace-manager-resolver-maven</artifactId>
 			<version>${version.forge}</version>
 		</dependency>
 		<dependency>
