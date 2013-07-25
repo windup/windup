@@ -10,7 +10,7 @@
 	<artifactId>windup-reporting</artifactId>
 
 	<properties>
-		<version.forge>2.0.0-SNAPSHOT</version.forge>
+		<version.forge>2.0.0.Alpha7</version.forge>
 	</properties>
 
 	<dependencies>
