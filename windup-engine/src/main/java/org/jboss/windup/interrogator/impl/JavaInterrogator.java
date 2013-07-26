@@ -150,22 +150,25 @@ public class JavaInterrogator extends ExtensionInterrogator<JavaMetadata> {
 		
 		@SuppressWarnings("unchecked")
 		List<TypeDeclaration> types = cu.types();
-		for(TypeDeclaration type : types) {
-			//if class is in package grab that
-			PackageDeclaration packageDeclaration = cu.getPackage();
-			String packageName = "";
-			if(packageDeclaration != null) {
-				packageName = cu.getPackage().getName().getFullyQualifiedName() + ".";
+		
+		if(types != null) {
+			for(TypeDeclaration type : types) {
+				//if class is in package grab that
+				PackageDeclaration packageDeclaration = cu.getPackage();
+				String packageName = "";
+				if(packageDeclaration != null) {
+					packageName = cu.getPackage().getName().getFullyQualifiedName() + ".";
+				}
+				
+				//generate full class name
+				String fullPackage = packageName + type.getName().getFullyQualifiedName();
+				meta.setQualifiedClassName(fullPackage);
+				
+				if(LOG.isDebugEnabled()) {
+					LOG.debug("Full Package: "+fullPackage);
+				}
+				break;
 			}
-			
-			//generate full class name
-			String fullPackage = packageName + type.getName().getFullyQualifiedName();
-			meta.setQualifiedClassName(fullPackage);
-			
-			if(LOG.isDebugEnabled()) {
-				LOG.debug("Full Package: "+fullPackage);
-			}
-			break;
 		}
 	}
 	
