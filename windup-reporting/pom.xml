@@ -55,6 +55,12 @@
 			<artifactId>dependencies-api</artifactId>
 			<version>${version.furnace}</version>
 		</dependency>
+		<dependency>
+		   <groupId>org.switchyard.forge</groupId>
+   		   <artifactId>switchyard-forge-plugin</artifactId>
+           <version>1.0.0-SNAPSHOT</version>
+           <classifier>forge-addon</classifier>		
+		</dependency>
 
 		<dependency>
 			<groupId>log4j</groupId>
