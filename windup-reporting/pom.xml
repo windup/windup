@@ -10,29 +10,35 @@
 	<artifactId>windup-reporting</artifactId>
 
 	<properties>
-		<version.furnace>2.0.0.Alpha8</version.furnace>
+		<version.furnace>2.0.0.Alpha9</version.furnace>
+		<version.forge>2.0.0.Alpha9</version.forge>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>dependencies-api</artifactId>
+			<version>${version.forge}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>projects-api</artifactId>
-			<version>${version.furnace}</version>
+			<version>${version.forge}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>resources-api</artifactId>
-			<version>${version.furnace}</version>
+			<version>${version.forge}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>parser-java-api</artifactId>
-			<version>${version.furnace}</version>
+			<version>${version.forge}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>parser-java-impl</artifactId>
-			<version>${version.furnace}</version>
+			<version>${version.forge}</version>
 		</dependency>
 
 		<dependency>
@@ -48,11 +54,6 @@
 		<dependency>
 			<groupId>org.jboss.forge.furnace</groupId>
 			<artifactId>furnace-manager-resolver-maven</artifactId>
-			<version>${version.furnace}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>dependencies-api</artifactId>
 			<version>${version.furnace}</version>
 		</dependency>
 		<dependency>
