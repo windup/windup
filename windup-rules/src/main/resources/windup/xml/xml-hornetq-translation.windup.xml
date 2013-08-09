@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:windup="http://www.jboss.org/schema/windup"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+    <windup:pipeline type="XML" id="hornetq-configuration-xml-to-messaging-subsytem-decorators">
+
+        <windup:xpath-classification description="HornetQ translation to messaging subsystem format"
+                                     xpath="//*[local-name()='configuration']"
+                                     effort="1">
+        </windup:xpath-classification>
+
+        <windup:file-gate regex="hornetq-configuration.xml">
+            <windup:decorators>
+                <windup:xslt-transform
+                    location="transformations/xslt/hornetq-configuration-xml-to-messaging-subsytem.xsl"
+                    description="Transform HornetQ hornetq-configuration to messaging subsystem XML"
+                    extension="-subsystem.xml"/>
+            </windup:decorators>
+        </windup:file-gate>
+    </windup:pipeline>
+
+</beans>

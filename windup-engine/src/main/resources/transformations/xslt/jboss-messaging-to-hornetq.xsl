@@ -41,19 +41,19 @@
             <xsl:if test="attribute[@name='MessageCounterSamplePeriod']">
                 <xsl:choose>
                     <xsl:when test="not(attribute[@name='MessageCounterSamplePeriod'] = 5000)" >
+                        <xsl:comment>Value from JBoss Messaging MessageCounterSamplePeriod</xsl:comment>
                         <xsl:element name="message-counter-sample-period">
                             <xsl:value-of
                                 select="attribute[@name='MessageCounterSamplePeriod']"/>
                         </xsl:element>
                     </xsl:when>
                 </xsl:choose>
-
-
             </xsl:if>
 
             <xsl:if test="attribute[@name='EnableMessageCounters']">
                 <xsl:choose>
                     <xsl:when test="not(attribute[@name='EnableMessageCounters'] = 'false')" >
+                        <xsl:comment>Value from JBoss Messaging EnableMessageCounters</xsl:comment>
                         <xsl:element name="message-counter-enabled">
                             <xsl:value-of
                                 select="attribute[@name='EnableMessageCounters']"/>
@@ -63,6 +63,7 @@
             </xsl:if>
 
             <xsl:if test="attribute[@name='SuckerPassword']">
+                <xsl:comment>Value from JBoss Messaging SuckerPassword</xsl:comment>
                 <xsl:element name="cluster-password">
                     <xsl:value-of select="attribute[@name='SuckerPassword']"/>
                 </xsl:element>
@@ -72,7 +73,7 @@
             <xsl:choose>
                 <xsl:when
                     test="attribute[@name='SuckerConnectionRetryTimes'] or attribute[@name='SuckerConnectionRetryInterval']">
-
+                    <xsl:comment>Value from JBoss Messaging SuckerConnectionRetryTimes or SuckerConnectionRetryInterval</xsl:comment>
                     <xsl:element name="bridges">
                         <xsl:element name="bridge">
                             <xsl:if
@@ -175,15 +176,68 @@
             <address-settings>
 
                 <address-setting match="#">
-                    <dead-letter-address>jms.queue.DLQ</dead-letter-address>
-                    <expiry-address>jms.queue.ExpiryQueue</expiry-address>
-                    <redelivery-delay>0</redelivery-delay>
-                    <max-size-bytes>10485760</max-size-bytes>
-                    <message-counter-history-day-limit>10
-                    </message-counter-history-day-limit>
-                    <address-full-policy>BLOCK</address-full-policy>
-                    <redistribution-delay>60000</redistribution-delay>
+
+                    <!-- -->
+
+                    <xsl:if test="attribute[@name='DefaultDLQ']">
+                    <xsl:choose>
+                        <xsl:when test="(attribute[@name='DefaultDLQ'] = 'jboss.messaging.destination:service=Queue,name=DLQ')" >
+                            <dead-letter-address>jms.queue.DLQ</dead-letter-address>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:comment>Value from JBoss Messaging DefaultDLQ</xsl:comment>
+                            <xsl:element name="dead-letter-address">
+                                <xsl:value-of
+                                    select="attribute[@name='DefaultDLQ']"/>
+                            </xsl:element>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    </xsl:if>
+
+                    <xsl:if test="attribute[@name='DefaultExpiryQueue']">
+                        <xsl:choose>
+                            <xsl:when test="(attribute[@name='DefaultExpiryQueue'] = 'jboss.messaging.destination:service=Queue,name=ExpiryQueue')" >
+                                <expiry-address>jms.queue.ExpiryQueue</expiry-address>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:comment>Value from JBoss Messaging DefaultExpiryQueue</xsl:comment>
+                                <xsl:element name="expiry-address">
+                                    <xsl:value-of
+                                        select="attribute[@name='DefaultExpiryQueue']"/>
+                                </xsl:element>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:if>
+
+                    <!-- change this -->
+                    <xsl:if test="attribute[@name='DefaultRedeliveryDelay']">
+                        <xsl:comment>Value from JBoss Messaging DefaultRedeliveryDelay</xsl:comment>
+                        <xsl:element name="redelivery-delay">
+                            <xsl:value-of
+                                select="attribute[@name='DefaultRedeliveryDelay']"/>
+                        </xsl:element>
+                    </xsl:if>
+
+                    <xsl:if test="attribute[@name='DefaultMaxDeliveryAttempts']">
+                        <xsl:choose>
+                            <xsl:when test="not(attribute[@name='DefaultMaxDeliveryAttempts'] = 10)" >
+                                <xsl:comment>Value from JBoss Messaging DefaultMaxDeliveryAttempts</xsl:comment>
+                                <xsl:element name="max-delivery-attempts">
+                                    <xsl:value-of
+                                        select="attribute[@name='DefaultMaxDeliveryAttempts']"/>
+                                </xsl:element>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:if>
+
+                        <!-- required settings -->
+                     <max-size-bytes>10485760</max-size-bytes>
+                     <message-counter-history-day-limit>10</message-counter-history-day-limit>
+                     <address-full-policy>BLOCK</address-full-policy>
+                     <redistribution-delay>60000</redistribution-delay>
+
                 </address-setting>
+
             </address-settings>
 
         </configuration>

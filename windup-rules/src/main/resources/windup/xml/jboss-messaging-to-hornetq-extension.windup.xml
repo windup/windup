@@ -6,29 +6,6 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
 
-    <windup:pipeline type="XML" id="hornetq-config-decorators">
-        <!--  -->
-        <windup:xpath-classification description="HornetQ Configuration"
-                                     xpath="/server/mbean[@name='jboss.messaging:service=ServerPeer']"
-                                     effort="0">
-            <windup:decorators>
-                <windup:link url="http://documentation-devel.engineering.redhat.com/docs/en-US/JBoss_Enterprise_Application_Platform/5/html-single/HornetQ_User_Guide/index.html#idm89903344"
-                             description="HornetQ User Guide - section 2.5 Server Configuration Migration" />
-            </windup:decorators>
-        </windup:xpath-classification>
-
-        <windup:file-gate regex="messaging-service.xml">
-                <windup:decorators>
-                    <windup:xslt-transform location="transformations/xslt/jboss-messaging-to-hornetq.xsl"
-                                           description="JBoss Messaging and MQ Configuration to HornetQ Configuration Transform"
-                                           extension="-hornetq-config.xml"/>
-                </windup:decorators>
-        </windup:file-gate>
-
-    </windup:pipeline>
-
-
-
     <!-- ################ Java Code Rules ################ -->
     <windup:java-hints id="jboss-messaging-to-hornetq-classname-equivalents">
 
@@ -40,7 +17,7 @@
 
 
 
-        <windup:java-hint source-type="CONSTRUCT" regex="JBossConnectionFactory" effort="1">
+        <windup:java-hint source-type="CONSTRUCT" regex="org.jboss.jms.client.JBossConnectionFactory" effort="1">
             <![CDATA[
                 Select appropriate replacement:
 
@@ -48,7 +25,7 @@
             ]]>
         </windup:java-hint>
 
-        <windup:java-hint source-type="CONSTRUCT"  regex="JBossConnection\b" effort="1">
+        <windup:java-hint source-type="CONSTRUCT"  regex="org.jboss.jms.client.JBossConnection\b" effort="1">
             <![CDATA[
                 Replace with constructor:
 
@@ -57,7 +34,7 @@
             ]]>
         </windup:java-hint>
 
-        <windup:java-hint source-type="CONSTRUCT"  regex="JBossSession" effort="1">
+        <windup:java-hint source-type="CONSTRUCT"  regex="org.jboss.jms.client.JBossSession" effort="1">
             <![CDATA[
                 Replace with constructor:
 
@@ -65,7 +42,7 @@
             ]]>
         </windup:java-hint>
 
-        <windup:java-hint source-type="CONSTRUCT"  regex="JBossMessageProducer" effort="1">
+        <windup:java-hint source-type="CONSTRUCT"  regex="org.jboss.jms.client.JBossMessageProducer" effort="1">
             <![CDATA[
                 Replace with constructor:
 
@@ -73,7 +50,7 @@
             ]]>
         </windup:java-hint>
 
-        <windup:java-hint source-type="CONSTRUCT" regex="JBossMessageConsumer" effort="1">
+        <windup:java-hint source-type="CONSTRUCT" regex="org.jboss.jms.client.JBossMessageConsumer" effort="1">
             <![CDATA[
                 Replace with constructor:
 
@@ -86,7 +63,7 @@
     <!-- -->
     <windup:pipeline type="JAVA" id="hornetq-classname-docs">
         <windup:java-classification source-type="IMPORT"
-                                    regex="((JBossConnectionFactory)|(JBossConnection)|(JBossSession)|(JBossMessageProducer)|(JBossMessageConsumer))$"
+                                    regex="((org.jboss.jms.client.JBossConnectionFactory)|(org.jboss.jms.client.JBossConnection)|(org.jboss.jms.client.JBossSession)|(org.jboss.jms.client.JBossMessageProducer)|(org.jboss.jms.client.JBossMessageConsumer))$"
                                     description="HornetQ configuration" effort="1">
             <windup:decorators>
                 <windup:link url="http://documentation-devel.engineering.redhat.com/docs/en-US/JBoss_Enterprise_Application_Platform/5/html-single/HornetQ_User_Guide/index.html#idm89157152"
@@ -97,43 +74,58 @@
     </windup:pipeline>
 
 
-    <!-- ################ JMS Rules ################ -->
+    <!--  -->
+    <windup:pipeline type="XML" id="connection-factories-service-xml-to-messaging-subsytem-decorators">
 
-    <windup:pipeline type="XML" id="hornetq-jms-config-decorators">
-
-        <windup:xpath-classification description="JBoss Message JNDI bindings"
-                                     xpath="//*[@name='JNDIBindings']">
-
-            <windup:decorators>
-
-                <windup:xpath-value description="HornetQ remapping required for JNDIBindings."
-                                    xpath="//*[@name='JNDIBindings']"
-                                    effort="0" inline="true"/>
-
-                <windup:xpath-value description="HornetQ remapping required for PrefetchSize."
-                                    xpath="//*[@name='PrefetchSize']"
-                                    effort="0" inline="true"/>
-
-                <windup:xpath-value description="HornetQ remapping required for SendAcksAsync."
-                                    xpath="//*[@name='SendAcksAsync']"
-                                    effort="0" inline="true"/>
-
-
-                <windup:xpath-value description="HornetQ remapping required for DupsOKBatchSize."
-                                    xpath="//*[@name='DupsOKBatchSize']"
-                                    effort="0" inline="true"/>
-
-
-                <windup:xpath-value description="HornetQ remapping required for LoadBalancingFactory."
-                                    xpath="//*[@name='LoadBalancingFactory']"
-                                    effort="0" inline="true"/>
-
-                <windup:link url="http://documentation-devel.engineering.redhat.com/docs/en-US/JBoss_Enterprise_Application_Platform/5/html-single/HornetQ_User_Guide/index.html#idm89903344
-"
-                             description="HornetQ User Guide - section 2.6. Migrating JMS-administered Objects and Bridges" />
-            </windup:decorators>
+        <windup:xpath-classification description="HornetQ ConnectionFactory Attributes"
+                                     xpath="/server/mbean[@code='org.jboss.jms.server.connectionfactory.ConnectionFactory']"
+                                     effort="1">
         </windup:xpath-classification>
 
+        <windup:file-gate regex="connection-factories-service.xml">
+            <windup:decorators>
+                <windup:xslt-transform
+                    location="transformations/xslt/connection-factories-service-xml-to-messaging-subsytem.xsl"
+                    description="Transform JBoss Messaging connection-factories-service file to messaging subsystem XML"
+                    extension="-subsystem.xml"/>
+            </windup:decorators>
+        </windup:file-gate>
+    </windup:pipeline>
+
+
+    <windup:pipeline type="XML" id="destinations-service-xml-to-messaging-subsytem-decorators">
+
+        <windup:xpath-classification description="HornetQ queue Attributes"
+                                     xpath="/server/mbean[@code='org.jboss.jms.server.destination.QueueService']"
+                                     effort="1">
+        </windup:xpath-classification>
+
+        <windup:file-gate regex="destinations-service.xml">
+            <windup:decorators>
+                <windup:xslt-transform
+                    location="transformations/xslt/destinations-service-xml-to-messaging-subsytem.xsl"
+                    description="Transform JBoss Messaging destinations-service file to messaging subsystem XML"
+                    extension="-subsystem.xml"/>
+            </windup:decorators>
+        </windup:file-gate>
+    </windup:pipeline>
+
+
+    <windup:pipeline type="XML" id="messaging-service-xml-to-messaging-subsytem-decorators">
+
+        <windup:xpath-classification description="HornetQ address-setting Attributes"
+                                     xpath="/server/mbean[@code='org.jboss.jms.server.ServerPeer']"
+                                     effort="1">
+        </windup:xpath-classification>
+
+        <windup:file-gate regex="messaging-service.xml">
+            <windup:decorators>
+                <windup:xslt-transform
+                    location="transformations/xslt/messaging-service-xml-to-messaging-subsytem.xsl"
+                    description="Transform JBoss Messaging messaging-service file to messaging subsystem XML"
+                    extension="-subsystem.xml"/>
+            </windup:decorators>
+        </windup:file-gate>
     </windup:pipeline>
 
 </beans>
