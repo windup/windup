@@ -10,8 +10,8 @@
 	<artifactId>windup-reporting</artifactId>
 
 	<properties>
-		<version.furnace>2.0.0.Alpha9</version.furnace>
-		<version.forge>2.0.0.Alpha9</version.forge>
+		<version.furnace>2.0.0-SNAPSHOT</version.furnace>
+		<version.forge>2.0.0-SNAPSHOT</version.forge>
 	</properties>
 
 	<dependencies>

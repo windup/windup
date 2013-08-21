@@ -13,7 +13,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.projects.facets.ResourceFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.Furnace;
@@ -62,9 +62,9 @@ public class SwitchyardForgeController implements Reporter
 
             AddonId switchyardId = AddonId
                      .fromCoordinates("org.switchyard.forge:switchyard-forge-plugin,1.0.0-SNAPSHOT");
-            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:parser-java,2.0.0.Alpha9"));
-            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:projects,2.0.0.Alpha9"));
-            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:maven,2.0.0.Alpha9"));
+            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:parser-java,2.0.0-SNAPSHOT"));
+            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:projects,2.0.0-SNAPSHOT"));
+            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:maven,2.0.0-SNAPSHOT"));
             install(furnace, switchyardId);
 
             AddonRegistry registry = furnace.getAddonRegistry();
@@ -82,7 +82,7 @@ public class SwitchyardForgeController implements Reporter
             projectDir.mkdir();
 
             List<Class<? extends ProjectFacet>> facetsToInstall = Arrays.asList(JavaSourceFacet.class,
-                     ResourceFacet.class);
+                     ResourcesFacet.class);
             Project project = projectFactory.createProject(projectDir, facetsToInstall);
             if (project != null)
             {
