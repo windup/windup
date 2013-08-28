@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.Classification;
+import org.jboss.windup.metadata.decoration.XmlLine;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.metadata.type.XmlMetadata;
 import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
@@ -14,8 +15,10 @@ import org.jboss.windup.reporting.Reporter;
 
 public class SwitchyardReporter implements Reporter {
 	private static final Log LOG = LogFactory.getLog(SwitchyardReporter.class);
-	private static final String ESB_DESC = "JBoss ESB Pipeline Configuration";
-	
+	public static final String ESB_DESC = "JBoss ESB Pipeline Configuration";
+	public static final String ESB_ACTION = "Action :";
+    public static final String ESB_ACTION_CLASS = "JBossESB Action Class";
+
 	@Override
 	public void process(ArchiveMetadata archive, File reportDirectory) {
 		if (isJBossESB(archive)) {
@@ -35,17 +38,21 @@ public class SwitchyardReporter implements Reporter {
 			//only look for decorations if it is an XML file.
 			if(entry instanceof XmlMetadata) {
 				for (AbstractDecoration dec : entry.getDecorations()) {
+
 					if (dec instanceof Classification) {
-						if (StringUtils.equals(dec.getDescription(), ESB_DESC)) {
+						if (StringUtils.equals(dec.getDescription(), ESB_DESC) ||
+                            StringUtils.equals(dec.getDescription(), ESB_ACTION_CLASS)) {
 							return true;
 						}
-					}
+					} else if(dec instanceof XmlLine){
+                        if (StringUtils.startsWith(dec.getDescription(), ESB_ACTION)) {
+                            return true;
+                        }
+                    }
 				}
 			}
 		}
-		
 
-		//recurse.
 		if(archive.getNestedArchives() != null) {
 			for(ArchiveMetadata ar : archive.getNestedArchives()) {
 				if(isJBossESB(ar)) {
