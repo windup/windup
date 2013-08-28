@@ -4,9 +4,12 @@
         <artifactId>windup-parent</artifactId>
         <groupId>org.jboss.windup</groupId>
         <version>0.7.0</version>
-        <relativePath>..</relativePath>
     </parent>
+    
     <artifactId>windup-cli</artifactId>
+    <name>Windup CLI</name>
+    <description>Command Line Interface for JBoss Windup.</description>
+    
     <build>
         <plugins>
             <plugin>
@@ -92,6 +95,4 @@
             <version>2.6</version>
         </dependency>
     </dependencies>
-    <name>Windup CLI</name>
-    <description>Command Line Interface for JBoss Windup.</description>
 </project>
