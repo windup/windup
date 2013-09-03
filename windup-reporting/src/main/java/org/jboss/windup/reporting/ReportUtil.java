@@ -13,6 +13,7 @@ package org.jboss.windup.reporting;
 
 import java.io.File;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -26,8 +27,13 @@ public class ReportUtil {
 		Validate.notNull(reportDirectory, "Report directory is null, but a required field.");
 		Validate.notNull(htmlOutputPath, "HTML output directory is null, but a required field.");
 		
-		String archiveOutput = reportDirectory.getAbsolutePath();
-		String htmlOutput = htmlOutputPath.getAbsolutePath();
+		String archiveOutput = FilenameUtils.normalize(reportDirectory.getAbsolutePath());
+		String htmlOutput = FilenameUtils.normalize(htmlOutputPath.getAbsolutePath());
+		
+		if(LOG.isDebugEnabled()) {
+			LOG.debug("archiveOutput: "+archiveOutput);
+			LOG.debug("htmlOutput: "+htmlOutput);
+		}
 
 		String relative = StringUtils.removeStart(htmlOutput, archiveOutput);
 		relative = StringUtils.replace(relative, "\\", "/");
@@ -41,7 +47,9 @@ public class ReportUtil {
 	}
 	
 	public static String calculateRelativePathFromRoot(File reportDirectory, File relativeFile) {
-		String relPath = StringUtils.removeStart(relativeFile.getAbsolutePath(), reportDirectory.getAbsolutePath());
+		String relPath = StringUtils.removeStart(
+				FilenameUtils.normalize(relativeFile.getAbsolutePath()),
+				FilenameUtils.normalize(reportDirectory.getAbsolutePath()));
 		relPath = StringUtils.replace(relPath, "\\", "/");
 		relPath = StringUtils.removeStart(relPath, "/");
 		return relPath;
