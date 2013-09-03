@@ -7,12 +7,20 @@
 
 	<windup:pipeline type="XML" id="xml-weblogic-decorators">
 		<windup:xpath-classification description="Weblogic Entity EJB Configuration" xpath="/*[local-name()='weblogic-rdbms-jar']" effort="3">
-			<windup:namespace prefix="wle" uri="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar" />
+
+		    <windup:namespace prefix="wle" uri="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar" />
 			<windup:decorators>
 				<windup:xslt-transform location="transformations/xslt/weblogic-entity2-to-jboss.xsl"
 						description="JBoss EJB CMP Descriptor (Windup-Generated)"
 						extension="-jbosscmp-jdbc.xml"/>
 			</windup:decorators>
+			
+			<windup:xpath-value description="Weblogic Specific Transaction Property Delay Updates" xpath="//*[@value='delay-updates-until-end-of-tx']/@value]/text()" effort="1" inline="true">
+ 				<windup:hints>
+  					<windup:regex-hint regex="delay-updates-until-end-of-tx$" hint="In EAP6 replace with: <sync-on-commit-only> in jbosscmp-jdbc.xml"/>
+ 				</windup:hints>
+			</windup:xpath-value>
+			
 		</windup:xpath-classification>
 
 		<windup:xpath-classification description="Weblogic EJB XML" xpath="/weblogic-ejb-jar" effort="3">
@@ -115,6 +123,11 @@
 		<windup:xpath-classification description="Weblogic Annotation Manifest" xpath="/wl:annotation-manifest | /annotation-manifest" effort="8">
 			<windup:namespace prefix="wl" uri="http://www.bea.com/2004/03/wlw/external-config/" />
 		</windup:xpath-classification>
+		
+		
+		
+		
+		
 	</windup:pipeline>
 </beans>
  
