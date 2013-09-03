@@ -3,7 +3,9 @@ package org.jboss.windup.classprofiler.lucene;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.windup.classprofiler.metadata.ArchiveVO;
 import org.jboss.windup.classprofiler.metadata.ClassVO;
@@ -81,13 +83,11 @@ public class ModuleArchiveTest {
 		for(int i=0; i<totalNum; i++) {
 			ClassVO cvo = stubClass("com.bradsdavis.lucene.LuceneTest"+i, "java.io.File", "java.util.ArrayList", "java.util.List", "org.junit.Test");
 			lci.addClass(avo, cvo);
-			System.out.println(i);
 		}
 		
 		for(int i=0; i<totalNum; i++) {
 			ClassVO cvo = stubClass("com.bradsdavis.lucene.LuceneTest"+i, "java.io.File", "java.util.ArrayList", "java.util.List", "org.junit.Test");
 			lci.addClass(avo1, cvo);
-			System.out.println(i);
 		}
 		
 		System.out.println("Setup.");
@@ -98,6 +98,15 @@ public class ModuleArchiveTest {
 		Collection<ModuleVO> modules = lmi.findModuleProvidingClass("com.bradsdavis.lucene.LuceneTest0");
 		Assert.assertTrue(modules.size() == 3);
 		
+		Set<String> names = new HashSet<String>();
+		for(ModuleVO module : modules) {
+			names.add(module.getName()+":"+module.getSlot()+":"+module.getPlatform().getName()+":"+module.getPlatform().getVersion());
+		}
+		
+		Assert.assertTrue(names.contains("example-module:1.2:jboss-eap:6.0.0"));
+		Assert.assertTrue(names.contains("example-module:1.3:jboss-eap:6.0.0"));
+		Assert.assertTrue(names.contains("example-module:1.2:jboss-eap:6.1.0"));
+
 		System.out.println("Total Modules: "+modules.size());
 	}
 	
