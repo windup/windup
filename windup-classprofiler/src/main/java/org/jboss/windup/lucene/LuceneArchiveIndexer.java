@@ -10,8 +10,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -21,6 +19,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
@@ -29,15 +28,12 @@ import org.apache.lucene.util.Version;
 import org.jboss.windup.ArchiveIndexer;
 import org.jboss.windup.exception.ArchiveIndexReaderException;
 import org.jboss.windup.exception.ArchiveIndexWriteException;
+import org.jboss.windup.lucene.transformer.ArchiveTransformer;
+import org.jboss.windup.lucene.transformer.ClassTransformer;
 import org.jboss.windup.metadata.ArchiveVO;
 
 public class LuceneArchiveIndexer implements ArchiveIndexer {
 
-	public static final String ARCHIVE_NAME = "archiveName";
-	public static final String ARCHIVE_VERSION = "archiveVersion";
-	public static final String ARCHIVE_SHA1 = "archiveSHA1";
-	public static final String ARCHIVE_MD5 = "archiveMD5";
-	
 	private final Directory classIndexDir;
 	private final Directory archiveIndexDir;
 	private final IndexWriterConfig iwc;
@@ -64,20 +60,12 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 	}
 
 	public void addArchive(ArchiveVO archive) throws ArchiveIndexWriteException {
-		Document document = new Document();
-		document.add(new StringField(ARCHIVE_NAME, archive.getName(), Field.Store.YES));
-		document.add(new StringField(ARCHIVE_VERSION, archive.getName(), Field.Store.YES));
-		document.add(new StringField(ARCHIVE_SHA1, archive.getSha1(), Field.Store.YES));
-		document.add(new StringField(ARCHIVE_MD5, archive.getMd5(), Field.Store.YES));
-		
-		for(String key : archive.getProperties().keySet()) {
-			document.add(new StringField(key, archive.getProperties().get(key), Field.Store.YES));
-		}
+		Document document =  ArchiveTransformer.toDocument(archive);
 		
 		IndexWriter writer = null;
 		try {
 			writer = new IndexWriter(archiveIndexDir, iwc);
-			writer.updateDocument(new Term(ARCHIVE_SHA1), document);
+			writer.updateDocument(new Term(ArchiveTransformer.ARCHIVE_SHA1), document);
 			writer.commit();
 		}
 		catch(Exception e) {
@@ -88,27 +76,47 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 		}
 	}
 
-	public Collection<String> findArchiveByField(String field, String value) throws ArchiveIndexReaderException {
-		Set<String> results = new HashSet<String>();
+	@Override
+	public Collection<ArchiveVO> findArchiveByMD5(String value) throws ArchiveIndexReaderException {
+		return findArchiveByField(ArchiveTransformer.ARCHIVE_MD5, value);
+	}
+
+	@Override
+	public Collection<ArchiveVO> findArchiveBySHA1(String value) throws ArchiveIndexReaderException {
+		return findArchiveByField(ArchiveTransformer.ARCHIVE_SHA1, value);
+	}
+
+	@Override
+	public Collection<ArchiveVO> findArchiveByName(String value) throws ArchiveIndexReaderException {
+		return findArchiveByField(ArchiveTransformer.ARCHIVE_NAME, value);
+	}
+	
+	public Collection<ArchiveVO> findArchiveByField(String field, String value) throws ArchiveIndexReaderException {
+		Term term = new Term(field, value);
+		BooleanQuery query = new BooleanQuery();
+		query.add(new TermQuery(term), BooleanClause.Occur.MUST);
+		return findArchiveByField(query);
+	}
+	
+	protected Collection<ArchiveVO> findArchiveByField(Query query) throws ArchiveIndexReaderException {
+		Set<ArchiveVO> results = new HashSet<ArchiveVO>();
 		
 		IndexReader reader = null;
 		try {
 			reader = DirectoryReader.open(archiveIndexDir);
 			IndexSearcher searcher = new IndexSearcher(reader);
-
-			BooleanQuery query = new BooleanQuery();
-			query.add(new TermQuery(new Term(field, value)), BooleanClause.Occur.MUST);
 			
 			int numResults = 100;
 			ScoreDoc[] hits = searcher.search(query, numResults).scoreDocs;
 			
 			for(int i=0; i< hits.length; i++) {
 				Document doc = searcher.doc(hits[i].doc);
-				results.add(doc.get(ARCHIVE_NAME));
+				ArchiveVO archive = ArchiveTransformer.fromDocument(doc);
+				results.add(archive);
 			}
 		}
 		catch(Exception e) {
-			throw new ArchiveIndexReaderException("Exception querying archive by field: "+field, e);
+			throw new ArchiveIndexReaderException("Exception querying archive.", e);
 		}
 		finally {
 			IOUtils.closeQuietly(reader);
@@ -117,7 +125,7 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 		return results;
 	}
 
-	public Collection<String> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException {
+	public Collection<ArchiveVO> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException {
 		Set<String> archiveSHA1References = new HashSet<String>();
 		
 		IndexReader reader = null;
@@ -126,14 +134,14 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 			IndexSearcher searcher = new IndexSearcher(reader);
 
 			BooleanQuery query = new BooleanQuery();
-			query.add(new TermQuery(new Term(LuceneClassIndexer.QUALIFIED_NAME, clz)), BooleanClause.Occur.MUST);
+			query.add(new TermQuery(new Term(ClassTransformer.QUALIFIED_NAME, clz)), BooleanClause.Occur.MUST);
 			
 			int numResults = 100;
 			ScoreDoc[] hits = searcher.search(query, numResults).scoreDocs;
 			
 			for(int i=0; i< hits.length; i++) {
 				Document doc = searcher.doc(hits[i].doc);
-				archiveSHA1References.add(doc.get(ARCHIVE_SHA1));
+				archiveSHA1References.add(doc.get(ArchiveTransformer.ARCHIVE_SHA1));
 			}
 		}
 		catch(Exception e) {
@@ -143,16 +151,16 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 			IOUtils.closeQuietly(reader);
 		}
 		
-		Set<String> archives = new HashSet<String>();
+		Set<ArchiveVO> archives = new HashSet<ArchiveVO>();
 		//now, for each, find archive by SHA1.
 		for(String sha1Ref : archiveSHA1References) {
-			archives.addAll(findArchiveByField(ARCHIVE_SHA1, sha1Ref));
+			archives.addAll(findArchiveByField(ArchiveTransformer.ARCHIVE_SHA1, sha1Ref));
 		}
 		
 		return archives;
 	}
 
-	public Collection<String> findArchiveLeveragingDependency(String clz) throws ArchiveIndexReaderException {
+	public Collection<ArchiveVO> findArchiveLeveragingDependency(String clz) throws ArchiveIndexReaderException {
 		Set<String> archiveSHA1References = new HashSet<String>();
 		
 		IndexReader reader = null;
@@ -161,14 +169,14 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 			IndexSearcher searcher = new IndexSearcher(reader);
 
 			BooleanQuery query = new BooleanQuery();
-			query.add(new TermQuery(new Term(LuceneClassIndexer.DEPENDENCY, clz)), BooleanClause.Occur.MUST);
+			query.add(new TermQuery(new Term(ClassTransformer.DEPENDENCY, clz)), BooleanClause.Occur.MUST);
 			
 			int numResults = 100;
 			ScoreDoc[] hits = searcher.search(query, numResults).scoreDocs;
 			
 			for(int i=0; i< hits.length; i++) {
 				Document doc = searcher.doc(hits[i].doc);
-				archiveSHA1References.add(doc.get(ARCHIVE_SHA1));
+				archiveSHA1References.add(doc.get(ArchiveTransformer.ARCHIVE_SHA1));
 			}
 		}
 		catch(Exception e) {
@@ -178,14 +186,26 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 			IOUtils.closeQuietly(reader);
 		}
 		
-		Set<String> archives = new HashSet<String>();
+		Set<ArchiveVO> archives = new HashSet<ArchiveVO>();
 		//now, for each, find archive by SHA1.
 		for(String sha1Ref : archiveSHA1References) {
-			archives.addAll(findArchiveByField(ARCHIVE_SHA1, sha1Ref));
+			archives.addAll(findArchiveByField(ArchiveTransformer.ARCHIVE_SHA1, sha1Ref));
 		}
 		
 		return archives;
 	}
+
+	@Override
+	public Collection<ArchiveVO> findArchiveByNameAndVersion(String name, String version) throws ArchiveIndexReaderException {
+		Term nameTerm = new Term(ArchiveTransformer.ARCHIVE_NAME, name);
+		Term versionTerm = new Term(ArchiveTransformer.ARCHIVE_VERSION, version);
+		BooleanQuery query = new BooleanQuery();
+		query.add(new TermQuery(nameTerm), BooleanClause.Occur.MUST);
+		query.add(new TermQuery(versionTerm), BooleanClause.Occur.MUST);
+		return findArchiveByField(query);
+	}
+
+	
 
 
 }

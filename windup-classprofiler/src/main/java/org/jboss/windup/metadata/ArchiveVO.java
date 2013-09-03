@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArchiveVO {
+	
 	private String name;
 	private String version;
 	private String md5;
@@ -45,8 +46,5 @@ public class ArchiveVO {
 	public String toString() {
 		return "ArchiveVO [name=" + name + ", version=" + version + ", md5="
 				+ md5 + ", sha1=" + sha1 + "]";
-	}
-	
-	
-	
+	}	
 }

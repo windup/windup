@@ -9,8 +9,8 @@ import org.jboss.windup.metadata.ClassVO;
 
 public interface ClassIndexer {
 
-	public Collection<String> findClassDependenciesByQualifiedName(String clz) throws ClassIndexReaderException;
 	public void addClass(ArchiveVO archive, ClassVO clz) throws ClassIndexWriteException;
-	public Collection<String> findClassesLeveragingDependency(String clz) throws ClassIndexReaderException;
+	public Collection<String> findClassDependenciesByQualifiedName(String clz) throws ClassIndexReaderException;
+	public Collection<ClassVO> findClassesLeveragingDependency(String clz) throws ClassIndexReaderException;
 	
 }

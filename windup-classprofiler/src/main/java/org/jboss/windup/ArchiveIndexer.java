@@ -7,9 +7,14 @@ import org.jboss.windup.exception.ArchiveIndexWriteException;
 import org.jboss.windup.metadata.ArchiveVO;
 
 public interface ArchiveIndexer {
+	
 	public void addArchive(ArchiveVO archive) throws ArchiveIndexWriteException;
-	public Collection<String> findArchiveByField(String field, String value) throws ArchiveIndexReaderException;
-	public Collection<String> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException;
-	public Collection<String> findArchiveLeveragingDependency(String clz) throws ArchiveIndexReaderException;
+	public Collection<ArchiveVO> findArchiveByMD5(String value) throws ArchiveIndexReaderException;
+	public Collection<ArchiveVO> findArchiveBySHA1(String value) throws ArchiveIndexReaderException;
+	public Collection<ArchiveVO> findArchiveByName(String value) throws ArchiveIndexReaderException;
+	public Collection<ArchiveVO> findArchiveByNameAndVersion(String value, String version) throws ArchiveIndexReaderException;
+	public Collection<ArchiveVO> findArchiveByField(String field, String value) throws ArchiveIndexReaderException;
+	public Collection<ArchiveVO> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException;
+	public Collection<ArchiveVO> findArchiveLeveragingDependency(String clz) throws ArchiveIndexReaderException;
 	
 }

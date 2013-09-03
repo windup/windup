@@ -31,13 +31,13 @@ import org.apache.lucene.util.Version;
 import org.jboss.windup.ClassIndexer;
 import org.jboss.windup.exception.ClassIndexReaderException;
 import org.jboss.windup.exception.ClassIndexWriteException;
+import org.jboss.windup.lucene.transformer.ArchiveTransformer;
+import org.jboss.windup.lucene.transformer.ClassTransformer;
 import org.jboss.windup.metadata.ArchiveVO;
 import org.jboss.windup.metadata.ClassVO;
 
 public class LuceneClassIndexer implements ClassIndexer {
-	public static final String QUALIFIED_NAME = "qualifiedClassName";
-	public static final String DEPENDENCY = "classDependency";
-	
+
 	private final Directory indexDir;
 	private final IndexWriterConfig iwc;
 	
@@ -64,21 +64,14 @@ public class LuceneClassIndexer implements ClassIndexer {
 	public void addClass(ArchiveVO archive, ClassVO clz) throws ClassIndexWriteException {
 		Term unique = new Term("UNIQUE", clz.getQualifiedName() +"#"+archive.getSha1());
 		
-		Document document = new Document();
-		document.add(new StringField(QUALIFIED_NAME, clz.getQualifiedName(), Field.Store.YES));
-		
-		if(clz.getDependencies() != null) {
-			for(String dep : clz.getDependencies()) {
-				document.add(new StringField(DEPENDENCY, dep, Field.Store.YES));
-			}
-		}
+		Document document = ClassTransformer.toDocument(clz);
 		
 		if(StringUtils.isNotBlank(archive.getSha1())) {
-			document.add(new StringField(LuceneArchiveIndexer.ARCHIVE_SHA1, archive.getSha1(), Field.Store.YES));
+			document.add(new StringField(ArchiveTransformer.ARCHIVE_SHA1, archive.getSha1(), Field.Store.YES));
 		}
 		
 		if(StringUtils.isNotBlank(archive.getMd5())) {
-			document.add(new StringField(LuceneArchiveIndexer.ARCHIVE_MD5, archive.getMd5(), Field.Store.YES));
+			document.add(new StringField(ArchiveTransformer.ARCHIVE_MD5, archive.getMd5(), Field.Store.YES));
 		}
 		
 		IndexWriter writer = null;
@@ -103,14 +96,14 @@ public class LuceneClassIndexer implements ClassIndexer {
 			IndexSearcher searcher = new IndexSearcher(reader);
 
 			BooleanQuery query = new BooleanQuery();
-			query.add(new TermQuery(new Term(QUALIFIED_NAME, clz)), BooleanClause.Occur.MUST);
+			query.add(new TermQuery(new Term(ClassTransformer.QUALIFIED_NAME, clz)), BooleanClause.Occur.MUST);
 			
 			int numResults = 100;
 			ScoreDoc[] hits = searcher.search(query, numResults).scoreDocs;
 			
 			for(int i=0; i< hits.length; i++) {
 				Document doc = searcher.doc(hits[i].doc);
-				String[] values = doc.getValues(DEPENDENCY);
+				String[] values = doc.getValues(ClassTransformer.DEPENDENCY);
 				
 				clzs.addAll(Arrays.asList(values));
 			}
@@ -125,8 +118,8 @@ public class LuceneClassIndexer implements ClassIndexer {
 		return clzs;
 	}
 
-	public Collection<String> findClassesLeveragingDependency(String clz) throws ClassIndexReaderException {
-		Set<String> clzs = new HashSet<String>();
+	public Collection<ClassVO> findClassesLeveragingDependency(String clz) throws ClassIndexReaderException {
+		Set<ClassVO> clzs = new HashSet<ClassVO>();
 		
 		IndexReader reader = null;
 		try {
@@ -134,14 +127,15 @@ public class LuceneClassIndexer implements ClassIndexer {
 			IndexSearcher searcher = new IndexSearcher(reader);
 
 			BooleanQuery query = new BooleanQuery();
-			query.add(new TermQuery(new Term(DEPENDENCY, clz)), BooleanClause.Occur.MUST);
+			query.add(new TermQuery(new Term(ClassTransformer.DEPENDENCY, clz)), BooleanClause.Occur.MUST);
 			
 			int numResults = 100;
 			ScoreDoc[] hits = searcher.search(query, numResults).scoreDocs;
 			
 			for(int i=0; i< hits.length; i++) {
 				Document doc = searcher.doc(hits[i].doc);
-				clzs.add(doc.get(QUALIFIED_NAME));
+				ClassVO clzVO = ClassTransformer.fromDocument(doc);
+				clzs.add(clzVO);
 			}
 		}
 		catch(Exception e) {
