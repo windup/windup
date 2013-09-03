@@ -12,7 +12,7 @@ import java.util.List;
 public class ModuleVO {
 	PlatformVO platform;
 	
-	private String name;
+	private String name = "main";
 	private String slot;
 	
 	/**
@@ -27,6 +27,10 @@ public class ModuleVO {
 	
 	public List<ModuleVO> getDependencies() {
 		return dependencies;
+	}
+	
+	public void setPlatform(PlatformVO platform) {
+		this.platform = platform;
 	}
 	
 	public PlatformVO getPlatform() {
@@ -51,7 +55,10 @@ public class ModuleVO {
 
 	@Override
 	public String toString() {
-		return "ModuleVO [name=" + name + ", slot=" + slot + ", dependencies="
-				+ dependencies + "]";
+		return "ModuleVO [platform=" + platform + ", name=" + name + ", slot="
+				+ slot + ", dependencies=" + dependencies + ", archives="
+				+ archives + "]";
 	}
+
+	
 }

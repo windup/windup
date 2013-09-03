@@ -1,4 +1,4 @@
-package org.jboss.windup.classprofiler;
+package org.jboss.windup.classprofiler.lucene;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class LuceneTest {
+public class ClassArchiveTest {
 
 	private static final int totalNum = 100;
 	private static LuceneArchiveIndexer lai;

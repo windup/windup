@@ -28,6 +28,12 @@ public class ModuleTransformer {
 		module.setName(doc.get(MODULE_NAME));
 		module.setSlot(doc.get(MODULE_SLOT));
 		
+		PlatformVO platform = new PlatformVO();
+		platform.setName(doc.get(PLATFORM_NAME));
+		platform.setVersion(doc.get(PLATFORM_VERSION));
+		
+		module.setPlatform(platform);
+		
 		for(IndexableField field : doc.getFields(MODULE_DEPENDENCY)) {
 			String[] vals = StringUtils.split(field.stringValue(), "##");
 			ModuleVO dep = new ModuleVO();

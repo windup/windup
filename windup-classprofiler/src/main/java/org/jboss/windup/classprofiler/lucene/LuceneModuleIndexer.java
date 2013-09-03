@@ -16,18 +16,24 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.surround.query.OrQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.grouping.SearchGroup;
+import org.apache.lucene.search.grouping.term.TermFirstPassGroupingCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 import org.jboss.windup.classprofiler.ModuleIndexer;
 import org.jboss.windup.classprofiler.exception.ArchiveIndexReaderException;
 import org.jboss.windup.classprofiler.exception.ModuleIndexReaderException;
 import org.jboss.windup.classprofiler.exception.ModuleIndexWriteException;
+import org.jboss.windup.classprofiler.lucene.transformer.ArchiveTransformer;
 import org.jboss.windup.classprofiler.lucene.transformer.ModuleTransformer;
 import org.jboss.windup.classprofiler.metadata.ArchiveVO;
 import org.jboss.windup.classprofiler.metadata.ModuleVO;
@@ -65,7 +71,7 @@ public class LuceneModuleIndexer implements ModuleIndexer {
 		IndexWriter writer = null;
 		try {
 			writer = new IndexWriter(moduleIndexDir, iwc);
-			writer.updateDocument(new Term(ModuleTransformer.MODULE_ID), document);
+			writer.updateDocument(new Term(ModuleTransformer.MODULE_ID, document.get(ModuleTransformer.MODULE_ID)), document);
 			writer.commit();
 		}
 		catch(Exception e) {
@@ -84,10 +90,7 @@ public class LuceneModuleIndexer implements ModuleIndexer {
 		try {
 			Collection<ArchiveVO> archives = archiveIndexer.findArchiveByQualifiedClassName(clz);
 			//find all references between module and archive by sha1.
-			
-			for(ArchiveVO archive : archives) {
-				modules.addAll(findModulesContainingArchive(archive));
-			}
+			modules.addAll(findModulesContainingArchive(archives));
 		} catch (ArchiveIndexReaderException e) {
 			throw new ModuleIndexReaderException("Exception finding module for class: "+clz, e);
 		}
@@ -95,15 +98,18 @@ public class LuceneModuleIndexer implements ModuleIndexer {
 		return modules;
 	}
 	
-	protected Collection<ModuleVO> findModulesContainingArchive(ArchiveVO archive) throws ModuleIndexReaderException {
+	protected Collection<ModuleVO> findModulesContainingArchive(Collection<ArchiveVO> archives) throws ModuleIndexReaderException {
 		Set<ModuleVO> modules = new HashSet<ModuleVO>();
 		IndexReader reader = null;
 		try {
 			reader = DirectoryReader.open(moduleIndexDir);
 			IndexSearcher searcher = new IndexSearcher(reader);
-
+			
 			BooleanQuery query = new BooleanQuery();
-			query.add(new TermQuery(new Term(ModuleTransformer.MODULE_ARCHIVE, archive.getSha1())), BooleanClause.Occur.MUST);
+			for(ArchiveVO archive : archives) {
+				query.add(new TermQuery(new Term(ModuleTransformer.MODULE_ARCHIVE, archive.getSha1())), BooleanClause.Occur.SHOULD);
+			}
+			query.setMinimumNumberShouldMatch(1);
 			
 			int numResults = 100;
 			ScoreDoc[] hits = searcher.search(query, numResults).scoreDocs;
@@ -114,7 +120,7 @@ public class LuceneModuleIndexer implements ModuleIndexer {
 			}
 		}
 		catch(Exception e) {
-			throw new ModuleIndexReaderException("Exception querying archive: "+archive.toString(), e);
+			throw new ModuleIndexReaderException("Exception querying archives.", e);
 		}
 		finally {
 			IOUtils.closeQuietly(reader);
