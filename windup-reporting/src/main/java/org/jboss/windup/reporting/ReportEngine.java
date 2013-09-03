@@ -88,20 +88,23 @@ public class ReportEngine {
 			ArchiveMetadata am = windupEngine.processSourceDirectory(inputLocation, outputLocation);
 			generateReport(am, outputLocation);
 		}
-		if (inputLocation.isDirectory()) {
-			batchInputDirectory(inputLocation);
-		}
+		//if this isn't a source run, then we should run it as archive mode.
 		else {
-			// single archive processing.
-			if (outputLocation == null) {
-				//generate output based on input.
-				outputLocation = generateArchiveOutputLocation(inputLocation);
-				ArchiveMetadata amd = windupEngine.processArchive(inputLocation, outputLocation);
-				generateReport(amd, outputLocation);
+			if (inputLocation.isDirectory()) {
+				batchInputDirectory(inputLocation);
 			}
 			else {
-				ArchiveMetadata amd = windupEngine.processArchive(inputLocation, outputLocation);
-				generateReport(amd, outputLocation);
+				// single archive processing.
+				if (outputLocation == null) {
+					//generate output based on input.
+					outputLocation = generateArchiveOutputLocation(inputLocation);
+					ArchiveMetadata amd = windupEngine.processArchive(inputLocation, outputLocation);
+					generateReport(amd, outputLocation);
+				}
+				else {
+					ArchiveMetadata amd = windupEngine.processArchive(inputLocation, outputLocation);
+					generateReport(amd, outputLocation);
+				}
 			}
 		}
 	}

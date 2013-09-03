@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.windup</groupId>
+    <artifactId>windup-parent</artifactId>
+    <version>0.7.0</version>
+  </parent>
+  <artifactId>windup-classprofiler</artifactId>
+  
+  <properties>
+  	<lucene-version>4.4.0</lucene-version>
+  </properties>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-core</artifactId>
+  		<version>${lucene-version}</version>
+  	</dependency>
+  	<dependency>
+        <artifactId>lucene-queries</artifactId>
+        <groupId>org.apache.lucene</groupId>
+        <type>jar</type>
+        <version>${lucene-version}</version>
+      </dependency>
+ 
+      <dependency>
+        <artifactId>lucene-queryparser</artifactId>
+        <groupId>org.apache.lucene</groupId>
+        <type>jar</type>
+        <version>${lucene-version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>lucene-analyzers-common</artifactId>
+        <groupId>org.apache.lucene</groupId>
+        <type>jar</type>
+        <version>${lucene-version}</version>
+      </dependency>
+ 
+      <dependency>
+        <artifactId>lucene-facet</artifactId>
+        <groupId>org.apache.lucene</groupId>
+        <type>jar</type>
+        <version>${lucene-version}</version>
+      </dependency>
+  	
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.11</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-lang</groupId>
+  		<artifactId>commons-lang</artifactId>
+  		<version>2.5</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-io</groupId>
+  		<artifactId>commons-io</artifactId>
+  		<version>2.4</version>
+  	</dependency>
+  </dependencies>
+</project>
