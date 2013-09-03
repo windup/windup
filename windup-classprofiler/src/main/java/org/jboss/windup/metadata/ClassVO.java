@@ -1,11 +1,12 @@
 package org.jboss.windup.metadata;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class ClassVO {
 
 	private String qualifiedName;
-	private List<String> dependencies;
+	private List<String> dependencies = new LinkedList<String>();
 	
 	public String getQualifiedName() {
 		return qualifiedName;

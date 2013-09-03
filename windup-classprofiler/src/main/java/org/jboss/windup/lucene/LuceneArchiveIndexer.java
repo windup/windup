@@ -21,9 +21,16 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.grouping.AbstractAllGroupHeadsCollector;
+import org.apache.lucene.search.grouping.SearchGroup;
+import org.apache.lucene.search.grouping.term.TermAllGroupHeadsCollector;
+import org.apache.lucene.search.grouping.term.TermFirstPassGroupingCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.FixedBitSet;
 import org.apache.lucene.util.Version;
 import org.jboss.windup.ArchiveIndexer;
 import org.jboss.windup.exception.ArchiveIndexReaderException;
@@ -65,7 +72,7 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 		IndexWriter writer = null;
 		try {
 			writer = new IndexWriter(archiveIndexDir, iwc);
-			writer.updateDocument(new Term(ArchiveTransformer.ARCHIVE_SHA1), document);
+			writer.updateDocument(new Term(ArchiveTransformer.ARCHIVE_SHA1, archive.getSha1()), document);
 			writer.commit();
 		}
 		catch(Exception e) {
@@ -171,12 +178,12 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 			BooleanQuery query = new BooleanQuery();
 			query.add(new TermQuery(new Term(ClassTransformer.DEPENDENCY, clz)), BooleanClause.Occur.MUST);
 			
-			int numResults = 100;
-			ScoreDoc[] hits = searcher.search(query, numResults).scoreDocs;
+			TermFirstPassGroupingCollector fpgc = new TermFirstPassGroupingCollector(ArchiveTransformer.ARCHIVE_SHA1, Sort.INDEXORDER, 100);
+			searcher.search(query, fpgc);
+			Collection<SearchGroup<BytesRef>> results = fpgc.getTopGroups(0, true);
 			
-			for(int i=0; i< hits.length; i++) {
-				Document doc = searcher.doc(hits[i].doc);
-				archiveSHA1References.add(doc.get(ArchiveTransformer.ARCHIVE_SHA1));
+			for(SearchGroup<BytesRef> ref : results) {
+				archiveSHA1References.add(ref.groupValue.utf8ToString());
 			}
 		}
 		catch(Exception e) {
