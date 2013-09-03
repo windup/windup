@@ -1,10 +1,10 @@
-package org.jboss.windup.lucene.transformer;
+package org.jboss.windup.classprofiler.lucene.transformer;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexableField;
-import org.jboss.windup.metadata.ClassVO;
+import org.jboss.windup.classprofiler.metadata.ClassVO;
 
 public class ClassTransformer {
 	public static final String QUALIFIED_NAME = "qualifiedClassName";

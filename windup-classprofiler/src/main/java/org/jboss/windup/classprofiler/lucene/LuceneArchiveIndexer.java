@@ -1,4 +1,4 @@
-package org.jboss.windup.lucene;
+package org.jboss.windup.classprofiler.lucene;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,21 +23,18 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.grouping.AbstractAllGroupHeadsCollector;
 import org.apache.lucene.search.grouping.SearchGroup;
-import org.apache.lucene.search.grouping.term.TermAllGroupHeadsCollector;
 import org.apache.lucene.search.grouping.term.TermFirstPassGroupingCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.FixedBitSet;
 import org.apache.lucene.util.Version;
-import org.jboss.windup.ArchiveIndexer;
-import org.jboss.windup.exception.ArchiveIndexReaderException;
-import org.jboss.windup.exception.ArchiveIndexWriteException;
-import org.jboss.windup.lucene.transformer.ArchiveTransformer;
-import org.jboss.windup.lucene.transformer.ClassTransformer;
-import org.jboss.windup.metadata.ArchiveVO;
+import org.jboss.windup.classprofiler.ArchiveIndexer;
+import org.jboss.windup.classprofiler.exception.ArchiveIndexReaderException;
+import org.jboss.windup.classprofiler.exception.ArchiveIndexWriteException;
+import org.jboss.windup.classprofiler.lucene.transformer.ArchiveTransformer;
+import org.jboss.windup.classprofiler.lucene.transformer.ClassTransformer;
+import org.jboss.windup.classprofiler.metadata.ArchiveVO;
 
 public class LuceneArchiveIndexer implements ArchiveIndexer {
 
@@ -142,13 +139,13 @@ public class LuceneArchiveIndexer implements ArchiveIndexer {
 
 			BooleanQuery query = new BooleanQuery();
 			query.add(new TermQuery(new Term(ClassTransformer.QUALIFIED_NAME, clz)), BooleanClause.Occur.MUST);
+
+			TermFirstPassGroupingCollector fpgc = new TermFirstPassGroupingCollector(ArchiveTransformer.ARCHIVE_SHA1, Sort.INDEXORDER, 100);
+			searcher.search(query, fpgc);
+			Collection<SearchGroup<BytesRef>> results = fpgc.getTopGroups(0, true);
 			
-			int numResults = 100;
-			ScoreDoc[] hits = searcher.search(query, numResults).scoreDocs;
-			
-			for(int i=0; i< hits.length; i++) {
-				Document doc = searcher.doc(hits[i].doc);
-				archiveSHA1References.add(doc.get(ArchiveTransformer.ARCHIVE_SHA1));
+			for(SearchGroup<BytesRef> ref : results) {
+				archiveSHA1References.add(ref.groupValue.utf8ToString());
 			}
 		}
 		catch(Exception e) {

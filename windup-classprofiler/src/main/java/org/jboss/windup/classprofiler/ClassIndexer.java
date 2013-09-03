@@ -1,11 +1,11 @@
-package org.jboss.windup;
+package org.jboss.windup.classprofiler;
 
 import java.util.Collection;
 
-import org.jboss.windup.exception.ClassIndexReaderException;
-import org.jboss.windup.exception.ClassIndexWriteException;
-import org.jboss.windup.metadata.ArchiveVO;
-import org.jboss.windup.metadata.ClassVO;
+import org.jboss.windup.classprofiler.exception.ClassIndexReaderException;
+import org.jboss.windup.classprofiler.exception.ClassIndexWriteException;
+import org.jboss.windup.classprofiler.metadata.ArchiveVO;
+import org.jboss.windup.classprofiler.metadata.ClassVO;
 
 public interface ClassIndexer {
 

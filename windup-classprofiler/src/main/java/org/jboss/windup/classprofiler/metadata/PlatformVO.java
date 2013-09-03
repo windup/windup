@@ -1,4 +1,4 @@
-package org.jboss.windup.metadata;
+package org.jboss.windup.classprofiler.metadata;
 
 /**
  * Describes the platform.  Example: JBoss EAP 6.0.1

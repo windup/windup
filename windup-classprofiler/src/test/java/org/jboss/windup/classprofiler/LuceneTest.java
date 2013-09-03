@@ -8,18 +8,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.lucene.LuceneArchiveIndexer;
-import org.jboss.windup.lucene.LuceneClassIndexer;
-import org.jboss.windup.lucene.transformer.ArchiveTransformer;
-import org.jboss.windup.metadata.ArchiveVO;
-import org.jboss.windup.metadata.ClassVO;
+import org.jboss.windup.classprofiler.lucene.LuceneArchiveIndexer;
+import org.jboss.windup.classprofiler.lucene.LuceneClassIndexer;
+import org.jboss.windup.classprofiler.lucene.transformer.ArchiveTransformer;
+import org.jboss.windup.classprofiler.metadata.ArchiveVO;
+import org.jboss.windup.classprofiler.metadata.ClassVO;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class LuceneTest {
 
-	private static final int totalNum = 100000;
+	private static final int totalNum = 100;
 	private static LuceneArchiveIndexer lai;
 	private static LuceneClassIndexer lci;
 	
@@ -48,11 +48,13 @@ public class LuceneTest {
 		for(int i=0; i<totalNum; i++) {
 			ClassVO cvo = stubClass("com.bradsdavis.lucene.LuceneTest"+i, "java.io.File", "java.util.ArrayList", "java.util.List", "org.junit.Test");
 			lci.addClass(avo, cvo);
+			System.out.println(i);
 		}
 		
 		for(int i=0; i<totalNum; i++) {
 			ClassVO cvo = stubClass("com.bradsdavis.lucene.LuceneTest"+i, "java.io.File", "java.util.ArrayList", "java.util.List", "org.junit.Test");
 			lci.addClass(avo1, cvo);
+			System.out.println(i);
 		}
 		
 		System.out.println("Setup.");

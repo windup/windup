@@ -1,4 +1,4 @@
-package org.jboss.windup.lucene.transformer;
+package org.jboss.windup.classprofiler.lucene.transformer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -6,9 +6,9 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexableField;
-import org.jboss.windup.metadata.ArchiveVO;
-import org.jboss.windup.metadata.ModuleVO;
-import org.jboss.windup.metadata.PlatformVO;
+import org.jboss.windup.classprofiler.metadata.ArchiveVO;
+import org.jboss.windup.classprofiler.metadata.ModuleVO;
+import org.jboss.windup.classprofiler.metadata.PlatformVO;
 
 public class ModuleTransformer {
 	public static final String MODULE_ID = "moduleID";

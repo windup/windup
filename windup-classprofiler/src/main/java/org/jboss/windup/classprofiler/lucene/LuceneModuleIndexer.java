@@ -1,4 +1,4 @@
-package org.jboss.windup.lucene;
+package org.jboss.windup.classprofiler.lucene;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,13 +24,13 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
-import org.jboss.windup.ModuleIndexer;
-import org.jboss.windup.exception.ArchiveIndexReaderException;
-import org.jboss.windup.exception.ModuleIndexReaderException;
-import org.jboss.windup.exception.ModuleIndexWriteException;
-import org.jboss.windup.lucene.transformer.ModuleTransformer;
-import org.jboss.windup.metadata.ArchiveVO;
-import org.jboss.windup.metadata.ModuleVO;
+import org.jboss.windup.classprofiler.ModuleIndexer;
+import org.jboss.windup.classprofiler.exception.ArchiveIndexReaderException;
+import org.jboss.windup.classprofiler.exception.ModuleIndexReaderException;
+import org.jboss.windup.classprofiler.exception.ModuleIndexWriteException;
+import org.jboss.windup.classprofiler.lucene.transformer.ModuleTransformer;
+import org.jboss.windup.classprofiler.metadata.ArchiveVO;
+import org.jboss.windup.classprofiler.metadata.ModuleVO;
 
 public class LuceneModuleIndexer implements ModuleIndexer {
 

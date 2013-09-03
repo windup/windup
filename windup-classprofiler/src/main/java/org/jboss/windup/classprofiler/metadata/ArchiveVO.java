@@ -1,4 +1,4 @@
-package org.jboss.windup.metadata;
+package org.jboss.windup.classprofiler.metadata;
 
 import java.util.HashMap;
 import java.util.Map;

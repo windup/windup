@@ -1,4 +1,4 @@
-package org.jboss.windup.exception;
+package org.jboss.windup.classprofiler.exception;
 
 public class ClassIndexReaderException extends Exception {
 

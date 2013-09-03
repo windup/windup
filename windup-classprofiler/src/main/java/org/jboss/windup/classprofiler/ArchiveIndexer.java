@@ -1,10 +1,10 @@
-package org.jboss.windup;
+package org.jboss.windup.classprofiler;
 
 import java.util.Collection;
 
-import org.jboss.windup.exception.ArchiveIndexReaderException;
-import org.jboss.windup.exception.ArchiveIndexWriteException;
-import org.jboss.windup.metadata.ArchiveVO;
+import org.jboss.windup.classprofiler.exception.ArchiveIndexReaderException;
+import org.jboss.windup.classprofiler.exception.ArchiveIndexWriteException;
+import org.jboss.windup.classprofiler.metadata.ArchiveVO;
 
 public interface ArchiveIndexer {
 	
