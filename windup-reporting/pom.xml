@@ -10,11 +10,16 @@
 	<artifactId>windup-reporting</artifactId>
 
 	<properties>
-		<version.forge>2.0.0.Alpha7</version.forge>
+		<version.furnace>2.0.0-SNAPSHOT</version.furnace>
+		<version.forge>2.0.0-SNAPSHOT</version.forge>
 	</properties>
 
 	<dependencies>
-		<!-- APIs for interacting with addons we want to use. -->
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>dependencies-api</artifactId>
+			<version>${version.forge}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>projects-api</artifactId>
@@ -36,30 +41,27 @@
 			<version>${version.forge}</version>
 		</dependency>
 
-		<!-- Furnace embeddable container -->
 		<dependency>
 			<groupId>org.jboss.forge.furnace</groupId>
 			<artifactId>furnace-se</artifactId>
-			<version>${version.forge}</version>
+			<version>${version.furnace}</version>
 		</dependency>
-		<!-- Furnace dependencies enable us to fetch Furnace Addons for getting 
-			Windup Extensions -->
 		<dependency>
 			<groupId>org.jboss.forge.furnace</groupId>
 			<artifactId>furnace-manager</artifactId>
-			<version>${version.forge}</version>
+			<version>${version.furnace}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.forge.furnace</groupId>
 			<artifactId>furnace-manager-resolver-maven</artifactId>
-			<version>${version.forge}</version>
+			<version>${version.furnace}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>dependencies-api</artifactId>
-			<version>${version.forge}</version>
+		   <groupId>org.switchyard.forge</groupId>
+   		   <artifactId>switchyard-forge-plugin</artifactId>
+           <version>1.0.0-SNAPSHOT</version>
+           <classifier>forge-addon</classifier>		
 		</dependency>
-		<!-- End dependencies for fetching Addons -->
 
 		<dependency>
 			<groupId>log4j</groupId>

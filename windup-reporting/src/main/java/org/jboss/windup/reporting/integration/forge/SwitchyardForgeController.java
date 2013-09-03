@@ -7,12 +7,13 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
+import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.facets.ResourceFacet;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.Furnace;
@@ -31,14 +32,11 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
 import org.jboss.windup.reporting.Reporter;
+import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 public class SwitchyardForgeController implements Reporter
 {
-
    private static final Log LOG = LogFactory.getLog(SwitchyardForgeController.class);
-   {
-      System.setProperty("modules.ignore.jdk.factory", "true");
-   }
 
    @Override
    @SuppressWarnings("unchecked")
@@ -62,28 +60,47 @@ public class SwitchyardForgeController implements Reporter
                Thread.sleep(100);
             }
 
-            install(furnace, "org.jboss.forge.addon:parser-java,2.0.0-SNAPSHOT");
-            install(furnace, "org.jboss.forge.addon:projects,2.0.0-SNAPSHOT");
-            install(furnace, "org.jboss.forge.addon:maven,2.0.0-SNAPSHOT");
+            AddonId switchyardId = AddonId
+                     .fromCoordinates("org.switchyard.forge:switchyard-forge-plugin,1.0.0-SNAPSHOT");
+            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:parser-java,2.0.0-SNAPSHOT"));
+            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:projects,2.0.0-SNAPSHOT"));
+            install(furnace, AddonId.fromCoordinates("org.jboss.forge.addon:maven,2.0.0-SNAPSHOT"));
+            install(furnace, switchyardId);
 
             AddonRegistry registry = furnace.getAddonRegistry();
-            Addons.waitUntilStarted(registry.getAddon(AddonId.from("org.jboss.forge.addon:projects", "2.0.0-SNAPSHOT")));
+            Addons.waitUntilStarted(registry.getAddon(switchyardId));
 
-            ResourceFactory resourceFactory = registry.getExportedInstance(ResourceFactory.class).get();
-            ProjectFactory projectFactory = registry.getExportedInstance(ProjectFactory.class).get();
+            /**
+             * Get the necessary factory instances.
+             */
+            ResourceFactory resourceFactory = registry.getServices(ResourceFactory.class).get();
+            ProjectFactory projectFactory = registry.getServices(ProjectFactory.class).get();
+            FacetFactory facetFactory = registry.getServices(FacetFactory.class).get();
 
             DirectoryResource dr = resourceFactory.create(DirectoryResource.class, forgeOutput);
-            DirectoryResource projectDir = dr.getChildDirectory("project");
+            DirectoryResource projectDir = dr.getChildDirectory(archive.getName());
             projectDir.mkdir();
 
             List<Class<? extends ProjectFacet>> facetsToInstall = Arrays.asList(JavaSourceFacet.class,
-                     ResourceFacet.class);
+                     ResourcesFacet.class);
             Project project = projectFactory.createProject(projectDir, facetsToInstall);
             if (project != null)
             {
+
                LOG.info("Project created: " + project);
                project.getFacet(JavaSourceFacet.class).saveJavaSource(
                         JavaParser.create(JavaClass.class).setPackage("com.example").setName("ExampleClass"));
+               MetadataFacet mdf = project.getFacet(MetadataFacet.class);
+               mdf.setProjectName(archive.getName());
+
+               /**
+                * Install and retrieve the switchyard facet
+                */
+               SwitchYardFacet syf = facetFactory.install(project, SwitchYardFacet.class);
+
+               /**
+                * Do more stuff...
+                */
             }
 
          }
@@ -100,32 +117,14 @@ public class SwitchyardForgeController implements Reporter
       }
    }
 
-   private void install(Furnace furnace, String addonCoordinates)
+   private static void install(Furnace furnace, AddonId addonId)
    {
       try
       {
          AddonDependencyResolver addonResolver = new MavenAddonDependencyResolver();
          AddonManager addonManager = new AddonManagerImpl(furnace, addonResolver, false);
 
-         AddonId addon;
-         // This allows forge --install maven
-         if (addonCoordinates.contains(","))
-         {
-            addon = AddonId.fromCoordinates(addonCoordinates);
-         }
-         else
-         {
-            String coordinates = "org.jboss.forge.addon:" + addonCoordinates;
-            CoordinateBuilder coordinate = CoordinateBuilder.create(coordinates);
-            AddonId[] versions = addonResolver.resolveVersions(coordinate.toString());
-            if (versions.length < 1)
-            {
-               throw new IllegalArgumentException("No Artifact version found for " + coordinate);
-            }
-            addon = versions[versions.length - 1];
-         }
-
-         InstallRequest request = addonManager.install(addon);
+         InstallRequest request = addonManager.install(addonId);
          System.out.println(request);
          request.perform();
       }
