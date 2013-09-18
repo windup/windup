@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class ModuleArchiveTest {
 
-	private static final int totalNum = 10;
+	private static final int totalNum = 1000;
 	private static LuceneArchiveIndexer lai;
 	private static LuceneClassIndexer lci;
 	private static LuceneModuleIndexer lmi;
