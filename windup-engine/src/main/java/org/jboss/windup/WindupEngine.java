@@ -35,165 +35,165 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class WindupEngine {
-	private static final Log LOG = LogFactory.getLog(WindupEngine.class);
+    private static final Log LOG = LogFactory.getLog(WindupEngine.class);
 
-	private ApplicationContext context;
-	private List<String> supportedExtensions;
+    private ApplicationContext context;
+    private List<String> supportedExtensions;
 
-	private ZipInterrogationEngine interrogationEngine;
-	private DirectoryInterrogationEngine directoryInterrogationEngine;
-	private FileInterrogationEngine fileInterrogationEngine;
-	
-	private WindupEnvironment settings;
+    private ZipInterrogationEngine interrogationEngine;
+    private DirectoryInterrogationEngine directoryInterrogationEngine;
+    private FileInterrogationEngine fileInterrogationEngine;
 
-	public WindupEngine(WindupEnvironment settings) {
-		setupEnvironment(settings);
-		this.settings = settings;
+    private WindupEnvironment settings;
 
-		// sets environment variables needed for Spring configuration.
-		List<String> springContexts = new LinkedList<String>();
+    public WindupEngine(WindupEnvironment settings) {
+        setupEnvironment(settings);
+        this.settings = settings;
 
-		springContexts.add("/jboss-windup-context.xml");
-		this.context = new ClassPathXmlApplicationContext(springContexts.toArray(new String[springContexts.size()]));
-		
-		interrogationEngine = (ZipInterrogationEngine) context.getBean("archive-interrogation-engine");
-		directoryInterrogationEngine = (DirectoryInterrogationEngine) context.getBean("directory-interrogation-engine");
-		fileInterrogationEngine = (FileInterrogationEngine) context.getBean("file-interrogation-engine");
-		supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));
-	}
-	
-	public ApplicationContext getContext() {
-		return context;
-	}
+        // sets environment variables needed for Spring configuration.
+        List<String> springContexts = new LinkedList<String>();
 
-	/**
-	 * Sets up runtime properties for the context.
-	 * 
-	 * @param settings
-	 */
-	private void setupEnvironment(WindupEnvironment settings) {
-		// validate settings...
-		if (StringUtils.isNotBlank(settings.getPackageSignature())) {
-			System.setProperty("package.signature", settings.getPackageSignature());
-		}
-		else {
-			LOG.warn("WARNING: Consider specifying javaPkgs.  Otherwise, the Java code will not be inspected.");
-		}
-		
-		if (StringUtils.isNotBlank(settings.getExcludeSignature())) {
-			System.setProperty("exclude.signature", settings.getExcludeSignature());
-		}
-		
+        springContexts.add("/jboss-windup-context.xml");
+        this.context = new ClassPathXmlApplicationContext(springContexts.toArray(new String[springContexts.size()]));
 
-		if (StringUtils.isNotBlank(settings.getTargetPlatform())) {
-			System.setProperty("target.platform", settings.getTargetPlatform());
-		}
+        interrogationEngine = (ZipInterrogationEngine) context.getBean("archive-interrogation-engine");
+        directoryInterrogationEngine = (DirectoryInterrogationEngine) context.getBean("directory-interrogation-engine");
+        fileInterrogationEngine = (FileInterrogationEngine) context.getBean("file-interrogation-engine");
+        supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));
+    }
 
-		if (StringUtils.isNotBlank(settings.getFetchRemote())) {
-			System.setProperty("fetch.remote", settings.getFetchRemote());
-		}
-		else {
-			LOG.warn("INFO: Will not try and fetch remote versions for unknown JARs.  Consider using: '-fetchRemote true' command line for more detailed reporting.  Requires internet connection.");
-			System.setProperty("fetch.remote", "false");
-		}
+    public ApplicationContext getContext() {
+        return context;
+    }
 
-	}
-	
-	/**
-	 * <p>
-	 * Process a single file.
-	 * </p>
-	 * 
-	 * @param filePath
-	 * @throws IOException
-	 */
-	public FileMetadata processFile(File file) throws IOException {
-		Validate.notNull(file, "File is required, but provided as null.");
-		
-		if(!settings.isSource()) {
-			throw new RuntimeException("Windup Engine must be set to source mode to process single files.");
-		}
-		
-		if (!file.exists()) {
-			throw new FileNotFoundException("file does not exist: " + file);
-		}
-		
-		if(!file.isFile()) {
-			throw new FileNotFoundException("given file path does not reference a file: " + file.getAbsolutePath());
-		}
-		
-		return fileInterrogationEngine.process(file);
-	}
-	
-	/**
-	 * Processes a directory, recursively, in source mode.  That is, it will not process zip archives, but will treat the directory as a project directory, for example.  
-	 * 
-	 * @param dirPath - path to the source directory
-	 * @param outputPath - path to the report output path
-	 * @return
-	 * @throws IOException
-	 */
-	public ArchiveMetadata processSourceDirectory(File dirPath, File outputPath) throws IOException {
-		Validate.notNull(dirPath, "Directory input path must be provided.");
-		Validate.notNull(dirPath.isDirectory(), "Input must be a directory.");
-		Validate.notNull(outputPath, "Directory output path must be provided.");
-		
-		File logFile = null;
-				
-		if (StringUtils.isNotBlank(settings.getLogLevel())) {
-			LogController.setLogLevel(settings.getLogLevel());
-		}
-		
-		try {
-			if (settings.isCaptureLog()) {
-				logFile = new File(outputPath.getAbsolutePath() + File.separator + "windup.log");
-				LogController.addFileAppender(logFile);
-			}
-			return directoryInterrogationEngine.process(outputPath, dirPath);
-		}
-		finally {
-			if (logFile != null && logFile.exists()) {
-				LogController.removeFileAppender(logFile);
-			}
-		}
-	}
+    /**
+     * Sets up runtime properties for the context.
+     * 
+     * @param settings
+     */
+    private void setupEnvironment(WindupEnvironment settings) {
+        // validate settings...
+        if (StringUtils.isNotBlank(settings.getPackageSignature())) {
+            System.setProperty("package.signature", settings.getPackageSignature());
+        }
+        else {
+            LOG.warn("WARNING: Consider specifying javaPkgs.  Otherwise, the Java code will not be inspected.");
+        }
 
-	
-	/**
-	 * Processes a zip archive and returns the meta information; the report will be output to the outputPath.
-	 * @param archivePath - path to zip archive
-	 * @param outputPath - report output path
-	 * @return
-	 * @throws IOException
-	 */
-	public ArchiveMetadata processArchive(File archivePath, File outputPath) throws IOException {
-		Validate.notNull(archivePath, "Directory archivePath path must be provided.");
-		Validate.notNull(outputPath, "Directory outputPath must be provided.");
-		
-		if (!archivePath.exists()) {
-			throw new FileNotFoundException("Archive to process not found: " + archivePath.getPath());
-		}
+        if (StringUtils.isNotBlank(settings.getExcludeSignature())) {
+            System.setProperty("exclude.signature", settings.getExcludeSignature());
+        }
 
-		File logFile = null;
-		if (!outputPath.exists()) {
-			FileUtils.forceMkdir(outputPath);
-		}
 
-		if (StringUtils.isNotBlank(settings.getLogLevel())) {
-			LogController.setLogLevel(settings.getLogLevel());
-		}
+        if (StringUtils.isNotBlank(settings.getTargetPlatform())) {
+            System.setProperty("target.platform", settings.getTargetPlatform());
+        }
 
-		try {
-			if (settings.isCaptureLog()) {
-				logFile = new File(outputPath.getAbsolutePath() + File.separator + "windup.log");
-				LogController.addFileAppender(logFile);
-			} 
-			return interrogationEngine.process(outputPath, archivePath);
-		}
-		finally {
-			if (logFile != null && logFile.exists()) {
-				LogController.removeFileAppender(logFile);
-			}
-		}
-	}
+        if (StringUtils.isNotBlank(settings.getFetchRemote())) {
+            System.setProperty("fetch.remote", settings.getFetchRemote());
+        }
+        else {
+            LOG.warn("INFO: Will not try and fetch remote versions for unknown JARs.  Consider using: '-fetchRemote true' command line for more detailed reporting.  Requires internet connection.");
+            System.setProperty("fetch.remote", "false");
+        }
+
+    }
+
+    /**
+     * <p>
+     * Process a single file.
+     * </p>
+     * 
+     * @param filePath
+     * @throws IOException
+     */
+    public FileMetadata processFile(File file) throws IOException {
+        Validate.notNull(file, "File is required, but provided as null.");
+
+        if(!settings.isSource()) {
+            throw new RuntimeException("Windup Engine must be set to source mode to process single files.");
+        }
+
+        if (!file.exists()) {
+            throw new FileNotFoundException("file does not exist: " + file);
+        }
+
+        if(!file.isFile()) {
+            throw new FileNotFoundException("given file path does not reference a file: " + file.getAbsolutePath());
+        }
+
+        return fileInterrogationEngine.process(file);
+    }
+
+    /**
+     * Processes a directory, recursively, in source mode.  That is, it will not process zip archives, but will treat the directory as a project directory, for example.  
+     * 
+     * @param dirPath - path to the source directory
+     * @param outputPath - path to the report output path
+     * @return
+     * @throws IOException
+     */
+    public ArchiveMetadata processSourceDirectory(File dirPath, File outputPath) throws IOException {
+        Validate.notNull(dirPath, "Directory input path must be provided.");
+        Validate.notNull(dirPath.isDirectory(), "Input must be a directory.");
+        Validate.notNull(outputPath, "Directory output path must be provided.");
+
+        File logFile = null;
+
+        if (StringUtils.isNotBlank(settings.getLogLevel())) {
+            LogController.setLogLevel(settings.getLogLevel());
+        }
+
+        try {
+            if (settings.isCaptureLog()) {
+                logFile = new File(outputPath.getAbsolutePath() + File.separator + "windup.log");
+                LogController.addFileAppender(logFile);
+            }
+            return directoryInterrogationEngine.process(outputPath, dirPath);
+        }
+        finally {
+            if (logFile != null && logFile.exists()) {
+                LogController.removeFileAppender(logFile);
+            }
+        }
+    }
+
+
+    /**
+     * Processes a zip archive and returns the meta information; the report will be output to the outputPath.
+     * @param archivePath - path to zip archive
+     * @param outputPath - report output path
+     * @return
+     * @throws IOException
+     */
+    public ArchiveMetadata processArchive(File archivePath, File outputPath) throws IOException {
+        Validate.notNull(archivePath, "Directory archivePath path must be provided.");
+        Validate.notNull(outputPath, "Directory outputPath must be provided.");
+
+        if (!archivePath.exists()) {
+            throw new FileNotFoundException("Archive to process not found: " + archivePath.getPath());
+        }
+
+        File logFile = null;
+        if (!outputPath.exists()) {
+            FileUtils.forceMkdir(outputPath);
+        }
+
+        if (StringUtils.isNotBlank(settings.getLogLevel())) {
+            LogController.setLogLevel(settings.getLogLevel());
+        }
+
+        try {
+            if (settings.isCaptureLog()) {
+                logFile = new File(outputPath.getAbsolutePath() + File.separator + "windup.log");
+                LogController.addFileAppender(logFile);
+            } 
+            return interrogationEngine.process(outputPath, archivePath);
+        }
+        finally {
+            if (logFile != null && logFile.exists()) {
+                LogController.removeFileAppender(logFile);
+            }
+        }
+    }
 }
