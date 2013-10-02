@@ -171,7 +171,7 @@ public class WindupEngine {
 		Validate.notNull(outputPath, "Directory outputPath must be provided.");
 		
 		if (!archivePath.exists()) {
-			throw new FileNotFoundException("ArchiveMetadata not found.");
+			throw new FileNotFoundException("Archive to process not found: " + archivePath.getPath());
 		}
 
 		File logFile = null;

@@ -30,7 +30,6 @@ import org.jboss.windup.util.RecursiveZipMetaFactory;
  * are returned as an ArchiveResult.
  * 
  * @author bdavis
- * 
  */
 public class ZipInterrogationEngine {
 	private static final Log LOG = LogFactory.getLog(ZipInterrogationEngine.class);
@@ -48,6 +47,7 @@ public class ZipInterrogationEngine {
 
 	public ZipMetadata process(File outputDirectory, File targetArchive) {
 
+        // Unzip
 		ZipMetadata archiveMeta;
 		LOG.info("Processing: " + targetArchive.getName());
 		try {
@@ -55,29 +55,35 @@ public class ZipInterrogationEngine {
 			archiveMeta = recursiveExtractor.recursivelyExtract(zf);
 		}
 		catch (Exception e) {
-			LOG.error("Error unzipping file.", e);
+			LOG.error("Error unzipping file: " + targetArchive.getPath(), e);
 			return null;
 		}
 
+        // Flatten
 		List<ZipMetadata> archiveMetas = new LinkedList<ZipMetadata>();
 		unfoldRecursion(archiveMeta, archiveMetas);
 
 		int i = 1;
 		int j = archiveMetas.size();
 
+        // Process the flattened list.
 		for (ZipMetadata archive : archiveMetas) {
 			LOG.info("Interrogating (" + i + " of " + j + "): " + archive.getRelativePath());
-			File archiveOutputDirectory = new File(outputDirectory + File.separator + archive.getRelativePath());
+			File archiveOutputDirectory = new File(outputDirectory + File.separator + archive.getRelativePath()); // Using toString()!
 			archive.setArchiveOutputDirectory(archiveOutputDirectory);
 
 			decoratorPipeline.processMeta(archive);
 			i++;
 		}
 
+        // Delete the extracted files and return the "tree" metadata.
 		recursiveExtractor.releaseTempFiles();
 		return archiveMeta;
 	}
 
+    /**
+     *  Fills the collection archiveMetas from the "tree" given in base.
+     */
 	protected void unfoldRecursion(ZipMetadata base, Collection<ZipMetadata> archiveMetas) {
 		for (ArchiveMetadata meta : base.getNestedArchives()) {
 			ZipMetadata zipMeta = (ZipMetadata)meta;
