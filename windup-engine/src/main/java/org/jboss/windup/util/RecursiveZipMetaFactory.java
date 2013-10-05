@@ -32,11 +32,15 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.windup.metadata.type.archive.ZipMetadata;
 
 
+/**
+ *  Custom implementation of zip archive extraction.
+ */
 public class RecursiveZipMetaFactory {
 	private static final Log LOG = LogFactory.getLog(RecursiveZipMetaFactory.class);
 
 	private static final int BUFFER = 2048;
 
+    /** The directory to extract to. */
 	private File startLocation;
 
 	public RecursiveZipMetaFactory(File startLocation, Set<String> extensions) {
