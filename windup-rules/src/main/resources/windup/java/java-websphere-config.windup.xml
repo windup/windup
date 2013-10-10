@@ -128,5 +128,15 @@
 		<windup:java-hint regex="com.ibm.jms.JMSObjectMessage$" hint="Migrate to: javax.jms.ObjectMessage"/>
 		<windup:java-hint regex="com.ibm.jms.JMSStreamMessage$" hint="Migrate to: javax.jms.StreamMessage"/>
 		<windup:java-hint regex="com.ibm.jms.JMSTextMessage$" hint="Migrate to: javax.jms.TextMessage"/>
+
+        <!-- WebSphere Transaction Manager APIs -->
+        <windup:java-hint regex="com.ibm.ws.persistence.jdbc.kernel.ConstraintUpdateManager$" hint="Migrate to: org.apache.openjpa.jdbc.kernel.ConstraintUpdateManager"/>
+        <windup:java-hint regex="com.ibm.ws.persistence.jdbc.kernel.WsJpaJDBCBrokerFactory$" hint="Migrate to: org.apache.openjpa.jdbc.kernel.JDBCBrokerFactory"/>
+        <windup:java-hint regex="com.ibm.ws.persistence.jdbc.sql.DB2Dictionary$" hint="Migrate to: org.apache.openjpa.jdbc.sql.DB2Dictionary"/>
+        <windup:java-hint regex="com.ibm.ws.persistence.jdbc.sql.OracleDictionary$" hint="Migrate to: org.apache.openjpa.jdbc.sql.OracleDictionary"/>
+        <windup:java-hint regex="com.ibm.ws.persistence.jdbc.sql.SQLFactoryImpl$" hint="Migrate to: org.apache.openjpa.jdbc.sql.SQLFactoryImpl"/>
+        <windup:java-hint regex="com.ibm.ws.persistence.jdbc.sql.SQLServerDictionary$" hint="Migrate to: org.apache.openjpa.jdbc.sql.SQLServerDictionary"/>
+        <windup:java-hint regex="com.ibm.ws.persistence.jdbc.sql.WsJpaBrokerImpl$" hint="Migrate to: org.apache.openjpa.kernel.BrokerImpl"/>
+        <windup:java-hint regex="com.ibm.ws.persistence.kernel.WsJpaFinalizingBrokerImpl$" hint="Migrate to: org.apache.openjpa.kernel.FinalizingBrokerImpl"/>
 	</windup:java-hints>
 </beans>
