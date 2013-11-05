@@ -55,7 +55,7 @@ public class RecursiveZipMetaFactory {
 	private Set<String> kae = new HashSet<String>();
 
 	public void releaseTempFiles() {
-		LOG.info("Cleaning up: " + this.startLocation.getAbsolutePath());
+		LOG.debug("Cleaning up: " + this.startLocation.getAbsolutePath());
 		FileUtils.deleteQuietly(this.startLocation);
 	}
 
