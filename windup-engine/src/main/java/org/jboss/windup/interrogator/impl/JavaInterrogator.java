@@ -133,11 +133,13 @@ public class JavaInterrogator extends ExtensionInterrogator<JavaMetadata> {
 		List<ImportDeclaration> imports = cu.imports();
 		Set<String> clzDependencies = new HashSet<String>();
 		
-		for(ImportDeclaration id : imports) {
-			if(LOG.isDebugEnabled()) {
-				LOG.debug("Import: "+id.getName());
+		if(imports != null) {
+			for(ImportDeclaration id : imports) {
+				if(LOG.isDebugEnabled()) {
+					LOG.debug("Import: "+id.getName());
+				}
+				clzDependencies.add(id.getName().getFullyQualifiedName());
 			}
-			clzDependencies.add(id.getName().getFullyQualifiedName());
 		}
 		meta.setClassDependencies(clzDependencies);
 		meta.setBlackListedDependencies(blacklistPackageResolver.extractBlacklist(clzDependencies));
@@ -150,22 +152,28 @@ public class JavaInterrogator extends ExtensionInterrogator<JavaMetadata> {
 		
 		@SuppressWarnings("unchecked")
 		List<TypeDeclaration> types = cu.types();
-		for(TypeDeclaration type : types) {
-			//if class is in package grab that
-			PackageDeclaration packageDeclaration = cu.getPackage();
-			String packageName = "";
-			if(packageDeclaration != null) {
-				packageName = cu.getPackage().getName().getFullyQualifiedName() + ".";
+		
+		if(types != null) {
+			for(TypeDeclaration type : types) {
+				//if class is in package grab that
+				PackageDeclaration packageDeclaration = cu.getPackage();
+				String packageName = "";
+				if(packageDeclaration != null) {
+					packageName = cu.getPackage().getName().getFullyQualifiedName() + ".";
+				}
+				
+				//generate full class name
+				String fullPackage = packageName + type.getName().getFullyQualifiedName();
+				meta.setQualifiedClassName(fullPackage);
+				
+				if(LOG.isDebugEnabled()) {
+					LOG.debug("Full Package: "+fullPackage);
+				}
+				break;
 			}
-			
-			//generate full class name
-			String fullPackage = packageName + type.getName().getFullyQualifiedName();
-			meta.setQualifiedClassName(fullPackage);
-			
-			if(LOG.isDebugEnabled()) {
-				LOG.debug("Full Package: "+fullPackage);
-			}
-			break;
+		}
+		else {
+			LOG.warn("Expected to find Java 'type' in fine: "+meta.getPathRelativeToArchive());
 		}
 	}
 	
