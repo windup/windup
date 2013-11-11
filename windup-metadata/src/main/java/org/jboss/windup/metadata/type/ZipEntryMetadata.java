@@ -21,6 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,8 +77,8 @@ public class ZipEntryMetadata extends FileMetadata {
 	 * @throws FileNotFoundException
 	 */
 	protected File unzipEntry(ZipEntry entry, ZipFile zipfile, File archiveOutputDirectory) throws IOException, FileNotFoundException {
-		BufferedOutputStream dest;
-		BufferedInputStream is;
+		BufferedOutputStream dest = null;
+		BufferedInputStream is = null;
 		String pathOutput = null;
 		if (StringUtils.contains(entry.toString(), "/")) {
 			pathOutput = StringUtils.substringBeforeLast(entry.toString(), "/");
@@ -96,22 +97,26 @@ public class ZipEntryMetadata extends FileMetadata {
 		File entryOutput = new File(archiveOutputDirectory.getAbsolutePath() + File.separator + entry);
 
 		if (!entryOutput.exists()) {
-			FileUtils.forceMkdir(entryPathOutput);
-			is = new BufferedInputStream(zipfile.getInputStream(entry));
-			LOG.debug("Unzipping: " + entryOutput.getAbsolutePath());
-
-			int count;
-			byte data[] = new byte[BUFFER];
-			FileOutputStream fos = new FileOutputStream(entryOutput);
-			dest = new BufferedOutputStream(fos, BUFFER);
-
-			while ((count = is.read(data, 0, BUFFER)) != -1) {
-				dest.write(data, 0, count);
+			try {
+				FileUtils.forceMkdir(entryPathOutput);
+				is = new BufferedInputStream(zipfile.getInputStream(entry));
+				LOG.debug("Unzipping: " + entryOutput.getAbsolutePath());
+	
+				int count;
+				byte data[] = new byte[BUFFER];
+				
+				FileOutputStream fos = new FileOutputStream(entryOutput);
+				dest = new BufferedOutputStream(fos, BUFFER);
+	
+				while ((count = is.read(data, 0, BUFFER)) != -1) {
+					dest.write(data, 0, count);
+				}
+				dest.flush();
+				
+			} finally {
+				IOUtils.closeQuietly(dest);
+				IOUtils.closeQuietly(is);
 			}
-
-			dest.flush();
-			dest.close();
-			is.close();
 		}
 
 		return entryOutput;
