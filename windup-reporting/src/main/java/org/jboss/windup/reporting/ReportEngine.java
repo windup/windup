@@ -44,9 +44,40 @@ public class ReportEngine {
 	private final WindupEnvironment settings;
 	private final List<String> supportedExtensions;
 	
+	/**
+	 * <p>
+	 * Creates a new {@link ReportEngine} using the given
+	 * {@link WindupEnvironment}. This new {@link ReportEngine} will use a newly
+	 * created {@link WindupEngine}.
+	 * </p>
+	 * 
+	 * @param settings
+	 *            Windup settings to use for this {@link ReportEngine}
+	 */
 	public ReportEngine(WindupEnvironment settings) {
+		this(settings, new WindupEngine(settings));
+	}
+	
+	/**
+	 * <p>
+	 * Creates a {@link ReportEngine} using an already existing
+	 * {@link WindupEngine}.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>IMPORTANT: keep in mind that {@link WindupEngine} is not inherently
+	 * thread safe, so if you are using it for more then one task be sure to
+	 * manage this risk yourself.
+	 * </p>
+	 * 
+	 * @param settings
+	 *            Windup settings to use for this {@link ReportEngine}
+	 * @param engine
+	 *            Windup engine to use for this {@link ReportEngine}
+	 */
+	public ReportEngine(WindupEnvironment settings, WindupEngine engine) {
 		this.settings = settings;
-		windupEngine = new WindupEngine(settings);
+		windupEngine = engine;
 		context = windupEngine.getContext();
 		reporters = (Collection<Reporter>)context.getBean("reporters");
 		supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));

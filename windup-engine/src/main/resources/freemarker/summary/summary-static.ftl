@@ -2,6 +2,7 @@
 	<head>
 		<title>JBoss Windup: ${archiveReport.relativePathFromRoot}</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<link rel="stylesheet" type="text/css" href="windup.css">
 		<script type='text/javascript' src='jquery.min.js'></script>
 		<script type='text/javascript' src='flot/jquery.flot.min.js'></script>
