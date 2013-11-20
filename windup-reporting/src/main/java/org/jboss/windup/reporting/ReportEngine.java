@@ -83,19 +83,23 @@ public class ReportEngine {
 		supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));
 	}
 	
-	/**
-	 * Main processing method. 
-	 * @param inputLocation
-	 * @param outputLocation
-	 * @throws IOException
-	 */
+    /**
+     * Processes the input location based on this engine's settings.
+     * If in source mode, uses WindupEngine#processSourceDirectory().
+     * Otherwise, if it's a directory, looks for archives with supported suffix,
+     * and if not a directory, processes as a single archive.
+     * 
+     * @param inputLocation   Path to the archive or directory to process.
+     * @param outputLocation  Where to store the resulting reports.
+     *        If null, inputLocation + "-doc" is used. If the directory doesn't exist, it is created.
+     */
 	public void process(File inputLocation, File outputLocation) throws IOException {
         if( ! inputLocation.exists() ) {
             throw new FileNotFoundException("Input file or directory not found: " + inputLocation);
 		}
 		
 		if(settings.isSource()) {
-            // Validate input and output.
+            // Validate the input.
             if( ! inputLocation.isDirectory() ){
                 throw new IllegalArgumentException("Source input must be a directory: " + inputLocation);
             }			
@@ -111,11 +115,15 @@ public class ReportEngine {
 				LOG.info("  - To overwrite this in the future, use the -output parameter.");
 			}
 			
-			if (!outputLocation.exists()) {
+			if( ! outputLocation.exists() ) {
 				FileUtils.forceMkdir(outputLocation);
 			}
-			
-			ArchiveMetadata am = windupEngine.processSourceDirectory(inputLocation, outputLocation);
+            else {
+                if( ! outputLocation.isDirectory() )
+                    throw new IllegalArgumentException("Output location already exists and is not a directory: " + outputLocation);
+            }
+
+			ArchiveMetadata am = this.windupEngine.processSourceDirectory(inputLocation, outputLocation);
 			generateReport(am, outputLocation);
 		}
 		//if this isn't a source run, then we should run it as archive mode.
@@ -128,15 +136,21 @@ public class ReportEngine {
 			else {
 				if (outputLocation == null) {
 					// Generate output dir based on input path.
-					outputLocation = generateArchiveOutputLocation(inputLocation);
+					outputLocation = deduceArchiveOutputLocation(inputLocation);
 				}
-                ArchiveMetadata amd = windupEngine.processArchive(inputLocation, outputLocation);
+                ArchiveMetadata amd = this.windupEngine.processArchive(inputLocation, outputLocation);
                 generateReport(amd, outputLocation);
 			}
+            
+            LOG.info("Reporting complete for " + inputLocation.getPath());
 		}
 	}
-	
-	protected File generateArchiveOutputLocation(File input) throws IOException {
+
+    
+    /**
+     * Generates output dir based on input path.
+     */    
+	protected File deduceArchiveOutputLocation(File input) throws IOException {
 		String outputLoc = StringUtils.substringBeforeLast(input.getAbsolutePath(), ".");
 		outputLoc += "-" + StringUtils.substringAfterLast(input.getAbsolutePath(), ".") + "-doc";
 		
@@ -186,7 +200,7 @@ public class ReportEngine {
 			}
 			LOG.info("ArchiveMetadata Path: " + archive.getAbsolutePath());
 			
-			File output = generateArchiveOutputLocation(archive);
+			File output = deduceArchiveOutputLocation(archive);
 			archiveMetas.add(windupEngine.processArchive(archive, output));
 		}
 		
@@ -201,18 +215,17 @@ public class ReportEngine {
 	        LOG.info("Processing reports for: "+archive.getName());
 	    }
 		
-		if(reporters != null) {
-			for(Reporter reporter : reporters) {
+		if( this.reporters != null ) {
+			for(Reporter reporter : this.reporters) {
 				reporter.process(archive, reportDirectory);
 			}
 		}
 		
-		if(reporters == null || reporters.size() == 0){
+		if( this.reporters == null || this.reporters.size() == 0 ){
 			LOG.warn("No reporters are currently registered.");
 		}
 		
 		LOG.info("Reporting complete.");
-		
 	}
 
 }
