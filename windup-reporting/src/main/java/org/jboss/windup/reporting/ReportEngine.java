@@ -90,23 +90,22 @@ public class ReportEngine {
 	 * @throws IOException
 	 */
 	public void process(File inputLocation, File outputLocation) throws IOException {
-		if (!inputLocation.exists()) {
-			throw new FileNotFoundException("ArchiveMetadata not found: " + inputLocation);
+        if( ! inputLocation.exists() ) {
+            throw new FileNotFoundException("Input file or directory not found: " + inputLocation);
 		}
 		
 		if(settings.isSource()) {
-			//validate input and output.
-			if(!inputLocation.exists() || !inputLocation.isDirectory())
-			{
-				throw new IllegalArgumentException("Source input must be directory.");
-			}			
+            // Validate input and output.
+            if( ! inputLocation.isDirectory() ){
+                throw new IllegalArgumentException("Source input must be a directory: " + inputLocation);
+            }			
 			
 			if(outputLocation == null) {
 				String outputName = inputLocation.getName() +"-doc";
 				String outputPathLoc = inputLocation.getParentFile().getAbsolutePath();
 				outputPathLoc = outputPathLoc + File.separator + outputName;
 				
-				//create output path...
+				// Create output path...
 				outputLocation = new File(outputPathLoc);
 				LOG.info("Creating output path: "+outputLocation.getAbsolutePath());
 				LOG.info("  - To overwrite this in the future, use the -output parameter.");
@@ -121,21 +120,18 @@ public class ReportEngine {
 		}
 		//if this isn't a source run, then we should run it as archive mode.
 		else {
+            // A dir
 			if (inputLocation.isDirectory()) {
 				batchInputDirectory(inputLocation);
 			}
+            // Single archive processing.
 			else {
-				// single archive processing.
 				if (outputLocation == null) {
-					//generate output based on input.
+					// Generate output dir based on input path.
 					outputLocation = generateArchiveOutputLocation(inputLocation);
-					ArchiveMetadata amd = windupEngine.processArchive(inputLocation, outputLocation);
-					generateReport(amd, outputLocation);
 				}
-				else {
-					ArchiveMetadata amd = windupEngine.processArchive(inputLocation, outputLocation);
-					generateReport(amd, outputLocation);
-				}
+                ArchiveMetadata amd = windupEngine.processArchive(inputLocation, outputLocation);
+                generateReport(amd, outputLocation);
 			}
 		}
 	}
