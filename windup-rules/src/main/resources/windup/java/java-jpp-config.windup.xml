@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:windup="http://www.jboss.org/schema/windup"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+    <windup:java-hints id="java-jpp-hints">
+        <windup:java-hint source-type="IMPORT" regex="org.exoplatform.web.login.InitiateLoginServlet" hint="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."/>
+        <windup:java-hint source-type="IMPORT" regex="org.exoplatform.web.login.DoLoginServlet" hint="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."/>
+        <windup:java-hint source-type="IMPORT" regex="org.exoplatform.web.login.ErrorLoginServlet" hint="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."/>
+        <windup:java-hint source-type="IMPORT" regex="org.exoplatform.web.security.PortalLoginController" hint="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."/>
+    </windup:java-hints>
+
+</beans>
