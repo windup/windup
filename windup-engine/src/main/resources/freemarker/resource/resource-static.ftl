@@ -1,5 +1,7 @@
 <html>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
 		<script type='text/javascript' src='${relativePath}jquery.min.js'></script>
 		<script type='text/javascript' src='${relativePath}jquery-ui/jquery.ui.widget.js'></script>
 		<script type='text/javascript' src='${relativePath}snippet/jquery.snippet.min.js'></script>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:windup="http://www.jboss.org/schema/windup"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+    <windup:pipeline type="XML" id="xml-epp-specific-decorators">
+
+        <windup:file-gate regex="portlet.xml">
+            <windup:decorators>
+                <windup:xpath-classification description="Portlet 2.0 Application Descriptor" xpath="//p:portlet-app | //portlet-app" effort="0">
+                    <windup:namespace prefix="p" uri="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" />
+                </windup:xpath-classification>
+                <windup:xpath-classification description="Portlet 1.0 Application Descriptor" xpath="//p:portlet-app | //portlet-app" effort="0">
+                    <windup:namespace prefix="p" uri="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" />
+                </windup:xpath-classification>
+            </windup:decorators>
+        </windup:file-gate>
+
+        <windup:file-gate regex="webui-configuration.xml">
+            <windup:decorators>
+                <windup:xpath-classification description="GateIn WebUI Configuration" xpath="//webui-configuration" effort="1" />
+            </windup:decorators>
+        </windup:file-gate>
+
+        <windup:file-gate regex="gatein-jboss-beans.xml">
+            <windup:decorators>
+                <windup:xpath-classification description="JBoss Bean Deployer for GateIn" xpath="//dep:deployment | //deployment" effort="2">
+                    <windup:namespace prefix="dep" uri="urn:jboss:bean-deployer:2.0" />
+                </windup:xpath-classification>
+            </windup:decorators>
+        </windup:file-gate>
+
+        <windup:xpath-classification description="GateIn eXo Kernel Configuration" xpath="/k10:configuration | /k12:configuration" effort="0">
+            <windup:namespace prefix="k10" uri="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd" />
+            <windup:namespace prefix="k12" uri="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd" />
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="GateIn Gadget" xpath="/gdg:gadgets" effort="0">
+            <windup:namespace prefix="gdg" uri="http://www.gatein.org/xml/ns/gadgets_1_0" />
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="GateIn Node Navigation Configuration" xpath="/go:node-navigation" effort="0">
+            <windup:namespace prefix="go" uri="http://www.gatein.org/xml/ns/gatein_objects_1_2" />
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="GateIn Page Configuration" xpath="/go:page-set" effort="0">
+            <windup:namespace prefix="go" uri="http://www.gatein.org/xml/ns/gatein_objects_1_2" />
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="GateIn Portal Configuration" xpath="/go:portal-config" effort="0">
+            <windup:namespace prefix="go" uri="http://www.gatein.org/xml/ns/gatein_objects_1_2" />
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="GateIn Resources" xpath="/gr:gatein-resources" effort="0">
+            <windup:namespace prefix="gr" uri="http://www.gatein.org/xml/ns/gatein_resources_1_2" />
+        </windup:xpath-classification>
+
+        <windup:xpath-value description="PortletBridge View Handler"
+                            xpath="/jee:faces-config/jee:application/jee:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /je:faces-config/je:application/je:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /faces-config/application/view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')]"
+                            inline="true">
+            <windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+            <windup:namespace prefix="je" uri="http://java.sun.com/JSF/Configuration" />
+            <windup:hints>
+                <windup:regex-hint effort="1"
+                                   regex="org.jboss.portletbridge.application.PortletViewHandler"
+                                   hint="Remove this entry, as it's not needed by Red Hat JBoss Portal 6.x"/>
+            </windup:hints>
+        </windup:xpath-value>
+
+        <windup:xpath-value description="PortletBridge State Manager"
+                            xpath="/jee:faces-config/jee:application/jee:state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')] | /je:faces-config/je:application/je:state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')] | /faces-config/application/state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')]"
+                            inline="true">
+            <windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+            <windup:namespace prefix="je" uri="http://java.sun.com/JSF/Configuration" />
+            <windup:hints>
+                <windup:regex-hint effort="1"
+                                   regex="org.jboss.portletbridge.application.PortletStateManager"
+                                   hint="Remove this entry, as it's not needed by Red Hat JBoss Portal 6.x"/>
+            </windup:hints>
+        </windup:xpath-value>
+
+        <windup:xpath-value description="Portal library"
+                            xpath="/application/module/java/text()"
+                            inline="true" effort="1">
+            <windup:hints>
+                <windup:regex-hint effort="0"
+                                   regex=".*jar$"
+                                   hint="Move the library to the EAR's lib directory. See https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_Portal/6.0/html/Migration_Guide/ar01s06.html"/>
+            </windup:hints>
+        </windup:xpath-value>
+
+        <windup:xpath-value description="PortletBridge org.jboss.portal.portlet.impl.jsr168.taglib moved"
+                            xpath="//*[starts-with(., 'org.jboss.portal.portlet.impl.jsr168.taglib')]/text()"
+                            inline="true">
+            <windup:hints>
+                <windup:regex-hint effort="1"
+                                   regex="org.jboss.portal.portlet.impl.jsr168.taglib.*"
+                                   hint="This package has been moved to org.gatein.pc.portlet.impl.jsr168.taglib"/>
+            </windup:hints>
+        </windup:xpath-value>
+
+        <!-- Authentication-related classes that were removed -->
+        <windup:xpath-value description="Class org.exoplatform.web.login.InitiateLoginServlet moved"
+                            xpath="//*[starts-with(., 'org.exoplatform.web.login.InitiateLoginServlet')]/text()"
+                            inline="true">
+            <windup:hints>
+                <windup:regex-hint effort="1"
+                                   regex="org.exoplatform.web.login.InitiateLoginServlet"
+                                   hint="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."/>
+            </windup:hints>
+        </windup:xpath-value>
+
+        <windup:xpath-value description="Class org.exoplatform.web.login.DoLoginServlet moved"
+                            xpath="//*[starts-with(., 'org.exoplatform.web.login.DoLoginServlet')]/text()"
+                            inline="true">
+            <windup:hints>
+                <windup:regex-hint effort="1"
+                                   regex="org.exoplatform.web.login.DoLoginServlet"
+                                   hint="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."/>
+            </windup:hints>
+        </windup:xpath-value>
+
+        <windup:xpath-value description="Class org.exoplatform.web.login.ErrorLoginServlet moved"
+                            xpath="//*[starts-with(., 'org.exoplatform.web.login.ErrorLoginServlet')]/text()"
+                            inline="true">
+            <windup:hints>
+                <windup:regex-hint effort="1"
+                                   regex="org.exoplatform.web.login.ErrorLoginServlet"
+                                   hint="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."/>
+            </windup:hints>
+        </windup:xpath-value>
+
+        <windup:xpath-value description="Class org.exoplatform.web.security.PortalLoginController moved"
+                            xpath="//*[starts-with(., 'org.exoplatform.web.security.PortalLoginController')]/text()"
+                            inline="true">
+            <windup:hints>
+                <windup:regex-hint effort="1"
+                                   regex="org.exoplatform.web.security.PortalLoginController"
+                                   hint="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."/>
+            </windup:hints>
+        </windup:xpath-value>
+
+    </windup:pipeline>
+</beans>
