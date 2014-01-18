@@ -116,6 +116,7 @@
 							<windup:java-whitelist regex="java.net.URLDecoder$"/>
 							<windup:java-whitelist regex="java.net.URLEncoder$"/>
 							<windup:java-whitelist regex="java.net.URLStreamHandler$"/>
+							<windup:java-whitelist regex="com.ibm.ac.commonbaseevent101"/>
 							<windup:java-whitelist regex="java.rmi.dgc.VMID$"/>
 							<windup:java-whitelist regex="java.rmi.registry.RegistryHandler$"/>
 							<windup:java-whitelist regex="java.rmi.RMISecurityException$"/>

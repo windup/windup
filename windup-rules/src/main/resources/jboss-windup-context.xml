@@ -78,7 +78,7 @@
 
 				<entry key="com.iona" value="Iona" />
 				<entry key="com.lombardi" value="Lombardi" />
-
+				<entry key="com.sonic" value="Progress" />
 				<entry key="com.sybase" value="Sybase" />
 				<entry key="sybase" value="Sybase" />
 
@@ -193,6 +193,7 @@
 				<value>com.crystaldecisions</value>
 				<value>amx_</value>
 				<value>^bea</value>
+				<value>com.sonic</value>
 				<value>com.bea</value>
 				<value>com.ibm</value>
 				<value>com.iona</value>
@@ -228,6 +229,7 @@
 
 
 				<!-- JDK 1.7 -->
+				<!--
 				<value>java.awt.BorderLayout$</value>
 				<value>java.awt.CardLayout$</value>
 				<value>java.awt.CheckboxGroup$</value>
@@ -273,15 +275,14 @@
 				<value>java.awt.TextField$</value>
 				<value>java.awt.Toolkit$</value>
 				<value>java.awt.Window$</value>
-				<!-- Could cause performance problems in current impl -->
-				<!-- 
+				 
 				<value>java.util.Date$</value>
 				<value>java.io.ByteArrayOutputStream$</value>
 				<value>java.io.DataInputStream$</value>
 				<value>java.io.File$</value>
 				<value>java.lang.Character$</value>
 				<value>java.lang.String$</value>
-				-->
+				
 				<value>java.io.LineNumberInputStream$</value>
 				<value>java.io.ObjectInputStream$</value>
 				<value>java.io.ObjectOutputStream.PutField$</value>
@@ -449,7 +450,7 @@
 				<value>org.xml.sax.helpers.AttributeListImpl$</value>
 				<value>org.xml.sax.helpers.ParserFactory$</value>
 				<value>org.xml.sax.Parser$</value>
-
+				-->
 
 				<!-- Hibernate4 -->
 				<!-- https://community.jboss.org/wiki/HibernateCoreMigrationGuide40 -->
