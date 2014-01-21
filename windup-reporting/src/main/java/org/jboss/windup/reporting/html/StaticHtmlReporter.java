@@ -81,19 +81,27 @@ public class StaticHtmlReporter implements Reporter {
 	}
 	
 	protected void writeSupportedFile(String fileName, File reportDirectory) throws IOException {
-		String resourcePath = "supporting/" + fileName;
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
+		InputStream in = null;
+		FileOutputStream out = null;
+		try {
+			String resourcePath = "supporting/" + fileName;
+			in = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
+			
+			if(in != null) {
+				fileName = StringUtils.replace(fileName, "/", File.separator);
 		
-		if(in != null) {
-			fileName = StringUtils.replace(fileName, "/", File.separator);
-	
-			File file = new File(reportDirectory + File.separator + fileName);
-			File dirFile = new File(StringUtils.substringBeforeLast(file.getAbsolutePath(), File.separator));
-			FileUtils.forceMkdir(dirFile);
-	
-			IOUtils.copy(in, new FileOutputStream(file));
-		} else {
-			LOG.warn("Could not find resource: " + resourcePath);
+				File file = new File(reportDirectory + File.separator + fileName);
+				File dirFile = new File(StringUtils.substringBeforeLast(file.getAbsolutePath(), File.separator));
+				FileUtils.forceMkdir(dirFile);
+		
+				out = new FileOutputStream(file);
+				IOUtils.copy(in, out);
+			} else {
+				LOG.warn("Could not find resource: " + resourcePath);
+			}
+		} finally {
+			IOUtils.closeQuietly(in);
+			IOUtils.closeQuietly(out);
 		}
 	}
 	
