@@ -11,5 +11,10 @@ usage: java -jar windup-cli.jar
 
 For a more detailed list of Windup commands, or for documentation on writing Windup rules, please see the documentation at:
  - https://github.com/jboss-windup/windup/wiki
+ 
+ISSUES:
 
+Please go to https://issues.jboss.org/browse/WINDUP to enter issues for Windup.  That is the issues site that engineering will be monitoring
+for bug fixes and features.  We will do best efforts to move issues from the GITHUB Windup Issues site now; but this site 
+be shut down in the future.
 
