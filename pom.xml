@@ -126,6 +126,7 @@
         <module>windup-maven-plugin</module>
         <module>windup-metadata</module>
         <module>windup-classprofiler</module>
+        <module>windup-grapher</module>
     </modules>
 
 </project>

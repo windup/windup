@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.windup</groupId>
+  <artifactId>windup-graph-titan</artifactId>
+  <version>1.0.0</version>
+  <name>Windup Graph</name>
+  <dependencies>
+          <dependency>
+           <groupId>com.thinkaurelius.titan</groupId>
+           <artifactId>titan-core</artifactId>
+           <version>0.4.1</version>
+        </dependency>
+          <dependency>
+                <groupId>com.thinkaurelius.titan</groupId>
+                <artifactId>titan-berkeleyje</artifactId>
+                <version>0.4.1</version>
+          </dependency>
+          <dependency>
+                <groupId>com.thinkaurelius.titan</groupId>
+                <artifactId>titan-lucene</artifactId>
+                <version>0.4.1</version>
+          </dependency>
+          <dependency>
+                <groupId>org.jooq</groupId>
+                <artifactId>joox</artifactId>
+                <version>1.2.0</version>
+          </dependency>
+          <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.5</version>
+          </dependency>
+          <dependency>
+          	<groupId>org.slf4j</groupId>
+          	<artifactId>slf4j-log4j12</artifactId>
+          	<version>1.7.5</version>
+          	<scope>test</scope>
+          </dependency>
+  </dependencies>
+</project>
