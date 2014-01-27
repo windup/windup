@@ -14,8 +14,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.jboss.windup.graph.renderer.GraphWriter;
-import org.jboss.windup.graph.renderer.dot.DotConstants.DotGraphType;
-import org.jboss.windup.graph.renderer.dot.DotWriter;
+import org.jboss.windup.graph.renderer.graphlib.GraphlibWriter;
+import org.jboss.windup.graph.renderer.graphlib.GraphvizConstants.GraphvizDirection;
+import org.jboss.windup.graph.renderer.graphlib.GraphvizConstants.GraphvizType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -23,18 +24,18 @@ import org.xml.sax.SAXException;
 
 import com.tinkerpop.blueprints.Graph;
 
-public class VizJSHtmlWriter implements GraphWriter {
-	private static Logger LOG = LoggerFactory.getLogger(VizJSHtmlWriter.class);
+public class DagreD3JSHtmlWriter implements GraphWriter {
+	private static Logger LOG = LoggerFactory.getLogger(DagreD3JSHtmlWriter.class);
 	
 	private final GraphWriter writer;
 
-	public VizJSHtmlWriter(Graph graph) {
-		this.writer = new DotWriter(graph, "G", "qualifiedName", DotGraphType.DIGRAPH, "8pt");
+	public DagreD3JSHtmlWriter(Graph graph) {
+		this.writer = new GraphlibWriter(graph, GraphvizType.DIGRAPH, GraphvizDirection.TOP_TO_BOTTOM, "g", "qualifiedName");
 	}
 
 	public void writeGraph(final OutputStream os) throws IOException {
 		// read in the html template resource.
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream("vizjs/HtmlTemplate.html");
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("dagred3/HtmlTemplate.html");
 
 		String result;
 		{
@@ -44,7 +45,7 @@ public class VizJSHtmlWriter implements GraphWriter {
 		}
 		
 		if(LOG.isDebugEnabled())  {
-			LOG.debug("DOT: "+result);
+			LOG.debug("Graphlib: "+result);
 		}
 		
 		
@@ -53,7 +54,7 @@ public class VizJSHtmlWriter implements GraphWriter {
 		try {
 			document = $(is).document();
 			// append in the gexf.
-			$(document).find("#dot-source").append(result);
+			$(document).find("#graphlib-source").append(result);
 
 			writeDocument(document, os);
 		} catch (SAXException e) {

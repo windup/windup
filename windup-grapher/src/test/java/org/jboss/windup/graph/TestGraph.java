@@ -9,10 +9,14 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.jboss.windup.graph.dao.ClassGraphDao;
-import org.jboss.windup.graph.model.FileResource;
-import org.jboss.windup.graph.model.JavaClassResource;
-import org.jboss.windup.graph.model.XmlResource;
+import org.jboss.windup.graph.dao.impl.ClassGraphDaoImpl;
+import org.jboss.windup.graph.model.meta.JBossModule;
+import org.jboss.windup.graph.model.meta.Meta;
+import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.XmlDocument;
 import org.jboss.windup.graph.renderer.GraphExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -24,7 +28,11 @@ import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
 public class TestGraph {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TestGraph.class);
+	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
+		final int MAX_NODES = 30;
+		
 		File lucene = new File(FileUtils.getTempDirectory(), "graphsearch");
 		FileUtils.deleteQuietly(lucene);
 		
@@ -42,45 +50,48 @@ public class TestGraph {
 		
 		FramedGraphFactory factory = new FramedGraphFactory(
 			    new TypedGraphModuleBuilder()
-			    .withClass(JavaClassResource.class)
-		        .withClass(FileResource.class)
-			    .withClass(XmlResource.class)
+			    .withClass(JavaClass.class)
+		        .withClass(org.jboss.windup.graph.model.resource.File.class)
+			    .withClass(XmlDocument.class)
+			    .withClass(Meta.class)
+			    .withClass(JBossModule.class)
 			    .build()
 		);
 
 		FramedGraph framedGraph = factory.create(graph); //Frame the graph.
 
-		ClassGraphDao graphDao = new ClassGraphDao(framedGraph);
+		ClassGraphDao graphDao = new ClassGraphDaoImpl(framedGraph);
 
-		for(long i=0; i<10; i++) {
-			int random1 = RandomUtils.nextInt(5);
+		for(int i=0, j=MAX_NODES; i<j; i++) {
+			int random1 = RandomUtils.nextInt(j);
 			String name1 = "org.jboss.windup.Test"+random1;
 			
-			int random2 = RandomUtils.nextInt(5);
+			int random2 = RandomUtils.nextInt(j);
 			String name2 = "org.jboss.windup.Test"+random2;
 			
 			if(name1.equals(name2)) {
 				continue;
 			}
 			
-			JavaClassResource main = graphDao.getJavaClass(name1);
-			JavaClassResource impt = graphDao.getJavaClass(name2);
+			JavaClass main = graphDao.getJavaClass(name1);
+			JavaClass impt = graphDao.getJavaClass(name2);
 			
+			main.asVertex().setProperty("blacklist", true);
 			main.addImport(impt);
 		}
 		
-		for(long i=0; i<20; i++) {
-			int random1 = RandomUtils.nextInt(5);
+		for(int i=0, j=MAX_NODES; i<j; i++) {
+			int random1 = RandomUtils.nextInt(j);
 			String name1 = "org.jboss.windup.Test"+random1;
 			
-			int random2 = RandomUtils.nextInt(5);
+			int random2 = RandomUtils.nextInt(j);
 			String name2 = "org.jboss.windup.Test"+random2;
 		
 			if(name1.equals(name2)) {
 				continue;
 			}
-			JavaClassResource main = graphDao.getJavaClass(name1);
-			JavaClassResource impt = graphDao.getJavaClass(name2);
+			JavaClass main = graphDao.getJavaClass(name1);
+			JavaClass impt = graphDao.getJavaClass(name2);
 		
 			main.addExtends(impt);
 		}
@@ -91,6 +102,19 @@ public class TestGraph {
 		
 		renders.renderVizjs(new File(targetFolder, "vizjs.html"));
 		renders.renderSigma(new File(targetFolder, "sigma.html"));
+		renders.renderDagreD3(new File(targetFolder, "dagred3.html"));
 		
+		/*
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			GraphvizWriter writer = new GraphvizWriter(graph);
+			writer.writeGraph(baos);
+			
+			LOG.info("Graphviz Result: "+baos.toString());
+			
+		} catch (ScriptException e) {
+			LOG.error("Error!", e);
+		}
+		*/
 	}
 }

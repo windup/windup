@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
+import org.jboss.windup.graph.renderer.html.DagreD3JSHtmlWriter;
 import org.jboss.windup.graph.renderer.html.SigmaJSHtmlWriter;
 import org.jboss.windup.graph.renderer.html.VizJSHtmlWriter;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,11 @@ public class GraphExporter {
 	public void renderSigma(File output) throws FileNotFoundException, IOException {
 		LOG.debug("Writing Sigmajs graph to: "+output.getAbsolutePath());
 		render(new SigmaJSHtmlWriter(graph), output);
+	}
+	
+	public void renderDagreD3(File output) throws FileNotFoundException, IOException {
+		LOG.debug("Writing DagreD3 graph to: "+output.getAbsolutePath());
+		render(new DagreD3JSHtmlWriter(graph), output);
 	}
 	
 	public void render(GraphWriter writer, File output) throws FileNotFoundException, IOException {

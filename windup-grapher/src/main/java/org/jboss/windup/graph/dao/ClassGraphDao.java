@@ -1,31 +1,9 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.JavaClassResource;
+import org.jboss.windup.graph.model.resource.JavaClass;
 
-import com.tinkerpop.frames.FramedGraph;
+public interface ClassGraphDao {
 
-public class ClassGraphDao {
+	public abstract JavaClass getJavaClass(String qualifiedName);
 
-	private final FramedGraph<?> graph;
-	
-	public ClassGraphDao(FramedGraph graph) {
-		this.graph = graph;
-	}
-	
-	public JavaClassResource getJavaClass(String qualifiedName) {
-		JavaClassResource clz = null;
-		
-		for(JavaClassResource found : graph.getVertices("qualifiedName", qualifiedName, JavaClassResource.class)) {
-			clz = found;
-			break;
-		}
-		
-		if(clz == null) {
-			clz = (JavaClassResource) graph.addVertex(qualifiedName, JavaClassResource.class);
-			clz.setQualifiedName(qualifiedName);
-		}
-		
-		return clz;
-	}
-	
 }

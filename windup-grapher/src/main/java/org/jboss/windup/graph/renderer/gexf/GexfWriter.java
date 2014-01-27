@@ -14,10 +14,10 @@ import com.tinkerpop.blueprints.Vertex;
 
 public class GexfWriter implements GraphWriter {
 	
-	private final Graph graph;
-	private String defaultEdgeType = "directed";
-	private String mode = "static";
-	private String vertexLabelProperty = "label";
+	protected final Graph graph;
+	protected String defaultEdgeType = "directed";
+	protected String mode = "static";
+	protected String vertexLabelProperty = "label";
 	
 	public GexfWriter(Graph graph) {
 		this.graph = graph;
@@ -71,8 +71,10 @@ public class GexfWriter implements GraphWriter {
 	}
 	
 	private void writeGraphNode(String id, String label, OutputStream os) throws IOException {
-		final String tag = StringUtils.replaceEach(GexfConstants.NODE_TAG, new String[]{"%1", "%2"}, new String[]{id, label});
-		IOUtils.write(String.format(tag, id, label), os);
+		final String tag = StringUtils.replaceEach(GexfConstants.NODE_TAG, 
+				new String[]{"%1", "%2"}, 
+				new String[]{id, label});
+		IOUtils.write(tag, os);
 	}
 	
 	private void writeGraphNodes(OutputStream os) throws IOException {

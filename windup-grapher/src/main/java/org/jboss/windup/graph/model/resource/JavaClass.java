@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.graph.model.resource;
 
 import java.util.Iterator;
 
@@ -10,7 +10,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("JavaClassResource")
-public interface JavaClassResource extends FileResource {
+public interface JavaClass extends File {
 
 	@Label
 	@Property("qualifiedName")
@@ -20,21 +20,21 @@ public interface JavaClassResource extends FileResource {
 	public String setQualifiedName(String qualifiedName);
 
 	@Adjacency(label="imports", direction=Direction.OUT)
-	public void addImport(final JavaClassResource person);
+	public void addImport(final JavaClass person);
 
 	@Adjacency(label="imports", direction=Direction.OUT)
-	public Iterator<JavaClassResource> getImports(final JavaClassResource person);
+	public Iterator<JavaClass> getImports(final JavaClass person);
 
 	@Adjacency(label="extends", direction=Direction.OUT)
-	public Iterator<JavaClassResource> getExtends(final JavaClassResource person);
+	public Iterator<JavaClass> getExtends(final JavaClass person);
 
 	@Adjacency(label="extends", direction=Direction.OUT)
-	public Iterator<JavaClassResource> addExtends(final JavaClassResource person);
+	public Iterator<JavaClass> addExtends(final JavaClass person);
 
 	@Adjacency(label="implements", direction=Direction.OUT)
-	public Iterator<JavaClassResource> addImplements(final JavaClassResource person);
+	public Iterator<JavaClass> addImplements(final JavaClass person);
 
 	@Adjacency(label="implements", direction=Direction.OUT)
-	public Iterator<JavaClassResource> getImplements(final JavaClassResource person);
+	public Iterator<JavaClass> getImplements(final JavaClass person);
 
 }
