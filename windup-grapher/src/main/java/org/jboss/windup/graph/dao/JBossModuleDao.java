@@ -1,12 +1,12 @@
 package org.jboss.windup.graph.dao;
 
-import java.util.Collection;
+import java.util.Iterator;
 
 import org.jboss.windup.graph.dao.exception.ModuleIndexReaderException;
 import org.jboss.windup.graph.dao.exception.ModuleIndexWriteException;
 import org.jboss.windup.graph.model.meta.JBossModule;
 
-public interface ModuleDao {
+public interface JBossModuleDao extends BaseDao<JBossModule> {
 	public void addModule(JBossModule module) throws ModuleIndexWriteException;
-	public Collection<JBossModule> findModuleProvidingClass(String clz) throws ModuleIndexReaderException;
+	public Iterator<JBossModule> findModuleProvidingClass(String clz) throws ModuleIndexReaderException;
 }
