@@ -4,7 +4,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("JarArchiveFacet")
-public interface JarArchiveFacet extends Facet {
+public interface JarArchiveFacet extends ResourceFacet {
 
 	@Property("md5Hash")
 	public String getMD5Hash();

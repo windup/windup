@@ -8,7 +8,10 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 @TypeField("type")
-public interface Facet extends VertexFrame {
+public interface ResourceFacet extends VertexFrame {
 	@Adjacency(label="resource", direction=Direction.OUT)
-	public Resource getExtends(final Resource resource);
+	public Resource getResource();
+	
+	@Adjacency(label="resource", direction=Direction.OUT)
+	public Resource setResource(final Resource resource);
 }

@@ -18,7 +18,7 @@ public class TestGraph {
 	private static final Logger LOG = LoggerFactory.getLogger(TestGraph.class);
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		final int MAX_NODES = 200000;
+		final int MAX_NODES = 1000;
 
 		GraphContext context = new GraphContext(FileUtils.getTempDirectory());
 		JavaClassDao graphDao = new JavaClassDaoImpl(context);
@@ -40,7 +40,7 @@ public class TestGraph {
 			main.asVertex().setProperty("blacklist", true);
 			main.addImport(impt);
 			
-			if(i % 2000 == 0) {
+			if(i % 1000 == 0) {
 				context.getGraph().commit();
 			}
 			
@@ -60,18 +60,17 @@ public class TestGraph {
 			JavaClassFacet main = graphDao.getJavaClass(name1);
 			JavaClassFacet impt = graphDao.getJavaClass(name2);
 		
-			if(i % 2000 == 0) {
+			if(i % 1000 == 0) {
 				context.getGraph().commit();
 			}
 			
-			main.addExtends(impt);
+			main.setExtends(impt);
 			LOG.info("Pass: "+i); 
 		}
 		
 		GraphExporter renders = new GraphExporter(context.getGraph());
 		File targetFolder = FileUtils.getTempDirectory();
 		
-		/*
 		renders.renderVizjs(new File(targetFolder, "vizjs.html"));
 		renders.renderSigma(new File(targetFolder, "sigma.html"));
 		renders.renderDagreD3(new File(targetFolder, "dagred3.html"));

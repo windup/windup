@@ -10,7 +10,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("JavaClassFacet")
-public interface JavaClassFacet extends Facet {
+public interface JavaClassFacet extends ResourceFacet {
 
 	@Label
 	@Property("qualifiedName")
@@ -23,18 +23,18 @@ public interface JavaClassFacet extends Facet {
 	public void addImport(final JavaClassFacet person);
 
 	@Adjacency(label="imports", direction=Direction.OUT)
-	public Iterator<JavaClassFacet> getImports(final JavaClassFacet person);
+	public Iterator<JavaClassFacet> getImports(final JavaClassFacet javaFacet);
 
 	@Adjacency(label="extends", direction=Direction.OUT)
-	public Iterator<JavaClassFacet> getExtends(final JavaClassFacet person);
+	public JavaClassFacet getExtends();
 
 	@Adjacency(label="extends", direction=Direction.OUT)
-	public Iterator<JavaClassFacet> addExtends(final JavaClassFacet person);
+	public void setExtends(final JavaClassFacet javaFacet);
 
 	@Adjacency(label="implements", direction=Direction.OUT)
-	public Iterator<JavaClassFacet> addImplements(final JavaClassFacet person);
+	public Iterator<JavaClassFacet> addImplements(final JavaClassFacet javaFacet);
 
 	@Adjacency(label="implements", direction=Direction.OUT)
-	public Iterator<JavaClassFacet> getImplements(final JavaClassFacet person);
+	public Iterator<JavaClassFacet> getImplements();
 
 }
