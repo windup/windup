@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
-import org.jboss.windup.graph.model.meta.JBossModule;
+import org.jboss.windup.graph.model.meta.JBossModuleMeta;
 import org.jboss.windup.graph.model.meta.Meta;
 import org.jboss.windup.graph.model.resource.facet.JavaClassFacet;
 import org.jboss.windup.graph.model.resource.facet.XmlFacet;
@@ -61,7 +61,7 @@ public class GraphContext {
 		        .withClass(org.jboss.windup.graph.model.resource.File.class)
 			    .withClass(XmlFacet.class)
 			    .withClass(Meta.class)
-			    .withClass(JBossModule.class)
+			    .withClass(JBossModuleMeta.class)
 			    .build()
 		);
 		

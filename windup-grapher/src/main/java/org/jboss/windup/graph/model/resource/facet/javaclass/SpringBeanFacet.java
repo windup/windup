@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model.resource.facet.ejb;
+package org.jboss.windup.graph.model.resource.facet.javaclass;
 
 import org.jboss.windup.graph.renderer.Label;
 

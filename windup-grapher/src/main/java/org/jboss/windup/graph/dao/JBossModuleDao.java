@@ -4,9 +4,9 @@ import java.util.Iterator;
 
 import org.jboss.windup.graph.dao.exception.ModuleIndexReaderException;
 import org.jboss.windup.graph.dao.exception.ModuleIndexWriteException;
-import org.jboss.windup.graph.model.meta.JBossModule;
+import org.jboss.windup.graph.model.meta.JBossModuleMeta;
 
-public interface JBossModuleDao extends BaseDao<JBossModule> {
-	public void addModule(JBossModule module) throws ModuleIndexWriteException;
-	public Iterator<JBossModule> findModuleProvidingClass(String clz) throws ModuleIndexReaderException;
+public interface JBossModuleDao extends BaseDao<JBossModuleMeta> {
+	public void addModule(JBossModuleMeta module) throws ModuleIndexWriteException;
+	public Iterator<JBossModuleMeta> findModuleProvidingClass(String clz) throws ModuleIndexReaderException;
 }

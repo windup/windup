@@ -7,8 +7,8 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("JBossModule")
-public interface JBossModule extends Meta {
+@TypeValue("JBossModuleMeta")
+public interface JBossModuleMeta extends Meta {
 
 	@Property("moduleName")
 	public String getModuleName();
@@ -23,9 +23,9 @@ public interface JBossModule extends Meta {
 	public void setSlotName(String slotName);
 
 	@Adjacency(label="depends", direction=Direction.OUT)
-	public void addDependency(final JBossModule module);
+	public void addDependency(final JBossModuleMeta module);
 
 	@Adjacency(label="implements", direction=Direction.OUT)
-	public Iterator<JBossModule> getDependencies();
+	public Iterator<JBossModuleMeta> getDependencies();
 
 }
