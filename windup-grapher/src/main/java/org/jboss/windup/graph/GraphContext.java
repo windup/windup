@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
+import org.jboss.windup.graph.model.meta.xml.MavenFacet;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
 import org.jboss.windup.graph.model.resource.Archive;
@@ -105,6 +106,7 @@ public class GraphContext {
 			    .withClass(MessageDrivenBeanFacet.class)
 			    .withClass(SpringBeanFacet.class)
 			    
+			    .withClass(MavenFacet.class)
 			    .withClass(EjbConfigurationFacet.class)
 			    .withClass(SpringConfigurationFacet.class)
 			    .withClass(NamespaceMeta.class)

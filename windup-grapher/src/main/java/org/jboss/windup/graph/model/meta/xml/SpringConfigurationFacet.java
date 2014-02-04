@@ -10,9 +10,9 @@ public interface SpringConfigurationFacet extends XmlMetaFacet {
 
 	@Label
 	@Property("specificationVersion")
-	public double getSpecificationVersion();
+	public String getSpecificationVersion();
 
 	@Property("specificationVersion")
-	public void getSpecificationVersion(double version);
+	public void setSpecificationVersion(String version);
 	
 }

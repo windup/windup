@@ -11,6 +11,9 @@
 	<properties>
 		<deltaspike.version>0.5</deltaspike.version>
 		<weld.version>1.1.9.Final</weld.version>
+		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
+		<eclipselink.artifactid>eclipselink</eclipselink.artifactid>
+		<eclipselink.version>2.4.2</eclipselink.version>
 	</properties>
 	<build>
 		<plugins>
@@ -26,6 +29,18 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>${eclipselink.artifactid}</artifactId>
+			<version>${eclipselink.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commonj.sdo</artifactId>
+					<groupId>commonj.sdo</groupId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.jboss.windup</groupId>
 			<artifactId>windup-grapher</artifactId>

@@ -9,50 +9,57 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("SpringConfigurationFacet")
+@TypeValue("MavenFacet")
 public interface MavenFacet extends XmlMetaFacet {
 
 	@Label
 	@Property("specificationVersion")
-	public double getSpecificationVersion();
+	public String getSpecificationVersion();
 
 	@Property("specificationVersion")
-	public void getSpecificationVersion(double version);
+	public void setSpecificationVersion(String version);
 	
 
 	@Property("groupId")
 	public String getGroupId();
 
 	@Property("groupId")
-	public void getGroupId(String version);
+	public void setGroupId(String version);
 
 	
 	@Property("artifactId")
 	public String getArtifactId();
 
 	@Property("artifactId")
-	public void getArtifactId(String artifactId);
+	public void setArtifactId(String artifactId);
 	
 
 	@Property("version")
 	public String getVersion();
 
 	@Property("version")
-	public void getVersion(String version);
+	public void setVersion(String version);
 
 	
 	@Property("name")
 	public String getName();
 
 	@Property("name")
-	public void getName(String name);
+	public void setName(String name);
 
+
+	@Property("url")
+	public String getURL();
+
+	@Property("url")
+	public void setURL(String url);
+	
 	
 	@Property("description")
 	public String getDescription();
 
 	@Property("description")
-	public void getDescription(String description);
+	public void setDescription(String description);
 
 	
 	@Adjacency(label="module", direction=Direction.IN)

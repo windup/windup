@@ -6,6 +6,7 @@ import java.util.List;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
+import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.qualifier.ListenerChainQualifier;
 import org.jboss.windup.engine.visitor.ArchiveEntryIndexVisitor;
 import org.jboss.windup.engine.visitor.ArchiveTypingVisitor;
@@ -22,12 +23,16 @@ import org.jboss.windup.engine.visitor.reporter.ClassNotFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.DuplicateClassReporter;
 import org.jboss.windup.engine.visitor.reporter.GraphRenderReporter;
 import org.jboss.windup.engine.visitor.reporter.NamespacesFoundReporter;
+import org.jboss.windup.graph.model.meta.xml.MavenFacet;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.model.resource.XmlResource;
 
 public class ListenerChainProvider {
 
+	@Inject
+	private WindupContext context;
+	
 	@Inject
 	private BasicVisitor basic;
 	
@@ -79,6 +84,7 @@ public class ListenerChainProvider {
 		//listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
 		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
 		listenerChain.add(mavenFacetVisitor); //extract Maven information to facet.
+		listenerChain.add(new DebugVisitor(context, MavenFacet.class)); //extract Maven information to facet.
 		/*
 		listenerChain.add(classNotFoundReporter); //reports all classes not found on the classpath.
 		listenerChain.add(duplicateClassReporter); //reports all classes found multiple times on the classpath.

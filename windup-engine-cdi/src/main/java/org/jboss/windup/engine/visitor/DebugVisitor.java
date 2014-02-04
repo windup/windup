@@ -23,17 +23,17 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public class DebugVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(DebugVisitor.class);
 	
-	@Inject
-	private WindupContext context;
-	
+	private final WindupContext context;
 	private final String typeValue;
-	public DebugVisitor(Class<?> type) {
+	public DebugVisitor(WindupContext context, Class<?> type) {
 		TypeValue value = type.getAnnotation(TypeValue.class);
 		this.typeValue = value.value();
+		this.context = context;
 	}
 	
-	public DebugVisitor() {
+	public DebugVisitor(WindupContext context) {
 		typeValue = null;
+		this.context = context;
 	}
 	
 	@Override
