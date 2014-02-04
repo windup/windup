@@ -12,7 +12,7 @@ public class NamespaceDaoImpl extends BaseDaoImpl<NamespaceMeta> implements Name
 
 	@Override
 	public NamespaceMeta findByURI(String namespaceURI) {
-		return getByUniqueProperty("uri", namespaceURI);
+		return getByUniqueProperty("namespaceURI", namespaceURI);
 	}
 
 }

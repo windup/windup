@@ -58,10 +58,9 @@ public class JavaClassVisitor extends EmptyGraphVisitor {
 			ClassParser classParser = new ClassParser(archive.getFilePath(), entry.getArchiveEntry());
 			
 			JavaClass parsed = classParser.parse();
-			
 			String className = parsed.getClassName();
 			org.jboss.windup.graph.model.resource.JavaClass javaClass = javaClassDao.getJavaClass(className);
-			javaClass.setResource(entry);
+			javaClass.addResource(entry);
 			
 			for(String interfaceName : parsed.getInterfaceNames()) {
 				org.jboss.windup.graph.model.resource.JavaClass interfaceClass = javaClassDao.getJavaClass(interfaceName);

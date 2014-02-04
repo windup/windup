@@ -10,8 +10,11 @@ import org.jboss.windup.engine.qualifier.ListenerChainQualifier;
 import org.jboss.windup.engine.visitor.ArchiveEntryIndexVisitor;
 import org.jboss.windup.engine.visitor.ArchiveTypingVisitor;
 import org.jboss.windup.engine.visitor.BasicVisitor;
+import org.jboss.windup.engine.visitor.ClassNotFoundReporter;
 import org.jboss.windup.engine.visitor.DebugVisitor;
+import org.jboss.windup.engine.visitor.DuplicateClassReporter;
 import org.jboss.windup.engine.visitor.JavaClassVisitor;
+import org.jboss.windup.engine.visitor.NamespacesFoundReporter;
 import org.jboss.windup.engine.visitor.XmlResourceVisitor;
 import org.jboss.windup.engine.visitor.ZipArchiveGraphVisitor;
 import org.jboss.windup.engine.visitor.base.GraphVisitor;
@@ -39,6 +42,15 @@ public class ListenerChainProvider {
 	@Inject
 	private XmlResourceVisitor xmlResourceVisitor;
 	
+	@Inject
+	private ClassNotFoundReporter classNotFoundReporter;
+	
+	@Inject
+	private DuplicateClassReporter duplicateClassReporter;
+	
+	@Inject
+	private NamespacesFoundReporter namespacesFoundReporter;
+	
 	@ListenerChainQualifier
 	@Produces
 	public List<GraphVisitor> produceListenerChain() {
@@ -49,8 +61,9 @@ public class ListenerChainProvider {
 		listenerChain.add(archiveTypeVisitor);  //sets the archive to a sub-type
 		listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
 		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
-		
-		listenerChain.add(new DebugVisitor(XmlResource.class));
+		listenerChain.add(classNotFoundReporter); //reports all classes not found on the classpath.
+		listenerChain.add(duplicateClassReporter); //reports all classes found multiple times on the classpath.
+		listenerChain.add(namespacesFoundReporter);
 		return listenerChain;
 	}
 }

@@ -70,6 +70,9 @@ public class GraphContext {
 		//graph.createKeyIndex("filePath", Vertex.class, new Parameter<String, String>("type", "UNIQUE"));
 		//graph.createKeyIndex("type", Vertex.class);
 		
+		TitanKey namespaceURIKey = graph.makeKey("namespaceURI").dataType(String.class).
+				indexed(Vertex.class).unique().make();
+		
 		TitanKey qualifiedNameKey = graph.makeKey("qualifiedName").dataType(String.class).
 				indexed(Vertex.class).unique().make();
 		

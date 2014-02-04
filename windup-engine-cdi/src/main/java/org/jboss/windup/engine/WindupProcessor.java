@@ -32,13 +32,5 @@ public class WindupProcessor {
 			visitor.visitContext(windupContext);
 		}
 		LOG.info("Execution complete.");
-		
-		
-		
-		for(JavaClass javaClass : javaClassDao.getAll()) {
-			if(javaClass.getResource() == null) {
-				LOG.info("Class Not Found: "+javaClass.getQualifiedName());
-			}
-		}
 	}
 }

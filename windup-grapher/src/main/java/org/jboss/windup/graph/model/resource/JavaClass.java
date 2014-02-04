@@ -13,10 +13,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface JavaClass extends Resource {
 
 	@Adjacency(label="javaClassFacet", direction=Direction.IN)
-	public Resource getResource();
+	public Iterable<Resource> getResources();
 
 	@Adjacency(label="javaClassFacet", direction=Direction.IN)
-	public void setResource(Resource resource);
+	public void addResource(Resource resource);
 
 	@Label
 	@Property("qualifiedName")

@@ -47,6 +47,7 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 		for(ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("xml")) {
 			visitArchiveEntry(entry);
 		}
+		archiveEntryDao.commit();
 	}
 	
 	@Override
@@ -85,6 +86,7 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 						LOG.info("Adding namespace: "+namespace);
 						//create the namespace...
 						meta = namespaceDao.create(null);
+						meta.setURI(namespace);
 						meta.addXmlResource(resource);
 					}
 					else {

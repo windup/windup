@@ -1,16 +1,15 @@
 package org.jboss.windup.graph.dao.impl;
 
-import java.util.Iterator;
-
 import javax.inject.Inject;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.DoctypeDao;
 import org.jboss.windup.graph.dao.NamespaceDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.resource.XmlResource;
+
+import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
 public class XmlResourceDaoImpl extends BaseDaoImpl<XmlResource> implements XmlResourceDao {
 
@@ -25,12 +24,12 @@ public class XmlResourceDaoImpl extends BaseDaoImpl<XmlResource> implements XmlR
 	}
 
 	@Override
-	public Iterator<XmlResource> containsNamespaceURI(String namespaceURI) {
+	public Iterable<XmlResource> containsNamespaceURI(String namespaceURI) {
 		NamespaceMeta namespace = namespaceDao.findByURI(namespaceURI);
 		
 		//now, check thether it is null.
 		if(namespace == null) {
-			return IteratorUtils.emptyIterator();
+			return IterablesUtil.emptyIterable();
 		}
 		return namespace.getXmlResources();
 	}

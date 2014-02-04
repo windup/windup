@@ -1,7 +1,5 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import java.util.Iterator;
-
 import org.jboss.windup.graph.model.meta.Meta;
 import org.jboss.windup.graph.model.resource.XmlResource;
 
@@ -17,12 +15,12 @@ public interface NamespaceMeta extends Meta {
 	public void addXmlResource(XmlResource facet);
 
 	@Adjacency(label="namespace", direction=Direction.IN)
-	public Iterator<XmlResource> getXmlResources();
+	public Iterable<XmlResource> getXmlResources();
 	
-	@Property("uri")
+	@Property("namespaceURI")
 	public String getURI();
 	
-	@Property("uri")
+	@Property("namespaceURI")
 	public void setURI(String uri);
 	
 }
