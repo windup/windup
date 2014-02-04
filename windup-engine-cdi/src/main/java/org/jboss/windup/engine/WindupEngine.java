@@ -29,13 +29,6 @@ public class WindupEngine {
 		
 		LOG.info("Report: "+targetFolder.getAbsolutePath());
 		
-		context.getGraphContext().getGraph();
-		GraphMLWriter writer = new GraphMLWriter(context.getGraphContext().getGraph());
-		writer.outputGraph("/tmp/graph.gml");
-		
-		
-		renders.renderDagreD3(new File(targetFolder, "dagred3.html"));
-		
 		/*
 		for(Vertex v : context.getGraphContext().getGraph().getVertices()) {
 			LOG.info("Vertex: "+v);

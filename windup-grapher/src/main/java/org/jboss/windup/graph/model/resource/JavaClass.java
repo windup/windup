@@ -7,6 +7,7 @@ import org.jboss.windup.graph.renderer.Label;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("JavaClassResource")
@@ -43,4 +44,6 @@ public interface JavaClass extends Resource {
 	@Adjacency(label="implements", direction=Direction.OUT)
 	public Iterator<JavaClass> getImplements();
 
+	@GremlinGroovy("it.in('javaClassFacet').in('child').dedup")
+	public Iterator<JarArchive> providedBy();
 }

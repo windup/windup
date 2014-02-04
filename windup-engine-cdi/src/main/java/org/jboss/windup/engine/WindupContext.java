@@ -28,4 +28,8 @@ public class WindupContext {
 	public GraphContext getGraphContext() {
 		return graphContext;
 	}
+	
+	public File getRunDirectory() {
+		return runDirectory;
+	}
 }

@@ -7,12 +7,15 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.jboss.windup.engine.qualifier.ListenerChainQualifier;
+import org.jboss.windup.engine.visitor.ArchiveDependsOnReporter;
 import org.jboss.windup.engine.visitor.ArchiveEntryIndexVisitor;
+import org.jboss.windup.engine.visitor.ArchiveProvidesReporter;
 import org.jboss.windup.engine.visitor.ArchiveTypingVisitor;
 import org.jboss.windup.engine.visitor.BasicVisitor;
 import org.jboss.windup.engine.visitor.ClassNotFoundReporter;
 import org.jboss.windup.engine.visitor.DebugVisitor;
 import org.jboss.windup.engine.visitor.DuplicateClassReporter;
+import org.jboss.windup.engine.visitor.GraphRenderReporter;
 import org.jboss.windup.engine.visitor.JavaClassVisitor;
 import org.jboss.windup.engine.visitor.NamespacesFoundReporter;
 import org.jboss.windup.engine.visitor.XmlResourceVisitor;
@@ -49,7 +52,16 @@ public class ListenerChainProvider {
 	private DuplicateClassReporter duplicateClassReporter;
 	
 	@Inject
+	private ArchiveProvidesReporter archiveProvidesReporter;
+	
+	@Inject
 	private NamespacesFoundReporter namespacesFoundReporter;
+	
+	@Inject
+	private GraphRenderReporter graphRenderReporter;
+	
+	@Inject
+	private ArchiveDependsOnReporter archiveDependsOnReport;
 	
 	@ListenerChainQualifier
 	@Produces
@@ -64,6 +76,10 @@ public class ListenerChainProvider {
 		listenerChain.add(classNotFoundReporter); //reports all classes not found on the classpath.
 		listenerChain.add(duplicateClassReporter); //reports all classes found multiple times on the classpath.
 		listenerChain.add(namespacesFoundReporter);
+		listenerChain.add(archiveProvidesReporter);
+		listenerChain.add(graphRenderReporter);
+		listenerChain.add(archiveDependsOnReport);
+		
 		return listenerChain;
 	}
 }

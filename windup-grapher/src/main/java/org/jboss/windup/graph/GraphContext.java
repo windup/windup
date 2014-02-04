@@ -5,7 +5,6 @@ import java.io.File;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
-import org.jboss.windup.graph.model.meta.JBossModuleMeta;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
@@ -28,6 +27,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphFactory;
+import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
 public class GraphContext {
@@ -110,7 +110,8 @@ public class GraphContext {
 			    .withClass(NamespaceMeta.class)
 			    .withClass(DoctypeMeta.class)
 			    
-			    .build()
+			    .build(), 
+			    new GremlinGroovyModule()
 		);
 		
 		framed = factory.create(graph);
