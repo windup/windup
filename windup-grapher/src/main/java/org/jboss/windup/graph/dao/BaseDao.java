@@ -12,4 +12,6 @@ public interface BaseDao<T extends VertexFrame> {
 	public T getByUniqueProperty(String property, Object value) throws NonUniqueResultException;
 	public T create(Object id);
 	public Iterable<T> getAll();
+	public T castToType(VertexFrame v);
+	public void commit();
 }

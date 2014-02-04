@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.impl.JavaClassDaoImpl;
-import org.jboss.windup.graph.model.resource.facet.JavaClassFacet;
+import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.renderer.GraphExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +34,8 @@ public class TestGraph {
 				continue;
 			}
 			
-			JavaClassFacet main = graphDao.getJavaClass(name1);
-			JavaClassFacet impt = graphDao.getJavaClass(name2);
+			JavaClass main = graphDao.getJavaClass(name1);
+			JavaClass impt = graphDao.getJavaClass(name2);
 			
 			main.asVertex().setProperty("blacklist", true);
 			main.addImport(impt);
@@ -57,8 +57,8 @@ public class TestGraph {
 			if(name1.equals(name2)) {
 				continue;
 			}
-			JavaClassFacet main = graphDao.getJavaClass(name1);
-			JavaClassFacet impt = graphDao.getJavaClass(name2);
+			JavaClass main = graphDao.getJavaClass(name1);
+			JavaClass impt = graphDao.getJavaClass(name2);
 		
 			if(i % 1000 == 0) {
 				context.getGraph().commit();

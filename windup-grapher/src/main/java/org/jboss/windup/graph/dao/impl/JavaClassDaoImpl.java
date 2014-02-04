@@ -2,27 +2,32 @@ package org.jboss.windup.graph.dao.impl;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.facet.JavaClassFacet;
+import org.jboss.windup.graph.model.resource.JavaClass;
 
-public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassFacet> implements JavaClassDao {
+public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements JavaClassDao {
 
 	public JavaClassDaoImpl(GraphContext context) {
-		super(context, JavaClassFacet.class);
+		super(context, JavaClass.class);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.jboss.windup.graph.dao.impl.ClassGraphDaoA#getJavaClass(java.lang.String)
 	 */
 	@Override
-	public JavaClassFacet getJavaClass(String qualifiedName) {
-		JavaClassFacet clz = getByUniqueProperty("qualifiedName", qualifiedName);
+	public JavaClass getJavaClass(String qualifiedName) {
+		JavaClass clz = getByUniqueProperty("qualifiedName", qualifiedName);
 		
 		if(clz == null) {
-			clz = (JavaClassFacet) this.create(null);
+			clz = (JavaClass) this.create(null);
 			clz.setQualifiedName(qualifiedName);
 		}
 		
 		return clz;
+	}
+
+	@Override
+	public Iterable<JavaClass> getAllClassNotFound() {
+		return this.getAll();
 	}
 	
 }

@@ -1,6 +1,6 @@
-package org.jboss.windup.graph.model.resource.facet.xml;
+package org.jboss.windup.graph.model.meta.xml;
 
-import org.jboss.windup.graph.model.resource.facet.XmlFacet;
+import org.jboss.windup.graph.model.resource.XmlFile;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -10,8 +10,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 public interface XmlMetaFacet {
 
 	@Adjacency(label="xmlFacet", direction=Direction.OUT)
-	public void setJavaClassFacet(XmlFacet facet);
+	public void setJavaClassFacet(XmlFile facet);
 	
 	@Adjacency(label="xmlFacet", direction=Direction.OUT)
-	public XmlFacet getJavaClassFacet();
+	public XmlFile getJavaClassFacet();
 }

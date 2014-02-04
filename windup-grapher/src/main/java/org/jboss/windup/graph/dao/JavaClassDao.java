@@ -1,7 +1,9 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.resource.facet.JavaClassFacet;
+import org.jboss.windup.graph.model.resource.JavaClass;
 
-public interface JavaClassDao extends BaseDao<JavaClassFacet> {
-	public abstract JavaClassFacet getJavaClass(String qualifiedName);
+public interface JavaClassDao extends BaseDao<JavaClass> {
+	public abstract JavaClass getJavaClass(String qualifiedName);
+	public abstract Iterable<JavaClass> getAllClassNotFound();
+	
 }

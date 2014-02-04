@@ -59,13 +59,15 @@ public class GraphlibWriter implements GraphWriter{
 	}
 
 	private void writeGraphEdges(OutputStream os) throws IOException {
-		
+		int i=0;
 		for(Edge edge : graph.getEdges()) {
-			String id = ""+edge.getId().hashCode();
+			String id = ""+i;
 			String source = ""+edge.getVertex(Direction.IN).getId().hashCode();
 			String target = ""+edge.getVertex(Direction.OUT).getId().hashCode();
 			String label = ""+edge.getLabel();
 			writeGraphEdge(id, source, target, label, os);
+			
+			i++;
 		}
 		
 	}

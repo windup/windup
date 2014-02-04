@@ -1,20 +1,18 @@
 package org.jboss.windup.graph.dao;
 
-import java.util.Iterator;
+import java.io.IOException;
+import java.util.jar.JarFile;
 
 import org.jboss.windup.graph.dao.exception.ArchiveIndexReaderException;
-import org.jboss.windup.graph.dao.exception.ArchiveIndexWriteException;
-import org.jboss.windup.graph.model.resource.facet.JarArchiveFacet;
+import org.jboss.windup.graph.model.resource.JarArchive;
 
-public interface JarArchiveDao extends BaseDao<JarArchiveFacet> {
+public interface JarArchiveDao extends BaseDao<JarArchive> {
 	
-	public void addArchive(JarArchiveFacet archive) throws ArchiveIndexWriteException;
-	public Iterator<JarArchiveFacet> findArchiveByMD5(String value) throws ArchiveIndexReaderException;
-	public Iterator<JarArchiveFacet> findArchiveBySHA1(String value) throws ArchiveIndexReaderException;
-	public Iterator<JarArchiveFacet> findArchiveByName(String value) throws ArchiveIndexReaderException;
-	public Iterator<JarArchiveFacet> findArchiveByNameAndVersion(String value, String version) throws ArchiveIndexReaderException;
-	public Iterator<JarArchiveFacet> findArchiveByField(String field, String value) throws ArchiveIndexReaderException;
-	public Iterator<JarArchiveFacet> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException;
-	public Iterator<JarArchiveFacet> findArchiveLeveragingDependency(String clz) throws ArchiveIndexReaderException;
+	public Iterable<JarArchive> findArchiveByMD5(String value) throws ArchiveIndexReaderException;
+	public Iterable<JarArchive> findArchiveBySHA1(String value) throws ArchiveIndexReaderException;
+	public Iterable<JarArchive> findArchiveByName(String value) throws ArchiveIndexReaderException;
+	public Iterable<JarArchive> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException;
+	
+	public JarFile asJarFile(JarArchive archive) throws IOException;
 	
 }

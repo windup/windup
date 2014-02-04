@@ -127,6 +127,7 @@
         <module>windup-metadata</module>
         
         <module>windup-grapher</module>
+        <module>windup-engine-cdi</module>
     </modules>
 
 </project>

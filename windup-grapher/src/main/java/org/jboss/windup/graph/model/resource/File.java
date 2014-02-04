@@ -9,6 +9,7 @@ public interface File extends Resource {
 	@Property("filePath")
 	public String getFilePath();
 	
-	@Property("fileName")
+	@Property("filePath")
 	public void setFilePath(String filePath);
+	
 }

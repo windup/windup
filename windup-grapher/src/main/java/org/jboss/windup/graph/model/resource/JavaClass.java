@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model.resource.facet;
+package org.jboss.windup.graph.model.resource;
 
 import java.util.Iterator;
 
@@ -9,8 +9,14 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("JavaClassFacet")
-public interface JavaClassFacet extends ResourceFacet {
+@TypeValue("JavaClassResource")
+public interface JavaClass extends Resource {
+
+	@Adjacency(label="javaClassFacet", direction=Direction.IN)
+	public Resource getResource();
+
+	@Adjacency(label="javaClassFacet", direction=Direction.IN)
+	public void setResource(Resource resource);
 
 	@Label
 	@Property("qualifiedName")
@@ -20,21 +26,21 @@ public interface JavaClassFacet extends ResourceFacet {
 	public String setQualifiedName(String qualifiedName);
 
 	@Adjacency(label="imports", direction=Direction.OUT)
-	public void addImport(final JavaClassFacet person);
+	public void addImport(final JavaClass person);
 
 	@Adjacency(label="imports", direction=Direction.OUT)
-	public Iterator<JavaClassFacet> getImports(final JavaClassFacet javaFacet);
+	public Iterator<JavaClass> getImports(final JavaClass javaFacet);
 
 	@Adjacency(label="extends", direction=Direction.OUT)
-	public JavaClassFacet getExtends();
+	public JavaClass getExtends();
 
 	@Adjacency(label="extends", direction=Direction.OUT)
-	public void setExtends(final JavaClassFacet javaFacet);
+	public void setExtends(final JavaClass javaFacet);
 
 	@Adjacency(label="implements", direction=Direction.OUT)
-	public Iterator<JavaClassFacet> addImplements(final JavaClassFacet javaFacet);
+	public Iterator<JavaClass> addImplements(final JavaClass javaFacet);
 
 	@Adjacency(label="implements", direction=Direction.OUT)
-	public Iterator<JavaClassFacet> getImplements();
+	public Iterator<JavaClass> getImplements();
 
 }
