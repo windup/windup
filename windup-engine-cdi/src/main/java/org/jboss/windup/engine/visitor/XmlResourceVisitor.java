@@ -10,15 +10,14 @@ import java.util.zip.ZipFile;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.engine.util.xml.LocationAwareContentHandler.Doctype;
 import org.jboss.windup.engine.util.xml.LocationAwareXmlReader;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.ArchiveEntryDao;
-import org.jboss.windup.graph.dao.DoctypeDao;
-import org.jboss.windup.graph.dao.NamespaceDao;
-import org.jboss.windup.graph.dao.XmlResourceDao;
+import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
+import org.jboss.windup.graph.dao.DoctypeDaoBean;
+import org.jboss.windup.graph.dao.NamespaceDaoBean;
+import org.jboss.windup.graph.dao.XmlResourceDaoBean;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
@@ -31,19 +30,19 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(XmlResourceVisitor.class);
 	
 	@Inject
-	private DoctypeDao doctypeDao;
+	private DoctypeDaoBean doctypeDao;
 	
 	@Inject
-	private NamespaceDao namespaceDao;
+	private NamespaceDaoBean namespaceDao;
 	
 	@Inject
-	private XmlResourceDao xmlResourceDao;
+	private XmlResourceDaoBean xmlResourceDao;
 	
 	@Inject
-	private ArchiveEntryDao archiveEntryDao;
+	private ArchiveEntryDaoBean archiveEntryDao;
 	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		for(ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("xml")) {
 			visitArchiveEntry(entry);
 		}

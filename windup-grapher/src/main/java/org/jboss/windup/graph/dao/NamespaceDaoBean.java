@@ -1,16 +1,14 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.graph.dao;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.NamespaceDao;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 
-public class NamespaceDaoImpl extends BaseDaoImpl<NamespaceMeta> implements NamespaceDao {
+public class NamespaceDaoBean extends BaseDaoBean<NamespaceMeta> {
 
-	public NamespaceDaoImpl(GraphContext context) {
+	public NamespaceDaoBean(GraphContext context) {
 		super(context, NamespaceMeta.class);
 	}
 
-	@Override
 	public NamespaceMeta findByURI(String namespaceURI) {
 		return getByUniqueProperty("namespaceURI", namespaceURI);
 	}

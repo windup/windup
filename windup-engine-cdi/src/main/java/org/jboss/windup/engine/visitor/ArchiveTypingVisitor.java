@@ -3,13 +3,12 @@ package org.jboss.windup.engine.visitor;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.qualifier.ArchiveQualifier;
 import org.jboss.windup.engine.qualifier.EarQualifier;
 import org.jboss.windup.engine.qualifier.WarQualifier;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.BaseDao;
-import org.jboss.windup.graph.dao.JarArchiveDao;
+import org.jboss.windup.graph.dao.BaseDaoBean;
+import org.jboss.windup.graph.dao.JarArchiveDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.EarArchive;
 import org.jboss.windup.graph.model.resource.JarArchive;
@@ -31,22 +30,22 @@ public class ArchiveTypingVisitor extends EmptyGraphVisitor {
 
 	@WarQualifier
 	@Inject
-	private BaseDao<WarArchive> warDao;
+	private BaseDaoBean<WarArchive> warDao;
 	
 	@Inject
-	private JarArchiveDao jarDao;
+	private JarArchiveDaoBean jarDao;
 	
 	@EarQualifier
 	@Inject
-	private BaseDao<EarArchive> earDao;
+	private BaseDaoBean<EarArchive> earDao;
 	
 	@ArchiveQualifier
 	@Inject
-	private BaseDao<Archive> archiveDao;
+	private BaseDaoBean<Archive> archiveDao;
 	
 	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		for(Archive archive : archiveDao.getAll()) {
 			visitArchive(archive);
 		}

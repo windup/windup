@@ -3,15 +3,13 @@ package org.jboss.windup.engine.visitor;
 import java.io.File;
 import java.util.Collection;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.FileDao;
+import org.jboss.windup.graph.dao.FileDaoBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +17,10 @@ public class DirectoryVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryVisitor.class);
 
 	@Inject
-	private FileDao fileDao;
+	private FileDaoBean fileDao;
 
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		
 		for(org.jboss.windup.graph.model.resource.File file : fileDao.getAll()) {
 			visitFile(file);

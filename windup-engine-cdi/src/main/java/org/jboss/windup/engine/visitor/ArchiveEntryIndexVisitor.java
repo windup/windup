@@ -8,14 +8,11 @@ import java.util.zip.ZipFile;
 
 import javax.inject.Inject;
 
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.io.FileUtils;
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.qualifier.ArchiveQualifier;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.ArchiveEntryDao;
-import org.jboss.windup.graph.dao.BaseDao;
-import org.jboss.windup.graph.dao.FileDao;
+import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
+import org.jboss.windup.graph.dao.BaseDaoBean;
+import org.jboss.windup.graph.dao.FileDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.slf4j.Logger;
@@ -31,17 +28,17 @@ public class ArchiveEntryIndexVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveEntryIndexVisitor.class);
 
 	@Inject
-	FileDao fileDao;
+	FileDaoBean fileDao;
 	
 	@ArchiveQualifier
 	@Inject
-	private BaseDao<Archive> archiveDao;
+	private BaseDaoBean<Archive> archiveDao;
 
 	@Inject
-	private ArchiveEntryDao archiveEntryDao;
+	private ArchiveEntryDaoBean archiveEntryDao;
 	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		for(Archive archive : archiveDao.getAll()) {
 			visitArchive(archive);
 			archiveEntryDao.commit();

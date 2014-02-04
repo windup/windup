@@ -77,7 +77,7 @@ public class ListenerChainProvider {
 		listenerChain.add(duplicateClassReporter); //reports all classes found multiple times on the classpath.
 		listenerChain.add(namespacesFoundReporter);
 		listenerChain.add(archiveProvidesReporter);
-		listenerChain.add(graphRenderReporter);
+		//listenerChain.add(graphRenderReporter);
 		listenerChain.add(archiveDependsOnReport);
 		
 		return listenerChain;

@@ -10,12 +10,11 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.qualifier.ArchiveQualifier;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.BaseDao;
-import org.jboss.windup.graph.dao.FileDao;
+import org.jboss.windup.graph.dao.BaseDaoBean;
+import org.jboss.windup.graph.dao.FileDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.File;
 import org.slf4j.Logger;
@@ -32,11 +31,11 @@ public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ZipArchiveGraphVisitor.class);
 	
 	@Inject
-	private FileDao fileDao;
+	private FileDaoBean fileDao;
 	
 	@ArchiveQualifier
 	@Inject
-	private BaseDao<Archive> archiveDao;
+	private BaseDaoBean<Archive> archiveDao;
 	
 
 	private Set<String> getZipExtensions() {
@@ -61,7 +60,7 @@ public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 	}
 	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		//feed all file listeners...
 		for(File file : fileDao.findArchiveEntryWithExtension(
 				"war", "ear", "jar", "sar", "rar")) {

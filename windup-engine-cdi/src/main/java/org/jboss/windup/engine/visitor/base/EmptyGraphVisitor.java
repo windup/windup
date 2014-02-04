@@ -1,6 +1,5 @@
 package org.jboss.windup.engine.visitor.base;
 
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.EjbServiceFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
@@ -20,7 +19,7 @@ import org.jboss.windup.graph.model.resource.XmlResource;
 public abstract class EmptyGraphVisitor implements GraphVisitor {
 
 	@Override
-	public abstract void visitContext(WindupContext context);
+	public abstract void visit();
 
 	@Override
 	public void visitResource(Resource entry) {

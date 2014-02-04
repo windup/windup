@@ -1,11 +1,10 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.graph.dao;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.FileDao;
 import org.jboss.windup.graph.model.resource.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,15 +12,14 @@ import org.slf4j.LoggerFactory;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
-public class FileDaoImpl extends BaseDaoImpl<File> implements FileDao {
+public class FileDaoBean extends BaseDaoBean<File> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FileDaoImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FileDaoBean.class);
 	
-	public FileDaoImpl(GraphContext context) {
+	public FileDaoBean(GraphContext context) {
 		super(context, File.class);
 	}
 
-	@Override
 	public File getByFilePath(String filePath) {
 		File entry = getByUniqueProperty("filePath", filePath);
 		
@@ -40,7 +38,6 @@ public class FileDaoImpl extends BaseDaoImpl<File> implements FileDao {
 		return fis;
 	}
 	
-	@Override
 	public Iterable<File> findArchiveEntryWithExtension(String ... values) {
 		//build regex
 		if(values.length == 0) {

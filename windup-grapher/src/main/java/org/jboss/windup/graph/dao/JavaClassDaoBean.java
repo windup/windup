@@ -1,9 +1,8 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.graph.dao;
 
 import java.util.Iterator;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.model.resource.JavaClass;
 
 import com.tinkerpop.blueprints.Direction;
@@ -12,21 +11,12 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
-public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements
-		JavaClassDao {
+public class JavaClassDaoBean extends BaseDaoBean<JavaClass> {
 
-	public JavaClassDaoImpl(GraphContext context) {
+	public JavaClassDaoBean(GraphContext context) {
 		super(context, JavaClass.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.jboss.windup.graph.dao.impl.ClassGraphDaoA#getJavaClass(java.lang
-	 * .String)
-	 */
-	@Override
 	public JavaClass getJavaClass(String qualifiedName) {
 		JavaClass clz = getByUniqueProperty("qualifiedName", qualifiedName);
 
@@ -38,7 +28,6 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements
 		return clz;
 	}
 
-	@Override
 	public Iterable<JavaClass> getAllClassNotFound() {
 		
 		//iterate through all vertices
@@ -58,7 +47,6 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements
 		return context.getFramed().frameVertices(pipeline, JavaClass.class);
 	}
 	
-	@Override
 	public Iterable<JavaClass> getAllDuplicateClasses() {
 		//iterate through all vertices
 		Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context

@@ -2,9 +2,8 @@ package org.jboss.windup.engine.visitor;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.JavaClassDao;
+import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.model.resource.Resource;
@@ -16,10 +15,10 @@ public class DuplicateClassReporter extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(DuplicateClassReporter.class);
 	
 	@Inject
-	private JavaClassDao javaClassDao;
+	private JavaClassDaoBean javaClassDao;
 	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		for(JavaClass clz : javaClassDao.getAllDuplicateClasses()) {
 			LOG.info("Duplicate class: "+clz.getQualifiedName());
 			

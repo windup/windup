@@ -2,9 +2,8 @@ package org.jboss.windup.engine.visitor;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.NamespaceDao;
+import org.jboss.windup.graph.dao.NamespaceDaoBean;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.Resource;
@@ -17,10 +16,10 @@ public class NamespacesFoundReporter extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(NamespacesFoundReporter.class);
 	
 	@Inject
-	private NamespaceDao namespaceDao;
+	private NamespaceDaoBean namespaceDao;
 	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		for(NamespaceMeta namespace : namespaceDao.getAll()) {
 			LOG.info("Namespace Found: "+namespace.getURI());
 			

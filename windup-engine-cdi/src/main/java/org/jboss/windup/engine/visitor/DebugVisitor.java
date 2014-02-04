@@ -1,5 +1,7 @@
 package org.jboss.windup.engine.visitor;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
@@ -21,18 +23,21 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public class DebugVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(DebugVisitor.class);
 	
-	private String typeValue;
+	@Inject
+	private WindupContext context;
+	
+	private final String typeValue;
 	public DebugVisitor(Class<?> type) {
 		TypeValue value = type.getAnnotation(TypeValue.class);
 		this.typeValue = value.value();
 	}
 	
 	public DebugVisitor() {
-		
+		typeValue = null;
 	}
 	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		TitanGraph graph = context.getGraphContext().getGraph();
 		
 		Iterable<Vertex> vertices;

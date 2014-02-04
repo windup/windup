@@ -6,8 +6,7 @@ import javax.inject.Inject;
 
 import org.jboss.windup.engine.qualifier.ListenerChainQualifier;
 import org.jboss.windup.engine.visitor.base.GraphVisitor;
-import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,7 @@ public class WindupProcessor {
 	List<GraphVisitor> listenerChain;
 	
 	@Inject
-	JavaClassDao javaClassDao;
+	JavaClassDaoBean javaClassDao;
 	
 	public void execute() {
 		LOG.info("Executing: "+listenerChain.size() +" listeners...");

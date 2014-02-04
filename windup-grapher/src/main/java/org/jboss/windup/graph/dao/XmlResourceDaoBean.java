@@ -1,29 +1,25 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.graph.dao;
 
 import javax.inject.Inject;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.DoctypeDao;
-import org.jboss.windup.graph.dao.NamespaceDao;
-import org.jboss.windup.graph.dao.XmlResourceDao;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.resource.XmlResource;
 
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
-public class XmlResourceDaoImpl extends BaseDaoImpl<XmlResource> implements XmlResourceDao {
+public class XmlResourceDaoBean extends BaseDaoBean<XmlResource> {
 
 	@Inject
-	private DoctypeDao doctypeDao;
+	private DoctypeDaoBean doctypeDao;
 	
 	@Inject
-	private NamespaceDao namespaceDao;
+	private NamespaceDaoBean namespaceDao;
 	
-	public XmlResourceDaoImpl(GraphContext context) {
+	public XmlResourceDaoBean(GraphContext context) {
 		super(context, XmlResource.class);
 	}
 
-	@Override
 	public Iterable<XmlResource> containsNamespaceURI(String namespaceURI) {
 		NamespaceMeta namespace = namespaceDao.findByURI(namespaceURI);
 		

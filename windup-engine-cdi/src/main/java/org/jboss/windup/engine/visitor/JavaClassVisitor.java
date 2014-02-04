@@ -6,10 +6,9 @@ import javax.inject.Inject;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.ArchiveEntryDao;
-import org.jboss.windup.graph.dao.JavaClassDao;
+import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
+import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.slf4j.Logger;
@@ -25,14 +24,14 @@ public class JavaClassVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(JavaClassVisitor.class);
 
 	@Inject
-	private JavaClassDao javaClassDao;
+	private JavaClassDaoBean javaClassDao;
 	
 	@Inject
-	private ArchiveEntryDao archiveEntryDao;
+	private ArchiveEntryDaoBean archiveEntryDao;
 	
 	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		int i=0;
 		for(ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("class")) {
 			visitArchiveEntry(entry);

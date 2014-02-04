@@ -1,6 +1,5 @@
 package org.jboss.windup.engine.visitor.base;
 
-import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.EjbServiceFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
@@ -19,7 +18,7 @@ import org.jboss.windup.graph.model.resource.XmlResource;
 
 public interface GraphVisitor {
 
-	public void visitContext(WindupContext context);
+	public void visit();
 	public void visitResource(Resource entry);
 	public void visitFile(File entry);
 	

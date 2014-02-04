@@ -1,7 +1,6 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.graph.dao;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,20 +8,18 @@ import org.slf4j.LoggerFactory;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
-public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResource> implements ArchiveEntryDao {
+public class ArchiveEntryDaoBean extends BaseDaoBean<ArchiveEntryResource> {
 
-	private static Logger LOG = LoggerFactory.getLogger(ArchiveEntryDaoImpl.class);
+	private static Logger LOG = LoggerFactory.getLogger(ArchiveEntryDaoBean.class);
 	
-	public ArchiveEntryDaoImpl(GraphContext context) {
+	public ArchiveEntryDaoBean(GraphContext context) {
 		super(context, ArchiveEntryResource.class);
 	}
 	
-	@Override
 	public Iterable<ArchiveEntryResource> findArchiveEntry(String value) {
 		return super.getByProperty("archiveEntry", value);
 	}
 
-	@Override
 	public Iterable<ArchiveEntryResource> findArchiveEntryWithExtension(String ... values) {
 		//build regex
 		if(values.length == 0) {

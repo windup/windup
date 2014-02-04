@@ -6,8 +6,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.math.RandomUtils;
-import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.dao.impl.JavaClassDaoImpl;
+import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.renderer.GraphExporter;
 import org.slf4j.Logger;
@@ -21,7 +20,7 @@ public class TestGraph {
 		final int MAX_NODES = 1000;
 
 		GraphContext context = new GraphContext(FileUtils.getTempDirectory());
-		JavaClassDao graphDao = new JavaClassDaoImpl(context);
+		JavaClassDaoBean graphDao = new JavaClassDaoBean(context);
 
 		for(int i=0, j=MAX_NODES; i<j; i++) {
 			int random1 = RandomUtils.nextInt(j);

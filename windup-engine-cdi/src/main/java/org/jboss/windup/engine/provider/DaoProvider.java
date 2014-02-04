@@ -7,22 +7,14 @@ import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.qualifier.ArchiveQualifier;
 import org.jboss.windup.engine.qualifier.EarQualifier;
 import org.jboss.windup.engine.qualifier.WarQualifier;
-import org.jboss.windup.graph.dao.ArchiveEntryDao;
-import org.jboss.windup.graph.dao.BaseDao;
-import org.jboss.windup.graph.dao.DoctypeDao;
-import org.jboss.windup.graph.dao.FileDao;
-import org.jboss.windup.graph.dao.JarArchiveDao;
-import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.dao.NamespaceDao;
-import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.dao.impl.ArchiveEntryDaoImpl;
-import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
-import org.jboss.windup.graph.dao.impl.DoctypeDaoImpl;
-import org.jboss.windup.graph.dao.impl.FileDaoImpl;
-import org.jboss.windup.graph.dao.impl.JarArchiveDaoImpl;
-import org.jboss.windup.graph.dao.impl.JavaClassDaoImpl;
-import org.jboss.windup.graph.dao.impl.NamespaceDaoImpl;
-import org.jboss.windup.graph.dao.impl.XmlResourceDaoImpl;
+import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
+import org.jboss.windup.graph.dao.BaseDaoBean;
+import org.jboss.windup.graph.dao.DoctypeDaoBean;
+import org.jboss.windup.graph.dao.FileDaoBean;
+import org.jboss.windup.graph.dao.JarArchiveDaoBean;
+import org.jboss.windup.graph.dao.JavaClassDaoBean;
+import org.jboss.windup.graph.dao.NamespaceDaoBean;
+import org.jboss.windup.graph.dao.XmlResourceDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.EarArchive;
 import org.jboss.windup.graph.model.resource.WarArchive;
@@ -34,58 +26,58 @@ public class DaoProvider {
 	private WindupContext context;
 	
 	@Produces
-	public FileDao produceFileDao() {
-		return new FileDaoImpl(context.getGraphContext());
+	public FileDaoBean produceFileDao() {
+		return new FileDaoBean(context.getGraphContext());
 	}
 	
 	@Produces
-	public JavaClassDao produceJavaClassDao() {
-		return new JavaClassDaoImpl(context.getGraphContext());
+	public JavaClassDaoBean produceJavaClassDao() {
+		return new JavaClassDaoBean(context.getGraphContext());
 	}
 	
 	@ArchiveQualifier
 	@Produces
-	public BaseDao<Archive> produceArchiveDao() {
-		return new BaseDaoImpl<Archive>(context.getGraphContext(), Archive.class);
+	public BaseDaoBean<Archive> produceArchiveDao() {
+		return new BaseDaoBean<Archive>(context.getGraphContext(), Archive.class);
 	}
 	
 	@WarQualifier
 	@Produces
-	public BaseDao<WarArchive> produceWarDao() {
-		return new BaseDaoImpl<WarArchive>(context.getGraphContext(), WarArchive.class);
+	public BaseDaoBean<WarArchive> produceWarDao() {
+		return new BaseDaoBean<WarArchive>(context.getGraphContext(), WarArchive.class);
 	}
 	
 	@EarQualifier
 	@Produces
-	public BaseDao<EarArchive> produceEarDao() {
-		return new BaseDaoImpl<EarArchive>(context.getGraphContext(), EarArchive.class);
+	public BaseDaoBean<EarArchive> produceEarDao() {
+		return new BaseDaoBean<EarArchive>(context.getGraphContext(), EarArchive.class);
 	}
 
 	@Produces
-	public JarArchiveDao produceJarDao() {
-		return new JarArchiveDaoImpl(context.getGraphContext());
+	public JarArchiveDaoBean produceJarDao() {
+		return new JarArchiveDaoBean(context.getGraphContext());
 	}
 	
 	@Produces
-	public ArchiveEntryDao produceArchiveEntryDao() {
-		return new ArchiveEntryDaoImpl(context.getGraphContext());
+	public ArchiveEntryDaoBean produceArchiveEntryDao() {
+		return new ArchiveEntryDaoBean(context.getGraphContext());
 	}
 	
 	@Produces
-	public XmlResourceDao produceXmlResourceDao() {
-		return new XmlResourceDaoImpl(context.getGraphContext());
+	public XmlResourceDaoBean produceXmlResourceDao() {
+		return new XmlResourceDaoBean(context.getGraphContext());
 	}
 
 
 	@Produces
-	public DoctypeDao produceDoctypeDao() {
-		return new DoctypeDaoImpl(context.getGraphContext());
+	public DoctypeDaoBean produceDoctypeDao() {
+		return new DoctypeDaoBean(context.getGraphContext());
 	}
 	
 	
 	@Produces
-	public NamespaceDao produceNamespaceDao() {
-		return new NamespaceDaoImpl(context.getGraphContext());
+	public NamespaceDaoBean produceNamespaceDao() {
+		return new NamespaceDaoBean(context.getGraphContext());
 	}
 	
 }

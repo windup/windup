@@ -3,6 +3,8 @@ package org.jboss.windup.engine.visitor;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import javax.inject.Inject;
+
 import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.slf4j.Logger;
@@ -19,8 +21,11 @@ import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 public class GraphRenderReporter extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(GraphRenderReporter.class);
 
+	@Inject
+	private WindupContext context;
+	
 	@Override
-	public void visitContext(WindupContext context) {
+	public void visit() {
 		File graphLocation = new File(context.getRunDirectory(), "graphml.graphml");
 		GraphMLWriter graphML = new GraphMLWriter(context.getGraphContext().getGraph());
 		try {

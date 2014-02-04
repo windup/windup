@@ -1,21 +1,19 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.graph.dao;
 
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.DoctypeDao;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 
 import com.tinkerpop.frames.FramedGraphQuery;
 
-public class DoctypeDaoImpl extends BaseDaoImpl<DoctypeMeta> implements DoctypeDao {
+public class DoctypeDaoBean extends BaseDaoBean<DoctypeMeta> {
 
-	public DoctypeDaoImpl(GraphContext context) {
+	public DoctypeDaoBean(GraphContext context) {
 		super(context, DoctypeMeta.class);
 	}
 
-	@Override
 	public Iterator<DoctypeMeta> findByProperties(String name, String publicId, String systemId, String baseURI) {
 		FramedGraphQuery query = context.getFramed().query();
 		if(StringUtils.isNotBlank(name)) {

@@ -1,9 +1,8 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.graph.dao;
 
 import java.util.Iterator;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.BaseDao;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -12,13 +11,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 
-public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T> {
+public class BaseDaoBean<T extends VertexFrame> {
 
 	protected final Class<T> type;
 	protected final String typeValue;
 	protected final GraphContext context;
 	
-	public BaseDaoImpl(GraphContext context, Class<T> type) {
+	public BaseDaoBean(GraphContext context, Class<T> type) {
 		this.context = context;
 		this.type = type;
 		
@@ -29,32 +28,26 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T> {
 		this.typeValue = typeValue.value();
 	}
 
-	@Override
 	public void delete(T obj) {
 		context.getFramed().removeVertex(obj.asVertex());
 	}
 
-	@Override
 	public Iterable<T> getByProperty(String key, Object value) {
 		return (Iterable<T>)context.getFramed().getVertices(key, value, type);
 	}
 
-	@Override
 	public T create(Object id) {
 		return (T)context.getFramed().addVertex(id, type);
 	}
 
-	@Override
 	public Iterable<T> getAll() {
 		return (Iterable<T>)context.getFramed().query().has("type", typeValue).vertices(type);
 	}
 
-	@Override
 	public T getById(Object id) {
 		return context.getFramed().getVertex(id, type);
 	}
 
-	@Override
 	public T getByUniqueProperty(String property, Object value) throws NonUniqueResultException {
 		Iterable<T> results = getByProperty(property, value);
 		
@@ -72,7 +65,6 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T> {
 		return result;
 	}
 
-	@Override
 	public T castToType(VertexFrame v) {
 		Vertex vertex = v.asVertex();
 		TypeValue value = type.getAnnotation(TypeValue.class);
@@ -93,7 +85,6 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T> {
 		
 	}
 
-	@Override
 	public void commit() {
 		this.context.getGraph().commit();
 	}
