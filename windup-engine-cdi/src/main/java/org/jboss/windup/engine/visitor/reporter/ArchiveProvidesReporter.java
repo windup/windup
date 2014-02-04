@@ -1,16 +1,23 @@
-package org.jboss.windup.engine.visitor;
+package org.jboss.windup.engine.visitor.reporter;
 
 import javax.inject.Inject;
 
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.JarArchiveDaoBean;
 import org.jboss.windup.graph.model.resource.JarArchive;
+import org.jboss.windup.graph.model.resource.JavaClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ArchiveDependsOnReporter extends EmptyGraphVisitor {
+/**
+ * For each JAR, list the classes it provides.
+ * 
+ * @author bradsdavis
+ *
+ */
+public class ArchiveProvidesReporter extends EmptyGraphVisitor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ArchiveDependsOnReporter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ArchiveProvidesReporter.class);
 	
 	@Inject
 	private JarArchiveDaoBean jarDao;
@@ -20,12 +27,8 @@ public class ArchiveDependsOnReporter extends EmptyGraphVisitor {
 		for(JarArchive archive : jarDao.getAll()) {
 			LOG.info("Archive: "+archive.getFilePath());
 			
-			for(JarArchive clz : archive.dependsOnArchives()) {
-				LOG.info(" - Depends On: "+clz.getFilePath());
-			}
-
-			for(JarArchive clz : archive.providesForArchives()) {
-				LOG.info(" - Provides For: "+clz.getFilePath());
+			for(JavaClass clz : archive.getJavaClasses()) {
+				LOG.info(" - Provides: "+clz.getQualifiedName());
 			}
 		}
 	}

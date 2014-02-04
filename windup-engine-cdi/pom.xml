@@ -14,7 +14,6 @@
 	</properties>
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -43,7 +42,6 @@
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se</artifactId>
 			<version>${weld.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>

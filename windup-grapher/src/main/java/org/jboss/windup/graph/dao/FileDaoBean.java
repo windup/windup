@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +15,8 @@ public class FileDaoBean extends BaseDaoBean<File> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileDaoBean.class);
 	
-	public FileDaoBean(GraphContext context) {
-		super(context, File.class);
+	public FileDaoBean() {
+		super(File.class);
 	}
 
 	public File getByFilePath(String filePath) {

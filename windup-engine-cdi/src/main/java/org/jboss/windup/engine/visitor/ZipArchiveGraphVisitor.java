@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.qualifier.ArchiveQualifier;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.BaseDaoBean;
 import org.jboss.windup.graph.dao.FileDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
@@ -33,9 +34,8 @@ public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 	@Inject
 	private FileDaoBean fileDao;
 	
-	@ArchiveQualifier
 	@Inject
-	private BaseDaoBean<Archive> archiveDao;
+	private ArchiveDaoBean archiveDao;
 	
 
 	private Set<String> getZipExtensions() {

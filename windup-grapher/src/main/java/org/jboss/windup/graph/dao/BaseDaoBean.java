@@ -2,6 +2,8 @@ package org.jboss.windup.graph.dao;
 
 import java.util.Iterator;
 
+import javax.inject.Inject;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
 
@@ -15,10 +17,11 @@ public class BaseDaoBean<T extends VertexFrame> {
 
 	protected final Class<T> type;
 	protected final String typeValue;
-	protected final GraphContext context;
 	
-	public BaseDaoBean(GraphContext context, Class<T> type) {
-		this.context = context;
+	@Inject
+	GraphContext context;
+	
+	public BaseDaoBean(Class<T> type) {
 		this.type = type;
 		
 		TypeValue typeValue = type.getAnnotation(TypeValue.class);

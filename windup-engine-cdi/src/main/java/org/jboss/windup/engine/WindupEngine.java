@@ -11,8 +11,6 @@ import org.jboss.windup.graph.renderer.GraphExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
-
 public class WindupEngine {
 	private static final Logger LOG = LoggerFactory.getLogger(WindupEngine.class);
 	

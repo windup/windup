@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.jboss.windup.engine.qualifier.ArchiveQualifier;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
 import org.jboss.windup.graph.dao.BaseDaoBean;
 import org.jboss.windup.graph.dao.FileDaoBean;
@@ -30,9 +31,8 @@ public class ArchiveEntryIndexVisitor extends EmptyGraphVisitor {
 	@Inject
 	FileDaoBean fileDao;
 	
-	@ArchiveQualifier
 	@Inject
-	private BaseDaoBean<Archive> archiveDao;
+	private ArchiveDaoBean archiveDao;
 
 	@Inject
 	private ArchiveEntryDaoBean archiveEntryDao;

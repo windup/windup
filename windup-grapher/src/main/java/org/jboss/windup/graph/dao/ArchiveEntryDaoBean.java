@@ -1,6 +1,11 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.GraphContext;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +17,8 @@ public class ArchiveEntryDaoBean extends BaseDaoBean<ArchiveEntryResource> {
 
 	private static Logger LOG = LoggerFactory.getLogger(ArchiveEntryDaoBean.class);
 	
-	public ArchiveEntryDaoBean(GraphContext context) {
-		super(context, ArchiveEntryResource.class);
+	public ArchiveEntryDaoBean() {
+		super(ArchiveEntryResource.class);
 	}
 	
 	public Iterable<ArchiveEntryResource> findArchiveEntry(String value) {
@@ -47,6 +52,15 @@ public class ArchiveEntryDaoBean extends BaseDaoBean<ArchiveEntryResource> {
 
 		LOG.info("Regex: "+regex);
 		return context.getFramed().query().has("type", typeValue).has("archiveEntry", Text.REGEX, regex).vertices(type);
+	}
+	
+	public InputStream asInputStream(ArchiveEntryResource entry) throws IOException {
+		//try and read the XML...
+		ZipFile zipFile = new ZipFile(new File(entry.getArchive().getFilePath()));
+		ZipEntry zipEntry = zipFile.getEntry(entry.getArchiveEntry());
+		InputStream is = zipFile.getInputStream(zipEntry);
+		
+		return is;
 	}
 	
 }

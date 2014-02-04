@@ -3,15 +3,14 @@ package org.jboss.windup.graph.dao;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 
 import com.tinkerpop.frames.FramedGraphQuery;
 
 public class DoctypeDaoBean extends BaseDaoBean<DoctypeMeta> {
 
-	public DoctypeDaoBean(GraphContext context) {
-		super(context, DoctypeMeta.class);
+	public DoctypeDaoBean() {
+		super(DoctypeMeta.class);
 	}
 
 	public Iterator<DoctypeMeta> findByProperties(String name, String publicId, String systemId, String baseURI) {

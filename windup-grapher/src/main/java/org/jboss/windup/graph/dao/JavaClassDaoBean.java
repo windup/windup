@@ -2,7 +2,6 @@ package org.jboss.windup.graph.dao;
 
 import java.util.Iterator;
 
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.JavaClass;
 
 import com.tinkerpop.blueprints.Direction;
@@ -13,8 +12,8 @@ import com.tinkerpop.pipes.PipeFunction;
 
 public class JavaClassDaoBean extends BaseDaoBean<JavaClass> {
 
-	public JavaClassDaoBean(GraphContext context) {
-		super(context, JavaClass.class);
+	public JavaClassDaoBean() {
+		super(JavaClass.class);
 	}
 
 	public JavaClass getJavaClass(String qualifiedName) {

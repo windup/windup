@@ -1,11 +1,8 @@
 package org.jboss.windup.engine.visitor;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.inject.Inject;
 
@@ -26,6 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+/**
+ * Adds the XMLResource Facet to the resource.
+ * Extracts Doctype and Namespace information in the XML files.
+ * 
+ * @author bradsdavis
+ *
+ */
 public class XmlResourceVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(XmlResourceVisitor.class);
 	
@@ -54,12 +58,9 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 		LOG.info("Processing: "+entry.getArchiveEntry());
 		
 		//try and read the XML...
-		ZipFile zipFile = null;
 		InputStream is = null;
 		try {
-			zipFile = new ZipFile(new File(entry.getArchive().getFilePath()));
-			ZipEntry zipEntry = zipFile.getEntry(entry.getArchiveEntry());
-			is = zipFile.getInputStream(zipEntry);
+			is = archiveEntryDao.asInputStream(entry);
 			
 			Document parsedDocument = LocationAwareXmlReader.readXML(is);
 			Doctype docType = (Doctype) parsedDocument.getUserData(LocationAwareContentHandler.DOCTYPE_KEY_NAME);
@@ -98,7 +99,6 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 		catch(Exception e) {
 			
 		} finally {
-			IOUtils.closeQuietly(zipFile);
 			IOUtils.closeQuietly(is);
 		}
 		

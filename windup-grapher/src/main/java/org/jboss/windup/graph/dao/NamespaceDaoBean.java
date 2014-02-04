@@ -5,8 +5,8 @@ import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 
 public class NamespaceDaoBean extends BaseDaoBean<NamespaceMeta> {
 
-	public NamespaceDaoBean(GraphContext context) {
-		super(context, NamespaceMeta.class);
+	public NamespaceDaoBean() {
+		super(NamespaceMeta.class);
 	}
 
 	public NamespaceMeta findByURI(String namespaceURI) {

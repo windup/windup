@@ -6,14 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarFile;
 
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.exception.ArchiveIndexReaderException;
 import org.jboss.windup.graph.model.resource.JarArchive;
 
 public class JarArchiveDaoBean extends BaseDaoBean<JarArchive> {
 
-	public JarArchiveDaoBean(GraphContext context) {
-		super(context, JarArchive.class);
+	public JarArchiveDaoBean() {
+		super(JarArchive.class);
 	}
 
 	public Iterable<JarArchive> findArchiveByMD5(String value) throws ArchiveIndexReaderException {

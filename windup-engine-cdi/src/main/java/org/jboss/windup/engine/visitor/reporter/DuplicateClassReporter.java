@@ -1,4 +1,4 @@
-package org.jboss.windup.engine.visitor;
+package org.jboss.windup.engine.visitor.reporter;
 
 import javax.inject.Inject;
 
@@ -10,6 +10,12 @@ import org.jboss.windup.graph.model.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Find situations where a class is provided by multiple archives. 
+ * 
+ * @author bradsdavis
+ *
+ */
 public class DuplicateClassReporter extends EmptyGraphVisitor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DuplicateClassReporter.class);

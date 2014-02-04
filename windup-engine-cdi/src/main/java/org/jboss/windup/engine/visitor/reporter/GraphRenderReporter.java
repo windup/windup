@@ -1,4 +1,4 @@
-package org.jboss.windup.engine.visitor;
+package org.jboss.windup.engine.visitor.reporter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 
 /**
- * Goes through an archive adding the archive entries to the graph.
+ * Serializes the graph to GraphML.
  * 
  * @author bradsdavis
  *

@@ -3,12 +3,11 @@ package org.jboss.windup.engine.visitor;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.qualifier.ArchiveQualifier;
-import org.jboss.windup.engine.qualifier.EarQualifier;
-import org.jboss.windup.engine.qualifier.WarQualifier;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.BaseDaoBean;
+import org.jboss.windup.graph.dao.ArchiveDaoBean;
+import org.jboss.windup.graph.dao.EarArchiveDaoBean;
 import org.jboss.windup.graph.dao.JarArchiveDaoBean;
+import org.jboss.windup.graph.dao.WarArchiveDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.EarArchive;
 import org.jboss.windup.graph.model.resource.JarArchive;
@@ -28,21 +27,17 @@ import com.tinkerpop.blueprints.Vertex;
 public class ArchiveTypingVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveTypingVisitor.class);
 
-	@WarQualifier
 	@Inject
-	private BaseDaoBean<WarArchive> warDao;
+	private WarArchiveDaoBean warDao;
 	
 	@Inject
 	private JarArchiveDaoBean jarDao;
 	
-	@EarQualifier
 	@Inject
-	private BaseDaoBean<EarArchive> earDao;
+	private EarArchiveDaoBean earDao;
 	
-	@ArchiveQualifier
 	@Inject
-	private BaseDaoBean<Archive> archiveDao;
-	
+	private ArchiveDaoBean archiveDao;
 	
 	@Override
 	public void visit() {
