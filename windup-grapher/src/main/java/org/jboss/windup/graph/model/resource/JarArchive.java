@@ -25,7 +25,7 @@ public interface JarArchive extends Archive {
 	public Iterator<JavaClass> getJavaClasses();
 	
 	@GremlinGroovy("it.as('x').out('child').filter{'type','XmlResource'}.select")
-	public Iterator<XmlFile> getXmlFiles();
+	public Iterator<XmlResource> getXmlFiles();
 	
 	
 }

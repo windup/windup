@@ -12,10 +12,12 @@ import org.jboss.windup.engine.visitor.ArchiveTypingVisitor;
 import org.jboss.windup.engine.visitor.BasicVisitor;
 import org.jboss.windup.engine.visitor.DebugVisitor;
 import org.jboss.windup.engine.visitor.JavaClassVisitor;
+import org.jboss.windup.engine.visitor.XmlResourceVisitor;
 import org.jboss.windup.engine.visitor.ZipArchiveGraphVisitor;
 import org.jboss.windup.engine.visitor.base.GraphVisitor;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.XmlResource;
 
 public class ListenerChainProvider {
 
@@ -34,6 +36,9 @@ public class ListenerChainProvider {
 	@Inject
 	private JavaClassVisitor javaClassVisitor;
 	
+	@Inject
+	private XmlResourceVisitor xmlResourceVisitor;
+	
 	@ListenerChainQualifier
 	@Produces
 	public List<GraphVisitor> produceListenerChain() {
@@ -43,7 +48,9 @@ public class ListenerChainProvider {
 		listenerChain.add(archiveEntryIndexingVisitor); //indexes all entries to the graph
 		listenerChain.add(archiveTypeVisitor);  //sets the archive to a sub-type
 		listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
-		listenerChain.add(new DebugVisitor(JavaClass.class));
+		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
+		
+		listenerChain.add(new DebugVisitor(XmlResource.class));
 		return listenerChain;
 	}
 }

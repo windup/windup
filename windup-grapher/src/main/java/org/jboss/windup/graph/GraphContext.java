@@ -9,7 +9,9 @@ import org.jboss.windup.graph.model.meta.JBossModuleMeta;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
@@ -17,7 +19,7 @@ import org.jboss.windup.graph.model.resource.EarArchive;
 import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.model.resource.WarArchive;
-import org.jboss.windup.graph.model.resource.XmlFile;
+import org.jboss.windup.graph.model.resource.XmlResource;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -94,7 +96,7 @@ public class GraphContext {
 			    .withClass(JavaClass.class)
 		        .withClass(org.jboss.windup.graph.model.resource.Resource.class)
 			    .withClass(WarArchive.class)
-			    .withClass(XmlFile.class)
+			    .withClass(XmlResource.class)
 			    
 			    .withClass(EjbEntityFacet.class)
 			    .withClass(MessageDrivenBeanFacet.class)
@@ -102,6 +104,8 @@ public class GraphContext {
 			    
 			    .withClass(EjbConfigurationFacet.class)
 			    .withClass(SpringConfigurationFacet.class)
+			    .withClass(NamespaceMeta.class)
+			    .withClass(DoctypeMeta.class)
 			    
 			    .build()
 		);

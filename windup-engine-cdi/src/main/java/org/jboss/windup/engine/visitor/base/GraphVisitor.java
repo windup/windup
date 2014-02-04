@@ -15,7 +15,7 @@ import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.model.resource.Resource;
 import org.jboss.windup.graph.model.resource.WarArchive;
-import org.jboss.windup.graph.model.resource.XmlFile;
+import org.jboss.windup.graph.model.resource.XmlResource;
 
 public interface GraphVisitor {
 
@@ -35,7 +35,7 @@ public interface GraphVisitor {
 	public void visitMessageDrivenBean(MessageDrivenBeanFacet entry);
 	public void visitEjbEntity(SpringBeanFacet entry);
 	
-	public void visitXmlResource(XmlFile entry);
+	public void visitXmlResource(XmlResource entry);
 	public void visitEjbConfiguration(EjbConfigurationFacet entry);
 	public void visitSpringConfiguration(SpringConfigurationFacet entry);
 }

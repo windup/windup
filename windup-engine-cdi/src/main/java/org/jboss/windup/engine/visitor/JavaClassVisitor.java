@@ -47,15 +47,12 @@ public class JavaClassVisitor extends EmptyGraphVisitor {
 	@Override
 	public void visitArchiveEntry(ArchiveEntryResource entry) {
 		//now, check to see whether it is a JAR, and republish the typed value.
-		String archiveEntry = entry.getArchiveEntry();
 		Archive archive = entry.getArchive();
-		
 		
 		if(archive == null) {
 			LOG.warn("Archive should not be null: "+entry.asVertex());
 			return;
 		}
-		LOG.info("Processing entry: "+archive.getFilePath() + " -> "+archiveEntry);
 		
 		try {
 			ClassParser classParser = new ClassParser(archive.getFilePath(), entry.getArchiveEntry());
