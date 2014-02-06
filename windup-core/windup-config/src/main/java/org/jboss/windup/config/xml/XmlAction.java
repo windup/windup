@@ -26,8 +26,4 @@ public class XmlAction<T extends XmlResource> extends BaseAction<T> {
 	public String toString() {
 		return "XmlAction [namespacePrefixes=" + namespacePrefixes + ", condition=" + condition + ", actions=" + actions + "]";
 	}
-
-	
-
-	
 }

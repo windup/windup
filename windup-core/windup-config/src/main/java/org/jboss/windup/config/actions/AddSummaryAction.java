@@ -10,7 +10,7 @@ public class AddSummaryAction<T extends Resource> implements Action<T> {
 	private String description;
 	
 	@Override
-	public void execute(GraphContext graphContext, T obj) {
+	public void execute(GraphContext graphContext, T obj, LocalContext localContext) {
 		throw new NotImplementedException("Not yet implemented.");
 	}
 	

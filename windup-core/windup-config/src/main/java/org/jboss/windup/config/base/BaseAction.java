@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jboss.windup.config.actions.LocalContext;
 import org.jboss.windup.config.condition.Condition;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.Resource;
@@ -21,14 +22,14 @@ public class BaseAction<T extends Resource> implements Action<T> {
 	}
 	
 	@Override
-	public void execute(GraphContext graphContext, T obj) {
+	public void execute(GraphContext graphContext, T obj, LocalContext localContext) {
 		if(condition != null && !condition.match(graphContext, obj)) {
 			//return without executing.
 			return;
 		}
 
 		for(Action<T> action : actions) {
-			action.execute(null, obj);
+			action.execute(null, obj, localContext);
 		}
 	}
 

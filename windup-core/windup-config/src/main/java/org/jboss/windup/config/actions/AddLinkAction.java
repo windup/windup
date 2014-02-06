@@ -10,7 +10,7 @@ public class AddLinkAction<T extends Resource> implements Action<T> {
 	private String href;
 	
 	@Override
-	public void execute(GraphContext graphContext, T obj) {
+	public void execute(GraphContext graphContext, T obj, LocalContext localContext) {
 		
 	}
 	

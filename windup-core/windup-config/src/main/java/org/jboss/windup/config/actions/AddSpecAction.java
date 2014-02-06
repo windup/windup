@@ -10,7 +10,7 @@ public class AddSpecAction<T extends Resource> implements Action<T> {
 	private String specificationVersion;
 	
 	@Override
-	public void execute(GraphContext graphContext, T obj) {
+	public void execute(GraphContext graphContext, T obj, LocalContext localContext) {
 		SpecificationVersionMeta specVersion = graphContext.getFramed().addVertex(null, SpecificationVersionMeta.class);
 		specVersion.setSpecVersion(specificationVersion);
 		obj.addMeta(specVersion);

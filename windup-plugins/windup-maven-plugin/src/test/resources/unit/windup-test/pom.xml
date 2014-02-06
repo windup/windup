@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+		<parent>
+		<artifactId>windup-parent</artifactId>
+		<groupId>org.jboss.windup</groupId>
+		<version>0.7.0</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<groupId>org.jboss.windup</groupId>
+	<artifactId>windup-maven-plugin-test</artifactId>
+	<packaging>jar</packaging>
+	<name>Windup Maven Plugin Unit Test</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.jboss.windup</groupId>
+				<artifactId>windup-maven-plugin</artifactId>
+				<configuration>
+					<packages>
+						<package>org.jboss.windup</package>
+					</packages>					
+					<inputDirectory>${basedir}</inputDirectory>
+					<outputDirectory>${basedir}/target/site/windup</outputDirectory>
+					<source>true</source>
+					<captureLog>false</captureLog>
+					<logLevel>TRACE</logLevel>
+					<fetchRemote>true</fetchRemote>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

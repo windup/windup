@@ -9,7 +9,9 @@
   <packaging>pom</packaging>
   <name>Windup Core</name>
   <modules>
+	<module>windup-grapher</module>
   	<module>windup-config</module>
   	<module>windup-utils</module>
+	<module>windup-engine-cdi</module>
   </modules>
 </project>

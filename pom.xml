@@ -134,11 +134,8 @@
 		<module>windup-reporting</module>
 		<module>windup-cli</module>
 		<module>windup-rules</module>
-		<module>windup-maven-plugin</module>
 		<module>windup-metadata</module>
 
-		<module>windup-grapher</module>
-		<module>windup-engine-cdi</module>
 		<module>windup-plugins</module>
 		<module>windup-core</module>
 	</modules>

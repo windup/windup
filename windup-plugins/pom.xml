@@ -10,5 +10,6 @@
   <name>Windup Plugins</name>
   <modules>
   	<module>windup-nexus</module>
+	<module>windup-maven-plugin</module>
   </modules>
 </project>

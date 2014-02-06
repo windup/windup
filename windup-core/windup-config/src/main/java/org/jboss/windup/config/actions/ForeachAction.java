@@ -16,9 +16,11 @@ public class ForeachAction<T extends Resource> implements Action<T> {
 	}
 	
 	@Override
-	public void execute(GraphContext graphContext, T obj) {
+	public void execute(GraphContext graphContext, T obj, LocalContext context) {
 		for(Action action : actions) {
-			action.execute(graphContext, obj);
+			//create scoped context.
+			LocalContext localContext = new LocalContext(context);
+			action.execute(graphContext, obj, localContext);
 		}
 	}
 
