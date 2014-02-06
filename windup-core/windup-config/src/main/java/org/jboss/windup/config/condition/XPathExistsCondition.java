@@ -3,6 +3,7 @@ package org.jboss.windup.config.condition;
 import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.jboss.windup.graph.GraphContext;
 
 
 public class XPathExistsCondition<T> implements Condition<T> {
@@ -10,7 +11,7 @@ public class XPathExistsCondition<T> implements Condition<T> {
 	protected XPathExpression xpathExpression; 
 	
 	@Override
-	public boolean match(T obj) {
+	public boolean match(GraphContext graphContext, T obj) {
 		throw new NotImplementedException("Not yet implemented.");
 	}
 	

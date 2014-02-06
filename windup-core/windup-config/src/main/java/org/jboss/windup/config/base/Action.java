@@ -1,5 +1,8 @@
 package org.jboss.windup.config.base;
 
-public interface Action<T> {
-	public void execute(T obj);
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.Resource;
+
+public interface Action<T extends Resource> {
+	public void execute(GraphContext graphContext, T obj);
 }

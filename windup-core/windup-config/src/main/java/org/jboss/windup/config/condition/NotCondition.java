@@ -1,14 +1,16 @@
 package org.jboss.windup.config.condition;
 
+import org.jboss.windup.graph.GraphContext;
+
 
 public class NotCondition<T> implements Condition<T> {
 
 	private Condition<T> condition;
 	
 	@Override
-	public boolean match(T obj) {
+	public boolean match(GraphContext graphContext, T obj) {
 		//return negation
-		return !(condition.match(obj));
+		return !(condition.match(graphContext, obj));
 	}
 	
 	public Condition<T> getCondition() {

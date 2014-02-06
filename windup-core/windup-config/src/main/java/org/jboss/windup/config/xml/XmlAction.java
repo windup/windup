@@ -4,8 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jboss.windup.config.base.BaseAction;
+import org.jboss.windup.graph.model.resource.XmlResource;
 
-public class XmlAction<T> extends BaseAction<T> {
+public class XmlAction<T extends XmlResource> extends BaseAction<T> {
 	
 	protected List<NamespacePrefix> namespacePrefixes;
 	

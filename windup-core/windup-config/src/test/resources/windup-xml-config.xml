@@ -11,19 +11,15 @@
     			<j:xpath-exists matches=""/>
     			<j:not>
     				<j:sha1 equals="notval"/>
-    				<j:dtd-public-id matches="abs"/>	
     			</j:not>
     		</j:or>
     		<j:filename matches=".*.xml"/>
     	</j:and>
     </j:when>
-    
-    <j:add-classification description="Whatever"/>
-	<j:add-summary description="desc"/>
-	<j:add-link href="http://whatever.com" description="descr"/>
-	<j:foreach target="/test/whatever">
-		<j:add-classification description="Some description."/>
-		<j:xpath-variable name="" target=""/>
-	</j:foreach>
+    <j:add-link href="http://test.com" description="abc"/>
+  </j:xml-action>
+  <j:xml-action>
+  	<j:add-link href="http://test.com" description="abc"/>
+  	<j:add-spec-version version="kn"/>
   </j:xml-action>
 </j:rules>

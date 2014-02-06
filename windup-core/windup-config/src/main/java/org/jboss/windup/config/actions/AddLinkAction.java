@@ -1,16 +1,17 @@
 package org.jboss.windup.config.actions;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.jboss.windup.config.base.Action;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.Resource;
 
-public class AddLinkAction<T> implements Action<T> {
+public class AddLinkAction<T extends Resource> implements Action<T> {
 
 	private String description;
 	private String href;
 	
 	@Override
-	public void execute(T obj) {
-		throw new NotImplementedException("Not yet implemented.");
+	public void execute(GraphContext graphContext, T obj) {
+		
 	}
 	
 	public String getDescription() {

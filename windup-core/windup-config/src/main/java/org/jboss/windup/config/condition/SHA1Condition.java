@@ -1,12 +1,13 @@
 package org.jboss.windup.config.condition;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.jboss.windup.graph.GraphContext;
 
 
 public class SHA1Condition<T> extends EqualCondition<T> {
 
 	@Override
-	public boolean match(T obj) {
+	public boolean match(GraphContext graphContext, T obj) {
 		throw new NotImplementedException("Not yet implemented.");
 	}
 

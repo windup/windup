@@ -2,13 +2,15 @@ package org.jboss.windup.config.actions;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.jboss.windup.config.base.Action;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.Resource;
 
-public class AddClassificationAction<T> implements Action<T> {
+public class AddClassificationAction<T extends Resource> implements Action<T> {
 
 	private String description;
 	
 	@Override
-	public void execute(T obj) {
+	public void execute(GraphContext graphContext, T obj) {
 		throw new NotImplementedException("Not yet implemented.");
 	}
 	

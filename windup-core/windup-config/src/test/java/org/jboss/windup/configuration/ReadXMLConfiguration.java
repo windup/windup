@@ -17,12 +17,11 @@ public class ReadXMLConfiguration extends TestCase {
 	
 	private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ReadXMLConfiguration.class);
 	
-	
 	@Test
 	public void testLoadingFile() throws Exception {
 		Weld weld = new Weld();
     	WeldContainer container = weld.initialize();
-    	
+
     	ClassLoader classloader = this.getClass().getClassLoader();
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		dbFactory.setNamespaceAware(true);

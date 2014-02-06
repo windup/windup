@@ -6,9 +6,11 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.windup.config.condition.Condition;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.Resource;
 
 @XmlRootElement
-public class BaseAction<T> implements Action<T> {
+public class BaseAction<T extends Resource> implements Action<T> {
 
 	protected Condition<T> condition;
 	
@@ -19,14 +21,14 @@ public class BaseAction<T> implements Action<T> {
 	}
 	
 	@Override
-	public void execute(T obj) {
-		if(condition != null && !condition.match(obj)) {
+	public void execute(GraphContext graphContext, T obj) {
+		if(condition != null && !condition.match(graphContext, obj)) {
 			//return without executing.
 			return;
 		}
 
 		for(Action<T> action : actions) {
-			action.execute(obj);
+			action.execute(null, obj);
 		}
 	}
 

@@ -33,7 +33,7 @@
 	
 	<xs:complexType name="NotCondition">
 		<xs:choice minOccurs="1" maxOccurs="1">
-			<xs:group ref="j:XmlConditions"/>
+			<xs:group ref="j:XmlConditions" minOccurs="1" maxOccurs="1"/>
 		</xs:choice>
 	</xs:complexType>
 	
