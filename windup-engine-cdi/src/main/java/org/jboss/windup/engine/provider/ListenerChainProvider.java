@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.qualifier.ListenerChainQualifier;
 import org.jboss.windup.engine.visitor.ArchiveEntryIndexVisitor;
+import org.jboss.windup.engine.visitor.ArchiveHashVisitor;
 import org.jboss.windup.engine.visitor.ArchiveTypingVisitor;
 import org.jboss.windup.engine.visitor.BasicVisitor;
 import org.jboss.windup.engine.visitor.DebugVisitor;
@@ -24,9 +25,6 @@ import org.jboss.windup.engine.visitor.reporter.DuplicateClassReporter;
 import org.jboss.windup.engine.visitor.reporter.GraphRenderReporter;
 import org.jboss.windup.engine.visitor.reporter.NamespacesFoundReporter;
 import org.jboss.windup.graph.model.meta.xml.MavenFacet;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.XmlResource;
 
 public class ListenerChainProvider {
 
@@ -72,6 +70,8 @@ public class ListenerChainProvider {
 	@Inject
 	private ArchiveDependsOnReporter archiveDependsOnReport;
 	
+	@Inject
+	private ArchiveHashVisitor archiveHashVisitor;
 	
 	@ListenerChainQualifier
 	@Produces
@@ -80,11 +80,14 @@ public class ListenerChainProvider {
 		listenerChain.add(basic);
 		listenerChain.add(zipArchive); //recurses zip entries to expand
 		listenerChain.add(archiveEntryIndexingVisitor); //indexes all entries to the graph
+		listenerChain.add(archiveHashVisitor);
 		listenerChain.add(archiveTypeVisitor);  //sets the archive to a sub-type
+		
 		//listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
 		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
 		listenerChain.add(mavenFacetVisitor); //extract Maven information to facet.
 		listenerChain.add(new DebugVisitor(context, MavenFacet.class)); //extract Maven information to facet.
+		
 		/*
 		listenerChain.add(classNotFoundReporter); //reports all classes not found on the classpath.
 		listenerChain.add(duplicateClassReporter); //reports all classes found multiple times on the classpath.

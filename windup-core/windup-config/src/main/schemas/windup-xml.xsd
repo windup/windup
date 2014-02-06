@@ -1,0 +1,163 @@
+<?xml version="1.0" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:j="http://windup.jboss.org/v1/xml"
+	xmlns:base="http://windup.jboss.org/v1/base"
+	targetNamespace="http://windup.jboss.org/v1/xml" elementFormDefault="qualified" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<xs:import namespace="http://windup.jboss.org/v1/base" schemaLocation="windup-base.xsd"/>
+
+	<xs:complexType name="WhenType">
+		<xs:sequence>
+		<xs:choice minOccurs="1" maxOccurs="1">
+			<xs:group ref="j:XmlConditions"></xs:group>
+		</xs:choice>
+		<xs:group ref="j:Actions" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+
+	<xs:group name="XmlConditions">
+		<xs:choice>
+			<xs:element name="not" type="j:NotCondition"/>
+			<xs:element name="and" type="j:AndCondition"/>
+			<xs:element name="or" type="j:OrCondition"/>
+			<xs:element name="sha1" type="base:EqualsCondition"/>
+			<xs:element name="md5" type="base:EqualsCondition"/>
+			<xs:element name="xpath-exists" type="j:XmlMatches"/>
+			<xs:element name="dtd-public-id" type="j:XmlMatches"/>
+			<xs:element name="filename" type="base:MatchCondition"/>
+		</xs:choice>
+	</xs:group>
+	
+
+	
+	<xs:complexType name="NotCondition">
+		<xs:choice minOccurs="1" maxOccurs="1">
+			<xs:group ref="j:XmlConditions"/>
+		</xs:choice>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="AndCondition">
+		<xs:choice minOccurs="2" maxOccurs="unbounded">
+			<xs:group ref="j:XmlConditions"/>
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="OrCondition">
+		<xs:choice minOccurs="2" maxOccurs="unbounded">
+			<xs:group ref="j:XmlConditions"/>
+		</xs:choice>
+	</xs:complexType>
+
+
+	
+	<xs:group name="Actions">
+		<xs:choice>
+			<xs:element name="foreach" type="j:XPathForEach"/>
+			<xs:element name="highlight" type="j:XPathHighlight"/>
+			<xs:element name="action" type="j:XmlClassActionType"/>
+			<xs:element name="add-classification" type="base:AddClassification"/>
+			<xs:element name="add-summary" type="base:AddClassification"/>
+			<xs:element name="add-link" type="j:AddLink"/>
+			<xs:element name="add-spec-version" type="base:AddSpecificationVersion"/>
+		</xs:choice>
+	</xs:group>
+
+
+	
+	
+	<xs:complexType name="AddLink">
+		<xs:attribute name="description" type="xs:string" use="required"/>
+		<xs:attribute name="href" type="xs:anyURI" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="XmlClassActionType">
+		<xs:complexContent>
+			<xs:extension base="base:ClassActionType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="XPathForEach">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="xml-action" type="j:XmlClassActionType"/>
+			<xs:element name="xpath-foreach" type="j:XPathForEach"/>
+			<xs:element name="xpath-variable" type="j:XPathVariable"/>
+			<xs:element name="xpath-highlight" type="j:XPathHighlight"/>
+			<xs:element name="add-classification" type="base:AddClassification"/>
+			<xs:element name="add-summary" type="base:AddClassification"/>
+			<xs:element name="add-link" type="j:AddLink"/>
+		</xs:choice>
+		<xs:attribute name="target" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="XPathVariable">
+		<xs:complexContent>
+			<xs:extension base="base:ActionBaseType">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+				<xs:attribute name="target" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="XPathHighlight">
+		<xs:complexContent>
+			<xs:extension base="base:ActionBaseType">
+				<xs:sequence>
+					<xs:element name="xpath-variable" type="j:XPathVariable" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="hint" type="base:HintType" nillable="false" minOccurs="0" maxOccurs="unbounded"/>				
+				</xs:sequence>
+				<xs:attribute name="target" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="XmlMatches">
+		<xs:attribute name="matches" type="xs:string"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="XmlActionType">
+		<xs:complexContent>
+			<xs:extension base="base:ChainingActionType">
+				<xs:sequence>
+					<xs:element name="namespace" minOccurs="0" maxOccurs="unbounded" type="j:XmlNamespaceType" />
+					
+					<xs:choice>
+						<xs:element name="when" type="j:WhenType" minOccurs="0" maxOccurs="1"/>
+						<xs:group ref="j:Actions" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:choice>	
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	
+	
+	<xs:complexType name="JavaActionType">
+		<xs:complexContent>
+			<xs:extension base="base:ChainingActionType">
+				<xs:choice>
+					<xs:element name="when" type="j:WhenType" minOccurs="0" maxOccurs="1"/>
+					<xs:group ref="j:Actions" minOccurs="0" maxOccurs="unbounded"/>	
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+
+	<xs:complexType name="XmlNamespaceType">
+		<xs:attribute name="prefix" type="xs:NCName" use="required" />
+		<xs:attribute name="uri" type="xs:anyURI" use="required" />
+	</xs:complexType>
+
+	<xs:element name="rules">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="xml-action" minOccurs="0" maxOccurs="unbounded" type="j:XmlActionType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

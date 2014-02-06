@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:base="http://windup.jboss.org/v1/base" targetNamespace="http://windup.jboss.org/v1/base" elementFormDefault="qualified">
+	
+	<xs:simpleType name="Platform">
+	   <xsd:simpleType>
+	      <xsd:restriction base = "xsd:string">
+	         <xsd:enumeration value = "JBOSS"/>
+	         <xsd:enumeration value = "HIBERNATE"/>
+	         <xsd:enumeration value = "INFINISPAN"/>
+	         <xsd:enumeration value = "JAVA"/>
+	      </xsd:restriction>
+	   </xsd:simpleType>
+	</xsd:element>
+		
+</xs:schema>

@@ -1,0 +1,172 @@
+<?xml version="1.0" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:j="http://windup.jboss.org/v1/java"
+	xmlns:base="http://windup.jboss.org/v1/base"
+	targetNamespace="http://windup.jboss.org/v1/java" elementFormDefault="qualified" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<xs:import namespace="http://windup.jboss.org/v1/base" schemaLocation="windup-base.xsd"/>
+
+	<xs:complexType name="WhenType">
+		<xs:sequence>
+		<xs:choice minOccurs="1" maxOccurs="1">
+			<xs:group ref="j:Conditions"></xs:group>
+		</xs:choice>
+		<xs:group ref="j:Actions" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	
+	<xs:group name="Conditions">
+		<xs:choice>
+			<xs:element name="not" type="j:NotCondition"/>
+			<xs:element name="and" type="j:AndCondition"/>
+			<xs:element name="or" type="j:OrCondition"/>
+			<xs:element name="sha1" type="j:EqualsCondition"/>
+			<xs:element name="md5" type="j:EqualsCondition"/>
+			<xs:element name="class-extends" type="j:ExtendsCondition"/>
+			<xs:element name="class-imports" type="j:ImportsCondition"/>
+			<xs:element name="class-implements" type="j:ImplementsCondition"/>
+			<xs:element name="filename" type="j:MatchCondition"/>
+		</xs:choice>
+	</xs:group>
+
+
+	<xs:complexType name="NotCondition">
+		<xs:choice minOccurs="1" maxOccurs="1">
+			<xs:group ref="j:Conditions"/>
+		</xs:choice>
+	</xs:complexType>
+	
+		
+	<xs:complexType name="AndCondition">
+		<xs:choice minOccurs="2" maxOccurs="unbounded">
+			<xs:group ref="j:Conditions"/>
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="OrCondition">
+		<xs:choice minOccurs="2" maxOccurs="unbounded">
+			<xs:group ref="j:Conditions"/>
+		</xs:choice>
+	</xs:complexType>
+	
+	
+	
+	<xs:group name="Actions">
+		<xs:choice>
+			<xs:element name="foreach" type="j:JavaForEach"/>
+			<xs:element name="add-classification" type="j:AddClassification"/>
+			<xs:element name="add-summary" type="j:AddClassification"/>
+			<xs:element name="add-link" type="j:AddLink"/>
+			<xs:element name="add-spec-version" type="j:AddSpecificationVersion"/>
+		</xs:choice>
+	</xs:group>
+
+	<xs:complexType name="AddClassification">
+		<xs:attribute name="description" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="AddLink">
+		<xs:attribute name="description" type="xs:string" use="required"/>
+		<xs:attribute name="href" type="xs:anyURI" use="required"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="JavaClassActionType">
+		<xs:complexContent>
+			<xs:extension base="base:ClassActionType"/>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+
+	<xs:complexType name="JavaActionType">
+		<xs:complexContent>
+			<xs:extension base="base:ChainingActionType">
+				<xs:choice>
+					<xs:element name="when" type="j:WhenType" minOccurs="0" maxOccurs="1"/>
+					<xs:group ref="j:Actions" minOccurs="0" maxOccurs="unbounded"/>	
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="JavaForEach">
+		<xs:choice minOccurs="1" maxOccurs="1">
+			<xs:element name="highlight" type="j:JavaHighlight"/>
+		</xs:choice>
+		<xs:attribute name="import" type="xs:string"/>
+		<xs:attribute name="interface" type="xs:string"/>
+		<xs:attribute name="type" type="xs:string"/>
+		<xs:attribute name="method-call" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="JavaVariable">
+		<xs:complexContent>
+			<xs:extension base="base:ActionBaseType">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+				<xs:attribute name="target" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="JavaHighlight">
+		<xs:complexContent>
+			<xs:extension base="base:ActionBaseType">
+				<xs:sequence>
+					<xs:element name="variable" type="j:JavaVariable" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="hint" type="base:HintType" nillable="false" minOccurs="0" maxOccurs="unbounded"/>				
+				</xs:sequence>
+				<xs:attribute name="description" type="xs:string" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="ExtendsCondition">
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="ImportsCondition">
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="ImplementsCondition">
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+		<xs:complexType name="MatchCondition">
+		<xs:complexContent>
+			 <xs:extension base="base:MatchCondition"/>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="EqualsCondition">
+		<xs:complexContent>
+			 <xs:extension base="base:EqualsCondition"/>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AttributeMatch">
+		<xs:complexContent>
+			 <xs:extension base="base:EqualsCondition"/>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AddSpecificationVersion">
+		<xs:complexContent>
+			 <xs:extension base="base:AddSpecificationVersion"/>
+		</xs:complexContent>
+	</xs:complexType>
+
+	
+	
+	
+	<xs:element name="rules">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="java-action" minOccurs="0" maxOccurs="unbounded" type="j:JavaActionType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

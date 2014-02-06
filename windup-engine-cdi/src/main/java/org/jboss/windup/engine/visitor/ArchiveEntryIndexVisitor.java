@@ -8,11 +8,9 @@ import java.util.zip.ZipFile;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.qualifier.ArchiveQualifier;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
-import org.jboss.windup.graph.dao.BaseDaoBean;
 import org.jboss.windup.graph.dao.FileDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;

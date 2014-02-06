@@ -10,11 +10,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.qualifier.ArchiveQualifier;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
-import org.jboss.windup.graph.dao.BaseDaoBean;
 import org.jboss.windup.graph.dao.FileDaoBean;
 import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.File;

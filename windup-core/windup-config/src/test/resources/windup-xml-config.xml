@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<j:rules xmlns:base="http://windup.jboss.org/v1/base" xmlns:j="http://windup.jboss.org/v1/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://windup.jboss.org/v1/xml ../../main/schemas/windup-xml.xsd ">
+  <j:xml-action>
+    <j:namespace prefix="test" uri="http://tempuri.org"/>
+    <j:when>
+    	<j:and>
+    		<j:or>
+    			<j:dtd-public-id matches="lng"/>
+    			<j:md5 equals="xyz"/>
+    			<j:sha1 equals="abc"/>
+    			<j:xpath-exists matches=""/>
+    			<j:not>
+    				<j:sha1 equals="notval"/>
+    				<j:dtd-public-id matches="abs"/>	
+    			</j:not>
+    		</j:or>
+    		<j:filename matches=".*.xml"/>
+    	</j:and>
+    </j:when>
+    
+    <j:add-classification description="Whatever"/>
+	<j:add-summary description="desc"/>
+	<j:add-link href="http://whatever.com" description="descr"/>
+	<j:foreach target="/test/whatever">
+		<j:add-classification description="Some description."/>
+		<j:xpath-variable name="" target=""/>
+	</j:foreach>
+  </j:xml-action>
+</j:rules>

@@ -1,7 +1,5 @@
 package org.jboss.windup.engine.visitor;
 
-import static org.joox.JOOX.$;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,16 +19,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Adds the MavenFacet to the XML.
+ * If the JAR did not contain a POM, try and look up the POM from Maven Central.
  * 
  * @author bradsdavis
  *
  */
-public class MavenFacetVisitor extends EmptyGraphVisitor {
-	private static final Logger LOG = LoggerFactory.getLogger(MavenFacetVisitor.class);
+public class MavenRemoteFetchVisitor extends EmptyGraphVisitor {
+	private static final Logger LOG = LoggerFactory.getLogger(MavenRemoteFetchVisitor.class);
 	
 	private final Map<String, String> namespaces;
-	public MavenFacetVisitor() {
+	public MavenRemoteFetchVisitor() {
 		namespaces = new HashMap<String, String>();
 		namespaces.put("pom", "http://maven.apache.org/POM/4.0.0");
 	}

@@ -26,6 +26,19 @@ public interface JavaClass extends Resource {
 	@Property("qualifiedName")
 	public String setQualifiedName(String qualifiedName);
 
+	@Property("majorVersion")
+	public int getMajorVersion();
+
+	@Property("majorVersion")
+	public int setMajorVersion(int majorVersion);	
+
+	@Property("minorVersion")
+	public int getMinorVersion();
+
+	@Property("minorVersion")
+	public int setMinorVersion(int minorVersion);	
+	
+	
 	@Adjacency(label="imports", direction=Direction.OUT)
 	public void addImport(final JavaClass person);
 
