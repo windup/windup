@@ -157,6 +157,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="xml-action" minOccurs="0" maxOccurs="unbounded" type="j:XmlActionType"/>
+				<xs:element name="xml-action" minOccurs="1" maxOccurs="unbounded" type="j:XmlActionType"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

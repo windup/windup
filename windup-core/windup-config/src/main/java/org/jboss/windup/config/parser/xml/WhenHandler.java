@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.List;
 
+import org.jboss.windup.config.base.Action;
 import org.jboss.windup.config.condition.Condition;
 import org.jboss.windup.config.condition.When;
 import org.jboss.windup.config.parser.ConfigurationException;
@@ -21,7 +22,13 @@ public class WhenHandler implements ElementHandler<When> {
 		List<Element> children = $(element).children().get();
 		for(Element child : children) {
 			Object obj = handlerManager.processElement(child);
-			when.setCondition((Condition)obj);
+			
+			if(obj instanceof Condition) {
+				when.setCondition((Condition)obj);
+			}
+			else {
+				when.setAction((Action)obj);
+			}
 		}
 		return when;
 	}

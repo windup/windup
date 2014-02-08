@@ -28,6 +28,7 @@ public class XmlActionHandler implements ElementHandler<XmlAction<?>> {
 			if(obj instanceof When) {
 				Condition condition = ((When)obj).getCondition();
 				xmlAction.setCondition(condition);
+				xmlAction.getActions().add(((When)obj).getAction());
 			}
 			else if(obj instanceof NamespacePrefix) {
 				xmlAction.getNamespacePrefixes().add(obj);
