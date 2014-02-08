@@ -4,6 +4,7 @@
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-parent</artifactId>
     <version>0.7.0</version>
+    <relativePath>../</relativePath>
   </parent>
   <artifactId>windup-core</artifactId>
   <packaging>pom</packaging>
