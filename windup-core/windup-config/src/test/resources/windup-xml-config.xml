@@ -1,35 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<j:rules xmlns:base="http://windup.jboss.org/v1/base" xmlns:j="http://windup.jboss.org/v1/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://windup.jboss.org/v1/xml ../../main/schemas/rules/windup-xml.xsd ">
-  <j:xml-action>
-    <j:namespace prefix="test" uri="http://tempuri.org"/>
-    <j:when>
-    	<j:and>
-    		<j:or>
-    			<j:dtd-public-id matches="lng"/>
-    			<j:md5 equals="xyz"/>
-    			<j:sha1 equals="abc"/>
-    			<j:xpath-exists matches=""/>
-    			<j:not>
-    				<j:sha1 equals="notval"/>
-    			</j:not>
-    		</j:or>
-    		<j:filename matches=".*.xml"/>
-    	</j:and>
-    	<j:foreach target="/test:some-elemnet">
-    		<j:xpath-variable name="abc" target="./@attribute"/>
-    		<j:add-summary description="This is ${abc}"></j:add-summary>
-    	</j:foreach>
-    </j:when>
-    
-  </j:xml-action>
-
-
-
-
-
-  <j:xml-action>
-  	<j:add-link href="http://test.com" description="abc"/>
-  	<j:add-spec-version version="kn"/>
-  </j:xml-action>
-  
+<j:rules xmlns:base="http://windup.jboss.org/v1/base" xmlns:j="http://windup.jboss.org/v1/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://windup.jboss.org/v1/xml ../../main/schemas/rules/windup-xml.xsd ">
+   <j:xml-action>
+      <j:namespace prefix="test" uri="http://tempuri.org"/>
+      <j:when>
+         <j:and>
+            <j:or>
+               <j:dtd-public-id matches="lng"/>
+               <j:md5 equals="xyz"/>
+               <j:sha1 equals="abc"/>
+               <j:xpath-exists matches=""/>
+               <j:not>
+                  <j:sha1 equals="notval"/>
+               </j:not>
+            </j:or>
+            <j:filename matches=".*.xml"/>
+         </j:and>
+         <j:foreach target="/test:some-elemnet">
+            <j:xpath-variable name="abc" target="./@attribute"/>
+            <j:add-summary description="This is ${abc}"></j:add-summary>
+         </j:foreach>
+      </j:when>
+   </j:xml-action>
+   <j:xml-action>
+      <j:add-link href="http://test.com" description="abc"/>
+      <j:add-spec-version version="kn"/>
+   </j:xml-action>
 </j:rules>
