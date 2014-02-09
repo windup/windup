@@ -5,6 +5,6 @@ import org.sonatype.nexus.client.rest.NexusClientFactory;
 public class RemotePomClient {
 
 	public void process() {
-		NexusClientFactory clientFactory = new 
+		
 	}
 }
