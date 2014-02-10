@@ -34,6 +34,14 @@ public class NamespaceMapContext implements NamespaceContext {
 		}
 	}
 	
+	public void addNamespaceEntry(NamespaceEntry entry) {
+		context.put(entry.getPrefix(), entry.getNamespaceURI());
+	}
+	
+	public void addPrefix(String prefix, String namespaceURI) {
+		context.put(prefix, namespaceURI);
+	}
+	
 	public Set<String> getNamespaceURIs() {
 		return new HashSet<String>(context.values());
 	}
@@ -62,5 +70,10 @@ public class NamespaceMapContext implements NamespaceContext {
 		}
 
 		return prefixes.iterator();
+	}
+
+	@Override
+	public String toString() {
+		return "NamespaceMapContext [context=" + context + "]";
 	}
 }
