@@ -5,16 +5,16 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.FileDaoBean;
+import org.jboss.windup.graph.dao.FileResourceDaoBean;
 
 public class BasicVisitor extends EmptyGraphVisitor {
 
 	@Inject
-	private FileDaoBean fileDao;
+	private FileResourceDaoBean fileDao;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		File reference = new File("/Users/bradsdavis/JBoss/jboss-eap-6.1/standalone/deployments/custom-application-remote.war");
-		org.jboss.windup.graph.model.resource.File graphReference = fileDao.getByFilePath(reference.getAbsolutePath());
+		org.jboss.windup.graph.model.resource.FileResource graphReference = fileDao.getByFilePath(reference.getAbsolutePath());
 	}
 }

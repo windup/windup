@@ -6,10 +6,10 @@ import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
 import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
-import org.jboss.windup.graph.model.resource.Archive;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.EarArchive;
-import org.jboss.windup.graph.model.resource.File;
+import org.jboss.windup.graph.model.resource.FileResource;
 import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.model.resource.Resource;
@@ -19,7 +19,7 @@ import org.jboss.windup.graph.model.resource.XmlResource;
 public abstract class EmptyGraphVisitor implements GraphVisitor {
 
 	@Override
-	public abstract void visit();
+	public abstract void run();
 
 	@Override
 	public void visitResource(Resource entry) {
@@ -27,12 +27,12 @@ public abstract class EmptyGraphVisitor implements GraphVisitor {
 	}
 
 	@Override
-	public void visitFile(File entry) {
+	public void visitFile(FileResource entry) {
 		//nothing.		
 	}
 
 	@Override
-	public void visitArchive(Archive entry) {
+	public void visitArchive(ArchiveResource entry) {
 		//nothing.		
 	}
 

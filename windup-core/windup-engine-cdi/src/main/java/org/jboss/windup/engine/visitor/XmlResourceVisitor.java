@@ -27,7 +27,7 @@ import org.w3c.dom.Document;
  * Adds the XMLResource Facet to the resource.
  * Extracts Doctype and Namespace information in the XML files.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class XmlResourceVisitor extends EmptyGraphVisitor {
@@ -46,16 +46,17 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 	private ArchiveEntryDaoBean archiveEntryDao;
 	
 	@Override
-	public void visit() {
-		for(ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("xml")) {
-			visitArchiveEntry(entry);
+	public void run() {
+		for(final ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("xml")) {
+			visitArchiveEntry(entry); 
 		}
 		archiveEntryDao.commit();
 	}
 	
 	@Override
 	public void visitArchiveEntry(ArchiveEntryResource entry) {
-		LOG.info("Processing: "+entry.getArchiveEntry());
+		//rehydrate to new thread...
+		LOG.debug("Processing: "+entry.getArchiveEntry());
 		
 		//try and read the XML...
 		InputStream is = null;
@@ -64,7 +65,7 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 			
 			Document parsedDocument = LocationAwareXmlReader.readXML(is);
 			Doctype docType = (Doctype) parsedDocument.getUserData(LocationAwareContentHandler.DOCTYPE_KEY_NAME);
-		
+
 			//if this is successful, then we know it is a proper XML file.
 			//set it to the graph as an XML file.
 			XmlResource resource = xmlResourceDao.create(null);
@@ -81,23 +82,14 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 			Set<String> namespaces = (Set<String>) parsedDocument.getUserData(LocationAwareContentHandler.NAMESPACE_KEY_NAME);
 			if(namespaces != null) {
 				for(String namespace : namespaces) {
-					NamespaceMeta meta = namespaceDao.findByURI(namespace);
-					if(meta == null) {
-						LOG.info("Adding namespace: "+namespace);
-						//create the namespace...
-						meta = namespaceDao.create(null);
-						meta.setURI(namespace);
-						meta.addXmlResource(resource);
-					}
-					else {
-						meta.addXmlResource(resource);
-					}
+					NamespaceMeta meta = namespaceDao.createByURI(namespace);
+					meta.addXmlResource(resource);
 				}
 			}
 			
 		}
 		catch(Exception e) {
-			
+			LOG.error("Encountered Exception",e);
 		} finally {
 			IOUtils.closeQuietly(is);
 		}

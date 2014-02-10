@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Display Java Classes not found but referenced by another class.
  *  
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class ClassNotFoundReporter extends EmptyGraphVisitor {
@@ -22,7 +22,7 @@ public class ClassNotFoundReporter extends EmptyGraphVisitor {
 	private JavaClassDaoBean javaClassDao;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		for(JavaClass clz : javaClassDao.getAllClassNotFound()) {
 			LOG.info("Class not found: "+clz.getQualifiedName());
 		}

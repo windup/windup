@@ -9,15 +9,15 @@ import org.apache.bcel.classfile.JavaClass;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
 import org.jboss.windup.graph.dao.JavaClassDaoBean;
-import org.jboss.windup.graph.model.resource.Archive;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * For all Java Class entries in the zip, this sets up the JavaClass graph entries. 
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class JavaClassVisitor extends EmptyGraphVisitor {
@@ -31,22 +31,25 @@ public class JavaClassVisitor extends EmptyGraphVisitor {
 	
 	
 	@Override
-	public void visit() {
-		int i=0;
-		for(ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("class")) {
+	public void run() {
+		int total = (int)archiveEntryDao.count(archiveEntryDao.findArchiveEntryWithExtension("class"));
+		int i=0; 
+		for(final ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("class")) {
 			visitArchiveEntry(entry);
-			//for every 1000, commit.
-			if((i%1000)==0) {
-				javaClassDao.commit();
+			if(i>0&&i%1000==0) {
+				LOG.info("Processed: "+i+" of "+total+" Java Classes.");
+				archiveEntryDao.commit();
 			}
+			i++;
 		}
-		javaClassDao.commit();
+		LOG.info("Processed: "+i+" of "+total+" Java Classes.");
+		archiveEntryDao.commit();
 	}
 	
 	@Override
 	public void visitArchiveEntry(ArchiveEntryResource entry) {
 		//now, check to see whether it is a JAR, and republish the typed value.
-		Archive archive = entry.getArchive();
+		ArchiveResource archive = entry.getArchive();
 		
 		if(archive == null) {
 			LOG.warn("Archive should not be null: "+entry.asVertex());
@@ -54,27 +57,10 @@ public class JavaClassVisitor extends EmptyGraphVisitor {
 		}
 		
 		try {
-			ClassParser classParser = new ClassParser(archive.getFilePath(), entry.getArchiveEntry());
-			
+			ClassParser classParser = new ClassParser(archive.getFileResource().getFilePath(), entry.getArchiveEntry());
 			JavaClass parsed = classParser.parse();
-			String className = parsed.getClassName();
-			org.jboss.windup.graph.model.resource.JavaClass javaClass = javaClassDao.getJavaClass(className);
-			javaClass.addResource(entry);
-			int major = parsed.getMajor();
-			int minor = parsed.getMinor();
-			
-			javaClass.setMajorVersion(major);
-			javaClass.setMinorVersion(minor);
-			
-			for(String interfaceName : parsed.getInterfaceNames()) {
-				org.jboss.windup.graph.model.resource.JavaClass interfaceClass = javaClassDao.getJavaClass(interfaceName);
-				//then we make the connection.
-				javaClass.addImplements(interfaceClass);
-			}
-			
-			String superClz = parsed.getSuperclassName();
-			org.jboss.windup.graph.model.resource.JavaClass superJavaClass = javaClassDao.getJavaClass(superClz);
-			javaClass.setExtends(superJavaClass);
+			JavaClassReader iv = new JavaClassReader(parsed, javaClassDao, entry);
+			iv.process();
 		} catch (IOException e) {
 			LOG.error("Exception reading class.", e);
 		}

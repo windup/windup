@@ -8,10 +8,7 @@ import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.EarArchiveDaoBean;
 import org.jboss.windup.graph.dao.JarArchiveDaoBean;
 import org.jboss.windup.graph.dao.WarArchiveDaoBean;
-import org.jboss.windup.graph.model.resource.Archive;
-import org.jboss.windup.graph.model.resource.EarArchive;
-import org.jboss.windup.graph.model.resource.JarArchive;
-import org.jboss.windup.graph.model.resource.WarArchive;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +18,7 @@ import com.tinkerpop.blueprints.Vertex;
  * Determines the extension of the "unknown" archive type, and then casts it to the 
  * subtype: JAR, WAR, EAR, etc.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class ArchiveTypingVisitor extends EmptyGraphVisitor {
@@ -40,29 +37,25 @@ public class ArchiveTypingVisitor extends EmptyGraphVisitor {
 	private ArchiveDaoBean archiveDao;
 	
 	@Override
-	public void visit() {
-		for(Archive archive : archiveDao.getAll()) {
+	public void run() {
+		for(ArchiveResource archive : archiveDao.getAll()) {
 			visitArchive(archive);
 		}
 	}
 	
 	@Override
-	public void visitArchive(Archive file) {
-		LOG.info("Vertex: "+file.asVertex());
+	public void visitArchive(ArchiveResource file) {
 		//now, check to see whether it is a JAR, and republish the typed value.
-		String filePath = file.getFilePath();
+		String filePath = file.getFileResource().getFilePath();
 		
 		if(StringUtils.endsWith(filePath, ".jar")) {
-			JarArchive archive = jarDao.castToType(file);
-			LOG.info(" - as JAR");
+			jarDao.castToType(file);
 		}
 		else if(StringUtils.endsWith(filePath, ".war")) {
-			WarArchive archive = warDao.castToType(file);
-			LOG.info(" - as WAR");
+			warDao.castToType(file);
 		}
 		else if(StringUtils.endsWith(filePath, ".ear")) {
-			EarArchive archive = earDao.castToType(file);
-			LOG.info(" - as EAR");
+			earDao.castToType(file);
 		}
 		else {
 			Vertex v = file.asVertex();

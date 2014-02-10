@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * Shows the XML Namespaces used in the application and references to the XML
  * files which contain the namespace. 
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class NamespacesFoundReporter extends EmptyGraphVisitor {
@@ -26,7 +26,7 @@ public class NamespacesFoundReporter extends EmptyGraphVisitor {
 	private NamespaceDaoBean namespaceDao;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		for(NamespaceMeta namespace : namespaceDao.getAll()) {
 			LOG.info("Namespace Found: "+namespace.getURI());
 			

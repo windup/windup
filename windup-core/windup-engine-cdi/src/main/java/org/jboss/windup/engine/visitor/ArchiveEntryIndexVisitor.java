@@ -11,23 +11,25 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
-import org.jboss.windup.graph.dao.FileDaoBean;
-import org.jboss.windup.graph.model.resource.Archive;
+import org.jboss.windup.graph.dao.FileResourceDaoBean;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * Goes through an archive adding the archive entries to the graph.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class ArchiveEntryIndexVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveEntryIndexVisitor.class);
 
 	@Inject
-	FileDaoBean fileDao;
+	FileResourceDaoBean fileDao;
 	
 	@Inject
 	private ArchiveDaoBean archiveDao;
@@ -36,19 +38,25 @@ public class ArchiveEntryIndexVisitor extends EmptyGraphVisitor {
 	private ArchiveEntryDaoBean archiveEntryDao;
 	
 	@Override
-	public void visit() {
-		for(Archive archive : archiveDao.getAll()) {
-			visitArchive(archive);
-			archiveEntryDao.commit();
+	public void run() {
+		final int total = (int)archiveDao.count(archiveDao.getAll());
+
+		int i=1;
+		for(final ArchiveResource archive : archiveDao.getAll()) {
+			visitArchive(archive); 
+			LOG.info("Processed: "+i+" of "+total+" Archives.");
+			i++;
 		}
 	}
 	
 	@Override
-	public void visitArchive(Archive file) {
-		LOG.info("Processing: "+file.asVertex());
+	public void visitArchive(ArchiveResource result) {
+		Vertex v = result.asVertex();
+		ArchiveResource file = archiveDao.getById(v.getId());
+		
 		ZipFile zipFileReference = null;
 		try {
-			File zipFile = new File(file.getFilePath());
+			File zipFile = archiveDao.asFile(result);
 			zipFileReference = new ZipFile(zipFile);
 			Enumeration<? extends ZipEntry> entries = zipFileReference.entries();
 			
@@ -67,6 +75,7 @@ public class ArchiveEntryIndexVisitor extends EmptyGraphVisitor {
 		}
 		finally {
 			org.apache.commons.io.IOUtils.closeQuietly(zipFileReference);
+			archiveDao.commit();
 		}
 	}
 }

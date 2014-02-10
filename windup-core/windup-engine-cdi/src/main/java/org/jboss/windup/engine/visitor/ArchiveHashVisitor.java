@@ -8,43 +8,43 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
-import org.jboss.windup.graph.dao.FileDaoBean;
-import org.jboss.windup.graph.model.resource.Archive;
+import org.jboss.windup.graph.dao.FileResourceDaoBean;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Extracts the hash values from the archive and sets them on the archive vertex. 
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class ArchiveHashVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveHashVisitor.class);
 	
 	@Inject
-	private FileDaoBean fileDao;
+	private FileResourceDaoBean fileDao;
 	
 	@Inject
 	private ArchiveDaoBean archiveDao;
 	
 	@Override
-	public void visit() {
-		for(Archive archive : archiveDao.getAll()) {
+	public void run() {
+		for(ArchiveResource archive : archiveDao.getAll()) {
 			visitArchive(archive);
 		}
 		fileDao.commit();
 	}
 	
 	@Override
-	public void visitArchive(Archive file) {
+	public void visitArchive(ArchiveResource file) {
 		InputStream is = null;
 		try {
-			is = fileDao.getPayload(file);
+			is = archiveDao.getPayload(file);
 			String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
 			
 			//start over
-			is = fileDao.getPayload(file);
+			is = archiveDao.getPayload(file);
 			String sha1 = org.apache.commons.codec.digest.DigestUtils.sha1Hex(is);
 			
 			file.setSHA1Hash(sha1);

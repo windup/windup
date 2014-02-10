@@ -1,7 +1,5 @@
 package org.jboss.windup.engine.visitor;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.WindupContext;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
@@ -17,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Goes through an archive adding the archive entries to the graph.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class DebugVisitor extends EmptyGraphVisitor {
@@ -37,7 +35,7 @@ public class DebugVisitor extends EmptyGraphVisitor {
 	}
 	
 	@Override
-	public void visit() {
+	public void run() {
 		TitanGraph graph = context.getGraphContext().getGraph();
 		
 		Iterable<Vertex> vertices;

@@ -21,7 +21,7 @@ import org.w3c.dom.NodeList;
 /**
  * If the JAR did not contain a POM, try and look up the POM from Maven Central.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class MavenRemoteFetchVisitor extends EmptyGraphVisitor {
@@ -41,7 +41,7 @@ public class MavenRemoteFetchVisitor extends EmptyGraphVisitor {
 	private XmlResourceDaoBean xmlResourceDao;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		//visit all XML files that have a maven namespace...
 		for(XmlResource entry : xmlResourceDao.containsNamespaceURI("http://maven.apache.org/POM/4.0.0")) {
 			visitXmlResource(entry);
@@ -107,9 +107,9 @@ public class MavenRemoteFetchVisitor extends EmptyGraphVisitor {
 			for(int i=0, j=nodes.getLength(); i<j; i++) 
 			{
 				Node node = nodes.item(i);
-				final String dependencyGroupId = XmlUtil.xpathExtract(node, "//pom:groupId", namespaces);
-				final String dependencyArtifactId = XmlUtil.xpathExtract(node, "//pom:artifactId", namespaces);
-				final String dependencyVersionId = XmlUtil.xpathExtract(node, "//pom:version", namespaces);
+				final String dependencyGroupId = XmlUtil.xpathExtract(node, "./pom:groupId", namespaces);
+				final String dependencyArtifactId = XmlUtil.xpathExtract(node, "./pom:artifactId", namespaces);
+				final String dependencyVersionId = XmlUtil.xpathExtract(node, "./pom:version", namespaces);
 				
 				if(StringUtils.isNotBlank(dependencyGroupId)) {
 					MavenFacet dependency = mavenDao.createMaven(dependencyGroupId, dependencyArtifactId, dependencyVersionId);

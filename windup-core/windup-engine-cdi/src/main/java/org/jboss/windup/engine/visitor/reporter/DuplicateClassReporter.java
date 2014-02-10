@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Find situations where a class is provided by multiple archives. 
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class DuplicateClassReporter extends EmptyGraphVisitor {
@@ -24,14 +24,14 @@ public class DuplicateClassReporter extends EmptyGraphVisitor {
 	private JavaClassDaoBean javaClassDao;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		for(JavaClass clz : javaClassDao.getAllDuplicateClasses()) {
 			LOG.info("Duplicate class: "+clz.getQualifiedName());
 			
 			for(Resource resource : clz.getResources()) {
 				if(resource instanceof ArchiveEntryResource) {
 					ArchiveEntryResource ar = (ArchiveEntryResource)resource;
-					LOG.info(" - Provided by: "+ar.getArchive().getFilePath()+" -> "+ar.getArchiveEntry());
+					LOG.info(" - Provided by: "+ar.getArchive().getArchiveName()+" -> "+clz.getQualifiedName());
 				}
 			}
 		}

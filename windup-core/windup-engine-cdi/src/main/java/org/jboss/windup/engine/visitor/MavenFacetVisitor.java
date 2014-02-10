@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.XmlUtil;
+import org.jboss.windup.engine.util.exception.MarshallingException;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.MavenFacetDaoBean;
 import org.jboss.windup.graph.dao.XmlResourceDaoBean;
@@ -20,10 +21,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.thinkaurelius.titan.core.TitanGraphQuery;
+
 /**
  * Adds the MavenFacet to the XML.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class MavenFacetVisitor extends EmptyGraphVisitor {
@@ -43,17 +46,21 @@ public class MavenFacetVisitor extends EmptyGraphVisitor {
 	private XmlResourceDaoBean xmlResourceDao;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		//visit all XML files that have a maven namespace...
+		long total = xmlResourceDao.count(xmlResourceDao.containsNamespaceURI("http://maven.apache.org/POM/4.0.0"));
+		
+		int i=1;
 		for(XmlResource entry : xmlResourceDao.containsNamespaceURI("http://maven.apache.org/POM/4.0.0")) {
 			visitXmlResource(entry);
+			i++;
+			LOG.info("Processed "+i+" of "+total+" Maven POMs.");
 		}
 		mavenDao.commit();
 	}
 	
 	@Override
 	public void visitXmlResource(XmlResource entry) {
-		LOG.info("Resource: "+entry.getResource().asVertex());
 		try {
 			Document document = xmlResourceDao.asDocument(entry);
 			/*String modelVersion = $(document).namespace("pom", "http://maven.apache.org/POM/4.0.0")
@@ -70,9 +77,9 @@ public class MavenFacetVisitor extends EmptyGraphVisitor {
 			String artifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:artifactId", namespaces);
 			String version = XmlUtil.xpathExtract(document, "/pom:project/pom:version", namespaces);
 			
-			final String parentGroupId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:groupId", namespaces);
-			final String parentArtifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:artifactId", namespaces);
-			final String parentVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:version", namespaces);
+			String parentGroupId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:groupId", namespaces);
+			String parentArtifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:artifactId", namespaces);
+			String parentVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:version", namespaces);
 			
 			if(StringUtils.isBlank(groupId) && StringUtils.isNotBlank(parentGroupId)) {
 				groupId = parentGroupId;
@@ -100,6 +107,11 @@ public class MavenFacetVisitor extends EmptyGraphVisitor {
 			
 			if(StringUtils.isNotBlank(parentGroupId)) {
 				//parent
+
+				parentGroupId = resolveProperty(document, namespaces, parentGroupId, version);
+				parentArtifactId = resolveProperty(document, namespaces, parentArtifactId, version);
+				parentVersion = resolveProperty(document, namespaces, parentVersion, version);
+				
 				MavenFacet parent = mavenDao.createMaven(parentGroupId, parentArtifactId, parentVersion);
 				facet.setParent(parent);
 			}
@@ -109,19 +121,51 @@ public class MavenFacetVisitor extends EmptyGraphVisitor {
 			for(int i=0, j=nodes.getLength(); i<j; i++) 
 			{
 				Node node = nodes.item(i);
-				final String dependencyGroupId = XmlUtil.xpathExtract(node, "//pom:groupId", namespaces);
-				final String dependencyArtifactId = XmlUtil.xpathExtract(node, "//pom:artifactId", namespaces);
-				final String dependencyVersionId = XmlUtil.xpathExtract(node, "//pom:version", namespaces);
+				String dependencyGroupId = XmlUtil.xpathExtract(node, "./pom:groupId", namespaces);
+				String dependencyArtifactId = XmlUtil.xpathExtract(node, "./pom:artifactId", namespaces);
+				String dependencyVersionId = XmlUtil.xpathExtract(node, "./pom:version", namespaces);
+				
+				dependencyGroupId = resolveProperty(document, namespaces, dependencyGroupId, version);
+				dependencyArtifactId = resolveProperty(document, namespaces, dependencyArtifactId, version);
+				dependencyVersionId = resolveProperty(document, namespaces, dependencyVersionId, version);
 				
 				if(StringUtils.isNotBlank(dependencyGroupId)) {
 					MavenFacet dependency = mavenDao.createMaven(dependencyGroupId, dependencyArtifactId, dependencyVersionId);
 					facet.addDependency(dependency);
 				}
 			}
-			LOG.info("Successfully read XML..");
 		} catch (Exception e) {
 			LOG.error("Exception reading document.", e);
 		}
 	}
 	
+	
+	protected String resolveProperty(Document document, Map<String, String> namespaces, String property, String projectVersion) throws MarshallingException {
+		if(StringUtils.startsWith(property, "${")) {
+			//is property...
+			String propertyName = StringUtils.removeStart(property, "${");
+			propertyName = StringUtils.removeEnd(propertyName, "}");
+			
+			switch(propertyName) {
+				case "pom.version" :
+				case "project.version" :
+					return projectVersion;
+				default:
+					NodeList nodes = XmlUtil.xpathNodeList(document, "//pom:properties/pom:"+propertyName, namespaces);
+					
+					if(nodes.getLength() == 0 || nodes.item(0) == null) {
+						LOG.warn("Expected: "+property+" but it wasn't found in the POM.");
+					}
+					else {
+						Node node = nodes.item(0);
+						String value = node.getTextContent();
+						return value;
+					}
+			}
+			
+		
+			
+		}
+		return property;
+	}
 }

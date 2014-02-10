@@ -13,9 +13,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
-import org.jboss.windup.graph.dao.FileDaoBean;
-import org.jboss.windup.graph.model.resource.Archive;
-import org.jboss.windup.graph.model.resource.File;
+import org.jboss.windup.graph.dao.FileResourceDaoBean;
+import org.jboss.windup.graph.dao.TempFileArchiveEntryDaoBean;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
+import org.jboss.windup.graph.model.resource.FileResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,18 +24,20 @@ import org.slf4j.LoggerFactory;
  * Takes untyped archives, and casts them to the appropriate type within the graph.
  * For nested archives, this also extracts the nested archive for profiling.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ZipArchiveGraphVisitor.class);
 	
 	@Inject
-	private FileDaoBean fileDao;
+	private FileResourceDaoBean fileDao;
 	
 	@Inject
 	private ArchiveDaoBean archiveDao;
 	
+	@Inject
+	private TempFileArchiveEntryDaoBean tempFileArchiveEntryDao;
 
 	private Set<String> getZipExtensions() {
 		Set<String> extensions = new HashSet<String>();
@@ -58,17 +61,16 @@ public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 	}
 	
 	@Override
-	public void visit() {
+	public void run() {
 		//feed all file listeners...
-		for(File file : fileDao.findArchiveEntryWithExtension(
-				"war", "ear", "jar", "sar", "rar")) {
+		for(FileResource file : fileDao.findArchiveEntryWithExtension("war", "ear", "jar", "sar", "rar")) {
 			visitFile(file);
 		}
 		fileDao.commit();
 	}
 	
 	@Override
-	public void visitFile(File file) {
+	public void visitFile(FileResource file) {
 		//now, check to see whether it is a JAR, and republish the typed value.
 		String filePath = file.getFilePath();
 		
@@ -80,8 +82,12 @@ public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 				LOG.info(filePath);
 				
 				//go ahead and make it into an archive.
-				Archive archive = archiveDao.castToType(file);
-				LOG.info("Cast vertex: "+file.asVertex()+" to archive.");
+				
+				ArchiveResource archive = archiveDao.create(null);
+				archive.setArchiveName(reference.getName());
+				archive.setFileResource(file);
+				LOG.info("Creating archive for file: "+file.asVertex()+" archive: "+archive.asVertex());
+				
 				
 				//first, make the file reference.
 				Enumeration<?> entries = zipFile.entries();
@@ -93,12 +99,18 @@ public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 					}
 					if(endsWithExtension(entry.getName())) {
 						//unzip.
-						java.io.File tempFile = ZipUtil.unzipToTemp(zipFile, entry);
-						org.jboss.windup.graph.model.resource.File tempReference = fileDao.getByFilePath(tempFile.getAbsolutePath());
-						archiveDao.castToType(tempReference);
-						LOG.info("File reference: "+tempReference.asVertex());
+						String subArchiveName = StringUtils.substringAfterLast(entry.getName(), "/");
+						java.io.File subArchiveTempFile = ZipUtil.unzipToTemp(zipFile, entry);
+						org.jboss.windup.graph.model.resource.FileResource subArchiveTempFileReference = fileDao.getByFilePath(subArchiveTempFile.getAbsolutePath());
+						subArchiveTempFileReference = tempFileArchiveEntryDao.castToType(subArchiveTempFileReference);
+						
+						ArchiveResource subArchive = archiveDao.create(null);
+						subArchive.setArchiveName(subArchiveName);
+						subArchive.setFileResource(subArchiveTempFileReference);
+						LOG.info("Creating archive for file: "+subArchiveTempFileReference+" archive: "+subArchive);
+						
 						//add the element as a child..
-						archive.addChild(tempReference);
+						archive.addChild(subArchive);
 					}
 				}
 			} catch (Exception e) {

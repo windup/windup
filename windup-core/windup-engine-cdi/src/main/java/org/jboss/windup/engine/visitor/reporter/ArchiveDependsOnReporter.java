@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * JAR X Provides for JAR W
  * JAR Z Provides for JAR Y
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class ArchiveDependsOnReporter extends EmptyGraphVisitor {
@@ -38,16 +38,20 @@ public class ArchiveDependsOnReporter extends EmptyGraphVisitor {
 	private JarArchiveDaoBean jarDao;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		for(JarArchive archive : jarDao.getAll()) {
-			LOG.info("Archive: "+archive.getFilePath());
+			LOG.info("Archive: "+archive.getArchiveName()+" - "+archive.asVertex());
 			
 			for(JarArchive clz : archive.dependsOnArchives()) {
-				LOG.info(" - Depends On: "+clz.getFilePath());
+				LOG.info(" - Depends On: "+clz.getArchiveName());
 			}
 
 			for(JarArchive clz : archive.providesForArchives()) {
-				LOG.info(" - Provides For: "+clz.getFilePath());
+				LOG.info(" - Provides For: "+clz.getArchiveName());
+			}
+			//look for circular...
+			for(JarArchive src : jarDao.findCircularReferences(archive)) {
+				LOG.info(" - Circular with: "+src.getArchiveName());
 			}
 		}
 	}

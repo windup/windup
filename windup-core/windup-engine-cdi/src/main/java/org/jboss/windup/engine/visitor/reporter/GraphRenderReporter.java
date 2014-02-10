@@ -15,7 +15,7 @@ import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 /**
  * Serializes the graph to GraphML.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class GraphRenderReporter extends EmptyGraphVisitor {
@@ -25,7 +25,7 @@ public class GraphRenderReporter extends EmptyGraphVisitor {
 	private WindupContext context;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		File graphLocation = new File(context.getRunDirectory(), "graphml.graphml");
 		GraphMLWriter graphML = new GraphMLWriter(context.getGraphContext().getGraph());
 		try {

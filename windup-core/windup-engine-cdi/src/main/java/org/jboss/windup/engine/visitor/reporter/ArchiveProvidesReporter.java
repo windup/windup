@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 /**
  * For each JAR, list the classes it provides.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class ArchiveProvidesReporter extends EmptyGraphVisitor {
@@ -23,9 +23,9 @@ public class ArchiveProvidesReporter extends EmptyGraphVisitor {
 	private JarArchiveDaoBean jarDao;
 	
 	@Override
-	public void visit() {
+	public void run() {
 		for(JarArchive archive : jarDao.getAll()) {
-			LOG.info("Archive: "+archive.getFilePath());
+			LOG.info("Archive: "+archive.getArchiveName());
 			
 			for(JavaClass clz : archive.getJavaClasses()) {
 				LOG.info(" - Provides: "+clz.getQualifiedName());

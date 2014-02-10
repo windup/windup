@@ -28,7 +28,7 @@ public class WindupProcessor {
 		LOG.info("Executing: "+listenerChain.size() +" listeners...");
 		for(GraphVisitor visitor : listenerChain) {
 			LOG.info("Processing: "+visitor.getClass());
-			visitor.visit();
+			visitor.run();
 		}
 		LOG.info("Execution complete.");
 	}

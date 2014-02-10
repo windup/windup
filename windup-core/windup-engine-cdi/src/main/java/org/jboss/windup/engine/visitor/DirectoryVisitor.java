@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.FileDaoBean;
+import org.jboss.windup.graph.dao.FileResourceDaoBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,19 +17,19 @@ public class DirectoryVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryVisitor.class);
 
 	@Inject
-	private FileDaoBean fileDao;
+	private FileResourceDaoBean fileDao;
 
 	@Override
-	public void visit() {
+	public void run() {
 		
-		for(org.jboss.windup.graph.model.resource.File file : fileDao.getAll()) {
+		for(org.jboss.windup.graph.model.resource.FileResource file : fileDao.getAll()) {
 			visitFile(file);
 		}
 		
 	}
 	
 	@Override
-	public void visitFile(org.jboss.windup.graph.model.resource.File file) {
+	public void visitFile(org.jboss.windup.graph.model.resource.FileResource file) {
 		//now, check to see whether it is a JAR, and republish the typed value.
 		LOG.info(file.getFilePath());
 		String filePath = file.getFilePath();
@@ -39,7 +39,7 @@ public class DirectoryVisitor extends EmptyGraphVisitor {
 			LOG.info("Directory: "+filePath);
 			Collection<File> found = FileUtils.listFiles(fileReference, FileFileFilter.FILE, TrueFileFilter.INSTANCE);
 			for(File reference : found) {
-				org.jboss.windup.graph.model.resource.File graphReference = fileDao.getByFilePath(reference.getAbsolutePath());
+				org.jboss.windup.graph.model.resource.FileResource graphReference = fileDao.getByFilePath(reference.getAbsolutePath());
 				visitFile(graphReference);
 			}
 		}
