@@ -1,7 +1,5 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import java.util.Iterator;
-
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
@@ -12,6 +10,15 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("MavenFacet")
 public interface MavenFacet extends XmlMetaFacet {
 
+	@Label
+	@Property("mavenIdentifier")
+	public String getMavenIdentifier();
+
+	@Property("mavenIdentifier")
+	public void setMavenIdentifier(String identifier);
+	
+	
+	
 	@Label
 	@Property("specificationVersion")
 	public String getSpecificationVersion();
@@ -73,13 +80,13 @@ public interface MavenFacet extends XmlMetaFacet {
 	public void addChildModule(MavenFacet maven);
 	
 	@Adjacency(label="module", direction=Direction.OUT)
-	public MavenFacet getChildModules();
-	
+	public Iterable<MavenFacet> getChildModules();
+
 	
 	@Adjacency(label="dependency", direction=Direction.OUT)
 	public void addDependency(MavenFacet maven);
 	
 	@Adjacency(label="dependency", direction=Direction.OUT)
-	public Iterator<MavenFacet> getDependencies();
+	public Iterable<MavenFacet> getDependencies();
 
 }

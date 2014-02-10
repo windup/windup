@@ -4,23 +4,23 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jboss.windup.graph.model.resource.File;
+import org.jboss.windup.graph.model.resource.FileResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
-public class FileDaoBean extends BaseDaoBean<File> {
+public class FileResourceDaoBean extends BaseDaoBean<FileResource> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FileDaoBean.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FileResourceDaoBean.class);
 	
-	public FileDaoBean() {
-		super(File.class);
+	public FileResourceDaoBean() {
+		super(FileResource.class);
 	}
 
-	public File getByFilePath(String filePath) {
-		File entry = getByUniqueProperty("filePath", filePath);
+	public FileResource getByFilePath(String filePath) {
+		FileResource entry = getByUniqueProperty("filePath", filePath);
 		
 		if(entry == null) {
 			entry = this.create(null);
@@ -31,13 +31,13 @@ public class FileDaoBean extends BaseDaoBean<File> {
 		return entry;
 	}
 	
-	public InputStream getPayload(File file) throws IOException {
+	public InputStream getPayload(FileResource file) throws IOException {
 		String fileName = file.getFilePath();
 		FileInputStream fis = new FileInputStream(new java.io.File(fileName));
 		return fis;
 	}
 	
-	public Iterable<File> findArchiveEntryWithExtension(String ... values) {
+	public Iterable<FileResource> findArchiveEntryWithExtension(String ... values) {
 		//build regex
 		if(values.length == 0) {
 			return IterablesUtil.emptyIterable();

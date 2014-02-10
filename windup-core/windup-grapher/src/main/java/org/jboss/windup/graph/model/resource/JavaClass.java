@@ -24,23 +24,29 @@ public interface JavaClass extends Resource {
 	public String getQualifiedName();
 
 	@Property("qualifiedName")
-	public String setQualifiedName(String qualifiedName);
+	public void setQualifiedName(String qualifiedName);
 
+	@Property("packageName")
+	public String getPackageName();
+
+	@Property("packageName")
+	public void setPackageName(String packageName);
+
+	
 	@Property("majorVersion")
 	public int getMajorVersion();
 
 	@Property("majorVersion")
-	public int setMajorVersion(int majorVersion);	
+	public void setMajorVersion(int majorVersion);	
 
 	@Property("minorVersion")
 	public int getMinorVersion();
 
 	@Property("minorVersion")
-	public int setMinorVersion(int minorVersion);	
-	
+	public void setMinorVersion(int minorVersion);	
 	
 	@Adjacency(label="imports", direction=Direction.OUT)
-	public void addImport(final JavaClass person);
+	public void addImport(final JavaClass javaImport);
 
 	@Adjacency(label="imports", direction=Direction.OUT)
 	public Iterator<JavaClass> getImports(final JavaClass javaFacet);

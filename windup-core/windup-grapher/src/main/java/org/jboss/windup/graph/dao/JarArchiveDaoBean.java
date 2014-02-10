@@ -2,8 +2,10 @@ package org.jboss.windup.graph.dao;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.jboss.windup.graph.dao.exception.ArchiveIndexReaderException;
@@ -32,7 +34,7 @@ public class JarArchiveDaoBean extends BaseDaoBean<JarArchive> {
 	}
 
 	public JarFile asJarFile(JarArchive archive) throws IOException {
-		File file = new File(archive.getFilePath());
+		File file = new File(archive.getFileResource().getFilePath());
 		return new JarFile(file);
 	}
 
@@ -48,6 +50,22 @@ public class JarArchiveDaoBean extends BaseDaoBean<JarArchive> {
 		return iterable;
 	}
 
+	public Iterable<JarArchive> findCircularReferences(JarArchive archive) {
+		Set<JarArchive> results = new HashSet<>();
+
+		//if it is both providing for and depending on, is circular.
+		Set<String> set = new HashSet<>();
+		for(JarArchive d : archive.dependsOnArchives()) {
+			set.add(d.getFileResource().getFilePath());
+		}
+		for(JarArchive p : archive.providesForArchives()) {
+			if(set.contains(p.getFileResource().getFilePath())) {
+				results.add(p);
+			}
+		}
+			
+		return results;
+	}
 	
 	
 }

@@ -7,10 +7,12 @@ import javax.inject.Inject;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
 
+import com.thinkaurelius.titan.core.TitanTransaction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 
 public class BaseDaoBean<T extends VertexFrame> {
@@ -20,6 +22,10 @@ public class BaseDaoBean<T extends VertexFrame> {
 	
 	@Inject
 	GraphContext context;
+	
+	public GraphContext getContext() {
+		return context;
+	}
 	
 	public BaseDaoBean(Class<T> type) {
 		this.type = type;
@@ -42,11 +48,20 @@ public class BaseDaoBean<T extends VertexFrame> {
 	public T create(Object id) {
 		return (T)context.getFramed().addVertex(id, type);
 	}
-
+	
 	public Iterable<T> getAll() {
 		return (Iterable<T>)context.getFramed().query().has("type", typeValue).vertices(type);
 	}
 
+	public TitanTransaction newTransaction() {
+		return context.getGraph().newTransaction();
+	}
+	
+	public long count(Iterable<?> obj) {
+		GremlinPipeline pipe = new GremlinPipeline();
+		return pipe.start(obj).count();
+	}
+	
 	public T getById(Object id) {
 		return context.getFramed().getVertex(id, type);
 	}
@@ -87,6 +102,11 @@ public class BaseDaoBean<T extends VertexFrame> {
 		return context.getFramed().frame(vertex, type);
 		
 	}
+	
+	public T castToType(Vertex vertex) {
+		return context.getFramed().frame(vertex, type);
+	}
+	
 
 	public void commit() {
 		this.context.getGraph().commit();

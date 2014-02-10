@@ -16,7 +16,7 @@ public class JavaClassDaoBean extends BaseDaoBean<JavaClass> {
 		super(JavaClass.class);
 	}
 
-	public JavaClass getJavaClass(String qualifiedName) {
+	public synchronized JavaClass getJavaClass(String qualifiedName) {
 		JavaClass clz = getByUniqueProperty("qualifiedName", qualifiedName);
 
 		if (clz == null) {
@@ -25,6 +25,15 @@ public class JavaClassDaoBean extends BaseDaoBean<JavaClass> {
 		}
 
 		return clz;
+	}
+
+	
+	public Iterable<JavaClass> findByJavaPackage(String packageName) {
+		return getContext().getFramed().query().has("type", typeValue).has("packageName", packageName).vertices(type);
+	}
+	
+	public Iterable<JavaClass> findByJavaVersion(JavaVersion version) {
+		return getContext().getFramed().query().has("type", typeValue).has("majorVersion", version.major).has("minorVersion", version.minor).vertices(type);
 	}
 
 	public Iterable<JavaClass> getAllClassNotFound() {
@@ -66,6 +75,34 @@ public class JavaClassDaoBean extends BaseDaoBean<JavaClass> {
 					}
 				});
 		return context.getFramed().frameVertices(pipeline, JavaClass.class);
+	}
+	
+	
+	
+	public enum JavaVersion {
+		JAVA_7(7, 0),
+		JAVA_6(6, 0),
+		JAVA_5(5, 0),
+		JAVA_1_4(1, 4),
+		JAVA_1_3(1, 3),
+		JAVA_1_2(1, 2),
+		JAVA_1_1(1, 1);
+		
+		final int major;
+		final int minor;
+		
+		JavaVersion(int major, int minor) {
+			this.major = major;
+			this.minor = minor;
+		}
+		
+		public int getMajor() {
+			return major;
+		}
+		
+		public int getMinor() {
+			return minor;
+		}
 	}
 
 

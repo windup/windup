@@ -16,6 +16,7 @@ public class MavenFacetDaoBean extends BaseDaoBean<MavenFacet> {
 		MavenFacet facet = findByGroupArtifactVersion(groupId, artifactId, version);
 		if(facet == null) {
 			facet = create(null);
+			facet.setMavenIdentifier(generateMavenKey(groupId, artifactId, version));
 			facet.setGroupId(groupId);
 			facet.setArtifactId(artifactId);
 			facet.setVersion(version);
@@ -25,12 +26,14 @@ public class MavenFacetDaoBean extends BaseDaoBean<MavenFacet> {
 	}
 	
 	public MavenFacet findByGroupArtifactVersion(String groupId, String artifactId, String version) {
-		Iterable<MavenFacet> facets = context.getFramed().query().has("type", typeValue).has("groupId", groupId).has("artifactId", artifactId).has("version", version).vertices(MavenFacet.class);
-		if(facets.iterator().hasNext()) {
-			return facets.iterator().next();
-		}
+		String key = generateMavenKey(groupId, artifactId, version);
+		MavenFacet facet = this.getByUniqueProperty("mavenIdentifier", key);
 		
-		return null;
+		return facet;
 	}
 	
+	
+	protected String generateMavenKey(String groupId, String artifactId, String version) {
+		return groupId+":"+artifactId+":"+version;
+	}
 }

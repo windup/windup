@@ -8,9 +8,15 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("ArchiveResource")
-public interface Archive extends File {
-	
+public interface ArchiveResource extends Resource {
 
+	@Adjacency(label="file", direction=Direction.OUT)
+	public FileResource getFileResource();
+
+	@Adjacency(label="file", direction=Direction.OUT)
+	public void setFileResource(FileResource file);
+
+	
 	@Property("md5Hash")
 	public String getMD5Hash();
 	
@@ -30,16 +36,17 @@ public interface Archive extends File {
 	@Property("archiveName")
 	public void setArchiveName(String archiveName);
 	
-	@Adjacency(label="child", direction=Direction.OUT)
-	public Iterator<Resource> getChildren();
 	
 	@Adjacency(label="child", direction=Direction.OUT)
-	public void addChild(final Resource resource);
+	public Iterator<ArchiveResource> getChildren();
+	
+	@Adjacency(label="child", direction=Direction.OUT)
+	public void addChild(final ArchiveResource resource);
 	
 	@Adjacency(label="child", direction=Direction.IN)
-	public Resource getParent();
+	public ArchiveResource getParent();
 	
 	@Adjacency(label="child", direction=Direction.IN)
-	public void setChild(final Resource resource);
+	public void setChild(final ArchiveResource resource);
 	
 }

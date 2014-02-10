@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 public class ArchiveEntryDaoBean extends BaseDaoBean<ArchiveEntryResource> {
 
@@ -25,6 +26,12 @@ public class ArchiveEntryDaoBean extends BaseDaoBean<ArchiveEntryResource> {
 		return super.getByProperty("archiveEntry", value);
 	}
 
+
+	public long findArchiveEntryWithExtensionCount(String ... values) {
+		GremlinPipeline pipe = new GremlinPipeline();
+		return pipe.start(findArchiveEntryWithExtension(values)).count();
+	}
+	
 	public Iterable<ArchiveEntryResource> findArchiveEntryWithExtension(String ... values) {
 		//build regex
 		if(values.length == 0) {
@@ -50,13 +57,13 @@ public class ArchiveEntryDaoBean extends BaseDaoBean<ArchiveEntryResource> {
 			regex = ".+\\."+builder.toString()+"$";
 		}
 
-		LOG.info("Regex: "+regex);
+		LOG.debug("Regex: "+regex);
 		return context.getFramed().query().has("type", typeValue).has("archiveEntry", Text.REGEX, regex).vertices(type);
 	}
 	
 	public InputStream asInputStream(ArchiveEntryResource entry) throws IOException {
 		//try and read the XML...
-		ZipFile zipFile = new ZipFile(new File(entry.getArchive().getFilePath()));
+		ZipFile zipFile = new ZipFile(new File(entry.getArchive().getFileResource().getFilePath()));
 		ZipEntry zipEntry = zipFile.getEntry(entry.getArchiveEntry());
 		InputStream is = zipFile.getInputStream(zipEntry);
 		

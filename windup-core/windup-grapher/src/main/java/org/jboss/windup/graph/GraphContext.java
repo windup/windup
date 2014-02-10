@@ -13,11 +13,12 @@ import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
 import org.jboss.windup.graph.model.meta.xml.MavenFacet;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
-import org.jboss.windup.graph.model.resource.Archive;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.EarArchive;
 import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.TempArchiveResource;
 import org.jboss.windup.graph.model.resource.WarArchive;
 import org.jboss.windup.graph.model.resource.XmlResource;
 
@@ -85,22 +86,24 @@ public class GraphContext {
 		
 		TitanKey filePath = graph.makeKey("filePath").dataType(String.class).
 				indexed(Vertex.class).unique().make();
-			
 		
+		TitanKey mavenIdentifier = graph.makeKey("mavenIdentifier").dataType(String.class).
+				indexed(Vertex.class).unique().make();
 		
 		batch = new BatchGraph<TitanGraph>(graph, 1000L);
 		
 		FramedGraphFactory factory = new FramedGraphFactory(
 			    new TypedGraphModuleBuilder()
-			    .withClass(Archive.class)
+			    .withClass(ArchiveResource.class)
 			    .withClass(ArchiveEntryResource.class)
 			    .withClass(EarArchive.class)
-			    .withClass(org.jboss.windup.graph.model.resource.File.class)
+			    .withClass(org.jboss.windup.graph.model.resource.FileResource.class)
 		        .withClass(JarArchive.class)
 			    .withClass(JavaClass.class)
 		        .withClass(org.jboss.windup.graph.model.resource.Resource.class)
 			    .withClass(WarArchive.class)
 			    .withClass(XmlResource.class)
+			    .withClass(TempArchiveResource.class)
 			    
 			    .withClass(EjbEntityFacet.class)
 			    .withClass(MessageDrivenBeanFacet.class)
