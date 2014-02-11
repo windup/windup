@@ -75,7 +75,17 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 				//create the doctype from
 				Iterator<DoctypeMeta> metas = doctypeDao.findByProperties(docType.getName(), docType.getPublicId(), docType.getSystemId(), docType.getBaseURI());
 				if(metas.hasNext()) {
-					metas.next().addXmlResource(resource); 
+					DoctypeMeta meta = metas.next();
+					meta.addXmlResource(resource);
+					resource.addMeta(meta);
+				}
+				else {
+					LOG.info("Adding doctype: "+docType);
+					DoctypeMeta meta = doctypeDao.create(null);
+					meta.setBaseURI(docType.getBaseURI());
+					meta.setName(docType.getName());
+					meta.setPublicId(docType.getPublicId());
+					meta.setSystemId(docType.getSystemId());
 				}
 			}
 			
@@ -89,7 +99,7 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 			
 		}
 		catch(Exception e) {
-			LOG.error("Encountered Exception",e);
+			LOG.error("Encountered Exception: "+e.getMessage());
 		} finally {
 			IOUtils.closeQuietly(is);
 		}

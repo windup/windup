@@ -8,6 +8,8 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
 
 import com.thinkaurelius.titan.core.TitanTransaction;
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
@@ -45,8 +47,42 @@ public class BaseDaoBean<T extends VertexFrame> {
 		return (Iterable<T>)context.getFramed().getVertices(key, value, type);
 	}
 
+	public Iterable<T> findValueMatchingRegex(String key, String ... regex) {
+		//build regex
+		if(regex.length == 0) {
+			return IterablesUtil.emptyIterable();
+		}
+		
+		final String regexFinal;
+		if(regex.length == 1) {
+			regexFinal = regex[0];
+		}
+		else {
+			StringBuilder builder = new StringBuilder();
+			builder.append("\\b(");
+			int i=0;
+			for(String value : regex) {
+				if(i>0) {
+					builder.append("|");
+				}
+				builder.append(value);
+				i++;
+			}
+			builder.append(")\\b");
+			regexFinal = builder.toString();
+		}
+		
+		
+		return context.getFramed().query().has("type", typeValue).has(key, Text.REGEX, regexFinal).vertices(type);
+	}
+	
 	public T create(Object id) {
 		return (T)context.getFramed().addVertex(id, type);
+	}
+
+
+	public T create() {
+		return (T)context.getFramed().addVertex(null, type);
 	}
 	
 	public Iterable<T> getAll() {

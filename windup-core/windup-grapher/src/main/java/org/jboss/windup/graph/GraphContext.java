@@ -83,6 +83,12 @@ public class GraphContext {
 		TitanKey namespaceURIKey = graph.makeKey("namespaceURI").dataType(String.class).
 				indexed(Vertex.class).unique().make();
 		
+		TitanKey publicIdKey = graph.makeKey("publicId").dataType(String.class).
+				indexed(Vertex.class).make();
+		
+		TitanKey systemIdKey = graph.makeKey("systemId").dataType(String.class).
+				indexed(Vertex.class).make();
+		
 		TitanKey qualifiedNameKey = graph.makeKey("qualifiedName").dataType(String.class).
 				indexed(Vertex.class).unique().make();
 		

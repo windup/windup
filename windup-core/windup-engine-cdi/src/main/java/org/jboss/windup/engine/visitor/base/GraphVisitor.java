@@ -4,6 +4,7 @@ import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.EjbServiceFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
 import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
 import org.jboss.windup.graph.model.resource.ArchiveResource;
@@ -37,4 +38,5 @@ public interface GraphVisitor {
 	public void visitXmlResource(XmlResource entry);
 	public void visitEjbConfiguration(EjbConfigurationFacet entry);
 	public void visitSpringConfiguration(SpringConfigurationFacet entry);
+	public void visitDoctype(DoctypeMeta entry);
 }

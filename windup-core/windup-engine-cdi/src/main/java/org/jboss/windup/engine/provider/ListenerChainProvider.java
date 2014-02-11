@@ -13,6 +13,7 @@ import org.jboss.windup.engine.visitor.ArchiveHashVisitor;
 import org.jboss.windup.engine.visitor.ArchiveTypingVisitor;
 import org.jboss.windup.engine.visitor.BasicVisitor;
 import org.jboss.windup.engine.visitor.DebugVisitor;
+import org.jboss.windup.engine.visitor.HibernateConfigurationVisitor;
 import org.jboss.windup.engine.visitor.JavaClassVisitor;
 import org.jboss.windup.engine.visitor.MavenFacetVisitor;
 import org.jboss.windup.engine.visitor.SpringConfigurationVisitor;
@@ -24,12 +25,13 @@ import org.jboss.windup.engine.visitor.reporter.ArchiveProvidesReporter;
 import org.jboss.windup.engine.visitor.reporter.ClassNotFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.DuplicateClassReporter;
 import org.jboss.windup.engine.visitor.reporter.GraphRenderReporter;
+import org.jboss.windup.engine.visitor.reporter.HibernateConfigurationReporter;
 import org.jboss.windup.engine.visitor.reporter.MavenPomReporter;
 import org.jboss.windup.engine.visitor.reporter.NamespacesFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.WriteGraphToGraphMLReporter;
-import org.jboss.windup.graph.model.meta.xml.MavenFacet;
-import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
-import org.jboss.windup.graph.model.resource.JarArchive;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
+import org.jboss.windup.graph.model.meta.xml.HibernateConfigurationFacet;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 
 public class ListenerChainProvider {
 
@@ -78,6 +80,8 @@ public class ListenerChainProvider {
 	@Inject
 	private ArchiveDependsOnReporter archiveDependsOnReport;
 	
+	@Inject
+	private HibernateConfigurationVisitor hibernateConfigurationVisitor;
 	
 	
 	@Inject
@@ -88,6 +92,11 @@ public class ListenerChainProvider {
 	
 	@Inject
 	private MavenPomReporter mavenPomReporter;
+	
+	@Inject
+	private HibernateConfigurationReporter hibernateConfigurationReporter;
+	
+	
 	
 	@ListenerChainQualifier
 	@Produces
@@ -101,6 +110,14 @@ public class ListenerChainProvider {
 		
 		//listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
 		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
+		listenerChain.add(hibernateConfigurationVisitor); //loads hibernate configurations and processes
+		listenerChain.add(hibernateConfigurationReporter); //reports on hibernate configurations found
+		
+		
+	//	listenerChain.add(new DebugVisitor(context, NamespaceMeta.class)); //extract Maven information to facet.
+	//	listenerChain.add(new DebugVisitor(context, DoctypeMeta.class)); //extract Maven information to facet.
+		
+		
 		//listenerChain.add(mavenFacetVisitor); //extract Maven information to facet.
 		//listenerChain.add(springConfigurationVisitor);
 		//listenerChain.add(new DebugVisitor(context, SpringConfigurationFacet.class)); //extract Maven information to facet.

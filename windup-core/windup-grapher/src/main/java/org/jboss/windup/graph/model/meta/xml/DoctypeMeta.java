@@ -1,7 +1,5 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import java.util.Iterator;
-
 import org.jboss.windup.graph.model.meta.Meta;
 import org.jboss.windup.graph.model.resource.XmlResource;
 
@@ -17,7 +15,7 @@ public interface DoctypeMeta extends Meta {
 	public void addXmlResource(XmlResource facet);
 
 	@Adjacency(label="doctype", direction=Direction.IN)
-	public Iterator<XmlResource> getXmlResources();
+	public Iterable<XmlResource> getXmlResources();
 
 	
 	@Property("name")
