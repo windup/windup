@@ -16,7 +16,8 @@ import org.w3c.dom.NodeList;
 public class XmlUtil {
 
 	public static boolean xpathExists(Node document, String xpathExpression, Map<String, String> namespaceMapping) throws MarshallingException {
-		return (boolean)executeXPath(document, xpathExpression, namespaceMapping, XPathConstants.BOOLEAN);
+		Boolean result = (Boolean)executeXPath(document, xpathExpression, namespaceMapping, XPathConstants.BOOLEAN);
+		return result != null && result;
 	}
 	
 	public static String xpathExtract(Node document, String xpathExpression, Map<String, String> namespaceMapping) throws MarshallingException {
