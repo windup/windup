@@ -15,6 +15,7 @@ import org.jboss.windup.engine.visitor.BasicVisitor;
 import org.jboss.windup.engine.visitor.DebugVisitor;
 import org.jboss.windup.engine.visitor.JavaClassVisitor;
 import org.jboss.windup.engine.visitor.MavenFacetVisitor;
+import org.jboss.windup.engine.visitor.SpringConfigurationVisitor;
 import org.jboss.windup.engine.visitor.XmlResourceVisitor;
 import org.jboss.windup.engine.visitor.ZipArchiveGraphVisitor;
 import org.jboss.windup.engine.visitor.base.GraphVisitor;
@@ -27,6 +28,7 @@ import org.jboss.windup.engine.visitor.reporter.MavenPomReporter;
 import org.jboss.windup.engine.visitor.reporter.NamespacesFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.WriteGraphToGraphMLReporter;
 import org.jboss.windup.graph.model.meta.xml.MavenFacet;
+import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
 import org.jboss.windup.graph.model.resource.JarArchive;
 
 public class ListenerChainProvider {
@@ -56,6 +58,9 @@ public class ListenerChainProvider {
 	private MavenFacetVisitor mavenFacetVisitor;
 	
 	@Inject
+	private SpringConfigurationVisitor springConfigurationVisitor;
+	
+	@Inject
 	private ClassNotFoundReporter classNotFoundReporter;
 	
 	@Inject
@@ -73,6 +78,8 @@ public class ListenerChainProvider {
 	@Inject
 	private ArchiveDependsOnReporter archiveDependsOnReport;
 	
+	
+	
 	@Inject
 	private ArchiveHashVisitor archiveHashVisitor;
 	
@@ -89,19 +96,19 @@ public class ListenerChainProvider {
 		listenerChain.add(basic);
 		listenerChain.add(zipArchive); //recurses zip entries to expand
 		listenerChain.add(archiveEntryIndexingVisitor); //indexes all entries to the graph
-		listenerChain.add(archiveHashVisitor);
-		listenerChain.add(archiveTypeVisitor);  //sets the archive to a sub-type
+		//listenerChain.add(archiveHashVisitor);
+		//listenerChain.add(archiveTypeVisitor);  //sets the archive to a sub-type
 		
-		listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
+		//listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
 		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
-		listenerChain.add(mavenFacetVisitor); //extract Maven information to facet.
-		
-		//listenerChain.add(new DebugVisitor(context, JarArchive.class)); //extract Maven information to facet.
+		//listenerChain.add(mavenFacetVisitor); //extract Maven information to facet.
+		//listenerChain.add(springConfigurationVisitor);
+		//listenerChain.add(new DebugVisitor(context, SpringConfigurationFacet.class)); //extract Maven information to facet.
 
-		listenerChain.add(archiveDependsOnReport);
+		//listenerChain.add(archiveDependsOnReport);
 		//listenerChain.add(exportToMLreporter);
-		listenerChain.add(mavenPomReporter);
-		listenerChain.add(duplicateClassReporter); //reports all classes found multiple times on the classpath.
+		//listenerChain.add(mavenPomReporter);
+		//listenerChain.add(duplicateClassReporter); //reports all classes found multiple times on the classpath.
 		/*
 		listenerChain.add(classNotFoundReporter); //reports all classes not found on the classpath.
 		

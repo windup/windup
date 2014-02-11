@@ -28,7 +28,7 @@ public class ZipUtil {
 			out = new FileOutputStream(temp);
 			
 			IOUtils.copy(in, out);
-			LOG.info("Extracting entry: "+entry.getName()+" to: "+temp.getAbsolutePath());
+			LOG.debug("Extracting entry: "+entry.getName()+" to: "+temp.getAbsolutePath());
 			return temp;
 		}
 		catch(Exception e) {

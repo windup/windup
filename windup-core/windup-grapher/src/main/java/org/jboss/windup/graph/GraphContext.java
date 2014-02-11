@@ -5,16 +5,24 @@ import java.io.File;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
+import org.jboss.windup.graph.model.meta.DatasourceMeta;
+import org.jboss.windup.graph.model.meta.JBossModuleMeta;
+import org.jboss.windup.graph.model.meta.JMSMeta;
+import org.jboss.windup.graph.model.meta.MailserverMeta;
+import org.jboss.windup.graph.model.meta.SpecificationVersionMeta;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
+import org.jboss.windup.graph.model.meta.javaclass.EjbServiceFacet;
+import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
+import org.jboss.windup.graph.model.meta.xml.HibernateConfigurationFacet;
 import org.jboss.windup.graph.model.meta.xml.MavenFacet;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.jboss.windup.graph.model.resource.EarArchive;
 import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.model.resource.JavaClass;
@@ -106,14 +114,23 @@ public class GraphContext {
 			    .withClass(TempArchiveResource.class)
 			    
 			    .withClass(EjbEntityFacet.class)
+			    .withClass(EjbServiceFacet.class)
+			    .withClass(HibernateEntityFacet.class)
 			    .withClass(MessageDrivenBeanFacet.class)
 			    .withClass(SpringBeanFacet.class)
 			    
 			    .withClass(MavenFacet.class)
 			    .withClass(EjbConfigurationFacet.class)
 			    .withClass(SpringConfigurationFacet.class)
+			    .withClass(HibernateConfigurationFacet.class)
 			    .withClass(NamespaceMeta.class)
 			    .withClass(DoctypeMeta.class)
+			    
+			    .withClass(DatasourceMeta.class)
+				.withClass(JBossModuleMeta.class)
+				.withClass(JMSMeta.class)
+				.withClass(MailserverMeta.class)
+				.withClass(SpecificationVersionMeta.class)
 			    
 			    .build(), 
 			    new GremlinGroovyModule()

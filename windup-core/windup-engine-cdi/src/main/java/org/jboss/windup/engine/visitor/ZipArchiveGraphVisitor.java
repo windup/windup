@@ -79,15 +79,12 @@ public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 			ZipFile zipFile = null;
 			try {
 				zipFile = new ZipFile(reference);
-				LOG.info(filePath);
 				
 				//go ahead and make it into an archive.
 				
 				ArchiveResource archive = archiveDao.create(null);
 				archive.setArchiveName(reference.getName());
 				archive.setFileResource(file);
-				LOG.info("Creating archive for file: "+file.asVertex()+" archive: "+archive.asVertex());
-				
 				
 				//first, make the file reference.
 				Enumeration<?> entries = zipFile.entries();
@@ -107,7 +104,6 @@ public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
 						ArchiveResource subArchive = archiveDao.create(null);
 						subArchive.setArchiveName(subArchiveName);
 						subArchive.setFileResource(subArchiveTempFileReference);
-						LOG.info("Creating archive for file: "+subArchiveTempFileReference+" archive: "+subArchive);
 						
 						//add the element as a child..
 						archive.addChild(subArchive);

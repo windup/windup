@@ -60,7 +60,7 @@ public class FileResourceDaoBean extends BaseDaoBean<FileResource> {
 			regex = ".+\\."+builder.toString()+"$";
 		}
 
-		LOG.info("Regex: "+regex);
+		LOG.debug("Regex: "+regex);
 		return context.getFramed().query().has("type", typeValue).has("filePath", Text.REGEX, regex).vertices(type);
 	}
 }

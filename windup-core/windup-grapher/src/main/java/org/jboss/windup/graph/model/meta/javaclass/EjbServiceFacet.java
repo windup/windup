@@ -5,7 +5,7 @@ import org.jboss.windup.graph.renderer.Label;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("EJBFacet")
+@TypeValue("EJBServiceFacet")
 public interface EjbServiceFacet extends JavaClassMetaFacet {
 
 	@Label
