@@ -12,7 +12,7 @@ import org.jboss.windup.graph.model.meta.JarManifest;
 import org.jboss.windup.graph.model.meta.MailserverMeta;
 import org.jboss.windup.graph.model.meta.SpecificationVersionMeta;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
-import org.jboss.windup.graph.model.meta.javaclass.EjbServiceFacet;
+import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
@@ -126,7 +126,7 @@ public class GraphContext {
 			    .withClass(TempArchiveResource.class)
 			    
 			    .withClass(EjbEntityFacet.class)
-			    .withClass(EjbServiceFacet.class)
+			    .withClass(EjbSessionBeanFacet.class)
 			    .withClass(HibernateEntityFacet.class)
 			    .withClass(MessageDrivenBeanFacet.class)
 			    .withClass(SpringBeanFacet.class)

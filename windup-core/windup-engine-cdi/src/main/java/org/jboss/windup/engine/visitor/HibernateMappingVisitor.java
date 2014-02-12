@@ -11,12 +11,13 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.xml.XmlUtil;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.DoctypeDaoBean;
-import org.jboss.windup.graph.dao.HibernateConfigurationDaoBean;
 import org.jboss.windup.graph.dao.HibernateEntityDaoBean;
+import org.jboss.windup.graph.dao.HibernateMappingDaoBean;
 import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.jboss.windup.graph.dao.XmlResourceDaoBean;
 import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
+import org.jboss.windup.graph.model.meta.xml.HibernateMappingFacet;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.model.resource.XmlResource;
 import org.slf4j.Logger;
@@ -43,6 +44,10 @@ public class HibernateMappingVisitor extends EmptyGraphVisitor {
 	private HibernateEntityDaoBean hibernateEntityDao;
 	
 	@Inject
+	private HibernateMappingDaoBean hibernateMappingDao;
+	
+	
+	@Inject
 	private JavaClassDaoBean javaClassDao;
 	
 	@Inject
@@ -59,6 +64,8 @@ public class HibernateMappingVisitor extends EmptyGraphVisitor {
 			LOG.info("Processed "+i+" of "+" Doctypes.");
 			visitDoctype(doctype);
 		}
+		
+		javaClassDao.commit();
 	}
 	
 	@Override
@@ -74,7 +81,15 @@ public class HibernateMappingVisitor extends EmptyGraphVisitor {
 		String versionInformation = extractVersion(publicId, systemId);
 		
 		
+		
+		int batch = 0;
 		for(XmlResource xml : entry.getXmlResources()) {
+
+			//create a facet, and then identify the XML.
+			HibernateMappingFacet hibernateMapping = hibernateMappingDao.create();
+			hibernateMapping.setXmlFacet(xml);
+			
+			
 			Document doc = xmlResourceDao.asDocument(xml);
 			
 			if(!XmlUtil.xpathExists(doc, "/hibernate-mapping", null)) {
@@ -89,7 +104,7 @@ public class HibernateMappingVisitor extends EmptyGraphVisitor {
 			String catalogName = $(doc).xpath("/hibernate-mapping/class").attr("catalog");
 			
 			if(StringUtils.isBlank(clzName)) {
-				LOG.warn("Docment does not contain class name mapping: "+$(doc).xpath("/hibernate-mapping/class").toString());
+				LOG.debug("Docment does not contain class name. Skipping.");
 				continue;
 			}
 			
@@ -103,16 +118,26 @@ public class HibernateMappingVisitor extends EmptyGraphVisitor {
 			
 
 			//create the hibernate facet.
-			HibernateEntityFacet facet = hibernateEntityDao.create();
-			facet.setSpecificationVersion(versionInformation);
-			facet.setJavaClassFacet(clz);
-			facet.setTableName(tableName);
-			facet.setSchemaName(schemaName);
-			facet.setCatalogName(catalogName);
+			HibernateEntityFacet hibernateEntity = hibernateEntityDao.create();
+			hibernateEntity.setSpecificationVersion(versionInformation);
+			hibernateEntity.setJavaClassFacet(clz);
+			hibernateEntity.setTableName(tableName);
+			hibernateEntity.setSchemaName(schemaName);
+			hibernateEntity.setCatalogName(catalogName);
+			
+			//map the entity back to the XML mapping.
+			hibernateMapping.setHibernateEntity(hibernateEntity);
 			
 			if(StringUtils.isNotBlank(versionInformation)) {
-				facet.setSpecificationVersion(versionInformation);
+				hibernateEntity.setSpecificationVersion(versionInformation);
+				hibernateMapping.setSpecificationVersion(versionInformation);
 			}
+			
+			if(batch % 100 == 0 && batch > 0) {
+				javaClassDao.commit();
+			}
+			batch++;
+			
 		}
 	}
 	

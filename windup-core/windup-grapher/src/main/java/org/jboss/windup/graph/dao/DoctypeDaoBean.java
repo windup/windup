@@ -1,17 +1,13 @@
 package org.jboss.windup.graph.dao;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 
 import com.google.common.collect.Iterables;
-import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.Pipe;
-import com.tinkerpop.pipes.util.PipeHelper;
 
 public class DoctypeDaoBean extends BaseDaoBean<DoctypeMeta> {
 

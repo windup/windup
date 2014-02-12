@@ -1,7 +1,7 @@
 package org.jboss.windup.engine.visitor.base;
 
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
-import org.jboss.windup.graph.model.meta.javaclass.EjbServiceFacet;
+import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
@@ -68,7 +68,7 @@ public abstract class EmptyGraphVisitor implements GraphVisitor {
 	}
 
 	@Override
-	public void visitEjbService(EjbServiceFacet entry) {
+	public void visitEjbService(EjbSessionBeanFacet entry) {
 		//nothing.		
 	}
 

@@ -13,6 +13,7 @@ import org.jboss.windup.engine.visitor.ArchiveHashVisitor;
 import org.jboss.windup.engine.visitor.ArchiveTypingVisitor;
 import org.jboss.windup.engine.visitor.BasicVisitor;
 import org.jboss.windup.engine.visitor.DebugVisitor;
+import org.jboss.windup.engine.visitor.EjbConfigurationVisitor;
 import org.jboss.windup.engine.visitor.HibernateConfigurationVisitor;
 import org.jboss.windup.engine.visitor.HibernateMappingVisitor;
 import org.jboss.windup.engine.visitor.JavaClassVisitor;
@@ -26,8 +27,10 @@ import org.jboss.windup.engine.visitor.reporter.ArchiveDependsOnReporter;
 import org.jboss.windup.engine.visitor.reporter.ArchiveProvidesReporter;
 import org.jboss.windup.engine.visitor.reporter.ClassNotFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.DuplicateClassReporter;
+import org.jboss.windup.engine.visitor.reporter.EjbConfigurationReporter;
 import org.jboss.windup.engine.visitor.reporter.GraphRenderReporter;
 import org.jboss.windup.engine.visitor.reporter.HibernateConfigurationReporter;
+import org.jboss.windup.engine.visitor.reporter.HibernateEntityReporter;
 import org.jboss.windup.engine.visitor.reporter.JarManifestReporter;
 import org.jboss.windup.engine.visitor.reporter.MavenPomReporter;
 import org.jboss.windup.engine.visitor.reporter.NamespacesFoundReporter;
@@ -90,6 +93,9 @@ public class ListenerChainProvider {
 	@Inject
 	private HibernateMappingVisitor hibernateMappingVisitor;
 	
+	@Inject
+	private EjbConfigurationVisitor ejbConfigurationVisitor;
+	
 	
 	@Inject
 	private ArchiveHashVisitor archiveHashVisitor;
@@ -109,8 +115,11 @@ public class ListenerChainProvider {
 	@Inject
 	private HibernateConfigurationReporter hibernateConfigurationReporter;
 	
+	@Inject
+	private HibernateEntityReporter hibernateEntityReporter;
 	
-	
+	@Inject
+	private EjbConfigurationReporter ejbConfigurationReporter;
 	
 	@ListenerChainQualifier
 	@Produces
@@ -125,11 +134,19 @@ public class ListenerChainProvider {
 		
 		//listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
 		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
-		listenerChain.add(hibernateConfigurationVisitor); //loads hibernate configurations and processes
-		listenerChain.add(hibernateConfigurationReporter); //reports on hibernate configurations found
 		
-		listenerChain.add(hibernateMappingVisitor); //loads hibernate entity mappings and processes
-		listenerChain.add(new DebugVisitor(context, HibernateEntityFacet.class)); 
+		
+		listenerChain.add(ejbConfigurationVisitor);
+		listenerChain.add(ejbConfigurationReporter);
+		
+		//listenerChain.add(hibernateConfigurationVisitor); //loads hibernate configurations and processes
+		//listenerChain.add(hibernateConfigurationReporter); //reports on hibernate configurations found
+		
+		//listenerChain.add(hibernateMappingVisitor); //loads hibernate entity mappings and processes
+		//listenerChain.add(hibernateEntityReporter);
+		
+		
+		
 		//listenerChain.add(manifestReporter); //reports on hibernate configurations found
 		
 	//	listenerChain.add(new DebugVisitor(context, NamespaceMeta.class)); //extract Maven information to facet.

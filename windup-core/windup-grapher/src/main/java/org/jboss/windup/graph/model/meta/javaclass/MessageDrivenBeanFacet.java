@@ -14,5 +14,28 @@ public interface MessageDrivenBeanFacet extends JavaClassMetaFacet {
 
 	@Property("messageDrivenBeanName")
 	public String setMessageDrivenBeanName(String messageDrivenBeanName);
+
+	@Property("displayName")
+	public String getDisplayName();
+
+	@Property("displayName")
+	public void setDisplayName(String displayName);
 	
+	@Property("ejbId")
+	public String getEjbId();
+
+	@Property("ejbId")
+	public void setEjbId(String id);
+	
+	@Property("transactionType")
+	public String getTransactionType();
+
+	@Property("transactionType")
+	public void setTransactionType(String transactionType);
+	
+	@Property("sessionType")
+	public String getSessionType();
+
+	@Property("sessionType")
+	public void setSessionType(String sessionType);
 }

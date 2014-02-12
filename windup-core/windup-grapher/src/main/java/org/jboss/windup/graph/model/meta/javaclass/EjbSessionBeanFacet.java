@@ -8,15 +8,27 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("EJBEntityFacet")
-public interface EjbEntityFacet extends JavaClassMetaFacet {
+@TypeValue("EJBSessionBean")
+public interface EjbSessionBeanFacet extends JavaClassMetaFacet {
 
 	@Label
-	@Property("ejbEntityName")
-	public String getEjbEntityName();
+	@Property("ejbSessionBeanName")
+	public String getSessionBeanName();
 
-	@Property("ejbEntityName")
-	public String setEjbEntityName(String ejbEntityName);
+	@Property("ejbSessionBeanName")
+	public void setSessionBeanName(String ejbSessionBeanName);
+
+	@Property("sessionType")
+	public String getSessionType();
+
+	@Property("sessionType")
+	public void setSessionType(String sessionType);
+	
+	@Property("transactionType")
+	public String getTransactionType();
+
+	@Property("transactionType")
+	public void setTransactionType(String transactionType);
 	
 	@Property("displayName")
 	public String getDisplayName();
@@ -30,21 +42,27 @@ public interface EjbEntityFacet extends JavaClassMetaFacet {
 	@Property("ejbId")
 	public void setEjbId(String id);
 	
-	@Property("persistenceType")
-	public String getPersistenceType();
-
-	@Property("persistenceType")
-	public void setPersistenceType(String PersistenceType);
-	
 	@Adjacency(label = "ejbLocal", direction = Direction.OUT)
 	public void setEjbLocal(JavaClass ejbLocal);
 
 	@Adjacency(label = "ejbLocal", direction = Direction.OUT)
 	public JavaClass getEjbLocal();
 	
+	@Adjacency(label = "ejbRemote", direction = Direction.OUT)
+	public void setEjbRemote(JavaClass ejbRemote);
+
+	@Adjacency(label = "ejbRemote", direction = Direction.OUT)
+	public JavaClass getEjbRemote();
+	
 	@Adjacency(label = "ejbLocalHome", direction = Direction.OUT)
 	public void setEjbLocalHome(JavaClass ejbLocalHome);
 
 	@Adjacency(label = "ejbLocalHome", direction = Direction.OUT)
 	public JavaClass getEjbLocalHome();
+	
+	@Adjacency(label = "ejbHome", direction = Direction.OUT)
+	public void setEjbHome(JavaClass ejbHome);
+
+	@Adjacency(label = "ejbHome", direction = Direction.OUT)
+	public JavaClass getEjbHome();
 }
