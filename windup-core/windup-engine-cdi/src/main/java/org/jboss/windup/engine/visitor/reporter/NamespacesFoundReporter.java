@@ -28,14 +28,17 @@ public class NamespacesFoundReporter extends EmptyGraphVisitor {
 	@Override
 	public void run() {
 		for(NamespaceMeta namespace : namespaceDao.getAll()) {
-			LOG.info("Namespace Found: "+namespace.getURI());
+			LOG.info("Namespace: ");
+			LOG.info("  - URI: "+namespace.getURI());
+			LOG.info("  - Loc: "+namespace.getSchemaLocation());
+			
 			
 			for(XmlResource xml : namespace.getXmlResources()) {
 				//report the xml files that contain the namespace...
 				Resource resource = xml.getResource();
 				if(resource instanceof ArchiveEntryResource) {
 					ArchiveEntryResource ar = (ArchiveEntryResource)resource;
-					LOG.info(" - "+ar.getArchiveEntry());
+					LOG.info("   - "+ar.getArchiveEntry());
 				}
 			}
 		}

@@ -33,11 +33,11 @@ public class LocationAwareContentHandler extends DefaultHandler2 {
 	final public static String NAMESPACE_KEY_NAME = "nsuri";
 	
 	
+	private final Set<String> namespaceURIs = new HashSet<String>();
 	private final Document doc;
 	private Locator locator;
 	private Element current;
 	private Doctype doctype;
-	private Set<String> namespaceURIs = new HashSet<String>();
 	
 	@Override
 	public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId) throws SAXException, IOException {

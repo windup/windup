@@ -3,9 +3,7 @@ package org.jboss.windup.engine.visitor.reporter;
 import javax.inject.Inject;
 
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.DoctypeDaoBean;
 import org.jboss.windup.graph.dao.HibernateConfigurationDaoBean;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.HibernateConfigurationFacet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

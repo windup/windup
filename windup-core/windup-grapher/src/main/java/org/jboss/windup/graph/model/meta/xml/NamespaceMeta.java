@@ -23,4 +23,11 @@ public interface NamespaceMeta extends Meta {
 	@Property("namespaceURI")
 	public void setURI(String uri);
 	
+
+	@Property("schemaLocation")
+	public String getSchemaLocation();
+	
+	@Property("schemaLocation")
+	public void setSchemaLocation(String schemaLocation);
+	
 }

@@ -2,7 +2,7 @@ package org.jboss.windup.engine.visitor;
 
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -10,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.jboss.windup.engine.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.engine.util.xml.LocationAwareContentHandler.Doctype;
 import org.jboss.windup.engine.util.xml.LocationAwareXmlReader;
+import org.jboss.windup.engine.util.xml.XmlUtil;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
 import org.jboss.windup.graph.dao.DoctypeDaoBean;
@@ -22,7 +23,6 @@ import org.jboss.windup.graph.model.resource.XmlResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-
 /**
  * Adds the XMLResource Facet to the resource.
  * Extracts Doctype and Namespace information in the XML files.
@@ -47,8 +47,13 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 	
 	@Override
 	public void run() {
+		int i = 0;
 		for(final ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("xml")) {
-			visitArchiveEntry(entry); 
+			visitArchiveEntry(entry);
+			
+			if(i % 10 == 0 && i > 0) {
+				archiveEntryDao.commit();
+			}
 		}
 		archiveEntryDao.commit();
 	}
@@ -65,7 +70,6 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 			
 			Document parsedDocument = LocationAwareXmlReader.readXML(is);
 			Doctype docType = (Doctype) parsedDocument.getUserData(LocationAwareContentHandler.DOCTYPE_KEY_NAME);
-
 			//if this is successful, then we know it is a proper XML file.
 			//set it to the graph as an XML file.
 			XmlResource resource = xmlResourceDao.create(null);
@@ -80,7 +84,7 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 					resource.addMeta(meta);
 				}
 				else {
-					LOG.info("Adding doctype: "+docType);
+					LOG.debug("Adding doctype: "+docType);
 					DoctypeMeta meta = doctypeDao.create(null);
 					meta.setBaseURI(docType.getBaseURI());
 					meta.setName(docType.getName());
@@ -88,11 +92,11 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 					meta.setSystemId(docType.getSystemId());
 				}
 			}
-			
-			Set<String> namespaces = (Set<String>) parsedDocument.getUserData(LocationAwareContentHandler.NAMESPACE_KEY_NAME);
-			if(namespaces != null) {
-				for(String namespace : namespaces) {
-					NamespaceMeta meta = namespaceDao.createByURI(namespace);
+
+			Map<String, String> namespaceSchemaLocations = XmlUtil.getSchemaLocations(parsedDocument); 
+			if(namespaceSchemaLocations != null && namespaceSchemaLocations.size() > 0) {
+				for(String namespace : namespaceSchemaLocations.keySet()) {
+					NamespaceMeta meta = namespaceDao.createNamespaceSchemaLocation(namespace, namespaceSchemaLocations.get(namespace));
 					meta.addXmlResource(resource);
 				}
 			}

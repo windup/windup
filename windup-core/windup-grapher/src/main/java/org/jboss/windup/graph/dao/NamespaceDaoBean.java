@@ -6,6 +6,8 @@ import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tinkerpop.gremlin.java.GremlinPipeline;
+
 @Singleton
 public class NamespaceDaoBean extends BaseDaoBean<NamespaceMeta> {
 	private static final Logger LOG = LoggerFactory.getLogger(NamespaceDaoBean.class);
@@ -13,17 +15,21 @@ public class NamespaceDaoBean extends BaseDaoBean<NamespaceMeta> {
 		super(NamespaceMeta.class);
 	}
 
-	public NamespaceMeta findByURI(String namespaceURI) {
-		return getByUniqueProperty("namespaceURI", namespaceURI);
+	public Iterable<NamespaceMeta> findByURI(String namespaceURI) {
+		return getByProperty("namespaceURI", namespaceURI);
 	}
 	
-	public synchronized NamespaceMeta createByURI(String namespaceURI) {
-		NamespaceMeta meta = getByUniqueProperty("namespaceURI", namespaceURI);
-		if(meta == null) {
-			LOG.info("Adding namespace: "+namespaceURI);
-			meta = this.create(null);
-			meta.setURI(namespaceURI);
+	public NamespaceMeta createNamespaceSchemaLocation(String namespaceURI, String schemaLocation) {
+		Iterable<NamespaceMeta> results = getContext().getFramed().query().has("type", typeValue).has("namespaceURI", namespaceURI).has("schemaLocation", schemaLocation).vertices(type);
+		
+		for(NamespaceMeta result : results) {
+			return result;
 		}
+		
+		//otherwise, create it.
+		NamespaceMeta meta = this.create();
+		meta.setSchemaLocation(schemaLocation);
+		meta.setURI(namespaceURI);
 		
 		return meta;
 	}

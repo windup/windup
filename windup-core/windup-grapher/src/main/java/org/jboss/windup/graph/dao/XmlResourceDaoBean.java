@@ -1,8 +1,8 @@
 package org.jboss.windup.graph.dao;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -13,7 +13,8 @@ import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.Resource;
 import org.jboss.windup.graph.model.resource.XmlResource;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+
+import com.google.common.collect.Iterables;
 
 public class XmlResourceDaoBean extends BaseDaoBean<XmlResource> {
 
@@ -28,16 +29,20 @@ public class XmlResourceDaoBean extends BaseDaoBean<XmlResource> {
 	private NamespaceDaoBean namespaceDao;
 
 	public Iterable<XmlResource> containsNamespaceURI(String namespaceURI) {
-		NamespaceMeta namespace = namespaceDao.findByURI(namespaceURI);
+		
+		List<Iterable<XmlResource>> result = new LinkedList<Iterable<XmlResource>>();
+		for(NamespaceMeta resource : namespaceDao.findByURI(namespaceURI)) {
+			result.add(resource.getXmlResources());
+		}
 		
 		//now, check thether it is null.
-		if(namespace == null) {
+		if(result == null || result.size() == 0) {
 			return new LinkedList<XmlResource>();
 		}
-		return namespace.getXmlResources();
+		return Iterables.concat(result);
 	}
 	
-	public Document asDocument(XmlResource resource) throws IOException, SAXException {
+	public Document asDocument(XmlResource resource) throws RuntimeException {
 		Resource underlyingResource = resource.getResource();
 		if(underlyingResource instanceof ArchiveEntryResource) {
 			InputStream is = null;
@@ -45,6 +50,9 @@ public class XmlResourceDaoBean extends BaseDaoBean<XmlResource> {
 				is = archiveEntryDao.asInputStream((ArchiveEntryResource)underlyingResource);
 				Document parsedDocument = LocationAwareXmlReader.readXML(is);
 				return parsedDocument;
+			}
+			catch(Exception e) {
+				throw new RuntimeException("Exception reading document.", e);
 			}
 			finally {
 				IOUtils.closeQuietly(is);

@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.util.XmlUtil;
+import org.jboss.windup.engine.util.xml.XmlUtil;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.MavenFacetDaoBean;
 import org.jboss.windup.graph.dao.XmlResourceDaoBean;

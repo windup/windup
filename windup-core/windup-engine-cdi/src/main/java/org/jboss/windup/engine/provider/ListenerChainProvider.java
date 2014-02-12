@@ -14,7 +14,9 @@ import org.jboss.windup.engine.visitor.ArchiveTypingVisitor;
 import org.jboss.windup.engine.visitor.BasicVisitor;
 import org.jboss.windup.engine.visitor.DebugVisitor;
 import org.jboss.windup.engine.visitor.HibernateConfigurationVisitor;
+import org.jboss.windup.engine.visitor.HibernateMappingVisitor;
 import org.jboss.windup.engine.visitor.JavaClassVisitor;
+import org.jboss.windup.engine.visitor.ManifestVisitor;
 import org.jboss.windup.engine.visitor.MavenFacetVisitor;
 import org.jboss.windup.engine.visitor.SpringConfigurationVisitor;
 import org.jboss.windup.engine.visitor.XmlResourceVisitor;
@@ -26,9 +28,11 @@ import org.jboss.windup.engine.visitor.reporter.ClassNotFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.DuplicateClassReporter;
 import org.jboss.windup.engine.visitor.reporter.GraphRenderReporter;
 import org.jboss.windup.engine.visitor.reporter.HibernateConfigurationReporter;
+import org.jboss.windup.engine.visitor.reporter.JarManifestReporter;
 import org.jboss.windup.engine.visitor.reporter.MavenPomReporter;
 import org.jboss.windup.engine.visitor.reporter.NamespacesFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.WriteGraphToGraphMLReporter;
+import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.HibernateConfigurationFacet;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
@@ -83,6 +87,9 @@ public class ListenerChainProvider {
 	@Inject
 	private HibernateConfigurationVisitor hibernateConfigurationVisitor;
 	
+	@Inject
+	private HibernateMappingVisitor hibernateMappingVisitor;
+	
 	
 	@Inject
 	private ArchiveHashVisitor archiveHashVisitor;
@@ -94,7 +101,14 @@ public class ListenerChainProvider {
 	private MavenPomReporter mavenPomReporter;
 	
 	@Inject
+	private ManifestVisitor manifestVisitor;
+	
+	@Inject
+	private JarManifestReporter manifestReporter;
+	
+	@Inject
 	private HibernateConfigurationReporter hibernateConfigurationReporter;
+	
 	
 	
 	
@@ -105,14 +119,18 @@ public class ListenerChainProvider {
 		listenerChain.add(basic);
 		listenerChain.add(zipArchive); //recurses zip entries to expand
 		listenerChain.add(archiveEntryIndexingVisitor); //indexes all entries to the graph
-		//listenerChain.add(archiveHashVisitor);
-		//listenerChain.add(archiveTypeVisitor);  //sets the archive to a sub-type
+		listenerChain.add(archiveHashVisitor);
+		listenerChain.add(archiveTypeVisitor);  //sets the archive to a sub-type
+		listenerChain.add(manifestVisitor); //extracts manifest data.
 		
 		//listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
 		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
 		listenerChain.add(hibernateConfigurationVisitor); //loads hibernate configurations and processes
 		listenerChain.add(hibernateConfigurationReporter); //reports on hibernate configurations found
 		
+		listenerChain.add(hibernateMappingVisitor); //loads hibernate entity mappings and processes
+		listenerChain.add(new DebugVisitor(context, HibernateEntityFacet.class)); 
+		//listenerChain.add(manifestReporter); //reports on hibernate configurations found
 		
 	//	listenerChain.add(new DebugVisitor(context, NamespaceMeta.class)); //extract Maven information to facet.
 	//	listenerChain.add(new DebugVisitor(context, DoctypeMeta.class)); //extract Maven information to facet.
@@ -129,11 +147,12 @@ public class ListenerChainProvider {
 		/*
 		listenerChain.add(classNotFoundReporter); //reports all classes not found on the classpath.
 		
-		listenerChain.add(namespacesFoundReporter);
+		
 		
 		//listenerChain.add(graphRenderReporter);
 		
 		*/
+		//listenerChain.add(namespacesFoundReporter);
 		return listenerChain;
 	}
 }

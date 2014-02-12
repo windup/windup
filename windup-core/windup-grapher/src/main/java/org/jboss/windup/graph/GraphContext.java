@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.windup.graph.model.meta.DatasourceMeta;
 import org.jboss.windup.graph.model.meta.JBossModuleMeta;
 import org.jboss.windup.graph.model.meta.JMSMeta;
+import org.jboss.windup.graph.model.meta.JarManifest;
 import org.jboss.windup.graph.model.meta.MailserverMeta;
 import org.jboss.windup.graph.model.meta.SpecificationVersionMeta;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
@@ -38,6 +39,7 @@ import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
 public class GraphContext {
@@ -81,7 +83,10 @@ public class GraphContext {
 		//graph.createKeyIndex("type", Vertex.class);
 		
 		TitanKey namespaceURIKey = graph.makeKey("namespaceURI").dataType(String.class).
-				indexed(Vertex.class).unique().make();
+				indexed(Vertex.class).make();
+
+		TitanKey schemaLocationKey = graph.makeKey("schemaLocation").dataType(String.class).
+				indexed(Vertex.class).make();
 		
 		TitanKey publicIdKey = graph.makeKey("publicId").dataType(String.class).
 				indexed(Vertex.class).make();
@@ -107,6 +112,7 @@ public class GraphContext {
 		batch = new BatchGraph<TitanGraph>(graph, 1000L);
 		
 		FramedGraphFactory factory = new FramedGraphFactory(
+				new JavaHandlerModule(),
 			    new TypedGraphModuleBuilder()
 			    .withClass(ArchiveResource.class)
 			    .withClass(ArchiveEntryResource.class)
@@ -137,6 +143,7 @@ public class GraphContext {
 				.withClass(JMSMeta.class)
 				.withClass(MailserverMeta.class)
 				.withClass(SpecificationVersionMeta.class)
+			    .withClass(JarManifest.class)
 			    
 			    .build(), 
 			    new GremlinGroovyModule()

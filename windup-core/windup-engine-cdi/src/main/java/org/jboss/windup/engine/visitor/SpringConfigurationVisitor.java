@@ -61,7 +61,7 @@ public class SpringConfigurationVisitor extends EmptyGraphVisitor {
 		try {
 			Document doc = xmlResourceDao.asDocument(entry);
 			org.w3c.dom.Element element = $(doc).namespace("s", "http://www.springframework.org/schema/beans").xpath("/s:beans").get().get(0);
-			
+
 			if(element != null) {
 				SpringConfigurationFacet facet = springConfigurationDao.create(null);
 				facet.setXmlFacet(entry);

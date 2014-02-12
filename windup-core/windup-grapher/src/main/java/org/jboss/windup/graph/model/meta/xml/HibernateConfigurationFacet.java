@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
+import org.jboss.windup.graph.model.meta.HibernateSessionFactory;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
@@ -18,10 +18,10 @@ public interface HibernateConfigurationFacet extends XmlMetaFacet {
 	@Property("specificationVersion")
 	public void setSpecificationVersion(String version);
 	
-	@Adjacency(label="hibernateEntity", direction=Direction.OUT)
-	public Iterable<HibernateEntityFacet> getHibernateEntity();
+	@Adjacency(label="hibernateSessionFactory", direction=Direction.OUT)
+	public Iterable<HibernateSessionFactory> getHibernateSessionFactories();
 
-	@Adjacency(label="hibernateEntity", direction=Direction.OUT)
-	public void addHibernateEntityReference(HibernateEntityFacet hibernateEntity);
+	@Adjacency(label="hibernateSessionFactory", direction=Direction.OUT)
+	public void addHibernateSessionFactory(HibernateSessionFactory hibernateSessionFactor);
 
 }
