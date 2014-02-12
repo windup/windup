@@ -42,6 +42,7 @@ public class XmlResourceDaoBean extends BaseDaoBean<XmlResource> {
 		return Iterables.concat(result);
 	}
 	
+	
 	public Document asDocument(XmlResource resource) throws RuntimeException {
 		Resource underlyingResource = resource.getResource();
 		if(underlyingResource instanceof ArchiveEntryResource) {

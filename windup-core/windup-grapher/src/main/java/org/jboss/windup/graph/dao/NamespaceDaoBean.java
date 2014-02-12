@@ -6,8 +6,6 @@ import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-
 @Singleton
 public class NamespaceDaoBean extends BaseDaoBean<NamespaceMeta> {
 	private static final Logger LOG = LoggerFactory.getLogger(NamespaceDaoBean.class);
@@ -17,6 +15,14 @@ public class NamespaceDaoBean extends BaseDaoBean<NamespaceMeta> {
 
 	public Iterable<NamespaceMeta> findByURI(String namespaceURI) {
 		return getByProperty("namespaceURI", namespaceURI);
+	}
+	
+	public Iterable<NamespaceMeta> findByURIs(String ... uriRegex) {
+		return super.findValueMatchingRegex("namespaceURI", uriRegex);
+	}
+	
+	public Iterable<NamespaceMeta> findSchemaLocationRegexMatch(String schemaLocationRegex) {
+		return super.findValueMatchingRegex("schemaLocation", schemaLocationRegex);
 	}
 	
 	public NamespaceMeta createNamespaceSchemaLocation(String namespaceURI, String schemaLocation) {

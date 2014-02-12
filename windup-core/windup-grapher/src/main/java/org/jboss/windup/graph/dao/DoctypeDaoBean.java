@@ -32,21 +32,14 @@ public class DoctypeDaoBean extends BaseDaoBean<DoctypeMeta> {
 	}
 	
 
-	public Iterator<DoctypeMeta> findByProperties(String name, String publicId, String systemId, String baseURI) {
+	public Iterator<DoctypeMeta> findByProperties(String publicId, String systemId) {
 		FramedGraphQuery query = context.getFramed().query();
-		if(StringUtils.isNotBlank(name)) {
-			query.has("name", name);
-		}
 		if(StringUtils.isNotBlank(publicId)) {
 			query.has("publicId", publicId);
 		}
 		if(StringUtils.isNotBlank(systemId)) {
 			query.has("systemId", systemId);
 		}
-		if(StringUtils.isNotBlank(baseURI)) {
-			query.has("baseURI", baseURI);
-		}
-		
 		return query.vertices(DoctypeMeta.class).iterator();
 	}
 

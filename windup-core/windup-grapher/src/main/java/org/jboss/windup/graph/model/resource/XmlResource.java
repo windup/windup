@@ -1,7 +1,5 @@
 package org.jboss.windup.graph.model.resource;
 
-import java.util.Iterator;
-
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 
@@ -28,6 +26,6 @@ public interface XmlResource extends Resource {
 	public void addNamespace(NamespaceMeta namespace);
 	
 	@Adjacency(label="namespace", direction=Direction.OUT)
-	public Iterator<NamespaceMeta> getNamespaces();
+	public Iterable<NamespaceMeta> getNamespaces();
 	
 }

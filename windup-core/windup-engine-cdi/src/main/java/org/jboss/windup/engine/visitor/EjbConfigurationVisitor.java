@@ -1,9 +1,14 @@
 package org.jboss.windup.engine.visitor;
 
+import static org.joox.JOOX.$;
+
+import java.util.regex.Pattern;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.xml.DoctypeUtils;
+import org.jboss.windup.engine.util.xml.NamespaceUtils;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
 import org.jboss.windup.graph.dao.DoctypeDaoBean;
 import org.jboss.windup.graph.dao.EJBConfigurationDaoBean;
@@ -11,20 +16,20 @@ import org.jboss.windup.graph.dao.EJBEntityDaoBean;
 import org.jboss.windup.graph.dao.EJBSessionBeanDaoBean;
 import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.jboss.windup.graph.dao.MessageDrivenDaoBean;
+import org.jboss.windup.graph.dao.NamespaceDaoBean;
 import org.jboss.windup.graph.dao.XmlResourceDaoBean;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.model.resource.XmlResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import static org.joox.JOOX.$;
 
 /**
  * Goes over all XML files that contain Enterprise JavaBean doctype and checks root tag, then adds EJB facet. 
@@ -36,6 +41,9 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(EjbConfigurationVisitor.class);
 
 	private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
+	
+	@Inject
+	private NamespaceDaoBean namespaceDao;
 	
 	@Inject
 	private DoctypeDaoBean doctypeDao;
@@ -60,54 +68,100 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 	
 	@Override
 	public void run() {
-		//visit all Doctypes matching Hibernate in system or public ids.
-		long total = doctypeDao.count(doctypeDao.findSystemIdOrPublicIdMatchingRegex(dtdRegex));
-		
-		int i=1;
-		for(DoctypeMeta doctype : doctypeDao.findSystemIdOrPublicIdMatchingRegex(dtdRegex)) {
-			i++;
-			LOG.info("Processed "+i+" of "+" Doctypes.");
-			visitDoctype(doctype);
+		for(XmlResource xml : xmlDao.getAll()) {
+			Document doc = xmlDao.asDocument(xml);
+			
+			if(!$(doc).tag().equalsIgnoreCase("ejb-jar")) {
+				continue;
+			}
+			String documentTag = $(doc).tag();
+			LOG.info("Document tag: "+documentTag);
+			
+			
+			//otherwise, it is a EJB-JAR XML.
+			if(xml.getDoctype() != null) {
+				//check doctype.
+				if(!processDoctypeMatches(xml.getDoctype())) {
+					//move to next document.
+					continue;
+				}
+				String version = processDoctypeVersion(xml.getDoctype());
+				visitXmlResource(xml, doc, version);
+			}
+			else {
+				String namespace = $(doc).find("ejb-jar").namespaceURI();
+				if(StringUtils.isBlank(namespace)) {
+					namespace = doc.getFirstChild().getNamespaceURI();
+				}
+				
+				String version = $(doc).find("ejb-jar").first().attr("version");
+
+				//if the version attribute isn't found, then grab it from the XSD name if we can.
+				if(StringUtils.isBlank(version)) {
+					for(NamespaceMeta ns: xml.getNamespaces()) {
+						LOG.info("Namespace URI: "+ns.getURI());
+						if(StringUtils.equals(ns.getURI(), namespace)) {
+							LOG.info("Schema Location: "+ns.getSchemaLocation());
+							version = NamespaceUtils.extractVersion(ns.getSchemaLocation());
+							LOG.info("Version: "+version);
+						}
+					}
+				}
+				
+				visitXmlResource(xml, doc, version);
+			}
 		}
 	}
 	
-	@Override
-	public void visitDoctype(DoctypeMeta entry) {
-		LOG.info("Doctype: ");
-		LOG.info("  - publicId ["+ entry.getPublicId() + "]");
-		LOG.info("  - systemId ["+ entry.getSystemId() + "]");
+	public void visitXmlResource(XmlResource xml, Document doc, String versionInformation) {
+		//check the root XML node.
+		EjbConfigurationFacet facet = ejbConfigurationDao.create();
+		facet.setXmlFacet(xml);
 		
+		if(StringUtils.isNotBlank(versionInformation)) {
+			facet.setSpecificationVersion(versionInformation);
+		}
+		
+		//process all session beans...
+		//
+		for(Element element : $(doc).find("session").get()) {
+			processSessionBeanElement(facet, element);
+		}
+		
+		//process all message driven beans...
+		for(Element element : $(doc).find("message-driven").get()) {
+			processMessageDrivenElement(facet, element);
+		}
+		
+		//process all entity beans...
+		for(Element element : $(doc).find("entity").get()) {
+			processMessageDrivenElement(facet, element);
+		}
+	}
+	
+	public boolean processDoctypeMatches(DoctypeMeta entry) {
+		if(StringUtils.isNotBlank(entry.getPublicId())) {
+			if(Pattern.matches(dtdRegex, entry.getPublicId())) {
+				return true;
+			}
+		}
+
+		if(StringUtils.isNotBlank(entry.getSystemId())) {
+			if(Pattern.matches(dtdRegex, entry.getSystemId())) {
+				return true;
+			}
+			
+		}
+		return false;
+	}
+	
+	public String processDoctypeVersion(DoctypeMeta entry) {
 		String publicId = entry.getPublicId();
 		String systemId = entry.getSystemId();
 		
 		//extract the version information from the public / system ID.
 		String versionInformation = DoctypeUtils.extractVersion(publicId, systemId);
-		
-		for(XmlResource xml : entry.getXmlResources()) {
-			Document doc = xmlDao.asDocument(xml);
-			//check the root XML node.
-			EjbConfigurationFacet facet = ejbConfigurationDao.create();
-			facet.setXmlFacet(xml);
-			
-			if(StringUtils.isNotBlank(versionInformation)) {
-				facet.setSpecificationVersion(versionInformation);
-			}
-			
-			//process all session beans...
-			for(Element element : $(doc).xpath("//session").get()) {
-				processSessionBeanElement(facet, element);
-			}
-			
-			//process all message driven beans...
-			for(Element element : $(doc).xpath("//message-driven").get()) {
-				processMessageDrivenElement(facet, element);
-			}
-			
-			//process all entity beans...
-			for(Element element : $(doc).xpath("//entity").get()) {
-				processMessageDrivenElement(facet, element);
-			}
-		}
+		return versionInformation;
 	}
 	
 	protected void processSessionBeanElement(EjbConfigurationFacet ejbConfig, Element element) {
@@ -151,6 +205,7 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 			ejb = javaClassDao.getJavaClass(ejbClz);
 		}
 		
+		
 		String sessionType = extractChildTagAndTrim(element, "session-type"); 
 		String transactionType = extractChildTagAndTrim(element, "transaction-type");
 		
@@ -186,10 +241,6 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 		String sessionType = extractChildTagAndTrim(element, "session-type");
 		String transactionType = extractChildTagAndTrim(element, "transaction-type");		
 		
-		if(ejb == null) {
-			LOG.warn("Message driven is null.");
-			return;
-		}
 		
 		MessageDrivenBeanFacet mdb = mdbDao.create();
 		mdb.setJavaClassFacet(ejb);
@@ -231,12 +282,6 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 		} 
 		
 		String persistenceType = extractChildTagAndTrim(element, "persistence-type");		
-
-		if(ejb == null) {
-			//do nothing.
-			LOG.warn("EJB Entity is null.");
-			return;
-		}
 		
 		//create new entity facet.
 		EjbEntityFacet entity = ejbEntityDao.create();
@@ -260,7 +305,7 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 	}
 	
 	protected String extractChildTagAndTrim(Element element, String property) {
-		String result = $(element).child(property).first().text();
+		String result = $(element).find(property).first().text();
 		return StringUtils.trimToNull(result);
 	}
 }

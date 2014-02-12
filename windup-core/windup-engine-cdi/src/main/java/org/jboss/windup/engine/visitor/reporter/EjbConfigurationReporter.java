@@ -27,22 +27,36 @@ public class EjbConfigurationReporter extends EmptyGraphVisitor {
 	@Override
 	public void run() {
 		for(EjbConfigurationFacet ejb : ejbConfigurationDao.getAll()) {
-			LOG.info("Ejb Configuration: ");
+			LOG.info("Ejb Configuration: "+ejb.getXmlFacet());
 			LOG.info("  - EJB Specification: "+ejb.getSpecificationVersion());
 			
 			
 			LOG.info("  - Ejb Entities: ");
 			for(EjbEntityFacet entity : ejb.getEjbEntity()) {
-				LOG.info("    - ["+entity.getEjbEntityName()+"] - "+entity.getJavaClassFacet().getQualifiedName());
-				
+				String name = "    - " + entity.getEjbEntityName();
+				String clz = "";
+				if(entity.getJavaClassFacet()!=null) {
+					clz = entity.getJavaClassFacet().getQualifiedName();
+				}
+				LOG.info(name + " - "+clz);
 			}
 			LOG.info("  - Ejb Session: ");
 			for(EjbSessionBeanFacet session : ejb.getEjbSessionBeans()) {
-				LOG.info("    - ["+session.getSessionBeanName()+"] - "+session.getJavaClassFacet().getQualifiedName());
+				String name = "    - " + session.getSessionBeanName();
+				String clz = "";
+				if(session.getJavaClassFacet()!=null) {
+					clz = session.getJavaClassFacet().getQualifiedName();
+				}
+				LOG.info(name + " - "+clz);
 			}
 			LOG.info("  - MDBs: ");
 			for(MessageDrivenBeanFacet mdb : ejb.getMessageDriven()) {
-				LOG.info("    - ["+mdb.getMessageDrivenBeanName()+"] - "+mdb.getJavaClassFacet().getQualifiedName());
+				String name = "    - " + mdb.getMessageDrivenBeanName();
+				String clz = "";
+				if(mdb.getJavaClassFacet()!=null) {
+					clz = mdb.getJavaClassFacet().getQualifiedName();
+				}
+				LOG.info(name + " - "+clz);
 			}
 		}
 	}

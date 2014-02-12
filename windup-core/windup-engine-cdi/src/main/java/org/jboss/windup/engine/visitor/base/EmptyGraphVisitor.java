@@ -6,6 +6,7 @@ import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.ArchiveResource;
@@ -102,4 +103,8 @@ public abstract class EmptyGraphVisitor implements GraphVisitor {
 		//nothing.
 	}
 
+	@Override
+	public void visitNamespace(NamespaceMeta entry) {
+		//nothing.
+	}
 }

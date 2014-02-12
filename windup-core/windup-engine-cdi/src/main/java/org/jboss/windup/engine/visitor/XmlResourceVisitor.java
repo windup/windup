@@ -77,7 +77,7 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 			
 			if(docType != null) {
 				//create the doctype from
-				Iterator<DoctypeMeta> metas = doctypeDao.findByProperties(docType.getName(), docType.getPublicId(), docType.getSystemId(), docType.getBaseURI());
+				Iterator<DoctypeMeta> metas = doctypeDao.findByProperties(docType.getPublicId(), docType.getSystemId());
 				if(metas.hasNext()) {
 					DoctypeMeta meta = metas.next();
 					meta.addXmlResource(resource);
