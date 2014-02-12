@@ -61,7 +61,8 @@ public class JavaASTDecorator extends ChainingDecorator<JavaMetadata> {
 		
 		for (Object o : cu.types()) {
 			TypeDeclaration td = (TypeDeclaration) o;
-			String qualifiedTemp = cu.getPackage().getName() + "." + td.getName().toString();
+			String pkg = cu.getPackage() != null ? cu.getPackage().getName() + "." : "";
+			String qualifiedTemp = pkg + td.getName().toString();
 
 			if (StringUtils.equals(qualifiedTemp, meta.getQualifiedClassName())) {
 				LOG.debug("Matched: " + qualifiedTemp);
