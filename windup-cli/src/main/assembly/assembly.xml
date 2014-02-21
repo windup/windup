@@ -20,7 +20,9 @@
             <outputDirectory></outputDirectory>
             <includes>
                 <include>jboss-windup.sh</include>
+                <include>jboss-windup.bat</include>
             </includes>
+            <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>src/main/assembly/extensions</directory>
