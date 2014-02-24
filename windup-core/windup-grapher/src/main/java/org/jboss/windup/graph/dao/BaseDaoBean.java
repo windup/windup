@@ -1,5 +1,6 @@
 package org.jboss.windup.graph.dao;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.inject.Inject;
@@ -11,6 +12,7 @@ import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -74,6 +76,19 @@ public class BaseDaoBean<T extends VertexFrame> {
 		
 		
 		return context.getFramed().query().has("type", typeValue).has(key, Text.REGEX, regexFinal).vertices(type);
+	}
+	
+	public Iterable<T> hasAllProperties(String[] keys, String[] vals) {
+		FramedGraphQuery fgq = context.getFramed().query().has("type", this.typeValue);
+		
+		for(int i = 0, j=keys.length; i<j; i++) {
+			String key = keys[i];
+			String val = vals[i];
+			
+			fgq = fgq.has(key, val);
+		}
+		
+		return fgq.vertices(type);
 	}
 	
 	public T create(Object id) {

@@ -18,16 +18,18 @@ public class GexfWriter implements GraphWriter {
 	protected String defaultEdgeType = "directed";
 	protected String mode = "static";
 	protected String vertexLabelProperty = "label";
+	protected String edgeLabel = null;
 	
 	public GexfWriter(Graph graph) {
 		this.graph = graph;
 	}
 	
-	public GexfWriter(Graph graph, String mode, String defaultEdgeType, String vertexLabelProperty) {
+	public GexfWriter(Graph graph, String mode, String defaultEdgeType, String vertexLabelProperty, String edgeLabel) {
 		this.graph = graph;
 		this.mode = mode;
 		this.defaultEdgeType = defaultEdgeType;
 		this.vertexLabelProperty = vertexLabelProperty;
+		this.edgeLabel = edgeLabel;
 	}
 	
 	public void writeGraph(OutputStream os) throws IOException {
@@ -53,12 +55,10 @@ public class GexfWriter implements GraphWriter {
 	private void writeGraphEdges(OutputStream os) throws IOException {
 		IOUtils.write(GexfConstants.EDGES_OPEN, os);
 		
-		
-		
 		for(Edge edge : graph.getEdges()) {
 			String id = ""+edge.getId().hashCode();
-			String source = ""+edge.getVertex(Direction.IN).getId().hashCode();
-			String target = ""+edge.getVertex(Direction.OUT).getId().hashCode();
+			String source = ""+edge.getVertex(Direction.OUT).getId().toString();
+			String target = ""+edge.getVertex(Direction.IN).getId().toString();
 			writeGraphEdge(id, source, target, os);
 		}
 		
@@ -82,7 +82,7 @@ public class GexfWriter implements GraphWriter {
 		IOUtils.write(GexfConstants.NODES_OPEN, os);
 		//iterate the nodes.
 		for(Vertex vertex : graph.getVertices()) {
-			String id = ""+vertex.getId().hashCode();
+			String id = ""+vertex.getId().toString();
 			String label = vertex.getProperty(vertexLabelProperty);
 			
 			if(StringUtils.isBlank(label)) {

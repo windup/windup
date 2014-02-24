@@ -7,13 +7,11 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.jboss.windup.graph.renderer.GraphWriter;
 import org.jboss.windup.graph.renderer.graphlib.GraphvizConstants.GraphvizDirection;
 import org.jboss.windup.graph.renderer.graphlib.GraphvizConstants.GraphvizType;
 import org.slf4j.LoggerFactory;
 
-import com.esotericsoftware.minlog.Log;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
@@ -26,16 +24,18 @@ public class GraphlibWriter implements GraphWriter{
 	protected final GraphvizDirection direction;
 	protected final String graphVariableName;
 	protected final String vertexLabelProperty;
+	protected final String edgeLabel;
 	
 	public GraphlibWriter(Graph graph) {
 		//default config
-		this(graph, GraphvizType.DIGRAPH, GraphvizDirection.TOP_TO_BOTTOM, "g", "label");
+		this(graph, GraphvizType.DIGRAPH, GraphvizDirection.TOP_TO_BOTTOM, "g", "label", "label");
 	}
 	
-	public GraphlibWriter(Graph graph, GraphvizType type, GraphvizDirection direction, String graphVariableName, String vertexLabelProperty) {
+	public GraphlibWriter(Graph graph, GraphvizType type, GraphvizDirection direction, String graphVariableName, String vertexLabelProperty, String edgeLabelProperty) {
 		this.graph = graph;
 		this.graphVariableName = graphVariableName;
 		this.vertexLabelProperty = vertexLabelProperty;
+		this.edgeLabel = edgeLabelProperty;
 		this.type = type;
 		this.direction = direction;
 	}
@@ -62,9 +62,14 @@ public class GraphlibWriter implements GraphWriter{
 		int i=0;
 		for(Edge edge : graph.getEdges()) {
 			String id = ""+i;
-			String source = ""+edge.getVertex(Direction.IN).getId().hashCode();
-			String target = ""+edge.getVertex(Direction.OUT).getId().hashCode();
-			String label = ""+edge.getLabel();
+			String source = ""+edge.getVertex(Direction.OUT).getId().toString();
+			String target = ""+edge.getVertex(Direction.IN).getId().toString();
+			
+			String label = ""+edge.getProperty(edgeLabel);
+			if(edgeLabel != null) {
+				label = edgeLabel;
+			}
+
 			writeGraphEdge(id, source, target, label, os);
 			
 			i++;
@@ -80,18 +85,10 @@ public class GraphlibWriter implements GraphWriter{
 		IOUtils.write(tag, os);
 	}
 	
-	private void writeGraphNode(String id, String label, Set<String> classes, OutputStream os) throws IOException {
-		StringBuilder clzBuilder = new StringBuilder();
-		for(String clz : classes) {
-			clzBuilder.append(clz+", ");
-		}
-		String clzList = StringUtils.removeEnd(clzBuilder.toString(), ", ");
-		LOG.debug("Classlist: "+clzList);
-		
-		
+	private void writeGraphNode(String id, String label, OutputStream os) throws IOException {
 		final String tag = StringUtils.replaceEach(GraphvizConstants.NODE_STATEMENT, 
 				new String[] {"%NAME", "%ID", "%LABEL", "%CLZLIST"}, 
-				new String[] {graphVariableName, id, label, clzList});
+				new String[] {graphVariableName, id, label, ""});
 		
 		IOUtils.write(tag, os);
 	}
@@ -100,19 +97,9 @@ public class GraphlibWriter implements GraphWriter{
 
 		//iterate the nodes.
 		for(Vertex vertex : graph.getVertices()) {
-			String id = ""+vertex.getId().hashCode();
+			String id = vertex.getId().toString();
 			String label = vertex.getProperty(vertexLabelProperty);
-			
-			Set<String> clzSet = new HashSet<String>();
-			Boolean blacklist = (Boolean)vertex.getProperty("blacklist");
-			if(blacklist != null && blacklist) {
-				clzSet.add("blacklisted");
-			}
-			
-			if(StringUtils.isBlank(label)) {
-				label = vertex.toString();
-			}
-			writeGraphNode(id, label, clzSet, os);
+			writeGraphNode(id, label, os);
 		}
 		
 	}

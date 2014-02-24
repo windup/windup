@@ -28,7 +28,11 @@ public class SigmaJSHtmlWriter implements GraphWriter {
 	private final GexfWriter gexfWriter;
 
 	public SigmaJSHtmlWriter(Graph graph) {
-		this.gexfWriter = new GexfWriter(graph, "static", "directed", "qualifiedName");
+		this.gexfWriter = new GexfWriter(graph, "static", "directed", "qualifiedName", "");
+	}
+	
+	public SigmaJSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabel) {
+		this.gexfWriter = new GexfWriter(graph, "static", "directed", vertexLabelProperty, edgeLabel);
 	}
 
 	public void writeGraph(final OutputStream os) throws IOException {

@@ -1,5 +1,8 @@
 package org.jboss.windup.graph.model.meta.javaclass;
 
+import java.util.Iterator;
+
+import org.jboss.windup.graph.model.meta.Meta;
 import org.jboss.windup.graph.model.resource.JavaClass;
 import org.jboss.windup.graph.renderer.Label;
 
@@ -65,4 +68,11 @@ public interface EjbSessionBeanFacet extends JavaClassMetaFacet {
 
 	@Adjacency(label = "ejbHome", direction = Direction.OUT)
 	public JavaClass getEjbHome();
+	
+
+	@Adjacency(label="meta", direction=Direction.OUT)
+	public Iterator<Meta> getMeta();
+	
+	@Adjacency(label="meta", direction=Direction.OUT)
+	public void addMeta(final Meta resource);
 }

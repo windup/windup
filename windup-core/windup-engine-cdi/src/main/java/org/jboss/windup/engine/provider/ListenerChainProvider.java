@@ -20,11 +20,13 @@ import org.jboss.windup.engine.visitor.JavaClassVisitor;
 import org.jboss.windup.engine.visitor.ManifestVisitor;
 import org.jboss.windup.engine.visitor.MavenFacetVisitor;
 import org.jboss.windup.engine.visitor.SpringConfigurationVisitor;
+import org.jboss.windup.engine.visitor.WebConfigurationVisitor;
 import org.jboss.windup.engine.visitor.XmlResourceVisitor;
 import org.jboss.windup.engine.visitor.ZipArchiveGraphVisitor;
 import org.jboss.windup.engine.visitor.base.GraphVisitor;
 import org.jboss.windup.engine.visitor.reporter.ArchiveDependsOnReporter;
 import org.jboss.windup.engine.visitor.reporter.ArchiveProvidesReporter;
+import org.jboss.windup.engine.visitor.reporter.ArchiveTransitiveDependsOnReporter;
 import org.jboss.windup.engine.visitor.reporter.ClassNotFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.DuplicateClassReporter;
 import org.jboss.windup.engine.visitor.reporter.EjbConfigurationReporter;
@@ -35,9 +37,7 @@ import org.jboss.windup.engine.visitor.reporter.JarManifestReporter;
 import org.jboss.windup.engine.visitor.reporter.MavenPomReporter;
 import org.jboss.windup.engine.visitor.reporter.NamespacesFoundReporter;
 import org.jboss.windup.engine.visitor.reporter.WriteGraphToGraphMLReporter;
-import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
-import org.jboss.windup.graph.model.meta.xml.HibernateConfigurationFacet;
+import org.jboss.windup.graph.model.meta.EnvironmentReference;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 
 public class ListenerChainProvider {
@@ -59,6 +59,9 @@ public class ListenerChainProvider {
 	
 	@Inject
 	private JavaClassVisitor javaClassVisitor;
+	
+	@Inject
+	private WebConfigurationVisitor webConfigurationVisitor;
 	
 	@Inject
 	private XmlResourceVisitor xmlResourceVisitor;
@@ -121,6 +124,9 @@ public class ListenerChainProvider {
 	@Inject
 	private EjbConfigurationReporter ejbConfigurationReporter;
 	
+	@Inject
+	private ArchiveTransitiveDependsOnReporter archiveTransitiveReporter;
+	
 	@ListenerChainQualifier
 	@Produces
 	public List<GraphVisitor> produceListenerChain() {
@@ -135,9 +141,10 @@ public class ListenerChainProvider {
 		//listenerChain.add(javaClassVisitor); //loads java class information (imports / extends) to the graph
 		listenerChain.add(xmlResourceVisitor); //loads xml resource information to the graph
 		
-		
-		listenerChain.add(ejbConfigurationVisitor);
-		listenerChain.add(ejbConfigurationReporter);
+		listenerChain.add(webConfigurationVisitor);
+		//listenerChain.add(archiveTransitiveReporter);
+		//listenerChain.add(ejbConfigurationVisitor);
+		//listenerChain.add(ejbConfigurationReporter);
 		
 		//listenerChain.add(hibernateConfigurationVisitor); //loads hibernate configurations and processes
 		//listenerChain.add(hibernateConfigurationReporter); //reports on hibernate configurations found
@@ -151,6 +158,9 @@ public class ListenerChainProvider {
 		
 	//	listenerChain.add(new DebugVisitor(context, NamespaceMeta.class)); //extract Maven information to facet.
 	//	listenerChain.add(new DebugVisitor(context, DoctypeMeta.class)); //extract Maven information to facet.
+		
+		listenerChain.add(new DebugVisitor(context, EnvironmentReference.class)); //extract Maven information to facet.
+		
 		
 		
 		//listenerChain.add(mavenFacetVisitor); //extract Maven information to facet.

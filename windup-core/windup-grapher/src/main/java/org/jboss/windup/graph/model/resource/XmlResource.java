@@ -5,6 +5,7 @@ import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("XmlResource")
@@ -28,4 +29,9 @@ public interface XmlResource extends Resource {
 	@Adjacency(label="namespace", direction=Direction.OUT)
 	public Iterable<NamespaceMeta> getNamespaces();
 	
+	@Property("rootTagName")
+	public String getRootTagName();
+
+	@Property("rootTagName")
+	public void setRootTagName(String rootTagName);
 }

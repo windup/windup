@@ -1,7 +1,13 @@
 package org.jboss.windup.graph.model.meta.javaclass;
 
+import java.util.Iterator;
+
+import org.jboss.windup.graph.model.meta.Meta;
+import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.jboss.windup.graph.renderer.Label;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
@@ -38,4 +44,12 @@ public interface MessageDrivenBeanFacet extends JavaClassMetaFacet {
 
 	@Property("sessionType")
 	public void setSessionType(String sessionType);
+	
+	@Adjacency(label="meta", direction=Direction.OUT)
+	public Iterator<Meta> getMeta();
+	
+	@Adjacency(label="meta", direction=Direction.OUT)
+	public void addMeta(final Meta resource);
+	
+	
 }

@@ -29,8 +29,13 @@ public class VizJSHtmlWriter implements GraphWriter {
 	private final GraphWriter writer;
 
 	public VizJSHtmlWriter(Graph graph) {
-		this.writer = new DotWriter(graph, "G", "qualifiedName", DotGraphType.DIGRAPH, "8pt");
+		this.writer = new DotWriter(graph, "G", "qualifiedName", "", DotGraphType.DIGRAPH, "8pt");
 	}
+	
+	public VizJSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabel) {
+		this.writer = new DotWriter(graph, "G", vertexLabelProperty, edgeLabel, DotGraphType.DIGRAPH, "8pt");
+	}
+	
 
 	public void writeGraph(final OutputStream os) throws IOException {
 		// read in the html template resource.

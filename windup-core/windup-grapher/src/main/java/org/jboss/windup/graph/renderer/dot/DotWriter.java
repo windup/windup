@@ -22,17 +22,19 @@ public class DotWriter implements GraphWriter {
 	private String vertexLabelProperty = "label";
 	private DotGraphType graphType = DotGraphType.DIGRAPH;
 	private String fontSize = "12pt";
+	private String edgeLabel = "";
 	
 	public DotWriter(Graph graph) {
 		this.graph = graph;
 	}
 
-	public DotWriter(Graph graph, String graphName, String vertexLabelProperty, DotGraphType graphType, String fontSize) {
+	public DotWriter(Graph graph, String graphName, String vertexLabelProperty, String edgeLabel, DotGraphType graphType, String fontSize) {
 		this.graph = graph;
 		this.graphName = graphName;
 		this.fontSize = fontSize;
 		this.vertexLabelProperty = vertexLabelProperty;
 		this.graphType = graphType;
+		this.edgeLabel = edgeLabel;
 	}
 
 	
@@ -57,9 +59,9 @@ public class DotWriter implements GraphWriter {
 
 	private void writeGraphEdges(OutputStream os) throws IOException {
 		for(Edge edge : graph.getEdges()) {
-			String label = edge.getLabel();
-			String source = ""+edge.getVertex(Direction.IN).getId().hashCode();
-			String target = ""+edge.getVertex(Direction.OUT).getId().hashCode();
+			String label = edgeLabel;
+			String source = ""+edge.getVertex(Direction.OUT).getId().toString();
+			String target = ""+edge.getVertex(Direction.IN).getId().toString();
 			writeGraphEdge(label, source, target, os);
 		}
 	}
@@ -87,7 +89,7 @@ public class DotWriter implements GraphWriter {
 
 		//iterate the nodes.
 		for(Vertex vertex : graph.getVertices()) {
-			String id = ""+vertex.getId().hashCode();
+			String id = ""+vertex.getId().toString();
 			String label = vertex.getProperty(vertexLabelProperty);
 			
 			if(StringUtils.isBlank(label)) {

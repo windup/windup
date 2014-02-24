@@ -1,6 +1,7 @@
 package org.jboss.windup.engine.visitor;
 
 import java.io.InputStream;
+import static org.joox.JOOX.$;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -25,7 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 /**
  * Adds the XMLResource Facet to the resource.
- * Extracts Doctype and Namespace information in the XML files.
+ *  Extracts Doctype and Namespace information in the XML files.
+ *  Extracts Root Element Tag name.
  * 
  * @author bradsdavis@gmail.com
  *
@@ -60,20 +62,26 @@ public class XmlResourceVisitor extends EmptyGraphVisitor {
 	
 	@Override
 	public void visitArchiveEntry(ArchiveEntryResource entry) {
-		//rehydrate to new thread...
-		LOG.debug("Processing: "+entry.getArchiveEntry());
-		
+
 		//try and read the XML...
 		InputStream is = null;
 		try {
 			is = archiveEntryDao.asInputStream(entry);
 			
+			//read it to a Document object.
 			Document parsedDocument = LocationAwareXmlReader.readXML(is);
+			
+			//pull out doctype data.
 			Doctype docType = (Doctype) parsedDocument.getUserData(LocationAwareContentHandler.DOCTYPE_KEY_NAME);
+			
 			//if this is successful, then we know it is a proper XML file.
 			//set it to the graph as an XML file.
 			XmlResource resource = xmlResourceDao.create(null);
 			resource.setResource(entry);
+
+			//get and index by the root tag.
+			String tagName = $(parsedDocument).tag();
+			resource.setRootTagName(tagName);
 			
 			if(docType != null) {
 				//create the doctype from

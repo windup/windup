@@ -42,6 +42,10 @@ public class XmlResourceDaoBean extends BaseDaoBean<XmlResource> {
 		return Iterables.concat(result);
 	}
 	
+	public Iterable<XmlResource> findByRootTag(String rootTagName) {
+		return getByProperty("rootTagName", rootTagName);
+	}
+	
 	
 	public Document asDocument(XmlResource resource) throws RuntimeException {
 		Resource underlyingResource = resource.getResource();

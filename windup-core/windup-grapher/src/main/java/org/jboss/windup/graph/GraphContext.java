@@ -91,6 +91,9 @@ public class GraphContext {
 		TitanKey publicIdKey = graph.makeKey("publicId").dataType(String.class).
 				indexed(Vertex.class).make();
 		
+		TitanKey rootTagKey = graph.makeKey("rootTagName").dataType(String.class).
+				indexed(Vertex.class).make();
+		
 		TitanKey systemIdKey = graph.makeKey("systemId").dataType(String.class).
 				indexed(Vertex.class).make();
 		

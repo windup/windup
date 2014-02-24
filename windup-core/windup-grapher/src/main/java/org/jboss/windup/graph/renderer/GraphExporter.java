@@ -22,19 +22,19 @@ public class GraphExporter {
 		this.graph = graph;
 	}
 	
-	public void renderVizjs(File output) throws FileNotFoundException, IOException {
+	public void renderVizjs(File output, String vertexLabelProperty, String edgeLabel) throws FileNotFoundException, IOException {
 		LOG.debug("Writing Vizjs graph to: "+output.getAbsolutePath());
-		render(new VizJSHtmlWriter(graph), output);
+		render(new VizJSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
 	}
 	
-	public void renderSigma(File output) throws FileNotFoundException, IOException {
+	public void renderSigma(File output, String vertexLabelProperty, String edgeLabel) throws FileNotFoundException, IOException {
 		LOG.debug("Writing Sigmajs graph to: "+output.getAbsolutePath());
-		render(new SigmaJSHtmlWriter(graph), output);
+		render(new SigmaJSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
 	}
 	
-	public void renderDagreD3(File output) throws FileNotFoundException, IOException {
+	public void renderDagreD3(File output, String vertexLabelProperty, String edgeLabel) throws FileNotFoundException, IOException {
 		LOG.debug("Writing DagreD3 graph to: "+output.getAbsolutePath());
-		render(new DagreD3JSHtmlWriter(graph), output);
+		render(new DagreD3JSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
 	}
 	
 	public void render(GraphWriter writer, File output) throws FileNotFoundException, IOException {

@@ -29,8 +29,8 @@ public class DagreD3JSHtmlWriter implements GraphWriter {
 	
 	private final GraphWriter writer;
 
-	public DagreD3JSHtmlWriter(Graph graph) {
-		this.writer = new GraphlibWriter(graph, GraphvizType.DIGRAPH, GraphvizDirection.TOP_TO_BOTTOM, "g", "qualifiedName");
+	public DagreD3JSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabelProperty) {
+		this.writer = new GraphlibWriter(graph, GraphvizType.DIGRAPH, GraphvizDirection.TOP_TO_BOTTOM, "g", vertexLabelProperty, edgeLabelProperty);
 	}
 
 	public void writeGraph(final OutputStream os) throws IOException {

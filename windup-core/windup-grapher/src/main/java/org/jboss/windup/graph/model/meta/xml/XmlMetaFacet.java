@@ -4,6 +4,7 @@ import org.jboss.windup.graph.model.resource.XmlResource;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
@@ -15,4 +16,10 @@ public interface XmlMetaFacet extends VertexFrame {
 	
 	@Adjacency(label="xmlFacet", direction=Direction.OUT)
 	public XmlResource getXmlFacet();
+	
+	@Property("rootTagName")
+	public String getRootTagName();
+
+	@Property("rootTagName")
+	public void setRootTagName(String rootTagName);
 }

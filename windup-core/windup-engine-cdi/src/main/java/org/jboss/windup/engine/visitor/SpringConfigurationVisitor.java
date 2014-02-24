@@ -44,14 +44,8 @@ public class SpringConfigurationVisitor extends EmptyGraphVisitor {
 	
 	@Override
 	public void run() {
-		//visit all XML files that have a maven namespace...
-		long total = xmlResourceDao.count(xmlResourceDao.containsNamespaceURI("http://www.springframework.org/schema/beans"));
-		
-		int i=1;
-		for(XmlResource entry : xmlResourceDao.containsNamespaceURI("http://www.springframework.org/schema/beans")) {
+		for(XmlResource entry : xmlResourceDao.findByRootTag("beans")) {
 			visitXmlResource(entry);
-			i++;
-			LOG.info("Processed "+i+" of "+total+" Spring Configurations.");
 			xmlResourceDao.commit();
 		}
 	}
@@ -91,6 +85,9 @@ public class SpringConfigurationVisitor extends EmptyGraphVisitor {
 					springBeanRef.setJavaClassFacet(classReference);
 					facet.addSpringBeanReference(springBeanRef);
 				}
+			}
+			else {
+				LOG.warn("Found [beans] XML without namespace.");
 			}
 		}
 		catch(Exception e) {

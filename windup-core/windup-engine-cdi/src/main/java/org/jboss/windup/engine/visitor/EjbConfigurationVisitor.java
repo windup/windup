@@ -2,6 +2,8 @@ package org.jboss.windup.engine.visitor;
 
 import static org.joox.JOOX.$;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
@@ -10,14 +12,14 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.xml.DoctypeUtils;
 import org.jboss.windup.engine.util.xml.NamespaceUtils;
 import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
-import org.jboss.windup.graph.dao.DoctypeDaoBean;
 import org.jboss.windup.graph.dao.EJBConfigurationDaoBean;
 import org.jboss.windup.graph.dao.EJBEntityDaoBean;
 import org.jboss.windup.graph.dao.EJBSessionBeanDaoBean;
+import org.jboss.windup.graph.dao.EnvironmentReferenceDaoBean;
 import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.jboss.windup.graph.dao.MessageDrivenDaoBean;
-import org.jboss.windup.graph.dao.NamespaceDaoBean;
 import org.jboss.windup.graph.dao.XmlResourceDaoBean;
+import org.jboss.windup.graph.model.meta.EnvironmentReference;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
@@ -43,10 +45,7 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 	private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
 	
 	@Inject
-	private NamespaceDaoBean namespaceDao;
-	
-	@Inject
-	private DoctypeDaoBean doctypeDao;
+	private EnvironmentReferenceDaoBean envRefDao;
 	
 	@Inject
 	private EJBConfigurationDaoBean ejbConfigurationDao;
@@ -68,15 +67,8 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 	
 	@Override
 	public void run() {
-		for(XmlResource xml : xmlDao.getAll()) {
+		for(XmlResource xml : xmlDao.findByRootTag("ejb-jar")) {
 			Document doc = xmlDao.asDocument(xml);
-			
-			if(!$(doc).tag().equalsIgnoreCase("ejb-jar")) {
-				continue;
-			}
-			String documentTag = $(doc).tag();
-			LOG.info("Document tag: "+documentTag);
-			
 			
 			//otherwise, it is a EJB-JAR XML.
 			if(xml.getDoctype() != null) {
@@ -99,11 +91,11 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 				//if the version attribute isn't found, then grab it from the XSD name if we can.
 				if(StringUtils.isBlank(version)) {
 					for(NamespaceMeta ns: xml.getNamespaces()) {
-						LOG.info("Namespace URI: "+ns.getURI());
+						LOG.debug("Namespace URI: "+ns.getURI());
 						if(StringUtils.equals(ns.getURI(), namespace)) {
-							LOG.info("Schema Location: "+ns.getSchemaLocation());
+							LOG.debug("Schema Location: "+ns.getSchemaLocation());
 							version = NamespaceUtils.extractVersion(ns.getSchemaLocation());
-							LOG.info("Version: "+version);
+							LOG.debug("Version: "+version);
 						}
 					}
 				}
@@ -221,6 +213,11 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 		sessionBean.setSessionType(sessionType);
 		sessionBean.setTransactionType(transactionType);
 
+		List<EnvironmentReference> refs = processEnvironmentReference(element);
+		for(EnvironmentReference ref : refs) {
+			sessionBean.addMeta(ref);
+		}
+		
 		ejbConfig.addEjbSessionBean(sessionBean);
 		mdbDao.commit();
 	}
@@ -241,7 +238,6 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 		String sessionType = extractChildTagAndTrim(element, "session-type");
 		String transactionType = extractChildTagAndTrim(element, "transaction-type");		
 		
-		
 		MessageDrivenBeanFacet mdb = mdbDao.create();
 		mdb.setJavaClassFacet(ejb);
 		mdb.setMessageDrivenBeanName(ejbName);
@@ -249,6 +245,12 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 		mdb.setEjbId(ejbId);
 		mdb.setSessionType(sessionType);
 		mdb.setTransactionType(transactionType);
+		
+
+		List<EnvironmentReference> refs = processEnvironmentReference(element);
+		for(EnvironmentReference ref : refs) {
+			mdb.addMeta(ref);
+		}
 		
 		ejbConfig.addMessageDriven(mdb);
 		mdbDao.commit();
@@ -292,11 +294,40 @@ public class EjbConfigurationVisitor extends EmptyGraphVisitor {
 		entity.setJavaClassFacet(ejb);
 		entity.setEjbLocalHome(localHome);
 		entity.setEjbLocal(local);
+		
+		List<EnvironmentReference> refs = processEnvironmentReference(element);
+		for(EnvironmentReference ref : refs) {
+			entity.addMeta(ref);
+		}
 
 		
 		ejbConfig.addEjbEntity(entity);
 		ejbEntityDao.commit();
 	}
+	
+	
+	
+	
+	protected List<EnvironmentReference> processEnvironmentReference(Element element) {
+		List<EnvironmentReference> resources = new LinkedList<EnvironmentReference>();
+		
+		//find JMS references...
+		List<Element> queueReferences = $(element).find("resource-env-ref").get();
+		for(Element e : queueReferences) {
+			String type = $(e).child("resource-env-ref-type").text();
+			String name = $(e).child("resource-env-ref-name").text();
+			
+			type = StringUtils.trim(type);
+			name = StringUtils.trim(name);
+			
+			EnvironmentReference ref = envRefDao.createEnvironmentReference(name, type);
+			LOG.info("Adding name: "+name+", type: "+type);
+			resources.add(ref);
+		}
+	
+		return resources;
+	}
+	
 	
 
 	protected String extractAttributeAndTrim(Element element, String property) {
