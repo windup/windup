@@ -13,6 +13,14 @@
 
    <dependencies>
       <dependency>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>${furnace.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
          <groupId>org.jboss.windup</groupId>
          <artifactId>windup-utils</artifactId>
          <version>${project.version}</version>
@@ -22,7 +30,7 @@
          <artifactId>windup-grapher</artifactId>
          <version>${project.version}</version>
       </dependency>
-      
+
       <dependency>
          <groupId>org.ocpsoft.rewrite</groupId>
          <artifactId>rewrite-api</artifactId>
