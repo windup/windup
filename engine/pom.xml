@@ -8,7 +8,7 @@
       <relativePath>../</relativePath>
    </parent>
 
-   <artifactId>windup-engine-cdi</artifactId>
+   <artifactId>windup-engine</artifactId>
    <name>Windup CDI Engine</name>
 
    <properties>

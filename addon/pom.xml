@@ -18,6 +18,23 @@
          <version>${furnace.version}</version>
          <scope>provided</scope>
       </dependency>
+
+      <dependency>
+         <groupId>org.jboss.windup</groupId>
+         <artifactId>windup-config</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.windup</groupId>
+         <artifactId>windup-engine</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.windup</groupId>
+         <artifactId>windup-grapher</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.windup</groupId>
+         <artifactId>windup-utils</artifactId>
+      </dependency>
    </dependencies>
 
 </project>
