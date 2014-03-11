@@ -9,7 +9,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupContext;
+import org.jboss.windup.engine.WindupProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,12 +35,14 @@ public class WindupArchitectureTest
    }
 
    @Inject
-   private WindupContext context;
+   private WindupProcessor processor;
 
    @Test
    public void testRunWindup() throws Exception
    {
-      Assert.assertNotNull(context.getGraphContext());
-      Assert.assertNotNull(context.getRunDirectory());
+      Assert.assertNotNull(processor);
+      Assert.assertNotNull(processor.toString());
+
+      processor.execute();
    }
 }

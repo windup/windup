@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import org.jboss.windup.engine.WindupContext;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
  * @author bradsdavis@gmail.com
  *
  */
-public class WriteGraphToGraphMLReporter extends EmptyGraphVisitor {
+public class WriteGraphToGraphMLReporter extends AbstractGraphVisitor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(WriteGraphToGraphMLReporter.class);
 	

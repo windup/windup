@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.JarArchiveDaoBean;
 import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.renderer.SimpleGraphRenderer;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis@gmail.com
  *
  */
-public class ArchiveTransitiveDependsOnReporter extends EmptyGraphVisitor {
+public class ArchiveTransitiveDependsOnReporter extends AbstractGraphVisitor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveTransitiveDependsOnReporter.class);
 	

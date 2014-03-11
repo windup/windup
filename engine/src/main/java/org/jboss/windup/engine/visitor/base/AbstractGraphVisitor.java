@@ -18,7 +18,7 @@ import org.jboss.windup.graph.model.resource.Resource;
 import org.jboss.windup.graph.model.resource.WarArchive;
 import org.jboss.windup.graph.model.resource.XmlResource;
 
-public abstract class EmptyGraphVisitor implements GraphVisitor {
+public abstract class AbstractGraphVisitor implements GraphVisitor {
 
 	@Override
 	public abstract void run();

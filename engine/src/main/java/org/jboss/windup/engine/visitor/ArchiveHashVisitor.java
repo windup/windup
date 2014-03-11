@@ -6,7 +6,7 @@ import java.io.InputStream;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.FileResourceDaoBean;
 import org.jboss.windup.graph.model.resource.ArchiveResource;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis@gmail.com
  *
  */
-public class ArchiveHashVisitor extends EmptyGraphVisitor {
+public class ArchiveHashVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveHashVisitor.class);
 	
 	@Inject

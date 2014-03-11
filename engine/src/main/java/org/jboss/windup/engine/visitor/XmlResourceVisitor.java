@@ -12,7 +12,7 @@ import org.jboss.windup.engine.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.engine.util.xml.LocationAwareContentHandler.Doctype;
 import org.jboss.windup.engine.util.xml.LocationAwareXmlReader;
 import org.jboss.windup.engine.util.xml.XmlUtil;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
 import org.jboss.windup.graph.dao.DoctypeDaoBean;
 import org.jboss.windup.graph.dao.NamespaceDaoBean;
@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
  * @author bradsdavis@gmail.com
  *
  */
-public class XmlResourceVisitor extends EmptyGraphVisitor {
+public class XmlResourceVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(XmlResourceVisitor.class);
 	
 	@Inject

@@ -2,7 +2,7 @@ package org.jboss.windup.engine.visitor.reporter;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.JarArchiveDaoBean;
 import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.model.resource.JavaClass;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis@gmail.com
  *
  */
-public class ArchiveProvidesReporter extends EmptyGraphVisitor {
+public class ArchiveProvidesReporter extends AbstractGraphVisitor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveProvidesReporter.class);
 	

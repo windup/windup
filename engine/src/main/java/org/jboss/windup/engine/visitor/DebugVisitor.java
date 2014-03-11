@@ -2,7 +2,7 @@ package org.jboss.windup.engine.visitor;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.WindupContext;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author bradsdavis@gmail.com
  *
  */
-public class DebugVisitor extends EmptyGraphVisitor {
+public class DebugVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(DebugVisitor.class);
 	
 	private final WindupContext context;

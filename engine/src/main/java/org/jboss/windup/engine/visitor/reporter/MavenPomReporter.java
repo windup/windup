@@ -2,7 +2,7 @@ package org.jboss.windup.engine.visitor.reporter;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.MavenFacetDaoBean;
 import org.jboss.windup.graph.model.meta.xml.MavenFacet;
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis@gmail.com
  *
  */
-public class MavenPomReporter extends EmptyGraphVisitor {
+public class MavenPomReporter extends AbstractGraphVisitor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MavenPomReporter.class);
 	

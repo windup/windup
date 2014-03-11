@@ -4,10 +4,10 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.FileResourceDaoBean;
 
-public class BasicVisitor extends EmptyGraphVisitor {
+public class BasicVisitor extends AbstractGraphVisitor {
 
 	@Inject
 	private FileResourceDaoBean fileDao;

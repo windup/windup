@@ -2,7 +2,7 @@ package org.jboss.windup.engine.visitor.reporter;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.EJBConfigurationDaoBean;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis@gmail.com
  *
  */
-public class EjbConfigurationReporter extends EmptyGraphVisitor {
+public class EjbConfigurationReporter extends AbstractGraphVisitor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EjbConfigurationReporter.class);
 	

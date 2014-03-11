@@ -3,7 +3,7 @@ package org.jboss.windup.engine.visitor;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.EarArchiveDaoBean;
 import org.jboss.windup.graph.dao.JarArchiveDaoBean;
@@ -21,7 +21,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author bradsdavis@gmail.com
  *
  */
-public class ArchiveTypingVisitor extends EmptyGraphVisitor {
+public class ArchiveTypingVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveTypingVisitor.class);
 
 	@Inject

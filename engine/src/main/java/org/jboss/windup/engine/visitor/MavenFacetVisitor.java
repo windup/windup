@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.exception.MarshallingException;
 import org.jboss.windup.engine.util.xml.XmlUtil;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.MavenFacetDaoBean;
 import org.jboss.windup.graph.dao.XmlResourceDaoBean;
 import org.jboss.windup.graph.model.meta.xml.MavenFacet;
@@ -29,7 +29,7 @@ import com.thinkaurelius.titan.core.TitanGraphQuery;
  * @author bradsdavis@gmail.com
  *
  */
-public class MavenFacetVisitor extends EmptyGraphVisitor {
+public class MavenFacetVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(MavenFacetVisitor.class);
 	
 	private final Map<String, String> namespaces;

@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
 import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis@gmail.com
  *
  */
-public class JavaClassVisitor extends EmptyGraphVisitor {
+public class JavaClassVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(JavaClassVisitor.class);
 
 	@Inject

@@ -7,7 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.JavaClassDaoBean;
 import org.jboss.windup.graph.dao.SpringBeanDaoBean;
 import org.jboss.windup.graph.dao.SpringConfigurationDaoBean;
@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
  * @author bradsdavis@gmail.com
  *
  */
-public class SpringConfigurationVisitor extends EmptyGraphVisitor {
+public class SpringConfigurationVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(SpringConfigurationVisitor.class);
 
 	@Inject

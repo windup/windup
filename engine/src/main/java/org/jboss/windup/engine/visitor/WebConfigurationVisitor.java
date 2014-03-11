@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.xml.DoctypeUtils;
 import org.jboss.windup.engine.util.xml.NamespaceUtils;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.EnvironmentReferenceDaoBean;
 import org.jboss.windup.graph.dao.WebConfigurationDaoBean;
 import org.jboss.windup.graph.dao.XmlResourceDaoBean;
@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
  * @author bradsdavis@gmail.com
  *
  */
-public class WebConfigurationVisitor extends EmptyGraphVisitor {
+public class WebConfigurationVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(WebConfigurationVisitor.class);
 
 	private static final String dtdRegex = "(?i).*web.application.*";

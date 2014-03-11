@@ -7,7 +7,7 @@ import java.util.jar.Manifest;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.EarArchiveDaoBean;
 import org.jboss.windup.graph.dao.JarArchiveDaoBean;
 import org.jboss.windup.graph.dao.JarManifestDaoBean;
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis@gmail.com
  *
  */
-public class ManifestVisitor extends EmptyGraphVisitor {
+public class ManifestVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ManifestVisitor.class);
 
 	@Inject

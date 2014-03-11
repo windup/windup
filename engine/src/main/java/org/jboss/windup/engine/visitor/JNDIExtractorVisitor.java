@@ -2,12 +2,12 @@ package org.jboss.windup.engine.visitor;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.JNDIReferenceDaoBean;
 import org.jboss.windup.graph.dao.XmlResourceDaoBean;
 import org.jboss.windup.graph.model.resource.XmlResource;
 
-public class JNDIExtractorVisitor extends EmptyGraphVisitor {
+public class JNDIExtractorVisitor extends AbstractGraphVisitor {
 
 	@Inject
 	private XmlResourceDaoBean xmlDao;

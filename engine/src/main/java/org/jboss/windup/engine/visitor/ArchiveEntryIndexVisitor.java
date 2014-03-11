@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.ArchiveEntryDaoBean;
 import org.jboss.windup.graph.dao.FileResourceDaoBean;
@@ -25,7 +25,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author bradsdavis@gmail.com
  *
  */
-public class ArchiveEntryIndexVisitor extends EmptyGraphVisitor {
+public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ArchiveEntryIndexVisitor.class);
 
 	@Inject

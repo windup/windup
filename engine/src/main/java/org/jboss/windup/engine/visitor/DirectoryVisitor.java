@@ -8,12 +8,12 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.FileResourceDaoBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DirectoryVisitor extends EmptyGraphVisitor {
+public class DirectoryVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryVisitor.class);
 
 	@Inject

@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.xml.XmlUtil;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.DoctypeDaoBean;
 import org.jboss.windup.graph.dao.HibernateEntityDaoBean;
 import org.jboss.windup.graph.dao.HibernateMappingDaoBean;
@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
  * @author bradsdavis@gmail.com
  *
  */
-public class HibernateMappingVisitor extends EmptyGraphVisitor {
+public class HibernateMappingVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(HibernateMappingVisitor.class);
 
 	private static final String hibernateRegex = "(?i).*hibernate.mapping.*";

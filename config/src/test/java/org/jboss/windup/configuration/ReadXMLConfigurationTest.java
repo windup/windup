@@ -27,7 +27,5 @@ public class ReadXMLConfigurationTest
       evaluationContext.put(ParameterValueStore.class, values);
 
       Subset.evaluate(configuration).perform(new GraphRewrite(), evaluationContext);
-
-      System.out.println(configuration);
    }
 }

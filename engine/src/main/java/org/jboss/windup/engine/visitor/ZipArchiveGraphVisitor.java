@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.ZipUtil;
-import org.jboss.windup.engine.visitor.base.EmptyGraphVisitor;
+import org.jboss.windup.engine.visitor.base.AbstractGraphVisitor;
 import org.jboss.windup.graph.dao.ArchiveDaoBean;
 import org.jboss.windup.graph.dao.FileResourceDaoBean;
 import org.jboss.windup.graph.dao.TempFileArchiveEntryDaoBean;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis@gmail.com
  *
  */
-public class ZipArchiveGraphVisitor extends EmptyGraphVisitor {
+public class ZipArchiveGraphVisitor extends AbstractGraphVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ZipArchiveGraphVisitor.class);
 	
 	@Inject
