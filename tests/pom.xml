@@ -8,25 +8,33 @@
       <version>1.0.0-SNAPSHOT</version>
       <relativePath>../</relativePath>
    </parent>
-
    <artifactId>windup-tests</artifactId>
    <packaging>war</packaging>
 
+   <properties>
+      <version.furnace>2.1.1.Final</version.furnace>
+   </properties>
+
    <dependencies>
-      <!-- Furnace Container -->
+      <dependency>
+         <groupId>org.jboss.windup</groupId>
+         <artifactId>windup-forge-addon</artifactId>
+         <version>${project.version}</version>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
          <artifactId>cdi</artifactId>
-         <classifier>forge-addon</classifier>
          <version>${furnace.version}</version>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-
       <dependency>
          <groupId>org.jboss.forge.furnace.test</groupId>
          <artifactId>furnace-test-harness</artifactId>
-         <scope>test</scope>
          <version>${furnace.version}</version>
+         <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.furnace.test</groupId>
@@ -35,5 +43,4 @@
          <scope>test</scope>
       </dependency>
    </dependencies>
-
 </project>
