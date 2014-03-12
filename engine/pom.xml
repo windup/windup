@@ -9,7 +9,7 @@
    </parent>
 
    <artifactId>windup-engine</artifactId>
-   <name>Windup CDI Engine</name>
+   <name>Windup Engine</name>
 
    <properties>
       <eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
@@ -29,12 +29,10 @@
       <dependency>
          <groupId>org.jboss.windup</groupId>
          <artifactId>windup-grapher</artifactId>
-         <version>${project.version}</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.windup</groupId>
          <artifactId>windup-config</artifactId>
-         <version>${project.version}</version>
       </dependency>
 
       <dependency>
