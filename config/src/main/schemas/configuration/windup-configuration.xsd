@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-	xmlns:c="http://windup.jboss.org/v1/configuration"
-	targetNamespace="http://windup.jboss.org/v1/configuration" elementFormDefault="qualified" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
-	
-
-</xs:schema>

@@ -1,0 +1,15 @@
+org.jboss.windup.addon.config.parser.xml.RuleHandler
+org.jboss.windup.addon.config.parser.xml.RulesHandler
+
+org.jboss.windup.addon.config.parser.xml.perform.LogHandler
+org.jboss.windup.addon.config.parser.xml.perform.PerformHandler
+
+org.jboss.windup.addon.config.parser.xml.when.AndHandler
+org.jboss.windup.addon.config.parser.xml.when.NotHandler
+org.jboss.windup.addon.config.parser.xml.when.OrHandler
+org.jboss.windup.addon.config.parser.xml.when.ParamHandler
+org.jboss.windup.addon.config.parser.xml.when.TrueHandler
+org.jboss.windup.addon.config.parser.xml.when.WhenHandler
+
+org.jboss.windup.addon.config.parser.xml.where.WhereHandler
+org.jboss.windup.addon.config.parser.xml.where.MatchesHandler
