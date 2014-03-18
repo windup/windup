@@ -225,9 +225,12 @@ public class StaticHtmlReporter implements Reporter {
 			ArchiveReport temp = toArchiveReport(meta, reportDirectory);
 			report.getNestedArchiveReports().add(temp);
 		}
-		
+
+        if( this.resolver == null )
+            throw new IllegalStateException("Resolver not set for " + StaticHtmlReporter.class.getSimpleName() );
+        
 		for(FileMetadata fileMeta : archive.getEntries()) {
-			MetaResultTransformer transformer = resolver.resolveTransformer(fileMeta.getClass());
+			MetaResultTransformer transformer = this.resolver.resolveTransformer(fileMeta.getClass());
 			ResourceReport data = transformer.toResourceReport(fileMeta, reportDirectory, report);
 			report.getResourceReports().add(data);
 		}
