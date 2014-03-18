@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <!--
+    <parent>
+        <artifactId>windup-parent</artifactId>
+        <groupId>org.jboss.windup</groupId>
+        <version>0.7.0</version>
+    </parent>
+    -->
+
+    <groupId>org.jboss.windup</groupId>
+    <artifactId>windup-service</artifactId>
+    <version>0.7.0</version>
+    <packaging>war</packaging>
+
+    <name>Windup Service</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Local vs. OpenShift vs. production. Controlled in profiles. -->
+        <wicket.mode>development</wicket.mode>
+        <jboss-as.deploy.hostname>localhost</jboss-as.deploy.hostname>  <!-- Where to deploy. -->
+        <jboss-as.deploy.user>jboss-as.deploy.user is not defined (try settings.xml).</jboss-as.deploy.user>
+        <jboss-as.deploy.pass>jboss-as.deploy.pass is not defined (try settings.xml).</jboss-as.deploy.pass>
+        <plugin.war.warName>${project.build.finalName}</plugin.war.warName>  <!-- To change to ROOT for "prod", to go to / context. -->
+    </properties>
+    
+
+    <build>
+        <!-- Set the name of the war, used as the context root when the app is deployed. -->
+        <finalName>${project.artifactId}</finalName>
+
+        <plugins>
+            
+            <!-- JBoss AS plugin to deploy the war. -->
+            <plugin>
+                <groupId>org.jboss.as.plugins</groupId>
+                <artifactId>jboss-as-maven-plugin</artifactId>
+                <version>7.4.Final</version>
+                <configuration>
+                    <hostname>${jboss-as.deploy.hostname}</hostname>
+                    <fileNames>
+                        <fileName>target/${plugin.war.warName}.war</fileName>
+                    </fileNames>
+                </configuration>
+            </plugin>
+
+            <!-- Compiler -->            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration><source>1.7</source><target>1.7</target></configuration>
+            </plugin>
+            
+            <!-- War -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            
+        </plugins>
+        
+    </build>
+    
+
+    <profiles>
+        <!-- OpenShift. -->
+        <profile>
+            <id>openshift</id>
+            <build>
+                <finalName>test</finalName>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <outputDirectory>deployments</outputDirectory>
+                            <warName>ROOT</warName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <!-- Debug. -->
+        <profile>
+            <id>debug</id>
+            <activation><property><name>debug</name></property></activation>
+            <properties>
+                <jvm.args.debug>-Xrunjdwp:transport=dt_socket,address=4000,server=y,suspend=y</jvm.args.debug>
+            </properties>
+        </profile>
+
+    </profiles>
+    
+    
+                        
+    <!-- Deps -->
+    <dependencies>
+        
+        <!-- Commons -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.8</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils-core</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+        
+        <!-- Java EE 7 Web API -->
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- WindUp -->
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-engine</artifactId>
+            <version>0.7.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-rules</artifactId>
+            <version>0.7.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-reporting</artifactId>
+            <version>0.7.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+    
+
+</project>
