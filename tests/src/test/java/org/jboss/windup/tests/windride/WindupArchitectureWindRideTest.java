@@ -14,6 +14,7 @@ import org.jboss.loom.conf.AS7Config;
 import org.jboss.loom.conf.Configuration;
 import org.jboss.loom.conf.ConfigurationValidator;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,7 +43,7 @@ public class WindupArchitectureWindRideTest
        return archive;
     }*/
 
-
+    @Ignore
     @Test
     @RunAsClient
     public void testRunWindup() throws Exception
