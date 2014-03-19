@@ -37,8 +37,8 @@
          </dependency>
       </dependencies>
    </dependencyManagement>
-   <dependencies>
    
+   <dependencies>
       <dependency>
          <groupId>org.jboss.windup.addon</groupId>
          <artifactId>graph</artifactId>
@@ -69,7 +69,18 @@
          <artifactId>cdi</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+      
+      <dependency>
+         <groupId>org.jboss.migr.as</groupId>
+         <artifactId>WindRide</artifactId>
+         <version>1.1.0</version>
+         <scope>test</scope>
+      </dependency>
+      
+      
    </dependencies>
+   
+   
    <build>
       <plugins>
          <plugin>
