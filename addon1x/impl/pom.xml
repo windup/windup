@@ -6,7 +6,7 @@
    <parent>
       <groupId>org.jboss.windup</groupId>
       <artifactId>windup1x-addon-parent</artifactId>
-      <version>0.7.0</version>
+      <version>1.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
@@ -16,7 +16,6 @@
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
          <artifactId>cdi</artifactId>
-         <version>${version.forge}</version>         
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
      </dependency>
@@ -29,13 +28,11 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-api</artifactId>
-         <version>${version.forge}</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources-api</artifactId>
-         <version>${version.forge}</version>
          <scope>provided</scope>
       </dependency>
 
