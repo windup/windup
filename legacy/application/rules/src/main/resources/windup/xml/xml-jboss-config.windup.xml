@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="XML" id="xml-jboss-specific-decorators">
+		<windup:xpath-classification description="JBoss Cache" xpath="//mbean[@code='org.jboss.cache.TreeCache']" effort="1" />
+		
+		<windup:dtd-classification description="JBoss 5.x EAR Descriptor" effort="0" public-id-regex="JBoss.+DTD Java EE.+5" />
+
+		<windup:xpath-classification description="JBoss Classloading" xpath="/classloading" effort="1" />
+
+		<windup:xpath-classification description="JBoss Classloading Configuration" xpath="/jbc:classloading" effort="0">
+			<windup:namespace prefix="jbc" uri="urn:jboss:classloading:1.0" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="JBoss Seam Components" xpath="/sc:components">
+			<windup:namespace prefix="sc" uri="http://jboss.com/products/seam/components" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="JBoss Seam Pages" xpath="/sp:pages">
+			<windup:namespace prefix="sp" uri="http://jboss.com/products/seam/pages" />
+		</windup:xpath-classification>
+
+		<windup:file-gate regex="jboss-app.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss EAR Configuration" xpath="//*[local-name()='jboss-app']" effort="1" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:file-gate regex="jboss-web.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss Web Application Descriptor" xpath="//*[local-name()='jboss-web']" effort="1" />
+			</windup:decorators>
+		</windup:file-gate>
+		
+		<windup:file-gate regex="jboss-classloading.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss 5 Classloader Configuration" xpath="//*[local-name()='classloading']" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:file-gate regex="jboss-deployment-structure.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss Module and Classloading Configuration (since AS7/EAP6)" xpath="//*[local-name()='jboss-deployment-structure']" effort="1" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:file-gate regex="jbosscmp-jdbc.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss EJB2 CMP Deployment Descriptor" xpath="//*[local-name()='jbosscmp-jdbc']" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<!-- JBoss 4/5 to JBoss AS7/EAP6 -->
+		<windup:file-gate regex="jboss.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss EJB Deployment Descriptor (prior to AS7/EAP6)" xpath="//*[local-name()='jboss']">
+					<windup:decorators>
+						<windup:global description="If migrating to JBoss AS7 or EAP6 the &quot;jboss.xml&quot; descriptor is ignored in deployments. Replace with &quot;jboss-ejb3.xml&quot;"
+							effort="1" />
+					</windup:decorators>
+				</windup:xpath-classification>
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:xpath-value description="JBoss AS7/EAP6 Specific" xpath="//*[local-name()='security-domain' ][starts-with(., 'java:/jaas/')]/text()">
+			<windup:hints>
+				<windup:regex-hint regex="java\:\/jaas\/" hint="Remove the &quot;java:/jaas/&quot; prefix for security-domain elements in AS7/EAP6." effort="1" />
+			</windup:hints>
+		</windup:xpath-value>
+
+		<windup:file-gate regex="login-config.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss Security Configuration Descriptor (prior to AS7/EAP6)" xpath="//*[local-name()='policy']">
+					<windup:decorators>
+						<windup:global description="If migrating to JBoss AS7 or EAP6 the &quot;login-config.xml&quot; descriptor is no longer supported. Security is now configured in the security-domain element inside the server configuration."
+									   effort="1" />
+					</windup:decorators>
+				</windup:xpath-classification>
+			</windup:decorators>
+		</windup:file-gate>
+
+
+		<windup:file-gate regex="jboss-ejb3.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss EJB3 Deployment Descriptor (since AS7/EAP6)" xpath="//*[local-name()='ejb-jar']" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:file-gate regex="jboss-webservices.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss Webservices Deployment Descriptor (since AS7/EAP6)" xpath="//*[local-name()='webservices']" />
+			</windup:decorators>
+		</windup:file-gate>
+
+		<windup:file-gate regex=".+.page.xml">
+			<windup:decorators>
+				<windup:xpath-classification description="JBoss Seam Page" xpath="/page" />
+			</windup:decorators>
+		</windup:file-gate>
+
+        <!-- JBoss 4 to JBoss 5 -->
+		<windup:xpath-classification description="Jboss App Descriptor" xpath="jboss-app">
+			<windup:decorators>
+				<windup:dtd-classification description="Jboss App XML with missing DTD detect " effort="1" public-id-regex="">
+					<windup:decorators>
+					
+						<windup:xslt-transform location="transformations/xslt/jboss-app-to-jboss5.xsl"
+							description="JBoss APP Descriptor - JBoss 5 (Windup-Generated)"
+							extension="-jboss5.xml"/>
+							
+					</windup:decorators>
+				</windup:dtd-classification>
+			</windup:decorators>
+		</windup:xpath-classification>
+
+		<!-- JBoss 4 to JBoss 5 -->
+		<windup:xpath-classification description="JBoss 4 JMS Configuration" xpath="server/mbean[@code='org.jboss.mq.server.jmx.Queue']" effort="2">
+			<windup:decorators>
+			
+				<!-- Convert to JBoss 5 -->
+				<windup:xslt-transform location="transformations/xslt/jboss4-mq-to-jboss5.xsl"
+						description="Queue Destinations Service - JBoss 5 (Windup-Generated)"
+						extension="-jboss5.xml"/>
+			
+			</windup:decorators>
+		</windup:xpath-classification>
+
+	</windup:pipeline>
+</beans>

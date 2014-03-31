@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://www.jboss.org/schema/windup" targetNamespace="http://www.jboss.org/schema/windup"
+	elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="pipeline">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="type" use="required" type="interrogatorTypeEnum" />
+			<xs:attribute name="id" use="required" type="xs:string" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="file-gate">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="decorators" type="allBeans" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="regex" use="required" type="xs:string" />
+			<xs:attribute name="full-path" use="optional" type="xs:boolean" />
+		</xs:complexType>
+	</xs:element>
+		
+	<xs:element name="xslt-transform">
+		<xs:complexType>
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="location" use="required" type="xs:string" />
+			<xs:attribute name="extension" use="required" type="xs:string" />
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="xpath-summary" type="xpathTypeInline"/>
+	
+	<xs:element name="xpath-value" type="xpathTypeInline" />
+	
+	<xs:element name="xpath-classification" type="xpathType" />
+	
+	<xs:element name="xpath-gate" type="xpathGateType" />
+	
+	<xs:element name="dtd-classification">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="hints" type="allBeans" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="decorators" type="allBeans" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+			
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="effort" type="xs:int" />
+			
+			<xs:attribute name="name-regex" use="optional" type="xs:string" />
+			<xs:attribute name="public-id-regex" use="optional" type="xs:string" />
+			<xs:attribute name="system-id-regex" use="optional" type="xs:string" />
+			<xs:attribute name="base-uri-regex" use="optional" type="xs:string" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="classification">
+		<xs:complexType>
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="effort" type="xs:int" />
+		</xs:complexType>
+	</xs:element>	
+	
+	<xs:element name="java-classification">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="hints" type="allBeans" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="decorators" type="allBeans" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="source-type" type="sourceTypeEnum" />
+			<xs:attribute name="regex" use="required" type="xs:string" />
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="effort" type="xs:int" />
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="java-whitelist">
+		<xs:complexType>
+			<xs:attribute name="source-type" type="sourceTypeEnum" />
+			<xs:attribute name="regex" use="required" type="xs:string" />
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="java-gate">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="regexGateType">
+					<xs:attribute name="source-type" type="sourceTypeEnum" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="regex-gate" type="regexGateType"/>
+	
+	<xs:element name="regex-hint" type="regexHintType"/>
+	
+	
+	
+	<xs:element name="java-hints">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="java-hint" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" use="required" type="xs:string" />
+		</xs:complexType>
+	</xs:element>
+
+	
+	
+	<xs:element name="hint">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="regexHintType">
+					<xs:attribute name="source-type" type="sourceTypeEnum" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+			
+	
+	<xs:element name="java-hint">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="regexHintType">
+					<xs:attribute name="source-type" type="sourceTypeEnum" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+		
+	<xs:element name="summary">
+		<xs:complexType>
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="effort" type="xs:int" />
+		</xs:complexType>
+	</xs:element>		
+	
+	<xs:element name="global">
+		<xs:complexType>
+			<xs:attribute name="description" use="required" type="xs:string" />
+			<xs:attribute name="effort" type="xs:int" />
+		</xs:complexType>
+	</xs:element>	
+	
+	<xs:element name="link">
+		<xs:complexType>
+			<xs:attribute name="url" use="required" type="xs:string" />
+			<xs:attribute name="description" use="required" type="xs:string" />
+		</xs:complexType>
+	</xs:element>	
+	
+	<xs:complexType name="xpathTypeInline">
+		<xs:complexContent>
+			<xs:extension base="xpathType">
+				<xs:attribute name="inline" use="optional" type="xs:boolean" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="xpathType">
+		<xs:sequence>
+			<xs:element name="namespace" type="xmlNamespace" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="hints" type="allBeans" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="decorators" type="allBeans" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="xpath" use="required" type="xs:string" />
+		<xs:attribute name="description" use="required" type="xs:string" />
+		<xs:attribute name="effort" type="xs:int" />
+	</xs:complexType>
+
+	<xs:complexType name="xpathGateType">
+		<xs:sequence>
+			<xs:element name="namespace" type="xmlNamespace" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="decorators" type="allBeans" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="xpath" use="required" type="xs:string" />
+	</xs:complexType>
+	
+	<xs:complexType name="regexGateType">
+			<xs:sequence>
+				<xs:element name="hints" type="allBeans" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="decorators" type="allBeans" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="regex" use="required" type="xs:string" />
+	</xs:complexType>
+		
+	<xs:complexType name="regexHintType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="hint" use="optional" type="xs:string" />
+				<xs:attribute name="regex" use="required" type="xs:string" />
+				<xs:attribute name="effort" type="xs:int" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="xmlNamespace">
+		<xs:attribute name="prefix" type="xs:string" use="required" />
+		<xs:attribute name="uri" type="xs:string" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="allBeans">
+		<xs:sequence>
+           <xs:any minOccurs="0" maxOccurs="unbounded"/>
+       </xs:sequence>
+       <xs:attribute name="ref" use="optional" type="xs:string"/>
+	</xs:complexType>
+	
+	
+	<xs:simpleType name="interrogatorTypeEnum">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="XML" />
+			<xs:enumeration value="JAVA" />
+			<xs:enumeration value="ARCHIVE" />
+			<xs:enumeration value="JSP" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="sourceTypeEnum">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="IMPORT" />
+			<xs:enumeration value="TYPE" />
+			<xs:enumeration value="METHOD" />
+			<xs:enumeration value="INHERITANCE" />
+			<xs:enumeration value="CONSTRUCT" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+</xs:schema>

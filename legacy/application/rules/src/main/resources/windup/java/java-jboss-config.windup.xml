@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-jboss-decorators">
+        <!-- 
+		<windup:java-gate source-type="INHERITANCE" regex="javax.ejb.EJBHome$">
+			<windup:hints>
+				<windup:java-hint source-type="TYPE" regex="javax.persistence.JoinColumn" hint="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn" effort="0"/>
+			</windup:hints>
+			<windup:decorators>
+				<windup:link url="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/>							
+			</windup:decorators>
+		</windup:java-gate>
+        -->
+        <windup:java-classification source-type="TYPE" regex="org.jboss.ejb3.annotation.Management" description="JBoss 5 JMX ManagementBean"/>
+	 	
+	</windup:pipeline>
+
+	<windup:java-hints id="java-jboss-hints">
+		<!-- JBoss 4 to JBoss 5 -->
+		<windup:java-hint source-type="TYPE" regex="javax.jms.QueueConnectionFactory" hint="If migrating from JBoss 4, replace lookup string &quot;QueueConnectionFactory&quot; with &quot;ConnectionFactory&quot;" effort="1"/>
+		<windup:java-hint source-type="TYPE" regex="javax.persistence.JoinColumn" hint="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn" effort="0"/>
+	    <windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.Service" hint="Migrated to org.jboss.ejb3.annotation.Service"/>
+	    <windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.Management" hint="Migrated to org.jboss.ejb3.annotation.Management"/>
+	    <windup:java-hint source-type="IMPORT" regex="org.jboss.annotation.ejb.LocalBinding" hint="Migrated to org.jboss.ejb3.annotation.LocalBinding"/>
+	    <windup:java-hint source-type="TYPE" regex="org.jboss.annotation.ejb.Depends" hint="Validate that JBoss 6 Dependency exists."/>
+
+	</windup:java-hints>
+
+</beans>

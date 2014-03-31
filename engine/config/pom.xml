@@ -18,9 +18,6 @@
     <module>spi</module>
     <module>tests</module>
   </modules>
-  <properties>
-    <version.furnace>2.1.1.Final</version.furnace>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>

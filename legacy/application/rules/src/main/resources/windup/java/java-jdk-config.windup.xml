@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-jdk-decorators">
+    	<windup:java-classification source-type="TYPE" regex="java.lang.ClassLoader$" description="Java Classloader, must be migrated." effort="1">
+    		<windup:decorators>
+    		    <windup:link url="https://access.redhat.com/knowledge/solutions/239033" description="Red Hat Customer Portal: How to get resources via the ClassLoader in a JavaEE application in JBoss EAP"/>    		    
+    			</windup:decorators>
+    	</windup:java-classification>
+    </windup:pipeline>
+
+	<windup:java-hints id="java-jdk-hints">
+		<!-- Deprecated Interfaces - Begin -->
+		<windup:java-hint source-type="INHERITANCE" regex="org.xml.sax.AttributeList" effort="0" hint="Deprecated By JDK 6. This interface has been replaced by the SAX2 Attributes interface, which includes Namespace support." />
+		<windup:java-hint source-type="INHERITANCE" regex="java.security.Certificate" effort="0" hint="Deprecated By JDK 6. A new certificate handling package is created in the Java platform. This Certificate interface is entirely deprecated and is here to allow for a smooth transition to the new package." />
+		<windup:java-hint source-type="INHERITANCE" regex="org.xml.sax.DocumentHandler" effort="0" hint="Deprecated By JDK 6. This interface has been replaced by the SAX2 ContentHandler interface, which includes Namespace support." />
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.DynAny" effort="0" hint="Deprecated By JDK 6. Use the new DynAny instead" />
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.DynArray" effort="0" hint="Deprecated By JDK 6. Use the new DynArray instead" />
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.DynEnum" effort="0" hint="Deprecated By JDK 6. Use the new DynEnum instead" />
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.DynFixed" effort="0" hint="Deprecated By JDK 6. Use the new DynFixed instead" />
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.DynSequence" effort="0" hint="Deprecated By JDK 6. Use the new DynSequence instead" />
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.DynStruct" effort="0" hint="Deprecated By JDK 6. Use the new DynStruct instead" />
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.DynUnion" effort="0" hint="Deprecated By JDK 6. Use the new DynUnion instead" />
+		<windup:java-hint source-type="INHERITANCE" regex="org.omg.CORBA.DynValue" effort="0" hint="Deprecated By JDK 6. Use the new DynValue instead" />
+		<windup:java-hint source-type="INHERITANCE" regex="java.rmi.server.LoaderHandler" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="INHERITANCE" regex="org.xml.sax.Parser" effort="0" hint="Deprecated By JDK 6. This interface has been replaced by the SAX2 XMLReader interface, which includes Namespace support." />
+		<windup:java-hint source-type="INHERITANCE" regex="java.rmi.registry.RegistryHandler" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="INHERITANCE" regex="java.rmi.server.RemoteCall" effort="0" hint="Deprecated By JDK 6. no replacement." />
+		<windup:java-hint source-type="INHERITANCE" regex="java.rmi.server.Skeleton" effort="0" hint="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater." />
+		<windup:java-hint source-type="INHERITANCE" regex="javax.xml.bind.Validator" effort="0" hint="Deprecated By JDK 6. since JAXB 2.0" />
+	<!-- Deprecated Interfaces - End -->
+	
+	<!-- Deprecated Classes - Begin -->
+		<windup:java-hint source-type="TYPE" regex="javax.accessibility.AccessibleResourceBundle" effort="0" hint="Deprecated By JDK 6. This class is deprecated as of version 1.3 of the Java Platform." />
+		<windup:java-hint source-type="TYPE" regex="org.xml.sax.helpers.AttributeListImpl" effort="0" hint="Deprecated By JDK 6. This class implements a deprecated interface, AttributeList; that interface has been replaced by Attributes, which is implemented in the AttributesImpl helper class." />
+		<windup:java-hint source-type="TYPE" regex="javax.management.DefaultLoaderRepository" effort="0" hint="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository() instead." />
+		<windup:java-hint source-type="TYPE" regex="javax.management.loading.DefaultLoaderRepository" effort="0" hint="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository()} instead." />
+		<windup:java-hint source-type="TYPE" regex="javax.swing.text.DefaultTextUI" effort="0" hint="Deprecated By JDK 6." />
+		<windup:java-hint source-type="TYPE" regex="org.omg.CORBA.DynamicImplementation" effort="0" hint="Deprecated By JDK 6. org.omg.CORBA.DynamicImplementation" />
+		<windup:java-hint source-type="TYPE" regex="org.xml.sax.HandlerBase" effort="0" hint="Deprecated By JDK 6. This class works with the deprecated DocumentHandler interface. It has been replaced by the SAX2 DefaultHandler class." />
+		<windup:java-hint source-type="TYPE" regex="java.security.Identity" effort="0" hint="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal." />
+		<windup:java-hint source-type="TYPE" regex="java.security.IdentityScope" effort="0" hint="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal." />
+		<windup:java-hint source-type="TYPE" regex="java.io.LineNumberInputStream" effort="0" hint="Deprecated By JDK 6. This class incorrectly assumes that bytes adequately represent characters. As of JDK 1.1, the preferred way to operate on character streams is via the new character-stream classes, which include a class for counting line numbers." />
+		<windup:java-hint source-type="TYPE" regex="java.rmi.server.LogStream" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.metal.MetalComboBoxUI.MetalComboPopup" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.4." />
+		<windup:java-hint source-type="TYPE" regex="java.rmi.server.Operation" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="TYPE" regex="org.xml.sax.helpers.ParserFactory" effort="0" hint="Deprecated By JDK 6. This class works with the deprecated Parser interface." />
+		<windup:java-hint source-type="TYPE" regex="org.omg.CORBA.Principal" effort="0" hint="Deprecated By JDK 6. Deprecated by CORBA 2.2." />
+		<windup:java-hint source-type="TYPE" regex="org.omg.CORBA.PrincipalHolder" effort="0" hint="Deprecated By JDK 6. Deprecated by CORBA 2.2." />
+		<windup:java-hint source-type="TYPE" regex="java.security.Signer" effort="0" hint="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal." />
+		<windup:java-hint source-type="TYPE" regex="javax.xml.soap.SOAPElementFactory" effort="0" hint="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory for creating SOAPElements." />
+		<windup:java-hint source-type="TYPE" regex="java.io.StringBufferInputStream" effort="0" hint="Deprecated By JDK 6. This class does not properly convert characters into bytes. As of JDK 1.1, the preferred way to create a stream from a string is via the StringReader class." />
+		<windup:java-hint source-type="TYPE" regex="javax.swing.text.TableView.TableCell" effort="0" hint="Deprecated By JDK 6. A table cell can now be any View implementation." />
+		<windup:java-hint source-type="TYPE" regex="javax.security.auth.Policy" effort="0">
+			<![CDATA[
+				 Deprecated By JDK 6 - as of JDK version 1.4 -- Replaced by java.security.Policy. java.security.Policy has a method:
+				 
+				```java
+	
+					  public PermissionCollection getPermissions
+						  (java.security.ProtectionDomain pd)
+				```
+	
+				and ProtectionDomain has a constructor:
+	
+				```java
+					  public ProtectionDomain
+						  (CodeSource cs,
+						   PermissionCollection permissions,
+						   ClassLoader loader,
+						   Principal[] principals)
+				```
+	
+				These two APIs provide callers the means to query the Policy for Principal-based Permission entries.
+			]]>
+		</windup:java-hint>
+	<!-- Deprecated Classes - End -->
+	<!-- Deprecated Exceptions - Begin -->
+		<windup:java-hint source-type="IMPORT" regex="java.rmi.RMISecurityException" effort="0" hint="Deprecated By JDK 6. Use SecurityException instead. Application code should never directly reference this class, and RMISecurityManager no longer throws this subclass of java.lang.SecurityException." />
+		<windup:java-hint source-type="IMPORT" regex="java.rmi.ServerRuntimeException" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="IMPORT" regex="java.rmi.server.SkeletonMismatchException" effort="0" hint="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater." />
+		<windup:java-hint source-type="IMPORT" regex="java.rmi.server.SkeletonNotFoundException" effort="0" hint="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater." />
+	<!-- Deprecated Exceptions - End -->
+	<!-- Deprecated Annotation Types - Begin -->
+		<windup:java-hint source-type="TYPE" regex="javax.jws.soap.InitParam" effort="0" hint="Deprecated By JDK 6. As of JSR-181 2.0 with no replacement." />
+		<windup:java-hint source-type="TYPE" regex="javax.jws.soap.SOAPMessageHandler" effort="0" hint="Deprecated By JDK 6. As of JSR-181 2.0 with no replacement." />
+		<windup:java-hint source-type="TYPE" regex="javax.jws.soap.SOAPMessageHandlers" effort="0" hint="Deprecated By JDK 6. As of JSR-181 2.0 with no replacement." />
+	<!-- Deprecated Annotation Types - End -->
+	<!-- Deprecated Fields - Begin -->
+		<windup:java-hint source-type="TYPE" regex="javax.management.openmbean.OpenType.ALLOWED_CLASSNAMES" effort="0" hint="Deprecated By JDK 6. Use ALLOWED_CLASSNAMES_LIST instead."/>
+		<windup:java-hint source-type="TYPE" regex="javax.management.monitor.Monitor.alreadyNotified" effort="0" hint="Deprecated By JDK 6. equivalent to Monitor.alreadyNotifieds[0]."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.JViewport.backingStore" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3"/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicDesktopPaneUI.closeKey" effort="0" hint="Deprecated By JDK 6. As of 1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.sql.rowset.CachedRowSet.COMMIT_ON_ACCEPT_CHANGES" effort="0" hint="Deprecated By JDK 6. Because this field is final (it is part of an interface), its value cannot be changed."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.CROSSHAIR_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.CROSSHAIR_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="javax.management.monitor.Monitor.dbgTag" effort="0" hint="Deprecated By JDK 6. No replacement."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.DEFAULT_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.DEFAULT_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.JRootPane.defaultPressAction" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.JRootPane.defaultReleaseAction" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.dividerResizeToggleKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicToolBarUI.downKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.downKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicTabbedPaneUI.downKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.E_RESIZE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.E_RESIZE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.endKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="java.util.logging.Logger.global" effort="0" hint="Deprecated By JDK 6. Initialization of this field is prone to deadlocks. The field must be initialized by the Logger class initialization which may cause deadlocks with the LogManager class initialization. In such cases two class initialization wait for each other to complete. The preferred way to get the global logger object is via the call Logger.getGlobal(). For compatibility with old JDK versions where the Logger.getGlobal() is not available use the call Logger.getLogger(Logger.GLOBAL_LOGGER_NAME) or Logger.getLogger(&quot;global&quot;)."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.HAND_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.HAND_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.homeKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="java.net.HttpURLConnection.HTTP_SERVER_ERROR" effort="0" hint="Deprecated By JDK 6. it is misplaced and shouldn't have existed."/>
+		<windup:java-hint source-type="TYPE" regex="java.lang.SecurityManager.inCheck" effort="0" hint="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.keyboardDownRightListener" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.keyboardEndListener" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.keyboardHomeListener" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.keyboardResizeToggleListener" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.keyboardUpLeftListener" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicToolBarUI.leftKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.leftKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicTabbedPaneUI.leftKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicDesktopPaneUI.maximizeKey" effort="0" hint="Deprecated By JDK 6. As of 1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicDesktopPaneUI.minimizeKey" effort="0" hint="Deprecated By JDK 6. As of 1.3."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.MOVE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.MOVE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.N_RESIZE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.N_RESIZE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey" effort="0" hint="Deprecated By JDK 6. As of 1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey2" effort="0" hint="Deprecated By JDK 6. As of 1.3."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.NE_RESIZE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.NE_RESIZE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.NW_RESIZE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.NW_RESIZE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicInternalFrameUI.openMenuKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.datatransfer.DataFlavor.plainTextFlavor" effort="0" hint="Deprecated By JDK 6. as of 1.3. Use DataFlavor.getReaderForText(Transferable) instead of Transferable.getTransferData(DataFlavor.plainTextFlavor)."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Cursor.predefined" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.7, the Cursor.getPredefinedCursor(int) method should be used instead."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.text.html.FormView.RESET" effort="0" hint="Deprecated By JDK 6. As of 1.3, value comes from UIManager UIManager property FormView.resetButtonText"/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.table.TableColumn.resizedPostingDisableCount" effort="0" hint="Deprecated By JDK 6. as of Java 2 platform v1.3"/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicToolBarUI.rightKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.rightKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicTabbedPaneUI.rightKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.S_RESIZE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.S_RESIZE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.SE_RESIZE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.SE_RESIZE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="javax.imageio.spi.ImageReaderSpi.STANDARD_INPUT_TYPE" effort="0" hint="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array { ImageInputStream.class }."/>
+		<windup:java-hint source-type="TYPE" regex="javax.imageio.spi.ImageWriterSpi.STANDARD_OUTPUT_TYPE" effort="0" hint="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array { ImageOutputStream.class }."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.text.html.FormView.SUBMIT" effort="0" hint="Deprecated By JDK 6. As of 1.3, value now comes from UIManager property FormView.submitButtonText"/>
+		<windup:java-hint source-type="TYPE" regex="java.lang.Character.UnicodeBlock.SURROGATES_AREA" effort="0" hint="Deprecated By JDK 6. As of J2SE 5, use Character.UnicodeBlock.HIGH_SURROGATES, Character.UnicodeBlock.HIGH_PRIVATE_USE_SURROGATES, and Character.UnicodeBlock.LOW_SURROGATES. These new constants match the block definitions of the Unicode Standard. The Character.UnicodeBlock.of(char) and Character.UnicodeBlock.of(int) methods return the new constants, not SURROGATES_AREA."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.SW_RESIZE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.SW_RESIZE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.TEXT_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.TEXT_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicToolBarUI.upKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicSplitPaneUI.upKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="javax.swing.plaf.basic.BasicTabbedPaneUI.upKey" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.W_RESIZE_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.W_RESIZE_CURSOR."/>
+		<windup:java-hint source-type="TYPE" regex="java.awt.Frame.WAIT_CURSOR" effort="0" hint="Deprecated By JDK 6. replaced by Cursor.WAIT_CURSOR."/>
+	<!-- Deprecated Fields - End -->
+	<!-- Deprecated Methods - Begin -->
+				<windup:java-hint source-type="METHOD" regex="java.awt.Component.action\(Event, Object\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, should register this component as ActionListener on component which fires action events."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.addItem\(String\)" effort="0" hint="Deprecated By JDK 6. replaced by add(String)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.addItem\(String, int\)" effort="0" hint="Deprecated By JDK 6. replaced by add(String, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.BorderLayout.addLayoutComponent\(String, Component\)" effort="0" hint="Deprecated By JDK 6. replaced by addLayoutComponent(Component, Object)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.CardLayout.addLayoutComponent\(String, Component\)" effort="0" hint="Deprecated By JDK 6. replaced by addLayoutComponent(Component, Object)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.allowsMultipleSelections\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by isMultipleMode()."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.ThreadGroup.allowThreadSuspension\(boolean\)" effort="0" hint="Deprecated By JDK 6. The definition of this call depends on ThreadGroup.suspend(), which is deprecated. Further, the behavior of this call was never specified."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextArea.appendText\(String\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by append(String)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Window.applyResourceBundle\(ResourceBundle\)" effort="0" hint="Deprecated By JDK 6. As of J2SE 1.4, replaced by Component.applyComponentOrientation."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Window.applyResourceBundle\(String\)" effort="0" hint="Deprecated By JDK 6. As of J2SE 1.4, replaced by Component.applyComponentOrientation."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.bounds\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getBounds()."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.SecurityManager.checkMulticast\(InetAddress, byte\)" effort="0" hint="Deprecated By JDK 6. se #checkPermission(java.security.Permission) instead"/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.SecurityManager.classDepth\(String\)" effort="0" hint="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.SecurityManager.classLoaderDepth\(\)" effort="0" hint="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.clear\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by removeAll()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.image.renderable.RenderContext.concetenateTransform\(AffineTransform\)" effort="0" hint="Deprecated By JDK 6. replaced by concatenateTransform(AffineTransform)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Container.countComponents\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentCount()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Menu.countItems\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getItemCount()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Choice.countItems\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getItemCount()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.countItems\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getItemCount()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.MenuBar.countMenus\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMenuCount()."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Thread.countStackFrames\(\)" effort="0" hint="Deprecated By JDK 6. The definition of this call depends on Thread.suspend(), which is deprecated. Further, the results of this call were never well-defined."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.create_basic_dyn_any(TypeCode)" effort="0" hint="Deprecated By JDK 6. Use the new DynAnyFactory API instead"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.create_dyn_any(Any)" effort="0" hint="Deprecated By JDK 6. Use the new DynAnyFactory API instead"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.create_dyn_array(TypeCode)" effort="0" hint="Deprecated By JDK 6. Use the new DynAnyFactory API instead"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.create_dyn_enum(TypeCode)" effort="0" hint="Deprecated By JDK 6. Use the new DynAnyFactory API instead"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.create_dyn_sequence(TypeCode)" effort="0" hint="Deprecated By JDK 6. Use the new DynAnyFactory API instead"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.create_dyn_struct(TypeCode)" effort="0" hint="Deprecated By JDK 6. Use the new DynAnyFactory API instead"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.create_dyn_union(TypeCode)" effort="0" hint="Deprecated By JDK 6. Use the new DynAnyFactory API instead"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.create_recursive_sequence_tc(int, int)" effort="0" hint="Deprecated By JDK 6. Use a combination of create_recursive_tc and create_sequence_tc instead"/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.soap.SOAPElementFactory.create\(Name\)" effort="0" hint="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(javax.xml.soap.Name) instead"/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.soap.SOAPElementFactory.create\(String\)" effort="0" hint="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(String localName) instead"/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.soap.SOAPElementFactory.create\(String, String, String\)" effort="0" hint="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(String localName, String prefix, String uri) instead"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardDownRightListener\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardEndListener\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardHomeListener\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardResizeToggleListener\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardUpLeftListener\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JTable.createScrollPaneForTable\(JTable\)" effort="0" hint="Deprecated By JDK 6. As of Swing version 1.0.2, replaced by new JScrollPane(aTable)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.text.TableView.createTableCell\(Element\)" effort="0" hint="Deprecated By JDK 6. Table cells can now be any arbitrary View implementation and should be produced by the ViewFactory rather than the table."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.JAXBContext.createValidator\(\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0"/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.SecurityManager.currentClassLoader\(\)" effort="0" hint="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.SecurityManager.currentLoadedClass\(\)" effort="0" hint="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.net.URLDecoder.decode\(String\)" effort="0" hint="Deprecated By JDK 6. The resulting string may vary depending on the platform's default encoding. Instead, use the decode(String,String) method to specify the encoding."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.ClassLoader.defineClass\(byte\[\], int, int\)" effort="0" hint="Deprecated By JDK 6. Replaced by defineClass(String, byte\[\], int, int)"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.delItem\(int\)" effort="0" hint="Deprecated By JDK 6. replaced by remove(String) and remove(int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.delItems\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, Not for public use in the future. This method is expected to be retained only as a package private method."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Container.deliverEvent\(Event\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent e)"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.deliverEvent\(Event\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent e)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.MBeanServer.deserialize\(ObjectName, byte\[\]\)" effort="0" hint="Deprecated By JDK 6. Use getClassLoaderFor to obtain the appropriate class loader for deserialization."/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.MBeanServer.deserialize\(String, byte\[\]\)" effort="0" hint="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository() to obtain the class loader repository and use it to deserialize."/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.MBeanServer.deserialize\(String, ObjectName, byte\[\]\)" effort="0" hint="Deprecated By JDK 6. Use getClassLoader to obtain the class loader for deserialization."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Thread.destroy\(\)" effort="0" hint="Deprecated By JDK 6. This method was originally designed to destroy this thread without any cleanup. Any monitors it held would have remained locked. However, the method was never implemented. If if were to be implemented, it would be deadlock-prone in much the manner of Thread.suspend(). If the target thread held a lock protecting a critical system resource when it was destroyed, no thread could ever access this resource again. If another thread ever attempted to lock this resource, deadlock would result. Such deadlocks typically manifest themselves as &quot;frozen&quot; processes. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.disable\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.MenuItem.disable\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JComponent.disable\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by java.awt.Component.setEnabled(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.table.TableColumn.disableResizedPosting\(\)" effort="0" hint="Deprecated By JDK 6. as of Java 2 platform v1.3"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.FocusManager.disableSwingFocusManager\(\)" effort="0" hint="Deprecated By JDK 6. as of 1.4, replaced by KeyboardFocusManager.setDefaultFocusTraversalPolicy(FocusTraversalPolicy)"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.Skeleton.dispatch\(Remote, RemoteCall, int, long\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteCall.done\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteRef.done\(RemoteCall\)" effort="0" hint="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls to the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object\[\], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.metal.MetalComboBoxUI.editablePropertyChanged\(PropertyChangeEvent\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.4."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.enable\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.MenuItem.enable\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JComponent.enable\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by java.awt.Component.setEnabled(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.enable\(boolean\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.MenuItem.enable\(boolean\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.table.TableColumn.enableResizedPosting\(\)" effort="0" hint="Deprecated By JDK 6. as of Java 2 platform v1.3"/>
+		<windup:java-hint source-type="METHOD" regex="java.net.URLEncoder.encode\(String\)" effort="0" hint="Deprecated By JDK 6. The resulting string may vary depending on the platform's default encoding. Instead, use the encode(String,String) method to specify the encoding."/>
+		<windup:java-hint source-type="METHOD" regex="java.security.SignatureSpi.engineGetParameter\(String\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.security.SignatureSpi.engineSetParameter\(String, Object\)" effort="0" hint="Deprecated By JDK 6. Replaced by engineSetParameter."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.datatransfer.DataFlavor.equals\(String\)" effort="0" hint="Deprecated By JDK 6. As inconsistent with hashCode() contract, use isMimeTypeEqual(String) instead."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ServerRequest.except\(Any\)" effort="0" hint="Deprecated By JDK 6. use set_exception()"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteCall.executeCall\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.Any.extract_Principal()" effort="0" hint="Deprecated By JDK 6. Deprecated by CORBA 2.2."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.SwingUtilities.findFocusOwner\(Component\)" effort="0" hint="Deprecated By JDK 6. As of 1.4, replaced by KeyboardFocusManager.getFocusOwner()."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ORB.get_current()" effort="0" hint="Deprecated By JDK 6. use resolve_initial_references."/>
+		<windup:java-hint source-type="METHOD" regex="java.security.Security.getAlgorithmProperty\(String, String\)" effort="0" hint="Deprecated By JDK 6. This method used to return the value of a proprietary property in the master file of the &quot;SUN&quot; Cryptographic Service Provider in order to determine how to parse algorithm-specific parameters. Use the new provider-based and algorithm-independent AlgorithmParameters and KeyFactory engine classes (introduced in the J2SE version 1.2 platform) instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.CallableStatement.getBigDecimal\(int, int\)" effort="0" hint="Deprecated By JDK 6. use getBigDecimal(int parameterIndex) or getBigDecimal(String parameterName)"/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.ResultSet.getBigDecimal\(int, int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.ResultSet.getBigDecimal\(String, int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Polygon.getBoundingBox\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getBounds()."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.String.getBytes\(int, int, byte\[\], int\)" effort="0" hint="Deprecated By JDK 6. This method does not properly convert characters into bytes. As of JDK 1.1, the preferred way to do this is via the String.getBytes() method, which uses the platform's default charset."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Graphics.getClipRect\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getClipBounds()."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JMenuBar.getComponentAtIndex\(int\)" effort="0" hint="Deprecated By JDK 6. replaced by getComponent(int i)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JPopupMenu.getComponentAtIndex\(int\)" effort="0" hint="Deprecated By JDK 6. replaced by Container.getComponent(int)"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.CheckboxGroup.getCurrent\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getSelectedCheckbox()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Frame.getCursorType\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Component.getCursor()."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Time.getDate\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.getDate\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.DAY_OF_MONTH)."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Time.getDay\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.getDay\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.DAY_OF_WEEK)."/>
+		<windup:java-hint source-type="METHOD" regex="java.net.URLConnection.getDefaultRequestProperty\(String\)" effort="0" hint="Deprecated By JDK 6. The instance specific getRequestProperty method should be used after an appropriate instance of URLConnection is obtained."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.getDefaultStream\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.GaugeMonitorMBean.getDerivedGauge\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitorMBean.getDerivedGauge(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.CounterMonitor.getDerivedGauge\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getDerivedGauge(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.StringMonitor.getDerivedGauge\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitor.getDerivedGauge(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.StringMonitorMBean.getDerivedGauge\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitorMBean.getDerivedGauge(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.GaugeMonitor.getDerivedGauge\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitor.getDerivedGauge(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.CounterMonitorMBean.getDerivedGauge\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getDerivedGauge(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.GaugeMonitorMBean.getDerivedGaugeTimeStamp\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.CounterMonitor.getDerivedGaugeTimeStamp\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getDerivedGaugeTimeStamp(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.StringMonitor.getDerivedGaugeTimeStamp\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitor.getDerivedGaugeTimeStamp(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.StringMonitorMBean.getDerivedGaugeTimeStamp\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.GaugeMonitor.getDerivedGaugeTimeStamp\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitor.getDerivedGaugeTimeStamp(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.CounterMonitorMBean.getDerivedGaugeTimeStamp\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.basic.BasicSplitPaneUI.getDividerBorderSize\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3, instead set the border on the divider."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.Validator.getEventHandler\(\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Toolkit.getFontList\(\)" effort="0" hint="Deprecated By JDK 6. see GraphicsEnvironment.getAvailableFontFamilyNames()"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.text.LabelView.getFontMetrics\(\)" effort="0" hint="Deprecated By JDK 6. FontMetrics are not used for glyph rendering when running in the JDK."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Toolkit.getFontMetrics\(Font\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.2, replaced by the Font method getLineMetrics."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Toolkit.getFontPeer\(String, int\)" effort="0" hint="Deprecated By JDK 6. see java.awt.GraphicsEnvironment#getAllFonts"/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Date.getHours\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.getHours\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.HOUR_OF_DAY)."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.SecurityManager.getInCheck\(\)" effort="0" hint="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteCall.getInputStream\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.KeyStroke.getKeyStroke\(char, boolean\)" effort="0" hint="Deprecated By JDK 6. use getKeyStroke(char)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.AbstractButton.getLabel\(\)" effort="0" hint="Deprecated By JDK 6. Replaced by getText"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Scrollbar.getLineIncrement\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getUnitIncrement()."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Runtime.getLocalizedInputStream\(InputStream\)" effort="0" hint="Deprecated By JDK 6. As of JDK 1.1, the preferred way to translate a byte stream in the local encoding into a character stream in Unicode is via the InputStreamReader and BufferedReader classes."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Runtime.getLocalizedOutputStream\(OutputStream\)" effort="0" hint="Deprecated By JDK 6. As of JDK 1.1, the preferred way to translate a Unicode character stream into a byte stream in the local encoding is via the OutputStreamWriter, BufferedWriter, and PrintWriter classes."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.DriverManager.getLogStream\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.FontMetrics.getMaxDecent\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1.1, replaced by getMaxDescent()."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JRootPane.getMenuBar\(\)" effort="0" hint="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by getJMenuBar()."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JInternalFrame.getMenuBar\(\)" effort="0" hint="Deprecated By JDK 6. As of Swing version 1.0.3, replaced by getJMenuBar()."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Date.getMinutes\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.getMinutes\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.MINUTE)."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Time.getMonth\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.getMonth\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.MONTH)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JComponent.getNextFocusableComponent\(\)" effort="0" hint="Deprecated By JDK 6. As of 1.4, replaced by FocusTraversalPolicy."/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.MonitorMBean.getObservedObject\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by MonitorMBean.getObservedObjects()"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.Monitor.getObservedObject\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by Monitor.getObservedObjects()"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.Operation.getOperation\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.Skeleton.getOperations\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.ComponentOrientation.getOrientation\(ResourceBundle\)" effort="0" hint="Deprecated By JDK 6. As of J2SE 1.4, use ComponentOrientation.getOrientation(java.util.Locale)."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteCall.getOutputStream\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.getOutputStream\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Scrollbar.getPageIncrement\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getBlockIncrement()."/>
+		<windup:java-hint source-type="METHOD" regex="java.security.Signature.getParameter\(String\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.MenuComponent.getPeer\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, programs should not directly manipulate peers."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.getPeer\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, programs should not directly manipulate peers; replaced by boolean isDisplayable()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Font.getPeer\(\)" effort="0" hint="Deprecated By JDK 6. Font rendering is now platform independent."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.Validator.getProperty\(String\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteCall.getResultStream\(boolean\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Date.getSeconds\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.getSeconds\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.SECOND)."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RMIClassLoader.getSecurityContext\(ClassLoader\)" effort="0" hint="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses this method to obtain a class loader's security context."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LoaderHandler.getSecurityContext\(ClassLoader\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JList.getSelectedValues\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK 1.7, replaced by JList.getSelectedValuesList()"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JPasswordField.getText\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.2, replaced by getPassword."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JPasswordField.getText\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.2, replaced by getPassword."/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.CounterMonitor.getThreshold\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getThreshold(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.CounterMonitorMBean.getThreshold\(\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getThreshold(ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.getTimezoneOffset\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by -(Calendar.get(Calendar.ZONE_OFFSET) + Calendar.get(Calendar.DST_OFFSET)) / (60 * 1000)."/>
+		<windup:java-hint source-type="METHOD" regex="java.net.DatagramSocketImpl.getTTL\(\)" effort="0" hint="Deprecated By JDK 6. use getTimeToLive instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.net.MulticastSocket.getTTL\(\)" effort="0" hint="Deprecated By JDK 6. use the getTimeToLive method instead, which returns an int instead of a byte."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.ResultSet.getUnicodeStream\(int\)" effort="0" hint="Deprecated By JDK 6. use getCharacterStream in place of getUnicodeStream"/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.ResultSet.getUnicodeStream\(String\)" effort="0" hint="Deprecated By JDK 6. use getCharacterStream instead"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.ScrollPaneLayout.getViewportBorderBounds\(JScrollPane\)" effort="0" hint="Deprecated By JDK 6. As of JDK version Swing1.1 replaced by JScrollPane.getViewportBorderBounds()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Scrollbar.getVisible\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getVisibleAmount()."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Time.getYear\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.getYear\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.YEAR)- 1900."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.gotFocus\(Event, Object\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processFocusEvent(FocusEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.handleEvent\(Event\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1 replaced by processEvent(AWTEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Window.hide\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.5, replaced by Window.setVisible(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.hide\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Dialog.hide\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.5, replaced by setVisible(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.SecurityManager.inClass\(String\)" effort="0" hint="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.SecurityManager.inClassLoader\(\)" effort="0" hint="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.Any.insert_Principal(Principal)" effort="0" hint="Deprecated By JDK 6. Deprecated by CORBA 2.2."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction.insertAtBoundry\(JEditorPane, HTMLDocument, int, Element, String, HTML.Tag, HTML.Tag\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3, use insertAtBoundary"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextArea.insertText\(String, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by insert(String, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Container.insets\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getInsets()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.inside\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Rectangle.inside\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Polygon.inside\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteRef.invoke\(RemoteCall\)" effort="0" hint="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls to the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object\[\], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.DynamicImplementation.invoke\(ServerRequest\)" effort="0" hint="Deprecated By JDK 6. Deprecated by Portable Object Adapter"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JViewport.isBackingStoreEnabled\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3, replaced by getScrollMode()."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.FocusManager.isFocusManagerEnabled\(\)" effort="0" hint="Deprecated By JDK 6. As of 1.4, replaced by KeyboardFocusManager.getDefaultFocusTraversalPolicy()"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.isFocusTraversable\(\)" effort="0" hint="Deprecated By JDK 6. As of 1.4, replaced by isFocusable()."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Character.isJavaLetter\(char\)" effort="0" hint="Deprecated By JDK 6. Replaced by isJavaIdentifierStart(char)."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Character.isJavaLetterOrDigit\(char\)" effort="0" hint="Deprecated By JDK 6. Replaced by isJavaIdentifierPart(char)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JComponent.isManagingFocus\(\)" effort="0" hint="Deprecated By JDK 6. As of 1.4, replaced by Component.setFocusTraversalKeys(int, Set) and Container.setFocusCycleRoot(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.isSelected\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by isIndexSelected(int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Character.isSpace\(char\)" effort="0" hint="Deprecated By JDK 6. Replaced by isWhitespace(char)."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.dgc.VMID.isUnique\(\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.Unmarshaller.isValidating\(\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0, please see Unmarshaller.getSchema()"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.keyDown\(Event, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processKeyEvent(KeyEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.keyUp\(Event, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processKeyEvent(KeyEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Container.layout\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by doLayout()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.layout\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by doLayout()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.ScrollPane.layout\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by doLayout()."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RMIClassLoader.loadClass\(String\)" effort="0" hint="Deprecated By JDK 6. replaced by loadClass(String,String) method"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LoaderHandler.loadClass\(String\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LoaderHandler.loadClass\(URL, String\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Container.locate\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentAt(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.locate\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentAt(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.location\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getLocation()."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.log\(String\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.lostFocus\(Event, Object\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processFocusEvent(FocusEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextArea.minimumSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Container.minimumSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextField.minimumSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.minimumSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.minimumSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextField.minimumSize\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.minimumSize\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextArea.minimumSize\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.text.View.modelToView\(int, Shape\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.mouseDown\(Event, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.mouseDrag\(Event, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseMotionEvent(MouseEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.mouseEnter\(Event, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.mouseExit\(Event, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.mouseMove\(Event, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseMotionEvent(MouseEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.mouseUp\(Event, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.move\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setLocation(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Rectangle.move\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setLocation(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.Principal.name\(\)" effort="0" hint="Deprecated By JDK 6. Deprecated by CORBA 2.2."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.Principal.name\(byte\[\]\)" effort="0" hint="Deprecated By JDK 6. Deprecated by CORBA 2.2."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteRef.newCall\(RemoteObject, Operation\[\], int, long\)" effort="0" hint="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls on the stub's the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object\[\], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.stream.XMLInputFactory.newInstance\(String, ClassLoader\)" effort="0" hint="Deprecated By JDK 6. This method has been deprecated to maintain API consistency. All newInstance methods have been replaced with corresponding newFactory methods. The replacement XMLInputFactory.newFactory(java.lang.String, java.lang.ClassLoader) method defines no changes in behavior."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.stream.XMLEventFactory.newInstance\(String, ClassLoader\)" effort="0" hint="Deprecated By JDK 6. This method has been deprecated to maintain API consistency. All newInstance methods have been replaced with corresponding newFactory methods. The replacement XMLEventFactory.newFactory(java.lang.String, java.lang.ClassLoader) method defines no changes in behavior."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.stream.XMLOutputFactory.newInstance\(String, ClassLoader\)" effort="0" hint="Deprecated By JDK 6. This method has been deprecated because it returns an instance of XMLInputFactory, which is of the wrong class. Use the new method XMLOutputFactory.newFactory(java.lang.String, java.lang.ClassLoader) instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.nextFocus\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by transferFocus()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.datatransfer.DataFlavor.normalizeMimeType\(String\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="javax.activation.ActivationDataFlavor.normalizeMimeType\(String\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.datatransfer.DataFlavor.normalizeMimeTypeParameter\(String, String\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="javax.activation.ActivationDataFlavor.normalizeMimeTypeParameter\(String, String\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.tree.DefaultTreeSelectionModel.notifyPathChange\(Vector, TreePath\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.7"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ServerRequest.op_name()" effort="0" hint="Deprecated By JDK 6. use operation()"/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ServerRequest.params\(NVList\)" effort="0" hint="Deprecated By JDK 6. use the method arguments"/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.parse\(String\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.parse(String s)."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.parseLevel\(String\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.MenuComponent.postEvent\(Event\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.MenuContainer.postEvent\(Event\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1 replaced by dispatchEvent(AWTEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Window.postEvent\(Event\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1 replaced by dispatchEvent(AWTEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.postEvent\(Event\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.image.renderable.RenderContext.preConcetenateTransform\(AffineTransform\)" effort="0" hint="Deprecated By JDK 6. replaced by preConcatenateTransform(AffineTransform)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextArea.preferredSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Container.preferredSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextField.preferredSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.preferredSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.preferredSize\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextField.preferredSize\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.preferredSize\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextArea.preferredSize\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.portable.InputStream.read_Principal()" effort="0" hint="Deprecated By JDK 6. Deprecated by CORBA 2.2."/>
+		<windup:java-hint source-type="METHOD" regex="java.io.ObjectInputStream.readLine\(\)" effort="0" hint="Deprecated By JDK 6. This method does not properly convert bytes to characters. see DataInputStream for the details and alternatives."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.registry.RegistryHandler.registryImpl\(int\)" effort="0" hint="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses the RegistryHandler to obtain the registry's implementation."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.registry.RegistryHandler.registryStub\(String, int\)" effort="0" hint="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses the RegistryHandler to obtain the registry's stub."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteCall.releaseInputStream\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteCall.releaseOutputStream\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.metal.MetalComboBoxUI.removeListeners\(\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.4."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextArea.replaceText\(String, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by replaceRange(String, int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JComponent.requestDefaultFocus\(\)" effort="0" hint="Deprecated By JDK 6. As of 1.4, replaced by FocusTraversalPolicy.getDefaultComponent(Container).requestFocus()"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Window.reshape\(int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.reshape\(int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Rectangle.reshape\(int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.resize\(Dimension\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(Dimension)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.resize\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Rectangle.resize\(int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(int, int)."/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.ServerRequest.result\(Any\)" effort="0" hint="Deprecated By JDK 6. use the method set_result"/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.ThreadGroup.resume\(\)" effort="0" hint="Deprecated By JDK 6. This method is used solely in conjunction with Thread.suspend and ThreadGroup.suspend, both of which have been deprecated, as they are inherently deadlock-prone. See Thread.suspend() for details."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Thread.resume\(\)" effort="0" hint="Deprecated By JDK 6. This method exists solely for use with Thread.suspend(), which has been deprecated because it is deadlock-prone. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.System.runFinalizersOnExit\(boolean\)" effort="0" hint="Deprecated By JDK 6. This method is inherently unsafe. It may result in finalizers being called on live objects while other threads are concurrently manipulating those objects, resulting in erratic behavior or deadlock."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Runtime.runFinalizersOnExit\(boolean\)" effort="0" hint="Deprecated By JDK 6. This method is inherently unsafe. It may result in finalizers being called on live objects while other threads are concurrently manipulating those objects, resulting in erratic behavior or deadlock."/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Properties.save\(OutputStream, String\)" effort="0" hint="Deprecated By JDK 6. This method does not throw an IOException if an I/O error occurs while saving the property list. The preferred way to save a properties list is via the store(OutputStream out, String comments) method or the storeToXML(OutputStream os, String comment) method."/>
+		<windup:java-hint source-type="METHOD" regex="java.net.MulticastSocket.send\(DatagramPacket, byte\)" effort="0" hint="Deprecated By JDK 6. Use the following code or its equivalent instead: ...... int ttl = mcastSocket.getTimeToLive(); mcastSocket.setTimeToLive(newttl); mcastSocket.send(p); mcastSocket.setTimeToLive(ttl); ......"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JViewport.setBackingStoreEnabled\(boolean\)" effort="0" hint="Deprecated By JDK 6. As of Java 2 platform v1.3, replaced by setScrollMode()."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.CheckboxGroup.setCurrent\(Checkbox\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSelectedCheckbox(Checkbox)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Frame.setCursor\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Component.setCursor(Cursor)."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Time.setDate\(int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.setDate\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.DAY_OF_MONTH, int date)."/>
+		<windup:java-hint source-type="METHOD" regex="java.net.URLConnection.setDefaultRequestProperty\(String, String\)" effort="0" hint="Deprecated By JDK 6. The instance specific setRequestProperty method should be used after an appropriate instance of URLConnection is obtained. Invoking this method will have no effect."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.setDefaultStream\(PrintStream\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.TextField.setEchoCharacter\(char\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEchoChar(char)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.Validator.setEventHandler\(ValidationEventHandler\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0"/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Date.setHours\(int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.setHours\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.HOUR_OF_DAY, int hours)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.AbstractButton.setLabel\(String\)" effort="0" hint="Deprecated By JDK 6. Replaced by setText(text)"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Scrollbar.setLineIncrement\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setUnitIncrement(int)."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.DriverManager.setLogStream\(PrintStream\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.AttributeValueExp.setMBeanServer\(MBeanServer\)" effort="0" hint="Deprecated By JDK 6. This method has no effect. The MBean Server used to obtain an attribute value is QueryEval.getMBeanServer()."/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.ValueExp.setMBeanServer\(MBeanServer\)" effort="0" hint="Deprecated By JDK 6. This method is not needed because a ValueExp can access the MBean server in which it is being evaluated by using QueryEval.getMBeanServer()."/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.StringValueExp.setMBeanServer\(MBeanServer\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JRootPane.setMenuBar\(JMenuBar\)" effort="0" hint="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by setJMenuBar(JMenuBar menu)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JInternalFrame.setMenuBar\(JMenuBar\)" effort="0" hint="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by setJMenuBar(JMenuBar m)."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Date.setMinutes\(int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.setMinutes\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.MINUTE, int minutes)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.event.KeyEvent.setModifiers\(int\)" effort="0" hint="Deprecated By JDK 6. as of JDK1.1.4"/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Time.setMonth\(int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.setMonth\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.MONTH, int month)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.List.setMultipleSelections\(boolean\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setMultipleMode(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JComponent.setNextFocusableComponent\(Component\)" effort="0" hint="Deprecated By JDK 6. As of 1.4, replaced by FocusTraversalPolicy"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.MonitorMBean.setObservedObject\(ObjectName\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by MonitorMBean.addObservedObject(javax.management.ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.Monitor.setObservedObject\(ObjectName\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by Monitor.addObservedObject(javax.management.ObjectName)"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.setOutputStream\(OutputStream\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Scrollbar.setPageIncrement\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBlockIncrement()."/>
+		<windup:java-hint source-type="METHOD" regex="java.security.Signature.setParameter\(String, Object\)" effort="0" hint="Deprecated By JDK 6. Use setParameter."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.Validator.setProperty\(String, Object\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.RemoteStub.setRef\(RemoteStub, RemoteRef\)" effort="0" hint="Deprecated By JDK 6. no replacement. The setRef method is not needed since RemoteStubs can be created with the RemoteStub(RemoteRef) constructor."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Date.setSeconds\(int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.setSeconds\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.SECOND, int seconds)."/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.CounterMonitor.setThreshold\(Number\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.setInitThreshold(java.lang.Number)"/>
+		<windup:java-hint source-type="METHOD" regex="javax.management.monitor.CounterMonitorMBean.setThreshold\(Number\)" effort="0" hint="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.setInitThreshold(java.lang.Number)"/>
+		<windup:java-hint source-type="METHOD" regex="java.net.DatagramSocketImpl.setTTL\(byte\)" effort="0" hint="Deprecated By JDK 6. use setTimeToLive instead."/>
+		<windup:java-hint source-type="METHOD" regex="java.net.MulticastSocket.setTTL\(byte\)" effort="0" hint="Deprecated By JDK 6. use the setTimeToLive method instead, which uses int instead of byte as the type for ttl."/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.PreparedStatement.setUnicodeStream\(int, InputStream, int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="javax.sql.rowset.BaseRowSet.setUnicodeStream\(int, InputStream, int\)" effort="0" hint="Deprecated By JDK 6. getCharacterStream should be used in its place"/>
+		<windup:java-hint source-type="METHOD" regex="java.net.URLStreamHandler.setURL\(URL, String, String, int, String, String\)" effort="0" hint="Deprecated By JDK 6. Use setURL(URL, String, String, int, String, String, String, String);"/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.Unmarshaller.setValidating\(boolean\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0, please see Unmarshaller.setSchema(javax.xml.validation.Schema)"/>
+		<windup:java-hint source-type="METHOD" regex="java.sql.Time.setYear\(int\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.setYear\(int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.YEAR, year + 1900)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Window.show\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.5, replaced by Window.setVisible(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.show\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Dialog.show\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.5, replaced by setVisible(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.show\(boolean\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)."/>
+		<windup:java-hint source-type="METHOD" regex="java.awt.Component.size\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by getSize()."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JTable.sizeColumnsToFit\(boolean\)" effort="0" hint="Deprecated By JDK 6. As of Swing version 1.0.3, replaced by doLayout()."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.ThreadGroup.stop\(\)" effort="0" hint="Deprecated By JDK 6. This method is inherently unsafe. See Thread.stop() for details."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Thread.stop\(\)" effort="0" hint="Deprecated By JDK 6. This method is inherently unsafe. Stopping a thread with Thread.stop causes it to unlock all of the monitors that it has locked (as a natural consequence of the unchecked ThreadDeath exception propagating up the stack). If any of the objects previously protected by these monitors were in an inconsistent state, the damaged objects become visible to other threads, potentially resulting in arbitrary behavior. Many uses of stop should be replaced by code that simply modifies some variable to indicate that the target thread should stop running. The target thread should check this variable regularly, and return from its run method in an orderly fashion if the variable indicates that it is to stop running. If the target thread waits for long periods (on a condition variable, for example), the interrupt method should be used to interrupt the wait. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Thread.stop\(Throwable\)" effort="0" hint="Deprecated By JDK 6. This method is inherently unsafe. See Thread.stop() for details. An additional danger of this method is that it may be used to generate exceptions that the target thread is unprepared to handle (including checked exceptions that the thread could not possibly throw, were it not for this method). For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.ThreadGroup.suspend\(\)" effort="0" hint="Deprecated By JDK 6. This method is inherently deadlock-prone. See Thread.suspend() for details."/>
+		<windup:java-hint source-type="METHOD" regex="java.lang.Thread.suspend\(\)" effort="0" hint="Deprecated By JDK 6. This method has been deprecated, as it is inherently deadlock-prone. If the target thread holds a lock on the monitor protecting a critical system resource when it is suspended, no thread can access this resource until the target thread is resumed. If the thread that would resume the target thread attempts to lock this monitor prior to calling resume, deadlock results. Such deadlocks typically manifest themselves as &quot;frozen&quot; processes. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.toGMTString\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.format(Date date), using a GMT TimeZone."/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.toLocaleString\(\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.format(Date date)."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.Operation.toString\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.toString\(\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.io.ByteArrayOutputStream.toString\(int\)" effort="0" hint="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the toString(String enc) method, which takes an encoding-name argument, or the toString() method, which uses the platform's default character encoding."/>
+		<windup:java-hint source-type="METHOD" regex="java.io.File.toURL\(\)" effort="0" hint="Deprecated By JDK 6. This method does not automatically escape characters that are illegal in URLs. It is recommended that new code convert an abstract pathname into a URL by first converting it into a URI, via the toURI method, and then converting the URI into a URL via the URI.toURL method."/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.plaf.metal.MetalScrollPaneUI.uninstallListeners\(JScrollPane\)" effort="0" hint="Deprecated By JDK 6. Replaced by MetalScrollPaneUI.uninstallListeners(JComponent)"/>
+		<windup:java-hint source-type="METHOD" regex="java.util.Date.UTC\(int, int, int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min, sec), using a UTC TimeZone, followed by Calendar.getTime().getTime()."/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.Validator.validate\(Object\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0"/>
+		<windup:java-hint source-type="METHOD" regex="javax.xml.bind.Validator.validateRoot\(Object\)" effort="0" hint="Deprecated By JDK 6. since JAXB2.0"/>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.text.View.viewToModel\(float, float, Shape\)" effort="0" hint="Deprecated By JDK 6. "/>
+		<windup:java-hint source-type="METHOD" regex="org.omg.CORBA.portable.OutputStream.write_Principal(Principal)" effort="0" hint="Deprecated By JDK 6. Deprecated by CORBA 2.2."/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.write\(byte\[\], int, int\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.rmi.server.LogStream.write\(int\)" effort="0" hint="Deprecated By JDK 6. no replacement"/>
+		<windup:java-hint source-type="METHOD" regex="java.io.ObjectOutputStream.PutField.write\(ObjectOutput\)" effort="0" hint="Deprecated By JDK 6. This method does not write the values contained by this PutField object in a proper format, and may result in corruption of the serialization stream. The correct way to write PutField data is by calling the ObjectOutputStream.writeFields() method."/>
+		<windup:java-hint source-type="METHOD" regex="java.io.DataInputStream.readLine\(\)" effort="0">
+			<![CDATA[
+			Deprecated By JDK 6. 
+			This method does not properly convert bytes to characters. As of JDK 1.1, the preferred way to read lines of text is via the BufferedReader.readLine() method. Programs that use the DataInputStream class to read lines can be converted to use the BufferedReader class by replacing code of the form:
+			```java
+			   DataInputStream d = new DataInputStream(in);
+			with:
+			 BufferedReader d
+				  = new BufferedReader(new InputStreamReader(in));
+			```
+			]]>
+		</windup:java-hint>
+		<windup:java-hint source-type="METHOD" regex="javax.swing.JComponent.reshape\(int, int, int, int\)" effort="0">
+			<![CDATA[
+			Deprecated By JDK 6. 
+			As of JDK 5, replaced by Component.setBounds(int, int, int, int).
+			Moves and resizes this component.
+			]]>
+		</windup:java-hint>
+	<!-- Deprecated Methods - End -->
+	<!-- Deprecated Constructors - Begin -->
+		<windup:java-hint source-type="CONSTRUCT" regex="javax.management.AttributeValueExp\(\)" effort="0" hint="Deprecated By JDK 6. An instance created with this constructor cannot be used in a query." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Date\(int, int, int\)" effort="0" hint="Deprecated By JDK 6. instead use the constructor Date(long date)" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date\(int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date) or GregorianCalendar(year + 1900, month, date)." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date\(int, int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min) or GregorianCalendar(year + 1900, month, date, hrs, min)." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date\(int, int, int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min, sec)." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.util.Date\(java.lang.String\)" effort="0" hint="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.parse(String s)." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.awt.event.KeyEvent\(java.awt.Component, int, long, int, int\)" effort="0" hint="Deprecated By JDK 6. as of JDK1.1" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.server.Operation\(java.lang.String\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.RMISecurityException\(java.lang.String\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.RMISecurityException\(java.lang.String, java.lang.String\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.ServerRuntimeException\(java.lang.String, java.lang.Exception\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.rmi.server.SkeletonMismatchException\(java.lang.String\)" effort="0" hint="Deprecated By JDK 6. no replacement" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.net.Socket\(java.net.InetAddress, int, boolean\)" effort="0" hint="Deprecated By JDK 6. Use DatagramSocket instead for UDP transport." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.net.Socket\(java.lang.String, int, boolean\)" effort="0" hint="Deprecated By JDK 6. Use DatagramSocket instead for UDP transport." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.lang.String\(byte\[\], int\)" effort="0" hint="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String constructors that take a Charset, charset name, or that use the platform's default charset." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.lang.String\(byte\[\], int, int, int\)" effort="0" hint="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String constructors that take a Charset, charset name, or that use the platform's default charset." />
+		<windup:java-hint source-type="CONSTRUCT" regex="org.omg.CORBA.TCKind\(int\)" effort="0" hint="Deprecated By JDK 6. Do not use this constructor as this method should be private according to the OMG specification. Use TCKind.from_int(int) instead." />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Time\(int, int, int\)" effort="0" hint="Deprecated By JDK 6. Use the constructor that takes a milliseconds value in place of this constructor" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.sql.Timestamp\(int, int, int, int, int, int, int\)" effort="0" hint="Deprecated By JDK 6. instead use the constructor Timestamp(long millis)" />
+		<windup:java-hint source-type="CONSTRUCT" regex="java.io.StreamTokenizer\(java.io.InputStream\)" effort="0">
+			<![CDATA[
+				 Deprecated By JDK 6 - As of JDK version 1.1, the preferred way to tokenize an input stream is to convert it into a character stream, for example:
+	
+				```java
+					Reader r = new BufferedReader(new InputStreamReader(is));
+					StreamTokenizer st = new StreamTokenizer(r);
+				```
+			]]>
+		</windup:java-hint>
+	<!-- Deprecated Constructors - End -->
+	<!-- Deprecated Annotation Type Elements - Begin -->
+		<windup:java-hint source-type="TYPE" regex="javax.jws.HandlerChain.name" effort="0" hint="Deprecated By JDK 6. As of JSR-181 2.0 with no replacement." />
+	<!-- Deprecated Annotation Type Elements - End -->
+    </windup:java-hints>
+	
+</beans>

@@ -1,0 +1,93 @@
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<script type='text/javascript' src='../../jquery.min.js'></script>
+		<script type='text/javascript' src='../../jquery-ui/jquery.ui.widget.js'></script>
+		<script type='text/javascript' src='../../snippet/jquery.snippet.min.js'></script>
+		<script type='text/javascript' src='../../snippet/jquery.snippet.java-manifest.js'></script>
+		<script type='text/javascript' src='../../sausage/jquery.sausage.min.js'></script>
+
+		<link rel='stylesheet' type='text/css' href='../../snippet/jquery.snippet.min.css' />
+		<link rel='stylesheet' type='text/css' href='../../windup.css' />
+
+		<link rel='stylesheet' type='text/css' href='../../sausage/sausage.css' />
+	</head>
+	<body class='sourceReport'>
+		<div class="windupHeader"><img src="../../img/windup-logo.png"></div>
+		
+
+			<div class='windupBody'>
+
+		<div class='windupHighLevel'>
+
+
+
+			<h3>Notification</h3>
+			<ul class='notifications'>
+%COMPARE_REGEX%					<li class='notification warning'><a href=".*">Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-navigation</a></li>
+%COMPARE_REGEX%					<li class='notification warning'><a href=".*">Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-dynamicui</a></li>
+%COMPARE_REGEX%					<li class='notification warning'><a href=".*">Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-logic</a></li>
+%COMPARE_REGEX%					<li class='notification warning'><a href=".*">Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-core</a></li>
+%COMPARE_REGEX%					<li class='notification warning'><a href=".*">Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-fmt</a></li>
+			</ul>
+		
+		</div>
+		</div>
+
+		<div class='windupReportBody'>
+
+<pre id='source'>&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=ISO-8859-1&quot;
+    pageEncoding=&quot;ISO-8859-1&quot;%&gt;'
+&lt;%@ taglib uri=&quot;http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-navigation&quot; prefix=&quot;portal-navigation&quot; %&gt;
+&lt;%@ taglib uri=&quot;http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-dynamicui&quot; prefix=&quot;portal-dynamicui&quot; %&gt;
+&lt;%@ taglib uri=&quot;http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-logic&quot; prefix=&quot;portal-logic&quot; %&gt;
+&lt;%@ taglib uri=&quot;http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-core&quot; prefix=&quot;portal-core&quot; %&gt;
+&lt;%@ taglib uri=&quot;http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-fmt&quot; prefix=&quot;portal-fmt&quot; %&gt;
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=ISO-8859-1&quot;&gt;
+&lt;title&gt;Insert title here&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+		</div>
+		
+
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('pre').snippet('xml',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '3,4,5,6,7' });
+
+
+$("<div id='3-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(3)');
+$("<div id='4-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(4)');
+$("<div id='5-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(5)');
+$("<div id='6-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(6)');
+$("<div id='7-inlines' class='inline-source-hint-group'>		").appendTo('ol.snippet-num li:nth-child(7)');
+	
+		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-navigation</h2></div></div></div>"\).appendTo\('#3-inlines'\);		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-dynamicui</h2></div></div></div>"\).appendTo\('#4-inlines'\);		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-logic</h2></div></div></div>"\).appendTo\('#5-inlines'\);		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-core</h2></div></div></div>"\).appendTo\('#6-inlines'\);		
+%COMPARE_REGEX%\$\("<a name='.*'></a>			<div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><h2 class='notification warning'>Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-fmt</h2></div></div></div>"\).appendTo\('#7-inlines'\);	
+	
+		$('code[data-code-syntax]').each(function(){
+	         var codeSyntax = ($(this).data('code-syntax'));
+	         if(codeSyntax) {
+	            $(this).parent().snippet(codeSyntax,{style:'ide-eclipse', menu:false, showNum:false});
+	         }
+		});
+		$(window).sausage({ page: 'li.box' });
+	}); 
+</script>		
+		<script type='text/javascript' src='../../windup.js'></script>
+		<div class='windupFooter'>
+			<a href='http://redhat.com'><img src='../../img/rh-logo.png'/></a>
+		</div>
+
+	</body>
+</html>

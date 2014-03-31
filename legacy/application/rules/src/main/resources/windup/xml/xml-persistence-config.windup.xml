@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="XML" id="xml-persistence-decorators">
+		<!-- iBATIS -->
+		<windup:xpath-classification description="iBatis Mapping" xpath="/sqlMap " effort="0" />
+		<windup:xpath-classification description="iBatis Configuration" xpath="/sqlMapConfig " effort="0" />
+
+
+		<!-- JPA -->
+
+		<!-- JBoss 4 to JBoss 5 -->
+		<windup:xpath-classification description="JPA Configuration" xpath="persistence[not(@version)]" effort="0">
+			<windup:decorators>
+			
+				<windup:xslt-transform location="transformations/xslt/jboss4-persistence-to-jboss5.xsl"
+						description="JPA Descriptor - JBoss 5 (Windup-Generated)"
+						extension="-jboss5.xml"/>
+						
+			</windup:decorators>
+		</windup:xpath-classification>
+
+		<windup:xpath-classification description="JPA 1.x Configuration" xpath="/jpa:persistence[@version='1.0'] | /persistence[@version='1.0']" effort="0">
+			<windup:namespace prefix="jpa" uri="http://java.sun.com/xml/ns/persistence" />
+			
+			<windup:decorators ref="jpa-pathway"/>
+		</windup:xpath-classification>
+
+		<windup:xpath-classification description="JPA 2.x Configuration" xpath="/jpa:persistence[@version='2.0'] | /persistence[@version='2.0']" effort="0">
+			<windup:namespace prefix="jpa" uri="http://java.sun.com/xml/ns/persistence" />
+			
+			<windup:decorators ref="jpa-pathway"/>
+		</windup:xpath-classification>
+
+
+		<!-- Hibernate -->
+		<windup:xpath-classification description="Hibernate Mapping" xpath="/hibernate-mapping" />
+
+		<windup:dtd-classification description="Hibernate 2.0 Mapping" system-id-regex="hibernate-mapping-2.0" />
+
+		<windup:xpath-summary description="Outer-Join Property Tag" xpath="/hibernate-mapping/class/@outer-join" effort="1">
+			<windup:hints>
+				<windup:regex-hint regex="outer-join" hint="Outer Join tag deprecated, use fetch='join'and fetch='select' instead"/>
+			</windup:hints>
+		</windup:xpath-summary>
+
+
+		<windup:xpath-summary description="Unused-Value Property Tag" xpath="/hibernate-mapping/class/@unused-value" effort="0">
+			<windup:hints>
+				<windup:regex-hint regex="unused-value" hint="Unused Value is now optional, Hibernate will set equal to 0 where sensible."/>
+			</windup:hints>
+		</windup:xpath-summary>
+
+
+		<windup:xpath-classification description="Hibernate Configuration" xpath="/hibernate-configuration">
+			<windup:decorators ref="hibernate-pathway" />
+		</windup:xpath-classification>
+
+		<windup:xpath-summary description="Index Expression Semi-Deprecated" xpath="/hibernate-mapping/class/index" effort="1">
+			<windup:hints>
+				<windup:regex-hint regex="index" hint="Index is now semi-deprecated.  list-index and map-key preferred."/>
+			</windup:hints>
+		</windup:xpath-summary>
+
+
+		<windup:xpath-summary description="Key-many-to-many tag" xpath="/hibernate-mapping/class/key-many-to-many" effort="1">
+			<windup:hints>
+				<windup:regex-hint regex="key-many-to-many" hint="map-key-many-to-many preferred over key-many-to-many"/>
+			</windup:hints>
+		</windup:xpath-summary>
+
+		<windup:xpath-summary description="Composite-index tag" xpath="/hibernate-mapping/class/composite-index" effort="1">
+			<windup:hints>
+				<windup:regex-hint regex="composite-index" hint="composite-map-key preferred over composite-index"/>
+			</windup:hints>
+		</windup:xpath-summary>
+
+	</windup:pipeline>
+
+	<!-- JPA pathway -->
+
+	<bean id="jpa-pathway" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+
+				<windup:xpath-value description="Weblogic Specifc Webservice Ant Tasks"
+					xpath="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']"
+					effort="10" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask$ | weblogic.ant.taskdefs.webservices.javaschema.JavaSchema$ | weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD$ | weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask$" hint="Replace with Apache CXF Ant Tasks or Annotations"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+				<windup:xpath-value description="JOnAS Specific" xpath="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" effort="1" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.JOnASTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+				<windup:xpath-value description="JOTM Specific" xpath="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" effort="1" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.JOTMTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+
+				<windup:xpath-value description="Websphere Specific" xpath="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value" effort="1"
+					inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.WebSphereExtendedJTATransactionLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+				<windup:xpath-value description="Websphere Specific"
+					xpath="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()"
+					effort="1" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.WebSphereTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+				<windup:xpath-value description="Weblogic Specific"
+					xpath="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()"
+					effort="1" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.WeblogicTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Borland ES Specific" xpath="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.BESTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="JRun4 AS Specific" xpath="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.JRun4TransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="OC4J (Oracle) AS Specific" xpath="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.OC4JTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+
+
+				<windup:xpath-value description="Orion Specific" xpath="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.OrionTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+				<windup:xpath-value description="Resin Specific" xpath="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.ResinTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+				<windup:xpath-value description="Sun ONE Application Server Specific" xpath="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value"
+					inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.SunONETransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- Hibernate Inline Hints TODO: Fix XPath -->
+	<bean id="hibernate-pathway" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<windup:xpath-value description="JOnAS Specific" xpath="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" effort="1" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.JOnASTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="JOTM Specific" xpath="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" effort="1" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.JOTMTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Websphere Specific" xpath="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value" effort="1"
+					inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.WebSphereExtendedJTATransactionLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Websphere Specific"
+					xpath="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()"
+					effort="1" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.WebSphereTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Weblogic Specific"
+					xpath="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()"
+					effort="1" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.WeblogicTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Borland ES Specific" xpath="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.BESTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="JRun4 AS Specific" xpath="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.JRun4TransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="OC4J (Oracle) AS Specific" xpath="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.OC4JTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Orion Specific" xpath="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.OrionTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Resin Specific" xpath="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.ResinTransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Sun ONE Application Server Specific" xpath="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value"
+					inline="true">
+					<windup:hints>
+						<windup:regex-hint regex="org.hibernate.transaction.SunONETransactionManagerLookup$" hint="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"/>
+					</windup:hints>
+				</windup:xpath-value>
+			</list>
+			</constructor-arg>
+		</bean>
+
+</beans>
+ 

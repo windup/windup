@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="XML" id="xml-base-decorators">
+		<!-- JSP tag library -->
+		<windup:xpath-classification description="JSP Tag Library" xpath="/j2ee:taglib | /taglib" effort="0">
+			<windup:namespace prefix="j2ee" uri="http://java.sun.com/xml/ns/j2ee" />
+		</windup:xpath-classification>
+		
+		<windup:dtd-classification description="OpenSymphony XWork Validator" effort="0" public-id-regex=".+XWork Validator.+" />
+		
+		<windup:dtd-classification description="JasperReports Report Design" effort="0" public-id-regex=".+JasperReports.+Report Design.+" />
+		
+		
+		
+		<!-- JiBX binding -->
+		<windup:xpath-classification description="JiBX Binding"
+			xpath="/*[local-name()='binding']/*[local-name()='namespace'] | /*[local-name()='binding']/*[local-name()='mapping']/@value-style | /*[local-name()='binding']/*[local-name()='mapping']/*[local-name()='value']/@style | /*[local-name()='binding']/*[local-name()='mapping']/@value" />
+	
+		<!-- Apache Struts -->
+		<windup:xpath-classification description="Struts Menu" xpath="/MenuConfig" effort="0" />
+		
+		<windup:dtd-classification description="Struts 1.x" effort="0" public-id-regex="//Apache Software Foundation//DTD Struts Configuration 1.." />
+
+		<windup:dtd-classification description="Struts 2.x" effort="0" public-id-regex="//Apache Software Foundation//DTD Struts Configuration 2.." />
+
+		<windup:xpath-classification description="Struts Configuration" xpath="/struts-config" effort="0" />
+		
+		<windup:xpath-classification description="Struts Tiles Definition" xpath="/tiles-definitions | /component-definitions" effort="0" />
+		
+		<windup:xpath-classification description="Struts Chain Of Responsibility Configuration" xpath="//catalog/chain | //catalog/chains" effort="0" />
+		
+		
+		<!-- XSLT -->
+		<windup:xpath-classification description="XSLT Configuration" xpath="/xslt:stylesheet" effort="0">
+			<windup:namespace prefix="xslt" uri="http://www.w3.org/1999/XSL/Transform" />
+		</windup:xpath-classification>
+		
+		
+		<!-- Facelet tag library -->
+		<windup:xpath-classification description="Facelet Taglib" xpath="/jee:facelet-taglib | /facelet-taglib | /*[local-name()='facelet-taglib']" effort="2">
+			<windup:namespace prefix="facelet" uri="http://java.sun.com/JSF/Facelet" />
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+		</windup:xpath-classification>
+
+		<!-- JSF -->
+		<windup:xpath-classification description="JavaServer Faces Config" xpath="/jee:faces-config | /je:faces-config | /faces-config" effort="0">
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+			<windup:namespace prefix="je" uri="http://java.sun.com/JSF/Configuration" />
+		</windup:xpath-classification>
+		
+		<!-- jBPM -->
+		<windup:xpath-classification description="jBPM 3.x Process Definition" xpath="/jbpm31:process-definition | /process-definition/start-state | /jbpm32:process-definition">
+			<windup:namespace prefix="jbpm32" uri="urn:jbpm.org:jpdl-3.2" />
+			<windup:namespace prefix="jbpm31" uri="urn:jbpm.org:jpdl-3.1" />
+			<windup:decorators>
+				<bean class="org.jboss.windup.decorator.xml.XSLTDecorator">
+					<property name="xsltLocation" value="jpdl3-bpmn2.xsl" />
+					<property name="outputDescription" value="JBoss jBPM 5 BPMN2(Windup-Generated)" />
+					<property name="outputExtension" value="-bpmn2.xml" />
+				</bean>
+			</windup:decorators>
+		</windup:xpath-classification>
+		
+		<!-- Oagis XML catalog -->
+		<windup:xpath-classification description="Oagis XML Catalog" xpath="/oagis:catalog" effort="0">
+			<windup:namespace prefix="oagis" uri="urn:oasis:names:tc:entity:xmlns:xml:catalog" />
+		</windup:xpath-classification>
+		
+		<!-- Apache Commons -->
+		<windup:xpath-classification description="Commons Validator Rules Configuration" xpath="/form-validation" effort="0" />
+		<windup:xpath-classification description="Commons Digester Configuration" xpath="/digester-rules" effort="0" />
+		
+		<!-- Apache Beehive -->
+		<windup:xpath-classification description="Apache Beehive Configuration" xpath="/b:netui-config | /netui-config">
+			<windup:namespace prefix="b" uri="http://beehive.apache.org/netui/2004/server/config" />
+		</windup:xpath-classification>
+		
+		<!-- RichFaces -->
+		<windup:xpath-classification description="Rich Faces Properties" xpath="/rf:properties" effort="0">
+			<windup:namespace prefix="rf" uri="http://jboss.org/schema/richfaces/cdk/extensions" />
+		</windup:xpath-classification>
+		
+		<!-- Application descriptors -->
+		<windup:xpath-classification description="EAR Application Descriptor" xpath="/jee:application | /j2e:application | /application" effort="1">
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+			<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="WAR Application Descriptor" xpath="/web-app | /j2e:web-app | /jee:web-app" effort="0">
+			<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+		</windup:xpath-classification>
+		
+		<!-- Dozer -->
+		<windup:xpath-classification description="Dozer Mappings" xpath="/dzr:mappings" effort="0">
+			<windup:namespace prefix="dzr" uri="http://dozer.sourceforge.net" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="Weblogic Webservice Annotation Descriptor" xpath="/jam-service">	
+			<windup:decorators>
+			</windup:decorators>
+		</windup:xpath-classification>
+				
+
+		<!-- Castor data binding -->
+		<windup:xpath-classification description="Castor Binding" xpath="/cbf:binding" effort="0">
+			<windup:namespace prefix="cbf" uri="http://www.castor.org/SourceGenerator/Binding" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="Castor Mapping" xpath="/cbf:mapping" effort="0">
+			<windup:namespace prefix="cbf" uri="http://castor.exolab.org/" />
+		</windup:xpath-classification>
+		
+		<windup:dtd-classification description="Castor JDO Config" effort="0" 
+			public-id-regex=".+Castor JDO Configuration.+" />
+		
+		<windup:dtd-classification description="Castor Mapping" effort="0" 
+			public-id-regex="Castor Mapping" />
+		
+		
+		<!-- Mule ESB -->
+		<windup:dtd-classification description="Mule ESB Configuration" public-id-regex="MuleSource.+mule-configuration" />
+								
+		<!-- Jetty -->
+		<windup:xpath-classification description="Jetty Configuration" xpath="/Configure[@class='org.mortbay.jetty.Server']" />
+		
+		<!-- Properties configuration -->
+		<windup:xpath-classification description="Properties Configuration" xpath="/properties/entry/@key" />
+		<windup:xpath-classification description="Sitemesh Configuration" xpath="/sitemesh" effort="0" />
+		<windup:xpath-classification description="RSS File" xpath="/rss" effort="0" />
+		<windup:xpath-classification description="Apache Axis Configuration" xpath="/axisconfig" effort="0" />
+		
+						
+		<!-- Apache Log4j -->
+		<windup:xpath-classification description="Apache Log4j Configuration" xpath="/configuration/appender/@class | /configuration/logger | /log4j:configuration" effort="2">
+			<windup:namespace prefix="log4j" uri="http://jakarta.apache.org/log4j/" />
+		</windup:xpath-classification>
+		
+		<!-- BPEL Process -->
+		<windup:xpath-classification description="BPEL Process" xpath="/bpws:process">
+			<windup:namespace prefix="bpws" uri="http://schemas.xmlsoap.org/ws/2004/03/business-process/" />
+		</windup:xpath-classification>
+		
+		
+		<!-- IBM Process Server -->
+		<windup:xpath-classification description="IBM Process Server Component" xpath="/scdl:component">
+			<windup:namespace prefix="scdl" uri="http://www.ibm.com/xmlns/prod/websphere/scdl/6.0.0" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="IBM Process Server Component" xpath="/xmi:XMI/extensionmodel:ExtensionMap">
+			<windup:namespace prefix="xmi" uri="http://www.omg.org/XMI" />
+			<windup:namespace prefix="extensionmodel" uri="http:///extensionmodel.ecore" />
+		</windup:xpath-classification>
+		
+		<!-- CDI -->
+		<windup:xpath-classification description="CDI Configuration" xpath="/jee:beans">
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="W3C Speech Recognition Grammar" xpath="/w3c:grammar">
+			<windup:namespace prefix="w3c" uri="http://www.w3.org/2001/06/grammar"/>
+		</windup:xpath-classification>
+		
+		<!-- Apache Ant -->
+		<windup:xpath-classification description="Apache Ant Task Definition" xpath="/antlib" effort="0" />
+		<windup:xpath-classification description="Apache Ant Configuration" xpath="/project/target" effort="0" />
+		
+		<!-- Ehcache -->
+		<windup:xpath-classification description="EH Cache Configuration" xpath="/ehcache" effort="0" />
+		
+		<!-- JGroups -->
+		<windup:xpath-classification description="JGroups Configuration" xpath="/protocol_stacks/stack" />
+		
+		<!-- Infinispan -->
+		<windup:xpath-classification description="Infinispan Configuration" xpath="/infinispan" />
+		
+		<!-- JBoss Cache -->
+		<windup:xpath-classification description="JBoss Cache Configuration" xpath="/cache-configs/cache-config" />
+		
+		<!-- Resource Adapter -->
+		<windup:xpath-classification description="Resource Adapter" xpath="/jee:connector | /j2e:connector" effort="3">
+			<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/j2ee" />
+		</windup:xpath-classification>
+		
+		
+		<!-- Checkstyle -->
+		<windup:xpath-classification description="Checkstyle Configuration" xpath="/module[@name='Checker'] | /checkstyle" effort="0" />
+		
+		<!-- PMD Ruleset -->
+		<windup:xpath-classification description="PMD Configuration" xpath="/pmd:ruleset | /pmd">
+			<windup:namespace prefix="pmd" uri="http://pmd.sf.net/ruleset/1.0.0" />
+		</windup:xpath-classification>
+		
+		
+		<!-- OSOA SCA -->
+		<windup:xpath-classification description="SCA Configuration" xpath="/sca:composite">
+			<windup:namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0" />
+			<windup:decorators>
+				<windup:xpath-summary description="Tibco SCA Extension: SOAP Binding" xpath="//soapbt:binding.soap.service" inline="true">
+					<windup:namespace prefix="soapbt" uri="http://xsd.tns.tibco.com/amf/models/sca/binding/soap" />
+				</windup:xpath-summary>
+	
+				<windup:xpath-summary description="Tibco SCA Extension: JMS Binding" xpath="//jmsbt:binding.jms.reference" inline="true">
+					<windup:namespace prefix="jmsbt" uri="http://xsd.tns.tibco.com/amf/models/sca/bindingtype/jms" />
+				</windup:xpath-summary>
+	
+				<windup:xpath-summary description="Data Source" xpath="//sca:property[@type='jdbc:JdbcDataSource']" inline="true">
+					<windup:namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0" />
+					<windup:namespace prefix="jdbc" uri="http://xsd.tns.tibco.com/amf/models/sharedresource/jdbc" />
+				</windup:xpath-summary>
+	
+				<windup:xpath-summary description="JMS Listener" xpath="//sca:property[@name='JMSConnectionFactory' and @type='jms:JMSConnectionFactory']" inline="true">
+					<windup:namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0" />
+				</windup:xpath-summary>
+	
+				<windup:xpath-value description="Java Service" xpath="//sca:implementation.java/@class" inline="true">
+					<windup:namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0" />
+				</windup:xpath-value>
+	
+			</windup:decorators>
+		</windup:xpath-classification>
+
+	</windup:pipeline>
+</beans>

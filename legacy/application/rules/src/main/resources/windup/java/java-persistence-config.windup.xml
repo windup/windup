@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-persistence-decorators">
+
+	</windup:pipeline>
+	
+	<windup:java-hints id="java-persistence-hints">
+		<!-- Hibernate 2 to 3 -->
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.Session.find" hint="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()" effort="2"/>
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.Session.iterate" hint="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()" effort="2"/>
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.Session.filter" hint="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()" effort="2"/>
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.Session.delete" hint="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()" effort="2"/>
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.Session.saveOrUpdateCopy" hint="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use merge()" effort="1"/>
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.Session.createSQLQuery" hint="Deprecated by Hibernate 3, moved to org.hibernate.classic" effort="3"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.Lifecycle" hint="Deprecated by Hibernate 3, moved to org.hibernate.classic" effort="3"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.Validatable" hint="Deprecated by Hibernate 3, moved to org.hibernate.classic" effort="3"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.PersistentEnum" hint="Removed in Hibernate 3, use UserType" effort="1"/>
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.FetchMode.EAGER" hint="Deprecated in Hibernate 3, use FetchMode.JOIN" effort="1"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.FetchMode.LAZY" hint="Deprecated in Hibernate 3, use FetchMode.SELECT" effort="1"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.+" hint="Replace net.sf.hibernate with org.hibernate (Hibernate 3)"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.Interceptor" hint="Hibernate 3 adds two methods to the Interceptor interface; consider simply extending the EmptyInterceptor class rather than writing empty implementations"/>
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.Interceptor.instantiate\(\)" hint="Method signature is now: instantiate(String entity)"/>
+		<windup:java-hint source-type="METHOD" regex="net.sf.hibernate.isUnsaved\(\)" hint="Renamed to isTransient()"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.UserType" hint="Re-implement with additional methods, moved to org.hibernate.usertype"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.CompositeUserType" hint="Re-implement with additional methods, moved to org.hibernate.usertype"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.criterion" hint="Has undergone significant refactoring, be careful during migration"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.mapping" hint="Has undergone significant refactoring, be careful during migration"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.persister" hint="Has undergone significant refactoring, be careful during migration"/>
+		<windup:java-hint source-type="IMPORT" regex="net.sf.hibernate.collection" hint="Has undergone significant refactoring, be careful during migration"/>
+	</windup:java-hints>
+</beans>	
+			

@@ -1,0 +1,101 @@
+<html><head>
+<LINK REL=STYLESHEET HREF="default.css" TYPE="text/css">
+
+	<style>
+.copright{font-family:arial,tahoma,geneva,helvetica;font-size:.55em;color:#333333;}
+.text{font-family:arial,tahoma,geneva,helvetica;font-size:.75em;color:#666666;line-height:1.5em;}
+A 				{color: #773300;}
+A:visited 		{color: #668877;}
+A:hover 		{color: #cc6600; text-decoration:underline;}
+A:active 		{color: #dd0000; text-decoration:underline;}
+</style>
+
+		<title>JRun 4: Sample Application Server Home Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	</head>
+	<body bgcolor="#ffffff">
+
+<h1>Samples server database notes</h1>
+
+<P>JRun 4 ships with a restricted version of the PointBase Server DBMS, which 
+  is used in support of JRun sample applications. PointBase is installed into 
+  the jrun_root/pointbase directory, including documentation and other instructions 
+  on using both PointBase Server and PointBase Embedded. The version of PointBase 
+  that ships with JRun is intended for use with the samples server only and the 
+  size of each database is limited to 5MB. For complete information on PointBase, 
+  go to <a href="http://www.pointbase.com" target="_blank">http://www.pointbase.com</a></P>
+<P align="left">The following table lists the PointBase databases and JRun data 
+  sources used by the samples JRun server:</P>
+<table width="84%" border="1">
+  <tr> 
+    <th width="18%">Database</th>
+    <th width="31%">JRun data source</th>
+    <th width="51%">Usage</th>
+  </tr>
+  <tr> 
+    <td width="18%">sample</td>
+    <td width="31%">samples</td>
+    <td width="51%">Programming techniques. Uses port 9192 by default.</td>
+  </tr> <tr> 
+    <td width="18%">compass</td>
+    <td width="31%">compass</td>
+    <td width="51%">Compass travel sample application. Uses port 9292 by default.</td>
+  </tr>
+  <tr> 
+    <td width="18%">smarticket</td>
+    <td width="31%">smarticket</td>
+    <td width="51%">Smart Ticket J2ME blueprints application. Uses port 9392 by 
+      default.</td>
+  </tr>
+  <tr> 
+    <td width="18%">worldmusic</td>
+    <td width="31%">worldmusic</td>
+    <td width="51%">WorldMusic application. Note that this application uses native 
+      JDBC access. Uses port 9692 by default.</td>
+  </tr>
+</table>
+<P align="left">JRun also includes the jms_private database, which illustrates 
+  how to use a DBMS as the data store for the JRun default JMS provider.</P>
+<h3 align="left">Starting the databases</h3>
+<P align="left">The databases run using PointBase Server, each in its own JVM. 
+  (The samples JRun server does not use the PointBase Embedded version.) You can 
+  start the databases either automatically or manually, as follows:</P>
+<ul>
+  <li><b>Automatically</b> - The samples JRun server uses the PointBaseStarter 
+    service, a custom JRun service, to automatically start databases when the 
+    samples server starts. The PointBaseStarter service is defined in the jrun.xml 
+    file. This service is itself a sample application and you can view the source 
+    code in the samples/pointbase-service directory.</li>
+  <li> <b>Manually</b> - The jrun_root/pointbase directory has batch files (Windows) 
+    and shell scripts (UNIX) for starting each of the databases individually. 
+    Use these files to start the databases when the samples server is not running 
+    or if the PointBaseStarter service doesn't work on your system.</li>
+</ul>
+<h3>Administering the databases</h3>
+<p>Once the databases are started, you can administer them through the PointBase 
+  Console, which you start using the console.bat batch file (Windows) or the console 
+  shell script (UNIX). The jrun_root/pointbase/docs directory contains documentation 
+  that explains how to use the PointBase Console. JRun also ships the commander.bat 
+  batch file (Windows) and the commander shell script for administering PointBase 
+  in text-only mode.</p>
+<h3>Troubleshooting</h3>
+<ul>
+  <li><b>Socket exceptions</b> - If the samples server is running and you attempt 
+    to start a database using a batch file or shell script, you will get a BindException, 
+    indicating that the port is already in use. If you encounter problems starting 
+    the databases with the PointBaseStarter service, comment out the service in 
+    the jrun.xml file and start the databases individually using the batch file/shell 
+    scripts in the jrun_root/pointbase directory.</li>
+  <li><b>Data source exceptions when starting the samples server</b> - If the 
+    compass, sample, and travelnet databases are not started successfully by the 
+    PointBaseStarter service, JRun will not be able to bind to the compass, samples, 
+    and travelnet data sources and will display errors in the samples-event.log 
+    file.</li>
+</ul>
+
+<p class="copright" align="left">Copyright 2002 Macromedia, Inc.<br>
+  All rights reserved. Macromedia, the Macromedia&nbsp;<br>
+  logo and JRun are trademarks or registered&nbsp;<br>
+  trademarks of Macromedia, Inc.</p>
+	</body>
+</html>

@@ -1,0 +1,27 @@
+BODY {
+	FONT-SIZE: 12px; FONT-FAMILY: Geneva, Arial, Helvetica, san-serif
+}
+TD {
+	FONT-SIZE: 12px; FONT-FAMILY: Geneva, Arial, Helvetica, san-serif
+}
+.welcome {
+	FONT-WEIGHT: normal; FONT-SIZE: 28px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.tablehead {
+	FONT-WEIGHT: bold; FONT-SIZE: 16px; COLOR: #ffffff; FONT-FAMILY: Geneva, Arial, Helvetica, san-serif; BACKGROUND-COLOR: #333399
+}
+.copyright {
+	FONT-SIZE: 10px; FONT-FAMILY: "Times New Roman", Times, serif
+}
+.team {
+	FONT-SIZE: 14px; FONT-FAMILY: Geneva, Arial, Helvetica, san-serif
+}
+a:hover {
+	color: 009933;
+	text-decoration: none;
+}
+h4 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: italic;
+}

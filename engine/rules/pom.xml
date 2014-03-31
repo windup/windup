@@ -6,6 +6,7 @@
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../../</relativePath>
   </parent>
   <groupId>org.jboss.windup.rules</groupId>
   <artifactId>rules-parent</artifactId>
@@ -17,9 +18,6 @@
     <module>spi</module>
     <module>tests</module>
   </modules>
-  <properties>
-    <version.furnace>2.1.1.Final</version.furnace>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>

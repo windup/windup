@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-ejb-decorators">
+		
+		<bean class="org.jboss.windup.decorator.NotificationLevelDecorator">
+			<property name="notificationLevel" value="INFO" />
+			<property name="matchingProcessors">
+				<list>
+					<windup:java-whitelist regex="javax.ejb.*"/>
+					<windup:java-whitelist regex="javax.persistence.*"/>
+				</list>
+			</property>	
+		</bean>
+		
+		<windup:java-classification source-type="TYPE" regex="javax.persistence.Entity$" description="JPA Entity" effort="0"/>
+		
+		<!-- TESTING CONFIG
+		<windup:java-if source-type="TYPE" regex="javax.persistence.Entity$">
+			<windup:categorize-resource-as description="JPA Entity">
+				<windup:add-hint>XYZ</windup:add-hint>
+			</windup:categorize-as>
+		</windup:java-gate>
+		-->
+		
+		
+		
+   		<!-- EJB 1.x/2.x -->
+		<windup:java-classification source-type="INHERITANCE" regex="javax.ejb.EJBHome$" description="EJB 1.x/2.x - Home Interface" />
+
+		<windup:java-classification source-type="INHERITANCE" regex="javax.ejb.EJBObject$"
+			description="EJB 1.x/2.x - Remote Interface" />
+
+		<windup:java-classification source-type="INHERITANCE" regex="javax.ejb.EntityBean$"
+			description="EJB 1.x/2.x - Entity Bean" />
+
+		<windup:java-classification source-type="INHERITANCE" regex="javax.ejb.SessionBean$"
+			description="EJB 1.x/2.x - Session Bean" />
+		
+		<!-- EJB 2.x -->
+
+		<windup:java-classification source-type="INHERITANCE" regex="javax.ejb.EJBLocalHome$"
+			description="EJB 2.x - Local Home" />
+
+		<windup:java-classification source-type="INHERITANCE" regex="javax.ejb.EJBLocalObject$"
+			description="EJB 2.x - Local Object" />
+
+		<windup:java-classification source-type="INHERITANCE" regex="javax.ejb.MessageDrivenBean$"
+			description="EJB 2.x - Message Driven Bean" />		
+		
+		<!-- EJB 3.x -->
+
+		<windup:java-classification source-type="TYPE" regex="javax.ejb.MessageDriven$" description="EJB 3.x - Message Driven Bean" effort="2"/>
+
+		<windup:java-classification source-type="TYPE" regex="javax.ejb.Local$" description="EJB 3.x - Local Session Bean Interface" effort="0"/>
+
+		<windup:java-classification source-type="TYPE" regex="javax.ejb.Remote$"
+			description="EJB 3.x - Remote Session Bean Interface" effort="2"/>
+
+		<windup:java-classification source-type="TYPE" regex="javax.ejb.Stateless$" description="EJB 3.x - Stateless Session Bean" effort="0"/>
+
+		<windup:java-classification source-type="TYPE" regex="javax.ejb.Stateful$" description="EJB 3.x - Stateful Session Bean" effort="0" />
+	</windup:pipeline>
+
+</beans>
