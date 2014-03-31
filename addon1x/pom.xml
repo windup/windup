@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>org.jboss.windup</groupId>
+   <artifactId>windup1x-addon-parent</artifactId>
+   <version>0.7.0</version>
+   <packaging>pom</packaging>
+
+   <properties>
+      <version.forge>2.3.0.Final</version.forge>
+      <version.windup.engine>0.7.0</version.windup.engine>
+   </properties>
+
+   <modules>
+      <module>api</module>
+      <module>impl</module>
+      <module>addon</module>
+      <module>tests</module>
+   </modules>
+
+   <dependencyManagement>
+      <dependencies>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-bom</artifactId>
+            <version>${version.forge}</version>
+            <type>pom</type>
+            <scope>import</scope>
+         </dependency>
+         <!-- Windup ENGINE Dependencies -->
+         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-engine</artifactId>
+            <version>${version.windup.engine}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-rules</artifactId>
+            <version>${version.windup.engine}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-reporting</artifactId>
+            <version>${version.windup.engine}</version>
+         </dependency>
+         <!-- END Windup ENGINE Dependencies -->
+
+         <!-- Windup Furnace Addon Dependencies -->
+         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup1x</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup1x-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup1x-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${version.forge}</version>
+            <scope>provided</scope>
+         </dependency>
+         <!-- END Windup Furnace Addon Dependencies -->
+
+
+         <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>furnace-test-harness</artifactId>
+            <version>${version.forge}</version>
+            <scope>provided</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-furnace-classpath</artifactId>
+            <version>${version.forge}</version>
+            <scope>test</scope>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+               <encoding>UTF-8</encoding>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+</project>
