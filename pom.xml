@@ -12,5 +12,6 @@
     <module>tests</module>
     <module>utils</module>
     <module>rules</module>
+    <module>addon1x</module>
   </modules>
 </project>
