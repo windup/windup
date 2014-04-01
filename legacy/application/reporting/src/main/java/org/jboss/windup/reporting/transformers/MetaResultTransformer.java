@@ -22,8 +22,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.IntRange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.Classification;
 import org.jboss.windup.metadata.decoration.Line;
@@ -44,7 +44,7 @@ import org.jboss.windup.reporting.html.ResourceReport;
 
 public abstract class MetaResultTransformer<T extends ResourceMetadata> {
 
-	private static final Log LOG = LogFactory.getLog(MetaResultTransformer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MetaResultTransformer.class);
 	
 	protected void populateResourceData(T meta, File reportDirectory, ResourceData data) {
 		if(data == null) {

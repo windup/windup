@@ -11,8 +11,8 @@
 */
 package org.jboss.windup.config.spring.namespace.xml;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.config.spring.namespace.java.SpringNamespaceHandlerUtil;
 import org.jboss.windup.decorator.xml.XPathSummaryDecorator;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 
 
 public class XPathSummaryBeanParser extends AbstractBeanDefinitionParser {
-	private static final Log LOG = LogFactory.getLog(XPathSummaryBeanParser.class);
+	private static final Logger LOG = LoggerFactory.getLogger(XPathSummaryBeanParser.class);
 
 	@Override
 	protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {

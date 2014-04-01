@@ -19,15 +19,15 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.TempSourceMetadata;
 import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
 import org.jboss.windup.metadata.type.archive.DirectoryMetadata;
 import org.jboss.windup.util.RecursiveDirectoryMetaFactory;
 
 public class DirectoryInterrogationEngine {
-	private static final Log LOG = LogFactory.getLog(DirectoryInterrogationEngine.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DirectoryInterrogationEngine.class);
 	protected List<Interrogator> interrogators;
 	
 	public void setInterrogators(List<Interrogator> interrogators) {

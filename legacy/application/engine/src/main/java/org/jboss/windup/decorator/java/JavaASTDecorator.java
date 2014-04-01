@@ -18,8 +18,8 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -30,7 +30,7 @@ import org.jboss.windup.metadata.type.JavaMetadata;
 
 
 public class JavaASTDecorator extends ChainingDecorator<JavaMetadata> {
-	private static final Log LOG = LogFactory.getLog(JavaASTDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaASTDecorator.class);
 
 	protected Set<String> javaLangDependencies;
 

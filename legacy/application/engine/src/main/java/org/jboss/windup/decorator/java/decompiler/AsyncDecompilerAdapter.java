@@ -19,11 +19,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AsyncDecompilerAdapter implements DecompilerAdapter {
-	private static final Log LOG = LogFactory.getLog(AsyncDecompilerAdapter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AsyncDecompilerAdapter.class);
 
 	private ExecutorService executor = Executors.newCachedThreadPool();
 	private Integer timeoutSeconds;

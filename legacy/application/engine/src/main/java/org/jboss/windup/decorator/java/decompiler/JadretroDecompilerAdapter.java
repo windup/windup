@@ -20,8 +20,8 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.util.FatalWindupException;
 import org.jboss.windup.util.LogController;
 
@@ -45,7 +45,7 @@ import org.jboss.windup.util.LogController;
  * 
  */
 public class JadretroDecompilerAdapter implements DecompilerAdapter {
-	private static final Log LOG = LogFactory.getLog(JadretroDecompilerAdapter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JadretroDecompilerAdapter.class);
 
 	private final String APP_NAME;
 	

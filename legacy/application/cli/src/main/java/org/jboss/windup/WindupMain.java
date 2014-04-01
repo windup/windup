@@ -26,12 +26,12 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.reporting.ReportEngine;
 
 public class WindupMain {
-	private static final Log LOG = LogFactory.getLog(WindupMain.class);
+	private static final Logger LOG = LoggerFactory.getLogger(WindupMain.class);
 	private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
 	private static final String WINDUP_COMMAND = "java -jar jboss-windup.jar";
 

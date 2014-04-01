@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.reporting.html.ClasspathReport;
 
 import freemarker.template.Configuration;
@@ -26,7 +26,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 public class ClassloaderHtmlWriter {
-	private static final Log LOG = LogFactory.getLog(ClassloaderHtmlWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ClassloaderHtmlWriter.class);
 	
 	private final Configuration cfg;
 

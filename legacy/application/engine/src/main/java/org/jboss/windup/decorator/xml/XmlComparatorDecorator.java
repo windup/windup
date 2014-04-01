@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.DifferenceEngine;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
@@ -43,7 +43,7 @@ import org.custommonkey.xmlunit.Diff;
  * Date: 6/19/13
  */
 public class XmlComparatorDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
-    private static final Log LOG = LogFactory.getLog(XmlComparatorDecorator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmlComparatorDecorator.class);
 
     private String xmlControlAsFile;
     private String xmlControlAsString;
@@ -199,7 +199,7 @@ public class XmlComparatorDecorator implements MetaDecorator<XmlMetadata>, Initi
             engine.compare(controlDoc.getDocumentElement(),
                 testDoc.getDocumentElement(), listener, myElementQualifier);
         } catch (NullPointerException ne) {
-            LOG.error(ne);
+            LOG.error("NPE: " + ne.getMessage(), ne);
         }
 
         isdifferent =listener.called();

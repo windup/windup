@@ -16,12 +16,12 @@ import java.io.File;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReportUtil {
 
-	private static final Log LOG = LogFactory.getLog(ReportUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ReportUtil.class);
 	
 	public static String calculateRelativePathToRoot(File reportDirectory, File htmlOutputPath) {
 		Validate.notNull(reportDirectory, "Report directory is null, but a required field.");

@@ -14,8 +14,8 @@ package org.jboss.windup.decorator.archive;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.archetype.version.PomVersion;
 import org.jboss.windup.metadata.decoration.archetype.version.Version;
@@ -32,7 +32,7 @@ import org.jboss.windup.metadata.type.ManifestMetadata;
  */
 public class ManifestVersionDecorator extends ManifestDecorator {
 
-	private static final Log LOG = LogFactory.getLog(ManifestVersionDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ManifestVersionDecorator.class);
 
 	protected List<String> versionPriority;
 	protected List<String> namePriority;

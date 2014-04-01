@@ -13,8 +13,8 @@ package org.jboss.windup.decorator;
 
 import java.io.FileInputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.Hash;
 import org.jboss.windup.metadata.decoration.Hash.HashType;
 import org.jboss.windup.metadata.type.FileMetadata;
@@ -22,7 +22,7 @@ import org.jboss.windup.metadata.type.FileMetadata;
 
 public class MD5HashDecorator extends ChainingDecorator<FileMetadata> {
 
-	private static final Log LOG = LogFactory.getLog(MD5HashDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MD5HashDecorator.class);
 
 	@Override
 	public void processMeta(FileMetadata meta) {

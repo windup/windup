@@ -17,8 +17,8 @@ import java.lang.ref.SoftReference;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.Summary;
 import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
 import org.jboss.windup.metadata.decoration.effort.UnknownEffort;
@@ -38,7 +38,7 @@ import org.w3c.dom.Document;
  * 
  */
 public class XmlMetadata extends FileMetadata {
-	private static final Log LOG = LogFactory.getLog(XmlMetadata.class);
+	private static final Logger LOG = LoggerFactory.getLogger(XmlMetadata.class);
 
 	protected SoftReference<Document> parsedDocumentRef;
 

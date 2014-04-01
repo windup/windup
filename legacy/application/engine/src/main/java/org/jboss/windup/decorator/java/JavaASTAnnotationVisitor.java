@@ -19,8 +19,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
@@ -43,7 +43,7 @@ import org.jboss.windup.metadata.decoration.AbstractDecoration;
 
 public class JavaASTAnnotationVisitor extends ASTVisitor {
 
-	private static final Log LOG = LogFactory.getLog(JavaASTAnnotationVisitor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaASTAnnotationVisitor.class);
 	
 	private final Collection<AbstractDecoration> results;
 	private final CompilationUnit cu;

@@ -28,8 +28,8 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.graph.clz.ApplicationClz;
 import org.jboss.windup.graph.clz.GraphableClz;
@@ -48,7 +48,7 @@ public class ClassesProvidedDecorator implements MetaDecorator<ZipMetadata> {
 	public static String PROVIDED_CLASS_LOCATIONS = "PROVIDED_CLASS_LOCATIONS";
 	
 	
-	private static final Log LOG = LogFactory.getLog(ClassesProvidedDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ClassesProvidedDecorator.class);
 	
 	private CustomerPackageResolver customerPackageResolver;
 	private ProfileResolver profileResolver;
@@ -205,7 +205,7 @@ public class ClassesProvidedDecorator implements MetaDecorator<ZipMetadata> {
 			return clzImports;
 		}
 		catch (Exception e) {
-			LOG.error(e);
+			LOG.error("Extract imports error: " + e.getMessage(), e);
 			return null;
 		}
 	}

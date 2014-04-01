@@ -11,8 +11,8 @@
 */
 package org.jboss.windup.decorator.xml;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.gate.XPathGateDecorator;
 import org.jboss.windup.metadata.decoration.Classification;
 import org.jboss.windup.metadata.type.XmlMetadata;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 
 public class XPathClassifyingDecorator extends XPathGateDecorator implements InitializingBean {
-	private static final Log LOG = LogFactory.getLog(XPathClassifyingDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(XPathClassifyingDecorator.class);
 
 	protected String matchDescription;
 

@@ -16,15 +16,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.Line;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.util.NewLineUtil;
 
 
 public class RegexDecorator extends ChainingDecorator<FileMetadata> {
-	private static final Log LOG = LogFactory.getLog(RegexDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RegexDecorator.class);
 
 	protected Pattern regexPattern;
 

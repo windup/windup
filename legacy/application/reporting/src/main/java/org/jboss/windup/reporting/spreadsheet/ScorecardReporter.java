@@ -23,8 +23,8 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -45,7 +45,7 @@ import org.jboss.windup.reporting.html.ArchiveReport;
 
 
 public class ScorecardReporter implements Reporter {
-	private static final Log LOG = LogFactory.getLog(ScorecardReporter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ScorecardReporter.class);
 	
 	protected File generateScorecardName(ArchiveMetadata archive, File reportDirectory) {
 		Validate.notNull(archive, "Archive is required, but null.");

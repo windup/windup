@@ -15,15 +15,15 @@ import java.io.FileInputStream;
 import java.lang.ref.SoftReference;
 import java.util.jar.Manifest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.Summary;
 import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
 import org.jboss.windup.metadata.decoration.effort.UnknownEffort;
 
 
 public class ManifestMetadata extends FileMetadata {
-	private static final Log LOG = LogFactory.getLog(ManifestMetadata.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ManifestMetadata.class);
 	protected SoftReference<Manifest> manifest;
 
 	public Manifest getManifest() {

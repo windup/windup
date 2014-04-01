@@ -15,18 +15,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
 public class LogController {
-	private static final Log LOG = LogFactory.getLog(LogController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LogController.class);
 
 	public static void setLogLevel(Level level) {
-		Logger root = Logger.getLogger("org.jboss.windup");
+		org.apache.log4j.Logger root = org.apache.log4j.Logger.getLogger("org.jboss.windup");
 		root.setLevel(level);
 		LOG.info("Set logger to: " + level);
 	}
@@ -40,7 +39,7 @@ public class LogController {
 		String hashCode = outputLocation.toString().hashCode() + "";
 
 		LOG.debug("Adding logger: " + outputLocation.getAbsolutePath() + " : " + hashCode);
-		Logger root = Logger.getRootLogger();
+		org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
 		PatternLayout pl = new PatternLayout("%d %-5p [%c] (%t) %m%n");
 		try {
 			FileAppender fa = new FileAppender(pl, outputLocation.getAbsolutePath());
@@ -57,7 +56,7 @@ public class LogController {
 		String hashCode = outputLocation.toString().hashCode() + "";
 
 		LOG.debug("Removing logger: " + outputLocation.getAbsolutePath() + " : " + hashCode);
-		Logger root = Logger.getRootLogger();
+		org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
 		root.removeAppender(hashCode);
 	}
 
@@ -72,7 +71,7 @@ public class LogController {
 	}
 
 	private static class LogPrintStream extends PrintStream {
-		private static final Log LOG = LogFactory.getLog(LogController.LogPrintStream.class);
+		private static final Logger LOG = LoggerFactory.getLogger(LogController.LogPrintStream.class);
 
 		public LogPrintStream(PrintStream stream) {
 			super(stream);

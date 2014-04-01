@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import freemarker.core.Environment;
 import freemarker.template.SimpleSequence;
@@ -28,7 +28,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
 
 public class SourceModificationSerializer implements TemplateDirectiveModel {
-	private static final Log LOG = LogFactory.getLog(SourceModificationSerializer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SourceModificationSerializer.class);
 
 	@Override
 	public void execute(Environment env, Map map, TemplateModel[] templateModel, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {

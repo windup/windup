@@ -22,8 +22,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.interrogator.DirectoryInterrogationEngine;
 import org.jboss.windup.interrogator.FileInterrogationEngine;
 import org.jboss.windup.interrogator.ZipInterrogationEngine;
@@ -35,7 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class WindupEngine {
-    private static final Log LOG = LogFactory.getLog(WindupEngine.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WindupEngine.class);
 
     private ApplicationContext context;
     private List<String> supportedExtensions;

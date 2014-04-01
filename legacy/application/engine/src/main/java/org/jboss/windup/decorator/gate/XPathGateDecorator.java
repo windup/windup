@@ -18,15 +18,15 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.XmlMetadata;
 import org.jboss.windup.metadata.util.NamespaceMapContext;
 import org.springframework.beans.factory.InitializingBean;
 
 
 public class XPathGateDecorator extends GateDecorator<XmlMetadata> implements InitializingBean {
-	private static final Log LOG = LogFactory.getLog(XPathGateDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(XPathGateDecorator.class);
 	private static final XPathFactory factory = XPathFactory.newInstance();
 
 	protected XPath xpath;

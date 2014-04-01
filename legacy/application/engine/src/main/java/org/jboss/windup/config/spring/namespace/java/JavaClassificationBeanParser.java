@@ -11,8 +11,8 @@
 */
 package org.jboss.windup.config.spring.namespace.java;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.java.JavaClassifyingDecorator;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 
 
 public class JavaClassificationBeanParser extends AbstractBeanDefinitionParser {
-	private static final Log LOG = LogFactory.getLog(JavaClassificationBeanParser.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaClassificationBeanParser.class);
 
 	@Override
 	protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {

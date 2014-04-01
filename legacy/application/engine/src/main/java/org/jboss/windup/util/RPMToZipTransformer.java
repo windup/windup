@@ -28,8 +28,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.freecompany.redline.ChannelWrapper.Key;
 import org.freecompany.redline.ReadableChannelWrapper;
 import org.freecompany.redline.header.Format;
@@ -37,7 +37,7 @@ import org.freecompany.redline.payload.CpioHeader;
 
 public class RPMToZipTransformer {
 
-	private static Log LOG = LogFactory.getLog(RPMToZipTransformer.class);
+	private static Logger LOG = LoggerFactory.getLogger(RPMToZipTransformer.class);
 
 	public static File convertRpmToZip(File file) throws Exception {
 		LOG.info("File: " + file.getAbsolutePath());

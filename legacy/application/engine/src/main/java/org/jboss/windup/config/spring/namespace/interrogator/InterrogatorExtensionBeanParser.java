@@ -13,8 +13,8 @@ package org.jboss.windup.config.spring.namespace.interrogator;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.config.spring.namespace.java.SpringNamespaceHandlerUtil;
 import org.jboss.windup.util.XmlElementUtil;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
 
 
 public class InterrogatorExtensionBeanParser extends AbstractBeanDefinitionParser {
-	private static final Log LOG = LogFactory.getLog(InterrogatorExtensionBeanParser.class);
+	private static final Logger LOG = LoggerFactory.getLogger(InterrogatorExtensionBeanParser.class);
 
 	@Override
 	protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {

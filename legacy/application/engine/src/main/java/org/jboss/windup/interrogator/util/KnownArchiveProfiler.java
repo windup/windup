@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.archetype.VendorResult;
 import org.jboss.windup.metadata.type.archive.ZipMetadata;
 import org.jboss.windup.util.CustomerPackageResolver;
@@ -27,7 +27,7 @@ import org.jboss.windup.util.CustomerPackageResolver;
 
 public class KnownArchiveProfiler {
 
-	private static final Log LOG = LogFactory.getLog(KnownArchiveProfiler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(KnownArchiveProfiler.class);
 	private Map<Pattern, String> knownPackages;
 	private CustomerPackageResolver customerPackageResolver;
 

@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.effort.StoryPointEffort;
 import org.jboss.windup.reporting.html.ArchiveReport;
 import org.jboss.windup.reporting.html.ResourceReport;
@@ -31,7 +31,7 @@ import freemarker.template.TemplateModel;
 
 public class SummaryPieSerializer implements TemplateDirectiveModel {
 
-	private static final Log LOG = LogFactory.getLog(SummaryPieSerializer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SummaryPieSerializer.class);
 	
 	@Override
 	public void execute(Environment env, Map map, TemplateModel[] templateModel, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {

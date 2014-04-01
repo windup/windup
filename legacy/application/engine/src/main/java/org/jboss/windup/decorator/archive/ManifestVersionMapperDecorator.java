@@ -22,8 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.archetype.version.Version;
 import org.jboss.windup.metadata.type.ManifestMetadata;
 
@@ -38,7 +38,7 @@ import org.jboss.windup.metadata.type.ManifestMetadata;
  */
 public class ManifestVersionMapperDecorator extends ManifestVersionDecorator {
 
-	private static final Log LOG = LogFactory.getLog(ManifestVersionDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ManifestVersionDecorator.class);
 
 	private String matchName;
 	private String matchVersion;

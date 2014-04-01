@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.Classification;
 import org.jboss.windup.metadata.decoration.Global;
@@ -35,7 +35,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 public class ResourceHtmlWriter {
-	private static final Log LOG = LogFactory.getLog(ClassloaderHtmlWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ClassloaderHtmlWriter.class);
 	
 	private final Configuration cfg;
 

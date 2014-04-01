@@ -15,8 +15,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.hint.ResultProcessor;
 import org.jboss.windup.metadata.type.XmlMetadata;
@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
 
 public class XPathValueExtractor implements MetaDecorator<XmlMetadata>, InitializingBean {
 
-	private static final Log LOG = LogFactory.getLog(XPathSummaryDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(XPathSummaryDecorator.class);
 	private static final XPathFactory factory = XPathFactory.newInstance();
 
 	private List<ResultProcessor> hints = new LinkedList<ResultProcessor>();

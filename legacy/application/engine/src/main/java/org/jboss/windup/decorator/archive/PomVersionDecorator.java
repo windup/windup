@@ -18,8 +18,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.interrogator.util.KnownArchiveProfiler;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
@@ -31,7 +31,7 @@ import org.w3c.dom.Document;
 
 
 public class PomVersionDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
-	private static final Log LOG = LogFactory.getLog(PomVersionDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PomVersionDecorator.class);
 
 	private static final XPathFactory factory = XPathFactory.newInstance();
 

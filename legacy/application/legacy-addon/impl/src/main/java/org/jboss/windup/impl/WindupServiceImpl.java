@@ -14,8 +14,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.WindupEngine;
 import org.jboss.windup.WindupEnvironment;
 import org.jboss.windup.WindupService;
@@ -33,7 +33,7 @@ public class WindupServiceImpl implements WindupService
          process(args);
    }
 
-   private static final Log LOG = LogFactory.getLog(WindupServiceImpl.class);
+   private static final Logger LOG = LoggerFactory.getLogger(WindupServiceImpl.class);
    private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
    private static final String WINDUP_COMMAND = "java -jar jboss-windup.jar";
 

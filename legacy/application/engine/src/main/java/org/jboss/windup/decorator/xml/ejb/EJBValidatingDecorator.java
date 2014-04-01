@@ -20,8 +20,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.metadata.decoration.Line;
 import org.jboss.windup.metadata.decoration.effort.StoryPointEffort;
@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 
 
 public class EJBValidatingDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
-	private static final Log LOG = LogFactory.getLog(EJBValidatingDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EJBValidatingDecorator.class);
 	private static final XPathFactory factory = XPathFactory.newInstance();
 
 	private static final String XPATH_EJB_RELATIONSHIP = "//*[local-name()='ejb-relation']/*[local-name()='ejb-relationship-role'][2]";

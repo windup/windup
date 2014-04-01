@@ -20,8 +20,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.ChainingDecorator;
 import org.jboss.windup.decorator.integration.mvn.resp.MavenCentralSHA1VersionResponseItem;
 import org.jboss.windup.decorator.integration.mvn.resp.MavenCentralSHA1VersionResponseWrapper;
@@ -43,7 +43,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 public class MavenCentralSHA1VersionDecorator extends ChainingDecorator<ZipMetadata> {
-	private static final Log LOG = LogFactory.getLog(MavenCentralSHA1VersionDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MavenCentralSHA1VersionDecorator.class);
 	private static final String MAVEN_API_URL = "http://search.maven.org/solrsearch/select?q=1:{query}&rows=1&wt=json";
 	private static final String MAVEN_API_FILEPULL_URL = "http://search.maven.org/remotecontent?filepath=";
 

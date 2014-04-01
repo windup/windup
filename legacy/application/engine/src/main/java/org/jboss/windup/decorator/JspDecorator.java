@@ -21,15 +21,15 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.hint.ResultProcessor;
 import org.jboss.windup.metadata.decoration.Line;
 import org.jboss.windup.metadata.type.JspMetadata;
 import org.jboss.windup.util.NewLineUtil;
 
 public class JspDecorator implements MetaDecorator<JspMetadata> {
-	private static final Log LOG = LogFactory.getLog(JspDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JspDecorator.class);
 
 	protected List<ResultProcessor> hints = new LinkedList<ResultProcessor>();
 	protected Set<Pattern> classBlacklistPatterns;

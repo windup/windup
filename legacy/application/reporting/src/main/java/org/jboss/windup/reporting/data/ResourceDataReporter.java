@@ -14,8 +14,8 @@ package org.jboss.windup.reporting.data;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
 import org.jboss.windup.reporting.Reporter;
@@ -24,7 +24,7 @@ import org.jboss.windup.reporting.transformers.MetaResultTransformer;
 
 
 public class ResourceDataReporter implements Reporter {
-	private static final Log LOG = LogFactory.getLog(ResourceDataReporter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ResourceDataReporter.class);
 	private MetaResultTransformResolver resolver;
 	
 	private ResourceDataMarshaller marshaller;

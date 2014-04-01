@@ -13,14 +13,14 @@ package org.jboss.windup.reporting.transformers;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.ResourceMetadata;
 import org.jboss.windup.reporting.data.ResourceData;
 
 
 public abstract class GenericMetaTransformer<T extends ResourceMetadata> extends MetaResultTransformer<T> {
-	private static final Log LOG = LogFactory.getLog(GenericMetaTransformer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GenericMetaTransformer.class);
 
 	public ResourceData toMetaResult(T meta, File reportDirectory) {
 		ResourceData data = super.toResourceData(meta, reportDirectory);

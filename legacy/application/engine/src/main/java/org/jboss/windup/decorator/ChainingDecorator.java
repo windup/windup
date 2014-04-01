@@ -13,15 +13,15 @@ package org.jboss.windup.decorator;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.effort.Effort;
 import org.jboss.windup.metadata.decoration.effort.UnknownEffort;
 import org.jboss.windup.metadata.type.ResourceMetadata;
 
 
 public abstract class ChainingDecorator<T extends ResourceMetadata> implements MetaDecorator<T> {
-	private static final Log LOG = LogFactory.getLog(ChainingDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ChainingDecorator.class);
 
 	protected List<MetaDecorator<T>> decorators;
 	protected Effort effort = new UnknownEffort();

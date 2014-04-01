@@ -10,6 +10,11 @@
       <relativePath>../</relativePath>
    </parent>
 
+  <properties>
+    <version.slf4j>1.7.5</version.slf4j>
+    <version.log4j>1.2.16</version.log4j>
+  </properties>
+
   <groupId>org.jboss.windup.legacy</groupId>
   <artifactId>legacy</artifactId>
   <packaging>pom</packaging>

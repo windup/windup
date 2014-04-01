@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -42,7 +42,7 @@ import org.jboss.windup.util.CustomerPackageResolver;
  * 
  */
 public class JavaInterrogator extends ExtensionInterrogator<JavaMetadata> {
-	private static final Log LOG = LogFactory.getLog(JavaInterrogator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaInterrogator.class);
 
 	private BlacklistPackageResolver blacklistPackageResolver;
 	private CustomerPackageResolver customerPackageResolver;

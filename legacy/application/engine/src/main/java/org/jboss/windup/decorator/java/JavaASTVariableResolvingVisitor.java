@@ -21,8 +21,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
@@ -54,7 +54,7 @@ import org.jboss.windup.metadata.decoration.SourceType;
 
 
 public class JavaASTVariableResolvingVisitor extends ASTVisitor {
-	private static final Log LOG = LogFactory.getLog(JavaASTVariableResolvingVisitor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaASTVariableResolvingVisitor.class);
 
 	private final Collection<AbstractDecoration> results;
 	private final CompilationUnit cu;

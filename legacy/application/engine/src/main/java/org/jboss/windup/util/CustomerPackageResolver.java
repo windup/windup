@@ -16,12 +16,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CustomerPackageResolver {
 
-	private static final Log LOG = LogFactory.getLog(CustomerPackageResolver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CustomerPackageResolver.class);
 
 	private Set<String> customerPackages = new HashSet<String>();
 	private Set<String> excludePackages = new HashSet<String>();

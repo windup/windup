@@ -16,8 +16,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.reporting.html.ArchiveReport;
 import org.jboss.windup.reporting.html.freemarker.ArchiveReportSummarySerializer;
 import org.jboss.windup.reporting.html.freemarker.PieSerializer;
@@ -29,7 +29,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 public class SummaryHtmlWriter {
-	private static final Log LOG = LogFactory.getLog(SummaryHtmlWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SummaryHtmlWriter.class);
 	
 	private final Configuration cfg;
 

@@ -14,13 +14,13 @@ package org.jboss.windup.util;
 import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.archive.DirectoryMetadata;
 
 public class RecursiveDirectoryMetaFactory {
 
-	private static final Log LOG = LogFactory.getLog(RecursiveDirectoryMetaFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecursiveDirectoryMetaFactory.class);
 	
 	private final File start;
 	

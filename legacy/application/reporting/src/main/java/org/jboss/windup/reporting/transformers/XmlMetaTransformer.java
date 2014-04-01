@@ -11,13 +11,13 @@
 */
 package org.jboss.windup.reporting.transformers;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.XmlMetadata;
 
 
 public class XmlMetaTransformer extends MetaResultTransformer<XmlMetadata> {
-	private static final Log LOG = LogFactory.getLog(XmlMetaTransformer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(XmlMetaTransformer.class);
 
 	@Override
 	protected String buildSyntax() {

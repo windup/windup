@@ -14,13 +14,13 @@ package org.jboss.windup.hint;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 
 
 public class RegexPatternWhitelistProcessor implements MatchingProcessor {
-	private static final Log LOG = LogFactory.getLog(RegexPatternWhitelistProcessor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RegexPatternWhitelistProcessor.class);
 
 	protected Pattern regexPattern;
 

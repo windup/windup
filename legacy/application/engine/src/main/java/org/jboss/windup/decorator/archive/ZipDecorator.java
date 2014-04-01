@@ -16,8 +16,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.interrogator.Interrogator;
 import org.jboss.windup.interrogator.util.KnownArchiveProfiler;
@@ -28,7 +28,7 @@ import org.jboss.windup.util.FatalWindupException;
 
 public class ZipDecorator implements MetaDecorator<ZipMetadata> {
 
-	private static final Log LOG = LogFactory.getLog(ZipDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ZipDecorator.class);
 
 	protected KnownArchiveProfiler knownArchiveProfiler;
 	protected List<Interrogator<?>> interrogators = new ArrayList<Interrogator<?>>();

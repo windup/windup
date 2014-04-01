@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -28,7 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class MetaResultTransformResolver implements InitializingBean {
 
-	private static final Log LOG = LogFactory.getLog(MetaResultTransformResolver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MetaResultTransformResolver.class);
 
 	private Map<String, MetaResultTransformer> transformResolver;
 	private FileMetaTransformer defaultTransformer;

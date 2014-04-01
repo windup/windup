@@ -27,8 +27,8 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.archive.ZipMetadata;
 
 
@@ -36,7 +36,7 @@ import org.jboss.windup.metadata.type.archive.ZipMetadata;
  *  Custom implementation of zip archive extraction.
  */
 public class RecursiveZipMetaFactory {
-	private static final Log LOG = LogFactory.getLog(RecursiveZipMetaFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecursiveZipMetaFactory.class);
 
 	private static final int BUFFER = 2048;
 
@@ -140,7 +140,7 @@ public class RecursiveZipMetaFactory {
 				return entryOutput;
 			}
 			catch (IOException e) {
-				LOG.error(e);
+				LOG.error("IOException: " + e.getMessage(), e);
 			}
 			finally {
 				IOUtils.closeQuietly(is);

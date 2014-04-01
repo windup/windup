@@ -14,8 +14,8 @@ package org.jboss.windup.config.spring.namespace.java;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.util.XmlElementUtil;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 
 
 public class SpringNamespaceHandlerUtil {
-	private static final Log LOG = LogFactory.getLog(SpringNamespaceHandlerUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SpringNamespaceHandlerUtil.class);
 
 	public static void parseNamespaceMap(BeanDefinitionBuilder builder, Element element) {
 

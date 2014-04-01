@@ -25,8 +25,8 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.java.decompiler.DecompilerAdapter;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.metadata.type.JavaMetadata;
@@ -38,7 +38,7 @@ import org.jboss.windup.util.FatalWindupException;
 
 
 public class ClassInterrogator extends ExtensionInterrogator<JavaMetadata> {
-	private static final Log LOG = LogFactory.getLog(ClassInterrogator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ClassInterrogator.class);
 	private DecompilerAdapter decompiler;
 
 	private BlacklistPackageResolver blacklistPackageResolver;
@@ -143,7 +143,7 @@ public class ClassInterrogator extends ExtensionInterrogator<JavaMetadata> {
 				throw (FatalWindupException)e;
 			}
 			
-			LOG.error(e);
+			LOG.error("Error extracting java file: " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -167,7 +167,7 @@ public class ClassInterrogator extends ExtensionInterrogator<JavaMetadata> {
 			return clzImports;
 		}
 		catch (Exception e) {
-			LOG.error(e);
+			LOG.error("Error extractine imports: " + e.getMessage(), e);
 			return null;
 		}
 	}

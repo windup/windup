@@ -18,15 +18,15 @@ import java.util.zip.ZipEntry;
 import javassist.bytecode.ClassFile;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.metadata.decoration.archetype.JVMBuildVersionResult;
 import org.jboss.windup.metadata.type.archive.ZipMetadata;
 
 
 public class JVMVersionDecorator implements MetaDecorator<ZipMetadata> {
-	private static final Log LOG = LogFactory.getLog(JVMVersionDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JVMVersionDecorator.class);
 
 	@Override
 	public void processMeta(ZipMetadata meta) {

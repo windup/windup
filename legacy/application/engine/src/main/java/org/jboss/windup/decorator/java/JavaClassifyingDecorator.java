@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.gate.JavaPatternGateDecorator;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.Classification;
@@ -24,7 +24,7 @@ import org.jboss.windup.metadata.type.FileMetadata;
 
 
 public class JavaClassifyingDecorator extends JavaPatternGateDecorator {
-	private static final Log LOG = LogFactory.getLog(JavaClassifyingDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaClassifyingDecorator.class);
 
 	private String matchDescription;
 

@@ -15,15 +15,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.util.XmlCDataAdapter;
 import org.pegdown.PegDownProcessor;
 
 
 @XmlRootElement(name="markdown-hint")
 public class MarkdownHint extends Hint {
-	private static final Log LOG = LogFactory.getLog(MarkdownHint.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MarkdownHint.class);
 	
 	private String markdown;
 

@@ -13,14 +13,14 @@ package org.jboss.windup.metadata.type.archive;
 
 import java.util.zip.ZipFile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.Summary;
 import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
 import org.jboss.windup.metadata.decoration.effort.UnknownEffort;
 
 public class ZipMetadata extends ArchiveMetadata {
-	private static final Log LOG = LogFactory.getLog(ZipMetadata.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ZipMetadata.class);
 	
 	protected ZipFile zip;
 	

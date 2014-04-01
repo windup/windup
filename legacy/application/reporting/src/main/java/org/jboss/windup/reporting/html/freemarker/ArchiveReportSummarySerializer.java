@@ -19,8 +19,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.Link;
 import org.jboss.windup.metadata.decoration.Summary;
@@ -38,7 +38,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
 
 public class ArchiveReportSummarySerializer implements TemplateDirectiveModel {
-	private static final Log LOG = LogFactory.getLog(ArchiveReportSummarySerializer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ArchiveReportSummarySerializer.class);
 	
 	@Override
 	public void execute(Environment env, Map map, TemplateModel[] templateModel, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {

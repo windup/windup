@@ -14,15 +14,15 @@ package org.jboss.windup.decorator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.hint.MatchingProcessor;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.type.FileMetadata;
 
 
 public class WhitelistDecorator implements MetaDecorator<FileMetadata> {
-	private static final Log LOG = LogFactory.getLog(WhitelistDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(WhitelistDecorator.class);
 
 	protected List<MatchingProcessor> whitelistProcessors;
 

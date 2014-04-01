@@ -13,8 +13,8 @@ package org.jboss.windup.interrogator.impl;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.Summary;
 import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
 import org.jboss.windup.metadata.type.FileMetadata;
@@ -31,7 +31,7 @@ import org.w3c.dom.Document;
  * 
  */
 public class XmlInterrogator extends ExtensionInterrogator<XmlMetadata> {
-	private static final Log LOG = LogFactory.getLog(XmlInterrogator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(XmlInterrogator.class);
 
 	@Override
 	public void processMeta(XmlMetadata fileMeta) {

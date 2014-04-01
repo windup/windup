@@ -17,8 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.interrogator.impl.DecoratorPipeline;
 import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
 import org.jboss.windup.metadata.type.archive.ZipMetadata;
@@ -32,7 +32,7 @@ import org.jboss.windup.util.RecursiveZipMetaFactory;
  * @author bdavis
  */
 public class ZipInterrogationEngine {
-    private static final Log LOG = LogFactory.getLog(ZipInterrogationEngine.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZipInterrogationEngine.class);
 
     protected RecursiveZipMetaFactory recursiveExtractor;
     protected DecoratorPipeline<ZipMetadata> decoratorPipeline;

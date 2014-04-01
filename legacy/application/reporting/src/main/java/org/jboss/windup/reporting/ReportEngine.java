@@ -25,8 +25,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.WindupEngine;
 import org.jboss.windup.WindupEnvironment;
 import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
@@ -36,7 +36,7 @@ import org.springframework.context.ApplicationContext;
 
 public class ReportEngine {
 	private static final String[] RPM_EXTENSIONS = new String[] { ".rpm", ".rpm_" };
-	private static final Log LOG = LogFactory.getLog(ReportEngine.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ReportEngine.class);
 
 	private final Collection<Reporter> reporters;
 	private final ApplicationContext context;

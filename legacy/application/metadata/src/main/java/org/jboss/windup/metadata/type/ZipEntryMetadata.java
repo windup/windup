@@ -22,13 +22,13 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.archive.ZipMetadata;
 
 public class ZipEntryMetadata extends FileMetadata {
 	private static final int BUFFER = 2048;
-	private static final Log LOG = LogFactory.getLog(ZipEntryMetadata.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ZipEntryMetadata.class);
 	
 	private ZipEntry zipEntry;
 

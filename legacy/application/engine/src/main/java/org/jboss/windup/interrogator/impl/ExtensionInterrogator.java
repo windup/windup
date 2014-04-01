@@ -17,8 +17,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.interrogator.Interrogator;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.metadata.type.ZipEntryMetadata;
@@ -32,7 +32,7 @@ import org.jboss.windup.metadata.type.ZipEntryMetadata;
  * 
  */
 public abstract class ExtensionInterrogator<T extends FileMetadata> extends Interrogator<T> {
-	private static final Log LOG = LogFactory.getLog(ExtensionInterrogator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ExtensionInterrogator.class);
 
 	protected Set<Pattern> extensions;
 

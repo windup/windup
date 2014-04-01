@@ -26,8 +26,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.MetaDecorator;
 import org.jboss.windup.metadata.decoration.Link;
 import org.jboss.windup.metadata.decoration.effort.Effort;
@@ -37,7 +37,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 
 public class XSLTDecorator implements MetaDecorator<XmlMetadata>, InitializingBean {
-	private static final Log LOG = LogFactory.getLog(XSLTDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(XSLTDecorator.class);
 
 	private String xsltLocation;
 

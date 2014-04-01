@@ -13,8 +13,8 @@ package org.jboss.windup.interrogator.impl;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.metadata.type.JspMetadata;
 import org.jboss.windup.metadata.type.ZipEntryMetadata;
@@ -29,7 +29,7 @@ import org.jboss.windup.metadata.type.ZipEntryMetadata;
  */
 public class JspInterrogator extends ExtensionInterrogator<JspMetadata> {
 
-	private static final Log LOG = LogFactory.getLog(JspInterrogator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JspInterrogator.class);
 
 	@Override
 	public JspMetadata fileEntryToMeta(FileMetadata entry) {

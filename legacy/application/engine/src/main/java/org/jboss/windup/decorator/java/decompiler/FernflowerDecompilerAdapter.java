@@ -13,8 +13,8 @@ package org.jboss.windup.decorator.java.decompiler;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.util.LogController;
 
 /**
@@ -24,7 +24,7 @@ import org.jboss.windup.util.LogController;
  * 
  */
 public class FernflowerDecompilerAdapter implements DecompilerAdapter {
-	private static final Log LOG = LogFactory.getLog(FernflowerDecompilerAdapter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FernflowerDecompilerAdapter.class);
 
 	public FernflowerDecompilerAdapter() {
 		LogController.LoggingAdapter.tieSystemOutAndErrToLog();

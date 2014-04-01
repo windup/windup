@@ -11,14 +11,14 @@
 */
 package org.jboss.windup.decorator.gate;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.decorator.ChainingDecorator;
 import org.jboss.windup.metadata.type.FileMetadata;
 
 
 public abstract class GateDecorator<T extends FileMetadata> extends ChainingDecorator<T> {
-	private static final Log LOG = LogFactory.getLog(GateDecorator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GateDecorator.class);
 	private boolean negate;
 
 	public void setNegate(boolean negate) {

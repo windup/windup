@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.Classification;
 import org.jboss.windup.metadata.decoration.Global;
@@ -27,7 +27,7 @@ import org.jboss.windup.metadata.type.JavaMetadata;
 
 
 public class JavaMetaTransformer extends GenericMetaTransformer<JavaMetadata> {
-	private static final Log LOG = LogFactory.getLog(JavaMetaTransformer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaMetaTransformer.class);
 
 	protected static int calcTotalChanges(JavaMetadata result) {
 		int totalChanges = 0;

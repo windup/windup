@@ -13,11 +13,11 @@ package org.jboss.windup.decorator.java.decompiler;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NullDecompilerAdapter implements DecompilerAdapter {
-	private static final Log LOG = LogFactory.getLog(NullDecompilerAdapter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(NullDecompilerAdapter.class);
 
 	@Override
 	public void decompile(String className, String classLocation, String sourceOutputLocation) {
