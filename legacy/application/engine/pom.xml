@@ -9,19 +9,10 @@
 	<artifactId>engine</artifactId>
 	<name>Legacy Windup Engine</name>
 	<description>The Engine for JBoss Windup.</description>
-   
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
 		</plugins>
+
 	</build>
 
 	<dependencies>
@@ -42,7 +33,6 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -139,7 +129,6 @@
 			<artifactId>metadata</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-      
 		<dependency>
 			<groupId>org.jboss.windup.legacy</groupId>
 			<artifactId>rules</artifactId>
