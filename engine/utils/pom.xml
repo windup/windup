@@ -24,7 +24,6 @@
          <groupId>org.jboss.forge.furnace.container</groupId>
          <artifactId>cdi</artifactId>
          <classifier>forge-addon</classifier>
-         <version>${version.furnace}</version>
          <scope>provided</scope>
       </dependency>
    </dependencies>
