@@ -73,15 +73,17 @@ public class WindupEngine {
      */
     private void setupEnvironment(WindupEnvironment settings) {
         // validate settings...
-        if (StringUtils.isNotBlank(settings.getPackageSignature())) {
-            System.setProperty("package.signature", settings.getPackageSignature());
+        if (settings.getIncludeJavaPackageSignature() != null) {
+            String javaPkgSigs = StringUtils.join(settings.getIncludeJavaPackageSignature(), ":");
+            System.setProperty("package.signature", javaPkgSigs);
         }
         else {
             LOG.warn("WARNING: Consider specifying javaPkgs.  Otherwise, the Java code will not be inspected.");
         }
 
-        if (StringUtils.isNotBlank(settings.getExcludeSignature())) {
-            System.setProperty("exclude.signature", settings.getExcludeSignature());
+        if (settings.getExcludeJavaPackageSignature() != null) {
+            String excSigString = StringUtils.join(settings.getExcludeJavaPackageSignature(), ":");
+            System.setProperty("exclude.signature", excSigString);
         }
 
 
@@ -89,8 +91,8 @@ public class WindupEngine {
             System.setProperty("target.platform", settings.getTargetPlatform());
         }
 
-        if (StringUtils.isNotBlank(settings.getFetchRemote())) {
-            System.setProperty("fetch.remote", settings.getFetchRemote());
+        if (settings.isFetchRemote()) {
+            System.setProperty("fetch.remote", String.valueOf(settings.isFetchRemote()));
         }
         else {
             LOG.warn("INFO: Will not try and fetch remote versions for unknown JARs.  Consider using: '-fetchRemote true' command line for more detailed reporting.  Requires internet connection.");

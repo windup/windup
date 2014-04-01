@@ -2,6 +2,7 @@ package org.jboss.windup.maven.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -12,7 +13,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.windup.WindupEnvironment;
-import org.jboss.windup.maven.plugin.util.WindupUtils;
 import org.jboss.windup.reporting.ReportEngine;
 
 @Mojo(name = "windup", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator=true)
@@ -46,8 +46,6 @@ public class WindupMojo extends AbstractMojo {
 	@Parameter
 	private String targetPlatform;
 
-	private static final char WINDUP_PACKAGE_SEPERATOR = ':';
-
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		try {
@@ -59,29 +57,27 @@ public class WindupMojo extends AbstractMojo {
 			}
 
 			if (fetchRemote != null) {
-				settings.setFetchRemote(fetchRemote.toString());
+				settings.setFetchRemote(fetchRemote);
 			}
 
-			String inPackages = WindupUtils.convertArrayToString(packages,
-					WINDUP_PACKAGE_SEPERATOR);
-
 			if (excludePackages != null) {
-				String exPackages = WindupUtils.convertArrayToString(
-						excludePackages, WINDUP_PACKAGE_SEPERATOR);
-				settings.setExcludeSignature(exPackages);
+				settings.setExcludeJavaPackageSignature(Arrays.asList(excludePackages));
 			}
 
 			settings.setCaptureLog(captureLog);
 			
 			settings.setLogLevel(logLevel);
 
-			settings.setPackageSignature(inPackages);
+			settings.setIncludeJavaPackageSignature(Arrays.asList(packages));
 
 			settings.setSource(source);
+			
+			settings.setInputPath(inputDirectory);
+			settings.setOutputPath(outputDirectory);
 
 			// Run Windup.
 			ReportEngine engine = new ReportEngine(settings);
-			engine.process(inputDirectory, outputDirectory);
+			engine.process();
 		} catch (IOException e) {
 			getLog().error(e.getMessage(), e);
 		}

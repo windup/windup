@@ -8,79 +8,102 @@
  *  
  *  Contributors:
  *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
-*/
+ */
 package org.jboss.windup;
+
+import java.io.File;
+import java.util.List;
 
 /***
  * Runtime configuration for the Windup environment
+ * 
  * @author bradsdavis
- *
+ * 
  */
 public class WindupEnvironment {
 
-	private String excludeSignature;
-	private String packageSignature;
-	private String targetPlatform;
-	private String fetchRemote;
+    private File inputPath;
+    private File outputPath;
+    private List<String> excludeJavaPackageSignature;
+    private List<String> includeJavaPackageSignature;
+    private String targetPlatform;
+    private boolean fetchRemote;
 
-	private String logLevel;
-	private boolean captureLog;
-	private boolean source;
-	
-	public void setSource(boolean source) {
-		this.source = source;
-	}
-	
-	public boolean isSource() {
-		return source;
-	}
-	
-	public void setExcludeSignature(String excludeSignature) {
-		this.excludeSignature = excludeSignature;
-	}
-	
-	public String getExcludeSignature() {
-		return excludeSignature;
-	}
-	
-	public String getPackageSignature() {
-		return packageSignature;
-	}
+    private String logLevel;
+    private boolean captureLog;
+    private boolean source;
 
-	public void setPackageSignature(String packageSignature) {
-		this.packageSignature = packageSignature;
-	}
+    public void setSource(boolean source) {
+        this.source = source;
+    }
 
-	public String getTargetPlatform() {
-		return targetPlatform;
-	}
+    public boolean isSource() {
+        return source;
+    }
 
-	public void setTargetPlatform(String targetPlatform) {
-		this.targetPlatform = targetPlatform;
-	}
+    public List<String> getExcludeJavaPackageSignature() {
+        return excludeJavaPackageSignature;
+    }
 
-	public String getFetchRemote() {
-		return fetchRemote;
-	}
+    public void setExcludeJavaPackageSignature(List<String> excludeJavaPackageSignature) {
+        this.excludeJavaPackageSignature = excludeJavaPackageSignature;
+    }
 
-	public void setFetchRemote(String fetchRemote) {
-		this.fetchRemote = fetchRemote;
-	}
+    public List<String> getIncludeJavaPackageSignature() {
+        return includeJavaPackageSignature;
+    }
 
-	public String getLogLevel() {
-		return logLevel;
-	}
+    public void setIncludeJavaPackageSignature(
+            List<String> packageJavaPackageSignature) {
+        this.includeJavaPackageSignature = packageJavaPackageSignature;
+    }
 
-	public void setLogLevel(String logLevel) {
-		this.logLevel = logLevel;
-	}
+    public File getInputPath() {
+        return inputPath;
+    }
 
-	public boolean isCaptureLog() {
-		return captureLog;
-	}
+    public void setInputPath(File inputPath) {
+        this.inputPath = inputPath;
+    }
 
-	public void setCaptureLog(boolean captureLog) {
-		this.captureLog = captureLog;
-	}
+    public File getOutputPath() {
+        return outputPath;
+    }
+
+    public void setOutputPath(File outputPath) {
+        this.outputPath = outputPath;
+    }
+
+    public String getTargetPlatform() {
+        return targetPlatform;
+    }
+
+    public void setTargetPlatform(String targetPlatform) {
+        this.targetPlatform = targetPlatform;
+    }
+
+    public boolean isFetchRemote() {
+        return fetchRemote;
+    }
+
+    public void setFetchRemote(boolean fetchRemote) {
+        this.fetchRemote = fetchRemote;
+    }
+
+    public String getLogLevel() {
+        return logLevel;
+    }
+
+    public void setLogLevel(String logLevel) {
+        this.logLevel = logLevel;
+    }
+
+    public boolean isCaptureLog() {
+        return captureLog;
+    }
+
+    public void setCaptureLog(boolean captureLog) {
+        this.captureLog = captureLog;
+    }
 
 }

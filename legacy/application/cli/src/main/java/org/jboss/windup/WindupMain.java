@@ -15,6 +15,7 @@ package org.jboss.windup;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -85,10 +86,18 @@ public class WindupMain {
 				// Map the environment settings from the input arguments.
 				WindupEnvironment settings = new WindupEnvironment();
 				if (line.hasOption("javaPkgs")) {
-					settings.setPackageSignature(line.getOptionValue("javaPkgs"));
+				    String javaPkgs = line.getOptionValue("javaPkgs");
+				    if (javaPkgs != null) {
+				        String[] javaPkgsArr = javaPkgs.split(javaPkgs);
+				        settings.setIncludeJavaPackageSignature(Arrays.asList(javaPkgsArr));
+				    }
 				}
 				if (line.hasOption("excludePkgs")) {
-					settings.setExcludeSignature(line.getOptionValue("excludePkgs"));
+				    String excludeJavaPkgs = line.getOptionValue("excludePkgs");
+				    if (excludeJavaPkgs != null) {
+                        String[] excludeJavaPkgsArr = excludeJavaPkgs.split(excludeJavaPkgs);
+                        settings.setExcludeJavaPackageSignature(Arrays.asList(excludeJavaPkgsArr));
+                    }
 				}
 
 				
@@ -97,7 +106,13 @@ public class WindupMain {
 				}
 
 				if (line.hasOption("fetchRemote")) {
-					settings.setFetchRemote(line.getOptionValue("fetchRemote"));
+					String fetchRemoteString = line.getOptionValue("fetchRemote");
+					if (StringUtils.isBlank(fetchRemoteString)) {
+						settings.setFetchRemote(false);
+					} else {
+						boolean fetchRemote = Boolean.parseBoolean(fetchRemoteString);
+						settings.setFetchRemote(fetchRemote);	
+					}
 				}
 
 				String inputLocation = line.getOptionValue("input");
@@ -129,9 +144,12 @@ public class WindupMain {
 				settings.setCaptureLog(captureLog);
 				settings.setLogLevel(logLevel);
 
+				settings.setInputPath(inputPath);
+				settings.setOutputPath(outputPath);
+				
 				// Run Windup.
 				ReportEngine engine = new ReportEngine(settings);
-				engine.process(inputPath, outputPath);
+				engine.process();
 			}
 		}
 		catch (FileNotFoundException e) {

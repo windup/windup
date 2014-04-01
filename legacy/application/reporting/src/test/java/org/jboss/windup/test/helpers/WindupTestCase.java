@@ -32,6 +32,8 @@ import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
 import org.jboss.windup.reporting.ReportEngine;
 import org.junit.Assert;
 
+import com.esotericsoftware.kryo.io.Input;
+
 /**
  * <p>
  * The parent class for all Windup test cases.
@@ -190,9 +192,12 @@ public class WindupTestCase {
 		}
 
 		// generate report
-		ReportEngine reportEngine = new ReportEngine(this.getEnvironment());
 		File input = new File(this.getResourcePath(archivePath));
-		reportEngine.process(input, output);
+		WindupEnvironment environment = this.getEnvironment();
+		environment.setInputPath(input);
+		environment.setOutputPath(output);
+		ReportEngine reportEngine = new ReportEngine(environment);
+		reportEngine.process();
 
 		//if not output specified the engine will append -doc
 		if(outputPath == null) {

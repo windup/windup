@@ -88,8 +88,10 @@ public class WindupServlet extends HttpServlet {
         
         // Process with WindUp
         File reportTmpDir = reportsTmpDir; //new File(reportsTmpDir, depl.getName() );
+        windupEnv.setInputPath(depl);
+        windupEnv.setOutputPath(reportsTmpDir);
         try {
-            windupReport.process( depl, reportTmpDir );
+            windupReport.process();
         }
         catch( Throwable ex ){
             error = ex;

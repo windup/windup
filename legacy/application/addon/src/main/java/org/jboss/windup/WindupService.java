@@ -2,5 +2,5 @@ package org.jboss.windup;
 
 public interface WindupService
 {
-   public void execute(String[] args);
+   public void execute(WindupEnvironment options) throws WindupServiceException;
 }

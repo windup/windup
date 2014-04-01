@@ -83,6 +83,14 @@ public class ReportEngine {
 		supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));
 	}
 	
+	/**
+	 * Processes the input location based upon the environment passed
+	 * in from the constructor
+	 */
+	public void process() throws IOException {
+	    process(settings.getInputPath(), settings.getOutputPath());
+	}
+	
     /**
      * Processes the input location based on this engine's settings.
      * If in source mode, uses WindupEngine#processSourceDirectory().
@@ -93,7 +101,7 @@ public class ReportEngine {
      * @param outputLocation  Where to store the resulting reports.
      *        If null, inputLocation + "-doc" is used. If the directory doesn't exist, it is created.
      */
-	public void process(File inputLocation, File outputLocation) throws IOException {
+	private void process(File inputLocation, File outputLocation) throws IOException {
         if( ! inputLocation.exists() ) {
             throw new FileNotFoundException("Input file or directory not found: " + inputLocation);
 		}

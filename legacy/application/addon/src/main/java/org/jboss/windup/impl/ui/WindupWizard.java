@@ -1,5 +1,6 @@
 package org.jboss.windup.impl.ui;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +22,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.windup.WindupEnvironment;
 import org.jboss.windup.WindupService;
 
 public class WindupWizard implements UICommand
@@ -45,6 +47,22 @@ public class WindupWizard implements UICommand
    @WithAttributes(label = "Scan Java Packages", required = true)
    private UIInputMany<String> packages;
 
+   @Inject
+   @WithAttributes(label = "Exclude Java Packages", required = false)
+   private UIInputMany<String> excludePackages;
+   
+   @Inject
+   @WithAttributes(label = "Fetch Remote Resources", required = false, defaultValue = "true")
+   private UIInput<Boolean> fetchRemote;
+   
+   @Inject
+   @WithAttributes(label = "Source Mode", required = false, defaultValue = "false")
+   private UIInput<Boolean> sourceMode;
+   
+   @Inject
+   @WithAttributes(label = "Target Platform", required = false)
+   private UIInput<String> targetPlatform;
+   
    @Override
    public UICommandMetadata getMetadata(UIContext ctx)
    {
@@ -61,7 +79,7 @@ public class WindupWizard implements UICommand
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
-      builder.add(input).add(output).add(packages);
+      builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode).add(targetPlatform);
    }
 
    @Override
@@ -79,8 +97,17 @@ public class WindupWizard implements UICommand
       }
       try
       {
-         windup.execute(new String[] { "-input", input.getValue().getFullyQualifiedName(), "-output",
-                  output.getValue().getFullyQualifiedName(), "-javaPkgs", builder.toString() });
+    	 WindupEnvironment options = new WindupEnvironment();
+    	 options.setInputPath(input.getValue().getUnderlyingResourceObject());
+    	 options.setOutputPath(output.getValue().getUnderlyingResourceObject());
+    	 options.setIncludeJavaPackageSignature((List<String>)packages.getValue());
+    	 
+    	 options.setFetchRemote(fetchRemote.getValue().booleanValue());
+    	 options.setExcludeJavaPackageSignature((List<String>)excludePackages.getValue());
+    	 options.setSource(sourceMode.getValue().booleanValue());
+    	 options.setTargetPlatform(targetPlatform.getValue());
+    	 
+         windup.execute(options);
          return Results.success();
       }
       catch (Exception e)
