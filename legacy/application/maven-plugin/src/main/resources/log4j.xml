@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<!-- the log configuration file for the AndroMDA project -->
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+    <!-- ================================
+          Append messages to the console
+         ================================ -->
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="INFO"/>
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <!-- The default pattern: Date Priority [Category] Message\n -->
+            <param name="ConversionPattern" value="%-5p [%c{1}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <category name="org.springframework.beans.factory.xml.XmlBeanDefinitionReader">
+    	<priority value="WARN" />
+    </category>
+
+    <category name="org.springframework.beans.factory.support.DefaultListableBeanFactory">
+    	<priority value="WARN" />
+    </category>
+
+
+
+	<category name="org.jboss.windup.report.WindupReport">
+        <priority value="INFO" />
+    </category>
+ 	
+    <!-- ==================
+          Limit categories
+         ================== -->
+         <!-- 
+    <category name="org.jboss">
+        <priority value="INFO" />
+    </category>
+ 			-->
+    <root>
+        <priority value="INFO" />
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</log4j:configuration>

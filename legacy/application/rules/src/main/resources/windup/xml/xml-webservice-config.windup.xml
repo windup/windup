@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="XML" id="xml-webservice-decorators">
+   			<!-- Apache Axis -->
+		<windup:xpath-classification description="Apache Axis Service Group" xpath="/serviceGroup/service/operation" />
+		<windup:xpath-classification description="Apache Axis Module" xpath="/module/InFlow" />
+		<windup:xpath-classification description="Apache Axis Configuration" xpath="/axisconfig" />
+		
+		<!-- XFire 1.x Configuration -->		
+		<windup:xpath-classification description="XFire 1.x Configuration" xpath="/xfire:beans">
+			<windup:namespace prefix="xfire" uri="http://xfire.codehaus.org/config/1.0"/>
+		</windup:xpath-classification>
+		
+		<!-- JAX-WS -->
+		<windup:xpath-classification description="JAX-WS Handler Chain" xpath="/jee:handler-chains | /j2e:handler-chains" effort="0">
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+			<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="Java Webservice Configuration" xpath="/jee:webservices | /j2e:webservices" effort="0">
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+			<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+			
+			<windup:decorators>
+				<windup:xpath-value description="Handler Class" xpath="//jee:handler-class | //j2e:handler-class">
+					<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+					<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+				</windup:xpath-value>
+				<windup:xpath-value description="Service Interface" xpath="//jee:service-endpoint-interface | //j2e:service-endpoint-interface">
+					<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+					<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+				</windup:xpath-value>
+			</windup:decorators>
+		</windup:xpath-classification>
+		
+		
+		<!-- Apache CXF -->
+		<windup:xpath-classification description="Apache CXF Bus Extension" xpath="/cxf:extensions" effort="0">
+			<windup:namespace prefix="cxf" uri="http://cxf.apache.org/bus/extension" />
+		</windup:xpath-classification>
+		
+		<!-- WS-Policy -->
+		<windup:xpath-classification description="WS-Policy" xpath="/wsp:Policy">
+			<windup:namespace prefix="wsp" uri="http://schemas.xmlsoap.org/ws/2004/09/policy" />
+		</windup:xpath-classification>
+		
+		<!-- SOAP Envelope -->
+		<windup:xpath-classification description="SOAP Envelope" xpath="/se:Envelope" effort="0">
+			<windup:namespace prefix="se" uri="http://schemas.xmlsoap.org/soap/envelope/" />
+		</windup:xpath-classification>
+		
+		<!-- WSDL definitions -->
+		<windup:xpath-classification description="WSDL Definition" xpath="/wsdl:definitions" effort="0">
+			<windup:namespace prefix="wsdl" uri="http://schemas.xmlsoap.org/wsdl/" />
+			<windup:decorators>
+				<windup:xslt-transform location="transformations/xslt/wsdl-pom-plugin.xsl"
+						description="WSDL2JAVA POM Plugin - JAXB (Windup-Generated sample)"
+						extension="-sample-cxf-wsdl2java-pom-plugin.xml"/>
+
+				<windup:xslt-transform location="transformations/xslt/wsdl2java-xmlbeans-pom-plugin.xsl"
+						description="WSDL2JAVA POM Plugin - XMLBeans (Windup-Generated sample)"
+						extension="-sample-cxf-wsdl2java-xmlbeans-pom-plugin.xml"/>
+
+				<windup:link url="http://cxf.apache.org/docs/maven-cxf-codegen-plugin-wsdl-to-java.html"
+					description="CXF WSDL2Java Generator Documentation" />
+					
+			</windup:decorators>
+		</windup:xpath-classification>
+		
+		<windup:xpath-classification description="RPC-Encoded WSDL Definition" xpath="//soapenc:operation[@style='rpc'] and //*[@use='encoded']">
+			<windup:namespace prefix="soapenc" uri="http://schemas.xmlsoap.org/soap/encoding/" />
+		</windup:xpath-classification>
+	</windup:pipeline>
+</beans>
+ 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="XML" id="xml-ejb-decorators">
+		<windup:xpath-classification description="EJB XML" xpath="/j2e:ejb-jar | /jee:ejb-jar | /ejb-jar">
+			<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+			<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+			<windup:decorators>
+				<!-- only will process these if it is successfully classified as an ejb -->
+				<windup:xpath-value description="EJB - MDB" xpath="/ejb-jar//message-driven//ejb-name | /j2e:ejb-jar//j2e:message-driven//j2e:ejb-name | /jee:ejb-jar//jee:message-driven//jee:ejb-name" effort="1">
+					<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+					<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+				</windup:xpath-value>
+		
+				<windup:xpath-value description="EJB - Session" xpath="/ejb-jar//session//ejb-name | /j2e:ejb-jar//j2e:session//j2e:ejb-name | /jee:ejb-jar//jee:session//jee:ejb-name" effort="1">
+					<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+					<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+				</windup:xpath-value>
+		
+				<windup:xpath-value description="EJB - Entity" xpath="/ejb-jar//entity//ejb-name | /j2e:ejb-jar//j2e:entity//j2e:ejb-name | /jee:ejb-jar//jee:entity//jee:ejb-name" effort="1">
+					<windup:namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+					<windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+				</windup:xpath-value>
+		
+				<windup:xpath-value description="EJB Relationship" xpath="//*[local-name()='ejb-relation']/*[local-name()='ejb-relationship-role'][2]/*[local-name()='ejb-relationship-role-name']" effort="1" inline="true" />
+		
+				<windup:dtd-classification description="EJB 2.x" public-id-regex="Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.."/>
+				<windup:dtd-classification description="EJB 1.x" public-id-regex="Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.."/>
+			
+				<bean class="org.jboss.windup.decorator.xml.ejb.EJBValidatingDecorator"/>
+			</windup:decorators>
+		</windup:xpath-classification>
+	</windup:pipeline>
+
+</beans>
+ 

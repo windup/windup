@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+	
+	<windup:pipeline type="XML" id="xml-spring-decorators">
+		<windup:xpath-classification description="Spring Web Flow Configuration" xpath="/spring:flow">
+			<windup:namespace prefix="spring" uri="http://www.springframework.org/schema/webflow" />
+		</windup:xpath-classification>
+
+		<windup:xpath-classification description="Spring Configuration" xpath="/spring:beans | /beans">
+			<windup:namespace prefix="spring" uri="http://www.springframework.org/schema/beans" />
+			<windup:decorators>
+				<!-- Will only be processed if the classification of spring is true. -->
+				<windup:xpath-value description="SCA Implementation" xpath="//sca:reference/@type" effort="1" inline="true">
+					<windup:namespace prefix="sca" uri="http://www.springframework.org/schema/sca"/>
+				</windup:xpath-value>
+				
+				<windup:xpath-value description="Tibco WSDL Location" xpath="//tibco:service-metadata/@wsdl-location" effort="1" inline="true">
+					<windup:namespace prefix="tibco" uri="http://xsd.tns.tibco.com/2008/amf/extension/spring"/>
+				</windup:xpath-value>
+				
+
+				<!-- JNDI -->
+				<windup:xpath-value description="JNDI Lookup" xpath="//*[@class='org.springframework.jndi.JndiObjectFactoryBean']/@class" effort="1" inline="true"/>
+
+				<!-- Glassfish -->
+				<windup:xpath-value description="Glassfish Specific" xpath="//*[@class='org.springframework.instrument.classloading.glassfish.ClassTransformerAdapter']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Glassfish Specific" xpath="//*[@class='org.springframework.instrument.classloading.glassfish.GlassFishClassLoaderAdapter']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Glassfish Specific" xpath="//*[@class='org.springframework.instrument.classloading.glassfish.GlassFishLoadTimeWeaver']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Glassfish Specific" xpath="//*[@class='org.springframework.jca.work.glassfish.GlassFishWorkManagerTaskExecutor']/@class" effort="1" inline="true"/>
+				
+				
+
+				<!-- JBoss -->
+				<!-- todo: add the rest in for commonj -->
+				<windup:xpath-value description="JBoss Specific" xpath="//*[@class='org.springframework.instrument.classloading.jboss.JBossClassLoaderAdapter']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="JBoss Specific" xpath="//*[@class='org.springframework.instrument.classloading.jboss.JBossLoadTimeWeaver']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="JBoss Specific" xpath="//*[@class='org.springframework.instrument.classloading.jboss.JBossTranslatorAdapter']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="JBoss Specific" xpath="//*[@class='org.springframework.jca.work.jboss.JBossWorkManagerTaskExecutor']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="JBoss Specific" xpath="//*[@class='org.springframework.jca.work.jboss.JBossWorkManagerUtils']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="JBoss Specific" xpath="//*[@class='org.springframework.jdbc.support.nativejdbc.JBossNativeJdbcExtractor']/@class" effort="1" inline="true"/>
+				
+				<!-- Tomcat -->
+				<windup:xpath-value description="Tomcat Specific" xpath="//*[@class='org.springframework.instrument.classloading.tomcat.TomcatInstrumentableClassLoader']/@class" effort="1" inline="true"/>
+
+
+				<!-- Weblogic/Websphere -->
+				<windup:xpath-value description="Weblogic and Websphere Specific" xpath="//*[@class='org.springframework.scheduling.commonj.WorkManagerTaskExecutor']/@class" effort="1" inline="true"/>
+
+
+				<!-- Weblogic -->
+				<windup:xpath-value description="Weblogic Specific" xpath="//*[@class='org.springframework.instrument.classloading.weblogic.WebLogicClassLoaderAdapter']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Weblogic Specific" xpath="//*[@class='org.springframework.instrument.classloading.weblogic.WebLogicClassPreProcessorAdapter']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Weblogic Specific" xpath="//*[@class='org.springframework.instrument.classloading.weblogic.WebLogicLoadTimeWeaver']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Weblogic Specific" xpath="//*[@class='org.springframework.jdbc.support.nativejdbc.WebLogicNativeJdbcExtractor']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Weblogic Specific" xpath="//*[@class='org.springframework.transaction.jta.WebLogicJtaTransactionManager']/@class" effort="1" inline="true"/>
+				
+				<!-- Websphere -->
+				<windup:xpath-value description="Websphere Specific" xpath="//*[@class='org.springframework.jdbc.datasource.WebSphereDataSourceAdapter']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Websphere Specific" xpath="//*[@class='org.springframework.jdbc.support.nativejdbc.WebSphereNativeJdbcExtractor']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Websphere Specific" xpath="//*[@class='org.springframework.jmx.support.WebSphereMBeanServerFactoryBean']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Websphere Specific" xpath="//*[@class='org.springframework.transaction.jta.WebSphereUowTransactionManager']/@class" effort="1" inline="true"/>
+				<windup:xpath-value description="Websphere Specific" xpath="//*[@class='org.springframework.transaction.jta.WebSphereUowTransactionManager$UOWActionAdapter']/@class" effort="1" inline="true"/>
+				
+				
+				<!-- Apache ActiveMQ -->
+				<windup:xpath-value description="Apache ActiveMQ Specific" xpath="//*[@class='org.apache.activemq.ActiveMQConnectionFactory']/@class" inline="true"/>
+				<windup:xpath-value description="Apache ActiveMQ Specific" xpath="//*[@class='org.apache.activemq.pool.PooledConnectionFactory']/@class" inline="true"/>
+				<windup:xpath-value description="Apache ActiveMQ Specific" xpath="//*[@class='org.apache.activemq.command.ActiveMQQueue']/@class" inline="true"/>
+				
+
+				<!-- IBM MQ -->
+				<windup:xpath-value description="IBM MQ Specific" xpath="//*[@class='com.ibm.mq.jms.MQQueueConnectionFactory']/@class" inline="true"/>
+
+				<!-- TIBCO -->
+				<windup:xpath-value description="Tibco EMS Specific" xpath="//property[@value='com.tibco.tibjms.naming.TibjmsInitialContextFactory']/@value" inline="true"/>
+
+				<!-- JNDI Name -->
+				<windup:xpath-value description="Validate JNDI Lookup" xpath="//jee:jndi-lookup/@jndi-name" effort="1">
+					<windup:namespace prefix="jee" uri="http://www.springframework.org/schema/jee"/>
+				</windup:xpath-value>
+			</windup:decorators>
+		</windup:xpath-classification>
+	</windup:pipeline>
+</beans>
+ 

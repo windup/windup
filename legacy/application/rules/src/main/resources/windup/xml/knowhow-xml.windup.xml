@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:util="http://www.springframework.org/schema/util"
+        xmlns:windup="http://www.jboss.org/schema/windup"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                        http://www.jboss.org/schema/windup
+                        http://www.jboss.org/schema/windup.xsd">
+
+    <!--
+        Rules converted from Tubame JBossMigrationKnowhowEAP4toEAP6-En.xml
+    -->
+
+    <windup:pipeline type="XML" id="asterisk-ds-eap6-xml">
+        <windup:file-gate regex=".*ds-eap6.xml">
+            <windup:decorators>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//datasource/@pool-name"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//datasource/@jndi-name"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//datasource/@jta"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//datasource/@spy"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//datasource/@use-ccm"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//connection-url"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//driver-class"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//new-connection-sql"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//min-pool-size"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//max-pool-size"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//prefill"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//use-strict-min"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//transaction-isolation"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//flush-strategy"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//user-name"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//password"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//background-validation"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//use-fast-fail"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//idle-timeout-minutes"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//xa-resource-timeout"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//track-statements"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//prepared-statement-cache-size"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//check-valid-connection-sql"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Define this attribute as one parameter with CLI."
+                    xpath="//validate-on-match"
+                    inline="true">
+                </windup:xpath-value>
+
+            </windup:decorators>
+        </windup:file-gate>
+    </windup:pipeline>
+
+
+    <windup:pipeline type="XML" id="asterisk-ds-xml">
+        <windup:file-gate regex=".*-ds.xml">
+
+            <windup:decorators>
+
+                <windup:xpath-value
+                    description="Manually port datasource settings"
+                    xpath="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:postgres')]"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Manually port datasource settings"
+                    xpath="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:oracle')]"
+                    inline="true">
+                </windup:xpath-value>
+
+                <windup:xpath-value
+                    description="Manually port datasource settings"
+                    xpath="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:sqlserver')]"
+                    inline="true">
+                </windup:xpath-value>
+
+            </windup:decorators>
+        </windup:file-gate>
+    </windup:pipeline>
+
+      <windup:pipeline type="XML" id="server-xml">
+          <windup:file-gate regex="server.xml">
+              <windup:decorators>
+
+                  <windup:xpath-value description="Check port number"
+                                      xpath="//Server/Service/Connector/@port"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check protocol value"
+                                      xpath="//Server/Service/Connector/@protocol"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check maxThreads value"
+                                      xpath="//Server/Service/Connector/@maxThreads"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check connectionTimeout value"
+                                      xpath="//Server/Service/Connector/@connectionTimeout"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check emptySessionPath value"
+                                      xpath="//Server/Service/Connector/@emptySessionPath"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check enableLookups value"
+                                      xpath="//Server/Service/Connector/@enableLookups"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check redirectPort value"
+                                      xpath="//Server/Service/Connector/@redirectPort"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check scheme value"
+                                      xpath="//Server/Service/Connector/@scheme"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check secure value"
+                                      xpath="//Server/Service/Connector[@secure='true']"
+                                      inline="true">
+                  </windup:xpath-value>
+
+                  <windup:xpath-value description="Check jvmRoute value"
+                                      xpath="//Server/Service/Engine/@jvmRoute"
+                                      inline="true">
+                  </windup:xpath-value>
+
+              </windup:decorators>
+          </windup:file-gate>
+      </windup:pipeline>
+
+
+     <windup:pipeline type="XML" id="jboss-xml-rules">
+         <windup:file-gate regex="jboss.xml">
+             <windup:decorators>
+
+                 <windup:xpath-value description="Bean-specific instance pool can be set with one line in management CLI"
+                                     xpath="//jboss/container-configurations/container-configuration[@extends='Standard Stateless SessionBean']"
+                                     inline="true">
+                 </windup:xpath-value>
+
+                 <windup:xpath-value description="Bean-specific instance pool can be set with one line in management CLI"
+                                     xpath="//jboss/container-configurations/container-configuration[@extends='Clustered Stateless SessionBean']"
+                                     inline="true">
+                 </windup:xpath-value>
+
+                 <windup:xpath-value description="MDB's Bean-specific instance pool can be set with one line in management CLI"
+                                     xpath="//jboss/container-configurations/container-configuration[@extends='Standard Message Driven Bean']"
+                                     inline="true">
+                 </windup:xpath-value>
+
+                 <windup:xpath-value description="Singleton Message Driven BeanMDB's Bean-specific instance pool can be set with one line in management CLI"
+                                     xpath="//jboss/container-configurations/container-configuration[@extends='Singleton Message Driven Bean']"
+                                     inline="true">
+                 </windup:xpath-value>
+
+                 <windup:xpath-value description="Standard Message Inflow Driven Bean's Bean-specific instance pool can be set with one line in management CLI"
+                                     xpath="//jboss/container-configurations/container-configuration[@extends='Standard Message Inflow Driven Bean']"
+                                     inline="true">
+                 </windup:xpath-value>
+
+             </windup:decorators>
+
+         </windup:file-gate>
+     </windup:pipeline>
+
+</beans>

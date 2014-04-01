@@ -1,0 +1,76 @@
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<script type='text/javascript' src='../../jquery.min.js'></script>
+		<script type='text/javascript' src='../../jquery-ui/jquery.ui.widget.js'></script>
+		<script type='text/javascript' src='../../snippet/jquery.snippet.min.js'></script>
+		<script type='text/javascript' src='../../snippet/jquery.snippet.java-manifest.js'></script>
+		<script type='text/javascript' src='../../sausage/jquery.sausage.min.js'></script>
+
+		<link rel='stylesheet' type='text/css' href='../../snippet/jquery.snippet.min.css' />
+		<link rel='stylesheet' type='text/css' href='../../windup.css' />
+
+		<link rel='stylesheet' type='text/css' href='../../sausage/sausage.css' />
+	</head>
+	<body class='sourceReport'>
+		<div class="windupHeader"><img src="../../img/windup-logo.png"></div>
+		
+
+			<div class='windupBody'>
+
+		<div class='windupHighLevel'>
+
+			<h3>Classification</h3>
+			<ul>
+					<li>IBM Deployment Descriptor
+					</li>
+			</ul>
+
+
+
+
+		
+		</div>
+		</div>
+
+		<div class='windupReportBody'>
+
+<pre id='source'>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;appdeployment:Deployment xmi:version=&quot;2.0&quot; xmlns:xmi=&quot;http://www.omg.org/XMI&quot; 
+xmlns:appdeployment=&quot;http://www.ibm.com/websphere/appserver/schemas/5.0/appdeployment.xmi&quot;&gt;
+   &lt;deployedObject xmi:type=&quot;appdeployment:ApplicationDeployment&quot; startingWeight=&quot;7&quot;&gt;
+    &lt;modules xmi:type=&quot;appdeployment:WebModuleDeployment&quot; uri=&quot;my-web-module.war&quot;&gt;
+      &lt;classloader&gt;
+        &lt;libraries libraryName=&quot;MySharedLib&quot; /&gt;
+      &lt;/classloader&gt;
+    &lt;/modules&gt;
+  &lt;/deployedObject&gt;
+&lt;/appdeployment:Deployment&gt;</pre>
+		</div>
+		
+
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('pre').snippet('xml',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '' });
+
+
+	
+	
+	
+		$('code[data-code-syntax]').each(function(){
+	         var codeSyntax = ($(this).data('code-syntax'));
+	         if(codeSyntax) {
+	            $(this).parent().snippet(codeSyntax,{style:'ide-eclipse', menu:false, showNum:false});
+	         }
+		});
+		$(window).sausage({ page: 'li.box' });
+	}); 
+</script>		
+		<script type='text/javascript' src='../../windup.js'></script>
+		<div class='windupFooter'>
+			<a href='http://redhat.com'><img src='../../img/rh-logo.png'/></a>
+		</div>
+
+	</body>
+</html>

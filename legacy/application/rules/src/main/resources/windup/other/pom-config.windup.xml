@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="pomInterrogator" class="org.jboss.windup.interrogator.impl.XmlInterrogator">
+		<property name="extensions">
+			<set>
+				<value>pom.xml</value>
+			</set>
+		</property>
+		<property name="decoratorPipeline" ref="pomPipeline"/>
+	</bean>
+	
+	<bean id="pomPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list>
+				<ref bean="pomClassifier"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="pomClassifier" class="org.jboss.windup.decorator.xml.XPathClassifyingDecorator">
+		<property name="matchDescription" value="Maven POM" />
+		<property name="xpathExpression" value="/mvn:project | /project/pomVersion | /project/modelVersion" />
+		<property name="namespaces">
+			<map>
+				<entry key="mvn" value="http://maven.apache.org/POM/4.0.0" />
+			</map>
+		</property>
+		<property name="effort">
+			<bean class="org.jboss.windup.metadata.decoration.effort.StoryPointEffort">
+				<property name="hours" value="0" />
+			</bean>
+		</property>
+		
+		<property name="decorators">
+			<list>
+				<bean class="org.jboss.windup.decorator.archive.PomVersionDecorator">
+					<property name="knownArchiveProfiler" ref="knownArchiveProfiler"/>
+				</bean>
+				<bean class="org.jboss.windup.decorator.archive.PomDescriptionDecorator"/>
+				<bean class="org.jboss.windup.decorator.archive.PomLinkDecorator"/>
+			</list>
+		</property>
+	</bean>
+
+</beans>

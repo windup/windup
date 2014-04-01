@@ -1,0 +1,24 @@
+
+?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:resource xmlns:ns2="http://jboss.org/windup/resource">
+	<decorations>
+		<decorator-result>
+			<description>XML File!</description>
+			<effort />
+			<level>WARNING</level>
+		</decorator-result>
+		<link-result>
+			<description>Red Hat</description>
+			<effort />
+			<level>WARNING</level>
+			<link>http://redhat.com</link>
+		</link-result>
+		<y>
+			<description>Red Hat</description>
+			<effort />
+			<hints>Hello world!!</hints>
+			<level>WARNING</level>
+			<lineNumber>1</lineNumber>
+		</y>
+	</decorations>
+</ns2:resource>

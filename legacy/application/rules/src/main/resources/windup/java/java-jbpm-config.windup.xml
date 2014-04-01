@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-jbpm3-to-jbpm5-decorators">
+
+	</windup:pipeline>
+
+
+	<windup:java-hints id="java-jbpm3-to-jbpm5-hints">
+		<windup:java-hint source-type="INHERITANCE" regex="org.jbpm.graph.def.ActionHandler$" hint="Migrate to jBPM 5 org.drools.runtime.process.WorkItemHandler." effort="2" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession$" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession" effort="4"/>
+		<windup:java-hint regex="org.jbpm.JbpmContext.getTaskInstance\(.+\)" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" 	/>
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.getTaskInstance\( " hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.loadTaskInstance\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstances\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksOwned(String userId, String language)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstances\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksOwned(String userId, List&gt;Status&lt; status, String language)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstancesByProcessInstance\("
+			hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksByStatusByProcessId(long processInstanceId, List&gt;Status&lt; status, String language)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstancesByProcessInstance\("
+			hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksByStatusByProcessIdByTaskName(long processInstanceId, List&gt;Status&lt; status, String taskName, String language)" />
+		<windup:java-hint regex="org.jbpm.db.TaskMgmtSession.findTaskInstancesByToken\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTaskByWorkItemId(long workItemId)" />
+		<windup:java-hint regex="org.jbpm.JbpmConfiguration$" hint="Migrate to jBPM 5: Replace with creation of org.drools.KnowledgeBase." effort="1"/>
+		<windup:java-hint regex="org.jbpm.JbpmConfiguration.createJbpmContext\(\)" hint="Migrate to jBPM 5: Replace with instantiation of org.drools.runtime.StatefulKnowledgeSession." effort="1"/>
+		<windup:java-hint regex="org.jbpm.JbpmContext.newProcessInstance" hint="Migrate to jBPM 5: org.drools.runtime.StatefulKnowledgeSession.startProcess(String processId)" effort="1"/>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getPriority\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getPriority or org.jbpm.task.Task.getPriority"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getName\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getName or org.jbpm.task.Task.getNames"/> 
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getId\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getId or org.jbpm.task.Task.getId"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getCreate\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getCreatedOn"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getDescription\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getDescription or org.jbpm.task.Task.getDescriptions"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getStart\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getActivationTime"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.end\(">
+			Migrate to jBPM 5: org.jbpm.task.service.TaskClient
+			
+			```java
+			TaskClient client = new TaskClient(new MinaTaskClientConnector(...);
+			client.complete( taskId, ...);
+			```
+		</windup:java-hint>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.addComment\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.addComment"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getComments\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.addComment"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getProcessInstance\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getProcessInstanceId"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getActorId\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getActualOwner"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getDueDate\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getExpirationTime"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.isBlocking\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.isSkipable"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.getDueDate\(" hint="Migrate to jBPM 5: org.jbpm.task.Task.getDeadlines"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.start\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Activate"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.setActorId\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Claim"/>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.resume\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Resume"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.cancel\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Skip"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.start\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Start"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.exe.TaskInstance.suspend\(" hint="Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Suspend"/>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.def.Task.getPriority\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getPriority or org.jbpm.task.Task.getPriority"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.def.Task.getName\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getName or org.jbpm.task.Task.getNames"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.def.Task.getId\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getId or org.jbpm.task.Task.getId"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.def.Task.getDescription\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getDescription or org.jbpm.task.Task.getDescriptions"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.def.Task.isBlocking\(" hint="Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.isSkipable"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.def.Task.getAssignmentDelegation\(" hint="Migrate to jBPM 5: org.jbpm.task.Task.getDelegation" />
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.taskmgmt.def.Task.getDueDate\(" hint="Migrate to jBPM 5: org.jbpm.task.Task.getDeadlines"/>
+		
+
+		<windup:java-hint regex="org.jbpm.graph.exe.ProcessInstance$" hint="Migrate to jBPM 5: org.drools.runtime.process.ProcessInstance"/>
+
+
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.graph.exe.ExecutionContext.getVariable">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.getVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+
+
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.graph.exe.ExecutionContext.setVariable">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.setVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+
+
+
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.JbpmContext.getProcessInstance">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+			```
+		]]>
+		</windup:java-hint>
+
+
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.getVariables">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.getVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.setVariable" >
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.setVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.getVariable">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.getVariable(...);
+			```
+		]]>
+		</windup:java-hint>		
+		 
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableContainer.setVariable">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.setVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableContainer.getVariable">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.getVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableContainer.getContextInstance " hint="Migrate to jBPM 5: org.jbpm.process.instance.context.variable.VariableScopeInstance.getVariableScope"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableContainer.setVariables">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.setVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableInstance.getName" hint="Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getName"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableInstance.getValue" hint="Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getValue"/>
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableInstance.setValue">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.setVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.VariableInstance.toString" hint="Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.toString"/>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.getVariable">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.getVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+		
+		<windup:java-hint source-type="METHOD" regex="org.jbpm.context.exe.ContextInstance.setVariable">
+		<![CDATA[
+			Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+			```java
+			ProcessContext kcontext = new ProcessContext(ksession);
+            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+            kcontext.setProcessInstance(processInstance);
+            kcontext.setVariable(...);
+			```
+		]]>
+		</windup:java-hint>
+		
+		
+	</windup:java-hints>
+</beans>

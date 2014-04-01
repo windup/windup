@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="JAVA" id="java-webservice-decorators">
+	
+		<windup:java-classification source-type="INHERITANCE" regex="javax.xml.rpc.Service$" description="JAX-RPC Service"/>
+					
+		<windup:java-classification source-type="INHERITANCE" regex="weblogic.wsee.jaxrpc.ServiceImpl" description="Weblogic Web Service Implementation" effort="6">
+				<windup:hints>
+					<windup:java-hint regex="weblogic.wsee.jaxrpc.ServiceImpl" hint="Replace with JAX-WS Web Service Implementation."/>
+				</windup:hints>
+				<windup:decorators>
+					<windup:link url="http://cxf.apache.org/docs/a-simple-jax-ws-service.html" description="Apache CXF Simple JAX-WS Web Service Example"/>
+				</windup:decorators>
+		</windup:java-classification>
+		
+		<windup:java-classification source-type="TYPE" description="Asynchronous Web Service Client" regex="weblogic.wsee.async.AsyncPreCallContext" effort="8">
+			<windup:hints>
+				<windup:java-hint regex="weblogic.wsee.async.AsyncPreCallContext" hint="Replace with CXF Asynchronous Client." effort="8"/>
+			</windup:hints>
+			<windup:decorators>
+				<windup:link url="http://docs.oracle.com/cd/E15051_01/wls/docs103/webserv_adv_rpc/asynch.html" description="Weblogic Asynchronous Execution Documentation"/>
+				<windup:link url="http://singztechmusings.in/consuming-web-services-in-cxf-non-blocking-asynchronous-invocation-model/" description="CXF Asynchronous Webservice Client Example"/>
+			</windup:decorators>
+		</windup:java-classification>
+		
+		
+		<windup:java-gate source-type="METHOD" regex="weblogic.wsee.connection.transport.http.HttpTransportInfo.setUsername\(.+\)">
+			<windup:decorators>
+				<windup:link url="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html" description="JAX-WS Proxy Password Example"/>
+			</windup:decorators>
+		</windup:java-gate>
+	
+	
+		<windup:java-classification source-type="INHERITANCE" regex="weblogic.common.T3StartupDef" description="Weblogic Startup Service" effort="4">
+			<windup:hints>
+				<windup:java-hint regex="weblogic.common.T3StartupDef" hint="Replace with EJB 3.1 @Singleton / @Startup annotations."/>
+			</windup:hints>				
+			<windup:decorators>
+				<windup:link url="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/>
+				<windup:link url="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean"/>
+			</windup:decorators>
+		</windup:java-classification>
+		
+		<windup:java-classification source-type="INHERITANCE" regex="weblogic.common.T3ServicesDef" description="Weblogic Startup Service" effort="8">
+				<windup:hints>
+					<windup:java-hint regex="weblogic.common.T3ServicesDef" hint="In JBoss 5, replace with an MBean."/>
+					<windup:java-hint regex="weblogic.common.T3ServicesDef" hint="In JBoss 6, replace with an @Singleton EJB."/>
+				</windup:hints>
+				<windup:decorators>
+					<windup:link url="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean"/>
+					<windup:link url="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/>
+				</windup:decorators>		
+		</windup:java-classification>
+		
+		<windup:java-classification source-type="INHERITANCE" regex="weblogic.time.common.Triggerable$" description="Weblogic Scheduled Job">
+			<windup:decorators>
+				<windup:link url="http://jaitechwriteups.blogspot.com/2010/07/ejb31-timerservice-in-jboss-as-600m4.html" description="JBoss EJB3.1 Scheduled Job"/>
+				<windup:link url="http://www.java2s.com/Code/Java/EJB3/EJBTutorialfromJBosstimer.htm" description="JBoss EJB3.0 Timeout Job"/>
+			</windup:decorators>
+		</windup:java-classification>
+		
+	</windup:pipeline>
+
+	<windup:java-hints id="java-webservice-hints">
+		<windup:java-hint regex="weblogic.wsee.async.AsyncPreCallContext" hint="Replace with CXF Asynchronous Client." effort="0"/>
+		<windup:java-hint regex="weblogic.utils.StringUtils.*" hint="Replace with Apache Commons's StringUtils"/>
+		<windup:java-hint regex="weblogic.apache.xml.+" hint="Replace weblogic.apache.xml with org.apache.xml (Xerces)" effort="1"/>
+		<windup:java-hint regex="weblogic.transaction.TransactionManager$" hint="Replace with the JEE standard javax.transaction.TransactionManager"/>
+		<windup:java-hint source-type="METHOD" regex="weblogic.transaction.TransactionManager.resume" hint="Replace with the JEE standard javax.transaction.TransactionManager.resume(Transaction tx)"/>
+		<windup:java-hint source-type="METHOD" regex="weblogic.transaction.TransactionManager.suspend\(\)" hint="Replace with the JEE standard javax.transaction.TransactionManager.suspend()"/>
+		<windup:java-hint source-type="IMPORT" regex="weblogic.transaction.TxHelper$" hint="Remove weblogic.transaction.TxHelper import"/>
+		<windup:java-hint source-type="METHOD" regex="weblogic.transaction.ClientTxHelper.getTransactionManager\(\)" hint="Look up the JEE javax.transaction.TransactionManager in JBoss using the javax.naming.InitialContext: java:TransactionManager"/>
+		<windup:java-hint source-type="METHOD" regex="weblogic.transaction.TxHelper.getTransactionManager\(\)" hint="Look up the JEE javax.transaction.TransactionManager in JBoss using the javax.naming.InitialContext: java:TransactionManager"/>
+		<windup:java-hint source-type="INHERITANCE" regex="weblogic.common.T3StartupDef$" hint="T3StartupDef defines a startup service in Weblogic.  The main method is executed when the server starts up, if it is registered in the Weblogic context.xml  The equivalent in JBoss 5 is to use a JMX Management annotation: org.jboss.annotation.ejb.Management."/>
+		<windup:java-hint regex="weblogic.logging.NonCatalogLogger$" hint="NonCatalogLogger is a logger for logging messages to the Weblogic log; replace this with log4j, commons logging, or slf4j, with an appropriate log level." effort="1"/>
+		<windup:java-hint source-type="INHERITANCE" regex="weblogic.time.common.Triggerable$" hint="Replace weblogic.time.common.Triggerable with EJB3 @Timeout"/>
+		<windup:java-hint source-type="INHERITANCE" regex="weblogic.time.common.Triggerable$" hint="Replace weblogic.time.common.Triggerable with org.jboss.varia.scheduler.Schedulable for JBoss 5"/>
+		<windup:java-hint regex="weblogic.jdbc.vendor.oracle.OracleThinClob" hint="Weblogic-specific Code; replace with oracle.sql.CLOB"/>
+		<windup:java-hint regex="(weblogic.jdbc.vendor.oracle.OracleThinClob|oracle.sql.CLOB)\.getCharacterOutputStream\(\)" hint="Weblogic-specific Code; replace with oracle.sql.CLOB.getCharacterOutputStream(1)"/>
+		
+		<windup:java-hint source-type="TYPE" regex="weblogic.common.T3ServicesDef" hint="In JBoss 5, look up the MBean replacement for the T3ServicesDef." effort="1"/>
+		<windup:java-hint source-type="TYPE" regex="weblogic.common.T3ServicesDef" hint="In JBoss 6, inject the @Singleton, @Startup EJB3." effort="1" />
+		
+		<windup:java-hint regex="weblogic.wsee.context.WebServiceContext" hint="Replace with javax.xml.ws.WebServiceContext" effort="1"/>
+		<windup:java-hint regex="weblogic.wsee.context.ContextNotFoundException" hint="Weblogic specific; remove." effort="0"/>
+	</windup:java-hints>
+</beans>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="archivePipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list>
+				<bean class="org.jboss.windup.decorator.archive.ClassesProvidedDecorator">
+					<property name="customerPackageResolver" ref="customerPackageResolver" />
+					<property name="profileResolver" ref="profileResolver"/>
+				</bean>
+
+				<!-- Extract relevant information per-resource -->
+				<bean id="archiveEntryDecorator" class="org.jboss.windup.decorator.archive.ZipDecorator">
+					<property name="versionInterrogators">
+						<list>
+							<ref bean="manifestInterrogator" />
+							<ref bean="pomInterrogator" />
+						</list>
+					</property>
+					<property name="knownArchiveProfiler" ref="knownArchiveProfiler"/>
+					<property name="interrogators">
+						<list>
+							<ref bean="manifestInterrogator" />
+							<ref bean="xmlInterrogator" />
+							<ref bean="javaInterrogator" />
+							<ref bean="classToJavaInterrogator" />
+							<ref bean="jspInterrogator" />
+						</list>
+					</property>
+				</bean>	
+				<!-- After meta has been extracted, validate inner-dependent resources.. -->
+				<!-- Example: EJBs require both classes and XML... -->
+				
+				
+				
+				<!-- Extract relevant information for the archive. -->
+				<bean class="org.jboss.windup.decorator.archive.JVMVersionDecorator"/>
+				<bean class="org.jboss.windup.decorator.MD5HashDecorator"/>
+				<bean class="org.jboss.windup.decorator.SHA1HashDecorator"/>
+				
+				
+				<bean class="org.jboss.windup.decorator.integration.mvn.MavenCentralSHA1VersionDecorator">
+					<property name="active" value="#{ systemProperties['fetch.remote'] }" />
+					<property name="knownArchiveProfiler" ref="knownArchiveProfiler"/>
+					<property name="pomInterrogator" ref="pomInterrogator"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="profileResolver" class="org.jboss.windup.util.ProfileResolver">
+		<property name="profiles">
+			<list>
+				<bean class="org.jboss.windup.graph.profile.SunJava6"/>
+				<bean class="org.jboss.windup.graph.profile.SunJava6JSSE"/>
+				<bean class="org.jboss.windup.graph.profile.SunJava6JCE"/>
+				<bean class="org.jboss.windup.graph.profile.JBossAS7Profile"/>
+				<bean class="org.jboss.windup.graph.profile.JavaEE6"/>
+			</list>
+		</property>
+	</bean>
+</beans>

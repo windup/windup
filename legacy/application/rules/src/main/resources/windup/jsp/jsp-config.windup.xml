@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="jspInterrogator" class="org.jboss.windup.interrogator.impl.JspInterrogator">
+		<property name="extensions">
+			<set>
+				<value>jsp</value>
+				<value>jspx</value>
+				<value>jsf</value>
+				<value>xhtml</value>
+			</set>
+		</property>
+		
+		<property name="decoratorPipeline" ref="jspPipeline" />
+	</bean>
+
+	<bean id="jspPipeline" class="org.jboss.windup.interrogator.impl.DecoratorPipeline">
+		<property name="decorators">
+			<list>
+				<bean class="org.jboss.windup.decorator.JspDecorator">
+					<property name="classBlacklists" ref="blacklistedClasses" />
+					<property name="namespaceBlacklists">
+						<list>
+							<value>.*ibm.com</value>
+							<value>.*.oracle.com</value>
+							<value>.*.bea.com</value>
+							<value>.*.sql.oracle</value>
+						</list>
+					</property>
+					<property name="hints">
+						<bean class="org.jboss.windup.hint.RegexPatternHintProcessor">
+							<property name="regexPattern" value="http://www.ibm.com/jsf/html_extended$" />
+							<property name="hint" value="IBM specific." />
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

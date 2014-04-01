@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:windup="http://www.jboss.org/schema/windup"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+	<windup:pipeline type="XML" id="xml-jrun-decorators">
+		<windup:xpath-classification description="JRun Web App" xpath="/*[local-name()='jrun-web-app']" effort="3"/>
+		<windup:xpath-classification description="JRun EJB" xpath="/*[local-name()='jrun-ejb-jar']" effort="4"/>
+		<windup:dtd-classification description="JRun EJB XML" effort="0" public-id-regex="Macromedia, Inc.//DTD jrun-ejb-jar ..."/>
+		<windup:dtd-classification description="JRun WAR Application  Descriptor" effort="0" public-id-regex="Macromedia, Inc.//DTD jrun-web 1.."/>
+	</windup:pipeline>
+</beans>
+ 
