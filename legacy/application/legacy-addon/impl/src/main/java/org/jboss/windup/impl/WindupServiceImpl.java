@@ -16,7 +16,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jboss.windup.WindupEngine;
 import org.jboss.windup.WindupEnvironment;
 import org.jboss.windup.WindupService;
 import org.jboss.windup.reporting.ReportEngine;
