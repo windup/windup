@@ -24,30 +24,30 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class WindupAddonTest
 {
-   @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.windup.legacy.application:legacy-windup"),
-   })
-   public static ForgeArchive getDeployment()
-   {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.windup.legacy.application:legacy-windup")
-               );
+    @Deployment
+    @Dependencies({
+                @AddonDependency(name = "org.jboss.windup.legacy.application:legacy-windup"),
+    })
+    public static ForgeArchive getDeployment()
+    {
+        ForgeArchive archive = ShrinkWrap
+                    .create(ForgeArchive.class)
+                    .addBeansXML()
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                                AddonDependencyEntry.create("org.jboss.windup.legacy.application:legacy-windup")
+                    );
 
-      return archive;
-   }
+        return archive;
+    }
 
-   @Inject
-   private WindupService windup;
+    @Inject
+    private WindupService windup;
 
-   @Test
-   public void testWindupServiceInjectionNotNull()
-   {
-      Assert.assertNotNull(windup);
-   }
+    @Test
+    public void testWindupServiceInjectionNotNull()
+    {
+        Assert.assertNotNull(windup);
+    }
 
 }

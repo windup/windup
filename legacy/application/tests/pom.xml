@@ -21,6 +21,12 @@
             <scope>test</scope>
         </dependency>
 
+				<dependency>
+  					<groupId>org.jboss.forge.addon</groupId>
+					  <artifactId>ui-test-harness</artifactId>
+					  <classifier>forge-addon</classifier>
+				</dependency>
+
         <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>furnace-test-harness</artifactId>
