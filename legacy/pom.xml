@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <modelVersion>4.0.0</modelVersion>
 
    <parent>
       <groupId>org.jboss.windup</groupId>
@@ -10,15 +10,20 @@
       <relativePath>../</relativePath>
    </parent>
 
-  <properties>
-    <version.slf4j>1.7.5</version.slf4j>
-    <version.log4j>1.2.16</version.log4j>
-  </properties>
+   <properties>
+      <version.slf4j>1.7.5</version.slf4j>
+      <version.log4j>1.2.16</version.log4j>
+   </properties>
 
-  <groupId>org.jboss.windup.legacy</groupId>
-  <artifactId>legacy</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>application</module>
-  </modules>
+   <groupId>org.jboss.windup.legacy</groupId>
+   <artifactId>legacy-parent</artifactId>
+   <packaging>pom</packaging>
+
+   <name>Legacy Windup - Parent</name>
+   <description>Parent pom for Windup Legacy Modules</description>
+
+   <modules>
+      <module>application</module>
+   </modules>
+
 </project>

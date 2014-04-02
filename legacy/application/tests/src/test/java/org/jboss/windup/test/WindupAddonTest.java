@@ -26,7 +26,7 @@ public class WindupAddonTest
 {
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.windup.legacy:windup"),
+            @AddonDependency(name = "org.jboss.windup.legacy.application:legacy-windup"),
    })
    public static ForgeArchive getDeployment()
    {
@@ -35,7 +35,7 @@ public class WindupAddonTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.windup.legacy:windup")
+                        AddonDependencyEntry.create("org.jboss.windup.legacy.application:legacy-windup")
                );
 
       return archive;

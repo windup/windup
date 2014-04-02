@@ -1,4 +1,4 @@
-package org.jboss.windup.ui;
+package org.jboss.windup.impl.ui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
