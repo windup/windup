@@ -16,3 +16,4 @@ docs/reference/src/main/docbook/en-US/version_info.xml
 .factorypath
 atlassian-ide-plugin.xml
 .externalToolBuilders
+bin
