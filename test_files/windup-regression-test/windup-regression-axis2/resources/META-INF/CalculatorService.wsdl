@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <definitions targetNamespace="http://calculator.jaxws.axis2.apache.org" name="CalculatorService"
-             xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://calculator.jaxws.axis2.apache.org"
-             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://calculator.jaxws.axis2.apache.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     <types>
         <xsd:schema>
-            <xsd:import namespace="http://calculator.jaxws.axis2.apache.org"
-                        schemaLocation="CalculatorService_schema1.xsd"/>
+            <xsd:import namespace="http://calculator.jaxws.axis2.apache.org" schemaLocation="CalculatorService_schema1.xsd"/>
         </xsd:schema>
     </types>
     <message name="getTicket">
@@ -32,8 +30,7 @@
         <operation name="add">
             <input wsaw:Action="http://calculator.jaxws.axis2.apache.org/add" message="tns:add"/>
             <output wsaw:Action="http://calculator.jaxws.axis2.apache.org/addResponse" message="tns:addResponse"/>
-            <fault message="tns:AddNumbersException" name="AddNumbersException"
-                   wsaw:Action="http://calculator.jaxws.axis2.apache.org/addFault"/>
+            <fault message="tns:AddNumbersException" name="AddNumbersException" wsaw:Action="http://calculator.jaxws.axis2.apache.org/addFault"/>
         </operation>
     </portType>
     <binding name="CalculatorServicePortBinding" type="tns:Calculator">

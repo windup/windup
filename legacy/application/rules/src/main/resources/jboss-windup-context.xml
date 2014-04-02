@@ -1,530 +1,381 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-	
-	<import resource="classpath*:/windup/**/*.windup.xml" />
-	<import resource="classpath*:/*.windup.xml" />
-	
-	<bean name="windupParsers" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
-		<property name="customEditors">
-			<map>
-				<entry key="org.jboss.windup.metadata.decoration.SourceType" value="org.jboss.windup.config.spring.property.SourceTypeEditor"/>
-				<entry key="org.jboss.windup.metadata.decoration.effort.Effort" value="org.jboss.windup.config.spring.property.StoryPointEffortTypeEditor"/>
-				<entry key="org.jboss.windup.platform.PlatformType" value="org.jboss.windup.config.spring.property.PlatformTypeEditor"/>
-				<entry key="java.util.regex.Pattern" value="org.jboss.windup.config.spring.property.RegexPatternEditor"/>
-				<entry key="org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel" value="org.jboss.windup.config.spring.property.NotificationLevelEditor"/>
-			</map>
-		</property>
-	</bean>
 
-	<bean id="directory-interrogation-engine" class="org.jboss.windup.interrogator.DirectoryInterrogationEngine">
-		<property name="interrogators">
-			<list>
-				<ref bean="manifestInterrogator" />
-				<ref bean="xmlInterrogator" />
-				<ref bean="javaInterrogator" />
-				<ref bean="classToJavaInterrogator" />
-				<ref bean="jspInterrogator" />
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="file-interrogation-engine" class="org.jboss.windup.interrogator.FileInterrogationEngine">
-		<property name="interrogators">
-			<list>
-				<ref bean="manifestInterrogator" />
-				<ref bean="xmlInterrogator" />
-				<ref bean="javaInterrogator" />
-				<ref bean="classToJavaInterrogator" />
-				<ref bean="jspInterrogator" />
-			</list>
-		</property>
-	</bean>
+    <import resource="classpath*:/windup/**/*.windup.xml"/>
+    <import resource="classpath*:/*.windup.xml"/>
 
-	<!-- main engine for interrogating resources. -->
-	<bean id="archive-interrogation-engine" class="org.jboss.windup.interrogator.ZipInterrogationEngine">
-		<property name="recursiveExtractor" ref="recursiveExtractor" />
-		<property name="decoratorPipeline" ref="archivePipeline" />
-	</bean>
+    <bean name="windupParsers" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="org.jboss.windup.metadata.decoration.SourceType" value="org.jboss.windup.config.spring.property.SourceTypeEditor"/>
+                <entry key="org.jboss.windup.metadata.decoration.effort.Effort" value="org.jboss.windup.config.spring.property.StoryPointEffortTypeEditor"/>
+                <entry key="org.jboss.windup.platform.PlatformType" value="org.jboss.windup.config.spring.property.PlatformTypeEditor"/>
+                <entry key="java.util.regex.Pattern" value="org.jboss.windup.config.spring.property.RegexPatternEditor"/>
+                <entry key="org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel" value="org.jboss.windup.config.spring.property.NotificationLevelEditor"/>
+            </map>
+        </property>
+    </bean>
 
-	<bean id="knownArchiveProfiler" class="org.jboss.windup.interrogator.util.KnownArchiveProfiler">
-		<property name="knownPackages" ref="vendorPackages" />
-		<property name="customerPackageResolver" ref="customerPackageResolver" />
-	</bean>
+    <bean id="directory-interrogation-engine" class="org.jboss.windup.interrogator.DirectoryInterrogationEngine">
+        <property name="interrogators">
+            <list>
+                <ref bean="manifestInterrogator"/>
+                <ref bean="xmlInterrogator"/>
+                <ref bean="javaInterrogator"/>
+                <ref bean="classToJavaInterrogator"/>
+                <ref bean="jspInterrogator"/>
+            </list>
+        </property>
+    </bean>
 
-	<bean id="recursiveExtractor" class="org.jboss.windup.util.RecursiveZipMetaFactory">
-		<constructor-arg name="startLocation">
-			<bean class="java.io.File">
-				<constructor-arg index="0" value="#{ systemProperties['java.io.tmpdir'] }" />
-			</bean>
-		</constructor-arg>
-		<constructor-arg name="extensions" ref="zipExtensions" />
-	</bean>
+    <bean id="file-interrogation-engine" class="org.jboss.windup.interrogator.FileInterrogationEngine">
+        <property name="interrogators">
+            <list>
+                <ref bean="manifestInterrogator"/>
+                <ref bean="xmlInterrogator"/>
+                <ref bean="javaInterrogator"/>
+                <ref bean="classToJavaInterrogator"/>
+                <ref bean="jspInterrogator"/>
+            </list>
+        </property>
+    </bean>
 
-	<bean id="vendorPackages" class="java.util.HashMap">
-		<constructor-arg>
-			<map>
-				<entry key="bea" value="Weblogic" />
-				<entry key="com.bea" value="Weblogic" />
-				<entry key="com.weblogic" value="Weblogic" />
-				<entry key="weblogic" value="Weblogic" />
-				<entry key="oracle" value="Weblogic" />
+    <!-- main engine for interrogating resources. -->
+    <bean id="archive-interrogation-engine" class="org.jboss.windup.interrogator.ZipInterrogationEngine">
+        <property name="recursiveExtractor" ref="recursiveExtractor"/>
+        <property name="decoratorPipeline" ref="archivePipeline"/>
+    </bean>
 
-				<entry key="ilog" value="IBM" />
-				<entry key="ibm" value="IBM" />
-				<entry key="com.ibm" value="IBM" />
-				<entry key="websphere" value="IBM" />
+    <bean id="knownArchiveProfiler" class="org.jboss.windup.interrogator.util.KnownArchiveProfiler">
+        <property name="knownPackages" ref="vendorPackages"/>
+        <property name="customerPackageResolver" ref="customerPackageResolver"/>
+    </bean>
 
-				<entry key="com.iona" value="Iona" />
-				<entry key="com.lombardi" value="Lombardi" />
-				<entry key="com.sonic" value="Progress" />
-				<entry key="com.sybase" value="Sybase" />
-				<entry key="sybase" value="Sybase" />
+    <bean id="recursiveExtractor" class="org.jboss.windup.util.RecursiveZipMetaFactory">
+        <constructor-arg name="startLocation">
+            <bean class="java.io.File">
+                <constructor-arg index="0" value="#{ systemProperties['java.io.tmpdir'] }"/>
+            </bean>
+        </constructor-arg>
+        <constructor-arg name="extensions" ref="zipExtensions"/>
+    </bean>
 
-				<entry key="com.tangosol" value="Tangosol" />
-				<entry key="com.tibco" value="Tibco" />
+    <bean id="vendorPackages" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="bea" value="Weblogic"/>
+                <entry key="com.bea" value="Weblogic"/>
+                <entry key="com.weblogic" value="Weblogic"/>
+                <entry key="weblogic" value="Weblogic"/>
+                <entry key="oracle" value="Weblogic"/>
 
-				<entry key="commonj" value="Commonj" />
+                <entry key="ilog" value="IBM"/>
+                <entry key="ibm" value="IBM"/>
+                <entry key="com.ibm" value="IBM"/>
+                <entry key="websphere" value="IBM"/>
 
-				<entry key="java." value="Sun" />
-				<entry key="com.sun" value="Sun" />
-				<entry key="javax" value="Sun" />
+                <entry key="com.iona" value="Iona"/>
+                <entry key="com.lombardi" value="Lombardi"/>
+                <entry key="com.sonic" value="Progress"/>
+                <entry key="com.sybase" value="Sybase"/>
+                <entry key="sybase" value="Sybase"/>
 
-				<entry key="mx4j" value="MX4J" />
+                <entry key="com.tangosol" value="Tangosol"/>
+                <entry key="com.tibco" value="Tibco"/>
 
-				<entry key="net.sf.hibernate" value="JBoss" />
-				<entry key="org.jboss" value="JBoss" />
-				<entry key="org.ajax4jsf" value="JBoss" />
-				<entry key="org.hibernate" value="JBoss" />
-				<entry key="org.jgroups" value="JBoss" />
-				<entry key="org.modeshape" value="JBoss" />
-				<entry key="org.drools" value="JBoss" />
-				<entry key="org.jbpm" value="JBoss" />
-				<entry key="org.hornetq" value="JBoss" />
+                <entry key="commonj" value="Commonj"/>
 
-				<entry key="org.quartz" value="Quartz" />
+                <entry key="java." value="Sun"/>
+                <entry key="com.sun" value="Sun"/>
+                <entry key="javax" value="Sun"/>
 
-				<entry key="com.opensymphony" value="Open Symphony" />
+                <entry key="mx4j" value="MX4J"/>
 
-				<entry key="org.apache" value="Apache" />
+                <entry key="net.sf.hibernate" value="JBoss"/>
+                <entry key="org.jboss" value="JBoss"/>
+                <entry key="org.ajax4jsf" value="JBoss"/>
+                <entry key="org.hibernate" value="JBoss"/>
+                <entry key="org.jgroups" value="JBoss"/>
+                <entry key="org.modeshape" value="JBoss"/>
+                <entry key="org.drools" value="JBoss"/>
+                <entry key="org.jbpm" value="JBoss"/>
+                <entry key="org.hornetq" value="JBoss"/>
 
-				<entry key="org.mule" value="Mule ESB" />
+                <entry key="org.quartz" value="Quartz"/>
 
-				<entry key="org.springframework" value="Spring" />
+                <entry key="com.opensymphony" value="Open Symphony"/>
 
-				<entry key="org.postgresql" value="Postgres" />
+                <entry key="org.apache" value="Apache"/>
 
-				<entry key="com.mysql" value="MySQL" />
+                <entry key="org.mule" value="Mule ESB"/>
 
-				<entry key="org.hsqldb" value="HypersonicDB" />
+                <entry key="org.springframework" value="Spring"/>
 
-				<entry key="microsoft" value="Microsoft" />
+                <entry key="org.postgresql" value="Postgres"/>
 
-				<entry key="org.xml.sax" value="Oagis" />
+                <entry key="com.mysql" value="MySQL"/>
 
-				<entry key="com.thoughtworks" value="Thoughtworks" />
+                <entry key="org.hsqldb" value="HypersonicDB"/>
 
-				<entry key="org.w3c" value="W3C" />
+                <entry key="microsoft" value="Microsoft"/>
 
-				<entry key="org.osoa" value="OSOA" />
+                <entry key="org.xml.sax" value="Oagis"/>
 
-				<entry key="org.mvel" value="MVEL" />
+                <entry key="com.thoughtworks" value="Thoughtworks"/>
 
-				<entry key="org.codehaus" value="Codehaus" />
+                <entry key="org.w3c" value="W3C"/>
 
-				<entry key="net.sf" value="Sourceforge" />
-				<entry key="net.sourceforge" value="Sourceforge" />
+                <entry key="org.osoa" value="OSOA"/>
 
-				<entry key="org.dom4j" value="DOM4J" />
+                <entry key="org.mvel" value="MVEL"/>
 
-				<entry key="edu.oswego.cs.dl.util.concurrent" value="Util Concurrent"/>
-				<entry key="edu.emory.mathcs.backport.java.util" value="Backport Util Concurrent"/>
+                <entry key="org.codehaus" value="Codehaus"/>
 
-				<entry key="com.adobe" value="Adobe" />
-				<entry key="coldfusion" value="Adobe" />
-				<entry key="flex.graphics" value="Adobe" />
-				<entry key="flex.management" value="Adobe" />
-				<entry key="flex.messaging" value="Adobe" />
+                <entry key="net.sf" value="Sourceforge"/>
+                <entry key="net.sourceforge" value="Sourceforge"/>
 
+                <entry key="org.dom4j" value="DOM4J"/>
 
-				<entry key="com.google" value="Google" />
-				<entry key="org.eclipse" value="Eclipse Foundation" />
-				<entry key="org.mozilla" value="Mozilla Foundation" />
+                <entry key="edu.oswego.cs.dl.util.concurrent" value="Util Concurrent"/>
+                <entry key="edu.emory.mathcs.backport.java.util" value="Backport Util Concurrent"/>
 
-				<entry key="org.bouncycastle" value="Bouncy Castle" />
-				<entry key="com.wso2" value="WSO2" />
-				<entry key="com.sap" value="SAP" />
-				<entry key="com.businessobjects" value="SAP" />
-				<entry key="com.mchange" value="Machinery For Change" />
-
-				<entry key="com.atlassian" value="Atlassian" />
-				<entry key="atlassian" value="Atlassian" />
-
-				<entry key="net.sf" value="SourceForge" />
-
-				<!-- Known open source libraries. -->
-				<entry key="org.scannotation" value="Scannotation" />
-				<entry key="org.slf4j" value="SLF4J" />
-				<entry key="org.joda" value="Joda Time" />
-				<entry key="freemarker" value="Freemarker" />
-
-				<entry key="org.milyn" value="Milyn" />
-
-				<entry key="junit" value="JUnit" />
-				<entry key="org.junit" value="JUnit" />
+                <entry key="com.adobe" value="Adobe"/>
+                <entry key="coldfusion" value="Adobe"/>
+                <entry key="flex.graphics" value="Adobe"/>
+                <entry key="flex.management" value="Adobe"/>
+                <entry key="flex.messaging" value="Adobe"/>
 
 
-				<entry key="org.jdom" value="JDOM" />
-				<entry key="org.jfree" value="JFree" />
+                <entry key="com.google" value="Google"/>
+                <entry key="org.eclipse" value="Eclipse Foundation"/>
+                <entry key="org.mozilla" value="Mozilla Foundation"/>
 
-				<entry key="com.google" value="Google" />
-				<entry key="com.yahoo" value="Yahoo" />
+                <entry key="org.bouncycastle" value="Bouncy Castle"/>
+                <entry key="com.wso2" value="WSO2"/>
+                <entry key="com.sap" value="SAP"/>
+                <entry key="com.businessobjects" value="SAP"/>
+                <entry key="com.mchange" value="Machinery For Change"/>
 
-				<entry key="org.antlr" value="Antlr" />
-			</map>
-		</constructor-arg>
-	</bean>
+                <entry key="com.atlassian" value="Atlassian"/>
+                <entry key="atlassian" value="Atlassian"/>
 
-	<bean id="blacklistedClasses" class="java.util.ArrayList">
-		<constructor-arg>
-			<set>
-				<!-- Vendor Classes / Lookup Classes -->
-				<value>com.crystaldecisions</value>
-				<value>amx_</value>
-				<value>^bea</value>
-				<value>com.sonic</value>
-				<value>com.bea</value>
-				<value>com.ibm</value>
-				<value>com.iona</value>
-				<value>com.lombardi</value>
-				<value>com.tangosol</value>
-				<value>com.tibco</value>
-				<value>com.weblogic</value>
-				<value>^ilog</value>
-				<value>^commonj</value>
-				<value>java.sql.DriverManager</value>
-				<value>javax.ejb</value>
-				<value>javax.persistence</value>
-				<value>javax.management</value>
-				<value>javax.naming.Context</value>
-				<value>javax.naming.InitialContext</value>
-				<value>javax.persistence.JoinColumn</value>
-				<value>javax.sql</value>
-				<value>jrun</value>
-				<value>jrunx</value>
-				<value>mx4j</value>
-				<value>net.sf.hibernate</value>
-				<value>oracle.sql</value>
-				<value>org.apache.activeio</value>
-				<value>org.apache.activemq</value>
-				<value>org.jboss</value>
-				<value>org.mule</value>
-				<value>org.osoa</value>
-				<value>weblogic</value>
-				<value>websphere</value>
-				<value>^oracle</value>
-				<value>edu.oswego.cs.dl.util.concurrent</value>
-				<value>edu.emory.mathcs.backport.java.util</value>
+                <entry key="net.sf" value="SourceForge"/>
+
+                <!-- Known open source libraries. -->
+                <entry key="org.scannotation" value="Scannotation"/>
+                <entry key="org.slf4j" value="SLF4J"/>
+                <entry key="org.joda" value="Joda Time"/>
+                <entry key="freemarker" value="Freemarker"/>
+
+                <entry key="org.milyn" value="Milyn"/>
+
+                <entry key="junit" value="JUnit"/>
+                <entry key="org.junit" value="JUnit"/>
 
 
-				<!-- JDK 1.7 -->
-				<!--
-				<value>java.awt.BorderLayout$</value>
-				<value>java.awt.CardLayout$</value>
-				<value>java.awt.CheckboxGroup$</value>
-				<value>java.awt.Choice$</value>
-				<value>java.awt.Component$</value>
-				<value>java.awt.ComponentOrientation$</value>
-				<value>java.awt.Container$</value>
-				<value>java.awt.Cursor.predefined$</value>
-				<value>java.awt.datatransfer.DataFlavor$</value>
-				<value>java.awt.datatransfer.DataFlavor.plainTextFlavor$</value>
-				<value>java.awt.Dialog$</value>
-				<value>java.awt.event.KeyEvent$</value>
-				<value>java.awt.Font$</value>
-				<value>java.awt.FontMetrics$</value>
-				<value>java.awt.Frame$</value>
-				<value>java.awt.Frame.CROSSHAIR_CURSOR$</value>
-				<value>java.awt.Frame.DEFAULT_CURSOR$</value>
-				<value>java.awt.Frame.E_RESIZE_CURSOR$</value>
-				<value>java.awt.Frame.HAND_CURSOR$</value>
-				<value>java.awt.Frame.MOVE_CURSOR$</value>
-				<value>java.awt.Frame.N_RESIZE_CURSOR$</value>
-				<value>java.awt.Frame.NE_RESIZE_CURSOR$</value>
-				<value>java.awt.Frame.NW_RESIZE_CURSOR$</value>
-				<value>java.awt.Frame.S_RESIZE_CURSOR$</value>
-				<value>java.awt.Frame.SE_RESIZE_CURSOR$</value>
-				<value>java.awt.Frame.SW_RESIZE_CURSOR$</value>
-				<value>java.awt.Frame.TEXT_CURSOR$</value>
-				<value>java.awt.Frame.W_RESIZE_CURSOR$</value>
-				<value>java.awt.Frame.WAIT_CURSOR$</value>
-				<value>java.awt.Graphics$</value>
-				<value>java.awt.image.renderable.RenderContext$</value>
-				<value>java.awt.List$</value>
-				<value>java.awt.Menu$</value>
-				<value>java.awt.MenuBar$</value>
-				<value>java.awt.MenuComponent$</value>
-				<value>java.awt.MenuContainer$</value>
-				<value>java.awt.MenuItem$</value>
-				<value>java.awt.Polygon$</value>
-				<value>java.awt.Rectangle$</value>
-				<value>java.awt.Scrollbar$</value>
-				<value>java.awt.ScrollPane$</value>
-				<value>java.awt.TextArea$</value>
-				<value>java.awt.TextField$</value>
-				<value>java.awt.Toolkit$</value>
-				<value>java.awt.Window$</value>
-				 
-				<value>java.util.Date$</value>
-				<value>java.io.ByteArrayOutputStream$</value>
-				<value>java.io.DataInputStream$</value>
-				<value>java.io.File$</value>
-				<value>java.lang.Character$</value>
-				<value>java.lang.String$</value>
-				
-				<value>java.io.LineNumberInputStream$</value>
-				<value>java.io.ObjectInputStream$</value>
-				<value>java.io.ObjectOutputStream.PutField$</value>
-				<value>java.io.StreamTokenizer$</value>
-				<value>java.io.StringBufferInputStream$</value>
-				<value>java.lang.Character.UnicodeBlock.SURROGATES_AREA$</value>
-				<value>java.lang.ClassLoader$</value>
-				<value>java.lang.Runtime$</value>
-				<value>java.lang.SecurityManager$</value>
-				<value>java.lang.SecurityManager.inCheck$</value>
-				<value>java.lang.System$</value>
-				<value>java.lang.Thread$</value>
-				<value>java.lang.ThreadGroup$</value>
-				<value>java.net.DatagramSocketImpl$</value>
-				<value>java.net.HttpURLConnection.HTTP_SERVER_ERROR$</value>
-				<value>java.net.MulticastSocket$</value>
-				<value>java.net.Socket$</value>
-				<value>java.net.URLConnection$</value>
-				<value>java.net.URLDecoder$</value>
-				<value>java.net.URLEncoder$</value>
-				<value>java.net.URLStreamHandler$</value>
-				<value>java.rmi.dgc.VMID$</value>
-				<value>java.rmi.registry.RegistryHandler$</value>
-				<value>java.rmi.RMISecurityException$</value>
-				<value>java.rmi.server.LoaderHandler$</value>
-				<value>java.rmi.server.LogStream$</value>
-				<value>java.rmi.server.Operation$</value>
-				<value>java.rmi.server.RemoteCall$</value>
-				<value>java.rmi.server.RemoteRef$</value>
-				<value>java.rmi.server.RemoteStub$</value>
-				<value>java.rmi.server.RMIClassLoader$</value>
-				<value>java.rmi.server.Skeleton$</value>
-				<value>java.rmi.server.SkeletonMismatchException$</value>
-				<value>java.rmi.server.SkeletonNotFoundException$</value>
-				<value>java.rmi.ServerRuntimeException$</value>
-				<value>java.security.Certificate$</value>
-				<value>java.security.Identity$</value>
-				<value>java.security.IdentityScope$</value>
-				<value>java.security.Security$</value>
-				<value>java.security.Signature$</value>
-				<value>java.security.SignatureSpi$</value>
-				<value>java.security.Signer$</value>
-				<value>java.sql.CallableStatement$</value>
-				<value>java.sql.Date$</value>
-				<value>java.sql.DriverManager$</value>
-				<value>java.sql.PreparedStatement$</value>
-				<value>java.sql.ResultSet$</value>
-				<value>java.sql.Time$</value>
-				<value>java.sql.Timestamp$</value>
-				<value>java.util.logging.Logger.global$</value>
-				<value>java.util.Properties$</value>
-				<value>javax.accessibility.AccessibleResourceBundle$</value>
-				<value>javax.activation.ActivationDataFlavor$</value>
-				<value>javax.imageio.spi.ImageReaderSpi.STANDARD_INPUT_TYPE$</value>
-				<value>javax.imageio.spi.ImageWriterSpi.STANDARD_OUTPUT_TYPE$</value>
-				<value>javax.jws.HandlerChain.name$</value>
-				<value>javax.jws.soap.InitParam$</value>
-				<value>javax.jws.soap.SOAPMessageHandler$</value>
-				<value>javax.jws.soap.SOAPMessageHandlers$</value>
-				<value>javax.management.AttributeValueExp$</value>
-				<value>javax.management.DefaultLoaderRepository$</value>
-				<value>javax.management.loading.DefaultLoaderRepository$</value>
-				<value>javax.management.MBeanServer$</value>
-				<value>javax.management.monitor.CounterMonitor$</value>
-				<value>javax.management.monitor.CounterMonitorMBean$</value>
-				<value>javax.management.monitor.GaugeMonitor$</value>
-				<value>javax.management.monitor.GaugeMonitorMBean$</value>
-				<value>javax.management.monitor.Monitor$</value>
-				<value>javax.management.monitor.Monitor.alreadyNotified$</value>
-				<value>javax.management.monitor.Monitor.dbgTag$</value>
-				<value>javax.management.monitor.MonitorMBean$</value>
-				<value>javax.management.monitor.StringMonitor$</value>
-				<value>javax.management.monitor.StringMonitorMBean$</value>
-				<value>javax.management.openmbean.OpenType.ALLOWED_CLASSNAMES$</value>
-				<value>javax.management.StringValueExp$</value>
-				<value>javax.management.ValueExp$</value>
-				<value>javax.security.auth.Policy$</value>
-				<value>javax.sql.rowset.BaseRowSet$</value>
-				<value>javax.sql.rowset.CachedRowSet.COMMIT_ON_ACCEPT_CHANGES$</value>
-				<value>javax.swing.AbstractButton$</value>
-				<value>javax.swing.FocusManager$</value>
-				<value>javax.swing.JComponent$</value>
-				<value>javax.swing.JInternalFrame$</value>
-				<value>javax.swing.JList$</value>
-				<value>javax.swing.JMenuBar$</value>
-				<value>javax.swing.JPasswordField$</value>
-				<value>javax.swing.JPopupMenu$</value>
-				<value>javax.swing.JRootPane$</value>
-				<value>javax.swing.JRootPane.defaultPressAction$</value>
-				<value>javax.swing.JRootPane.defaultReleaseAction$</value>
-				<value>javax.swing.JTable$</value>
-				<value>javax.swing.JViewport$</value>
-				<value>javax.swing.JViewport.backingStore$</value>
-				<value>javax.swing.KeyStroke$</value>
-				<value>javax.swing.plaf.basic.BasicDesktopPaneUI.closeKey$</value>
-				<value>javax.swing.plaf.basic.BasicDesktopPaneUI.maximizeKey$</value>
-				<value>javax.swing.plaf.basic.BasicDesktopPaneUI.minimizeKey$</value>
-				<value>javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey$</value>
-				<value>javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey2$</value>
-				<value>javax.swing.plaf.basic.BasicInternalFrameUI.openMenuKey$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.dividerResizeToggleKey$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.downKey$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.endKey$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.homeKey$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardDownRightListener$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardEndListener$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardHomeListener$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardResizeToggleListener$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardUpLeftListener$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.leftKey$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.rightKey$</value>
-				<value>javax.swing.plaf.basic.BasicSplitPaneUI.upKey$</value>
-				<value>javax.swing.plaf.basic.BasicTabbedPaneUI.downKey$</value>
-				<value>javax.swing.plaf.basic.BasicTabbedPaneUI.leftKey$</value>
-				<value>javax.swing.plaf.basic.BasicTabbedPaneUI.rightKey$</value>
-				<value>javax.swing.plaf.basic.BasicTabbedPaneUI.upKey$</value>
-				<value>javax.swing.plaf.basic.BasicToolBarUI.downKey$</value>
-				<value>javax.swing.plaf.basic.BasicToolBarUI.leftKey$</value>
-				<value>javax.swing.plaf.basic.BasicToolBarUI.rightKey$</value>
-				<value>javax.swing.plaf.basic.BasicToolBarUI.upKey$</value>
-				<value>javax.swing.plaf.metal.MetalComboBoxUI$</value>
-				<value>javax.swing.plaf.metal.MetalComboBoxUI.MetalComboPopup$</value>
-				<value>javax.swing.plaf.metal.MetalScrollPaneUI$</value>
-				<value>javax.swing.ScrollPaneLayout$</value>
-				<value>javax.swing.SwingUtilities$</value>
-				<value>javax.swing.table.TableColumn$</value>
-				<value>javax.swing.table.TableColumn.resizedPostingDisableCount$</value>
-				<value>javax.swing.text.DefaultTextUI$</value>
-				<value>javax.swing.text.html.FormView.RESET$</value>
-				<value>javax.swing.text.html.FormView.SUBMIT$</value>
-				<value>javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction$</value>
-				<value>javax.swing.text.LabelView$</value>
-				<value>javax.swing.text.TableView$</value>
-				<value>javax.swing.text.TableView.TableCell$</value>
-				<value>javax.swing.text.View$</value>
-				<value>javax.swing.tree.DefaultTreeSelectionModel$</value>
-				<value>javax.xml.bind.JAXBContext$</value>
-				<value>javax.xml.bind.Unmarshaller$</value>
-				<value>javax.xml.bind.Validator$</value>
-				<value>javax.xml.soap.SOAPElementFactory$</value>
-				<value>javax.xml.stream.XMLEventFactory$</value>
-				<value>javax.xml.stream.XMLInputFactory$</value>
-				<value>javax.xml.stream.XMLOutputFactory$</value>
-				<value>org.omg.CORBA.Any$</value>
-				<value>org.omg.CORBA.DynamicImplementation$</value>
-				<value>org.omg.CORBA.DynAny$</value>
-				<value>org.omg.CORBA.DynArray$</value>
-				<value>org.omg.CORBA.DynEnum$</value>
-				<value>org.omg.CORBA.DynFixed$</value>
-				<value>org.omg.CORBA.DynSequence$</value>
-				<value>org.omg.CORBA.DynStruct$</value>
-				<value>org.omg.CORBA.DynUnion$</value>
-				<value>org.omg.CORBA.DynValue$</value>
-				<value>org.omg.CORBA.ORB$</value>
-				<value>org.omg.CORBA.portable.InputStream$</value>
-				<value>org.omg.CORBA.portable.OutputStream$</value>
-				<value>org.omg.CORBA.Principal$</value>
-				<value>org.omg.CORBA.PrincipalHolder$</value>
-				<value>org.omg.CORBA.ServerRequest$</value>
-				<value>org.omg.CORBA.TCKind$</value>
-				<value>org.xml.sax.AttributeList$</value>
-				<value>org.xml.sax.DocumentHandler$</value>
-				<value>org.xml.sax.HandlerBase$</value>
-				<value>org.xml.sax.helpers.AttributeListImpl$</value>
-				<value>org.xml.sax.helpers.ParserFactory$</value>
-				<value>org.xml.sax.Parser$</value>
-				-->
+                <entry key="org.jdom" value="JDOM"/>
+                <entry key="org.jfree" value="JFree"/>
 
-				<!-- Hibernate4 -->
-				<!-- https://community.jboss.org/wiki/HibernateCoreMigrationGuide40 -->
-				<value>net.sf.hibernate</value>
-				<value>org.hibernate.classic.Session</value>
-				<value>org.hibernate.classic.Validatable</value>
-				<value>org.hibernate.classic.ValidationException</value>
-				<value>org.hibernate.jdbc.BatcherFactory</value>
-				<value>org.hibernate.jdbc.BatchingBatcherFactory</value>
-				<value>org.hibernate.jdbc.NonBatchingBatcherFactory</value>
-				<value>org.hibernate.jdbc.Batcher</value>
-				<value>org.hibernate.jdbc.AbstractBatcher</value>
-				<value>org.hibernate.jdbc.BatchingBatcher</value>
-				<value>org.hibernate.jdbc.NonBatchingBatcher</value>
-				<value>org.hibernate.dialect.resolver.DialectResolver</value>
-				<value>org.hibernate.connection</value>
-				<value>org.hibernate.util.EqualsHelper</value>
-				<value>org.hibernate.engine.SessionImplementor</value>
-				
-				<!-- jBPM 3 -->
-				<value>org.jbpm</value>
-			</set>
-		</constructor-arg>
-	</bean>
+                <entry key="com.google" value="Google"/>
+                <entry key="com.yahoo" value="Yahoo"/>
 
-	<!-- Last step.. write the report. -->
-	<bean id="reporters" class="java.util.HashSet">
-		<constructor-arg>
-			<set>
-				<bean class="org.jboss.windup.reporting.html.StaticHtmlReporter">
-					<property name="resolver" ref="metaTransformationResolver"/>
-				</bean>
-				<bean class="org.jboss.windup.reporting.spreadsheet.ScorecardReporter"/>
-			</set>
-		</constructor-arg>	
-	</bean>
-	
-	<bean id="metaTransformationResolver" class="org.jboss.windup.reporting.transformers.MetaResultTransformResolver">
-		<property name="defaultTransformer">
-			<bean class="org.jboss.windup.reporting.transformers.FileMetaTransformer"/>
-		</property>
-	
-		<property name="resolvers">
-			<list>
-				<value>org.jboss.windup.reporting.transformers.JavaMetaTransformer</value>
-				<value>org.jboss.windup.reporting.transformers.JspMetaTransformer</value>
-				<value>org.jboss.windup.reporting.transformers.ManifestMetaTransformer</value>
-				<value>org.jboss.windup.reporting.transformers.XmlMetaTransformer</value>
-			</list>
-		</property>
-	</bean>
-		
-	
-	<bean id="zipExtensions" class="java.util.HashSet">
-		<constructor-arg>
-			<set>
-				<value>.ear</value>
-				<value>.war</value>
-				<value>.jar</value>
-				<value>.rar</value> <!-- Resource Adapter -->
-				<value>.par</value> <!-- jBPM 3.x -->
-				<value>.har</value> <!-- Hibernate Archive -->
-				<value>.sar</value> <!-- JBoss 4/5 Service Archive -->
-				<value>.zip</value> <!-- Generic Zip -->
-				<value>.daa</value> <!-- Tibco Active Matrix Archive -->
-				<value>.wsr</value> <!-- Web Sphere Resource Archive -->
-				<value>.esb</value>
-			</set>
-		</constructor-arg>
-	</bean>
+                <entry key="org.antlr" value="Antlr"/>
+            </map>
+        </constructor-arg>
+    </bean>
 
-	<bean id="customerPackageResolver" class="org.jboss.windup.util.CustomerPackageResolver">
-		<constructor-arg value="#{ systemProperties['package.signature'] }" />
-		<constructor-arg value="#{ systemProperties['exclude.signature'] }" />
-	</bean>
+    <bean id="blacklistedClasses" class="java.util.ArrayList">
+        <constructor-arg>
+            <set>
+                <!-- Vendor Classes / Lookup Classes -->
+                <value>com.crystaldecisions</value>
+                <value>amx_</value>
+                <value>^bea</value>
+                <value>com.sonic</value>
+                <value>com.bea</value>
+                <value>com.ibm</value>
+                <value>com.iona</value>
+                <value>com.lombardi</value>
+                <value>com.tangosol</value>
+                <value>com.tibco</value>
+                <value>com.weblogic</value>
+                <value>^ilog</value>
+                <value>^commonj</value>
+                <value>java.sql.DriverManager</value>
+                <value>javax.ejb</value>
+                <value>javax.persistence</value>
+                <value>javax.management</value>
+                <value>javax.naming.Context</value>
+                <value>javax.naming.InitialContext</value>
+                <value>javax.persistence.JoinColumn</value>
+                <value>javax.sql</value>
+                <value>jrun</value>
+                <value>jrunx</value>
+                <value>mx4j</value>
+                <value>net.sf.hibernate</value>
+                <value>oracle.sql</value>
+                <value>org.apache.activeio</value>
+                <value>org.apache.activemq</value>
+                <value>org.jboss</value>
+                <value>org.mule</value>
+                <value>org.osoa</value>
+                <value>weblogic</value>
+                <value>websphere</value>
+                <value>^oracle</value>
+                <value>edu.oswego.cs.dl.util.concurrent</value>
+                <value>edu.emory.mathcs.backport.java.util</value>
+
+
+                <!-- JDK 1.7 -->
+                <!-- <value>java.awt.BorderLayout$</value> <value>java.awt.CardLayout$</value> <value>java.awt.CheckboxGroup$</value> 
+                    <value>java.awt.Choice$</value> <value>java.awt.Component$</value> <value>java.awt.ComponentOrientation$</value> <value>java.awt.Container$</value> 
+                    <value>java.awt.Cursor.predefined$</value> <value>java.awt.datatransfer.DataFlavor$</value> <value>java.awt.datatransfer.DataFlavor.plainTextFlavor$</value> 
+                    <value>java.awt.Dialog$</value> <value>java.awt.event.KeyEvent$</value> <value>java.awt.Font$</value> <value>java.awt.FontMetrics$</value> 
+                    <value>java.awt.Frame$</value> <value>java.awt.Frame.CROSSHAIR_CURSOR$</value> <value>java.awt.Frame.DEFAULT_CURSOR$</value> 
+                    <value>java.awt.Frame.E_RESIZE_CURSOR$</value> <value>java.awt.Frame.HAND_CURSOR$</value> <value>java.awt.Frame.MOVE_CURSOR$</value> 
+                    <value>java.awt.Frame.N_RESIZE_CURSOR$</value> <value>java.awt.Frame.NE_RESIZE_CURSOR$</value> <value>java.awt.Frame.NW_RESIZE_CURSOR$</value> 
+                    <value>java.awt.Frame.S_RESIZE_CURSOR$</value> <value>java.awt.Frame.SE_RESIZE_CURSOR$</value> <value>java.awt.Frame.SW_RESIZE_CURSOR$</value> 
+                    <value>java.awt.Frame.TEXT_CURSOR$</value> <value>java.awt.Frame.W_RESIZE_CURSOR$</value> <value>java.awt.Frame.WAIT_CURSOR$</value> 
+                    <value>java.awt.Graphics$</value> <value>java.awt.image.renderable.RenderContext$</value> <value>java.awt.List$</value> <value>java.awt.Menu$</value> 
+                    <value>java.awt.MenuBar$</value> <value>java.awt.MenuComponent$</value> <value>java.awt.MenuContainer$</value> <value>java.awt.MenuItem$</value> 
+                    <value>java.awt.Polygon$</value> <value>java.awt.Rectangle$</value> <value>java.awt.Scrollbar$</value> <value>java.awt.ScrollPane$</value> 
+                    <value>java.awt.TextArea$</value> <value>java.awt.TextField$</value> <value>java.awt.Toolkit$</value> <value>java.awt.Window$</value> 
+                    <value>java.util.Date$</value> <value>java.io.ByteArrayOutputStream$</value> <value>java.io.DataInputStream$</value> <value>java.io.File$</value> 
+                    <value>java.lang.Character$</value> <value>java.lang.String$</value> <value>java.io.LineNumberInputStream$</value> <value>java.io.ObjectInputStream$</value> 
+                    <value>java.io.ObjectOutputStream.PutField$</value> <value>java.io.StreamTokenizer$</value> <value>java.io.StringBufferInputStream$</value> 
+                    <value>java.lang.Character.UnicodeBlock.SURROGATES_AREA$</value> <value>java.lang.ClassLoader$</value> <value>java.lang.Runtime$</value> 
+                    <value>java.lang.SecurityManager$</value> <value>java.lang.SecurityManager.inCheck$</value> <value>java.lang.System$</value> 
+                    <value>java.lang.Thread$</value> <value>java.lang.ThreadGroup$</value> <value>java.net.DatagramSocketImpl$</value> <value>java.net.HttpURLConnection.HTTP_SERVER_ERROR$</value> 
+                    <value>java.net.MulticastSocket$</value> <value>java.net.Socket$</value> <value>java.net.URLConnection$</value> <value>java.net.URLDecoder$</value> 
+                    <value>java.net.URLEncoder$</value> <value>java.net.URLStreamHandler$</value> <value>java.rmi.dgc.VMID$</value> <value>java.rmi.registry.RegistryHandler$</value> 
+                    <value>java.rmi.RMISecurityException$</value> <value>java.rmi.server.LoaderHandler$</value> <value>java.rmi.server.LogStream$</value> 
+                    <value>java.rmi.server.Operation$</value> <value>java.rmi.server.RemoteCall$</value> <value>java.rmi.server.RemoteRef$</value> 
+                    <value>java.rmi.server.RemoteStub$</value> <value>java.rmi.server.RMIClassLoader$</value> <value>java.rmi.server.Skeleton$</value> 
+                    <value>java.rmi.server.SkeletonMismatchException$</value> <value>java.rmi.server.SkeletonNotFoundException$</value> <value>java.rmi.ServerRuntimeException$</value> 
+                    <value>java.security.Certificate$</value> <value>java.security.Identity$</value> <value>java.security.IdentityScope$</value> 
+                    <value>java.security.Security$</value> <value>java.security.Signature$</value> <value>java.security.SignatureSpi$</value> 
+                    <value>java.security.Signer$</value> <value>java.sql.CallableStatement$</value> <value>java.sql.Date$</value> <value>java.sql.DriverManager$</value> 
+                    <value>java.sql.PreparedStatement$</value> <value>java.sql.ResultSet$</value> <value>java.sql.Time$</value> <value>java.sql.Timestamp$</value> 
+                    <value>java.util.logging.Logger.global$</value> <value>java.util.Properties$</value> <value>javax.accessibility.AccessibleResourceBundle$</value> 
+                    <value>javax.activation.ActivationDataFlavor$</value> <value>javax.imageio.spi.ImageReaderSpi.STANDARD_INPUT_TYPE$</value> 
+                    <value>javax.imageio.spi.ImageWriterSpi.STANDARD_OUTPUT_TYPE$</value> <value>javax.jws.HandlerChain.name$</value> <value>javax.jws.soap.InitParam$</value> 
+                    <value>javax.jws.soap.SOAPMessageHandler$</value> <value>javax.jws.soap.SOAPMessageHandlers$</value> <value>javax.management.AttributeValueExp$</value> 
+                    <value>javax.management.DefaultLoaderRepository$</value> <value>javax.management.loading.DefaultLoaderRepository$</value> 
+                    <value>javax.management.MBeanServer$</value> <value>javax.management.monitor.CounterMonitor$</value> <value>javax.management.monitor.CounterMonitorMBean$</value> 
+                    <value>javax.management.monitor.GaugeMonitor$</value> <value>javax.management.monitor.GaugeMonitorMBean$</value> <value>javax.management.monitor.Monitor$</value> 
+                    <value>javax.management.monitor.Monitor.alreadyNotified$</value> <value>javax.management.monitor.Monitor.dbgTag$</value> 
+                    <value>javax.management.monitor.MonitorMBean$</value> <value>javax.management.monitor.StringMonitor$</value> <value>javax.management.monitor.StringMonitorMBean$</value> 
+                    <value>javax.management.openmbean.OpenType.ALLOWED_CLASSNAMES$</value> <value>javax.management.StringValueExp$</value> <value>javax.management.ValueExp$</value> 
+                    <value>javax.security.auth.Policy$</value> <value>javax.sql.rowset.BaseRowSet$</value> <value>javax.sql.rowset.CachedRowSet.COMMIT_ON_ACCEPT_CHANGES$</value> 
+                    <value>javax.swing.AbstractButton$</value> <value>javax.swing.FocusManager$</value> <value>javax.swing.JComponent$</value> 
+                    <value>javax.swing.JInternalFrame$</value> <value>javax.swing.JList$</value> <value>javax.swing.JMenuBar$</value> <value>javax.swing.JPasswordField$</value> 
+                    <value>javax.swing.JPopupMenu$</value> <value>javax.swing.JRootPane$</value> <value>javax.swing.JRootPane.defaultPressAction$</value> 
+                    <value>javax.swing.JRootPane.defaultReleaseAction$</value> <value>javax.swing.JTable$</value> <value>javax.swing.JViewport$</value> 
+                    <value>javax.swing.JViewport.backingStore$</value> <value>javax.swing.KeyStroke$</value> <value>javax.swing.plaf.basic.BasicDesktopPaneUI.closeKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicDesktopPaneUI.maximizeKey$</value> <value>javax.swing.plaf.basic.BasicDesktopPaneUI.minimizeKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey$</value> <value>javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey2$</value> 
+                    <value>javax.swing.plaf.basic.BasicInternalFrameUI.openMenuKey$</value> <value>javax.swing.plaf.basic.BasicSplitPaneUI$</value> 
+                    <value>javax.swing.plaf.basic.BasicSplitPaneUI.dividerResizeToggleKey$</value> <value>javax.swing.plaf.basic.BasicSplitPaneUI.downKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicSplitPaneUI.endKey$</value> <value>javax.swing.plaf.basic.BasicSplitPaneUI.homeKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardDownRightListener$</value> <value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardEndListener$</value> 
+                    <value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardHomeListener$</value> <value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardResizeToggleListener$</value> 
+                    <value>javax.swing.plaf.basic.BasicSplitPaneUI.keyboardUpLeftListener$</value> <value>javax.swing.plaf.basic.BasicSplitPaneUI.leftKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicSplitPaneUI.rightKey$</value> <value>javax.swing.plaf.basic.BasicSplitPaneUI.upKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicTabbedPaneUI.downKey$</value> <value>javax.swing.plaf.basic.BasicTabbedPaneUI.leftKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicTabbedPaneUI.rightKey$</value> <value>javax.swing.plaf.basic.BasicTabbedPaneUI.upKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicToolBarUI.downKey$</value> <value>javax.swing.plaf.basic.BasicToolBarUI.leftKey$</value> 
+                    <value>javax.swing.plaf.basic.BasicToolBarUI.rightKey$</value> <value>javax.swing.plaf.basic.BasicToolBarUI.upKey$</value> 
+                    <value>javax.swing.plaf.metal.MetalComboBoxUI$</value> <value>javax.swing.plaf.metal.MetalComboBoxUI.MetalComboPopup$</value> 
+                    <value>javax.swing.plaf.metal.MetalScrollPaneUI$</value> <value>javax.swing.ScrollPaneLayout$</value> <value>javax.swing.SwingUtilities$</value> 
+                    <value>javax.swing.table.TableColumn$</value> <value>javax.swing.table.TableColumn.resizedPostingDisableCount$</value> <value>javax.swing.text.DefaultTextUI$</value> 
+                    <value>javax.swing.text.html.FormView.RESET$</value> <value>javax.swing.text.html.FormView.SUBMIT$</value> <value>javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction$</value> 
+                    <value>javax.swing.text.LabelView$</value> <value>javax.swing.text.TableView$</value> <value>javax.swing.text.TableView.TableCell$</value> 
+                    <value>javax.swing.text.View$</value> <value>javax.swing.tree.DefaultTreeSelectionModel$</value> <value>javax.xml.bind.JAXBContext$</value> 
+                    <value>javax.xml.bind.Unmarshaller$</value> <value>javax.xml.bind.Validator$</value> <value>javax.xml.soap.SOAPElementFactory$</value> 
+                    <value>javax.xml.stream.XMLEventFactory$</value> <value>javax.xml.stream.XMLInputFactory$</value> <value>javax.xml.stream.XMLOutputFactory$</value> 
+                    <value>org.omg.CORBA.Any$</value> <value>org.omg.CORBA.DynamicImplementation$</value> <value>org.omg.CORBA.DynAny$</value> 
+                    <value>org.omg.CORBA.DynArray$</value> <value>org.omg.CORBA.DynEnum$</value> <value>org.omg.CORBA.DynFixed$</value> <value>org.omg.CORBA.DynSequence$</value> 
+                    <value>org.omg.CORBA.DynStruct$</value> <value>org.omg.CORBA.DynUnion$</value> <value>org.omg.CORBA.DynValue$</value> <value>org.omg.CORBA.ORB$</value> 
+                    <value>org.omg.CORBA.portable.InputStream$</value> <value>org.omg.CORBA.portable.OutputStream$</value> <value>org.omg.CORBA.Principal$</value> 
+                    <value>org.omg.CORBA.PrincipalHolder$</value> <value>org.omg.CORBA.ServerRequest$</value> <value>org.omg.CORBA.TCKind$</value> 
+                    <value>org.xml.sax.AttributeList$</value> <value>org.xml.sax.DocumentHandler$</value> <value>org.xml.sax.HandlerBase$</value> 
+                    <value>org.xml.sax.helpers.AttributeListImpl$</value> <value>org.xml.sax.helpers.ParserFactory$</value> <value>org.xml.sax.Parser$</value> -->
+
+                <!-- Hibernate4 -->
+                <!-- https://community.jboss.org/wiki/HibernateCoreMigrationGuide40 -->
+                <value>net.sf.hibernate</value>
+                <value>org.hibernate.classic.Session</value>
+                <value>org.hibernate.classic.Validatable</value>
+                <value>org.hibernate.classic.ValidationException</value>
+                <value>org.hibernate.jdbc.BatcherFactory</value>
+                <value>org.hibernate.jdbc.BatchingBatcherFactory</value>
+                <value>org.hibernate.jdbc.NonBatchingBatcherFactory</value>
+                <value>org.hibernate.jdbc.Batcher</value>
+                <value>org.hibernate.jdbc.AbstractBatcher</value>
+                <value>org.hibernate.jdbc.BatchingBatcher</value>
+                <value>org.hibernate.jdbc.NonBatchingBatcher</value>
+                <value>org.hibernate.dialect.resolver.DialectResolver</value>
+                <value>org.hibernate.connection</value>
+                <value>org.hibernate.util.EqualsHelper</value>
+                <value>org.hibernate.engine.SessionImplementor</value>
+
+                <!-- jBPM 3 -->
+                <value>org.jbpm</value>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <!-- Last step.. write the report. -->
+    <bean id="reporters" class="java.util.HashSet">
+        <constructor-arg>
+            <set>
+                <bean class="org.jboss.windup.reporting.html.StaticHtmlReporter">
+                    <property name="resolver" ref="metaTransformationResolver"/>
+                </bean>
+                <bean class="org.jboss.windup.reporting.spreadsheet.ScorecardReporter"/>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <bean id="metaTransformationResolver" class="org.jboss.windup.reporting.transformers.MetaResultTransformResolver">
+        <property name="defaultTransformer">
+            <bean class="org.jboss.windup.reporting.transformers.FileMetaTransformer"/>
+        </property>
+
+        <property name="resolvers">
+            <list>
+                <value>org.jboss.windup.reporting.transformers.JavaMetaTransformer</value>
+                <value>org.jboss.windup.reporting.transformers.JspMetaTransformer</value>
+                <value>org.jboss.windup.reporting.transformers.ManifestMetaTransformer</value>
+                <value>org.jboss.windup.reporting.transformers.XmlMetaTransformer</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="zipExtensions" class="java.util.HashSet">
+        <constructor-arg>
+            <set>
+                <value>.ear</value>
+                <value>.war</value>
+                <value>.jar</value>
+                <value>.rar</value> <!-- Resource Adapter -->
+                <value>.par</value> <!-- jBPM 3.x -->
+                <value>.har</value> <!-- Hibernate Archive -->
+                <value>.sar</value> <!-- JBoss 4/5 Service Archive -->
+                <value>.zip</value> <!-- Generic Zip -->
+                <value>.daa</value> <!-- Tibco Active Matrix Archive -->
+                <value>.wsr</value> <!-- Web Sphere Resource Archive -->
+                <value>.esb</value>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <bean id="customerPackageResolver" class="org.jboss.windup.util.CustomerPackageResolver">
+        <constructor-arg value="#{ systemProperties['package.signature'] }"/>
+        <constructor-arg value="#{ systemProperties['exclude.signature'] }"/>
+    </bean>
 
 </beans>

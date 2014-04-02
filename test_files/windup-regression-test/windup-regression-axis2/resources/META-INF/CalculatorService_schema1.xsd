@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema version="1.0" targetNamespace="http://calculator.jaxws.axis2.apache.org"
-           xmlns:tns="http://calculator.jaxws.axis2.apache.org" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:ns1="http://www.w3.org/2005/08/addressing">
+<xs:schema version="1.0" targetNamespace="http://calculator.jaxws.axis2.apache.org" xmlns:tns="http://calculator.jaxws.axis2.apache.org"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.w3.org/2005/08/addressing">
 
-    <xs:import namespace="http://www.w3.org/2005/08/addressing"
-               schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd"/>
+    <xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd"/>
 
     <xs:element name="AddNumbersException" type="tns:AddNumbersException"/>
 

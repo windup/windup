@@ -3,31 +3,26 @@
 	"http://www.macromedia.com/dtd/jrun-web.dtd">
 
 <!-- ============================================================= -->
-<!-- This XML file contains web application elements that are      -->
-<!-- specific to the JRun Application Server                       -->
+<!-- This XML file contains web application elements that are -->
+<!-- specific to the JRun Application Server -->
 <!-- ============================================================= -->
 
 
 <jrun-web-app>
 
-  <!-- =========================================================== -->
-  <!-- Virtual path mappings allow a resource path to be mapped    -->
-  <!-- to a different physical location (i.e. not necessarily      -->
-  <!-- within the web application root). A resource-path can       -->
-  <!-- end with a wild card '*' indicating that all resources      -->
-  <!-- paths that start with the given path will be resolved using -->
-  <!-- the system path.                                            -->
-  <!-- =========================================================== -->
+    <!-- =========================================================== -->
+    <!-- Virtual path mappings allow a resource path to be mapped -->
+    <!-- to a different physical location (i.e. not necessarily -->
+    <!-- within the web application root). A resource-path can -->
+    <!-- end with a wild card '*' indicating that all resources -->
+    <!-- paths that start with the given path will be resolved using -->
+    <!-- the system path. -->
+    <!-- =========================================================== -->
 
-<!--
-  <virtual-mapping>
-    <resource-path>/images/*</resource-path>
-    <system-path>/usr/local/images</system-path>
-  </virtual-mapping>
--->
+    <!-- <virtual-mapping> <resource-path>/images/*</resource-path> <system-path>/usr/local/images</system-path> </virtual-mapping> -->
 
-<!-- Set these to false for production, they are false by default -->
-  <reload>true</reload>
-  <compile>true</compile>
+    <!-- Set these to false for production, they are false by default -->
+    <reload>true</reload>
+    <compile>true</compile>
 
 </jrun-web-app>

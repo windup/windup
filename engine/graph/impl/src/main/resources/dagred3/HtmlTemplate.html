@@ -6,14 +6,13 @@
 <script src="dagre-d3.min.js" type="text/javascript"></script>
 
 <style>
-
 body {
 	margin: 0;
 	padding: 0;
 }
 
-g.type-TK > rect {
-  fill: #00ffd0;
+g.type-TK>rect {
+	fill: #00ffd0;
 }
 
 svg {
@@ -21,19 +20,19 @@ svg {
 	border-bottom: 1px;
 	border-color: #999;
 	border-style: solid;
-  	overflow: hidden;
+	overflow: hidden;
 }
 
 text {
-  font-weight: 300;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
-  font-size: 12px;
+	font-weight: 300;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+	font-size: 12px;
 }
 
 .node rect {
-  stroke: #000;
-  stroke-width: 2px;
-  fill: #FFF;
+	stroke: #000;
+	stroke-width: 2px;
+	fill: #FFF;
 }
 
 .node text {
@@ -41,58 +40,52 @@ text {
 }
 
 .edgeLabel rect {
-
-  fill: #FFF;
-  fill-opacity: 0.7;
+	fill: #FFF;
+	fill-opacity: 0.7;
 }
 
 .edgePath path {
-  stroke: #333;
-  stroke-width: 1.5px;
-  fill: none;
+	stroke: #333;
+	stroke-width: 1.5px;
+	fill: none;
 }
 
 .a {
 	padding-left: 60px;
-	border:1px solid #F00;
+	border: 1px solid #F00;
 }
 
 #container {
-
+	
 }
 
 #svg-canvas {
-	width:100%;
+	width: 100%;
 	height: 500px;
 	cursor: move;
 	background: #DFDFDF;
-
 	background: -webkit-radial-gradient(#EFEFEF, #DFDFDF);
-	background: -o-radial-gradient(#EFEFEF, #DFDFDF); 
-	background: -moz-radial-gradient(#EFEFEF, #DFDFDF); 
+	background: -o-radial-gradient(#EFEFEF, #DFDFDF);
+	background: -moz-radial-gradient(#EFEFEF, #DFDFDF);
 	background: radial-gradient(#EFEFEF, #DFDFDF);
 }
-
-
-
-
 </style>
 
 
 </head>
 <body>
-		<p>This is text before.</p>
-		
-		<div id="container">
-		  <svg id="svg-canvas">
-		    <g transform="translate(20, 20)"/>
-		  </svg>
-		</div>
-		
-		
-		<p>This is text after.</p>
+	<p>This is text before.</p>
 
-	
+	<div id="container">
+		<svg id="svg-canvas">
+		    <g transform="translate(20, 20)" />
+		  </svg>
+	</div>
+
+
+	<p>This is text after.</p>
+
+
 	<script type="text/javascript">
 	<![CDATA[
 	
@@ -128,7 +121,7 @@ text {
 		}
 	]]>
 	</script>
-	
+
 	<script type="text/javascript" id="graphlib-source"></script>
 </body>
 </html>

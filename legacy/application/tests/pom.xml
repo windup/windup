@@ -1,43 +1,43 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <groupId>org.jboss.windup.legacy.application</groupId>
-      <artifactId>application-parent</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <relativePath>../</relativePath>
-   </parent>
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jboss.windup.legacy.application</groupId>
+        <artifactId>application-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
 
-   <artifactId>tests</artifactId>
-   <name>Legacy Windup - Application Furnace Addon Tests</name>
-   <description>Tests for the Legacy Windup Furnace Addon</description>
+    <artifactId>tests</artifactId>
+    <name>Legacy Windup - Application Furnace Addon Tests</name>
+    <description>Tests for the Legacy Windup Furnace Addon</description>
 
-   <dependencies>
-      <dependency>
-         <groupId>org.jboss.windup.legacy.application</groupId>
-         <artifactId>legacy-windup</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>test</scope>
-      </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.windup.legacy.application</groupId>
+            <artifactId>legacy-windup</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>org.jboss.forge.furnace.test</groupId>
-         <artifactId>furnace-test-harness</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.furnace.test</groupId>
-         <artifactId>arquillian-furnace-classpath</artifactId>
-         <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>furnace-test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-furnace-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <!-- Furnace Container -->
-      <dependency>
-         <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>test</scope>
-      </dependency>
-   </dependencies>
+        <!-- Furnace Container -->
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <groupId>org.jboss.windup.addon</groupId>
-      <artifactId>graph-parent</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-   </parent>
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jboss.windup.addon</groupId>
+        <artifactId>graph-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
-   <artifactId>graph-impl</artifactId>
+    <artifactId>graph-impl</artifactId>
 
-   <dependencies>
+    <dependencies>
 
-      <dependency>
-         <groupId>com.thinkaurelius.titan</groupId>
-         <artifactId>titan-berkeleyje</artifactId>
-         <version>0.4.1</version>
-      </dependency>
-      <dependency>
-         <groupId>com.thinkaurelius.titan</groupId>
-         <artifactId>titan-lucene</artifactId>
-         <version>0.4.1</version>
-      </dependency>
-      <dependency>
-         <groupId>org.jooq</groupId>
-         <artifactId>joox</artifactId>
-         <version>1.2.0</version>
-      </dependency>
+        <dependency>
+            <groupId>com.thinkaurelius.titan</groupId>
+            <artifactId>titan-berkeleyje</artifactId>
+            <version>0.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thinkaurelius.titan</groupId>
+            <artifactId>titan-lucene</artifactId>
+            <version>0.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>joox</artifactId>
+            <version>1.2.0</version>
+        </dependency>
 
 
-      <dependency>
-         <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.windup.addon</groupId>
-         <artifactId>graph-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.windup.addon</groupId>
-         <artifactId>graph-spi</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>provided</scope>
-      </dependency>
-   </dependencies>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>graph-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>graph-spi</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>
