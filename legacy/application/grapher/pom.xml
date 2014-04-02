@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>grapher</artifactId>
-    <name>Legacy Windup - Application Graph</name>
+    <name>Legacy Windup - Application - Graph</name>
 
     <dependencies>
         <dependency>

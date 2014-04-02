@@ -10,7 +10,7 @@
 
     <artifactId>rules</artifactId>
 
-    <name>Legacy Windup - Application Rules</name>
+    <name>Legacy Windup - Application - Rules</name>
     <description>The Built-in Windup Rules</description>
 
 </project>

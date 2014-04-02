@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>legacy-windup</artifactId>
-    <name>Legacy Windup - Application Furnace Addon</name>
+    <name>Legacy Windup - Application - Furnace Addon</name>
     <description>Furnace addon for Legacy Windup</description>
 
     <dependencies>

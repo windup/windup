@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>cli</artifactId>
-    <name>Legacy Windup - Application CLI</name>
+    <name>Legacy Windup - Application - CLI</name>
     <description>Command Line Interface for JBoss Windup.</description>
 
     <build>

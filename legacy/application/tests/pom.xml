@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>tests</artifactId>
-    <name>Legacy Windup - Application Furnace Addon Tests</name>
+    <name>Legacy Windup - Application - Furnace Addon Tests</name>
     <description>Tests for the Legacy Windup Furnace Addon</description>
 
     <dependencies>

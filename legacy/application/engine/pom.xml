@@ -7,8 +7,10 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
+    
     <artifactId>engine</artifactId>
-    <name>Legacy Windup - Application Engine</name>
+    
+    <name>Legacy Windup - Application - Engine</name>
     <description>The Engine for JBoss Windup.</description>
 
     <dependencies>

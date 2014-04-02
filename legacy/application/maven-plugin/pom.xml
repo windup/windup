@@ -10,7 +10,7 @@
 
     <artifactId>windup-maven-plugin</artifactId>
 
-    <name>Legacy Windup - Application Maven Plugin</name>
+    <name>Legacy Windup - Application - Maven Plugin</name>
     <description>Maven Plugin for Windup</description>
     <packaging>maven-plugin</packaging>
 

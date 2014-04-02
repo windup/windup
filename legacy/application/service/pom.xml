@@ -12,7 +12,7 @@
     <artifactId>windup-service</artifactId>
     <packaging>war</packaging>
 
-    <name>Legacy Windup - Application Web Service</name>
+    <name>Legacy Windup - Application - Web Service</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

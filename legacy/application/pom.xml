@@ -13,7 +13,7 @@
     <groupId>org.jboss.windup.legacy.application</groupId>
     <artifactId>application-parent</artifactId>
 
-    <name>Legacy Windup - Application Parent</name>
+    <name>Legacy Windup - Application - Parent</name>
     <packaging>pom</packaging>
 
     <modules>

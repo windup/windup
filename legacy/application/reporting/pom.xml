@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>reporting</artifactId>
-    <name>Legacy Windup - Application Reporting</name>
+    <name>Legacy Windup - Application - Reporting</name>
 
     <dependencies>
         <dependency>

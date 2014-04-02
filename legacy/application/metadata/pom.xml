@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>metadata</artifactId>
-    <name>Legacy Windup - Application Metadata</name>
+    <name>Legacy Windup - Application - Metadata</name>
 
     <dependencies>
         <dependency>
