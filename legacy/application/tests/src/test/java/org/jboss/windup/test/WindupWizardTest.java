@@ -1,5 +1,7 @@
 package org.jboss.windup.test;
 
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
@@ -15,41 +17,41 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.inject.Inject;
-
 @RunWith(Arquillian.class)
 public class WindupWizardTest
 {
     @Deployment
     @Dependencies({
-             @AddonDependency(name = "org.jboss.windup.legacy.application:legacy-windup"),
-             @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+                @AddonDependency(name = "org.jboss.windup.legacy.application:legacy-windup"),
+                @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
     })
     public static ForgeArchive getDeployment()
     {
-       ForgeArchive archive = ShrinkWrap
-                .create(ForgeArchive.class)
-                .addBeansXML()
-                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.windup.legacy.application:legacy-windup")
-                );
+        ForgeArchive archive = ShrinkWrap
+                    .create(ForgeArchive.class)
+                    .addBeansXML()
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                                AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
+                                AddonDependencyEntry.create("org.jboss.windup.legacy.application:legacy-windup")
+                    );
 
-       return archive;
+        return archive;
     }
-    
+
     @Inject
     private UITestHarness uiTestHarness;
-    
+
     @Inject
     private WindupService windupService;
-    
+
     @Test
-    public void testNewMigration() throws Exception {
+    public void testNewMigration() throws Exception
+    {
         Assert.assertNotNull(windupService);
         Assert.assertNotNull(uiTestHarness);
-        try (WizardCommandController controller = uiTestHarness.createWizardController(WindupWizard.class)) {
+        try (WizardCommandController controller = uiTestHarness.createWizardController(WindupWizard.class))
+        {
             controller.initialize();
             Assert.assertTrue(controller.isEnabled());
             controller.setValueFor("input", "testinput");
