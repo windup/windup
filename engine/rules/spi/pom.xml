@@ -8,8 +8,12 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>rules-spi</artifactId>
+    
+    <name>Windup Engine - Rules SPI</name>
+    
     <dependencies>
     </dependencies>
+    
     <build>
         <plugins>
             <plugin>

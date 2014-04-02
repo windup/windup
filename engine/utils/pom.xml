@@ -12,6 +12,9 @@
 
     <groupId>org.jboss.windup.addon</groupId>
     <artifactId>utils</artifactId>
+    
+    <name>Windup Engine - Utils</name>
+    
 
     <dependencies>
         <dependency>

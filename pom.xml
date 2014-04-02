@@ -6,6 +6,9 @@
     <artifactId>windup-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    
+    <name>Windup Parent</name>
+    <description>Migration Tools</description>
 
     <properties>
         <version.furnace>2.3.0.Final</version.furnace>
@@ -15,7 +18,6 @@
         <module>engine</module>
         <module>legacy</module>
     </modules>
-
 
     <dependencyManagement>
         <dependencies>

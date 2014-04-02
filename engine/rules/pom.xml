@@ -8,9 +8,13 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
+
     <groupId>org.jboss.windup.rules</groupId>
     <artifactId>rules-parent</artifactId>
     <packaging>pom</packaging>
+
+    <name>Windup Engine - Rules Parent</name>
+
     <modules>
         <module>addon</module>
         <module>api</module>

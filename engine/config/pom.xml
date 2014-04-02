@@ -9,7 +9,9 @@
     </parent>
     <groupId>org.jboss.windup.addon</groupId>
     <artifactId>config-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+
+    <name>Windup Engine - Config Parent</name>
+    
     <packaging>pom</packaging>
     <modules>
         <module>addon</module>

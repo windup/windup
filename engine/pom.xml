@@ -11,6 +11,9 @@
     <groupId>org.jboss.windup.engine</groupId>
     <artifactId>windup-engine-parent</artifactId>
     <packaging>pom</packaging>
+    
+    <name>Windup Engine - Parent</name>
+    
 
     <modules>
         <module>graph</module>

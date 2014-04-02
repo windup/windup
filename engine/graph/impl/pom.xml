@@ -9,7 +9,9 @@
     </parent>
 
     <artifactId>graph-impl</artifactId>
-
+    
+    <name>Windup Engine - Graph Impl</name>
+    
     <dependencies>
 
         <dependency>

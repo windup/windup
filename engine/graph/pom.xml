@@ -10,7 +10,9 @@
     </parent>
     <groupId>org.jboss.windup.addon</groupId>
     <artifactId>graph-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    
+    <name>Windup Engine - Graph Parent</name>
+    
     <packaging>pom</packaging>
     <modules>
         <module>addon</module>

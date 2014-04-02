@@ -8,6 +8,9 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>rules-tests</artifactId>
+    
+    <name>Windup Engine - Rules Tests</name>
+    
     <dependencies>
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>

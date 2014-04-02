@@ -11,6 +11,9 @@
 
     <groupId>org.jboss.windup.tests</groupId>
     <artifactId>tests</artifactId>
+    
+    <name>Windup Engine - Tests</name>
+    
 
     <dependencyManagement>
         <dependencies>

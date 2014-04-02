@@ -8,8 +8,9 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>rules-impl</artifactId>
-
-
+    
+    <name>Windup Engine - Rules Impl</name>
+    
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.addon</groupId>
