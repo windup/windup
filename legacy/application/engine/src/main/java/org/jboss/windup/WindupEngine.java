@@ -14,6 +14,8 @@ package org.jboss.windup;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -32,10 +34,12 @@ import org.jboss.windup.metadata.type.archive.ArchiveMetadata;
 import org.jboss.windup.util.LogController;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 
 public class WindupEngine {
     private static final Logger LOG = LoggerFactory.getLogger(WindupEngine.class);
+    private static final String USER_PROVIDED_FILE_SUFFIX = ".windup.xml";
 
     private ApplicationContext context;
     private List<String> supportedExtensions;
@@ -55,6 +59,8 @@ public class WindupEngine {
 
         springContexts.add("/jboss-windup-context.xml");
         this.context = new ClassPathXmlApplicationContext(springContexts.toArray(new String[springContexts.size()]));
+        
+        loadUserProvidedContextFiles(settings.getUserProvidedRulesDirectory());
 
         interrogationEngine = (ZipInterrogationEngine) context.getBean("archive-interrogation-engine");
         directoryInterrogationEngine = (DirectoryInterrogationEngine) context.getBean("directory-interrogation-engine");
@@ -62,6 +68,37 @@ public class WindupEngine {
         supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));
     }
 
+    private void loadUserProvidedContextFiles(File parentDir) {
+        List<String> allUserProvidedFiles = new ArrayList<>();
+        findUserProvidedContextFiles(parentDir, allUserProvidedFiles);
+        
+        if (!allUserProvidedFiles.isEmpty()) {
+            String[] allUserProvidedFilesArr = allUserProvidedFiles.toArray(new String[allUserProvidedFiles.size()]);
+            FileSystemXmlApplicationContext newContext = new FileSystemXmlApplicationContext(allUserProvidedFilesArr, false, this.context);
+            newContext.refresh();
+            this.context = newContext;
+        }
+    }
+    
+    private void findUserProvidedContextFiles(File parentDir, List<String> contextFiles) {
+        if (parentDir == null || !parentDir.isDirectory()) {
+            return;
+        } else {
+            File[] userProvidedFiles = settings.getUserProvidedRulesDirectory().listFiles();
+            for (File userProvidedFile : userProvidedFiles) {
+                if (userProvidedFile.isFile() && userProvidedFile.canRead()) {
+                    if (userProvidedFile.getName().endsWith(USER_PROVIDED_FILE_SUFFIX)) {
+                        // add it as a uri
+                        URI uri = userProvidedFile.toURI();
+                        contextFiles.add(uri.toString());
+                    }
+                } else if (userProvidedFile.isDirectory()) {
+                    findUserProvidedContextFiles(userProvidedFile, contextFiles);
+                }
+            }
+        }
+    }
+    
     public ApplicationContext getContext() {
         return context;
     }

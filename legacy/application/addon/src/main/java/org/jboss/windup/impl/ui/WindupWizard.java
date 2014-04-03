@@ -1,11 +1,16 @@
 package org.jboss.windup.impl.ui;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
+import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.UICommand;
@@ -30,6 +35,8 @@ import org.jboss.windup.WindupService;
 
 public class WindupWizard implements UIWizard, UICommand
 {
+    private static final String KEY_USER_PROVIDED_RULES_FOLDER = "WindupWizard.userProvidedRulesFolder";
+    
     private static Logger log = Logger.getLogger(WindupWizard.class.getName());
 
     @Inject
@@ -38,6 +45,9 @@ public class WindupWizard implements UIWizard, UICommand
     @Inject
     private AddonRegistry registry;
 
+    @Inject
+    private Configuration configuration;
+    
     @Inject
     @WithAttributes(label = "Input", required = true)
     private UIInput<FileResource<?>> input;
@@ -65,6 +75,10 @@ public class WindupWizard implements UIWizard, UICommand
     @Inject
     @WithAttributes(label = "Target Platform", required = false)
     private UIInput<String> targetPlatform;
+    
+    @Inject
+    @WithAttributes(label = "User Provided Rules Folder", required = false)
+    private UIInput<DirectoryResource> userProvidedRulesFolder;
 
     @Override
     public NavigationResult next(UINavigationContext context) throws Exception
@@ -89,7 +103,7 @@ public class WindupWizard implements UIWizard, UICommand
     public void initializeUI(final UIBuilder builder) throws Exception
     {
         builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode)
-                    .add(targetPlatform);
+                    .add(targetPlatform).add(userProvidedRulesFolder);
     }
 
     @Override
@@ -97,6 +111,21 @@ public class WindupWizard implements UIWizard, UICommand
     {
     }
 
+    private File getUserProvidedRulesFolder() {
+        if (userProvidedRulesFolder.getValue() != null) {
+            File userProvidedRulesFolderFile = userProvidedRulesFolder.getValue().getUnderlyingResourceObject();
+            configuration.setProperty(KEY_USER_PROVIDED_RULES_FOLDER, userProvidedRulesFolderFile.getAbsolutePath());
+            return userProvidedRulesFolderFile;
+        } else {
+            String userProvidedRulesFolder = configuration.getString(KEY_USER_PROVIDED_RULES_FOLDER);
+            if (StringUtils.isEmpty(userProvidedRulesFolder)) {
+                return Paths.get(System.getenv("user.home"), ".windup", "rules").toFile();
+            } else {
+                return new File(userProvidedRulesFolder);
+            }
+        }
+    }
+    
     @Override
     public Result execute(UIExecutionContext executionContext) throws Exception
     {
@@ -111,6 +140,9 @@ public class WindupWizard implements UIWizard, UICommand
             options.setInputPath(input.getValue().getUnderlyingResourceObject());
             options.setOutputPath(output.getValue().getUnderlyingResourceObject());
             options.setIncludeJavaPackageSignature((List<String>) packages.getValue());
+            
+            File userProvidedRulesDirectory = getUserProvidedRulesFolder();
+            options.setUserProvidedRulesDirectory(userProvidedRulesDirectory);
 
             options.setFetchRemote(fetchRemote.getValue().booleanValue());
             options.setExcludeJavaPackageSignature((List<String>) excludePackages.getValue());

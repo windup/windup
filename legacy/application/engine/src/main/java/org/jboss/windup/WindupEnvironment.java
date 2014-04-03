@@ -26,6 +26,7 @@ public class WindupEnvironment {
     private File outputPath;
     private List<String> excludeJavaPackageSignature;
     private List<String> includeJavaPackageSignature;
+    private File userProvidedRulesDirectory; 
     private String targetPlatform;
     private boolean fetchRemote;
 
@@ -106,4 +107,13 @@ public class WindupEnvironment {
         this.captureLog = captureLog;
     }
 
+    public File getUserProvidedRulesDirectory()
+    {
+        return userProvidedRulesDirectory;
+    }
+    
+    public void setUserProvidedRulesDirectory(File userProvidedRulesDirectory)
+    {
+        this.userProvidedRulesDirectory = userProvidedRulesDirectory;
+    }
 }
