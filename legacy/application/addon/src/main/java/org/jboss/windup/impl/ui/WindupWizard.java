@@ -35,7 +35,7 @@ import org.jboss.windup.WindupService;
 
 public class WindupWizard implements UIWizard, UICommand
 {
-    private static final String KEY_USER_PROVIDED_RULES_FOLDER = "WindupWizard.userProvidedRulesFolder";
+    private static final String KEY_SUPPLEMENTAL_RULES_DIRECTORY = "WindupWizard.supplementalRulesDirectory";
     
     private static Logger log = Logger.getLogger(WindupWizard.class.getName());
 
@@ -49,36 +49,36 @@ public class WindupWizard implements UIWizard, UICommand
     private Configuration configuration;
     
     @Inject
-    @WithAttributes(label = "Input", required = true)
+    @WithAttributes(label = "Input", required = true, description = "Input File or Directory (a Directory is required for source mode)")
     private UIInput<FileResource<?>> input;
 
     @Inject
-    @WithAttributes(label = "Output", required = true)
+    @WithAttributes(label = "Output", required = true, description = "Output Directory")
     private UIInput<DirectoryResource> output;
 
     @Inject
-    @WithAttributes(label = "Scan Java Packages", required = true)
+    @WithAttributes(label = "Scan Java Packages", required = true, description = "A list of java package name prefixes to scan (eg, com.myapp)")
     private UIInputMany<String> packages;
 
     @Inject
-    @WithAttributes(label = "Exclude Java Packages", required = false)
+    @WithAttributes(label = "Exclude Java Packages", required = false, description = "A list of java package name prefixes to exclude (eg, com.myapp.subpackage)")
     private UIInputMany<String> excludePackages;
 
     @Inject
-    @WithAttributes(label = "Fetch Remote Resources", required = false, defaultValue = "true")
+    @WithAttributes(label = "Fetch Remote Resources", required = false, defaultValue = "true", description = "Indicates whether to fetch maven information from the internet (default: false)")
     private UIInput<Boolean> fetchRemote;
 
     @Inject
-    @WithAttributes(label = "Source Mode", required = false, defaultValue = "false")
+    @WithAttributes(label = "Source Mode", required = false, defaultValue = "false", description = "Indicates whether the input file or directory is a source code or compiled binaries (Default: Compiled)")
     private UIInput<Boolean> sourceMode;
 
     @Inject
-    @WithAttributes(label = "Target Platform", required = false)
+    @WithAttributes(label = "Target Platform", required = false, description = "Target Platform to migrate to")
     private UIInput<String> targetPlatform;
     
     @Inject
-    @WithAttributes(label = "User Provided Rules Folder", required = false)
-    private UIInput<DirectoryResource> userProvidedRulesFolder;
+    @WithAttributes(label = "Supplemental Rules Folder", required = false, description = "Directory containing additional rules (note: rule filenames must match the pattern *.windup.xml)")
+    private UIInput<DirectoryResource> supplementalRulesFolder;
 
     @Override
     public NavigationResult next(UINavigationContext context) throws Exception
@@ -103,7 +103,7 @@ public class WindupWizard implements UIWizard, UICommand
     public void initializeUI(final UIBuilder builder) throws Exception
     {
         builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode)
-                    .add(targetPlatform).add(userProvidedRulesFolder);
+                    .add(targetPlatform).add(supplementalRulesFolder);
     }
 
     @Override
@@ -112,12 +112,12 @@ public class WindupWizard implements UIWizard, UICommand
     }
 
     private File getUserProvidedRulesFolder() {
-        if (userProvidedRulesFolder.getValue() != null) {
-            File userProvidedRulesFolderFile = userProvidedRulesFolder.getValue().getUnderlyingResourceObject();
-            configuration.setProperty(KEY_USER_PROVIDED_RULES_FOLDER, userProvidedRulesFolderFile.getAbsolutePath());
+        if (supplementalRulesFolder.getValue() != null) {
+            File userProvidedRulesFolderFile = supplementalRulesFolder.getValue().getUnderlyingResourceObject();
+            configuration.setProperty(KEY_SUPPLEMENTAL_RULES_DIRECTORY, userProvidedRulesFolderFile.getAbsolutePath());
             return userProvidedRulesFolderFile;
         } else {
-            String userProvidedRulesFolder = configuration.getString(KEY_USER_PROVIDED_RULES_FOLDER);
+            String userProvidedRulesFolder = configuration.getString(KEY_SUPPLEMENTAL_RULES_DIRECTORY);
             if (StringUtils.isEmpty(userProvidedRulesFolder)) {
                 return Paths.get(System.getenv("user.home"), ".windup", "rules").toFile();
             } else {
@@ -142,7 +142,7 @@ public class WindupWizard implements UIWizard, UICommand
             options.setIncludeJavaPackageSignature((List<String>) packages.getValue());
             
             File userProvidedRulesDirectory = getUserProvidedRulesFolder();
-            options.setUserProvidedRulesDirectory(userProvidedRulesDirectory);
+            options.setSupplementalRulesDirectory(userProvidedRulesDirectory);
 
             options.setFetchRemote(fetchRemote.getValue().booleanValue());
             options.setExcludeJavaPackageSignature((List<String>) excludePackages.getValue());

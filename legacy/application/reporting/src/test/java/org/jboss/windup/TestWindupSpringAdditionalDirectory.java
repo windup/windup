@@ -36,7 +36,7 @@ public class TestWindupSpringAdditionalDirectory
     @Test
     public void testAdditionalDirectoryNotSeen() throws Exception {
         WindupEnvironment environment = new WindupEnvironment();
-        environment.setUserProvidedRulesDirectory(null);
+        environment.setSupplementalRulesDirectory(null);
         
         WindupEngine windupEngine = new WindupEngine(environment);
         Assert.assertFalse(windupEngine.getContext().containsBean("mystring"));
@@ -45,7 +45,7 @@ public class TestWindupSpringAdditionalDirectory
     @Test
     public void testAdditionalDirectoryIsSeen() throws Exception {
         WindupEnvironment environment = new WindupEnvironment();
-        environment.setUserProvidedRulesDirectory(this.tempDir.toFile());
+        environment.setSupplementalRulesDirectory(this.tempDir.toFile());
         
         WindupEngine windupEngine = new WindupEngine(environment);
         Assert.assertTrue(windupEngine.getContext().containsBean("mystring"));

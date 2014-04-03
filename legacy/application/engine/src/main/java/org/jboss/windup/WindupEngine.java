@@ -60,7 +60,7 @@ public class WindupEngine {
         springContexts.add("/jboss-windup-context.xml");
         this.context = new ClassPathXmlApplicationContext(springContexts.toArray(new String[springContexts.size()]));
         
-        loadUserProvidedContextFiles(settings.getUserProvidedRulesDirectory());
+        loadUserProvidedContextFiles(settings.getSupplementalRulesDirectory());
 
         interrogationEngine = (ZipInterrogationEngine) context.getBean("archive-interrogation-engine");
         directoryInterrogationEngine = (DirectoryInterrogationEngine) context.getBean("directory-interrogation-engine");
@@ -84,7 +84,7 @@ public class WindupEngine {
         if (parentDir == null || !parentDir.isDirectory()) {
             return;
         } else {
-            File[] userProvidedFiles = settings.getUserProvidedRulesDirectory().listFiles();
+            File[] userProvidedFiles = settings.getSupplementalRulesDirectory().listFiles();
             for (File userProvidedFile : userProvidedFiles) {
                 if (userProvidedFile.isFile() && userProvidedFile.canRead()) {
                     if (userProvidedFile.getName().endsWith(USER_PROVIDED_FILE_SUFFIX)) {
