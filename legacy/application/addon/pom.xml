@@ -35,6 +35,11 @@
 
 
         <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.windup.legacy.application</groupId>
             <artifactId>engine</artifactId>
         </dependency>

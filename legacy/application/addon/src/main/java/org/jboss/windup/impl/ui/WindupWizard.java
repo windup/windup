@@ -2,7 +2,6 @@ package org.jboss.windup.impl.ui;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +31,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.windup.WindupEnvironment;
 import org.jboss.windup.WindupService;
+import org.jboss.windup.engine.util.SharedProperties;
 
 public class WindupWizard implements UIWizard, UICommand
 {
@@ -119,7 +119,8 @@ public class WindupWizard implements UIWizard, UICommand
         } else {
             String userProvidedRulesFolder = configuration.getString(KEY_SUPPLEMENTAL_RULES_DIRECTORY);
             if (StringUtils.isEmpty(userProvidedRulesFolder)) {
-                return Paths.get(System.getenv("user.home"), ".windup", "rules").toFile();
+                Path windupConfigHomePath = SharedProperties.getWindupConfigurationDirectory();
+                return windupConfigHomePath.resolve(".windup").resolve("rules").toFile();
             } else {
                 return new File(userProvidedRulesFolder);
             }
