@@ -53,34 +53,34 @@ public class StaticHtmlReporter implements Reporter {
 	
 	protected void writeSupportingFiles(File reportDirectory) {
 		try {
-			writeSupportedFile("snippet/jquery.snippet.min.js", reportDirectory);
-			writeSupportedFile("snippet/jquery.snippet.min.css", reportDirectory);
-			writeSupportedFile("snippet/jquery.snippet.java-manifest.js", reportDirectory);
-			writeSupportedFile("jquery.min.js", reportDirectory);
-			writeSupportedFile("windup.css", reportDirectory);
-			writeSupportedFile("windup.js", reportDirectory);
-			writeSupportedFile("img/windup-logo.png", reportDirectory);
-			writeSupportedFile("img/rh-logo.png", reportDirectory);
-			writeSupportedFile("flot/jquery.flot.min.js", reportDirectory);
-			writeSupportedFile("flot/jquery.flot.pie.min.js", reportDirectory);
-			writeSupportedFile("jquery-ui/jquery.ui.widget.js", reportDirectory);
-			writeSupportedFile("sausage/jquery.sausage.min.js", reportDirectory);
-			writeSupportedFile("sausage/sausage.css", reportDirectory);
-			writeSupportedFile("img/styles/glyphicons_195_circle_info.png", reportDirectory);
-			writeSupportedFile("img/styles/glyphicons_196_circle_exclamation_mark.png", reportDirectory);
-			writeSupportedFile("img/styles/glyphicons_217_circle_arrow_right.png", reportDirectory);
-			writeSupportedFile("img/favicon.png", reportDirectory);
+			writeSupportingFile("snippet/jquery.snippet.min.js", reportDirectory);
+			writeSupportingFile("snippet/jquery.snippet.min.css", reportDirectory);
+			writeSupportingFile("snippet/jquery.snippet.java-manifest.js", reportDirectory);
+			writeSupportingFile("jquery.min.js", reportDirectory);
+			writeSupportingFile("windup.css", reportDirectory);
+			writeSupportingFile("windup.js", reportDirectory);
+			writeSupportingFile("img/windup-logo.png", reportDirectory);
+			writeSupportingFile("img/rh-logo.png", reportDirectory);
+			writeSupportingFile("flot/jquery.flot.min.js", reportDirectory);
+			writeSupportingFile("flot/jquery.flot.pie.min.js", reportDirectory);
+			writeSupportingFile("jquery-ui/jquery.ui.widget.js", reportDirectory);
+			writeSupportingFile("sausage/jquery.sausage.min.js", reportDirectory);
+			writeSupportingFile("sausage/sausage.css", reportDirectory);
+			writeSupportingFile("img/styles/glyphicons_195_circle_info.png", reportDirectory);
+			writeSupportingFile("img/styles/glyphicons_196_circle_exclamation_mark.png", reportDirectory);
+			writeSupportingFile("img/styles/glyphicons_217_circle_arrow_right.png", reportDirectory);
+			writeSupportingFile("img/favicon.png", reportDirectory);
 	
-			writeSupportedFile("jquery-collapse/jquery.collapse.js", reportDirectory);
-			writeSupportedFile("jquery-collapse/jquery.collapse_storage.js", reportDirectory);
-			writeSupportedFile("jquery-collapse/jquery.collapse_cookie_storage.js", reportDirectory);
+			writeSupportingFile("jquery-collapse/jquery.collapse.js", reportDirectory);
+			writeSupportingFile("jquery-collapse/jquery.collapse_storage.js", reportDirectory);
+			writeSupportingFile("jquery-collapse/jquery.collapse_cookie_storage.js", reportDirectory);
 		}
 		catch(IOException e) {
 			LOG.error("Exception writing supporting file.", e);
 		}
 	}
 	
-	protected void writeSupportedFile(String fileName, File reportDirectory) throws IOException {
+	protected void writeSupportingFile(String fileName, File reportDirectory) throws IOException {
 		String resourcePath = "supporting/" + fileName;
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
 		
