@@ -116,7 +116,7 @@ public class JavaInterrogator extends ExtensionInterrogator<JavaMetadata> {
 	}
 	
 	public void populateMeta(JavaMetadata meta) {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setBindingsRecovery(true);
 		parser.setResolveBindings(true);
 		try {
