@@ -34,6 +34,17 @@ public class TestWindupSpringAdditionalDirectory
     }
     
     @Test
+    public void testAdditionalDirectoryEmpty() throws Exception {
+        WindupEnvironment environment = new WindupEnvironment();
+        
+        Path emptyTempDir = Files.createTempDirectory(TestWindupSpringAdditionalDirectory.class.getName());
+        environment.setSupplementalRulesDirectory(emptyTempDir.toFile());
+        
+        WindupEngine windupEngine = new WindupEngine(environment);
+        Assert.assertFalse(windupEngine.getContext().containsBean("mystring"));
+    }
+    
+    @Test
     public void testAdditionalDirectoryNotSeen() throws Exception {
         WindupEnvironment environment = new WindupEnvironment();
         environment.setSupplementalRulesDirectory(null);

@@ -69,33 +69,13 @@ public class WindupEngine {
     }
 
     private void loadUserProvidedContextFiles(File parentDir) {
-        List<String> allUserProvidedFiles = new ArrayList<>();
-        findUserProvidedContextFiles(parentDir, allUserProvidedFiles);
-        
-        if (!allUserProvidedFiles.isEmpty()) {
-            String[] allUserProvidedFilesArr = allUserProvidedFiles.toArray(new String[allUserProvidedFiles.size()]);
-            FileSystemXmlApplicationContext newContext = new FileSystemXmlApplicationContext(allUserProvidedFilesArr, false, this.context);
-            newContext.refresh();
-            this.context = newContext;
-        }
-    }
-    
-    private void findUserProvidedContextFiles(File parentDir, List<String> contextFiles) {
         if (parentDir == null || !parentDir.isDirectory()) {
             return;
         } else {
-            File[] userProvidedFiles = settings.getSupplementalRulesDirectory().listFiles();
-            for (File userProvidedFile : userProvidedFiles) {
-                if (userProvidedFile.isFile() && userProvidedFile.canRead()) {
-                    if (userProvidedFile.getName().endsWith(USER_PROVIDED_FILE_SUFFIX)) {
-                        // add it as a uri
-                        URI uri = userProvidedFile.toURI();
-                        contextFiles.add(uri.toString());
-                    }
-                } else if (userProvidedFile.isDirectory()) {
-                    findUserProvidedContextFiles(userProvidedFile, contextFiles);
-                }
-            }
+            String springContextAdditionalPath = parentDir.toURI() + "/**/*.windup.xml";
+            String[] springContextAdditionalPathArr = new String[] { springContextAdditionalPath };
+            FileSystemXmlApplicationContext newContext = new FileSystemXmlApplicationContext(springContextAdditionalPathArr, true, this.context);
+            this.context = newContext;
         }
     }
     
