@@ -32,11 +32,14 @@ public class WindupProcessorImpl implements WindupProcessor
       List<GraphVisitor> listenerChain = provider.getListenerChain();
 
       LOG.info("Executing: " + listenerChain.size() + " listeners...");
+      //LOG.info("Executing: " + listenerChain);
       for (GraphVisitor visitor : listenerChain)
       {
-         LOG.info("Processing: " + visitor.getClass());
+         LOG.info("Processing: " + visitor + " - Class: " + visitor.getClass());
          visitor.run();
       }
+      
+      
       LOG.info("Execution complete.");
    }
 }

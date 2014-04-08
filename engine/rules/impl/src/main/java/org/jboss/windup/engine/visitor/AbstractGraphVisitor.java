@@ -1,5 +1,9 @@
 package org.jboss.windup.engine.visitor;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
@@ -22,6 +26,12 @@ public abstract class AbstractGraphVisitor implements GraphVisitor {
 
 	@Override
 	public abstract void run();
+	
+	@Override
+	public List<Class<? extends GraphVisitor>> getDependencies()
+	{
+	    return Collections.emptyList();
+	}
 
 	@Override
 	public void visitResource(Resource entry) {
@@ -106,5 +116,18 @@ public abstract class AbstractGraphVisitor implements GraphVisitor {
 	@Override
 	public void visitNamespace(NamespaceMeta entry) {
 		//nothing.
+	}
+	
+	@SafeVarargs
+	protected final List<Class<? extends GraphVisitor>> generateDependencies(Class<? extends GraphVisitor>... deps) {
+	    return Arrays.asList(deps);
+	}
+	
+	@Override
+	public String toString()
+	{
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("[" + getClass().getSimpleName() + ": [Phase: " + getPhase() + ", Dependencies: " + getDependencies() + "]");
+	    return sb.toString();
 	}
 }

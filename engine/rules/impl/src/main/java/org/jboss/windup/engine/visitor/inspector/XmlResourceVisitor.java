@@ -15,6 +15,7 @@ import org.jboss.windup.engine.util.xml.LocationAwareContentHandler.Doctype;
 import org.jboss.windup.engine.util.xml.LocationAwareXmlReader;
 import org.jboss.windup.engine.util.xml.XmlUtil;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
+import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.DoctypeDao;
 import org.jboss.windup.graph.dao.NamespaceDao;
@@ -48,6 +49,12 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 	
 	@Inject
 	private ArchiveEntryDao archiveEntryDao;
+
+	@Override
+    public VisitorPhase getPhase()
+    {
+        return VisitorPhase.InitialAnalysis;
+    }
 	
 	@Override
 	public void run() {

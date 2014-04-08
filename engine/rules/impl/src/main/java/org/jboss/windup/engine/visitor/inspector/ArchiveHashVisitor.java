@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
+import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.model.resource.ArchiveResource;
@@ -21,48 +22,54 @@ import org.jboss.windup.graph.model.resource.ArchiveResource;
  */
 public class ArchiveHashVisitor extends AbstractGraphVisitor
 {
-   private static final Logger LOG = Logger.getLogger(ArchiveHashVisitor.class.getName());
+    private static final Logger LOG = Logger.getLogger(ArchiveHashVisitor.class.getName());
 
-   @Inject
-   private FileResourceDao fileDao;
+    @Inject
+    private FileResourceDao fileDao;
 
-   @Inject
-   private ArchiveDao archiveDao;
+    @Inject
+    private ArchiveDao archiveDao;
 
-   @Override
-   public void run()
-   {
-      for (ArchiveResource archive : archiveDao.getAll())
-      {
-         visitArchive(archive);
-      }
-      fileDao.commit();
-   }
+    @Override
+    public VisitorPhase getPhase()
+    {
+        return VisitorPhase.InitialAnalysis;
+    }
 
-   @Override
-   public void visitArchive(ArchiveResource file)
-   {
-      InputStream is = null;
-      try
-      {
-         is = archiveDao.getPayload(file);
-         String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
+    @Override
+    public void run()
+    {
+        for (ArchiveResource archive : archiveDao.getAll())
+        {
+            visitArchive(archive);
+        }
+        fileDao.commit();
+    }
 
-         // start over
-         is = archiveDao.getPayload(file);
-         String sha1 = org.apache.commons.codec.digest.DigestUtils.sha1Hex(is);
+    @Override
+    public void visitArchive(ArchiveResource file)
+    {
+        InputStream is = null;
+        try
+        {
+            is = archiveDao.getPayload(file);
+            String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
 
-         file.setSHA1Hash(sha1);
-         file.setMD5Hash(md5);
-      }
-      catch (IOException e)
-      {
-         LOG.log(Level.SEVERE, "Exception generating hash.", e);
-      }
-      finally
-      {
-         IOUtils.closeQuietly(is);
-      }
-   }
+            // start over
+            is = archiveDao.getPayload(file);
+            String sha1 = org.apache.commons.codec.digest.DigestUtils.sha1Hex(is);
+
+            file.setSHA1Hash(sha1);
+            file.setMD5Hash(md5);
+        }
+        catch (IOException e)
+        {
+            LOG.log(Level.SEVERE, "Exception generating hash.", e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(is);
+        }
+    }
 
 }
