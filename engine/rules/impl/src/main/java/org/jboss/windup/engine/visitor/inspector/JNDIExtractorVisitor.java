@@ -45,7 +45,7 @@ public class JNDIExtractorVisitor extends AbstractGraphVisitor
 
         }
 
-        // for all oracle app servers web config...
+        // for all orion app servers web config...
         for (XmlResource resource : xmlDao.findByRootTag("orion-web-app"))
         {
 
