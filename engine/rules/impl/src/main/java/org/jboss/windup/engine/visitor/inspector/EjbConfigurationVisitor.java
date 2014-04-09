@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.util.xml.DoctypeUtils;
 import org.jboss.windup.engine.util.xml.NamespaceUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
+import org.jboss.windup.engine.visitor.GraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.EJBConfigurationDao;
 import org.jboss.windup.graph.dao.EJBEntityDao;
@@ -67,6 +68,12 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
     @Inject
     private EJBSessionBeanDao sessionBeanDao;
 
+    @Override
+    public List<Class<? extends GraphVisitor>> getDependencies()
+    {
+        return generateDependencies(XmlResourceVisitor.class);
+    }
+    
     @Override
     public VisitorPhase getPhase()
     {
