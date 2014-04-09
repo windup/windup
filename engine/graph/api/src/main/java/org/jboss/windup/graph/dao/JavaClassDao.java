@@ -20,7 +20,7 @@ public class JavaClassDao extends BaseDao<JavaClass> {
 		JavaClass clz = getByUniqueProperty("qualifiedName", qualifiedName);
 
 		if (clz == null) {
-			clz = (JavaClass) this.create(null);
+			clz = (JavaClass) this.create();
 			clz.setQualifiedName(qualifiedName);
 		}
 
