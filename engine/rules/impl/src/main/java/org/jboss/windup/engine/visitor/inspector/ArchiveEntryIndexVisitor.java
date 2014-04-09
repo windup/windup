@@ -88,7 +88,7 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
                     continue;
                 }
                 // creates a new archive entry.
-                ArchiveEntryResource resource = archiveEntryDao.create(null);
+                ArchiveEntryResource resource = archiveEntryDao.create();
                 resource.setArchiveEntry(entry.getName());
                 resource.setArchive(file);
             }
