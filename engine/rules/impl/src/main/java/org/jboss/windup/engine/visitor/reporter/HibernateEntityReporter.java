@@ -27,7 +27,7 @@ public class HibernateEntityReporter extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.Reporting;
+        return VisitorPhase.REPORTING;
     }
 
     @Override

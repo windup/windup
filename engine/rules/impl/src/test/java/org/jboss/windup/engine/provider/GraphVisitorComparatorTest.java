@@ -17,7 +17,7 @@ public class GraphVisitorComparatorTest
         @Override
         public VisitorPhase getPhase()
         {
-            return VisitorPhase.Discovery;
+            return VisitorPhase.DISCOVERY;
         }
         @Override
         public void run()
@@ -36,7 +36,7 @@ public class GraphVisitorComparatorTest
         @Override
         public VisitorPhase getPhase()
         {
-            return VisitorPhase.Discovery;
+            return VisitorPhase.DISCOVERY;
         }
         @Override
         public void run()
@@ -48,7 +48,7 @@ public class GraphVisitorComparatorTest
         @Override
         public VisitorPhase getPhase()
         {
-            return VisitorPhase.InitialAnalysis;
+            return VisitorPhase.INITIAL_ANALYSIS;
         }
         @Override
         public void run()

@@ -52,7 +52,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.Discovery;
+        return VisitorPhase.DISCOVERY;
     }
 
     private Set<String> getZipExtensions()

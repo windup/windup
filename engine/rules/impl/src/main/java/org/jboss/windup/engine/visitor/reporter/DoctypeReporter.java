@@ -26,7 +26,7 @@ public class DoctypeReporter extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.Reporting;
+        return VisitorPhase.REPORTING;
     }
 
     @Override

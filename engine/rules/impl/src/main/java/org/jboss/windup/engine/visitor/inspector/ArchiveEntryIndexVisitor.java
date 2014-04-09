@@ -50,7 +50,7 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.Discovery;
+        return VisitorPhase.DISCOVERY;
     }
 
     @Override

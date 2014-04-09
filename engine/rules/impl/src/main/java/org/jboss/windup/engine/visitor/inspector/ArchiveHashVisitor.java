@@ -33,7 +33,7 @@ public class ArchiveHashVisitor extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.InitialAnalysis;
+        return VisitorPhase.INITIAL_ANALYSIS;
     }
 
     @Override

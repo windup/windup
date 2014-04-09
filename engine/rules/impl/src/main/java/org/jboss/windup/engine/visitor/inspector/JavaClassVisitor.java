@@ -36,7 +36,7 @@ public class JavaClassVisitor extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.InitialAnalysis;
+        return VisitorPhase.INITIAL_ANALYSIS;
     }
 
     @Override

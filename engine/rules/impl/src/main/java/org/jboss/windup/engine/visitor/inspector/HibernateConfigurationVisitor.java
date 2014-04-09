@@ -37,7 +37,7 @@ public class HibernateConfigurationVisitor extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.Composition;
+        return VisitorPhase.COMPOSITION;
     }
 
     @Override

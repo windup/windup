@@ -32,7 +32,7 @@ public class DirectoryVisitor extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.Discovery;
+        return VisitorPhase.DISCOVERY;
     }
 
     @Override
