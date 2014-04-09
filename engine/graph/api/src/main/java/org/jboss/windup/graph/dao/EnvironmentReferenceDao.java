@@ -13,7 +13,7 @@ public class EnvironmentReferenceDao extends BaseDao<EnvironmentReference> {
 	public EnvironmentReference createEnvironmentReference(String name, String type) {
 		EnvironmentReference meta = findByNameAndType(name, type);
 		if(meta == null) {
-			meta  = create(null);
+			meta  = create();
 			
 			name = StringUtils.trim(name);
 			type = StringUtils.trim(type);

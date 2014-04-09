@@ -23,7 +23,7 @@ public class FileResourceDao extends BaseDao<FileResource> {
 		FileResource entry = getByUniqueProperty("filePath", filePath);
 		
 		if(entry == null) {
-			entry = this.create(null);
+			entry = this.create();
 			entry.setFilePath(filePath);
 			context.getGraph().commit();
 		}

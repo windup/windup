@@ -85,7 +85,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 			
 			//if this is successful, then we know it is a proper XML file.
 			//set it to the graph as an XML file.
-			XmlResource resource = xmlResourceDao.create(null);
+			XmlResource resource = xmlResourceDao.create();
 			resource.setResource(entry);
 
 			//get and index by the root tag.
@@ -102,7 +102,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 				}
 				else {
 					LOG.debug("Adding doctype: "+docType);
-					DoctypeMeta meta = doctypeDao.create(null);
+					DoctypeMeta meta = doctypeDao.create();
 					meta.setBaseURI(docType.getBaseURI());
 					meta.setName(docType.getName());
 					meta.setPublicId(docType.getPublicId());

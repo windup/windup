@@ -71,7 +71,7 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
 
             if (element != null)
             {
-                SpringConfigurationFacet facet = springConfigurationDao.create(null);
+                SpringConfigurationFacet facet = springConfigurationDao.create();
                 facet.setXmlFacet(entry);
 
                 List<Element> beans = $(element).children("bean").get();
@@ -91,7 +91,7 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
                         continue;
                     }
 
-                    SpringBeanFacet springBeanRef = springBeanDao.create(null);
+                    SpringBeanFacet springBeanRef = springBeanDao.create();
 
                     if (StringUtils.isNotBlank(id))
                     {

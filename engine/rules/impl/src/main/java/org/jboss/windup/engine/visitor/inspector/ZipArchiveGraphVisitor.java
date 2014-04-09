@@ -106,7 +106,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
 
                 // go ahead and make it into an archive.
 
-                ArchiveResource archive = archiveDao.create(null);
+                ArchiveResource archive = archiveDao.create();
                 archive.setArchiveName(reference.getName());
                 archive.setFileResource(file);
 
@@ -129,7 +129,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
                                     .getByFilePath(subArchiveTempFile.getAbsolutePath());
                         subArchiveTempFileReference = tempFileArchiveEntryDao.castToType(subArchiveTempFileReference);
 
-                        ArchiveResource subArchive = archiveDao.create(null);
+                        ArchiveResource subArchive = archiveDao.create();
                         subArchive.setArchiveName(subArchiveName);
                         subArchive.setFileResource(subArchiveTempFileReference);
 

@@ -15,7 +15,7 @@ public class MavenFacetDao extends BaseDao<MavenFacet> {
 	public MavenFacet createMaven(String groupId, String artifactId, String version) {
 		MavenFacet facet = findByGroupArtifactVersion(groupId, artifactId, version);
 		if(facet == null) {
-			facet = create(null);
+			facet = create();
 			facet.setMavenIdentifier(generateMavenKey(groupId, artifactId, version));
 			facet.setGroupId(groupId);
 			facet.setArtifactId(artifactId);
