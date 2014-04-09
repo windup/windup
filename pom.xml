@@ -39,6 +39,7 @@
     <modules>
         <module>engine</module>
         <module>legacy</module>
+        <module>windride-addon</module>
     </modules>
 
     <dependencyManagement>
