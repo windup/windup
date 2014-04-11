@@ -21,6 +21,9 @@
         <windup.scm.connection>scm:git:https://github.com/jsight/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:jsight/windup.git</windup.developer.connection>
         <windup.scm.url>http://github.com/windup/windup</windup.scm.url>
+        
+        <!-- This keeps javadoc from failing on projects with no actual .java source files -->
+        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
     </properties>
 
     <scm>
