@@ -55,12 +55,8 @@ public class WindupEngine {
         this.settings = settings;
 
         // sets environment variables needed for Spring configuration.
-        List<String> springContexts = new LinkedList<String>();
-
-        springContexts.add("/jboss-windup-context.xml");
-        this.context = new ClassPathXmlApplicationContext(springContexts.toArray(new String[springContexts.size()]));
         
-        loadUserProvidedContextFiles(settings.getSupplementalRulesDirectory());
+        loadRuleContextFiles();
 
         interrogationEngine = (ZipInterrogationEngine) context.getBean("archive-interrogation-engine");
         directoryInterrogationEngine = (DirectoryInterrogationEngine) context.getBean("directory-interrogation-engine");
@@ -68,7 +64,18 @@ public class WindupEngine {
         supportedExtensions = new ArrayList((Collection<String>) context.getBean("zipExtensions"));
     }
 
-    private void loadUserProvidedContextFiles(File parentDir) {
+    private void loadRuleContextFiles() {
+        List<String> springContexts = new LinkedList<String>();
+        LOG.info("Should load rules contexts files... exclude base rules? " + settings.isExcludeBuiltinRules() + " user rules dir: " + settings.getSupplementalRulesDirectory());
+
+        if (!this.settings.isExcludeBuiltinRules()) {
+            springContexts.add("/jboss-windup-context.xml");
+            springContexts.add("classpath*:/windup/**/*.windup.xml");
+            springContexts.add("classpath*:/*.windup.xml");
+        }
+        this.context = new ClassPathXmlApplicationContext(springContexts.toArray(new String[springContexts.size()]));
+        
+        File parentDir = this.settings.getSupplementalRulesDirectory();
         if (parentDir == null || !parentDir.isDirectory()) {
             return;
         } else {

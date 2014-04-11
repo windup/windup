@@ -77,6 +77,10 @@ public class WindupWizard implements UIWizard, UICommand
     private UIInput<String> targetPlatform;
     
     @Inject
+    @WithAttributes(label = "Exclude built-in rules", required = false, description = "Exclude the builtin rules from being processed", defaultValue = "false")
+    private UIInput<Boolean> excludeBuiltinRules;
+    
+    @Inject
     @WithAttributes(label = "Supplemental Rules Folder", required = false, description = "Directory containing additional rules (note: rule filenames must match the pattern *.windup.xml)")
     private UIInput<DirectoryResource> supplementalRulesFolder;
 
@@ -103,7 +107,7 @@ public class WindupWizard implements UIWizard, UICommand
     public void initializeUI(final UIBuilder builder) throws Exception
     {
         builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode)
-                    .add(targetPlatform).add(supplementalRulesFolder);
+                    .add(targetPlatform).add(supplementalRulesFolder).add(excludeBuiltinRules);
     }
 
     @Override
@@ -144,6 +148,7 @@ public class WindupWizard implements UIWizard, UICommand
             
             File userProvidedRulesDirectory = getUserProvidedRulesFolder();
             options.setSupplementalRulesDirectory(userProvidedRulesDirectory);
+            options.setExcludeBuiltinRules(excludeBuiltinRules.getValue().booleanValue());
 
             options.setFetchRemote(fetchRemote.getValue().booleanValue());
             options.setExcludeJavaPackageSignature((List<String>) excludePackages.getValue());

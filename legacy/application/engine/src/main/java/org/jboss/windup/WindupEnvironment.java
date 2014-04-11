@@ -29,6 +29,7 @@ public class WindupEnvironment {
     private File supplementalRulesDirectory; 
     private String targetPlatform;
     private boolean fetchRemote;
+    private boolean excludeBuiltinRules;
 
     private String logLevel;
     private boolean captureLog;
@@ -115,5 +116,15 @@ public class WindupEnvironment {
     public void setSupplementalRulesDirectory(File supplementalRulesDirectory)
     {
         this.supplementalRulesDirectory = supplementalRulesDirectory;
+    }
+    
+    public boolean isExcludeBuiltinRules()
+    {
+        return excludeBuiltinRules;
+    }
+    
+    public void setExcludeBuiltinRules(boolean excludeBuiltinRules)
+    {
+        this.excludeBuiltinRules = excludeBuiltinRules;
     }
 }
