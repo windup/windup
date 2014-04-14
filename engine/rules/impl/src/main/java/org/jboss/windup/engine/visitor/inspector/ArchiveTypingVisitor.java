@@ -43,7 +43,7 @@ public class ArchiveTypingVisitor extends AbstractGraphVisitor
     @Override
     public List<Class<? extends GraphVisitor>> getDependencies()
     {
-        return super.generateDependencies(ZipArchiveGraphVisitor.class);
+        return super.generateDependencies(ZipArchiveGraphVisitor.class, DirectoryVisitor.class);
     }
     
     @Override
