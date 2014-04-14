@@ -67,7 +67,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
         return extensions;
     }
 
-    private boolean endsWithExtension(String path)
+    private boolean endsWithZipExtension(String path)
     {
         for (String extension : getZipExtensions())
         {
@@ -96,7 +96,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
         // now, check to see whether it is a JAR, and republish the typed value.
         String filePath = file.getFilePath();
 
-        if (endsWithExtension(filePath))
+        if (endsWithZipExtension(filePath))
         {
             java.io.File reference = new java.io.File(filePath);
             ZipFile zipFile = null;
@@ -120,7 +120,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
                     {
                         continue;
                     }
-                    if (endsWithExtension(entry.getName()))
+                    if (endsWithZipExtension(entry.getName()))
                     {
                         // unzip.
                         String subArchiveName = StringUtils.substringAfterLast(entry.getName(), "/");
