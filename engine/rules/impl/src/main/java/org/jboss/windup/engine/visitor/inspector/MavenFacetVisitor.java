@@ -75,7 +75,7 @@ public class MavenFacetVisitor extends AbstractGraphVisitor
     {
         try
         {
-            Document document = xmlResourceDao.asDocument(entry);
+            Document document = entry.asDocument();
             /*
              * String modelVersion = $(document).namespace("pom", "http://maven.apache.org/POM/4.0.0")
              * .xpath("/pom:project/pom:modelVersion").text();

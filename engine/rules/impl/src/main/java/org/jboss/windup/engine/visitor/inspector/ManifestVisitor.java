@@ -76,7 +76,7 @@ public class ManifestVisitor extends AbstractGraphVisitor
     {
         try
         {
-            JarFile file = jarDao.asJarFile(entry);
+            JarFile file = entry.asJarFile();
             Manifest fileManifest = file.getManifest();
             if (fileManifest == null || fileManifest.getMainAttributes().size() == 0)
             {

@@ -61,7 +61,7 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
         // if the XML contains the root tag "web-app"
         for (XmlResource xml : xmlDao.findByRootTag("web-app"))
         {
-            Document doc = xmlDao.asDocument(xml);
+            Document doc = xml.asDocument();
             String version = null;
 
             // check it's doctype against the known doctype.

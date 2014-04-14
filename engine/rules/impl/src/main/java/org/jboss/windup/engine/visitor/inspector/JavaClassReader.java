@@ -36,7 +36,7 @@ public class JavaClassReader extends EmptyVisitor
     @Override
     public void visitJavaClass(JavaClass obj)
     {
-        current = javaClassDao.getJavaClass(obj.getClassName());
+        current = javaClassDao.createJavaClass(obj.getClassName());
         int major = obj.getMajor();
         int minor = obj.getMinor();
         current.setMajorVersion(major);
@@ -46,7 +46,7 @@ public class JavaClassReader extends EmptyVisitor
 
         for (String interfaceName : obj.getInterfaceNames())
         {
-            org.jboss.windup.graph.model.resource.JavaClass interfaceClass = javaClassDao.getJavaClass(interfaceName);
+            org.jboss.windup.graph.model.resource.JavaClass interfaceClass = javaClassDao.createJavaClass(interfaceName);
             // then we make the connection.
             current.addImplements(interfaceClass);
         }
@@ -61,7 +61,7 @@ public class JavaClassReader extends EmptyVisitor
         }
 
         String superClz = obj.getSuperclassName();
-        org.jboss.windup.graph.model.resource.JavaClass superJavaClass = javaClassDao.getJavaClass(superClz);
+        org.jboss.windup.graph.model.resource.JavaClass superJavaClass = javaClassDao.createJavaClass(superClz);
         current.setExtends(superJavaClass);
     }
 
@@ -78,7 +78,7 @@ public class JavaClassReader extends EmptyVisitor
             return;
         }
 
-        org.jboss.windup.graph.model.resource.JavaClass clz = javaClassDao.getJavaClass(classVal);
+        org.jboss.windup.graph.model.resource.JavaClass clz = javaClassDao.createJavaClass(classVal);
         current.addImport(clz);
     }
 

@@ -1,9 +1,5 @@
 package org.jboss.windup.graph.dao;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.jboss.windup.graph.model.resource.FileResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +15,7 @@ public class FileResourceDao extends BaseDao<FileResource> {
 		super(FileResource.class);
 	}
 
-	public FileResource getByFilePath(String filePath) {
+	public FileResource createByFilePath(String filePath) {
 		FileResource entry = getByUniqueProperty("filePath", filePath);
 		
 		if(entry == null) {
@@ -29,12 +25,6 @@ public class FileResourceDao extends BaseDao<FileResource> {
 		}
 		
 		return entry;
-	}
-	
-	public InputStream getPayload(FileResource file) throws IOException {
-		String fileName = file.getFilePath();
-		FileInputStream fis = new FileInputStream(new java.io.File(fileName));
-		return fis;
 	}
 	
 	public Iterable<FileResource> findArchiveEntryWithExtension(String ... values) {

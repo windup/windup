@@ -126,7 +126,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
                         String subArchiveName = StringUtils.substringAfterLast(entry.getName(), "/");
                         java.io.File subArchiveTempFile = ZipUtil.unzipToTemp(zipFile, entry);
                         org.jboss.windup.graph.model.resource.FileResource subArchiveTempFileReference = fileDao
-                                    .getByFilePath(subArchiveTempFile.getAbsolutePath());
+                                    .createByFilePath(subArchiveTempFile.getAbsolutePath());
                         subArchiveTempFileReference = tempFileArchiveEntryDao.castToType(subArchiveTempFileReference);
 
                         ArchiveResource subArchive = archiveDao.create();

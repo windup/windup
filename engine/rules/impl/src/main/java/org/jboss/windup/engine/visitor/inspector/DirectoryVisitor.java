@@ -60,7 +60,7 @@ public class DirectoryVisitor extends AbstractGraphVisitor
             Collection<File> found = FileUtils.listFiles(fileReference, FileFileFilter.FILE, TrueFileFilter.INSTANCE);
             for (File reference : found)
             {
-                org.jboss.windup.graph.model.resource.FileResource graphReference = fileDao.getByFilePath(reference
+                org.jboss.windup.graph.model.resource.FileResource graphReference = fileDao.createByFilePath(reference
                             .getAbsolutePath());
                 visitFile(graphReference);
             }

@@ -85,7 +85,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
     {
         for (XmlResource xml : xmlDao.findByRootTag("ejb-jar"))
         {
-            Document doc = xmlDao.asDocument(xml);
+            Document doc = xml.asDocument();
 
             // otherwise, it is a EJB-JAR XML.
             if (xml.getDoctype() != null)
@@ -207,35 +207,35 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         String localClz = extractChildTagAndTrim(element, "local");
         if (localClz != null)
         {
-            local = javaClassDao.getJavaClass(localClz);
+            local = javaClassDao.createJavaClass(localClz);
         }
 
         // get local home class.
         String localHomeClz = extractChildTagAndTrim(element, "local-home");
         if (localHomeClz != null)
         {
-            localHome = javaClassDao.getJavaClass(localHomeClz);
+            localHome = javaClassDao.createJavaClass(localHomeClz);
         }
 
         // get home class.
         String homeClz = extractChildTagAndTrim(element, "home");
         if (homeClz != null)
         {
-            home = javaClassDao.getJavaClass(homeClz);
+            home = javaClassDao.createJavaClass(homeClz);
         }
 
         // get remote class.
         String remoteClz = extractChildTagAndTrim(element, "remote");
         if (remoteClz != null)
         {
-            remote = javaClassDao.getJavaClass(remoteClz);
+            remote = javaClassDao.createJavaClass(remoteClz);
         }
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = javaClassDao.getJavaClass(ejbClz);
+            ejb = javaClassDao.createJavaClass(ejbClz);
         }
 
         String sessionType = extractChildTagAndTrim(element, "session-type");
@@ -275,7 +275,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = javaClassDao.getJavaClass(ejbClz);
+            ejb = javaClassDao.createJavaClass(ejbClz);
         }
 
         String sessionType = extractChildTagAndTrim(element, "session-type");
@@ -313,21 +313,21 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         String localClz = extractChildTagAndTrim(element, "local");
         if (localClz != null)
         {
-            local = javaClassDao.getJavaClass(localClz);
+            local = javaClassDao.createJavaClass(localClz);
         }
 
         // get local home class.
         String localHomeClz = extractChildTagAndTrim(element, "local-home");
         if (localHomeClz != null)
         {
-            localHome = javaClassDao.getJavaClass(localHomeClz);
+            localHome = javaClassDao.createJavaClass(localHomeClz);
         }
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = javaClassDao.getJavaClass(ejbClz);
+            ejb = javaClassDao.createJavaClass(ejbClz);
         }
 
         String persistenceType = extractChildTagAndTrim(element, "persistence-type");

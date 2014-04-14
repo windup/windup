@@ -33,11 +33,6 @@ public class JarArchiveDao extends BaseDao<JarArchive> {
 		return null;
 	}
 
-	public JarFile asJarFile(JarArchive archive) throws IOException {
-		File file = new File(archive.getFileResource().getFilePath());
-		return new JarFile(file);
-	}
-
 	public Iterable<JarArchive> findUnusedJars() {
 		List<JarArchive> iterable = new LinkedList<JarArchive>();
 		for(JarArchive archive : getAll()) {

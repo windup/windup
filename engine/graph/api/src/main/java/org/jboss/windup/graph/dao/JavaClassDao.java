@@ -16,7 +16,7 @@ public class JavaClassDao extends BaseDao<JavaClass> {
 		super(JavaClass.class);
 	}
 
-	public synchronized JavaClass getJavaClass(String qualifiedName) {
+	public synchronized JavaClass createJavaClass(String qualifiedName) {
 		JavaClass clz = getByUniqueProperty("qualifiedName", qualifiedName);
 
 		if (clz == null) {

@@ -65,7 +65,7 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
     {
         try
         {
-            Document doc = xmlResourceDao.asDocument(entry);
+            Document doc = entry.asDocument();
             org.w3c.dom.Element element = $(doc).namespace("s", "http://www.springframework.org/schema/beans")
                         .xpath("/s:beans").get().get(0);
 
@@ -98,7 +98,7 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
                         springBeanRef.setSpringBeanName(id);
                     }
 
-                    JavaClass classReference = javaClassDao.getJavaClass(clz);
+                    JavaClass classReference = javaClassDao.createJavaClass(clz);
                     springBeanRef.setJavaClassFacet(classReference);
                     facet.addSpringBeanReference(springBeanRef);
                 }

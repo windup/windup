@@ -52,11 +52,11 @@ public class ArchiveHashVisitor extends AbstractGraphVisitor
         InputStream is = null;
         try
         {
-            is = archiveDao.getPayload(file);
+            is = file.asInputStream();
             String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
 
             // start over
-            is = archiveDao.getPayload(file);
+            is = file.asInputStream();
             String sha1 = org.apache.commons.codec.digest.DigestUtils.sha1Hex(is);
 
             file.setSHA1Hash(sha1);

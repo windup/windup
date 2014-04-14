@@ -75,7 +75,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 		//try and read the XML...
 		InputStream is = null;
 		try {
-			is = archiveEntryDao.asInputStream(entry);
+			is = entry.asInputStream();
 			
 			//read it to a Document object.
 			Document parsedDocument = LocationAwareXmlReader.readXML(is);

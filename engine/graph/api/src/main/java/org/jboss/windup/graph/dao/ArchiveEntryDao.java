@@ -26,7 +26,6 @@ public class ArchiveEntryDao extends BaseDao<ArchiveEntryResource> {
 		return super.getByProperty("archiveEntry", value);
 	}
 
-
 	public long findArchiveEntryWithExtensionCount(String ... values) {
 		GremlinPipeline pipe = new GremlinPipeline();
 		return pipe.start(findArchiveEntryWithExtension(values)).count();
@@ -60,14 +59,4 @@ public class ArchiveEntryDao extends BaseDao<ArchiveEntryResource> {
 		LOG.debug("Regex: "+regex);
 		return context.getFramed().query().has("type", typeValue).has("archiveEntry", Text.REGEX, regex).vertices(type);
 	}
-	
-	public InputStream asInputStream(ArchiveEntryResource entry) throws IOException {
-		//try and read the XML...
-		ZipFile zipFile = new ZipFile(new File(entry.getArchive().getFileResource().getFilePath()));
-		ZipEntry zipEntry = zipFile.getEntry(entry.getArchiveEntry());
-		InputStream is = zipFile.getInputStream(zipEntry);
-		
-		return is;
-	}
-	
 }

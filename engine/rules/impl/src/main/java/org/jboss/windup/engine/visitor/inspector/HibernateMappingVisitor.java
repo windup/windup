@@ -96,7 +96,7 @@ public class HibernateMappingVisitor extends AbstractGraphVisitor
             HibernateMappingFacet hibernateMapping = hibernateMappingDao.create();
             hibernateMapping.setXmlFacet(xml);
 
-            Document doc = xmlResourceDao.asDocument(xml);
+            Document doc = xml.asDocument();
 
             if (!XmlUtil.xpathExists(doc, "/hibernate-mapping", null))
             {
@@ -123,7 +123,7 @@ public class HibernateMappingVisitor extends AbstractGraphVisitor
             }
 
             // get a reference to the Java class.
-            JavaClass clz = javaClassDao.getJavaClass(clzName);
+            JavaClass clz = javaClassDao.createJavaClass(clzName);
 
             // create the hibernate facet.
             HibernateEntityFacet hibernateEntity = hibernateEntityDao.create();

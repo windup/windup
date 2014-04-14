@@ -24,7 +24,7 @@ public class BasicVisitor extends AbstractGraphVisitor
     public void run()
     {
         File r1 = new File("/Users/lb3/Desktop/custom-application-remote.war");
-        org.jboss.windup.graph.model.resource.FileResource r1g = fileDao.getByFilePath(r1.getAbsolutePath());
+        org.jboss.windup.graph.model.resource.FileResource r1g = fileDao.createByFilePath(r1.getAbsolutePath());
         //
         // File r2 = new File("/Users/bradsdavis/Projects/migrations/inputs/WindupConfigurations.jar");
         // org.jboss.windup.graph.model.resource.FileResource r2g = fileDao.getByFilePath(r2.getAbsolutePath());
