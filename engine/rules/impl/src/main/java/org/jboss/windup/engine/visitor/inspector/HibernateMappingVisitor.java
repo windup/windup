@@ -55,7 +55,7 @@ public class HibernateMappingVisitor extends AbstractGraphVisitor
     @Override
     public VisitorPhase getPhase()
     {
-        return VisitorPhase.COMPOSITION;
+        return VisitorPhase.INITIAL_ANALYSIS;
     }
 
     @Override
