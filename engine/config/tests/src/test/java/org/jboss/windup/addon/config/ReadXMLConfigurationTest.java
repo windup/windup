@@ -10,6 +10,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -43,7 +44,7 @@ public class ReadXMLConfigurationTest
    public void testRunWindup() throws Exception
    {
       File folder = File.createTempFile("windupGraph", "");
-      GraphContext context = new GraphContext(folder);
+      GraphContext context = new GraphContextImpl(folder);
       ConfigurationLoader loader = ConfigurationLoader.create(context);
       Configuration configuration = loader.loadConfiguration(context);
 

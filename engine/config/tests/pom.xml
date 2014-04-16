@@ -17,6 +17,12 @@
             <artifactId>config</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>graph-impl</artifactId>
+            <scope>provided</scope>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
