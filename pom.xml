@@ -86,12 +86,4 @@
         </pluginManagement>
     </build>
     
-    <profiles>
-        <profile>
-            <id>release</id>
-            <properties>
-                <pushChanges>false</pushChanges>
-            </properties>
-        </profile>
-    </profiles>
 </project>
