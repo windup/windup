@@ -1,0 +1,53 @@
+body {
+  padding-top: 120px;
+  padding-bottom: 30px;
+}
+
+.logo {
+  margin:10px;
+}
+
+.theme-dropdown .dropdown-menu {
+  display: block;
+  position: static;
+  margin-bottom: 20px;
+}
+
+.theme-showcase > p > .btn {
+  margin: 5px 0;
+}
+
+h3.panel-title span.s {
+	margin:0 10px
+}
+
+.windup-bar {
+	height: 130px; text-align: center; background: #FFF; border-bottom: 1px solid #c2cfdb;
+}
+
+.windup-cta {
+	background: #fcfcfc; border-bottom: 1px solid #c2cfdb; height: 200px; margin-bottom: 30px;
+}
+
+.page-header-no-border {
+	border: 0;
+	margin-bottom: 0;
+}
+
+.page-header h1{
+	font-size:4em;
+}
+
+.page-header h1 span.slash {
+	color: #555;
+}
+
+.windup-header {
+	text-align:left;
+	margin: 0;
+	padding: 0;
+}
+
+#banner {
+	border:0;
+}

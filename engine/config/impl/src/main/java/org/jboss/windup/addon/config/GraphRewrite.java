@@ -59,4 +59,9 @@ public class GraphRewrite implements Rewrite
          }
       };
    }
+   
+   @Override
+   public String toString() {
+       return "GraphRewrite [resource=" + getResource() + "]";
+   }
 }

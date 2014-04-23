@@ -1,8 +1,7 @@
 package org.jboss.windup.graph.model.resource;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
-import java.util.Iterator;
 
 import org.jboss.windup.graph.model.meta.Meta;
 
@@ -12,16 +11,18 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-
-@TypeField("type") 
+@TypeField("type")
 @TypeValue("BaseResource")
-public interface Resource extends VertexFrame {
+public interface Resource extends VertexFrame
+{
 
-	@Adjacency(label="meta", direction=Direction.OUT)
-	public Iterator<Meta> getMeta();
-	
-	@Adjacency(label="meta", direction=Direction.OUT)
-	public void addMeta(final Meta resource);
+    @Adjacency(label = "meta", direction = Direction.OUT)
+    public Iterable<Meta> getMeta();
 
-	public InputStream asInputStream() throws IOException;
+    @Adjacency(label = "meta", direction = Direction.OUT)
+    public void addMeta(final Meta resource);
+
+    public InputStream asInputStream();
+
+    public File asFile() throws RuntimeException;
 }

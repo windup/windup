@@ -9,6 +9,8 @@ import java.util.zip.ZipFile;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.GraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
@@ -65,6 +67,9 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
             LOG.info("Processed: " + i + " of " + total + " Archives.");
             i++;
         }
+        
+        final int finalTotal = (int)archiveDao.count(archiveDao.getAll());
+        LOG.info("Total: "+finalTotal+" Archives.");
     }
 
     @Override
@@ -91,6 +96,23 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
                 ArchiveEntryResource resource = archiveEntryDao.create();
                 resource.setArchiveEntry(entry.getName());
                 resource.setArchive(file);
+                
+                //now look for recursive archives...
+                if(ZipUtil.endsWithZipExtension(entry.getName())) {
+                    String subArchiveName = entry.getName();
+                    if(StringUtils.contains(entry.getName(), "/")) {
+                        subArchiveName = StringUtils.substringAfterLast(subArchiveName, "/");
+                    }
+                    LOG.info("Found nested archive: "+subArchiveName);
+                    
+                    //create an archive record, and process it.
+                    ArchiveResource subArchive = archiveDao.create();
+                    subArchive.setArchiveName(subArchiveName);
+                    subArchive.setResource(resource);
+                    result.addChildArchive(subArchive);
+                    
+                    visitArchive(subArchive);
+                }
             }
         }
         catch (IOException e)
@@ -103,4 +125,6 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
             archiveDao.commit();
         }
     }
+    
+    
 }

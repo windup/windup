@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules xmlns:base="http://windup.jboss.org/v1/base" xmlns="http://windup.jboss.org/v1/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <rule>
-        <when>
-            <param name="foo" value="example-file.txt"/>
-        </when>
+   <rule>
+      <namespace prefix="test" uri="http://tempuri.org"/>
+      <when>
+         <param name="foo" value="abc" />
+         <filepath matches="{filepath}"/>
+      </when>
 
-        <perform>
-            <log message="Matched file {foo}"/>
-        </perform>
+      <perform>
+         <log message="Matched file {foo}"/>
+         <log message="Matched file {filepath}"/>
+      </perform>
 
-        <where name="foo">
-            <matches pattern="example-file.txt"/>
-        </where>
-    </rule>
+    <where name="foo">
+         <matches pattern="..c"/>
+      </where>
+      
+    <where name="filepath">
+     <matches pattern=".*\.xml"/>
+    </where>
+          
+   </rule>
 </rules>

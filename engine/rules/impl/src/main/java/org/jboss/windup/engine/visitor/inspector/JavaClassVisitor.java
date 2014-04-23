@@ -1,17 +1,16 @@
 package org.jboss.windup.engine.visitor.inspector;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.GraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.JavaClassDao;
+import org.jboss.windup.graph.dao.JavaMethodDao;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.slf4j.Logger;
@@ -33,6 +32,9 @@ public class JavaClassVisitor extends AbstractGraphVisitor
     @Inject
     private ArchiveEntryDao archiveEntryDao;
 
+    @Inject
+    private JavaMethodDao javaMethodDao;
+    
     @Override
     public VisitorPhase getPhase()
     {
@@ -47,7 +49,7 @@ public class JavaClassVisitor extends AbstractGraphVisitor
         for (final ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("class"))
         {
             visitArchiveEntry(entry);
-            if (i > 0 && i % 1000 == 0)
+            if (i > 0 && i % 100 == 0)
             {
                 LOG.info("Processed: " + i + " of " + total + " Java Classes.");
                 archiveEntryDao.commit();
@@ -72,9 +74,9 @@ public class JavaClassVisitor extends AbstractGraphVisitor
 
         try
         {
-            ClassParser classParser = new ClassParser(archive.getFileResource().getFilePath(), entry.getArchiveEntry());
+            ClassParser classParser = new ClassParser(archive.asFile().getAbsolutePath(), entry.getArchiveEntry());
             JavaClass parsed = classParser.parse();
-            JavaClassReader iv = new JavaClassReader(parsed, javaClassDao, entry);
+            JavaClassProfiler iv = new JavaClassProfiler(parsed, javaClassDao, javaMethodDao, entry);
             iv.process();
         }
         catch (IOException e)

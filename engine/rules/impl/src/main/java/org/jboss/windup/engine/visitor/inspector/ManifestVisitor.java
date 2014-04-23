@@ -1,21 +1,26 @@
 package org.jboss.windup.engine.visitor.inspector;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.GraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
+import org.jboss.windup.graph.WindupContext;
+import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.EarArchiveDao;
 import org.jboss.windup.graph.dao.JarArchiveDao;
 import org.jboss.windup.graph.dao.JarManifestDao;
 import org.jboss.windup.graph.dao.WarArchiveDao;
 import org.jboss.windup.graph.model.meta.JarManifest;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.EarArchive;
 import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.model.resource.WarArchive;
@@ -33,16 +38,13 @@ public class ManifestVisitor extends AbstractGraphVisitor
     private static final Logger LOG = LoggerFactory.getLogger(ManifestVisitor.class);
 
     @Inject
-    private WarArchiveDao warDao;
+    private WindupContext context;
 
     @Inject
-    private JarArchiveDao jarDao;
+    private ArchiveEntryDao archiveEntryDao;
 
     @Inject
-    private EarArchiveDao earDao;
-
-    @Inject
-    private JarManifestDao manifestDao;
+    private JarManifestDao jarManifestDao;
 
     @Override
     public VisitorPhase getPhase()
@@ -53,50 +55,45 @@ public class ManifestVisitor extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (JarArchive archive : jarDao.getAll())
+        for (ArchiveEntryResource resource : archiveEntryDao.findArchiveEntry("META-INF/MANIFEST.MF"))
         {
-            visitJarArchive(archive);
+            visitArchiveEntry(resource);
         }
-
-        for (WarArchive archive : warDao.getAll())
-        {
-            visitJarArchive(archive);
-        }
-
-        for (EarArchive archive : earDao.getAll())
-        {
-            visitJarArchive(archive);
-        }
-
-        manifestDao.commit();
+        archiveEntryDao.commit();
     }
 
     @Override
-    public void visitJarArchive(JarArchive entry)
+    public void visitArchiveEntry(ArchiveEntryResource entry)
     {
+        JarManifest jarManifest = jarManifestDao.create();
+        JarArchive archive = context.getGraphContext().getFramed().frame(entry.getArchive().asVertex(), JarArchive.class);
+        jarManifest.setResource(entry);
+        jarManifest.setJarArchive(archive);
+
+        InputStream is = null;
         try
         {
-            JarFile file = entry.asJarFile();
-            Manifest fileManifest = file.getManifest();
-            if (fileManifest == null || fileManifest.getMainAttributes().size() == 0)
+            is = entry.asInputStream();
+            Manifest manifest = new Manifest(entry.asInputStream());
+            if (manifest == null || manifest.getMainAttributes().size() == 0)
             {
                 return;
             }
 
-            JarManifest manifest = manifestDao.create();
-            manifest.setJarArchive(entry);
-
-            for (Object key : fileManifest.getMainAttributes().keySet())
+            for (Object key : manifest.getMainAttributes().keySet())
             {
                 String property = StringUtils.trim(key.toString());
-                String propertyValue = StringUtils.trim(fileManifest.getMainAttributes().get(key).toString());
-                manifest.setProperty(property, propertyValue);
+                String propertyValue = StringUtils.trim(manifest.getMainAttributes().get(key).toString());
+                jarManifest.setProperty(property, propertyValue);
             }
-
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            throw new RuntimeException("Unable to open JAR.", e);
+            LOG.warn("Exception reading manifest.", e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(is);
         }
 
     }

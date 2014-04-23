@@ -65,7 +65,7 @@ public class ArchiveTypingVisitor extends AbstractGraphVisitor
     public void visitArchive(ArchiveResource file)
     {
         // now, check to see whether it is a JAR, and republish the typed value.
-        String filePath = file.getFileResource().getFilePath();
+        String filePath = file.asFile().getAbsolutePath();
 
         if (StringUtils.endsWith(filePath, ".jar"))
         {

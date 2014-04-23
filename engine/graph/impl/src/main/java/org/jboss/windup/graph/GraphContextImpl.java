@@ -5,29 +5,34 @@ import java.io.File;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
+import org.jboss.windup.graph.model.meta.ApplicationReference;
 import org.jboss.windup.graph.model.meta.DatasourceMeta;
 import org.jboss.windup.graph.model.meta.JBossModuleMeta;
 import org.jboss.windup.graph.model.meta.JMSMeta;
 import org.jboss.windup.graph.model.meta.JarManifest;
 import org.jboss.windup.graph.model.meta.MailserverMeta;
+import org.jboss.windup.graph.model.meta.PropertiesMeta;
 import org.jboss.windup.graph.model.meta.SpecificationVersionMeta;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
 import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
 import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
+import org.jboss.windup.graph.model.meta.report.SourceReport;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
 import org.jboss.windup.graph.model.meta.xml.HibernateConfigurationFacet;
 import org.jboss.windup.graph.model.meta.xml.MavenFacet;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
 import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
+import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacet;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
 import org.jboss.windup.graph.model.resource.ArchiveResource;
 import org.jboss.windup.graph.model.resource.EarArchive;
 import org.jboss.windup.graph.model.resource.JarArchive;
 import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.TempArchiveResource;
+import org.jboss.windup.graph.model.resource.JavaMethod;
+import org.jboss.windup.graph.model.resource.JavaParameter;
 import org.jboss.windup.graph.model.resource.WarArchive;
 import org.jboss.windup.graph.model.resource.XmlResource;
 
@@ -117,16 +122,18 @@ public class GraphContextImpl implements GraphContext {
 		FramedGraphFactory factory = new FramedGraphFactory(
 				new JavaHandlerModule(),
 			    new TypedGraphModuleBuilder()
+				.withClass(ApplicationReference.class)
 			    .withClass(ArchiveResource.class)
 			    .withClass(ArchiveEntryResource.class)
 			    .withClass(EarArchive.class)
 			    .withClass(org.jboss.windup.graph.model.resource.FileResource.class)
 		        .withClass(JarArchive.class)
 			    .withClass(JavaClass.class)
+			    .withClass(JavaMethod.class)
+                .withClass(JavaParameter.class)
 		        .withClass(org.jboss.windup.graph.model.resource.Resource.class)
 			    .withClass(WarArchive.class)
 			    .withClass(XmlResource.class)
-			    .withClass(TempArchiveResource.class)
 			    
 			    .withClass(EjbEntityFacet.class)
 			    .withClass(EjbSessionBeanFacet.class)
@@ -147,6 +154,9 @@ public class GraphContextImpl implements GraphContext {
 				.withClass(MailserverMeta.class)
 				.withClass(SpecificationVersionMeta.class)
 			    .withClass(JarManifest.class)
+			    .withClass(SourceReport.class)
+                .withClass(WebConfigurationFacet.class)
+                .withClass(PropertiesMeta.class)
 			    
 			    .build(), 
 			    new GremlinGroovyModule()

@@ -103,6 +103,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 				else {
 					LOG.debug("Adding doctype: "+docType);
 					DoctypeMeta meta = doctypeDao.create();
+					meta.addXmlResource(resource);
 					meta.setBaseURI(docType.getBaseURI());
 					meta.setName(docType.getName());
 					meta.setPublicId(docType.getPublicId());
@@ -120,7 +121,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 			
 		}
 		catch(Exception e) {
-			LOG.error("Encountered Exception: "+e.getMessage());
+			LOG.error("Encountered Exception: "+e.getMessage(), e);
 		} finally {
 			IOUtils.closeQuietly(is);
 		}

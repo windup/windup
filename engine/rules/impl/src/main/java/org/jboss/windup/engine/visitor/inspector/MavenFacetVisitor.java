@@ -92,8 +92,7 @@ public class MavenFacetVisitor extends AbstractGraphVisitor
             String version = XmlUtil.xpathExtract(document, "/pom:project/pom:version", namespaces);
 
             String parentGroupId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:groupId", namespaces);
-            String parentArtifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:artifactId",
-                        namespaces);
+            String parentArtifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:artifactId", namespaces);
             String parentVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:version", namespaces);
 
             if (StringUtils.isBlank(groupId) && StringUtils.isNotBlank(parentGroupId))

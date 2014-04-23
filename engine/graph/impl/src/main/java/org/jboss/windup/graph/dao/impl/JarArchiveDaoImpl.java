@@ -52,10 +52,10 @@ public class JarArchiveDaoImpl extends BaseDaoImpl<JarArchive> implements JarArc
 		//if it is both providing for and depending on, is circular.
 		Set<String> set = new HashSet<>();
 		for(JarArchive d : archive.dependsOnArchives()) {
-			set.add(d.getFileResource().getFilePath());
+			set.add(d.asFile().getAbsolutePath());
 		}
 		for(JarArchive p : archive.providesForArchives()) {
-			if(set.contains(p.getFileResource().getFilePath())) {
+			if(set.contains(p.asFile().getAbsolutePath())) {
 				results.add(p);
 			}
 		}

@@ -77,7 +77,7 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
             else
             {
                 // if there is no doctype, check the XMD..
-                version = $(doc).find("web-app").first().attr("version");
+                version = $(doc).attr("version");
 
                 // if the version attribute isn't found, then grab it from the XSD name if we can.
                 if (StringUtils.isBlank(version))
