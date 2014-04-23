@@ -86,7 +86,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
                 ArchiveResource archive = archiveDao.create(null);
                 
                 //mark the archive as a top level archive.
-                ApplicationReference applicationReference = applicationReferenceDao.create(null);
+                ApplicationReference applicationReference = applicationReferenceDao.create();
                 applicationReference.setArchive(archive);
                 
                 archive.setArchiveName(reference.getName());

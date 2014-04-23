@@ -46,7 +46,7 @@ public class ZipUtil {
 	
 	public static boolean endsWithZipExtension(String path) {
         for(String extension : getZipExtensions()) {
-            if(StringUtils.endsWith(path, extension)) {
+            if(StringUtils.endsWith(path, "." + extension)) {
                 return true;
             }
         }
@@ -56,11 +56,11 @@ public class ZipUtil {
     public static Set<String> getZipExtensions() {
         if (supportedExtensions == null) {
             Set<String> extensions = new HashSet<String>();
-            extensions.add(".war");
-            extensions.add(".ear");
-            extensions.add(".jar");
-            extensions.add(".sar");
-            extensions.add(".rar");
+            extensions.add("war");
+            extensions.add("ear");
+            extensions.add("jar");
+            extensions.add("sar");
+            extensions.add("rar");
             supportedExtensions = extensions;
         }
         

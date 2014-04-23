@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
@@ -44,14 +45,17 @@ public class CssJsResourceRenderer extends AbstractGraphVisitor {
         
         try {
             String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+            if (path.endsWith(".jar") || path.endsWith(".jar!/")) {
+                path = path.replace("file:", "jar:file:");
+            }
+            
             File fpath = new File(path);
             if(fpath.isDirectory()) {
                 Path p = Paths.get(fpath.getAbsolutePath(), "reports/resources");
                 recursePath(p, resourceDirectory);
             }
             else {
-                //TODO: test as a zip file.
-                FileSystem fs = FileSystems.newFileSystem(new URI(path), null);
+                FileSystem fs = FileSystems.newFileSystem(new URI(path), new HashMap<String, String>());
                 Path p = fs.getPath("reports/resources");
                 recursePath(p, resourceDirectory);
             }
