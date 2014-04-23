@@ -1,6 +1,5 @@
 package org.jboss.windup.engine.provider;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class ListenerChainProvider
         for (GraphVisitor visitor : visitors) {
             listenerChain.add(visitor);
         }
-        Collections.sort(listenerChain, new GraphVisitorComparator());
+        listenerChain = new GraphVisitorSorter().sort(listenerChain);
         
         return listenerChain;
     }
