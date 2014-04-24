@@ -13,50 +13,44 @@ import org.jboss.windup.addon.config.parser.ParserContext;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class XMLConfigurationProvider implements ConfigurationProvider<GraphContext>
+public class XMLConfigurationProvider extends WindupConfigurationProvider
 {
+    @Override
+    public boolean handles(Object payload)
+    {
+        return payload instanceof GraphContext;
+    }
 
-   @Override
-   public int priority()
-   {
-      return 0;
-   }
+    @Override
+    public Configuration getConfiguration(GraphContext context)
+    {
+        try
+        {
+            ClassLoader classloader = this.getClass().getClassLoader();
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            dbFactory.setNamespaceAware(true);
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            
+            // FIXME This needs a more comprehensive XML location strategy
+            Document doc = dBuilder.parse(classloader.getResourceAsStream("META-INF/windup-rewrite-xml-config.xml"));
 
-   @Override
-   public boolean handles(Object payload)
-   {
-      return payload instanceof GraphContext;
-   }
+            ConfigurationBuilder builder = ConfigurationBuilder.begin();
+            ParserContext parser = new ParserContext(builder);
 
-   @Override
-   public Configuration getConfiguration(GraphContext context)
-   {
-      try
-      {
-         ClassLoader classloader = this.getClass().getClassLoader();
-         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-         dbFactory.setNamespaceAware(true);
-         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-         Document doc = dBuilder.parse(classloader.getResourceAsStream("META-INF/windup-rewrite-xml-config.xml"));
+            parser.processElement(doc.getDocumentElement());
 
-         ConfigurationBuilder builder = ConfigurationBuilder.begin();
-         ParserContext parser = new ParserContext(builder);
-
-         parser.processElement(doc.getDocumentElement());
-
-         return builder;
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Failed to parse XML configuration (better message please)", e);
-      }
-   }
+            return builder;
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Failed to parse XML configuration (better message please)", e);
+        }
+    }
 
 }

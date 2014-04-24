@@ -6,6 +6,7 @@
  */
 package org.jboss.windup.addon.config;
 
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.Resource;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
@@ -20,48 +21,54 @@ import org.slf4j.LoggerFactory;
  */
 public class GraphRewrite implements Rewrite
 {
-   private final Context context = new ContextBase()
-   {
-   };
+    private final GraphContext graphContext;
+    private final Context context = new ContextBase()
+    {
+    };
 
-   public Resource getResource()
-   {
-      return null;
-   }
+    public GraphRewrite(GraphContext context)
+    {
+        this.graphContext = context;
+    }
 
-   public Logger getLog()
-   {
-      return LoggerFactory.getLogger(GraphRewrite.class);
-   }
+    public Resource getResource()
+    {
+        return null;
+    }
 
-   @Override
-   public Context getRewriteContext()
-   {
-      return context;
-   }
+    public Logger getLog()
+    {
+        return LoggerFactory.getLogger(GraphRewrite.class);
+    }
 
-   @Override
-   public Flow getFlow()
-   {
-      return new Flow()
-      {
+    @Override
+    public Context getRewriteContext()
+    {
+        return context;
+    }
 
-         @Override
-         public boolean isHandled()
-         {
-            return false;
-         }
+    @Override
+    public Flow getFlow()
+    {
+        return new Flow()
+        {
 
-         @Override
-         public boolean is(Flow type)
-         {
-            return false;
-         }
-      };
-   }
-   
-   @Override
-   public String toString() {
-       return "GraphRewrite [resource=" + getResource() + "]";
-   }
+            @Override
+            public boolean isHandled()
+            {
+                return false;
+            }
+
+            @Override
+            public boolean is(Flow type)
+            {
+                return false;
+            }
+        };
+    }
+
+    public GraphContext getGraphContext()
+    {
+        return graphContext;
+    }
 }

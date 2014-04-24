@@ -15,31 +15,35 @@ import org.slf4j.LoggerFactory;
 public class WindupProcessorImpl implements WindupProcessor
 {
 
-   private static final Logger LOG = LoggerFactory.getLogger(WindupProcessorImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WindupProcessorImpl.class);
 
-   @Inject
-   WindupContext windupContext;
+    @Inject
+    WindupContext windupContext;
 
-   @Inject
-   private ListenerChainProvider provider;
+    @Inject
+    private ListenerChainProvider provider;
 
-   @Inject
-   JavaClassDao javaClassDao;
+    @Inject
+    JavaClassDao javaClassDao;
 
-   @Override
-   public void execute()
-   {
-      List<GraphVisitor> listenerChain = provider.getListenerChain();
+    @Inject
+    ConfigurationProcessorImpl configProcessor;
 
-      LOG.info("Executing: " + listenerChain.size() + " listeners...");
-      //LOG.info("Executing: " + listenerChain);
-      for (GraphVisitor visitor : listenerChain)
-      {
-         LOG.info("Processing: " + visitor + " - Class: " + visitor.getClass());
-         visitor.run();
-      }
-      
-      
-      LOG.info("Execution complete.");
-   }
+    @Override
+    public void execute()
+    {
+        final List<GraphVisitor> listenerChain = provider.getListenerChain();
+
+        LOG.info("Executing: " + listenerChain.size() + " listeners...");
+        // LOG.info("Executing: " + listenerChain);
+        for (final GraphVisitor visitor : listenerChain)
+        {
+            LOG.info("Processing: " + visitor + " - Class: " + visitor.getClass());
+            visitor.run();
+        }
+
+        configProcessor.run(windupContext.getGraphContext());
+
+        LOG.info("Execution complete.");
+    }
 }

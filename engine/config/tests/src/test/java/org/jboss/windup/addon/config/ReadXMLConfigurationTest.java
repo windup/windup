@@ -9,6 +9,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.addon.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
 import org.junit.Test;
@@ -23,36 +24,36 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 public class ReadXMLConfigurationTest
 {
 
-   @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.windup.addon:config"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-   })
-   public static ForgeArchive getDeployment()
-   {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addBeansXML()
-               .addClass(EvaluationContextImpl.class)
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.windup.addon:config"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
-      return archive;
-   }
+    @Deployment
+    @Dependencies({
+                @AddonDependency(name = "org.jboss.windup.addon:config"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static ForgeArchive getDeployment()
+    {
+        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+                    .addBeansXML()
+                    .addClass(DefaultEvaluationContext.class)
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.addon:config"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
+        return archive;
+    }
 
-   @Test
-   public void testRunWindup() throws Exception
-   {
-      File folder = File.createTempFile("windupGraph", "");
-      GraphContext context = new GraphContextImpl(folder);
-      ConfigurationLoader loader = ConfigurationLoader.create(context);
-      Configuration configuration = loader.loadConfiguration(context);
+    @Test
+    public void testRunWindup() throws Exception
+    {
+        final File folder = File.createTempFile("windupGraph", "");
+        final GraphContext context = new GraphContextImpl(folder);
+        final ConfigurationLoader loader = ConfigurationLoader.create(context);
+        final Configuration configuration = loader.loadConfiguration(context);
 
-      EvaluationContextImpl evaluationContext = new EvaluationContextImpl();
+        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
 
-      DefaultParameterValueStore values = new DefaultParameterValueStore();
-      evaluationContext.put(ParameterValueStore.class, values);
+        final DefaultParameterValueStore values = new DefaultParameterValueStore();
+        evaluationContext.put(ParameterValueStore.class, values);
 
-      Subset.evaluate(configuration).perform(new GraphRewrite(), evaluationContext);
-   }
+        Subset.evaluate(configuration).perform(new GraphRewrite(context), evaluationContext);
+    }
 }
