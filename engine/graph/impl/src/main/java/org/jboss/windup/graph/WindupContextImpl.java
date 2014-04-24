@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Named("windup-context")
+@Named
 @ApplicationScoped
 public class WindupContextImpl implements WindupContext
 {

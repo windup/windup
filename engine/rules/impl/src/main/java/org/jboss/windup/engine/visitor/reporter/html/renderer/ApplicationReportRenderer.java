@@ -139,9 +139,6 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
             name = resource.getArchiveName();
         }
         
-        
-        
-        
         archiveReport.setApplicationPath(name);
         
         for(ArchiveEntryResource entry : resource.getChildrenArchiveEntries()) {
