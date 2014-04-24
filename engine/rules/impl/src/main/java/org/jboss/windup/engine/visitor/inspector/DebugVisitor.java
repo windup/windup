@@ -3,6 +3,7 @@ package org.jboss.windup.engine.visitor.inspector;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.WindupContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +24,17 @@ public class DebugVisitor extends AbstractGraphVisitor
 {
     private static final Logger LOG = LoggerFactory.getLogger(DebugVisitor.class);
 
-    private final WindupContext context;
+    private final GraphContext context;
     private final String typeValue;
 
-    public DebugVisitor(WindupContext context, Class<?> type)
+    public DebugVisitor(GraphContext context, Class<?> type)
     {
         TypeValue value = type.getAnnotation(TypeValue.class);
         this.typeValue = value.value();
         this.context = context;
     }
 
-    public DebugVisitor(WindupContext context)
+    public DebugVisitor(GraphContext context)
     {
         typeValue = null;
         this.context = context;
@@ -48,7 +49,7 @@ public class DebugVisitor extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        TitanGraph graph = context.getGraphContext().getGraph();
+        TitanGraph graph = context.getGraph();
 
         Iterable<Vertex> vertices;
         if (StringUtils.isNotBlank(typeValue))

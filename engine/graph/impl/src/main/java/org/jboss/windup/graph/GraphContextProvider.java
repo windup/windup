@@ -1,5 +1,7 @@
 package org.jboss.windup.graph;
 
+import java.io.File;
+
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -8,13 +10,19 @@ import javax.inject.Singleton;
 public class GraphContextProvider
 {
 
-   @Inject
-   private WindupContext context;
+    @Inject
+    private WindupContext windupContext;
 
-   @Produces
-   public GraphContext produceGraphContext()
-   {
-      return context.getGraphContext();
-   }
+    private GraphContext graphContext;
+
+    @Produces
+    public GraphContext produceGraphContext()
+    {
+        if (graphContext == null)
+        {
+            graphContext = new GraphContextImpl(new File(windupContext.getRunDirectory(), "windup-graph"));
+        }
+        return graphContext;
+    }
 
 }

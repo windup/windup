@@ -108,7 +108,7 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
                     //create an archive record, and process it.
                     ArchiveResource subArchive = archiveDao.create();
                     subArchive.setArchiveName(subArchiveName);
-                    subArchive.setResource(resource);
+                    subArchive.setParentResource(resource);
                     result.addChildArchive(subArchive);
                     
                     visitArchive(subArchive);

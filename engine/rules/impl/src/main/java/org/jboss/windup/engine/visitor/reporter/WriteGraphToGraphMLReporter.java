@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.WindupContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,9 @@ public class WriteGraphToGraphMLReporter extends AbstractGraphVisitor
     private static final Logger LOG = LoggerFactory.getLogger(WriteGraphToGraphMLReporter.class);
 
     @Inject
-    private WindupContext context;
+    private WindupContext windupContext;
+    @Inject
+    private GraphContext graphContext;
 
     @Override
     public VisitorPhase getPhase()
@@ -36,8 +39,8 @@ public class WriteGraphToGraphMLReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        GraphMLWriter writer = new GraphMLWriter(context.getGraphContext().getGraph());
-        File graphFile = new File(context.getRunDirectory(), "graphml.graphml");
+        GraphMLWriter writer = new GraphMLWriter(graphContext.getGraph());
+        File graphFile = new File(windupContext.getRunDirectory(), "graphml.graphml");
         try
         {
             writer.outputGraph(graphFile.getAbsolutePath());

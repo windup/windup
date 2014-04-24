@@ -17,6 +17,7 @@ import org.jboss.windup.engine.visitor.reporter.html.model.ApplicationContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.ReportContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.SourceReport;
 import org.jboss.windup.engine.visitor.reporter.html.model.SourceReport.SourceLineAnnotations;
+import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.PropertiesDao;
@@ -49,6 +50,9 @@ public class PropertiesSourceRenderer extends AbstractGraphVisitor
     @Inject
     private WindupContext context;
 
+    @Inject
+    private GraphUtil graphUtil;
+    
     private final Configuration cfg;
 
     @Override
@@ -115,8 +119,7 @@ public class PropertiesSourceRenderer extends AbstractGraphVisitor
             String name = null;
             if (entry.getResource() instanceof ArchiveEntryResource)
             {
-                ArchiveEntryResource resource = context.getGraphContext().getFramed()
-                            .frame(entry.getResource().asVertex(), ArchiveEntryResource.class);
+                ArchiveEntryResource resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResource.class);
                 name = resource.getArchiveEntry();
                 name = StringUtils.substringAfterLast(name, "/");
 
@@ -124,8 +127,7 @@ public class PropertiesSourceRenderer extends AbstractGraphVisitor
             }
             else if (entry.getResource() instanceof FileResource)
             {
-                FileResource resource = context.getGraphContext().getFramed()
-                            .frame(entry.getResource().asVertex(), FileResource.class);
+                FileResource resource = graphUtil.castToType(entry.getResource().asVertex(), FileResource.class);
                 name = resource.asFile().getName();
 
                 fullName = name;

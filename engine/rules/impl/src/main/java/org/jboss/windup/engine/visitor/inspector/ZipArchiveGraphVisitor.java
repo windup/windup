@@ -90,7 +90,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
                 applicationReference.setArchive(archive);
                 
                 archive.setArchiveName(reference.getName());
-                archive.setResource(file);
+                archive.setParentResource(file);
             } catch (Exception e) {
                 LOG.error("Exception creating zip from: "+filePath, e);
             }

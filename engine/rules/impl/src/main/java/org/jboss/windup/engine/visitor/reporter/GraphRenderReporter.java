@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.WindupContext;
+import org.jboss.windup.graph.renderer.GraphMLRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class GraphRenderReporter extends AbstractGraphVisitor
     private static final Logger LOG = LoggerFactory.getLogger(GraphRenderReporter.class);
 
     @Inject
-    private WindupContext context;
+    private GraphMLRenderer graphMLRenderer;
 
     @Override
     public VisitorPhase getPhase()
@@ -36,16 +37,8 @@ public class GraphRenderReporter extends AbstractGraphVisitor
     public void run()
     {
         File graphLocation = new File("/home/jsightler/tmp/", "graphml.graphml");
-        GraphMLWriter graphML = new GraphMLWriter(context.getGraphContext().getGraph());
-        try
-        {
-            graphML.outputGraph(new FileOutputStream(graphLocation));
-            LOG.info("Wrote graph to: " + graphLocation.getAbsolutePath());
-        }
-        catch (Exception e)
-        {
-            LOG.error("Exception writing graph: ", e);
-        }
+        graphMLRenderer.renderGraphML(graphLocation);
+        LOG.debug("Wrote graph to: " + graphLocation.getAbsolutePath());
     }
 
 }

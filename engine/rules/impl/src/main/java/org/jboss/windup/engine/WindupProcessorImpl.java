@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.jboss.windup.addon.engine.WindupProcessor;
 import org.jboss.windup.engine.provider.ListenerChainProvider;
 import org.jboss.windup.engine.visitor.GraphVisitor;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.slf4j.Logger;
@@ -19,6 +20,9 @@ public class WindupProcessorImpl implements WindupProcessor
 
     @Inject
     WindupContext windupContext;
+    
+    @Inject
+    GraphContext graphContext;
 
     @Inject
     private ListenerChainProvider provider;
@@ -42,7 +46,7 @@ public class WindupProcessorImpl implements WindupProcessor
             visitor.run();
         }
 
-        configProcessor.run(windupContext.getGraphContext());
+        configProcessor.run(graphContext);
 
         LOG.info("Execution complete.");
     }

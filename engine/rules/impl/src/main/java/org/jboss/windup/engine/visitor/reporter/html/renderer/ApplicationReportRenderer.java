@@ -18,6 +18,7 @@ import org.jboss.windup.engine.visitor.reporter.html.model.ApplicationContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.Level;
 import org.jboss.windup.engine.visitor.reporter.html.model.SimpleName;
 import org.jboss.windup.engine.visitor.reporter.html.model.Tag;
+import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.dao.ArchiveDao;
@@ -80,6 +81,9 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
     @Inject
     private PropertiesDao propertiesDao;
     
+    @Inject
+    private GraphUtil graphUtil;
+    
     private Configuration cfg;
     private File runDirectory;
     private File reportReference;
@@ -131,8 +135,8 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
         ArchiveReport archiveReport = new ArchiveReport();
         
         String name = null;
-        if(resource.getResource() instanceof ArchiveEntryResource) {
-            ArchiveEntryResource parentEntry = context.getGraphContext().getFramed().frame(resource.getResource().asVertex(), ArchiveEntryResource.class);
+        if(resource.getParentResource() instanceof ArchiveEntryResource) {
+            ArchiveEntryResource parentEntry = graphUtil.castToType(resource.getParentResource().asVertex(), ArchiveEntryResource.class);
             name = namingUtility.buildFullPath(parentEntry);
         }
         else {

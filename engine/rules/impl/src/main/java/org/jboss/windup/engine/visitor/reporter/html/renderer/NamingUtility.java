@@ -10,6 +10,7 @@ import org.jboss.windup.engine.visitor.reporter.html.model.LinkName;
 import org.jboss.windup.engine.visitor.reporter.html.model.Name;
 import org.jboss.windup.engine.visitor.reporter.html.model.ReportContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.SimpleName;
+import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
@@ -36,6 +37,9 @@ public class NamingUtility
 
     @Inject
     private SourceReportDao sourceReportDao;
+    
+    @Inject
+    private GraphUtil graphUtil;
 
     public String getApplicationName()
     {
@@ -60,15 +64,14 @@ public class NamingUtility
         ArchiveResource archive = resource.getArchive();
         while (archive != null)
         {
-            if (archive.getResource() instanceof ArchiveEntryResource)
+            if (archive.getParentResource() instanceof ArchiveEntryResource)
             {
-                ArchiveEntryResource parentEntry = context.getGraphContext().getFramed()
-                            .frame(archive.getResource().asVertex(), ArchiveEntryResource.class);
+                ArchiveEntryResource parentEntry = graphUtil.castToType(archive.getParentResource().asVertex(), ArchiveEntryResource.class);
                 // prepend
                 path = parentEntry.getArchiveEntry() + "/" + path;
                 archive = archive.getParentArchive();
             }
-            else if (archive.getResource() instanceof FileResource)
+            else if (archive.getParentResource() instanceof FileResource)
             {
                 path = archive.getArchiveName() + "/" + path;
                 archive = archive.getParentArchive();
@@ -84,15 +87,14 @@ public class NamingUtility
         ArchiveResource archive = resource;
         while (archive != null)
         {
-            if (archive.getResource() instanceof ArchiveEntryResource)
+            if (archive.getParentResource() instanceof ArchiveEntryResource)
             {
-                ArchiveEntryResource parentEntry = context.getGraphContext().getFramed()
-                            .frame(archive.getResource().asVertex(), ArchiveEntryResource.class);
+                ArchiveEntryResource parentEntry = graphUtil.castToType(archive.getParentResource().asVertex(), ArchiveEntryResource.class);
                 // prepend
                 path = parentEntry.getArchiveEntry() + "/" + path;
                 archive = archive.getParentArchive();
             }
-            else if (archive.getResource() instanceof FileResource)
+            else if (archive.getParentResource() instanceof FileResource)
             {
                 path = archive.getArchiveName() + "/" + path;
                 archive = archive.getParentArchive();
@@ -171,14 +173,12 @@ public class NamingUtility
     {
         if (entry.getResource() instanceof ArchiveEntryResource)
         {
-            ArchiveEntryResource resource = context.getGraphContext().getFramed()
-                        .frame(entry.getResource().asVertex(), ArchiveEntryResource.class);
+            ArchiveEntryResource resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResource.class);
             return resource.getArchiveEntry();
         }
         else if (entry.getResource() instanceof FileResource)
         {
-            FileResource resource = context.getGraphContext().getFramed()
-                        .frame(entry.getResource().asVertex(), FileResource.class);
+            FileResource resource = graphUtil.castToType(entry.getResource().asVertex(), FileResource.class);
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");
@@ -189,14 +189,12 @@ public class NamingUtility
     {
         if (manifest.getResource() instanceof ArchiveEntryResource)
         {
-            ArchiveEntryResource resource = context.getGraphContext().getFramed()
-                        .frame(manifest.getResource().asVertex(), ArchiveEntryResource.class);
+            ArchiveEntryResource resource = graphUtil.castToType(manifest.getResource().asVertex(), ArchiveEntryResource.class);
             return resource.getArchiveEntry();
         }
         else if (manifest.getResource() instanceof FileResource)
         {
-            FileResource resource = context.getGraphContext().getFramed()
-                        .frame(manifest.getResource().asVertex(), FileResource.class);
+            FileResource resource = graphUtil.castToType(manifest.getResource().asVertex(), FileResource.class);
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");
@@ -207,14 +205,12 @@ public class NamingUtility
     {
         if (xml.getResource() instanceof ArchiveEntryResource)
         {
-            ArchiveEntryResource resource = context.getGraphContext().getFramed()
-                        .frame(xml.getResource().asVertex(), ArchiveEntryResource.class);
+            ArchiveEntryResource resource = graphUtil.castToType(xml.getResource().asVertex(), ArchiveEntryResource.class);
             return resource.getArchiveEntry();
         }
         else if (xml.getResource() instanceof FileResource)
         {
-            FileResource resource = context.getGraphContext().getFramed()
-                        .frame(xml.getResource().asVertex(), FileResource.class);
+            FileResource resource = graphUtil.castToType(xml.getResource().asVertex(), FileResource.class);
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");

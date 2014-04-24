@@ -16,10 +16,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface ArchiveResource extends Resource {
 
 	@Adjacency(label="archiveResourceFacet", direction=Direction.IN)
-	public Resource getResource();
+	public Resource getParentResource();
 
 	@Adjacency(label="archiveResourceFacet", direction=Direction.IN)
-	public void setResource(Resource resource);
+	public void setParentResource(Resource resource);
 	
 	@Property("md5Hash")
 	public String getMD5Hash();
@@ -70,7 +70,7 @@ public interface ArchiveResource extends Resource {
 		public InputStream asInputStream() throws RuntimeException {
 			
 			try {
-				Resource underlyingResource = this.getResource();
+				Resource underlyingResource = this.getParentResource();
 				if(underlyingResource instanceof ArchiveEntryResource) {
 						ArchiveEntryResource resource = frame(underlyingResource.asVertex(), ArchiveEntryResource.class);
 						return resource.asInputStream();
@@ -80,7 +80,7 @@ public interface ArchiveResource extends Resource {
 					return resource.asInputStream();
 				}
 				
-				return this.getResource().asInputStream();
+				return this.getParentResource().asInputStream();
 			}
 			catch(Exception e) {
 				throw new RuntimeException("Exception reading resource.", e);
@@ -90,7 +90,7 @@ public interface ArchiveResource extends Resource {
 		@Override
 		public File asFile() throws RuntimeException {
 			try {
-				Resource underlyingResource = this.getResource();
+				Resource underlyingResource = this.getParentResource();
 				if(underlyingResource instanceof ArchiveEntryResource) {
 					ArchiveEntryResource resource = frame(underlyingResource.asVertex(), ArchiveEntryResource.class);
 					return resource.asFile();
@@ -99,7 +99,7 @@ public interface ArchiveResource extends Resource {
 					FileResource resource = frame(underlyingResource.asVertex(), FileResource.class);
 					return resource.asFile();
 				}
-				return this.getResource().asFile();
+				return this.getParentResource().asFile();
 			}
 			catch(Exception e) {
 				throw new RuntimeException("Exception reading resource.", e);
