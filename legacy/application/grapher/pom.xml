@@ -15,17 +15,17 @@
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-core</artifactId>
-            <version>0.4.1</version>
+            <version>${version.titangraph}</version>
         </dependency>
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-berkeleyje</artifactId>
-            <version>0.4.1</version>
+            <version>${version.titangraph}</version>
         </dependency>
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-lucene</artifactId>
-            <version>0.4.1</version>
+            <version>${version.titangraph}</version>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
