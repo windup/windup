@@ -17,7 +17,7 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.furnace>2.3.0.Final</version.furnace>
+        <version.furnace>2.5.0.Final</version.furnace>
         <windup.scm.connection>scm:git:https://github.com/jsight/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:jsight/windup.git</windup.developer.connection>
         <windup.scm.url>http://github.com/windup/windup</windup.scm.url>
