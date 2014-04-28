@@ -11,7 +11,9 @@
     <artifactId>windup-service</artifactId>
     <packaging>war</packaging>
 
-    <name>Legacy Windup - Application - Web Service</name>
+    <name>Legacy Windup App - Windup as a Service</name>
+    <description>A Web application which lets user upload their archive,
+        processes with Windup 1.x and shows the report.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
