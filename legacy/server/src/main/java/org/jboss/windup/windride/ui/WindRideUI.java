@@ -54,7 +54,7 @@ public class WindRideUI implements UICommand {
 
     // Give Forge the command metadata.
     @Override public UICommandMetadata getMetadata( UIContext uic ) {
-        return Metadata.forCommand(getClass()).name("Run WindRide 1.x")
+        return Metadata.forCommand(getClass()).name("Windup 1.x Migrate Server")
               .description("Run WindRide 1.x server configuration migrator")
               .category(Categories.create("Platform", "Migration", "Configuration"));
     }
