@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<windup>
+    
+    <!-- What this migrator is (potentially) interested in. -->
+    <discovery>
+        <!-- <files> scans for files.
+          Each file found is stored in the graph as a FileNode or a subclass.
+          The file node is connected with the node of origin - app archive, or source server, etc.
+          source: appSource, appArchive, srcServer, ...? -->
+        
+        <!-- Scan current app's dir for given path. -->
+        <files source="appSource" path="*/META-INF/web.xml" />
+        
+        <!-- Extract the files from app's archives, put the paths of each to the graph. -->
+        <files source="archive" path="**/*"/>
+        
+        
+        <files source="srcServer" path="server/default/conf/" />
+    </discovery>
+    
+    <!-- --> 
+    <analysis>
+        <jaxb class="DataSource.grovy"
+              desc="Datasource definition"
+              note=
+              pathMask="**/jboss-ejb.xml" xpath="/foo/bar/datasources/"/>
+        
+        <method class="org.jboss.as.Foo" name="getObsoleteFoo(Int,String,Date)" />
+        
+    </analysis>
+        
+</windup>

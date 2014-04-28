@@ -9,9 +9,9 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     
-    <groupId>org.jboss.windup.windride</groupId>
-    <artifactId>WindRide-addon</artifactId>
-    <name>WindRide addon</name>
+    <groupId>org.jboss.windup.legacy.server</groupId>
+    <artifactId>legacy-windride</artifactId>
+    <name>Windup Legacy Server (WindRide)</name>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
