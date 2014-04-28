@@ -39,16 +39,16 @@ public class WindRideUI implements UICommand {
     // --- UI elements ---
 
     /** Source server - e.g. directory of EAP 5. */
-    @Inject  @WithAttributes(label = "Source server directory", required = true)
-    private UIInput<DirectoryResource> srcServerUI;
+    @Inject  @WithAttributes(label = "Source server directory", required = true, description = "Source server - e.g. directory of EAP 5.")
+    private UIInput<DirectoryResource> srcServer;
 
     /** Target server, e.g. AS 7. Used to start the server through Arquillian. */
-    @Inject  @WithAttributes(label = "Target server directory", required = true)
-    private UIInput<DirectoryResource> destServerUI;
+    @Inject  @WithAttributes(label = "Target server directory", required = true, description = "Target server, e.g. AS 7. Used to start the server through Arquillian.")
+    private UIInput<DirectoryResource> destServer;
 
     /** Directory to store the reports to. */
-    @Inject  @WithAttributes(label = "Directory to store the reports to", required = false)
-    private UIInput<DirectoryResource> reportDirUI;
+    @Inject  @WithAttributes(label = "Directory to store the reports to", required = false, description = "Directory to store the reports to.")
+    private UIInput<DirectoryResource> reportDir;
 
 
 
@@ -66,7 +66,7 @@ public class WindRideUI implements UICommand {
 
 
     @Override public void initializeUI(final UIBuilder builder) throws Exception {
-        builder.add(srcServerUI).add(destServerUI).add( reportDirUI );
+        builder.add(srcServer).add(destServer).add( reportDir );
     }
 
 
@@ -76,16 +76,16 @@ public class WindRideUI implements UICommand {
     public void validate( UIValidationContext uivc ) {
         Configuration conf = new Configuration();
         
-        conf.getGlobal().getSourceServerConf().setDir( srcServerUI.getValue().getContents() );
+        conf.getGlobal().getSourceServerConf().setDir( srcServer.getValue().getContents() );
         conf.getGlobal().getSourceServerConf().setProfileName("all");
         
-        conf.getGlobal().getTargetServerConf().setDir( srcServerUI.getValue().getContents() ); // target/as7copy
+        conf.getGlobal().getTargetServerConf().setDir( srcServer.getValue().getContents() ); // target/as7copy
         conf.getGlobal().getTargetServerConf().setConfigPath("standalone/configuration/standalone.xml");
         
         // If the user didn't choose reports dir, generate them into <CWD>/WindRide-report-<timestamp> .
         String reportDir = null;
-        if( this.reportDirUI.hasValue() )
-            reportDir = this.reportDirUI.getValue().getContents();
+        if( this.reportDir.hasValue() )
+            reportDir = this.reportDir.getValue().getContents();
         else
             reportDir = System.getProperty("user.dir") + File.separator + "WindRide-report-" + System.currentTimeMillis();
             
