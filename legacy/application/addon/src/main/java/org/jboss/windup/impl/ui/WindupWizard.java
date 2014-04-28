@@ -93,7 +93,7 @@ public class WindupWizard implements UIWizard, UICommand
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
     {
-        return Metadata.forCommand(getClass()).name("Run Windup 1.x").description("Run Windup 1.x Migration Analyzer")
+        return Metadata.forCommand(getClass()).name("Windup 1.x Migrate App").description("Run Windup 1.x Migration Analyzer")
                     .category(Categories.create("Platform", "Migration"));
     }
 
