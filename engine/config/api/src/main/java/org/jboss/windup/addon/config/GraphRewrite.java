@@ -12,8 +12,6 @@ import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
 import org.ocpsoft.rewrite.event.Flow;
 import org.ocpsoft.rewrite.event.Rewrite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -34,11 +32,6 @@ public class GraphRewrite implements Rewrite
     public Resource getResource()
     {
         return null;
-    }
-
-    public Logger getLog()
-    {
-        return LoggerFactory.getLogger(GraphRewrite.class);
     }
 
     @Override

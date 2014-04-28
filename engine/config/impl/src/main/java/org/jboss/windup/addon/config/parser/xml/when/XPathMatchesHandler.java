@@ -4,7 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.List;
 
-import org.jboss.windup.addon.config.condition.XPathMatchesCondition;
+import org.jboss.windup.addon.config.XPathMatchesCondition;
 import org.jboss.windup.addon.config.parser.ElementHandler;
 import org.jboss.windup.addon.config.parser.NamespaceElementHandler;
 import org.jboss.windup.addon.config.parser.ParserContext;
