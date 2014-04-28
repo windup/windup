@@ -23,6 +23,7 @@
 
     <modules>
         <module>application</module>
+        <module>server</module>
     </modules>
 
 </project>
