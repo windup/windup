@@ -28,6 +28,7 @@
             <artifactId>blueprints-graph-sail</artifactId>
             <version>${version.tinkerpop.blueprints}</version>
         </dependency>
+        
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
             <artifactId>sesame-rio-turtle</artifactId>

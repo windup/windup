@@ -27,6 +27,7 @@
             <artifactId>titan-lucene</artifactId>
             <version>${version.titangraph}</version>
         </dependency>
+        
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>joox</artifactId>
