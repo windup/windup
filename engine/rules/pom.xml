@@ -23,6 +23,8 @@
     </modules>
     <dependencyManagement>
         <dependencies>
+            
+            <!-- Forge -->
             <dependency>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-api</artifactId>
@@ -47,6 +49,7 @@
                 <version>${version.furnace}</version>
                 <scope>test</scope>
             </dependency>
+            
             <dependency>
                 <groupId>org.jboss.windup.rules</groupId>
                 <artifactId>rules</artifactId>
@@ -69,6 +72,7 @@
                 <version>${project.version}</version>
                 <classifier>forge-addon</classifier>
             </dependency>
+            
             <dependency>
                 <groupId>org.jboss.forge.furnace.container</groupId>
                 <artifactId>cdi</artifactId>
