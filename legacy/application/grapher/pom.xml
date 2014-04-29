@@ -32,6 +32,8 @@
             <artifactId>joox</artifactId>
             <version>1.2.0</version>
         </dependency>
+        
+        <!-- Logging. Moved to root pom.
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -48,5 +50,6 @@
             <version>${version.slf4j}</version>
             <scope>test</scope>
         </dependency>
+        -->
     </dependencies>
 </project>

@@ -39,6 +39,7 @@
             <artifactId>pegdown</artifactId>
             <version>1.2.2-DAVIS</version>
         </dependency>
+        <!-- Logging. Moved to root pom.
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -55,6 +56,7 @@
             <version>${version.slf4j}</version>
             <scope>test</scope>
         </dependency>
+        -->
 
     </dependencies>
 </project>
