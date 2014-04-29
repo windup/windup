@@ -17,6 +17,9 @@ public class FurnaceServiceLocator implements ServiceLocator
         List<Class<T>> result = new ArrayList<>();
 
         Furnace furnace = FurnaceHolder.getFurnace();
+        
+        // Furnace may be not available if the ServiceLoader is called before FurnaceHolder 
+        // has received the Furnace PostConstruct event, so check for null and if it isStarted
         if (furnace != null && furnace.getStatus().isStarted())
         {
             Set<Class<T>> types = furnace.getAddonRegistry().getExportedTypes(type);
