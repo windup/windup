@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Iterator;
 
 import javax.inject.Inject;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.engine.visitor.reporter.html.model.LinkName;
@@ -43,16 +45,9 @@ public class NamingUtility
 
     public String getApplicationName()
     {
-        ApplicationReference reference = null;
-        // get an application reference...
-        Iterator<ApplicationReference> applicationReferences = applicationReferenceDao.getAll().iterator();
-        if (applicationReferences.hasNext())
-        {
-            reference = applicationReferences.next();
-        }
-        if (reference != null)
-        {
-            return reference.getArchive().getArchiveName();
+        for( ApplicationReference appRef : applicationReferenceDao.getAll() ){
+            if( appRef == null )  break;
+            return StringUtils.defaultIfBlank( appRef.getArchive().getArchiveName(),  "Unnamed" );
         }
         return "Unknown";
     }
