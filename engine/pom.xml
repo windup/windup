@@ -20,5 +20,6 @@
         <module>tests</module>
         <module>utils</module>
         <module>rules</module>
+        <module>reporting</module>
     </modules>
 </project>
