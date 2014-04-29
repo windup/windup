@@ -1,9 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <groupId>pegdown</groupId>
     <artifactId>pegdown</artifactId>
     <version>1.2.2-DAVIS</version>
+    
     <dependencies>
         <dependency>
             <groupId>org.parboiled</groupId>
@@ -23,12 +25,16 @@
             <scope>test</scope>
         </dependency>
 
+
+        <!-- Moved to root pom. 
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.5</version>
             <scope>test</scope>
         </dependency>
+        -->
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -11,11 +11,8 @@
     <name>Legacy Windup - Application - Metadata</name>
 
     <dependencies>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
-        </dependency>
+        
+        <!-- TODO: Remove - we have slf4j + log4j -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -23,11 +20,19 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <!-- Moved to root pom. 
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+        -->
+        
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>

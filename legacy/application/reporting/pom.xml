@@ -11,13 +11,14 @@
     <name>Legacy Windup - Application - Reporting</name>
 
     <dependencies>
+        
+        <!-- Moved to root pom. 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.freemarker</groupId>
@@ -25,11 +26,14 @@
             <version>2.3.19</version>
         </dependency>
 
+        <!-- MS Office support -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>3.8</version>
         </dependency>
+        
+        <!-- Moved to root pom. 
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -40,12 +44,12 @@
             <artifactId>commons-lang</artifactId>
             <version>2.4</version>
         </dependency>
+        -->
+        <!-- TODO: Remove - we have slf4j + log4j -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -54,6 +58,7 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
