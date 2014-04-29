@@ -8,10 +8,10 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>windup-service</artifactId>
+    <artifactId>windup-web</artifactId>
     <packaging>war</packaging>
 
-    <name>Legacy Windup - Application - Web Service</name>
+    <name>Legacy Windup App - Web</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,7 +44,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Compiler -->
+            <!-- Compiler. Set in root pom.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -53,6 +53,7 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+            -->
 
             <!-- War -->
             <plugin>
