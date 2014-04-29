@@ -16,7 +16,6 @@ public class FurnaceServiceLocator implements ServiceLocator
     {
         List<Class<T>> result = new ArrayList<>();
 
-        // the BeanManager may be not available during Rewrite startup
         Furnace furnace = FurnaceHolder.getFurnace();
         if (furnace != null && furnace.getStatus().isStarted())
         {
