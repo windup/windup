@@ -88,14 +88,14 @@ public class WindupMain {
 				if (line.hasOption("javaPkgs")) {
 				    String javaPkgs = line.getOptionValue("javaPkgs");
 				    if (javaPkgs != null) {
-				        String[] javaPkgsArr = javaPkgs.split(javaPkgs);
+				        String[] javaPkgsArr = javaPkgs.split(":");
 				        settings.setIncludeJavaPackageSignature(Arrays.asList(javaPkgsArr));
 				    }
 				}
 				if (line.hasOption("excludePkgs")) {
 				    String excludeJavaPkgs = line.getOptionValue("excludePkgs");
 				    if (excludeJavaPkgs != null) {
-                        String[] excludeJavaPkgsArr = excludeJavaPkgs.split(excludeJavaPkgs);
+                        String[] excludeJavaPkgsArr = excludeJavaPkgs.split(":");
                         settings.setExcludeJavaPackageSignature(Arrays.asList(excludeJavaPkgsArr));
                     }
 				}
