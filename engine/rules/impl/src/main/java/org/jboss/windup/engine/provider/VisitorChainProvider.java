@@ -6,6 +6,9 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.engine.visitor.GraphVisitor;
 
+/**
+ *  Gets the GraphVisitor instances from Forge and provides a sorted copy of that list.
+ */
 public class VisitorChainProvider
 {
     //@Inject private WindupContext context;
@@ -13,6 +16,9 @@ public class VisitorChainProvider
     @Inject private Imported<GraphVisitor> visitors;
 
     
+    /**
+     *  Returns a sorted copy of GraphVisitor instances list from Forge.
+     */
     public List<GraphVisitor> getSortedVisitorChain()
     {
         List<GraphVisitor> chain = Lists.newArrayList( this.visitors );
