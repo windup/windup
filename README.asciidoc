@@ -1,0 +1,75 @@
+== Windup 2.0
+
+Get involved at: http://windup.jboss.org
+
+* Forums: https://community.jboss.org/en/windup
+* Users Mailing List: windup-users@lists.jboss.org
+* Dev Mailing List: windup-dev@lists.jboss.org
+* Commits Mailing List: windup-commits@lists.jboss.org
+
+Installing
+----------
+
+To install an alpha release of Windup, simply take the following steps:
+
+1. Install Forge 2 from:
+https://github.com/forge/core#jboss-forge-20
+
+2. Run the `forge` cli or Eclipse plugin with `CTRL+4`
++
+[source,text]
+----
+localhost:Desktop user$ forge
+    _____                    
+   |  ___|__  _ __ __ _  ___ 
+   | |_ / _ \| `__/ _` |/ _ \  \\
+   |  _| (_) | | | (_| |  __/  //
+   |_|  \___/|_|  \__, |\___| 
+                   |___/      
+JBoss Forge, version [ 2.4.2-SNAPSHOT ] - JBoss, by Red Hat, Inc. [ http://forge.jboss.org ]
+----
+
+3. Run "addon-install" with the following parameters:
++
+[source,text]
+----
+[bin]$ addon-install
+Group ID (The value of <groupId> from the addon's pom.xml):  org.jboss.windup.legacy.application
+Name (The value of <artifactId> from the addon's pom.xml):  legacy-windup
+Version (The value of <version> from the addon's pom.xml):  2.0.0.Alpha1
+----
+
+4. Run windup-1x via forge. Example:
++
+[source,text]
+----
+run-windup-1-x --input input --output output --packages pkg --excludeBuiltinRules --supplementalRulesFolder /path/to/my/rules
+----
++
+TIP:: A supplemental rules folder should contain all rules with the naming convention (*.windup.xml).
+
+For reference, if all goes well, your terminal should look something like this:
+
+[source,text]
+----
+localhost:Desktop user$ forge
+    _____                    
+   |  ___|__  _ __ __ _  ___ 
+   | |_ / _ \| `__/ _` |/ _ \  \\
+   |  _| (_) | | | (_| |  __/  //
+   |_|  \___/|_|  \__, |\___| 
+                   |___/      
+JBoss Forge, version [ 2.4.2-SNAPSHOT ] - JBoss, by Red Hat, Inc. [ http://forge.jboss.org ]
+
+[Desktop]$ 
+[Desktop]$ addon-install --groupId org.jboss.windup.legacy.application --name legacy-windup --version 2.0.0.Alpha1
+***SUCCESS*** Addon org.jboss.windup.legacy.application:legacy-windup,2.0.0.Alpha1 was installed successfully.
+[Desktop]$ 
+[Desktop]$ 
+[Desktop]$ run-windup-1-x 
+--input  --output  --packages  --excludePackages  --fetchRemote  --sourceMode  --targetPlatform  --supplementalRulesFolder  --excludeBuiltinRules  
+[Desktop]$ 
+[Desktop]$ run-windup-1-x 
+----
+
+You can also get information on the command by typing `man run-windup-1-x`
