@@ -39,7 +39,7 @@ public class GraphRDFRendererImpl implements GraphRDFRenderer
             sail.initialize();
 
             FileOutputStream fos = new FileOutputStream(outputFile);
-            RDFWriter writer = Rio.createWriter(RDFFormat.TURTLE, fos);
+            RDFWriter writer = Rio.createWriter(RDFFormat.NTRIPLES, fos);
             writer.startRDF();
 
             SailConnection sc = null;
