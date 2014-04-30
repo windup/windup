@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.WindupContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

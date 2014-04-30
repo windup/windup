@@ -7,8 +7,6 @@ import org.apache.bcel.classfile.EmptyVisitor;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.JavaMethodDao;
 import org.jboss.windup.graph.model.resource.Resource;
