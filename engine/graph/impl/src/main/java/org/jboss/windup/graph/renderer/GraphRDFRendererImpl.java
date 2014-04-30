@@ -68,7 +68,6 @@ public class GraphRDFRendererImpl implements GraphRDFRenderer
                         Statement stmt = i.next();
                         if (stmt.getSubject() != null && stmt.getPredicate() != null && stmt.getObject() != null)
                         {
-                            LOG.info("Serializing statement: " + stmt);
                             writer.handleStatement(stmt);
                         }
                     }

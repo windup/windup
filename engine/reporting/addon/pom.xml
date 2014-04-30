@@ -11,6 +11,13 @@
   <name>Windup Engine - Reporting Addon</name>
   <dependencies>
     <dependency>
+      <groupId>org.jboss.windup.addon</groupId>
+      <artifactId>config</artifactId>
+      <version>${project.version}</version>
+      <classifier>forge-addon</classifier>
+    </dependency>
+  
+    <dependency>
       <groupId>org.jboss.forge.furnace.container</groupId>
       <artifactId>cdi</artifactId>
       <classifier>forge-addon</classifier>
