@@ -6,12 +6,13 @@
         <artifactId>windup-parent</artifactId>
         <groupId>org.jboss.windup</groupId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
+    
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-maven-plugin-test</artifactId>
-    <packaging>jar</packaging>
+    
     <name>Windup Maven Plugin Unit Test</name>
+    
     <build>
         <plugins>
             <plugin>
