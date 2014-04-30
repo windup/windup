@@ -43,7 +43,6 @@ public class NamingUtility
     public String getApplicationName()
     {
         for( ApplicationReference appRef : applicationReferenceDao.getAll() ){
-            if( appRef == null )  break;
             return StringUtils.defaultIfBlank( appRef.getArchive().getArchiveName(),  "Unnamed" );
         }
         return "Unknown";
