@@ -1,13 +1,10 @@
 package org.jboss.windup.engine.visitor.reporter.html.renderer;
 
 import java.io.File;
-import java.util.Iterator;
 
 import javax.inject.Inject;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.engine.visitor.reporter.html.model.LinkName;
 import org.jboss.windup.engine.visitor.reporter.html.model.Name;
 import org.jboss.windup.engine.visitor.reporter.html.model.ReportContext;

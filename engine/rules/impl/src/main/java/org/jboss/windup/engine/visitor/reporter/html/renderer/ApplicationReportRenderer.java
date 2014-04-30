@@ -14,7 +14,6 @@ import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.engine.visitor.reporter.html.model.ApplicationReport;
 import org.jboss.windup.engine.visitor.reporter.html.model.ArchiveReport;
 import org.jboss.windup.engine.visitor.reporter.html.model.ArchiveReport.ResourceReportRow;
-import org.jboss.windup.engine.visitor.reporter.html.model.ApplicationContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.Level;
 import org.jboss.windup.engine.visitor.reporter.html.model.SimpleName;
 import org.jboss.windup.engine.visitor.reporter.html.model.Tag;

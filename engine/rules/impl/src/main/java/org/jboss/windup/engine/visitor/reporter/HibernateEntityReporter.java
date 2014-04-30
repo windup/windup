@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
-import org.jboss.windup.graph.dao.HibernateConfigurationDao;
 import org.jboss.windup.graph.dao.HibernateEntityDao;
 import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
 import org.slf4j.Logger;
