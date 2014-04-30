@@ -3,7 +3,7 @@ package org.jboss.windup.engine;
 import java.util.List;
 import javax.inject.Inject;
 import org.jboss.windup.addon.engine.WindupProcessor;
-import org.jboss.windup.engine.provider.ListenerChainProvider;
+import org.jboss.windup.engine.provider.VisitorChainProvider;
 import org.jboss.windup.engine.visitor.GraphVisitor;
 import org.jboss.windup.graph.GraphContext;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ public class WindupProcessorImpl implements WindupProcessor
     
     @Inject private GraphContext graphContext;
 
-    @Inject private ListenerChainProvider provider;
+    @Inject private VisitorChainProvider provider;
 
     //@Inject private JavaClassDao javaClassDao;
 
@@ -34,9 +34,9 @@ public class WindupProcessorImpl implements WindupProcessor
     @Override
     public void execute()
     {
-        final List<GraphVisitor> visitorChain = this.provider.getListenerChain();
+        final List<GraphVisitor> visitorChain = this.provider.getSortedVisitorChain();
 
-        LOG.info("Executing: " + visitorChain.size() + " listeners...");
+        LOG.info("Executing: " + visitorChain.size() + " visitors...");
         for (final GraphVisitor visitor : visitorChain)
         {
             LOG.info("Processing: " + visitor + " - Class: " + visitor.getClass());

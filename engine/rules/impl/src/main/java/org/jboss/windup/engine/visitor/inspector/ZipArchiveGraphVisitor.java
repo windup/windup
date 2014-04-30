@@ -55,7 +55,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        // feed all file listeners...
+        // feed all file visitors...
         Set<String> extensionsSet = ZipUtil.getZipExtensions();
         String[] extensions = ZipUtil.getZipExtensions().toArray(new String[extensionsSet.size()]);
         for (FileResource file : fileDao.findArchiveEntryWithExtension(extensions))
