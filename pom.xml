@@ -102,6 +102,10 @@
     
     <dependencyManagement>
         <dependencies>
+            
+            <!-- Forge and Furnace -->
+            
+            <!-- Forge BOM -->
             <dependency>
                 <groupId>org.jboss.forge</groupId>
                 <artifactId>forge-bom</artifactId>
@@ -109,12 +113,26 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Furnace CDI -->
             <dependency>
                 <groupId>org.jboss.forge.furnace.container</groupId>
                 <artifactId>cdi</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${version.furnace}</version>
                 <scope>provided</scope>
+                <!-- Not propagated to submodules :/ -->
+                <exclusions>
+                    <exclusion> <groupId>org.slf4j</groupId> <artifactId>slf4j-jdk14</artifactId> </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- Furnace CDI impl -->
+            <dependency>
+                <groupId>org.jboss.forge.furnace.container</groupId>
+                <artifactId>cdi-impl</artifactId>
+                <version>${version.furnace}</version>
+                <exclusions>
+                    <exclusion> <groupId>org.slf4j</groupId> <artifactId>slf4j-jdk14</artifactId> </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jboss.forge.furnace.test</groupId>
@@ -128,6 +146,7 @@
                 <version>${version.furnace}</version>
                 <scope>test</scope>
             </dependency>
+            
         </dependencies>
     </dependencyManagement>
     

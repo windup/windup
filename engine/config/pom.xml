@@ -67,6 +67,8 @@
                 <version>${project.version}</version>
                 <classifier>forge-addon</classifier>
             </dependency>
+            
+            <!-- Furnace CDI redefined? -->
             <dependency>
                 <groupId>org.jboss.forge.furnace.container</groupId>
                 <artifactId>cdi</artifactId>

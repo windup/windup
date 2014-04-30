@@ -18,12 +18,14 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Furnace -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jboss.windup.addon</groupId>
             <artifactId>graph-api</artifactId>
