@@ -148,20 +148,21 @@ public class WindupWizard implements UIWizard, UICommand
             
             File userProvidedRulesDirectory = getUserProvidedRulesFolder();
             options.setSupplementalRulesDirectory(userProvidedRulesDirectory);
-            options.setExcludeBuiltinRules(excludeBuiltinRules.getValue().booleanValue());
+            options.setExcludeBuiltinRules(excludeBuiltinRules.getValue());
 
-            options.setFetchRemote(fetchRemote.getValue().booleanValue());
+            options.setFetchRemote(fetchRemote.getValue());
             options.setExcludeJavaPackageSignature((List<String>) excludePackages.getValue());
-            options.setSource(sourceMode.getValue().booleanValue());
+            options.setSource(sourceMode.getValue());
             options.setTargetPlatform(targetPlatform.getValue());
 
             windup.execute(options);
             return Results.success();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            log.log(Level.SEVERE, "Could not run Windup", e);
-            return Results.fail("Could not run Windup", e);
+            final String msg = "Could not run Windup: " + ex.getMessage();
+            log.log(Level.SEVERE, msg, ex);
+            return Results.fail(msg, ex);
         }
     }
 

@@ -88,8 +88,10 @@ public class WindupWizardTest
                 Assert.assertFalse(controller.canExecute());
                 controller.setValueFor("packages", "org.jboss");
                 Assert.assertTrue(controller.canExecute());
+                
                 Result result = controller.execute();
-                Assert.assertFalse(result instanceof Failed);
+                final String msg = "controller.execute() 'Failed': " + result.getMessage();
+                Assert.assertFalse(msg, result instanceof Failed);
             }
             finally
             {
