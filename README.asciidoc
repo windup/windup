@@ -7,8 +7,8 @@ Get involved at: http://windup.jboss.org
 * Dev Mailing List: windup-dev@lists.jboss.org
 * Commits Mailing List: windup-commits@lists.jboss.org
 
-Installation & Usage
-------------------
+Installation and Usage
+----------------------
 
 To install an alpha release of Windup, simply take the following steps:
 
