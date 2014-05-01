@@ -7,24 +7,34 @@
 package org.jboss.windup.addon.config.condition;
 
 import org.jboss.windup.addon.config.Selectable;
+import org.jboss.windup.addon.config.SelectableCondition;
+import org.jboss.windup.addon.config.spi.SelectionFactory;
+import org.ocpsoft.common.services.ServiceLoader;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Selection
 {
-    public static <T extends Selectable> T exists(Class<T> selectable, String var)
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> CONDITION exists(Class<SELECTABLE> selectable, String var)
     {
-        return null;
+        return getSelectionFactory().createQuery(selectable);
     }
 
-    public static <T extends Selectable> T current(Class<T> selectable)
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE current(
+                Class<SELECTABLE> selectable)
     {
-        return null;
+        return getSelectionFactory().getCurrent(selectable);
     }
 
-    public static <T extends Selectable> T get(Class<T> selectable, String var)
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE get(
+                Class<SELECTABLE> selectable, String var)
     {
-        return null;
+        return getSelectionFactory().get(selectable);
+    }
+
+    private static SelectionFactory getSelectionFactory()
+    {
+        return (SelectionFactory) ServiceLoader.load(SelectionFactory.class).iterator().next();
     }
 }

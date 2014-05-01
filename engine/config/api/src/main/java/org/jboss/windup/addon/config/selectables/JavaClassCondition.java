@@ -4,12 +4,14 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config;
+package org.jboss.windup.addon.config.selectables;
+
+import org.jboss.windup.addon.config.SelectableCondition;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface Selectable<CONDITION extends SelectableCondition<SELECTABLE, CONDITION>, SELECTABLE extends Selectable<CONDITION, SELECTABLE>>
+public interface JavaClassCondition extends SelectableCondition<JavaClass, JavaClassCondition>
 {
-    Class<CONDITION> getSelectableConditionType();
+    JavaClassCondition named(String string);
 }

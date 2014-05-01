@@ -7,7 +7,6 @@
 package org.jboss.windup.addon.config.selectables;
 
 import org.jboss.windup.addon.config.Selectable;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
  * This type probably needs to be bonded / refactored into / make use of the current
@@ -15,9 +14,8 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaClass extends ConditionBuilder, Selectable
+public interface JavaClass extends Selectable<JavaClassCondition, JavaClass>
 {
-    JavaClass named(String string);
 
     String getName();
 }

@@ -6,13 +6,17 @@
  */
 package org.jboss.windup.addon.config.selectables;
 
-import org.jboss.windup.addon.config.Selectable;
+import org.jboss.windup.addon.config.SelectableCondition;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface JavaMethod extends Selectable<JavaMethodCondition, JavaMethod>
+public interface JavaMethodCondition extends SelectableCondition<JavaMethod, JavaMethodCondition>
 {
-    String getName();
+    JavaMethodCondition in(JavaClass current);
+
+    JavaMethodCondition withSignature(String signature);
+
+    JavaMethodCondition definedBy(String string);
 }

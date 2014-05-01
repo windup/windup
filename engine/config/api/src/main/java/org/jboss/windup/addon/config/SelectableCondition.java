@@ -6,10 +6,13 @@
  */
 package org.jboss.windup.addon.config;
 
+import org.ocpsoft.rewrite.config.Condition;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface Selectable<CONDITION extends SelectableCondition<SELECTABLE, CONDITION>, SELECTABLE extends Selectable<CONDITION, SELECTABLE>>
+public interface SelectableCondition<SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>>
+            extends Condition
 {
-    Class<CONDITION> getSelectableConditionType();
+    Class<SELECTABLE> getSelectableType();
 }
