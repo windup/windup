@@ -32,5 +32,23 @@
       <version>${project.version}</version>
       <classifier>forge-addon</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.windup.addon</groupId>
+      <artifactId>config-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.windup.addon</groupId>
+      <artifactId>config-api</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.windup.addon</groupId>
+      <artifactId>config-impl</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
