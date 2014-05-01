@@ -7,6 +7,9 @@
 package org.jboss.windup.addon.config.operation;
 
 import org.jboss.windup.addon.config.selectables.Selectable;
+import org.jboss.windup.addon.config.selectables.SelectableCondition;
+import org.jboss.windup.addon.config.spi.SelectionFactory;
+import org.ocpsoft.common.services.ServiceLoader;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;
@@ -20,9 +23,22 @@ import org.ocpsoft.rewrite.event.Rewrite;
 public class Iteration extends DefaultOperationBuilder
 {
 
-    public static <T extends Selectable> Iteration over(Class<T> selectable, String source, String var)
+    private final Class<? extends Selectable<?, ?>> type;
+    private final String source;
+    private final String var;
+
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iteration(
+                Class<SELECTABLE> type, String source, String var)
     {
-        return null;
+        this.type = type;
+        this.source = source;
+        this.var = var;
+    }
+
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iteration over(
+                Class<SELECTABLE> selectable, String source, String var)
+    {
+        return new Iteration(selectable, source, var);
     }
 
     public Iteration when(Condition condition)
@@ -45,4 +61,8 @@ public class Iteration extends DefaultOperationBuilder
 
     }
 
+    private static SelectionFactory getSelectionFactory()
+    {
+        return (SelectionFactory) ServiceLoader.load(SelectionFactory.class).iterator().next();
+    }
 }
