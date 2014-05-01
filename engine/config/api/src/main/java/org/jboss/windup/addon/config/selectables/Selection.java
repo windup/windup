@@ -14,9 +14,10 @@ import org.ocpsoft.common.services.ServiceLoader;
  */
 public class Selection
 {
-    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> CONDITION exists(Class<SELECTABLE> selectable, String var)
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> CONDITION exists(
+                Class<SELECTABLE> selectable, String var)
     {
-        return getSelectionFactory().createQuery(selectable);
+        return getSelectionFactory().createQuery(selectable, var);
     }
 
     public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE current(
@@ -28,7 +29,7 @@ public class Selection
     public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE get(
                 Class<SELECTABLE> selectable, String var)
     {
-        return getSelectionFactory().get(selectable);
+        return getSelectionFactory().get(selectable, var);
     }
 
     private static SelectionFactory getSelectionFactory()

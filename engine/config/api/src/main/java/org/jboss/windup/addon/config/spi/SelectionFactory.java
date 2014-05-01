@@ -16,11 +16,11 @@ import org.jboss.windup.addon.config.selectables.SelectableCondition;
 public interface SelectionFactory
 {
     public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> CONDITION createQuery(
-                Class<SELECTABLE> selectable);
+                Class<SELECTABLE> type, String var);
 
     public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE get(
-                Class<SELECTABLE> selectable);
+                Class<SELECTABLE> type, String var);
 
     public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE getCurrent(
-                Class<SELECTABLE> selectable);
+                Class<SELECTABLE> type);
 }

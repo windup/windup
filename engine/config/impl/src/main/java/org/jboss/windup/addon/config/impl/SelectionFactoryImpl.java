@@ -24,14 +24,17 @@ public class SelectionFactoryImpl implements SelectionFactory
 
     @Override
     public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> CONDITION createQuery(
-                Class<SELECTABLE> selectable)
+                Class<SELECTABLE> selectable, String var)
     {
-        return null;
+        SELECTABLE selectableInstance = registry.getServices(selectable).get();
+        Class<CONDITION> conditionType = selectableInstance.getSelectableConditionType();
+        CONDITION conditionInstance = registry.getServices(conditionType).get();
+        return conditionInstance;
     }
 
     @Override
     public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE get(
-                Class<SELECTABLE> selectable)
+                Class<SELECTABLE> selectable, String var)
     {
         return null;
     }
