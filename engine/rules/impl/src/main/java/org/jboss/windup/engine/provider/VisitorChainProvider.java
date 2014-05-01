@@ -15,7 +15,7 @@ public class VisitorChainProvider
     private Imported<GraphVisitor> visitors;
 
     /**
-     * Returns a sorted copy of GraphVisitor instances list from Forge.
+     * Returns a sorted copy of GraphVisitor instances list from Furnace.
      */
     public List<GraphVisitor> getSortedVisitorChain()
     {
