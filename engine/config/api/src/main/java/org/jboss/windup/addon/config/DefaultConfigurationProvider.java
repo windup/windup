@@ -8,11 +8,11 @@ package org.jboss.windup.addon.config;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.jboss.windup.addon.config.condition.Selection;
 import org.jboss.windup.addon.config.operation.Iteration;
 import org.jboss.windup.addon.config.operation.Log;
 import org.jboss.windup.addon.config.selectables.JavaClass;
 import org.jboss.windup.addon.config.selectables.JavaMethod;
+import org.jboss.windup.addon.config.selectables.Selection;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.logging.Logger.Level;
 import org.ocpsoft.rewrite.config.Configuration;

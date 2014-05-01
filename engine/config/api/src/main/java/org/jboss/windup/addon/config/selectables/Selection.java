@@ -4,10 +4,8 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.condition;
+package org.jboss.windup.addon.config.selectables;
 
-import org.jboss.windup.addon.config.selectables.Selectable;
-import org.jboss.windup.addon.config.selectables.SelectableCondition;
 import org.jboss.windup.addon.config.spi.SelectionFactory;
 import org.ocpsoft.common.services.ServiceLoader;
 
