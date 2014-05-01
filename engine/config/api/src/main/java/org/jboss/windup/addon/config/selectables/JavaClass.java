@@ -6,7 +6,6 @@
  */
 package org.jboss.windup.addon.config.selectables;
 
-import org.jboss.windup.addon.config.Selectable;
 
 /**
  * This type probably needs to be bonded / refactored into / make use of the current

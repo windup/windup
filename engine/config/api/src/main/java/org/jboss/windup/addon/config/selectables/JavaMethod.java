@@ -6,7 +6,6 @@
  */
 package org.jboss.windup.addon.config.selectables;
 
-import org.jboss.windup.addon.config.Selectable;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

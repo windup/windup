@@ -9,8 +9,8 @@ package org.jboss.windup.addon.config.impl;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.windup.addon.config.Selectable;
-import org.jboss.windup.addon.config.SelectableCondition;
+import org.jboss.windup.addon.config.selectables.Selectable;
+import org.jboss.windup.addon.config.selectables.SelectableCondition;
 import org.jboss.windup.addon.config.spi.SelectionFactory;
 
 /**

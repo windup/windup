@@ -6,7 +6,7 @@
  */
 package org.jboss.windup.addon.config.operation;
 
-import org.jboss.windup.addon.config.Selectable;
+import org.jboss.windup.addon.config.selectables.Selectable;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;

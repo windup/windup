@@ -6,8 +6,8 @@
  */
 package org.jboss.windup.addon.config.spi;
 
-import org.jboss.windup.addon.config.Selectable;
-import org.jboss.windup.addon.config.SelectableCondition;
+import org.jboss.windup.addon.config.selectables.Selectable;
+import org.jboss.windup.addon.config.selectables.SelectableCondition;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
