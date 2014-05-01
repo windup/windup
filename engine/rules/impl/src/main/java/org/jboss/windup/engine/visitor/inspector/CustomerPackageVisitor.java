@@ -44,7 +44,7 @@ public class CustomerPackageVisitor extends AbstractGraphVisitor {
         //for all rules....
         
         for(String packagePattern : packagePatterns) {
-            for(final org.jboss.windup.graph.model.resource.JavaClass entry : javaClassDao.findByJavaClassPattern(packagePattern)) {
+            for(final org.jboss.windup.graph.model.resource.JavaClassModel entry : javaClassDao.findByJavaClassPattern(packagePattern)) {
                 visitJavaClass(entry);
             }
         }
@@ -53,7 +53,7 @@ public class CustomerPackageVisitor extends AbstractGraphVisitor {
     
 
     @Override
-    public void visitJavaClass(org.jboss.windup.graph.model.resource.JavaClass entry) {
+    public void visitJavaClass(org.jboss.windup.graph.model.resource.JavaClassModel entry) {
         LOG.info("Customer Package: "+entry.getQualifiedName());
         javaClassDao.markAsCustomerPackage(entry);
     }

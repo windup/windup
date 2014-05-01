@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.DoctypeDao;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class DoctypeReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (DoctypeMeta doctype : doctypeDao.getAll())
+        for (DoctypeMetaModel doctype : doctypeDao.getAll())
         {
             LOG.info("Doctype: ");
             LOG.info("  - publicId [" + doctype.getPublicId() + "]");

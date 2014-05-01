@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,27 +39,27 @@ public class BlacklistCandidateVisitor extends AbstractGraphVisitor {
         //for all rules....
         
         for(Pattern p : patterns) {
-            for(final org.jboss.windup.graph.model.resource.JavaClass entry : javaClassDao.findByJavaClassPattern(p.pattern())) {
+            for(final org.jboss.windup.graph.model.resource.JavaClassModel entry : javaClassDao.findByJavaClassPattern(p.pattern())) {
                 visitJavaClass(entry);
             }
         }
         javaClassDao.commit();
         
-        for(JavaClass clz : javaClassDao.findCandidateBlacklistClasses()) {
+        for(JavaClassModel clz : javaClassDao.findCandidateBlacklistClasses()) {
             LOG.info("Leverages Blacklist: "+clz.getQualifiedName());
-            for(JavaClass p : clz.providesForJavaClass()) {
+            for(JavaClassModel p : clz.providesForJavaClass()) {
                 LOG.info(" -- Provides for: "+p.getQualifiedName());
             }
         }
         
-        for(JavaClass clz : javaClassDao.findClassesLeveragingCandidateBlacklists()) {
+        for(JavaClassModel clz : javaClassDao.findClassesLeveragingCandidateBlacklists()) {
             LOG.info("With Candidate: "+clz.getQualifiedName());
         }
     }
     
 
     @Override
-    public void visitJavaClass(org.jboss.windup.graph.model.resource.JavaClass entry) {
+    public void visitJavaClass(org.jboss.windup.graph.model.resource.JavaClassModel entry) {
         LOG.info("Blacklisting: "+entry.getQualifiedName());
         javaClassDao.markAsBlacklistCandidate(entry);
     }

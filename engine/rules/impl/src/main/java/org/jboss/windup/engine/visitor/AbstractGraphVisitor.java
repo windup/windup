@@ -4,25 +4,25 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.windup.graph.model.meta.JarManifest;
-import org.jboss.windup.graph.model.meta.PropertiesMeta;
-import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
-import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
-import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
-import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
-import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
-import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
-import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
-import org.jboss.windup.graph.model.resource.EarArchive;
-import org.jboss.windup.graph.model.resource.FileResource;
-import org.jboss.windup.graph.model.resource.JarArchive;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.Resource;
-import org.jboss.windup.graph.model.resource.WarArchive;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.meta.PropertiesMetaModel;
+import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacetModel;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
+import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
+import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacetModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
+import org.jboss.windup.graph.model.resource.EarArchiveModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.WarArchiveModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 public abstract class AbstractGraphVisitor implements GraphVisitor
 {
@@ -37,115 +37,115 @@ public abstract class AbstractGraphVisitor implements GraphVisitor
     }
 
     @Override
-    public void visitResource(Resource entry)
+    public void visitResource(ResourceModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitFile(FileResource entry)
+    public void visitFile(FileResourceModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitArchive(ArchiveResource entry)
+    public void visitArchive(ArchiveResourceModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitArchiveEntry(ArchiveEntryResource entry)
+    public void visitArchiveEntry(ArchiveEntryResourceModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitEarArchive(EarArchive entry)
+    public void visitEarArchive(EarArchiveModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitJarArchive(JarArchive entry)
+    public void visitJarArchive(JarArchiveModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitWarArchive(WarArchive entry)
+    public void visitWarArchive(WarArchiveModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitJavaClass(JavaClass entry)
+    public void visitJavaClass(JavaClassModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitEjbEntity(EjbEntityFacet entry)
+    public void visitEjbEntity(EjbEntityFacetModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitEjbService(EjbSessionBeanFacet entry)
+    public void visitEjbService(EjbSessionBeanFacetModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitMessageDrivenBean(MessageDrivenBeanFacet entry)
+    public void visitMessageDrivenBean(MessageDrivenBeanFacetModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitEjbEntity(SpringBeanFacet entry)
+    public void visitEjbEntity(SpringBeanFacetModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitXmlResource(XmlResource entry)
+    public void visitXmlResource(XmlResourceModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitEjbConfiguration(EjbConfigurationFacet entry)
+    public void visitEjbConfiguration(EjbConfigurationFacetModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitSpringConfiguration(SpringConfigurationFacet entry)
+    public void visitSpringConfiguration(SpringConfigurationFacetModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitDoctype(DoctypeMeta entry)
+    public void visitDoctype(DoctypeMetaModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitManifest(JarManifest entry)
+    public void visitManifest(JarManifestModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitNamespace(NamespaceMeta entry)
+    public void visitNamespace(NamespaceMetaModel entry)
     {
         // nothing.
     }
 
     @Override
-    public void visitProperties(PropertiesMeta entry)
+    public void visitProperties(PropertiesMetaModel entry)
     {
         // nothing.
     }

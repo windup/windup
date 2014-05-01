@@ -21,15 +21,15 @@ import org.jboss.windup.graph.dao.EnvironmentReferenceDao;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.MessageDrivenDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.meta.EnvironmentReference;
-import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
-import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
-import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
-import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
-import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.EnvironmentReferenceModel;
+import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacetModel;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
+import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -83,7 +83,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (XmlResource xml : xmlDao.findByRootTag("ejb-jar"))
+        for (XmlResourceModel xml : xmlDao.findByRootTag("ejb-jar"))
         {
             Document doc = xml.asDocument();
 
@@ -112,7 +112,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
                 // if the version attribute isn't found, then grab it from the XSD name if we can.
                 if (StringUtils.isBlank(version))
                 {
-                    for (NamespaceMeta ns : xml.getNamespaces())
+                    for (NamespaceMetaModel ns : xml.getNamespaces())
                     {
                         LOG.debug("Namespace URI: " + ns.getURI());
                         if (StringUtils.equals(ns.getURI(), namespace))
@@ -129,10 +129,10 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         }
     }
 
-    public void visitXmlResource(XmlResource xml, Document doc, String versionInformation)
+    public void visitXmlResource(XmlResourceModel xml, Document doc, String versionInformation)
     {
         // check the root XML node.
-        EjbConfigurationFacet facet = ejbConfigurationDao.create();
+        EjbConfigurationFacetModel facet = ejbConfigurationDao.create();
         facet.setXmlFacet(xml);
 
         if (StringUtils.isNotBlank(versionInformation))
@@ -160,7 +160,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         }
     }
 
-    public boolean processDoctypeMatches(DoctypeMeta entry)
+    public boolean processDoctypeMatches(DoctypeMetaModel entry)
     {
         if (StringUtils.isNotBlank(entry.getPublicId()))
         {
@@ -181,7 +181,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         return false;
     }
 
-    public String processDoctypeVersion(DoctypeMeta entry)
+    public String processDoctypeVersion(DoctypeMetaModel entry)
     {
         String publicId = entry.getPublicId();
         String systemId = entry.getSystemId();
@@ -191,13 +191,13 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         return versionInformation;
     }
 
-    protected void processSessionBeanElement(EjbConfigurationFacet ejbConfig, Element element)
+    protected void processSessionBeanElement(EjbConfigurationFacetModel ejbConfig, Element element)
     {
-        JavaClass home = null;
-        JavaClass localHome = null;
-        JavaClass remote = null;
-        JavaClass local = null;
-        JavaClass ejb = null;
+        JavaClassModel home = null;
+        JavaClassModel localHome = null;
+        JavaClassModel remote = null;
+        JavaClassModel local = null;
+        JavaClassModel ejb = null;
 
         String ejbId = extractAttributeAndTrim(element, "id");
         String displayName = extractChildTagAndTrim(element, "display-name");
@@ -241,7 +241,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         String sessionType = extractChildTagAndTrim(element, "session-type");
         String transactionType = extractChildTagAndTrim(element, "transaction-type");
 
-        EjbSessionBeanFacet sessionBean = sessionBeanDao.create();
+        EjbSessionBeanFacetModel sessionBean = sessionBeanDao.create();
         sessionBean.setEjbId(ejbId);
         sessionBean.setDisplayName(displayName);
         sessionBean.setSessionBeanName(ejbName);
@@ -253,8 +253,8 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         sessionBean.setSessionType(sessionType);
         sessionBean.setTransactionType(transactionType);
 
-        List<EnvironmentReference> refs = processEnvironmentReference(element);
-        for (EnvironmentReference ref : refs)
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(element);
+        for (EnvironmentReferenceModel ref : refs)
         {
             sessionBean.addMeta(ref);
         }
@@ -263,9 +263,9 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         mdbDao.commit();
     }
 
-    protected void processMessageDrivenElement(EjbConfigurationFacet ejbConfig, Element element)
+    protected void processMessageDrivenElement(EjbConfigurationFacetModel ejbConfig, Element element)
     {
-        JavaClass ejb = null;
+        JavaClassModel ejb = null;
 
         String ejbId = extractAttributeAndTrim(element, "id");
         String displayName = extractChildTagAndTrim(element, "display-name");
@@ -281,7 +281,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         String sessionType = extractChildTagAndTrim(element, "session-type");
         String transactionType = extractChildTagAndTrim(element, "transaction-type");
 
-        MessageDrivenBeanFacet mdb = mdbDao.create();
+        MessageDrivenBeanFacetModel mdb = mdbDao.create();
         mdb.setJavaClassFacet(ejb);
         mdb.setMessageDrivenBeanName(ejbName);
         mdb.setDisplayName(displayName);
@@ -289,8 +289,8 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         mdb.setSessionType(sessionType);
         mdb.setTransactionType(transactionType);
 
-        List<EnvironmentReference> refs = processEnvironmentReference(element);
-        for (EnvironmentReference ref : refs)
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(element);
+        for (EnvironmentReferenceModel ref : refs)
         {
             mdb.addMeta(ref);
         }
@@ -299,11 +299,11 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         mdbDao.commit();
     }
 
-    protected void processEntityElement(EjbConfigurationFacet ejbConfig, Element element)
+    protected void processEntityElement(EjbConfigurationFacetModel ejbConfig, Element element)
     {
-        JavaClass localHome = null;
-        JavaClass local = null;
-        JavaClass ejb = null;
+        JavaClassModel localHome = null;
+        JavaClassModel local = null;
+        JavaClassModel ejb = null;
 
         String ejbId = extractAttributeAndTrim(element, "id");
         String displayName = extractChildTagAndTrim(element, "display-name");
@@ -333,7 +333,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         String persistenceType = extractChildTagAndTrim(element, "persistence-type");
 
         // create new entity facet.
-        EjbEntityFacet entity = ejbEntityDao.create();
+        EjbEntityFacetModel entity = ejbEntityDao.create();
         entity.setPersistenceType(persistenceType);
         entity.setEjbId(ejbId);
         entity.setDisplayName(displayName);
@@ -342,8 +342,8 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         entity.setEjbLocalHome(localHome);
         entity.setEjbLocal(local);
 
-        List<EnvironmentReference> refs = processEnvironmentReference(element);
-        for (EnvironmentReference ref : refs)
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(element);
+        for (EnvironmentReferenceModel ref : refs)
         {
             entity.addMeta(ref);
         }
@@ -352,9 +352,9 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
         ejbEntityDao.commit();
     }
 
-    protected List<EnvironmentReference> processEnvironmentReference(Element element)
+    protected List<EnvironmentReferenceModel> processEnvironmentReference(Element element)
     {
-        List<EnvironmentReference> resources = new LinkedList<EnvironmentReference>();
+        List<EnvironmentReferenceModel> resources = new LinkedList<EnvironmentReferenceModel>();
 
         // find JMS references...
         List<Element> queueReferences = $(element).find("resource-env-ref").get();
@@ -366,7 +366,7 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
             type = StringUtils.trim(type);
             name = StringUtils.trim(name);
 
-            EnvironmentReference ref = envRefDao.createEnvironmentReference(name, type);
+            EnvironmentReferenceModel ref = envRefDao.createEnvironmentReference(name, type);
             LOG.info("Adding name: " + name + ", type: " + type);
             resources.add(ref);
         }

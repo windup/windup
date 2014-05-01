@@ -20,10 +20,10 @@ import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.DoctypeDao;
 import org.jboss.windup.graph.dao.NamespaceDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
-import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -59,7 +59,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 	@Override
 	public void run() {
 		int i = 0;
-		for(final ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("xml")) {
+		for(final ArchiveEntryResourceModel entry : archiveEntryDao.findArchiveEntryWithExtension("xml")) {
 			visitArchiveEntry(entry);
 			
 			if(i % 10 == 0 && i > 0) {
@@ -70,7 +70,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 	}
 	
 	@Override
-	public void visitArchiveEntry(ArchiveEntryResource entry) {
+	public void visitArchiveEntry(ArchiveEntryResourceModel entry) {
 
 		//try and read the XML...
 		InputStream is = null;
@@ -85,7 +85,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 			
 			//if this is successful, then we know it is a proper XML file.
 			//set it to the graph as an XML file.
-			XmlResource resource = xmlResourceDao.create();
+			XmlResourceModel resource = xmlResourceDao.create();
 			resource.setResource(entry);
 
 			//get and index by the root tag.
@@ -94,15 +94,15 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 			
 			if(docType != null) {
 				//create the doctype from
-				Iterator<DoctypeMeta> metas = doctypeDao.findByProperties(docType.getPublicId(), docType.getSystemId());
+				Iterator<DoctypeMetaModel> metas = doctypeDao.findByProperties(docType.getPublicId(), docType.getSystemId());
 				if(metas.hasNext()) {
-					DoctypeMeta meta = metas.next();
+					DoctypeMetaModel meta = metas.next();
 					meta.addXmlResource(resource);
 					resource.addMeta(meta);
 				}
 				else {
 					LOG.debug("Adding doctype: "+docType);
-					DoctypeMeta meta = doctypeDao.create();
+					DoctypeMetaModel meta = doctypeDao.create();
 					meta.addXmlResource(resource);
 					meta.setBaseURI(docType.getBaseURI());
 					meta.setName(docType.getName());
@@ -114,7 +114,7 @@ public class XmlResourceVisitor extends AbstractGraphVisitor {
 			Map<String, String> namespaceSchemaLocations = XmlUtil.getSchemaLocations(parsedDocument); 
 			if(namespaceSchemaLocations != null && namespaceSchemaLocations.size() > 0) {
 				for(String namespace : namespaceSchemaLocations.keySet()) {
-					NamespaceMeta meta = namespaceDao.createNamespaceSchemaLocation(namespace, namespaceSchemaLocations.get(namespace));
+					NamespaceMetaModel meta = namespaceDao.createNamespaceSchemaLocation(namespace, namespaceSchemaLocations.get(namespace));
 					meta.addXmlResource(resource);
 				}
 			}

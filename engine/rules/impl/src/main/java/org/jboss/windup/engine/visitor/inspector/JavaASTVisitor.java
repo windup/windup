@@ -26,7 +26,7 @@ import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 
 /**
  * Walks the Java Source by creating an Abstract Syntax Tree and walking the results.
@@ -51,7 +51,7 @@ public class JavaASTVisitor extends AbstractGraphVisitor {
     
     @Override
     public void run() {
-        for(JavaClass clz : javaClassDao.getAll()) {
+        for(JavaClassModel clz : javaClassDao.getAll()) {
             if(clz.getSource() != null) {
                 visitJavaClass(clz);
             }
@@ -60,7 +60,7 @@ public class JavaASTVisitor extends AbstractGraphVisitor {
     
     
     @Override
-    public void visitJavaClass(JavaClass entry) {
+    public void visitJavaClass(JavaClassModel entry) {
         ASTParser parser = ASTParser.newParser(AST.JLS3);
         parser.setBindingsRecovery(true);
         parser.setResolveBindings(true);

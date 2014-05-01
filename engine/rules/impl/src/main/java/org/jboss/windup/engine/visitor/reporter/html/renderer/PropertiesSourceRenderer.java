@@ -22,9 +22,9 @@ import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.PropertiesDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
-import org.jboss.windup.graph.model.meta.PropertiesMeta;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.FileResource;
+import org.jboss.windup.graph.model.meta.PropertiesMetaModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class PropertiesSourceRenderer extends AbstractGraphVisitor
     {
         try
         {
-            for (PropertiesMeta entry : propertiesDao.getAll())
+            for (PropertiesMetaModel entry : propertiesDao.getAll())
             {
                 visitProperties(entry);
             }
@@ -85,7 +85,7 @@ public class PropertiesSourceRenderer extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitProperties(PropertiesMeta entry)
+    public void visitProperties(PropertiesMetaModel entry)
     {
         try
         {
@@ -117,17 +117,17 @@ public class PropertiesSourceRenderer extends AbstractGraphVisitor
 
             String fullName = null;
             String name = null;
-            if (entry.getResource() instanceof ArchiveEntryResource)
+            if (entry.getResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResource resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResource.class);
+                ArchiveEntryResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResourceModel.class);
                 name = resource.getArchiveEntry();
                 name = StringUtils.substringAfterLast(name, "/");
 
                 fullName = namingUtility.buildFullPath(resource);
             }
-            else if (entry.getResource() instanceof FileResource)
+            else if (entry.getResource() instanceof FileResourceModel)
             {
-                FileResource resource = graphUtil.castToType(entry.getResource().asVertex(), FileResource.class);
+                FileResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), FileResourceModel.class);
                 name = resource.asFile().getName();
 
                 fullName = name;
@@ -152,12 +152,12 @@ public class PropertiesSourceRenderer extends AbstractGraphVisitor
         }
     }
 
-    private void persistReportReference(PropertiesMeta metaResource, File reportLocation)
+    private void persistReportReference(PropertiesMetaModel metaResource, File reportLocation)
     {
-        FileResource fileReference = fileResourceDao.create();
+        FileResourceModel fileReference = fileResourceDao.create();
         fileReference.setFilePath(reportLocation.getAbsolutePath());
 
-        org.jboss.windup.graph.model.meta.report.SourceReport sourceReport = sourceReportDao.create();
+        org.jboss.windup.graph.model.meta.report.SourceReportModel sourceReport = sourceReportDao.create();
         sourceReport.setReportFile(fileReference);
         sourceReport.setResource(metaResource);
 

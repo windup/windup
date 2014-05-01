@@ -13,14 +13,14 @@ import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
-import org.jboss.windup.graph.model.meta.ApplicationReference;
-import org.jboss.windup.graph.model.meta.JarManifest;
-import org.jboss.windup.graph.model.meta.PropertiesMeta;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
-import org.jboss.windup.graph.model.resource.FileResource;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.ApplicationReferenceModel;
+import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.meta.PropertiesMetaModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,27 +42,27 @@ public class NamingUtility
 
     public String getApplicationName()
     {
-        for( ApplicationReference appRef : applicationReferenceDao.getAll() ){
+        for( ApplicationReferenceModel appRef : applicationReferenceDao.getAll() ){
             return StringUtils.defaultIfBlank( appRef.getArchive().getArchiveName(),  "Unnamed" );
         }
         return "Unknown";
     }
 
-    protected String buildFullPath(ArchiveEntryResource resource)
+    protected String buildFullPath(ArchiveEntryResourceModel resource)
     {
         String path = resource.getArchiveEntry();
 
-        ArchiveResource archive = resource.getArchive();
+        ArchiveResourceModel archive = resource.getArchive();
         while (archive != null)
         {
-            if (archive.getParentResource() instanceof ArchiveEntryResource)
+            if (archive.getParentResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResource parentEntry = graphUtil.castToType(archive.getParentResource().asVertex(), ArchiveEntryResource.class);
+                ArchiveEntryResourceModel parentEntry = graphUtil.castToType(archive.getParentResource().asVertex(), ArchiveEntryResourceModel.class);
                 // prepend
                 path = parentEntry.getArchiveEntry() + "/" + path;
                 archive = archive.getParentArchive();
             }
-            else if (archive.getParentResource() instanceof FileResource)
+            else if (archive.getParentResource() instanceof FileResourceModel)
             {
                 path = archive.getArchiveName() + "/" + path;
                 archive = archive.getParentArchive();
@@ -71,21 +71,21 @@ public class NamingUtility
         return path;
     }
 
-    protected String buildFullPath(ArchiveResource resource)
+    protected String buildFullPath(ArchiveResourceModel resource)
     {
         String path = resource.getArchiveName();
 
-        ArchiveResource archive = resource;
+        ArchiveResourceModel archive = resource;
         while (archive != null)
         {
-            if (archive.getParentResource() instanceof ArchiveEntryResource)
+            if (archive.getParentResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResource parentEntry = graphUtil.castToType(archive.getParentResource().asVertex(), ArchiveEntryResource.class);
+                ArchiveEntryResourceModel parentEntry = graphUtil.castToType(archive.getParentResource().asVertex(), ArchiveEntryResourceModel.class);
                 // prepend
                 path = parentEntry.getArchiveEntry() + "/" + path;
                 archive = archive.getParentArchive();
             }
-            else if (archive.getParentResource() instanceof FileResource)
+            else if (archive.getParentResource() instanceof FileResourceModel)
             {
                 path = archive.getArchiveName() + "/" + path;
                 archive = archive.getParentArchive();
@@ -94,14 +94,14 @@ public class NamingUtility
         return path;
     }
 
-    protected Name getReportJavaResource(File baseDirectory, File thisReport, JavaClass clz)
+    protected Name getReportJavaResource(File baseDirectory, File thisReport, JavaClassModel clz)
     {
         if (!sourceReportDao.hasSourceReport(clz))
         {
             return new SimpleName(clz.getQualifiedName());
         }
 
-        FileResource reportLocation = sourceReportDao.getResourceReport(clz);
+        FileResourceModel reportLocation = sourceReportDao.getResourceReport(clz);
 
         ReportContext toBase = new ReportContext(baseDirectory, thisReport);
         ReportContext fromBase = new ReportContext(baseDirectory, reportLocation.asFile());
@@ -110,14 +110,14 @@ public class NamingUtility
         return linked;
     }
 
-    protected Name getReportXmlResource(File baseDirectory, File thisReport, XmlResource xml)
+    protected Name getReportXmlResource(File baseDirectory, File thisReport, XmlResourceModel xml)
     {
         if (!sourceReportDao.hasSourceReport(xml))
         {
             return new SimpleName(getXmlResourceName(xml));
         }
 
-        FileResource reportLocation = sourceReportDao.getResourceReport(xml);
+        FileResourceModel reportLocation = sourceReportDao.getResourceReport(xml);
 
         ReportContext toBase = new ReportContext(baseDirectory, thisReport);
         ReportContext fromBase = new ReportContext(baseDirectory, reportLocation.asFile());
@@ -126,14 +126,14 @@ public class NamingUtility
         return linked;
     }
 
-    protected Name getReportPropertiesResource(File baseDirectory, File thisReport, PropertiesMeta properties)
+    protected Name getReportPropertiesResource(File baseDirectory, File thisReport, PropertiesMetaModel properties)
     {
         if (!sourceReportDao.hasSourceReport(properties))
         {
             return new SimpleName(getPropertiesResourceName(properties));
         }
 
-        FileResource reportLocation = sourceReportDao.getResourceReport(properties);
+        FileResourceModel reportLocation = sourceReportDao.getResourceReport(properties);
 
         ReportContext toBase = new ReportContext(baseDirectory, thisReport);
         ReportContext fromBase = new ReportContext(baseDirectory, reportLocation.asFile());
@@ -143,14 +143,14 @@ public class NamingUtility
         return linked;
     }
 
-    protected Name getReportManifestResource(File baseDirectory, File thisReport, JarManifest manifest)
+    protected Name getReportManifestResource(File baseDirectory, File thisReport, JarManifestModel manifest)
     {
         if (!sourceReportDao.hasSourceReport(manifest))
         {
             return new SimpleName(getManifestResourceName(manifest));
         }
 
-        FileResource reportLocation = sourceReportDao.getResourceReport(manifest);
+        FileResourceModel reportLocation = sourceReportDao.getResourceReport(manifest);
 
         ReportContext toBase = new ReportContext(baseDirectory, thisReport);
         ReportContext fromBase = new ReportContext(baseDirectory, reportLocation.asFile());
@@ -160,48 +160,48 @@ public class NamingUtility
         return linked;
     }
 
-    protected String getPropertiesResourceName(PropertiesMeta entry)
+    protected String getPropertiesResourceName(PropertiesMetaModel entry)
     {
-        if (entry.getResource() instanceof ArchiveEntryResource)
+        if (entry.getResource() instanceof ArchiveEntryResourceModel)
         {
-            ArchiveEntryResource resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResource.class);
+            ArchiveEntryResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResourceModel.class);
             return resource.getArchiveEntry();
         }
-        else if (entry.getResource() instanceof FileResource)
+        else if (entry.getResource() instanceof FileResourceModel)
         {
-            FileResource resource = graphUtil.castToType(entry.getResource().asVertex(), FileResource.class);
+            FileResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), FileResourceModel.class);
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");
         return null;
     }
 
-    protected String getManifestResourceName(JarManifest manifest)
+    protected String getManifestResourceName(JarManifestModel manifest)
     {
-        if (manifest.getResource() instanceof ArchiveEntryResource)
+        if (manifest.getResource() instanceof ArchiveEntryResourceModel)
         {
-            ArchiveEntryResource resource = graphUtil.castToType(manifest.getResource().asVertex(), ArchiveEntryResource.class);
+            ArchiveEntryResourceModel resource = graphUtil.castToType(manifest.getResource().asVertex(), ArchiveEntryResourceModel.class);
             return resource.getArchiveEntry();
         }
-        else if (manifest.getResource() instanceof FileResource)
+        else if (manifest.getResource() instanceof FileResourceModel)
         {
-            FileResource resource = graphUtil.castToType(manifest.getResource().asVertex(), FileResource.class);
+            FileResourceModel resource = graphUtil.castToType(manifest.getResource().asVertex(), FileResourceModel.class);
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");
         return null;
     }
 
-    protected String getXmlResourceName(XmlResource xml)
+    protected String getXmlResourceName(XmlResourceModel xml)
     {
-        if (xml.getResource() instanceof ArchiveEntryResource)
+        if (xml.getResource() instanceof ArchiveEntryResourceModel)
         {
-            ArchiveEntryResource resource = graphUtil.castToType(xml.getResource().asVertex(), ArchiveEntryResource.class);
+            ArchiveEntryResourceModel resource = graphUtil.castToType(xml.getResource().asVertex(), ArchiveEntryResourceModel.class);
             return resource.getArchiveEntry();
         }
-        else if (xml.getResource() instanceof FileResource)
+        else if (xml.getResource() instanceof FileResourceModel)
         {
-            FileResource resource = graphUtil.castToType(xml.getResource().asVertex(), FileResource.class);
+            FileResourceModel resource = graphUtil.castToType(xml.getResource().asVertex(), FileResourceModel.class);
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");

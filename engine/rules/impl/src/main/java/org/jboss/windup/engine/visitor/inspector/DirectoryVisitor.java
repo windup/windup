@@ -39,7 +39,7 @@ public class DirectoryVisitor extends AbstractGraphVisitor
     public void run()
     {
 
-        for (org.jboss.windup.graph.model.resource.FileResource file : fileDao.getAll())
+        for (org.jboss.windup.graph.model.resource.FileResourceModel file : fileDao.getAll())
         {
             visitFile(file);
         }
@@ -47,7 +47,7 @@ public class DirectoryVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitFile(org.jboss.windup.graph.model.resource.FileResource file)
+    public void visitFile(org.jboss.windup.graph.model.resource.FileResourceModel file)
     {
         // now, check to see whether it is a JAR, and republish the typed value.
         LOG.info(file.getFilePath());
@@ -60,7 +60,7 @@ public class DirectoryVisitor extends AbstractGraphVisitor
             Collection<File> found = FileUtils.listFiles(fileReference, FileFileFilter.FILE, TrueFileFilter.INSTANCE);
             for (File reference : found)
             {
-                org.jboss.windup.graph.model.resource.FileResource graphReference = fileDao.createByFilePath(reference
+                org.jboss.windup.graph.model.resource.FileResourceModel graphReference = fileDao.createByFilePath(reference
                             .getAbsolutePath());
                 visitFile(graphReference);
             }

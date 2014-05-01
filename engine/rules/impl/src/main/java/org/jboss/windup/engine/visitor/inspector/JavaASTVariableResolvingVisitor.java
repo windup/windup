@@ -52,7 +52,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.jboss.windup.engine.visitor.inspector.decompiler.ClassCandidate;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 
 /**
  * Runs through the source code and checks "type" uses against the blacklisted class entries.
@@ -72,7 +72,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
 
     private final CompilationUnit cu;
     private final WindupContext windupContext;
-    private final JavaClass javaClass;
+    private final JavaClassModel javaClass;
     private final JavaClassDao javaClassDao;
 
     private final Map<String, String> classNameToFullyQualified = new HashMap<String, String>();
@@ -82,7 +82,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
     Set<String> blacklistCandidates = new HashSet<String>();
 
     public JavaASTVariableResolvingVisitor(CompilationUnit cu, JavaClassDao javaClassDao, WindupContext context,
-                JavaClass javaClass)
+                JavaClassModel javaClass)
     {
         this.cu = cu;
         this.javaClassDao = javaClassDao;
@@ -91,13 +91,13 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
 
         // creates an in-memory cache if all qualified blacklist candidates.
         // this set is leveraged to determine whether to catalog.
-        for (JavaClass clz : javaClassDao.findLeveragedCandidateBlacklists(javaClass))
+        for (JavaClassModel clz : javaClassDao.findLeveragedCandidateBlacklists(javaClass))
         {
             LOG.info("Blacklist w/in Class[" + javaClass.getQualifiedName() + "]: " + clz.getQualifiedName());
             blacklistCandidates.add(clz.getQualifiedName());
         }
 
-        for (JavaClass javaImport : javaClass.getImports())
+        for (JavaClassModel javaImport : javaClass.getImports())
         {
             classNameToFullyQualified.put(StringUtils.substringAfterLast(javaImport.getQualifiedName(), "."),
                         javaImport.getQualifiedName());

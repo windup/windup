@@ -22,9 +22,9 @@ import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.JarManifestDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
-import org.jboss.windup.graph.model.meta.JarManifest;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.FileResource;
+import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
     {
         try
         {
-            for (JarManifest entry : manifestResources.getAll())
+            for (JarManifestModel entry : manifestResources.getAll())
             {
                 visitManifest(entry);
             }
@@ -85,7 +85,7 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitManifest(JarManifest entry)
+    public void visitManifest(JarManifestModel entry)
     {
 
         try
@@ -118,17 +118,17 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
 
             String fullName = null;
             String name = null;
-            if (entry.getResource() instanceof ArchiveEntryResource)
+            if (entry.getResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResource resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResource.class);
+                ArchiveEntryResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResourceModel.class);
                 name = resource.getArchiveEntry();
                 name = StringUtils.substringAfterLast(name, "/");
 
                 fullName = namingUtility.buildFullPath(resource);
             }
-            else if (entry.getResource() instanceof FileResource)
+            else if (entry.getResource() instanceof FileResourceModel)
             {
-                FileResource resource = graphUtil.castToType(entry.getResource().asVertex(), FileResource.class);
+                FileResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), FileResourceModel.class);
                 name = resource.asFile().getName();
 
                 fullName = name;
@@ -153,13 +153,13 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
         }
     }
 
-    private void persistReportReference(JarManifest xmlResource, File reportLocation)
+    private void persistReportReference(JarManifestModel xmlResource, File reportLocation)
     {
         // persist the file resource & reference to Java Class.
-        FileResource fileReference = fileResourceDao.create();
+        FileResourceModel fileReference = fileResourceDao.create();
         fileReference.setFilePath(reportLocation.getAbsolutePath());
 
-        org.jboss.windup.graph.model.meta.report.SourceReport sourceReport = sourceReportDao.create();
+        org.jboss.windup.graph.model.meta.report.SourceReportModel sourceReport = sourceReportDao.create();
         sourceReport.setReportFile(fileReference);
         sourceReport.setResource(xmlResource);
 

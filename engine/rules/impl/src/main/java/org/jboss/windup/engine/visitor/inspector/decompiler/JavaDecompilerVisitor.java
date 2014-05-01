@@ -14,9 +14,9 @@ import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.FileResource;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +61,7 @@ public class JavaDecompilerVisitor extends AbstractGraphVisitor
     {
         // count the iterations so that we can commit periodically.
         int count = 1;
-        for (org.jboss.windup.graph.model.resource.JavaClass candidate : javaClassDao.findClassesLeveragingCandidateBlacklists())
+        for (org.jboss.windup.graph.model.resource.JavaClassModel candidate : javaClassDao.findClassesLeveragingCandidateBlacklists())
         {
             LOG.info("Processing candidate: " + candidate.getQualifiedName());
             // now, we should see if the class matches the customer package...
@@ -73,20 +73,20 @@ public class JavaDecompilerVisitor extends AbstractGraphVisitor
 
             if (candidate.getSource() == null)
             {
-                Iterator<Resource> resources = candidate.getResources().iterator();
+                Iterator<ResourceModel> resources = candidate.getResources().iterator();
                 if (resources.hasNext())
                 {
                     File fileReference = null;
                     // check its type...
-                    Resource resource = resources.next();
-                    if (resource instanceof ArchiveEntryResource)
+                    ResourceModel resource = resources.next();
+                    if (resource instanceof ArchiveEntryResourceModel)
                     {
-                        ArchiveEntryResource ae = archiveEntryDao.castToType(resource.asVertex());
+                        ArchiveEntryResourceModel ae = archiveEntryDao.castToType(resource.asVertex());
                         fileReference = ae.asFile();
                     }
-                    else if (resource instanceof FileResource)
+                    else if (resource instanceof FileResourceModel)
                     {
-                        FileResource fr = fileDao.castToType(resource.asVertex());
+                        FileResourceModel fr = fileDao.castToType(resource.asVertex());
                         fileReference = fr.asFile();
                     }
 
@@ -106,7 +106,7 @@ public class JavaDecompilerVisitor extends AbstractGraphVisitor
                         LOG.warn("Expected: " + outputReference.getAbsolutePath() + " but the file doesn't exist.");
                     }
 
-                    FileResource fr = fileDao.create();
+                    FileResourceModel fr = fileDao.create();
                     fr.setFilePath(outputReference.getAbsolutePath());
                     candidate.setSource(fr);
 

@@ -1,21 +1,21 @@
 package org.jboss.windup.graph.dao;
 
 import org.jboss.windup.graph.dao.exception.ArchiveIndexReaderException;
-import org.jboss.windup.graph.model.resource.JarArchive;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
 
-public interface JarArchiveDao extends BaseDao<JarArchive> {
+public interface JarArchiveDao extends BaseDao<JarArchiveModel> {
 
-	public Iterable<JarArchive> findArchiveByMD5(String value) throws ArchiveIndexReaderException;
+	public Iterable<JarArchiveModel> findArchiveByMD5(String value) throws ArchiveIndexReaderException;
 
-	public Iterable<JarArchive> findArchiveBySHA1(String value) throws ArchiveIndexReaderException;
+	public Iterable<JarArchiveModel> findArchiveBySHA1(String value) throws ArchiveIndexReaderException;
 
-	public Iterable<JarArchive> findArchiveByName(String value) throws ArchiveIndexReaderException;
+	public Iterable<JarArchiveModel> findArchiveByName(String value) throws ArchiveIndexReaderException;
 	
-	public Iterable<JarArchive> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException;
+	public Iterable<JarArchiveModel> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException;
 
-	public Iterable<JarArchive> findUnusedJars();
+	public Iterable<JarArchiveModel> findUnusedJars();
 
-	public Iterable<JarArchive> findCircularReferences(JarArchive archive);
+	public Iterable<JarArchiveModel> findCircularReferences(JarArchiveModel archive);
 	
 	
 }

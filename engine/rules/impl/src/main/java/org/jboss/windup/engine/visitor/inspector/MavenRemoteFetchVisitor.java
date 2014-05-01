@@ -11,8 +11,8 @@ import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.MavenFacetDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.meta.xml.MavenFacet;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -53,7 +53,7 @@ public class MavenRemoteFetchVisitor extends AbstractGraphVisitor
     public void run()
     {
         // visit all XML files that have a maven namespace...
-        for (XmlResource entry : xmlResourceDao.containsNamespaceURI("http://maven.apache.org/POM/4.0.0"))
+        for (XmlResourceModel entry : xmlResourceDao.containsNamespaceURI("http://maven.apache.org/POM/4.0.0"))
         {
             visitXmlResource(entry);
         }
@@ -61,7 +61,7 @@ public class MavenRemoteFetchVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitXmlResource(XmlResource entry)
+    public void visitXmlResource(XmlResourceModel entry)
     {
         LOG.info("Resource: " + entry.getResource().asVertex());
         try
@@ -98,7 +98,7 @@ public class MavenRemoteFetchVisitor extends AbstractGraphVisitor
                 version = parentVersion;
             }
 
-            MavenFacet facet = mavenDao.createMaven(groupId, artifactId, version);
+            MavenFacetModel facet = mavenDao.createMaven(groupId, artifactId, version);
             facet.setXmlFacet(entry);
 
             if (StringUtils.isNotBlank(name))
@@ -121,7 +121,7 @@ public class MavenRemoteFetchVisitor extends AbstractGraphVisitor
             if (StringUtils.isNotBlank(parentGroupId))
             {
                 // parent
-                MavenFacet parent = mavenDao.createMaven(parentGroupId, parentArtifactId, parentVersion);
+                MavenFacetModel parent = mavenDao.createMaven(parentGroupId, parentArtifactId, parentVersion);
                 facet.setParent(parent);
             }
 
@@ -136,7 +136,7 @@ public class MavenRemoteFetchVisitor extends AbstractGraphVisitor
 
                 if (StringUtils.isNotBlank(dependencyGroupId))
                 {
-                    MavenFacet dependency = mavenDao.createMaven(dependencyGroupId, dependencyArtifactId,
+                    MavenFacetModel dependency = mavenDao.createMaven(dependencyGroupId, dependencyArtifactId,
                                 dependencyVersionId);
                     facet.addDependency(dependency);
                 }

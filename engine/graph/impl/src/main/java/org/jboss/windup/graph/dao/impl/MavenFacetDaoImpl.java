@@ -5,8 +5,8 @@ import java.util.Iterator;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.MavenFacetDao;
-import org.jboss.windup.graph.model.meta.xml.MavenFacet;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,16 +14,16 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 @Singleton
-public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacet> implements MavenFacetDao {
+public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacetModel> implements MavenFacetDao {
 
 	private static Logger LOG = LoggerFactory.getLogger(MavenFacetDaoImpl.class);
 	
 	public MavenFacetDaoImpl() {
-		super(MavenFacet.class);
+		super(MavenFacetModel.class);
 	}
 	
-	public MavenFacet createMaven(String groupId, String artifactId, String version) {
-		MavenFacet facet = findByGroupArtifactVersion(groupId, artifactId, version);
+	public MavenFacetModel createMaven(String groupId, String artifactId, String version) {
+		MavenFacetModel facet = findByGroupArtifactVersion(groupId, artifactId, version);
 		if(facet == null) {
 			facet = create();
 			facet.setMavenIdentifier(generateMavenKey(groupId, artifactId, version));
@@ -35,9 +35,9 @@ public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacet> implements MavenF
 		return facet;
 	}
 	
-	public MavenFacet findByGroupArtifactVersion(String groupId, String artifactId, String version) {
+	public MavenFacetModel findByGroupArtifactVersion(String groupId, String artifactId, String version) {
 		String key = generateMavenKey(groupId, artifactId, version);
-		MavenFacet facet = this.getByUniqueProperty("mavenIdentifier", key);
+		MavenFacetModel facet = this.getByUniqueProperty("mavenIdentifier", key);
 		
 		return facet;
 	}
@@ -47,11 +47,11 @@ public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacet> implements MavenF
 		return groupId+":"+artifactId+":"+version;
 	}
 	
-	public boolean isMavenConfiguration(XmlResource resource) {
+	public boolean isMavenConfiguration(XmlResourceModel resource) {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", this.typeValue).back("facet").iterator().hasNext();
     }
     
-    public MavenFacet getMavenConfigurationFromResource(XmlResource resource) {
+    public MavenFacetModel getMavenConfigurationFromResource(XmlResourceModel resource) {
         Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", this.typeValue).back("facet").iterator();
         if(v.hasNext()) {
             return context.getFramed().frame(v.next(), this.type);

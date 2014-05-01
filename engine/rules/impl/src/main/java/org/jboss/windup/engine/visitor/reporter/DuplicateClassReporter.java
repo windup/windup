@@ -5,9 +5,9 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +34,15 @@ public class DuplicateClassReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (JavaClass clz : javaClassDao.getAllDuplicateClasses())
+        for (JavaClassModel clz : javaClassDao.getAllDuplicateClasses())
         {
             LOG.info("Duplicate class: " + clz.getQualifiedName());
 
-            for (Resource resource : clz.getResources())
+            for (ResourceModel resource : clz.getResources())
             {
-                if (resource instanceof ArchiveEntryResource)
+                if (resource instanceof ArchiveEntryResourceModel)
                 {
-                    ArchiveEntryResource ar = (ArchiveEntryResource) resource;
+                    ArchiveEntryResourceModel ar = (ArchiveEntryResourceModel) resource;
                     LOG.info(" - Provided by: " + ar.getArchive().getArchiveName() + " -> " + clz.getQualifiedName());
                 }
             }

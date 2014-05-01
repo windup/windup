@@ -3,13 +3,13 @@ package org.jboss.windup.graph.dao.impl;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.EarArchiveDao;
-import org.jboss.windup.graph.model.resource.EarArchive;
+import org.jboss.windup.graph.model.resource.EarArchiveModel;
 
 @Singleton
-public class EarArchiveDaoImpl extends BaseDaoImpl<EarArchive> implements EarArchiveDao {
+public class EarArchiveDaoImpl extends BaseDaoImpl<EarArchiveModel> implements EarArchiveDao {
 
 	public EarArchiveDaoImpl() {
-		super(EarArchive.class);
+		super(EarArchiveModel.class);
 	}
 	
 }

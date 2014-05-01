@@ -14,9 +14,9 @@ import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
-import org.jboss.windup.graph.model.meta.ApplicationReference;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
-import org.jboss.windup.graph.model.resource.FileResource;
+import org.jboss.windup.graph.model.meta.ApplicationReferenceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
         // feed all file visitors...
         Set<String> extensionsSet = ZipUtil.getZipExtensions();
         String[] extensions = ZipUtil.getZipExtensions().toArray(new String[extensionsSet.size()]);
-        for (FileResource file : fileDao.findArchiveEntryWithExtension(extensions))
+        for (FileResourceModel file : fileDao.findArchiveEntryWithExtension(extensions))
         {
             visitFile(file);
         }
@@ -66,7 +66,7 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitFile(FileResource file) {
+    public void visitFile(FileResourceModel file) {
         //now, check to see whether it is a JAR, and republish the typed value.
         String filePath = file.getFilePath();
         
@@ -78,10 +78,10 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
                 
                 //go ahead and make it into an archive.
                 
-                ArchiveResource archive = archiveDao.create(null);
+                ArchiveResourceModel archive = archiveDao.create(null);
                 
                 //mark the archive as a top level archive.
-                ApplicationReference applicationReference = applicationReferenceDao.create();
+                ApplicationReferenceModel applicationReference = applicationReferenceDao.create();
                 applicationReference.setArchive(archive);
                 
                 archive.setArchiveName(reference.getName());

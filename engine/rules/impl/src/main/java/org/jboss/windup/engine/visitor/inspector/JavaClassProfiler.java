@@ -9,7 +9,7 @@ import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.JavaMethodDao;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +25,10 @@ public class JavaClassProfiler extends EmptyVisitor {
     private final JavaClass javaClass;
     private final JavaMethodDao javaMethodDao;
     private final JavaClassDao javaClassDao;
-    private org.jboss.windup.graph.model.resource.JavaClass current;
-    private final Resource resource;
+    private org.jboss.windup.graph.model.resource.JavaClassModel current;
+    private final ResourceModel resource;
     
-    public JavaClassProfiler(JavaClass clz, JavaClassDao javaClassDao, JavaMethodDao methodDao, Resource resource) {
+    public JavaClassProfiler(JavaClass clz, JavaClassDao javaClassDao, JavaMethodDao methodDao, ResourceModel resource) {
         this.javaClass = clz;
         this.javaClassDao = javaClassDao;
         this.resource = resource;
@@ -50,7 +50,7 @@ public class JavaClassProfiler extends EmptyVisitor {
         current.setPackageName(obj.getPackageName());
         
         for(String interfaceName : obj.getInterfaceNames()) {
-            org.jboss.windup.graph.model.resource.JavaClass interfaceClass = javaClassDao.createJavaClass(interfaceName);
+            org.jboss.windup.graph.model.resource.JavaClassModel interfaceClass = javaClassDao.createJavaClass(interfaceName);
             //then we make the connection.
             current.addImplements(interfaceClass);
         }
@@ -71,12 +71,12 @@ public class JavaClassProfiler extends EmptyVisitor {
         } 
         
         String superClz = obj.getSuperclassName();
-        org.jboss.windup.graph.model.resource.JavaClass superJavaClass = javaClassDao.createJavaClass(superClz);
+        org.jboss.windup.graph.model.resource.JavaClassModel superJavaClass = javaClassDao.createJavaClass(superClz);
         current.setExtends(superJavaClass);
     }
     
-    protected org.jboss.windup.graph.model.resource.JavaClass[] toJavaClasses(Type[] types) {
-        org.jboss.windup.graph.model.resource.JavaClass[] clz = new org.jboss.windup.graph.model.resource.JavaClass[types.length];
+    protected org.jboss.windup.graph.model.resource.JavaClassModel[] toJavaClasses(Type[] types) {
+        org.jboss.windup.graph.model.resource.JavaClassModel[] clz = new org.jboss.windup.graph.model.resource.JavaClassModel[types.length];
         
         
         for(int i=0, j=types.length; i<j; i++) {
@@ -98,7 +98,7 @@ public class JavaClassProfiler extends EmptyVisitor {
             return;
         }
         
-        org.jboss.windup.graph.model.resource.JavaClass clz = javaClassDao.createJavaClass(classVal);
+        org.jboss.windup.graph.model.resource.JavaClassModel clz = javaClassDao.createJavaClass(classVal);
         current.addImport(clz);
     }
     

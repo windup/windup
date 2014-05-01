@@ -22,9 +22,9 @@ import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.FileResource;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class XmlSourceRenderer extends AbstractGraphVisitor
     {
         try
         {
-            for (XmlResource entry : xmlResources.getAll())
+            for (XmlResourceModel entry : xmlResources.getAll())
             {
                 visitXmlResource(entry);
             }
@@ -85,7 +85,7 @@ public class XmlSourceRenderer extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitXmlResource(XmlResource entry)
+    public void visitXmlResource(XmlResourceModel entry)
     {
 
         try
@@ -119,19 +119,19 @@ public class XmlSourceRenderer extends AbstractGraphVisitor
 
             String fullName = null;
             String name = null;
-            if (entry.getResource() instanceof ArchiveEntryResource)
+            if (entry.getResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResource resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResource.class);
+                ArchiveEntryResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResourceModel.class);
                 name = resource.getArchiveEntry();
                 name = StringUtils.substringAfterLast(name, "/");
 
                 fullName = namingUtility.buildFullPath(resource);
             }
-            else if (entry.getResource() instanceof FileResource)
+            else if (entry.getResource() instanceof FileResourceModel)
             {
                 // TODO: fix this for non-archive XML.
                 // This should recurse back to find the root directory.
-                FileResource resource = graphUtil.castToType(entry.getResource().asVertex(), FileResource.class);
+                FileResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), FileResourceModel.class);
                 name = resource.asFile().getName();
                 fullName = name;
             }
@@ -154,13 +154,13 @@ public class XmlSourceRenderer extends AbstractGraphVisitor
         }
     }
 
-    private void persistReportReference(XmlResource xmlResource, File reportLocation)
+    private void persistReportReference(XmlResourceModel xmlResource, File reportLocation)
     {
         // persist the file resource & reference to Java Class.
-        FileResource fileReference = fileResourceDao.create();
+        FileResourceModel fileReference = fileResourceDao.create();
         fileReference.setFilePath(reportLocation.getAbsolutePath());
 
-        org.jboss.windup.graph.model.meta.report.SourceReport sourceReport = sourceReportDao.create();
+        org.jboss.windup.graph.model.meta.report.SourceReportModel sourceReport = sourceReportDao.create();
         sourceReport.setReportFile(fileReference);
         sourceReport.setResource(xmlResource);
 

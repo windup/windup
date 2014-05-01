@@ -10,7 +10,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.jboss.windup.addon.config.condition.GraphCondition;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 
@@ -40,9 +40,9 @@ public class XPathMatchesCondition extends GraphCondition
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
-        if (event.getResource() instanceof XmlResource)
+        if (event.getResource() instanceof XmlResourceModel)
         {
-            final XmlResource resource = (XmlResource) event.getResource();
+            final XmlResourceModel resource = (XmlResourceModel) event.getResource();
             try
             {
                 final Document document = resource.asDocument();

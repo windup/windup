@@ -6,7 +6,7 @@ import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JNDIReferenceDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 public class JNDIExtractorVisitor extends AbstractGraphVisitor
 {
@@ -28,43 +28,43 @@ public class JNDIExtractorVisitor extends AbstractGraphVisitor
     {
 
         // for all JBoss web configs...
-        for (XmlResource resource : xmlDao.findByRootTag("jboss-web"))
+        for (XmlResourceModel resource : xmlDao.findByRootTag("jboss-web"))
         {
 
         }
 
         // process all weblogic web configs..
-        for (XmlResource resource : xmlDao.findByRootTag("weblogic-web-app"))
+        for (XmlResourceModel resource : xmlDao.findByRootTag("weblogic-web-app"))
         {
 
         }
 
         // for all weblogic ejb configs...
-        for (XmlResource resource : xmlDao.findByRootTag("weblogic-ejb-jar"))
+        for (XmlResourceModel resource : xmlDao.findByRootTag("weblogic-ejb-jar"))
         {
 
         }
 
         // for all orion app servers web config...
-        for (XmlResource resource : xmlDao.findByRootTag("orion-web-app"))
+        for (XmlResourceModel resource : xmlDao.findByRootTag("orion-web-app"))
         {
 
         }
 
         // for all oracle app servers ejb config...
-        for (XmlResource resource : xmlDao.findByRootTag("orion-ejb-jar"))
+        for (XmlResourceModel resource : xmlDao.findByRootTag("orion-ejb-jar"))
         {
 
         }
 
         // for all IBM Websphere webapp bindings...
-        for (XmlResource resource : xmlDao.findByRootTag("WebAppBinding"))
+        for (XmlResourceModel resource : xmlDao.findByRootTag("WebAppBinding"))
         {
 
         }
 
         // for all IBM Websphere ejb bindings...
-        for (XmlResource resource : xmlDao.findByRootTag("EJBJarBinding"))
+        for (XmlResourceModel resource : xmlDao.findByRootTag("EJBJarBinding"))
         {
 
         }

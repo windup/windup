@@ -6,37 +6,37 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.dao.DoctypeDao;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
 
 import com.google.common.collect.Iterables;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 @Singleton
-public class DoctypeDaoImpl extends BaseDaoImpl<DoctypeMeta> implements DoctypeDao {
+public class DoctypeDaoImpl extends BaseDaoImpl<DoctypeMetaModel> implements DoctypeDao {
 
 	public DoctypeDaoImpl() {
-		super(DoctypeMeta.class);
+		super(DoctypeMetaModel.class);
 	}
 
-	public Iterable<DoctypeMeta> findSystemIdOrPublicIdMatchingRegex(String ... regex) {
+	public Iterable<DoctypeMetaModel> findSystemIdOrPublicIdMatchingRegex(String ... regex) {
 		//iterate through all vertices
- 		Iterable<DoctypeMeta> results = Iterables.concat(findSystemIdMatchingRegex(regex), findPublicIdMatchingRegex(regex));
-		GremlinPipeline<DoctypeMeta, DoctypeMeta> pipe = new GremlinPipeline<DoctypeMeta, DoctypeMeta>(results).dedup();
+ 		Iterable<DoctypeMetaModel> results = Iterables.concat(findSystemIdMatchingRegex(regex), findPublicIdMatchingRegex(regex));
+		GremlinPipeline<DoctypeMetaModel, DoctypeMetaModel> pipe = new GremlinPipeline<DoctypeMetaModel, DoctypeMetaModel>(results).dedup();
 		return pipe;
 	}
 	
 	
-	public Iterable<DoctypeMeta> findSystemIdMatchingRegex(String ... regex) {
+	public Iterable<DoctypeMetaModel> findSystemIdMatchingRegex(String ... regex) {
 		return super.findValueMatchingRegex("systemId", regex);
 	}
 	
-	public Iterable<DoctypeMeta> findPublicIdMatchingRegex(String ... regex) {
+	public Iterable<DoctypeMetaModel> findPublicIdMatchingRegex(String ... regex) {
 		return super.findValueMatchingRegex("publicId", regex);
 	}
 	
 
-	public Iterator<DoctypeMeta> findByProperties(String publicId, String systemId) {
+	public Iterator<DoctypeMetaModel> findByProperties(String publicId, String systemId) {
 		FramedGraphQuery query = context.getFramed().query();
 		if(StringUtils.isNotBlank(publicId)) {
 			query.has("publicId", publicId);
@@ -44,7 +44,7 @@ public class DoctypeDaoImpl extends BaseDaoImpl<DoctypeMeta> implements DoctypeD
 		if(StringUtils.isNotBlank(systemId)) {
 			query.has("systemId", systemId);
 		}
-		return query.vertices(DoctypeMeta.class).iterator();
+		return query.vertices(DoctypeMetaModel.class).iterator();
 	}
 
 }

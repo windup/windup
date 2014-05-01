@@ -3,8 +3,8 @@ package org.jboss.windup.graph.dao.impl;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,17 +16,17 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
 @Singleton
-public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResource> implements ArchiveEntryDao
+public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResourceModel> implements ArchiveEntryDao
 {
 
     private static Logger LOG = LoggerFactory.getLogger(ArchiveEntryDaoImpl.class);
 
     public ArchiveEntryDaoImpl()
     {
-        super(ArchiveEntryResource.class);
+        super(ArchiveEntryResourceModel.class);
     }
 
-    public Iterable<ArchiveEntryResource> findByArchive(final ArchiveResource resource)
+    public Iterable<ArchiveEntryResourceModel> findByArchive(final ArchiveResourceModel resource)
     {
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
                     .getGraph().getVertices("type", typeValue))
@@ -41,10 +41,10 @@ public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResource> imple
                             return v.iterator().next().getId().equals(resource.asVertex().getId());
                         }
                     });
-        return context.getFramed().frameVertices(pipeline, ArchiveEntryResource.class);
+        return context.getFramed().frameVertices(pipeline, ArchiveEntryResourceModel.class);
     }
 
-    public Iterable<ArchiveEntryResource> findArchiveEntry(String value)
+    public Iterable<ArchiveEntryResourceModel> findArchiveEntry(String value)
     {
         return super.getByProperty("archiveEntry", value);
     }
@@ -54,7 +54,7 @@ public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResource> imple
         return count(findArchiveEntryWithExtension(values));
     }
 
-    public Iterable<ArchiveEntryResource> findArchiveEntryWithExtension(String... values)
+    public Iterable<ArchiveEntryResourceModel> findArchiveEntryWithExtension(String... values)
     {
         // build regex
         if (values.length == 0)

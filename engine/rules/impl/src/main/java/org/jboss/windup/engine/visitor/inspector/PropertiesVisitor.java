@@ -12,8 +12,8 @@ import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.PropertiesDao;
-import org.jboss.windup.graph.model.meta.PropertiesMeta;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
+import org.jboss.windup.graph.model.meta.PropertiesMetaModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,15 +43,15 @@ public class PropertiesVisitor extends AbstractGraphVisitor {
     
     @Override
     public void run() {
-        for(ArchiveEntryResource resource : archiveEntryDao.findArchiveEntryWithExtension("properties")) {
+        for(ArchiveEntryResourceModel resource : archiveEntryDao.findArchiveEntryWithExtension("properties")) {
             visitArchiveEntry(resource);
         }
         archiveEntryDao.commit();
     }
     
     @Override
-    public void visitArchiveEntry(ArchiveEntryResource entry) {
-        PropertiesMeta properties = propertiesDao.create();
+    public void visitArchiveEntry(ArchiveEntryResourceModel entry) {
+        PropertiesMetaModel properties = propertiesDao.create();
         properties.setResource(entry);
         
         InputStream is = null; 

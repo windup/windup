@@ -12,7 +12,7 @@ import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 
 /**
  * Extracts the hash values from the archive and sets them on the archive vertex.
@@ -39,7 +39,7 @@ public class ArchiveHashVisitor extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (ArchiveResource archive : archiveDao.getAll())
+        for (ArchiveResourceModel archive : archiveDao.getAll())
         {
             visitArchive(archive);
         }
@@ -47,7 +47,7 @@ public class ArchiveHashVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitArchive(ArchiveResource file)
+    public void visitArchive(ArchiveResourceModel file)
     {
         InputStream is = null;
         try

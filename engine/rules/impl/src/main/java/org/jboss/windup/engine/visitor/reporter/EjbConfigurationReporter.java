@@ -5,10 +5,10 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.EJBConfigurationDao;
-import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
-import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
-import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
-import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
+import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacetModel;
+import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +35,13 @@ public class EjbConfigurationReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (EjbConfigurationFacet ejb : ejbConfigurationDao.getAll())
+        for (EjbConfigurationFacetModel ejb : ejbConfigurationDao.getAll())
         {
             LOG.info("Ejb Configuration: " + ejb.getXmlFacet());
             LOG.info("  - EJB Specification: " + ejb.getSpecificationVersion());
 
             LOG.info("  - Ejb Entities: ");
-            for (EjbEntityFacet entity : ejb.getEjbEntity())
+            for (EjbEntityFacetModel entity : ejb.getEjbEntity())
             {
                 String name = "    - " + entity.getEjbEntityName();
                 String clz = "";
@@ -52,7 +52,7 @@ public class EjbConfigurationReporter extends AbstractGraphVisitor
                 LOG.info(name + " - " + clz);
             }
             LOG.info("  - Ejb Session: ");
-            for (EjbSessionBeanFacet session : ejb.getEjbSessionBeans())
+            for (EjbSessionBeanFacetModel session : ejb.getEjbSessionBeans())
             {
                 String name = "    - " + session.getSessionBeanName();
                 String clz = "";
@@ -63,7 +63,7 @@ public class EjbConfigurationReporter extends AbstractGraphVisitor
                 LOG.info(name + " - " + clz);
             }
             LOG.info("  - MDBs: ");
-            for (MessageDrivenBeanFacet mdb : ejb.getMessageDriven())
+            for (MessageDrivenBeanFacetModel mdb : ejb.getMessageDriven())
             {
                 String name = "    - " + mdb.getMessageDrivenBeanName();
                 String clz = "";

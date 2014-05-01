@@ -11,8 +11,8 @@ import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.JavaMethodDao;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class JavaClassVisitor extends AbstractGraphVisitor
     {
         int total = (int) archiveEntryDao.count(archiveEntryDao.findArchiveEntryWithExtension("class"));
         int i = 0;
-        for (final ArchiveEntryResource entry : archiveEntryDao.findArchiveEntryWithExtension("class"))
+        for (final ArchiveEntryResourceModel entry : archiveEntryDao.findArchiveEntryWithExtension("class"))
         {
             visitArchiveEntry(entry);
             if (i > 0 && i % 100 == 0)
@@ -61,10 +61,10 @@ public class JavaClassVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitArchiveEntry(ArchiveEntryResource entry)
+    public void visitArchiveEntry(ArchiveEntryResourceModel entry)
     {
         // now, check to see whether it is a JAR, and republish the typed value.
-        ArchiveResource archive = entry.getArchive();
+        ArchiveResourceModel archive = entry.getArchive();
 
         if (archive == null)
         {

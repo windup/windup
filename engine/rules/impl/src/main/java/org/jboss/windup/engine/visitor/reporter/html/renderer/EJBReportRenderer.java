@@ -23,9 +23,9 @@ import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.EJBEntityDao;
 import org.jboss.windup.graph.dao.EJBSessionBeanDao;
 import org.jboss.windup.graph.dao.MessageDrivenDao;
-import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
-import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacetModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +104,7 @@ public class EJBReportRenderer extends AbstractGraphVisitor
         }
     }
 
-    protected EJBRow getEJBRow(File runDirectory, File reportReference, String title, JavaClass clz, String type)
+    protected EJBRow getEJBRow(File runDirectory, File reportReference, String title, JavaClassModel clz, String type)
     {
         if (clz == null)
         {
@@ -119,7 +119,7 @@ public class EJBReportRenderer extends AbstractGraphVisitor
     {
         EJBReport applicationReport = new EJBReport();
 
-        for (EjbSessionBeanFacet session : sessionDao.getAll())
+        for (EjbSessionBeanFacetModel session : sessionDao.getAll())
         {
             EJBRow ejbRow = getEJBRow(runDirectory, reportReference, session.getSessionBeanName(),
                         session.getJavaClassFacet(), session.getSessionType());
@@ -162,7 +162,7 @@ public class EJBReportRenderer extends AbstractGraphVisitor
             }
         }
 
-        for (MessageDrivenBeanFacet mdf : messageDrivenDao.getAll())
+        for (MessageDrivenBeanFacetModel mdf : messageDrivenDao.getAll())
         {
             String name = mdf.getMessageDrivenBeanName();
             if (StringUtils.isBlank(name))

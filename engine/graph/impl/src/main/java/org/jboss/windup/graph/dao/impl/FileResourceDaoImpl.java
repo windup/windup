@@ -3,7 +3,7 @@ package org.jboss.windup.graph.dao.impl;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.FileResourceDao;
-import org.jboss.windup.graph.model.resource.FileResource;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,16 +11,16 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
 @Singleton
-public class FileResourceDaoImpl extends BaseDaoImpl<FileResource> implements FileResourceDao {
+public class FileResourceDaoImpl extends BaseDaoImpl<FileResourceModel> implements FileResourceDao {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileResourceDaoImpl.class);
 	
 	public FileResourceDaoImpl() {
-		super(FileResource.class);
+		super(FileResourceModel.class);
 	}
 
-	public FileResource createByFilePath(String filePath) {
-		FileResource entry = getByUniqueProperty("filePath", filePath);
+	public FileResourceModel createByFilePath(String filePath) {
+		FileResourceModel entry = getByUniqueProperty("filePath", filePath);
 		
 		if(entry == null) {
 			entry = this.create();
@@ -31,7 +31,7 @@ public class FileResourceDaoImpl extends BaseDaoImpl<FileResource> implements Fi
 		return entry;
 	}
 	
-	public Iterable<FileResource> findArchiveEntryWithExtension(String ... values) {
+	public Iterable<FileResourceModel> findArchiveEntryWithExtension(String ... values) {
 		//build regex
 		if(values.length == 0) {
 			return IterablesUtil.emptyIterable();

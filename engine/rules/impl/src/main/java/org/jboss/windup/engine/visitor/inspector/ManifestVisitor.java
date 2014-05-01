@@ -13,9 +13,9 @@ import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.JarManifestDao;
-import org.jboss.windup.graph.model.meta.JarManifest;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.JarArchive;
+import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ public class ManifestVisitor extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (ArchiveEntryResource resource : archiveEntryDao.findArchiveEntry("META-INF/MANIFEST.MF"))
+        for (ArchiveEntryResourceModel resource : archiveEntryDao.findArchiveEntry("META-INF/MANIFEST.MF"))
         {
             visitArchiveEntry(resource);
         }
@@ -58,10 +58,10 @@ public class ManifestVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitArchiveEntry(ArchiveEntryResource entry)
+    public void visitArchiveEntry(ArchiveEntryResourceModel entry)
     {
-        JarManifest jarManifest = jarManifestDao.create();
-        JarArchive archive = graphUtil.castToType(entry.getArchive().asVertex(), JarArchive.class);
+        JarManifestModel jarManifest = jarManifestDao.create();
+        JarArchiveModel archive = graphUtil.castToType(entry.getArchive().asVertex(), JarArchiveModel.class);
         jarManifest.setResource(entry);
         jarManifest.setJarArchive(archive);
 

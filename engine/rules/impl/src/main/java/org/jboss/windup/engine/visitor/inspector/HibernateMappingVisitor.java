@@ -16,11 +16,11 @@ import org.jboss.windup.graph.dao.HibernateEntityDao;
 import org.jboss.windup.graph.dao.HibernateMappingDao;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
-import org.jboss.windup.graph.model.meta.xml.HibernateMappingFacet;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacetModel;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
+import org.jboss.windup.graph.model.meta.xml.HibernateMappingFacetModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -65,7 +65,7 @@ public class HibernateMappingVisitor extends AbstractGraphVisitor
         long total = doctypeDao.count(doctypeDao.findSystemIdOrPublicIdMatchingRegex(hibernateRegex));
 
         int i = 1;
-        for (DoctypeMeta doctype : doctypeDao.findSystemIdOrPublicIdMatchingRegex(hibernateRegex))
+        for (DoctypeMetaModel doctype : doctypeDao.findSystemIdOrPublicIdMatchingRegex(hibernateRegex))
         {
             i++;
             LOG.info("Processed " + i + " of " + " Doctypes.");
@@ -76,7 +76,7 @@ public class HibernateMappingVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitDoctype(DoctypeMeta entry)
+    public void visitDoctype(DoctypeMetaModel entry)
     {
         LOG.info("Doctype: ");
         LOG.info("  - publicId [" + entry.getPublicId() + "]");
@@ -89,11 +89,11 @@ public class HibernateMappingVisitor extends AbstractGraphVisitor
         String versionInformation = extractVersion(publicId, systemId);
 
         int batch = 0;
-        for (XmlResource xml : entry.getXmlResources())
+        for (XmlResourceModel xml : entry.getXmlResources())
         {
 
             // create a facet, and then identify the XML.
-            HibernateMappingFacet hibernateMapping = hibernateMappingDao.create();
+            HibernateMappingFacetModel hibernateMapping = hibernateMappingDao.create();
             hibernateMapping.setXmlFacet(xml);
 
             Document doc = xml.asDocument();
@@ -123,10 +123,10 @@ public class HibernateMappingVisitor extends AbstractGraphVisitor
             }
 
             // get a reference to the Java class.
-            JavaClass clz = javaClassDao.createJavaClass(clzName);
+            JavaClassModel clz = javaClassDao.createJavaClass(clzName);
 
             // create the hibernate facet.
-            HibernateEntityFacet hibernateEntity = hibernateEntityDao.create();
+            HibernateEntityFacetModel hibernateEntity = hibernateEntityDao.create();
             hibernateEntity.setSpecificationVersion(versionInformation);
             hibernateEntity.setJavaClassFacet(clz);
             hibernateEntity.setTableName(tableName);

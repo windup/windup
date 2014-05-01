@@ -5,33 +5,33 @@ import java.util.Iterator;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.EJBConfigurationDao;
-import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 @Singleton
-public class EJBConfigurationDaoImpl extends BaseDaoImpl<EjbConfigurationFacet> implements EJBConfigurationDao
+public class EJBConfigurationDaoImpl extends BaseDaoImpl<EjbConfigurationFacetModel> implements EJBConfigurationDao
 {
     public EJBConfigurationDaoImpl()
     {
-        super(EjbConfigurationFacet.class);
+        super(EjbConfigurationFacetModel.class);
     }
 
-    public boolean isEJBConfiguration(XmlResource resource)
+    public boolean isEJBConfiguration(XmlResourceModel resource)
     {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet")
                     .has("type", this.typeValue).back("facet").iterator().hasNext();
     }
 
-    public EjbConfigurationFacet getEjbConfigurationFromResource(XmlResource resource)
+    public EjbConfigurationFacetModel getEjbConfigurationFromResource(XmlResourceModel resource)
     {
         Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
                     .in("xmlFacet").as("facet").has("type", this.typeValue).back("facet").iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), EjbConfigurationFacet.class);
+            return context.getFramed().frame(v.next(), EjbConfigurationFacetModel.class);
         }
 
         return null;

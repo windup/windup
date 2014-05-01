@@ -5,10 +5,10 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.NamespaceDao;
-import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.Resource;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,19 +35,19 @@ public class NamespacesFoundReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (NamespaceMeta namespace : namespaceDao.getAll())
+        for (NamespaceMetaModel namespace : namespaceDao.getAll())
         {
             LOG.info("Namespace: ");
             LOG.info("  - URI: " + namespace.getURI());
             LOG.info("  - Loc: " + namespace.getSchemaLocation());
 
-            for (XmlResource xml : namespace.getXmlResources())
+            for (XmlResourceModel xml : namespace.getXmlResources())
             {
                 // report the xml files that contain the namespace...
-                Resource resource = xml.getResource();
-                if (resource instanceof ArchiveEntryResource)
+                ResourceModel resource = xml.getResource();
+                if (resource instanceof ArchiveEntryResourceModel)
                 {
-                    ArchiveEntryResource ar = (ArchiveEntryResource) resource;
+                    ArchiveEntryResourceModel ar = (ArchiveEntryResourceModel) resource;
                     LOG.info("   - " + ar.getArchiveEntry());
                 }
             }

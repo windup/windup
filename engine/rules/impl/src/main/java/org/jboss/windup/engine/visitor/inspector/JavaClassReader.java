@@ -7,7 +7,7 @@ import org.apache.bcel.classfile.EmptyVisitor;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +18,10 @@ public class JavaClassReader extends EmptyVisitor
     private final JavaClass javaClass;
 
     private final JavaClassDao javaClassDao;
-    private org.jboss.windup.graph.model.resource.JavaClass current;
-    private final Resource resource;
+    private org.jboss.windup.graph.model.resource.JavaClassModel current;
+    private final ResourceModel resource;
 
-    public JavaClassReader(JavaClass clz, JavaClassDao javaClassDao, Resource resource)
+    public JavaClassReader(JavaClass clz, JavaClassDao javaClassDao, ResourceModel resource)
     {
         this.javaClass = clz;
         this.javaClassDao = javaClassDao;
@@ -46,7 +46,7 @@ public class JavaClassReader extends EmptyVisitor
 
         for (String interfaceName : obj.getInterfaceNames())
         {
-            org.jboss.windup.graph.model.resource.JavaClass interfaceClass = javaClassDao.createJavaClass(interfaceName);
+            org.jboss.windup.graph.model.resource.JavaClassModel interfaceClass = javaClassDao.createJavaClass(interfaceName);
             // then we make the connection.
             current.addImplements(interfaceClass);
         }
@@ -61,7 +61,7 @@ public class JavaClassReader extends EmptyVisitor
         }
 
         String superClz = obj.getSuperclassName();
-        org.jboss.windup.graph.model.resource.JavaClass superJavaClass = javaClassDao.createJavaClass(superClz);
+        org.jboss.windup.graph.model.resource.JavaClassModel superJavaClass = javaClassDao.createJavaClass(superClz);
         current.setExtends(superJavaClass);
     }
 
@@ -78,7 +78,7 @@ public class JavaClassReader extends EmptyVisitor
             return;
         }
 
-        org.jboss.windup.graph.model.resource.JavaClass clz = javaClassDao.createJavaClass(classVal);
+        org.jboss.windup.graph.model.resource.JavaClassModel clz = javaClassDao.createJavaClass(classVal);
         current.addImport(clz);
     }
 

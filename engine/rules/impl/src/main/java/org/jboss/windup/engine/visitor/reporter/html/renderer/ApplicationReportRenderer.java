@@ -28,16 +28,16 @@ import org.jboss.windup.graph.dao.MavenFacetDao;
 import org.jboss.windup.graph.dao.PropertiesDao;
 import org.jboss.windup.graph.dao.WebConfigurationDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.meta.ApplicationReference;
-import org.jboss.windup.graph.model.meta.JarManifest;
-import org.jboss.windup.graph.model.meta.PropertiesMeta;
-import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
-import org.jboss.windup.graph.model.meta.xml.MavenFacet;
-import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacet;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.ApplicationReferenceModel;
+import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.meta.PropertiesMetaModel;
+import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
+import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
+import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,8 +111,8 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
     public void run() {
         try {
             ApplicationReport applicationReport = new ApplicationReport();
-            for(ApplicationReference app : appRefDao.getAll()) {
-                ArchiveResource reference = app.getArchive();
+            for(ApplicationReferenceModel app : appRefDao.getAll()) {
+                ArchiveResourceModel reference = app.getArchive();
                 applicationReport.setApplicationName(reference.getArchiveName());
                 recurseArchive(applicationReport, app.getArchive());
             }
@@ -130,12 +130,12 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
         }
     }
     
-    protected void recurseArchive(ApplicationReport report, ArchiveResource resource) {
+    protected void recurseArchive(ApplicationReport report, ArchiveResourceModel resource) {
         ArchiveReport archiveReport = new ArchiveReport();
         
         String name = null;
-        if(resource.getParentResource() instanceof ArchiveEntryResource) {
-            ArchiveEntryResource parentEntry = graphUtil.castToType(resource.getParentResource().asVertex(), ArchiveEntryResource.class);
+        if(resource.getParentResource() instanceof ArchiveEntryResourceModel) {
+            ArchiveEntryResourceModel parentEntry = graphUtil.castToType(resource.getParentResource().asVertex(), ArchiveEntryResourceModel.class);
             name = namingUtility.buildFullPath(parentEntry);
         }
         else {
@@ -144,24 +144,24 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
         
         archiveReport.setApplicationPath(name);
         
-        for(ArchiveEntryResource entry : resource.getChildrenArchiveEntries()) {
+        for(ArchiveEntryResourceModel entry : resource.getChildrenArchiveEntries()) {
             //check to see about facets.
             processEntry(archiveReport, entry);
         }
         
-        for(ArchiveResource childResource : resource.getChildrenArchive()) {
+        for(ArchiveResourceModel childResource : resource.getChildrenArchive()) {
             recurseArchive(report, childResource);
         }
         
         report.getArchives().add(archiveReport);
     }
     
-    protected void processEntry(ArchiveReport report, ArchiveEntryResource entry) {
+    protected void processEntry(ArchiveReport report, ArchiveEntryResourceModel entry) {
         ResourceReportRow reportRow = new ResourceReportRow();
         
         //see if the resource is a java class...
         if(javaDao.isJavaClass(entry)) {
-            JavaClass clz = javaDao.getJavaClassFromResource(entry);
+            JavaClassModel clz = javaDao.getJavaClassFromResource(entry);
             if(!clz.isCustomerPackage()) {
                 return;
             }
@@ -175,23 +175,23 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
         //check if it is a XML resource...
         if(xmlDao.isXmlResource(entry)) 
         {
-            XmlResource resource = xmlDao.getXmlFromResource(entry);
+            XmlResourceModel resource = xmlDao.getXmlFromResource(entry);
             reportRow.setResourceName(namingUtility.getReportXmlResource(this.runDirectory, reportReference, resource));
             reportRow.getTechnologyTags().add(new Tag("XML", Level.SUCCESS));
                     
             //check the XML for some tags...
             if(ejbConfigurationDao.isEJBConfiguration(resource)) {
-                EjbConfigurationFacet ejbConfiguration = ejbConfigurationDao.getEjbConfigurationFromResource(resource);
+                EjbConfigurationFacetModel ejbConfiguration = ejbConfigurationDao.getEjbConfigurationFromResource(resource);
                 reportRow.getTechnologyTags().add(new Tag("EJB "+ejbConfiguration.getSpecificationVersion()+" Configuration", Level.SUCCESS));
             }
             
             if(webConfigurationDao.isWebConfiguration(resource)) {
-                WebConfigurationFacet webConfiguration = webConfigurationDao.getWebConfigurationFromResource(resource);
+                WebConfigurationFacetModel webConfiguration = webConfigurationDao.getWebConfigurationFromResource(resource);
                 reportRow.getTechnologyTags().add(new Tag("Web "+webConfiguration.getSpecificationVersion()+" Configuration", Level.SUCCESS));
             }
             
             if(mavenDao.isMavenConfiguration(resource)) {
-                MavenFacet mavenConfiguration = mavenDao.getMavenConfigurationFromResource(resource);
+                MavenFacetModel mavenConfiguration = mavenDao.getMavenConfigurationFromResource(resource);
                 reportRow.getTechnologyTags().add(new Tag("Maven "+mavenConfiguration.getSpecificationVersion()+" Configuration", Level.SUCCESS));
             }
                 
@@ -200,7 +200,7 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
         }
         
         if(propertiesDao.isPropertiesResource(entry)) {
-            PropertiesMeta meta = propertiesDao.getPropertiesFromResource(entry);
+            PropertiesMetaModel meta = propertiesDao.getPropertiesFromResource(entry);
             reportRow.setResourceName(namingUtility.getReportPropertiesResource(this.runDirectory, reportReference, meta));
             reportRow.getTechnologyTags().add(new Tag("Properties", Level.SUCCESS));
             report.getResources().add(reportRow);
@@ -210,7 +210,7 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor {
         //check if it is a manifest...
         if(manifestDao.isManifestResource(entry))
         {
-            JarManifest resource = manifestDao.getManifestFromResource(entry);
+            JarManifestModel resource = manifestDao.getManifestFromResource(entry);
             reportRow.setResourceName(namingUtility.getReportManifestResource(this.runDirectory, reportReference, resource));
             reportRow.getTechnologyTags().add(new Tag("Manifest", Level.SUCCESS));
                     

@@ -1,11 +1,11 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.resource.Resource;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
-public interface XmlResourceDao extends BaseDao<XmlResource> {
-	public Iterable<XmlResource> containsNamespaceURI(String namespaceURI);
-	public Iterable<XmlResource> findByRootTag(String rootTagName);
-	public boolean isXmlResource(Resource resource);
-    public XmlResource getXmlFromResource(Resource resource);
+public interface XmlResourceDao extends BaseDao<XmlResourceModel> {
+	public Iterable<XmlResourceModel> containsNamespaceURI(String namespaceURI);
+	public Iterable<XmlResourceModel> findByRootTag(String rootTagName);
+	public boolean isXmlResource(ResourceModel resource);
+    public XmlResourceModel getXmlFromResource(ResourceModel resource);
 }

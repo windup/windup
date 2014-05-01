@@ -3,18 +3,18 @@ package org.jboss.windup.graph.dao.impl;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.JNDIReferenceDao;
-import org.jboss.windup.graph.model.meta.JNDIReference;
+import org.jboss.windup.graph.model.meta.JNDIReferenceModel;
 
 @Singleton
-public class JNDIReferenceDaoImpl extends BaseDaoImpl<JNDIReference> implements JNDIReferenceDao {
+public class JNDIReferenceDaoImpl extends BaseDaoImpl<JNDIReferenceModel> implements JNDIReferenceDao {
 
 	public JNDIReferenceDaoImpl() {
-		super(JNDIReference.class);
+		super(JNDIReferenceModel.class);
 	}
 	
 
-	public JNDIReference createJndiReference(String jndiLocation) {
-		JNDIReference ref = getByUniqueProperty("jndiLocation", jndiLocation);
+	public JNDIReferenceModel createJndiReference(String jndiLocation) {
+		JNDIReferenceModel ref = getByUniqueProperty("jndiLocation", jndiLocation);
 		
 		if(ref == null) {
 			ref = create();

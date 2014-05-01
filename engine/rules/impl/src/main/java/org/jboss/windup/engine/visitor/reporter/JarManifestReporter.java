@@ -5,8 +5,8 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JarManifestDao;
-import org.jboss.windup.graph.model.meta.JarManifest;
-import org.jboss.windup.graph.model.resource.JarArchive;
+import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +33,9 @@ public class JarManifestReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (JarManifest manifest : manifestDao.getAll())
+        for (JarManifestModel manifest : manifestDao.getAll())
         {
-            JarArchive archive = manifest.getJarArchive();
+            JarArchiveModel archive = manifest.getJarArchive();
 
             LOG.info("Manifest for Archive: " + archive.getArchiveName());
             for (String key : manifest.keySet())

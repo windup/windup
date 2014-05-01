@@ -7,7 +7,7 @@
 package org.jboss.windup.addon.config;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
 import org.ocpsoft.rewrite.event.Flow;
@@ -29,7 +29,7 @@ public class GraphRewrite implements Rewrite
         this.graphContext = context;
     }
 
-    public Resource getResource()
+    public ResourceModel getResource()
     {
         return null;
     }

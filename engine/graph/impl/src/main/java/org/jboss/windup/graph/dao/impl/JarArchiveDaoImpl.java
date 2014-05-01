@@ -9,34 +9,34 @@ import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.JarArchiveDao;
 import org.jboss.windup.graph.dao.exception.ArchiveIndexReaderException;
-import org.jboss.windup.graph.model.resource.JarArchive;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
 
 @Singleton
-public class JarArchiveDaoImpl extends BaseDaoImpl<JarArchive> implements JarArchiveDao {
+public class JarArchiveDaoImpl extends BaseDaoImpl<JarArchiveModel> implements JarArchiveDao {
 
 	public JarArchiveDaoImpl() {
-		super(JarArchive.class);
+		super(JarArchiveModel.class);
 	}
 
-	public Iterable<JarArchive> findArchiveByMD5(String value) throws ArchiveIndexReaderException {
+	public Iterable<JarArchiveModel> findArchiveByMD5(String value) throws ArchiveIndexReaderException {
 		return this.getByProperty("md5Hash", value);
 	}
 
-	public Iterable<JarArchive> findArchiveBySHA1(String value) throws ArchiveIndexReaderException {
+	public Iterable<JarArchiveModel> findArchiveBySHA1(String value) throws ArchiveIndexReaderException {
 		return this.getByProperty("sha1Hash", value);
 	}
 
-	public Iterable<JarArchive> findArchiveByName(String value) throws ArchiveIndexReaderException {
+	public Iterable<JarArchiveModel> findArchiveByName(String value) throws ArchiveIndexReaderException {
 		return this.getByProperty("archiveName", value);
 	}
 	
-	public Iterable<JarArchive> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException {
+	public Iterable<JarArchiveModel> findArchiveByQualifiedClassName(String clz) throws ArchiveIndexReaderException {
 		return null;
 	}
 
-	public Iterable<JarArchive> findUnusedJars() {
-		List<JarArchive> iterable = new LinkedList<JarArchive>();
-		for(JarArchive archive : getAll()) {
+	public Iterable<JarArchiveModel> findUnusedJars() {
+		List<JarArchiveModel> iterable = new LinkedList<JarArchiveModel>();
+		for(JarArchiveModel archive : getAll()) {
 			if(archive.providesForArchives().iterator().hasNext()) {
 				continue;
 			}
@@ -46,15 +46,15 @@ public class JarArchiveDaoImpl extends BaseDaoImpl<JarArchive> implements JarArc
 		return iterable;
 	}
 
-	public Iterable<JarArchive> findCircularReferences(JarArchive archive) {
-		Set<JarArchive> results = new HashSet<>();
+	public Iterable<JarArchiveModel> findCircularReferences(JarArchiveModel archive) {
+		Set<JarArchiveModel> results = new HashSet<>();
 
 		//if it is both providing for and depending on, is circular.
 		Set<String> set = new HashSet<>();
-		for(JarArchive d : archive.dependsOnArchives()) {
+		for(JarArchiveModel d : archive.dependsOnArchives()) {
 			set.add(d.asFile().getAbsolutePath());
 		}
-		for(JarArchive p : archive.providesForArchives()) {
+		for(JarArchiveModel p : archive.providesForArchives()) {
 			if(set.contains(p.asFile().getAbsolutePath())) {
 				results.add(p);
 			}

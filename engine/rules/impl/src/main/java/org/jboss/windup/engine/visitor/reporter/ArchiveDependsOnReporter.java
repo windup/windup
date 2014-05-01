@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JarArchiveDao;
-import org.jboss.windup.graph.model.resource.JarArchive;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,21 +40,21 @@ public class ArchiveDependsOnReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (JarArchive archive : jarDao.getAll())
+        for (JarArchiveModel archive : jarDao.getAll())
         {
             LOG.info("Archive: " + archive.getArchiveName() + " - " + archive.asVertex());
 
-            for (JarArchive clz : archive.dependsOnArchives())
+            for (JarArchiveModel clz : archive.dependsOnArchives())
             {
                 LOG.info(" - Depends On: " + clz.getArchiveName());
             }
 
-            for (JarArchive clz : archive.providesForArchives())
+            for (JarArchiveModel clz : archive.providesForArchives())
             {
                 LOG.info(" - Provides For: " + clz.getArchiveName());
             }
             // look for circular...
-            for (JarArchive src : jarDao.findCircularReferences(archive))
+            for (JarArchiveModel src : jarDao.findCircularReferences(archive))
             {
                 LOG.info(" - Circular with: " + src.getArchiveName());
             }

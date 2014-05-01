@@ -21,8 +21,8 @@ import org.jboss.windup.engine.visitor.reporter.html.model.ClassloaderReport.Cla
 import org.jboss.windup.engine.visitor.reporter.html.model.Name;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class DuplicateClassloaderReportRenderer extends AbstractGraphVisitor
             ClassloaderReport report = new ClassloaderReport("Duplicates", "Duplicate", "Provided By");
 
             // for each class leveraging a blacklist...
-            for (JavaClass clz : javaClassDao.getAllDuplicateClasses())
+            for (JavaClassModel clz : javaClassDao.getAllDuplicateClasses())
             {
                 Name name = namingUtility.getReportJavaResource(runDirectory, reportReference.getParentFile(), clz);
 
@@ -102,9 +102,9 @@ public class DuplicateClassloaderReportRenderer extends AbstractGraphVisitor
 
     }
 
-    public void addAll(Collection<ClassReference> references, Iterable<ArchiveResource> archives)
+    public void addAll(Collection<ClassReference> references, Iterable<ArchiveResourceModel> archives)
     {
-        for (ArchiveResource resource : archives)
+        for (ArchiveResourceModel resource : archives)
         {
             // build the full path...
             Name name = new SimpleName(namingUtility.buildFullPath(resource));

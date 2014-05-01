@@ -1,10 +1,10 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
 
-public interface NamespaceDao extends BaseDao<NamespaceMeta> {
-	public Iterable<NamespaceMeta> findByURI(String namespaceURI);
-	public Iterable<NamespaceMeta> findByURIs(String ... uriRegex);
-	public Iterable<NamespaceMeta> findSchemaLocationRegexMatch(String schemaLocationRegex);
-	public NamespaceMeta createNamespaceSchemaLocation(String namespaceURI, String schemaLocation);
+public interface NamespaceDao extends BaseDao<NamespaceMetaModel> {
+	public Iterable<NamespaceMetaModel> findByURI(String namespaceURI);
+	public Iterable<NamespaceMetaModel> findByURIs(String ... uriRegex);
+	public Iterable<NamespaceMetaModel> findSchemaLocationRegexMatch(String schemaLocationRegex);
+	public NamespaceMetaModel createNamespaceSchemaLocation(String namespaceURI, String schemaLocation);
 }

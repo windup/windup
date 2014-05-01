@@ -2,53 +2,53 @@ package org.jboss.windup.engine.visitor;
 
 import java.util.List;
 
-import org.jboss.windup.graph.model.meta.JarManifest;
-import org.jboss.windup.graph.model.meta.PropertiesMeta;
-import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacet;
-import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacet;
-import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacet;
-import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
-import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacet;
-import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
-import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
-import org.jboss.windup.graph.model.resource.EarArchive;
-import org.jboss.windup.graph.model.resource.FileResource;
-import org.jboss.windup.graph.model.resource.JarArchive;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.Resource;
-import org.jboss.windup.graph.model.resource.WarArchive;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.meta.PropertiesMetaModel;
+import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacetModel;
+import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacetModel;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
+import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
+import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacetModel;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
+import org.jboss.windup.graph.model.resource.EarArchiveModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.WarArchiveModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 public interface GraphVisitor {
     public VisitorPhase getPhase();
     public List<Class<? extends GraphVisitor>> getDependencies();
     
 	public void run();
-	public void visitResource(Resource entry);
-	public void visitFile(FileResource entry);
+	public void visitResource(ResourceModel entry);
+	public void visitFile(FileResourceModel entry);
 	
-	public void visitArchive(ArchiveResource entry);
-	public void visitArchiveEntry(ArchiveEntryResource entry);
-	public void visitEarArchive(EarArchive entry);
-	public void visitJarArchive(JarArchive entry);
-	public void visitWarArchive(WarArchive entry);
+	public void visitArchive(ArchiveResourceModel entry);
+	public void visitArchiveEntry(ArchiveEntryResourceModel entry);
+	public void visitEarArchive(EarArchiveModel entry);
+	public void visitJarArchive(JarArchiveModel entry);
+	public void visitWarArchive(WarArchiveModel entry);
 	
-	public void visitJavaClass(JavaClass entry);
-	public void visitEjbEntity(EjbEntityFacet entry);
-	public void visitEjbService(EjbSessionBeanFacet entry);
-	public void visitMessageDrivenBean(MessageDrivenBeanFacet entry);
-	public void visitEjbEntity(SpringBeanFacet entry);
+	public void visitJavaClass(JavaClassModel entry);
+	public void visitEjbEntity(EjbEntityFacetModel entry);
+	public void visitEjbService(EjbSessionBeanFacetModel entry);
+	public void visitMessageDrivenBean(MessageDrivenBeanFacetModel entry);
+	public void visitEjbEntity(SpringBeanFacetModel entry);
 	
-	public void visitXmlResource(XmlResource entry);
-	public void visitEjbConfiguration(EjbConfigurationFacet entry);
-	public void visitSpringConfiguration(SpringConfigurationFacet entry);
-	public void visitDoctype(DoctypeMeta entry);
-	public void visitNamespace(NamespaceMeta entry);
+	public void visitXmlResource(XmlResourceModel entry);
+	public void visitEjbConfiguration(EjbConfigurationFacetModel entry);
+	public void visitSpringConfiguration(SpringConfigurationFacetModel entry);
+	public void visitDoctype(DoctypeMetaModel entry);
+	public void visitNamespace(NamespaceMetaModel entry);
 	
-    public void visitManifest(JarManifest entry);
-    public void visitProperties(PropertiesMeta entry);
+    public void visitManifest(JarManifestModel entry);
+    public void visitProperties(PropertiesMetaModel entry);
 
 }

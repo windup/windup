@@ -20,8 +20,8 @@ import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
-import org.jboss.windup.graph.model.resource.FileResource;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class JavaSourceRenderer extends AbstractGraphVisitor
     {
         try
         {
-            for (JavaClass clz : javaClassDao.findClassesWithSource())
+            for (JavaClassModel clz : javaClassDao.findClassesWithSource())
             {
                 visitJavaClass(clz);
             }
@@ -79,7 +79,7 @@ public class JavaSourceRenderer extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitJavaClass(JavaClass entry)
+    public void visitJavaClass(JavaClassModel entry)
     {
         try
         {
@@ -130,13 +130,13 @@ public class JavaSourceRenderer extends AbstractGraphVisitor
         }
     }
 
-    private void persistReportReference(JavaClass javaClass, File reportLocation)
+    private void persistReportReference(JavaClassModel javaClass, File reportLocation)
     {
         // persist the file resource & reference to Java Class.
-        FileResource fileReference = fileResourceDao.create();
+        FileResourceModel fileReference = fileResourceDao.create();
         fileReference.setFilePath(reportLocation.getAbsolutePath());
 
-        org.jboss.windup.graph.model.meta.report.SourceReport sourceReport = sourceReportDao.create();
+        org.jboss.windup.graph.model.meta.report.SourceReportModel sourceReport = sourceReportDao.create();
         sourceReport.setReportFile(fileReference);
         sourceReport.setResource(javaClass);
         LOG.info("Added source for clz: " + javaClass.getQualifiedName());

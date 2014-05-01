@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.HibernateEntityDao;
-import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacet;
+import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacetModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class HibernateEntityReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (HibernateEntityFacet hibernate : hibernateEntityDao.getAll())
+        for (HibernateEntityFacetModel hibernate : hibernateEntityDao.getAll())
         {
             LOG.info("Hibernate Entity: " + hibernate.getJavaClassFacet().getQualifiedName());
             LOG.info("  - Specification: " + hibernate.getSpecificationVersion());

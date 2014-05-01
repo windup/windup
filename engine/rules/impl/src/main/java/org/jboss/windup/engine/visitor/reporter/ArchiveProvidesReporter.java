@@ -5,8 +5,8 @@ import javax.inject.Inject;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JarArchiveDao;
-import org.jboss.windup.graph.model.resource.JarArchive;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +33,11 @@ public class ArchiveProvidesReporter extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (JarArchive archive : jarDao.getAll())
+        for (JarArchiveModel archive : jarDao.getAll())
         {
             LOG.info("Archive: " + archive.getArchiveName());
 
-            for (JavaClass clz : archive.getJavaClasses())
+            for (JavaClassModel clz : archive.getJavaClasses())
             {
                 LOG.info(" - Provides: " + clz.getQualifiedName());
             }

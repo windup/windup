@@ -17,8 +17,8 @@ import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +61,7 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
         final int total = (int) archiveDao.count(archiveDao.getAll());
 
         int i = 1;
-        for (final ArchiveResource archive : archiveDao.getAll())
+        for (final ArchiveResourceModel archive : archiveDao.getAll())
         {
             visitArchive(archive);
             LOG.info("Processed: " + i + " of " + total + " Archives.");
@@ -73,10 +73,10 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitArchive(ArchiveResource result)
+    public void visitArchive(ArchiveResourceModel result)
     {
         Vertex v = result.asVertex();
-        ArchiveResource file = archiveDao.getById(v.getId());
+        ArchiveResourceModel file = archiveDao.getById(v.getId());
 
         ZipFile zipFileReference = null;
         try
@@ -93,7 +93,7 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
                     continue;
                 }
                 // creates a new archive entry.
-                ArchiveEntryResource resource = archiveEntryDao.create();
+                ArchiveEntryResourceModel resource = archiveEntryDao.create();
                 resource.setArchiveEntry(entry.getName());
                 resource.setArchive(file);
                 
@@ -106,7 +106,7 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
                     LOG.info("Found nested archive: "+subArchiveName);
                     
                     //create an archive record, and process it.
-                    ArchiveResource subArchive = archiveDao.create();
+                    ArchiveResourceModel subArchive = archiveDao.create();
                     subArchive.setArchiveName(subArchiveName);
                     subArchive.setParentResource(resource);
                     result.addChildArchive(subArchive);

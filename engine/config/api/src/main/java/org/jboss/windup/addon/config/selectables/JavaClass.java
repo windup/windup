@@ -9,7 +9,7 @@ package org.jboss.windup.addon.config.selectables;
 
 /**
  * This type probably needs to be bonded / refactored into / make use of the current
- * {@link org.jboss.windup.graph.model.resource.JavaClass} API.
+ * {@link org.jboss.windup.graph.model.resource.JavaClassModel} API.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

@@ -10,9 +10,9 @@ import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.DoctypeDao;
 import org.jboss.windup.graph.dao.HibernateConfigurationDao;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
-import org.jboss.windup.graph.model.meta.xml.HibernateConfigurationFacet;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
+import org.jboss.windup.graph.model.meta.xml.HibernateConfigurationFacetModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class HibernateConfigurationVisitor extends AbstractGraphVisitor
         long total = doctypeDao.count(doctypeDao.findSystemIdOrPublicIdMatchingRegex(hibernateRegex));
 
         int i = 1;
-        for (DoctypeMeta doctype : doctypeDao.findSystemIdOrPublicIdMatchingRegex(hibernateRegex))
+        for (DoctypeMetaModel doctype : doctypeDao.findSystemIdOrPublicIdMatchingRegex(hibernateRegex))
         {
             i++;
             LOG.info("Processed " + i + " of " + " Doctypes.");
@@ -56,7 +56,7 @@ public class HibernateConfigurationVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitDoctype(DoctypeMeta entry)
+    public void visitDoctype(DoctypeMetaModel entry)
     {
         LOG.info("Doctype: ");
         LOG.info("  - publicId [" + entry.getPublicId() + "]");
@@ -69,10 +69,10 @@ public class HibernateConfigurationVisitor extends AbstractGraphVisitor
 
         String versionInformation = extractVersion(publicId, systemId);
 
-        for (XmlResource xml : entry.getXmlResources())
+        for (XmlResourceModel xml : entry.getXmlResources())
         {
             // check the root XML node.
-            HibernateConfigurationFacet facet = hibernateConfigurationDao.create();
+            HibernateConfigurationFacetModel facet = hibernateConfigurationDao.create();
             facet.setXmlFacet(xml);
 
             if (StringUtils.isNotBlank(versionInformation))

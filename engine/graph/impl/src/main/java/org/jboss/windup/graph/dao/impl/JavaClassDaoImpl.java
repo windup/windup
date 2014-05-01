@@ -7,8 +7,8 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -17,44 +17,44 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
 @Singleton
-public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements JavaClassDao
+public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements JavaClassDao
 {
 
     public JavaClassDaoImpl()
     {
-        super(JavaClass.class);
+        super(JavaClassModel.class);
     }
 
-    public synchronized JavaClass createJavaClass(String qualifiedName)
+    public synchronized JavaClassModel createJavaClass(String qualifiedName)
     {
-        JavaClass clz = getByUniqueProperty("qualifiedName", qualifiedName);
+        JavaClassModel clz = getByUniqueProperty("qualifiedName", qualifiedName);
 
         if (clz == null)
         {
-            clz = (JavaClass) this.create(null);
+            clz = (JavaClassModel) this.create(null);
             clz.setQualifiedName(qualifiedName);
         }
 
         return clz;
     }
 
-    public Iterable<JavaClass> findByJavaClassPattern(String regex)
+    public Iterable<JavaClassModel> findByJavaClassPattern(String regex)
     {
         return super.findValueMatchingRegex("qualifiedName", regex);
     }
 
-    public Iterable<JavaClass> findByJavaPackage(String packageName)
+    public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
         return getContext().getFramed().query().has("type", typeValue).has("packageName", packageName).vertices(type);
     }
 
-    public Iterable<JavaClass> findByJavaVersion(JavaVersion version)
+    public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
         return getContext().getFramed().query().has("type", typeValue).has("majorVersion", version.getMajor())
                     .has("minorVersion", version.getMinor()).vertices(type);
     }
 
-    public Iterable<JavaClass> getAllClassNotFound()
+    public Iterable<JavaClassModel> getAllClassNotFound()
     {
 
         // iterate through all vertices
@@ -75,10 +75,10 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements JavaClas
                             return true;
                         }
                     });
-        return context.getFramed().frameVertices(pipeline, JavaClass.class);
+        return context.getFramed().frameVertices(pipeline, JavaClassModel.class);
     }
 
-    public Iterable<JavaClass> getAllDuplicateClasses()
+    public Iterable<JavaClassModel> getAllDuplicateClasses()
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
@@ -103,37 +103,37 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements JavaClas
                             return false;
                         }
                     });
-        return context.getFramed().frameVertices(pipeline, JavaClass.class);
+        return context.getFramed().frameVertices(pipeline, JavaClassModel.class);
     }
 
-    public boolean isJavaClass(Resource resource)
+    public boolean isJavaClass(ResourceModel resource)
     {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("javaClassFacet").iterator().hasNext();
     }
 
-    public JavaClass getJavaClassFromResource(Resource resource)
+    public JavaClassModel getJavaClassFromResource(ResourceModel resource)
     {
         Iterator<Vertex> v = (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("javaClassFacet")
                     .iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), JavaClass.class);
+            return context.getFramed().frame(v.next(), JavaClassModel.class);
         }
 
         return null;
     }
 
-    public void markAsBlacklistCandidate(JavaClass clz)
+    public void markAsBlacklistCandidate(JavaClassModel clz)
     {
         clz.asVertex().setProperty("blacklistCandidate", true);
     }
 
-    public void markAsCustomerPackage(JavaClass clz)
+    public void markAsCustomerPackage(JavaClassModel clz)
     {
         clz.asVertex().setProperty("customerPackage", true);
     }
 
-    public Iterable<JavaClass> findClassesWithSource()
+    public Iterable<JavaClassModel> findClassesWithSource()
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
@@ -148,32 +148,32 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements JavaClas
                             return argument.getEdges(Direction.OUT, "source").iterator().hasNext();
                         }
                     });
-        return context.getFramed().frameVertices(pipeline, JavaClass.class);
+        return context.getFramed().frameVertices(pipeline, JavaClassModel.class);
     }
 
-    public Iterable<JavaClass> findCandidateBlacklistClasses()
+    public Iterable<JavaClassModel> findCandidateBlacklistClasses()
     {
         // for all java classes
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
                     .getGraph().getVertices("type", this.typeValue))
                     .as("clz").has("blacklistCandidate").back("clz").cast(Vertex.class);
-        return context.getFramed().frameVertices(pipeline, JavaClass.class);
+        return context.getFramed().frameVertices(pipeline, JavaClassModel.class);
     }
 
-    public Iterable<JavaClass> findClassesLeveragingCandidateBlacklists()
+    public Iterable<JavaClassModel> findClassesLeveragingCandidateBlacklists()
     {
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
                     .getGraph().getVertices("type", this.typeValue))
                     .has("blacklistCandidate")
                     .in("extends", "imports", "implements")
                     .dedup();
-        return context.getFramed().frameVertices(pipeline, JavaClass.class);
+        return context.getFramed().frameVertices(pipeline, JavaClassModel.class);
     }
 
-    public Iterable<JavaClass> findLeveragedCandidateBlacklists(JavaClass clz)
+    public Iterable<JavaClassModel> findLeveragedCandidateBlacklists(JavaClassModel clz)
     {
-        Set<JavaClass> results = new HashSet<JavaClass>();
-        for (JavaClass javaClz : clz.dependsOnJavaClass())
+        Set<JavaClassModel> results = new HashSet<JavaClassModel>();
+        for (JavaClassModel javaClz : clz.dependsOnJavaClass())
         {
             if (javaClz.isBlacklistCandidate())
             {
@@ -184,12 +184,12 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClass> implements JavaClas
         return results;
     }
 
-    public Iterable<JavaClass> findCustomerPackageClasses()
+    public Iterable<JavaClassModel> findCustomerPackageClasses()
     {
         // for all java classes
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
                     .getGraph().getVertices("type", this.typeValue))
                     .has("customerPackage").V();
-        return context.getFramed().frameVertices(pipeline, JavaClass.class);
+        return context.getFramed().frameVertices(pipeline, JavaClassModel.class);
     }
 }

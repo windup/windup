@@ -20,7 +20,7 @@ import org.jboss.windup.engine.visitor.reporter.html.model.ClassloaderReport.Cla
 import org.jboss.windup.engine.visitor.reporter.html.model.Name;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClass;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public class BlacklistClassloaderReportRenderer extends AbstractGraphVisitor
             ClassloaderReport report = new ClassloaderReport("Blacklists", "Class", "Blacklist");
 
             // for each class leveraging a blacklist...
-            for (JavaClass clz : javaClassDao.findClassesLeveragingCandidateBlacklists())
+            for (JavaClassModel clz : javaClassDao.findClassesLeveragingCandidateBlacklists())
             {
                 Name name = namingUtility.getReportJavaResource(runDirectory, reportReference.getParentFile(), clz);
 
@@ -100,9 +100,9 @@ public class BlacklistClassloaderReportRenderer extends AbstractGraphVisitor
 
     }
 
-    public void addAll(Collection<ClassReference> references, Iterable<JavaClass> clzs)
+    public void addAll(Collection<ClassReference> references, Iterable<JavaClassModel> clzs)
     {
-        for (JavaClass clz : clzs)
+        for (JavaClassModel clz : clzs)
         {
             Name name = namingUtility.getReportJavaResource(runDirectory, reportReference.getParentFile(), clz);
             ClassReference clzRef = new ClassReference("", name);

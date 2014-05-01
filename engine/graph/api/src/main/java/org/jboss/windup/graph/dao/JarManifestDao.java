@@ -1,10 +1,10 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.meta.JarManifest;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
-public interface JarManifestDao extends BaseDao<JarManifest>
+public interface JarManifestDao extends BaseDao<JarManifestModel>
 {
-    public boolean isManifestResource(Resource resource);
-    public JarManifest getManifestFromResource(Resource resource);
+    public boolean isManifestResource(ResourceModel resource);
+    public JarManifestModel getManifestFromResource(ResourceModel resource);
 }

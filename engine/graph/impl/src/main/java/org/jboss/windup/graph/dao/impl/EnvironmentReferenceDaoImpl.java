@@ -4,18 +4,18 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.dao.EnvironmentReferenceDao;
-import org.jboss.windup.graph.model.meta.EnvironmentReference;
+import org.jboss.windup.graph.model.meta.EnvironmentReferenceModel;
 
 @Singleton
-public class EnvironmentReferenceDaoImpl extends BaseDaoImpl<EnvironmentReference> implements EnvironmentReferenceDao {
+public class EnvironmentReferenceDaoImpl extends BaseDaoImpl<EnvironmentReferenceModel> implements EnvironmentReferenceDao {
 
 	public EnvironmentReferenceDaoImpl() {
-		super(EnvironmentReference.class);
+		super(EnvironmentReferenceModel.class);
 	}
 	
 
-	public EnvironmentReference createEnvironmentReference(String name, String type) {
-		EnvironmentReference meta = findByNameAndType(name, type);
+	public EnvironmentReferenceModel createEnvironmentReference(String name, String type) {
+		EnvironmentReferenceModel meta = findByNameAndType(name, type);
 		if(meta == null) {
 			meta  = create();
 			
@@ -29,9 +29,9 @@ public class EnvironmentReferenceDaoImpl extends BaseDaoImpl<EnvironmentReferenc
 		return meta;
 	}
 	
-	public EnvironmentReference findByNameAndType(String name, String type) {
+	public EnvironmentReferenceModel findByNameAndType(String name, String type) {
 		//return the first.
-		for(EnvironmentReference env : hasAllProperties(
+		for(EnvironmentReferenceModel env : hasAllProperties(
 				new String[]{"name", "referenceType"}, 
 				new String[]{name, type})) {
 			

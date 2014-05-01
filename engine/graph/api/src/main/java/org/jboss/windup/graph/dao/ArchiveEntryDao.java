@@ -1,16 +1,16 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.resource.ArchiveEntryResource;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
+import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 
-public interface ArchiveEntryDao extends BaseDao<ArchiveEntryResource>
+public interface ArchiveEntryDao extends BaseDao<ArchiveEntryResourceModel>
 {
 
-    public Iterable<ArchiveEntryResource> findArchiveEntry(String value);
+    public Iterable<ArchiveEntryResourceModel> findArchiveEntry(String value);
 
     public long findArchiveEntryWithExtensionCount(String... values);
 
-    public Iterable<ArchiveEntryResource> findArchiveEntryWithExtension(String... values);
+    public Iterable<ArchiveEntryResourceModel> findArchiveEntryWithExtension(String... values);
 
-    public Iterable<ArchiveEntryResource> findByArchive(final ArchiveResource resource);
+    public Iterable<ArchiveEntryResourceModel> findByArchive(final ArchiveResourceModel resource);
 }

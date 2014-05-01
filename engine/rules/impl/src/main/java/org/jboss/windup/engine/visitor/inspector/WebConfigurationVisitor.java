@@ -16,11 +16,11 @@ import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.EnvironmentReferenceDao;
 import org.jboss.windup.graph.dao.WebConfigurationDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.meta.EnvironmentReference;
-import org.jboss.windup.graph.model.meta.xml.DoctypeMeta;
-import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
-import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacet;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.EnvironmentReferenceModel;
+import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
+import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -59,7 +59,7 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
     public void run()
     {
         // if the XML contains the root tag "web-app"
-        for (XmlResource xml : xmlDao.findByRootTag("web-app"))
+        for (XmlResourceModel xml : xmlDao.findByRootTag("web-app"))
         {
             Document doc = xml.asDocument();
             String version = null;
@@ -89,7 +89,7 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
                         namespace = doc.getFirstChild().getNamespaceURI();
                     }
                     // find that namespace, and try and pull the version from the XSD name...
-                    for (NamespaceMeta ns : xml.getNamespaces())
+                    for (NamespaceMetaModel ns : xml.getNamespaces())
                     {
                         if (StringUtils.equals(ns.getURI(), namespace))
                         {
@@ -104,10 +104,10 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
         }
     }
 
-    public void visitXmlResource(XmlResource xml, Document doc, String versionInformation)
+    public void visitXmlResource(XmlResourceModel xml, Document doc, String versionInformation)
     {
         // check the root XML node.
-        WebConfigurationFacet facet = webConfigurationDao.create();
+        WebConfigurationFacetModel facet = webConfigurationDao.create();
         facet.setXmlFacet(xml);
 
         // change "_" in the version to "."
@@ -125,14 +125,14 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
         }
 
         // extract references.
-        List<EnvironmentReference> refs = processEnvironmentReference(doc.getDocumentElement());
-        for (EnvironmentReference ref : refs)
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(doc.getDocumentElement());
+        for (EnvironmentReferenceModel ref : refs)
         {
             facet.addMeta(ref);
         }
     }
 
-    public boolean processDoctypeMatches(DoctypeMeta entry)
+    public boolean processDoctypeMatches(DoctypeMetaModel entry)
     {
         if (StringUtils.isNotBlank(entry.getPublicId()))
         {
@@ -153,7 +153,7 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
         return false;
     }
 
-    public String processDoctypeVersion(DoctypeMeta entry)
+    public String processDoctypeVersion(DoctypeMetaModel entry)
     {
         String publicId = entry.getPublicId();
         String systemId = entry.getSystemId();
@@ -163,9 +163,9 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
         return versionInformation;
     }
 
-    protected List<EnvironmentReference> processEnvironmentReference(Element element)
+    protected List<EnvironmentReferenceModel> processEnvironmentReference(Element element)
     {
-        List<EnvironmentReference> resources = new LinkedList<EnvironmentReference>();
+        List<EnvironmentReferenceModel> resources = new LinkedList<EnvironmentReferenceModel>();
 
         // find JMS references...
         List<Element> queueReferences = $(element).find("resource-ref").get();
@@ -178,7 +178,7 @@ public class WebConfigurationVisitor extends AbstractGraphVisitor
             type = StringUtils.trim(type);
             name = StringUtils.trim(name);
 
-            EnvironmentReference ref = envRefDao.createEnvironmentReference(name, type);
+            EnvironmentReferenceModel ref = envRefDao.createEnvironmentReference(name, type);
             ref.setReferenceId(id);
             resources.add(ref);
         }

@@ -1,12 +1,12 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.meta.report.SourceReport;
-import org.jboss.windup.graph.model.resource.FileResource;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.meta.report.SourceReportModel;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
-public interface SourceReportDao extends BaseDao<SourceReport>
+public interface SourceReportDao extends BaseDao<SourceReportModel>
 {
-    public boolean hasSourceReport(Resource resource);
+    public boolean hasSourceReport(ResourceModel resource);
 
-    public FileResource getResourceReport(Resource resource);
+    public FileResourceModel getResourceReport(ResourceModel resource);
 }

@@ -5,23 +5,23 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.dao.JavaMethodDao;
 import org.jboss.windup.graph.dao.JavaParameterDao;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.JavaMethod;
-import org.jboss.windup.graph.model.resource.JavaParameter;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.JavaMethodModel;
+import org.jboss.windup.graph.model.resource.JavaParameterModel;
 
-public class JavaMethodDaoImpl extends BaseDaoImpl<JavaMethod> implements JavaMethodDao
+public class JavaMethodDaoImpl extends BaseDaoImpl<JavaMethodModel> implements JavaMethodDao
 {
     @Inject
     private JavaParameterDao paramDao;
     
     public JavaMethodDaoImpl()
     {
-        super(JavaMethod.class);
+        super(JavaMethodModel.class);
     }
 
-    public synchronized JavaMethod createJavaMethod(JavaClass clz, String javaMethod, JavaClass... params)
+    public synchronized JavaMethodModel createJavaMethod(JavaClassModel clz, String javaMethod, JavaClassModel... params)
     {
-        for (JavaMethod method : clz.getMethod(javaMethod))
+        for (JavaMethodModel method : clz.getMethod(javaMethod))
         {
             if (method.countParameters() != params.length)
             {
@@ -33,12 +33,12 @@ public class JavaMethodDaoImpl extends BaseDaoImpl<JavaMethod> implements JavaMe
             }
         }
 
-        JavaMethod method = create();
+        JavaMethodModel method = create();
         method.setMethodName(javaMethod);
 
         for (int i = 0, j = params.length; i < j; i++)
         {
-            JavaParameter param = paramDao.create();
+            JavaParameterModel param = paramDao.create();
             param.setPosition(i);
             param.setJavaType(params[i]);
         }
@@ -46,12 +46,12 @@ public class JavaMethodDaoImpl extends BaseDaoImpl<JavaMethod> implements JavaMe
         return method;
     }
 
-    protected boolean methodParametersMatch(JavaMethod method, JavaClass... params)
+    protected boolean methodParametersMatch(JavaMethodModel method, JavaClassModel... params)
     {
         for (int i = 0, j = params.length; i < j; i++)
         {
-            JavaParameter param = method.getParameter(i);
-            JavaClass paramVal = param.getJavaType();
+            JavaParameterModel param = method.getParameter(i);
+            JavaClassModel paramVal = param.getJavaType();
             if (!StringUtils.equals(paramVal.getQualifiedName(), paramVal.getQualifiedName()))
             {
                 return false;

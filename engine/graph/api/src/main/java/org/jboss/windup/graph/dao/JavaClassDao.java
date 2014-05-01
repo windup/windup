@@ -1,39 +1,39 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
-public interface JavaClassDao extends BaseDao<JavaClass> {
+public interface JavaClassDao extends BaseDao<JavaClassModel> {
 
-	public JavaClass createJavaClass(String qualifiedName);
+	public JavaClassModel createJavaClass(String qualifiedName);
 	
-	public Iterable<JavaClass> findByJavaClassPattern(String regex);
+	public Iterable<JavaClassModel> findByJavaClassPattern(String regex);
 	
-	public Iterable<JavaClass> findByJavaPackage(String packageName);
+	public Iterable<JavaClassModel> findByJavaPackage(String packageName);
 	
-	public Iterable<JavaClass> findByJavaVersion(JavaVersion version);
+	public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version);
 
-	public Iterable<JavaClass> getAllClassNotFound();
+	public Iterable<JavaClassModel> getAllClassNotFound();
 	
-	public Iterable<JavaClass> getAllDuplicateClasses();
+	public Iterable<JavaClassModel> getAllDuplicateClasses();
 	
-	public boolean isJavaClass(Resource resource);
+	public boolean isJavaClass(ResourceModel resource);
 	
-	public JavaClass getJavaClassFromResource(Resource resource);
+	public JavaClassModel getJavaClassFromResource(ResourceModel resource);
 	
-	public void markAsBlacklistCandidate(JavaClass clz);
+	public void markAsBlacklistCandidate(JavaClassModel clz);
 	
-	public void markAsCustomerPackage(JavaClass clz);
+	public void markAsCustomerPackage(JavaClassModel clz);
 	
-	public Iterable<JavaClass> findClassesWithSource();
+	public Iterable<JavaClassModel> findClassesWithSource();
 	
-	public Iterable<JavaClass> findCandidateBlacklistClasses();
+	public Iterable<JavaClassModel> findCandidateBlacklistClasses();
 	
-	public Iterable<JavaClass> findClassesLeveragingCandidateBlacklists();
+	public Iterable<JavaClassModel> findClassesLeveragingCandidateBlacklists();
 	
-	public Iterable<JavaClass> findLeveragedCandidateBlacklists(JavaClass clz);
+	public Iterable<JavaClassModel> findLeveragedCandidateBlacklists(JavaClassModel clz);
 	
-	public Iterable<JavaClass> findCustomerPackageClasses();
+	public Iterable<JavaClassModel> findCustomerPackageClasses();
 	
 	public enum JavaVersion {
 		JAVA_7(7, 0),

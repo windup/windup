@@ -12,7 +12,7 @@ import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.dao.EarArchiveDao;
 import org.jboss.windup.graph.dao.JarArchiveDao;
 import org.jboss.windup.graph.dao.WarArchiveDao;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +55,14 @@ public class ArchiveTypingVisitor extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (ArchiveResource archive : archiveDao.getAll())
+        for (ArchiveResourceModel archive : archiveDao.getAll())
         {
             visitArchive(archive);
         }
     }
 
     @Override
-    public void visitArchive(ArchiveResource file)
+    public void visitArchive(ArchiveResourceModel file)
     {
         // now, check to see whether it is a JAR, and republish the typed value.
         String filePath = file.asFile().getAbsolutePath();

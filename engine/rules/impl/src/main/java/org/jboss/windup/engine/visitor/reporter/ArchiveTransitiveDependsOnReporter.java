@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JarArchiveDao;
-import org.jboss.windup.graph.model.resource.JarArchive;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.jboss.windup.graph.renderer.SimpleGraphRenderer;
 import org.jboss.windup.graph.renderer.SimpleGraphRenderer.RenderableVertex;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class ArchiveTransitiveDependsOnReporter extends AbstractGraphVisitor
 
     public void processDependsOnTransitive()
     {
-        for (JarArchive archive : jarDao.getAll())
+        for (JarArchiveModel archive : jarDao.getAll())
         {
 
             SimpleGraphRenderer simpleGraph = new SimpleGraphRenderer("depends on");
@@ -60,7 +60,7 @@ public class ArchiveTransitiveDependsOnReporter extends AbstractGraphVisitor
 
             for (Object key : vertexIds)
             {
-                JarArchive dep = jarDao.getById(key);
+                JarArchiveModel dep = jarDao.getById(key);
                 LOG.info(" - Depends on: " + dep.getArchiveName());
 
                 RenderableVertex child = simpleGraph.getFramed().addVertex(null, RenderableVertex.class);
@@ -81,7 +81,7 @@ public class ArchiveTransitiveDependsOnReporter extends AbstractGraphVisitor
 
     public void processProvidesForTransitive()
     {
-        for (JarArchive archive : jarDao.getAll())
+        for (JarArchiveModel archive : jarDao.getAll())
         {
             SimpleGraphRenderer simpleGraph = new SimpleGraphRenderer("provides for");
             RenderableVertex v = simpleGraph.getFramed().addVertex(null, RenderableVertex.class);
@@ -95,7 +95,7 @@ public class ArchiveTransitiveDependsOnReporter extends AbstractGraphVisitor
 
             for (Object key : vertexIds)
             {
-                JarArchive dep = jarDao.getById(key);
+                JarArchiveModel dep = jarDao.getById(key);
                 LOG.info(" - Provides for: " + dep.getArchiveName());
 
                 RenderableVertex child = simpleGraph.getFramed().addVertex(null, RenderableVertex.class);
@@ -116,10 +116,10 @@ public class ArchiveTransitiveDependsOnReporter extends AbstractGraphVisitor
     }
 
     // depth first transversal.
-    public void profileTransitiveDependsOn(JarArchive archive, Set<Object> visited)
+    public void profileTransitiveDependsOn(JarArchiveModel archive, Set<Object> visited)
     {
         visited.add(archive.asVertex().getId());
-        for (JarArchive clz : archive.dependsOnArchives())
+        for (JarArchiveModel clz : archive.dependsOnArchives())
         {
             if (!visited.contains(clz.asVertex().getId()))
             {
@@ -129,10 +129,10 @@ public class ArchiveTransitiveDependsOnReporter extends AbstractGraphVisitor
     }
 
     // depth first transversal.
-    public void profileTransitiveProvidesFor(JarArchive archive, Set<Object> visited)
+    public void profileTransitiveProvidesFor(JarArchiveModel archive, Set<Object> visited)
     {
         visited.add(archive.asVertex().getId());
-        for (JarArchive clz : archive.providesForArchives())
+        for (JarArchiveModel clz : archive.providesForArchives())
         {
             if (!visited.contains(clz.asVertex().getId()))
             {

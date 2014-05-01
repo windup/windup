@@ -13,10 +13,10 @@ import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.SpringBeanDao;
 import org.jboss.windup.graph.dao.SpringConfigurationDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacet;
-import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacet;
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacetModel;
+import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacetModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -53,7 +53,7 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
     @Override
     public void run()
     {
-        for (XmlResource entry : xmlResourceDao.findByRootTag("beans"))
+        for (XmlResourceModel entry : xmlResourceDao.findByRootTag("beans"))
         {
             visitXmlResource(entry);
             xmlResourceDao.commit();
@@ -61,7 +61,7 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public void visitXmlResource(XmlResource entry)
+    public void visitXmlResource(XmlResourceModel entry)
     {
         try
         {
@@ -71,7 +71,7 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
 
             if (element != null)
             {
-                SpringConfigurationFacet facet = springConfigurationDao.create();
+                SpringConfigurationFacetModel facet = springConfigurationDao.create();
                 facet.setXmlFacet(entry);
 
                 List<Element> beans = $(element).children("bean").get();
@@ -91,14 +91,14 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
                         continue;
                     }
 
-                    SpringBeanFacet springBeanRef = springBeanDao.create();
+                    SpringBeanFacetModel springBeanRef = springBeanDao.create();
 
                     if (StringUtils.isNotBlank(id))
                     {
                         springBeanRef.setSpringBeanName(id);
                     }
 
-                    JavaClass classReference = javaClassDao.createJavaClass(clz);
+                    JavaClassModel classReference = javaClassDao.createJavaClass(clz);
                     springBeanRef.setJavaClassFacet(classReference);
                     facet.addSpringBeanReference(springBeanRef);
                 }

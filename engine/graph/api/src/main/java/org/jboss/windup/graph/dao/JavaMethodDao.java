@@ -1,10 +1,10 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.resource.JavaClass;
-import org.jboss.windup.graph.model.resource.JavaMethod;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.resource.JavaMethodModel;
 
-public interface JavaMethodDao extends BaseDao<JavaMethod>
+public interface JavaMethodDao extends BaseDao<JavaMethodModel>
 {
 
-    public JavaMethod createJavaMethod(JavaClass clz, String javaMethod, JavaClass ... params);
+    public JavaMethodModel createJavaMethod(JavaClassModel clz, String javaMethod, JavaClassModel ... params);
 }

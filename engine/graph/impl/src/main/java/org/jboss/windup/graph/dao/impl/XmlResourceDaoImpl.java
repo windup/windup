@@ -10,28 +10,28 @@ import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.NamespaceDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
-import org.jboss.windup.graph.model.meta.xml.NamespaceMeta;
-import org.jboss.windup.graph.model.resource.Resource;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 import com.google.common.collect.Iterables;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 @Singleton
-public class XmlResourceDaoImpl extends BaseDaoImpl<XmlResource> implements XmlResourceDao {
+public class XmlResourceDaoImpl extends BaseDaoImpl<XmlResourceModel> implements XmlResourceDao {
 
     @Inject
     private NamespaceDao namespaceDao;
     
 	public XmlResourceDaoImpl() {
-		super(XmlResource.class);
+		super(XmlResourceModel.class);
 	}
 
-	public Iterable<XmlResource> containsNamespaceURI(String namespaceURI) {
+	public Iterable<XmlResourceModel> containsNamespaceURI(String namespaceURI) {
 		
-		List<Iterable<XmlResource>> result = new LinkedList<Iterable<XmlResource>>();
-		for(NamespaceMeta resource : namespaceDao.findByURI(namespaceURI)) {
+		List<Iterable<XmlResourceModel>> result = new LinkedList<Iterable<XmlResourceModel>>();
+		for(NamespaceMetaModel resource : namespaceDao.findByURI(namespaceURI)) {
 			result.add(resource.getXmlResources());
 		}
 		
@@ -42,18 +42,18 @@ public class XmlResourceDaoImpl extends BaseDaoImpl<XmlResource> implements XmlR
 		return Iterables.concat(result);
 	}
 	
-	public Iterable<XmlResource> findByRootTag(String rootTagName) {
+	public Iterable<XmlResourceModel> findByRootTag(String rootTagName) {
 		return getByProperty("rootTagName", rootTagName);
 	}
 	
-	public boolean isXmlResource(Resource resource) {
+	public boolean isXmlResource(ResourceModel resource) {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("xmlResourceFacet").iterator().hasNext();
     }
     
-    public XmlResource getXmlFromResource(Resource resource) {
+    public XmlResourceModel getXmlFromResource(ResourceModel resource) {
         Iterator<Vertex> v = (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("xmlResourceFacet").iterator();
         if(v.hasNext()) {
-            return context.getFramed().frame(v.next(), XmlResource.class);
+            return context.getFramed().frame(v.next(), XmlResourceModel.class);
         }
         
         return null;

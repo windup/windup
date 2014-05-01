@@ -1,9 +1,9 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacet;
-import org.jboss.windup.graph.model.resource.XmlResource;
+import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
-public interface WebConfigurationDao extends BaseDao<WebConfigurationFacet> {
-    public boolean isWebConfiguration(XmlResource resource);
-    public WebConfigurationFacet getWebConfigurationFromResource(XmlResource resource);
+public interface WebConfigurationDao extends BaseDao<WebConfigurationFacetModel> {
+    public boolean isWebConfiguration(XmlResourceModel resource);
+    public WebConfigurationFacetModel getWebConfigurationFromResource(XmlResourceModel resource);
 }

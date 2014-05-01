@@ -5,8 +5,8 @@ import java.util.Iterator;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.ArchiveDao;
-import org.jboss.windup.graph.model.resource.ArchiveResource;
-import org.jboss.windup.graph.model.resource.Resource;
+import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -15,14 +15,14 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
 @Singleton
-public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResource> implements ArchiveDao
+public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements ArchiveDao
 {
     public ArchiveDaoImpl()
     {
-        super(ArchiveResource.class);
+        super(ArchiveResourceModel.class);
     }
 
-    public Iterable<ArchiveResource> findAllRootArchives()
+    public Iterable<ArchiveResourceModel> findAllRootArchives()
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
@@ -43,22 +43,22 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResource> implements Arch
                             return false;
                         }
                     });
-        return context.getFramed().frameVertices(pipeline, ArchiveResource.class);
+        return context.getFramed().frameVertices(pipeline, ArchiveResourceModel.class);
     }
 
-    public boolean isArchiveResource(Resource resource)
+    public boolean isArchiveResource(ResourceModel resource)
     {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("archiveResourceFacet").iterator()
                     .hasNext();
     }
 
-    public ArchiveResource getArchiveFromResource(Resource resource)
+    public ArchiveResourceModel getArchiveFromResource(ResourceModel resource)
     {
         Iterator<Vertex> v = (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("archiveResourceFacet")
                     .iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), ArchiveResource.class);
+            return context.getFramed().frame(v.next(), ArchiveResourceModel.class);
         }
 
         return null;
