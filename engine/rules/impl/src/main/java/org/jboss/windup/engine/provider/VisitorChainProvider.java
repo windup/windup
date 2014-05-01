@@ -7,28 +7,27 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.engine.visitor.GraphVisitor;
 
 /**
- *  Gets the GraphVisitor instances from Forge and provides a sorted copy of that list.
+ * Gets the GraphVisitor instances from Furnace and provides a sorted copy of that list.
  */
 public class VisitorChainProvider
 {
-    //@Inject private WindupContext context;
-    
-    @Inject private Imported<GraphVisitor> visitors;
+    @Inject
+    private Imported<GraphVisitor> visitors;
 
-    
     /**
-     *  Returns a sorted copy of GraphVisitor instances list from Forge.
+     * Returns a sorted copy of GraphVisitor instances list from Forge.
      */
     public List<GraphVisitor> getSortedVisitorChain()
     {
-        List<GraphVisitor> chain = Lists.newArrayList( this.visitors );
+        List<GraphVisitor> chain = Lists.newArrayList(this.visitors);
         chain = new GraphVisitorSorter().sort(chain);
         return chain;
     }
-    
-    
-    public void disposeVisitors( List<GraphVisitor> visitorsToDispose ) {
-        for (GraphVisitor v : visitorsToDispose) {
+
+    public void disposeVisitors(List<GraphVisitor> visitorsToDispose)
+    {
+        for (GraphVisitor v : visitorsToDispose)
+        {
             this.visitors.release(v);
         }
     }

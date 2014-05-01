@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
+import org.jboss.windup.engine.visitor.GraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.engine.visitor.reporter.html.model.Level;
 import org.jboss.windup.engine.visitor.reporter.html.model.LinkName;
@@ -35,6 +36,12 @@ public class OverviewReportRenderer extends AbstractGraphVisitor
     public VisitorPhase getPhase()
     {
         return VisitorPhase.REPORTING;
+    }
+    
+    @Override
+    public List<Class<? extends GraphVisitor>> getDependencies()
+    {
+        return generateDependencies(ApplicationReportRenderer.class, BlacklistClassloaderReportRenderer.class, CssJsResourceRenderer.class, DuplicateClassloaderReportRenderer.class, EJBReportRenderer.class, HibernateReportRenderer.class, JavaSourceRenderer.class, ManifestSourceRenderer.class, NotFoundClassloaderReportRenderer.class, PropertiesSourceRenderer.class, ServerResourceReportRenderer.class, SpringReportRenderer.class, XmlSourceRenderer.class);
     }
     
     public OverviewReportRenderer()
