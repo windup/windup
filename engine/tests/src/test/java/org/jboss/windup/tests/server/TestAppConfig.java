@@ -1,4 +1,4 @@
-package org.jboss.windup.tests.windride;
+package org.jboss.windup.tests.server;
 
 import java.io.File;
 import java.io.IOException;

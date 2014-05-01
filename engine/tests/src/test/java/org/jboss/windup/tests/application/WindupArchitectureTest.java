@@ -1,4 +1,4 @@
-package org.jboss.windup.tests;
+package org.jboss.windup.tests.application;
 
 import javax.inject.Inject;
 

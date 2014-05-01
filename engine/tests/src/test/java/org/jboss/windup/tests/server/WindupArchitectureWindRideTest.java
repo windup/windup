@@ -1,4 +1,4 @@
-package org.jboss.windup.tests.windride;
+package org.jboss.windup.tests.server;
 
 
 import javax.annotation.security.RunAs;
