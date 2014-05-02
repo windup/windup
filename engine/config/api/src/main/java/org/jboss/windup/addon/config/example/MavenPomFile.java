@@ -4,13 +4,15 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.selectables;
+package org.jboss.windup.addon.config.example;
 
+import org.jboss.windup.addon.config.selectables.Selectable;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-public interface JavaClassCondition extends SelectableCondition<JavaClass, JavaClassCondition>
+public interface MavenPomFile extends Selectable<MavenPomFileCondition, MavenPomFile>
 {
-    JavaClassCondition named(String string);
+
 }

@@ -4,14 +4,13 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config;
+package org.jboss.windup.addon.config.example;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.jboss.windup.addon.config.WindupConfigurationProvider;
 import org.jboss.windup.addon.config.operation.Iteration;
 import org.jboss.windup.addon.config.operation.Log;
-import org.jboss.windup.addon.config.selectables.JavaClass;
-import org.jboss.windup.addon.config.selectables.JavaMethod;
 import org.jboss.windup.addon.config.selectables.Selection;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.logging.Logger.Level;
@@ -22,7 +21,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public class DefaultConfigurationProvider extends WindupConfigurationProvider
+public class JavaExampleConfigurationProvider extends WindupConfigurationProvider
 {
     
     @Override
@@ -62,7 +61,7 @@ public class DefaultConfigurationProvider extends WindupConfigurationProvider
                                                 Selection.exists(JavaMethod.class, "methods")
                                                          .in(Selection.current(JavaClass.class))
                                                          .withSignature("toString()")
-                                                         .definedBy("java.lang.Object") 
+                                                         .definedBy("java.lang.Object")
                                     )
                                     .perform(
                                                 /*

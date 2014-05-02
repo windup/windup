@@ -26,6 +26,7 @@ public class Iteration extends DefaultOperationBuilder
     private final Class<? extends Selectable<?, ?>> type;
     private final String source;
     private final String var;
+    private Class<?> castType;
 
     public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iteration(
                 Class<SELECTABLE> type, String source, String var)
@@ -35,20 +36,32 @@ public class Iteration extends DefaultOperationBuilder
         this.var = var;
     }
 
+    /**
+     * Begin an {@link Iteration}
+     */
     public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iteration over(
                 Class<SELECTABLE> selectable, String source, String var)
     {
         return new Iteration(selectable, source, var);
     }
 
+    /**
+     * Cast each iterated element to the given type (if possible.)
+     */
+    public Iteration as(Class<?> castType)
+    {
+        this.castType = castType;
+        return this;
+    }
+
     public Iteration when(Condition condition)
     {
-        return null;
+        return this;
     }
 
     public Iteration perform(Operation operation)
     {
-        return null;
+        return this;
     }
 
     /*
