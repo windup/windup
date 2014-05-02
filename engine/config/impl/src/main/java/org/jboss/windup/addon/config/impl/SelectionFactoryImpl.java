@@ -34,6 +34,14 @@ public class SelectionFactoryImpl implements SelectionFactory
     }
 
     @Override
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iterable<SELECTABLE> getQueryResult(
+                Class<SELECTABLE> type, String var)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE get(
                 Class<SELECTABLE> selectable, String var)
     {
