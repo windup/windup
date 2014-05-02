@@ -16,6 +16,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface ResourceModel extends VertexFrame
 {
 
+    @Adjacency(label = "interface", direction = Direction.OUT)
+    public Iterable<ImplementedInterfaceModel> getAllInterfaces();
+
+    @Adjacency(label = "interface", direction = Direction.OUT)
+    public Iterable<String> addImplementedInterface(ImplementedInterfaceModel interfaceClassName);
+
     @Adjacency(label = "meta", direction = Direction.OUT)
     public Iterable<BaseMetaModel> getMeta();
 

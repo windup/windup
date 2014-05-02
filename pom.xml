@@ -20,6 +20,7 @@
         <version.furnace>2.5.0.Final</version.furnace>
         <version.titangraph>0.4.4</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
+        <version.freemarker>2.3.19</version.freemarker>
 
         <windup.scm.connection>scm:git:https://github.com/jsight/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:jsight/windup.git</windup.developer.connection>

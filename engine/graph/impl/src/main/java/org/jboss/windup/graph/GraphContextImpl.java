@@ -1,6 +1,8 @@
 package org.jboss.windup.graph;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -29,20 +31,29 @@ import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
 import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.jboss.windup.graph.model.resource.EarArchiveModel;
+import org.jboss.windup.graph.model.resource.ImplementedInterfaceModel;
 import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.model.resource.JavaMethodModel;
 import org.jboss.windup.graph.model.resource.JavaParameterModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.WarArchiveModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
+import com.esotericsoftware.minlog.Log;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanKey;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
+import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraph;
+import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
+import com.tinkerpop.frames.modules.AbstractModule;
+import com.tinkerpop.frames.modules.TypeResolver;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
@@ -119,7 +130,73 @@ public class GraphContextImpl implements GraphContext {
 		
 		batch = new BatchGraph<TitanGraph>(graph, 1000L);
 		
+		final TypeResolver customTypeResolver = new TypeResolver()
+        {
+            
+            @Override
+            public Class<?>[] resolveTypes(Edge e, Class<?> defaultType)
+            {
+                return new Class[] { };
+            }
+            
+            @Override
+            public Class<?>[] resolveTypes(Vertex v, Class<?> defaultType)
+            {
+                List<Class<?>> classes = new LinkedList<>();
+                if (defaultType != ResourceModel.class) {
+                    ResourceModel rModel = framed.frame(v, ResourceModel.class);
+                    for (ImplementedInterfaceModel implementedIFace : rModel.getAllInterfaces()) {
+                        System.out.println("TYPERESOLVER: " + implementedIFace.getClassName());
+                        try {
+                            classes.add(Class.forName(implementedIFace.getClassName()));
+                        } catch (Exception e) {
+                            Log.warn("Failed to load class with name: " + implementedIFace.getClassName());
+                        }
+                    }
+                }
+                return classes.toArray(new Class[0]);
+            }
+        };
+        final FrameInitializer frameInitializer = new FrameInitializer()
+        {
+            @Override
+            public void initElement(Class<?> kind, FramedGraph<?> framedGraph, Element element)
+            {
+                if (kind != ImplementedInterfaceModel.class && element instanceof Vertex) {
+                    Vertex v = (Vertex)element;
+                    ResourceModel resourceModel = framedGraph.frame(v, ResourceModel.class);
+                    
+                    boolean alreadyExists = false;
+                    for (ImplementedInterfaceModel ifaceModel : resourceModel.getAllInterfaces()) {
+                        String iface = ifaceModel.getClassName();
+                        if (iface.equals(kind.getCanonicalName())) {
+                            alreadyExists = true;
+                            break;
+                        }
+                    }
+                    if (!alreadyExists) {
+                        ImplementedInterfaceModel ifaceModel = framedGraph.addVertex(null, ImplementedInterfaceModel.class);
+                        ifaceModel.setClassName(kind.getCanonicalName());
+                        System.out.println("1FINIT added: " + kind.getCanonicalName());
+                        resourceModel.addImplementedInterface(ifaceModel);
+                    } else {
+                        System.out.println("NOT ADDED: " + kind.getCanonicalName());
+                    }
+                    
+                        
+                }
+            }
+        };
+		
 		FramedGraphFactory factory = new FramedGraphFactory(
+		        new AbstractModule() {
+		            @Override
+		            protected void doConfigure(FramedGraphConfiguration config)
+		            {
+		                config.addTypeResolver(customTypeResolver);
+		                config.addFrameInitializer(frameInitializer);
+		            }
+		        },
 				new JavaHandlerModule(),
 			    new TypedGraphModuleBuilder()
 				.withClass(ApplicationReferenceModel.class)
@@ -157,7 +234,6 @@ public class GraphContextImpl implements GraphContext {
 			    .withClass(SourceReportModel.class)
                 .withClass(WebConfigurationFacetModel.class)
                 .withClass(PropertiesMetaModel.class)
-			    
 			    .build(), 
 			    new GremlinGroovyModule()
 		);

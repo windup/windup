@@ -41,6 +41,6 @@ public interface ApplicationReportModel extends ReportModel
     public Iterable<ReportModel> getChildReports();
     
     @Adjacency(label="childReport", direction=Direction.OUT)
-    public void addChildrenArchiveEntries(final ReportModel reportResource);
+    public void addChildReport(final ReportModel reportResource);
 
 }
