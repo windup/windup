@@ -4,17 +4,15 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.example;
+package org.jboss.windup.addon.config.example.java;
 
 import org.jboss.windup.addon.config.selectables.SelectableCondition;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public interface MavenPomFileCondition extends SelectableCondition<MavenPomFile, MavenPomFileCondition>
+public interface JavaClassCondition extends SelectableCondition<JavaClass, JavaClassCondition, JavaClassModel>
 {
-
-    MavenPomFileCondition withDoctype(String string);
-
+    JavaClassCondition named(String string);
 }

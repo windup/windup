@@ -14,24 +14,39 @@ import org.ocpsoft.common.services.ServiceLoader;
  */
 public class Selection
 {
-    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> CONDITION exists(
-                Class<SELECTABLE> selectable, String var)
+    /*
+     * Conditions
+     */
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                CONDITION ofAll(Class<SELECTABLE> selectable, String var)
     {
         return getSelectionFactory().createQuery(selectable, var);
     }
 
-    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE current(
-                Class<SELECTABLE> selectable)
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                CONDITION ofCurrent(Class<SELECTABLE> selectable)
+    {
+        return getSelectionFactory().createQuery(selectable, null);
+    }
+
+    /*
+     * Selections
+     */
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                SELECTABLE current(Class<SELECTABLE> selectable)
     {
         return getSelectionFactory().getCurrent(selectable);
     }
 
-    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE get(
-                Class<SELECTABLE> selectable, String var)
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                SELECTABLE get(Class<SELECTABLE> selectable, String var)
     {
         return getSelectionFactory().get(selectable, var);
     }
 
+    /*
+     * Private
+     */
     private static SelectionFactory getSelectionFactory()
     {
         return (SelectionFactory) ServiceLoader.load(SelectionFactory.class).iterator().next();

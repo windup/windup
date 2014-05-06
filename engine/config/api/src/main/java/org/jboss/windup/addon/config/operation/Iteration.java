@@ -9,7 +9,6 @@ package org.jboss.windup.addon.config.operation;
 import org.jboss.windup.addon.config.selectables.Selectable;
 import org.jboss.windup.addon.config.selectables.SelectableCondition;
 import org.jboss.windup.addon.config.spi.SelectionFactory;
-import org.ocpsoft.common.services.ServiceLoader;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;
@@ -23,12 +22,14 @@ import org.ocpsoft.rewrite.event.Rewrite;
 public class Iteration extends DefaultOperationBuilder
 {
 
-    private final Class<? extends Selectable<?, ?>> type;
+    private final Class<? extends Selectable<?, ?, ?>> type;
     private final String source;
     private final String var;
     private Class<?> castType;
+    private Condition condition;
+    private Operation operation;
 
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iteration(
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> Iteration(
                 Class<SELECTABLE> type, String source, String var)
     {
         this.type = type;
@@ -39,8 +40,8 @@ public class Iteration extends DefaultOperationBuilder
     /**
      * Begin an {@link Iteration}
      */
-    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iteration over(
-                Class<SELECTABLE> selectable, String source, String var)
+    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                Iteration over(Class<SELECTABLE> selectable, String source, String var)
     {
         return new Iteration(selectable, source, var);
     }
@@ -56,11 +57,13 @@ public class Iteration extends DefaultOperationBuilder
 
     public Iteration when(Condition condition)
     {
+        this.condition = condition;
         return this;
     }
 
     public Iteration perform(Operation operation)
     {
+        this.operation = operation;
         return this;
     }
 
@@ -69,13 +72,23 @@ public class Iteration extends DefaultOperationBuilder
      * Iteration
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void perform(Rewrite event, EvaluationContext context)
     {
-
-    }
-
-    private static SelectionFactory getSelectionFactory()
-    {
-        return (SelectionFactory) ServiceLoader.load(SelectionFactory.class).iterator().next();
+        if (operation != null)
+        {
+            SelectionFactory factory = (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
+            Iterable<?> peek = factory.peek(source);
+            for (Object element : peek)
+            {
+                factory.setCurrentPayload((Class) type, element);
+                if (condition != null && condition.evaluate(event, context))
+                {
+                    if (operation != null)
+                        operation.perform(event, context);
+                }
+            }
+            factory.setCurrentPayload((Class) type, null);
+        }
     }
 }

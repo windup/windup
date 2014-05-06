@@ -10,21 +10,24 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.addon.config.example.people.PersonConfigurationProvider;
 import org.jboss.windup.addon.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.addon.config.spi.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationLoader;
 import org.ocpsoft.rewrite.config.Subset;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
-public class ReadXMLConfigurationTest
+public class PersonConfigurationTest
 {
 
     @Deployment
@@ -36,6 +39,7 @@ public class ReadXMLConfigurationTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
+                    .addPackages(true, PersonConfigurationProvider.class.getPackage())
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.addon:config"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -44,21 +48,31 @@ public class ReadXMLConfigurationTest
     }
 
     @Inject
+    private PersonConfigurationProvider provider;
+
+    @Inject
     private GraphTypeRegistry graphTypeRegistry;
-    
+
+    @Inject
+    private SelectionFactory factory;
+
     @Test
     public void testRunWindup() throws Exception
     {
-        final File folder = File.createTempFile("windupGraph", "");
+        final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
-        final ConfigurationLoader loader = ConfigurationLoader.create(context);
-        final Configuration configuration = loader.loadConfiguration(context);
+        GraphRewrite event = new GraphRewrite(context);
 
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
 
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
 
-        Subset.evaluate(configuration).perform(new GraphRewrite(context), evaluationContext);
+        event.getRewriteContext().put(SelectionFactory.class, factory);
+
+        Configuration configuration = provider.getConfiguration(context);
+        Subset.evaluate(configuration).perform(event, evaluationContext);
+
+        Assert.assertTrue(provider.isPersonFound());
     }
 }

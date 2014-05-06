@@ -4,15 +4,17 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.example;
+package org.jboss.windup.addon.config.example.java;
 
 import org.jboss.windup.addon.config.selectables.SelectableCondition;
+import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface MavenDependencyCondition extends SelectableCondition<MavenDependency, MavenDependencyCondition>
+public interface MavenDependencyCondition extends
+            SelectableCondition<MavenDependency, MavenDependencyCondition, MavenFacetModel>
 {
     MavenDependencyCondition in(MavenPomFile current);
 

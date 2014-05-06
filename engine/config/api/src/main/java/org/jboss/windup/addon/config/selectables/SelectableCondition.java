@@ -11,8 +11,10 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface SelectableCondition<SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>>
+public interface SelectableCondition<SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
             extends ConditionBuilder
 {
     Class<SELECTABLE> getSelectableType();
+    
+    CONDITION setCollectionName(String name);
 }

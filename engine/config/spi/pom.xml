@@ -15,7 +15,7 @@
         <dependency>
             <groupId>org.ocpsoft.rewrite</groupId>
             <artifactId>rewrite-api</artifactId>
-            <version>2.0.10.Final</version>
+            <version>2.0.12.Final</version>
         </dependency>
     </dependencies>
 

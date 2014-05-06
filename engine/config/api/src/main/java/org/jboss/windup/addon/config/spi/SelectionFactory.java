@@ -15,15 +15,30 @@ import org.jboss.windup.addon.config.selectables.SelectableCondition;
  */
 public interface SelectionFactory
 {
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> CONDITION createQuery(
-                Class<SELECTABLE> type, String var);
+    void push(Iterable<?> result, String name);
 
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iterable<SELECTABLE> getQueryResult(
-                Class<SELECTABLE> type, String var);
+    Iterable<?> pop();
 
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE get(
-                Class<SELECTABLE> type, String var);
+    Iterable<?> peek(String name);
 
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE getCurrent(
-                Class<SELECTABLE> type);
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                CONDITION createQuery(Class<SELECTABLE> type, String var);
+
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                Iterable<SELECTABLE> getQueryResult(Class<SELECTABLE> type, String var);
+
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                SELECTABLE get(Class<SELECTABLE> type, String var);
+
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                SELECTABLE getCurrent(Class<SELECTABLE> type);
+
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                void setCurrentPayload(Class<SELECTABLE> type, PAYLOAD element);
+
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                PAYLOAD getCurrentPayload(Class<SELECTABLE> type);
+
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+                PAYLOAD getCurrentPayload(Class<SELECTABLE> type, String var);
 }

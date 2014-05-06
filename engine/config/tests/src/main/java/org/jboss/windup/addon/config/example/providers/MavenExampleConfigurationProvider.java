@@ -4,11 +4,15 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.example;
+package org.jboss.windup.addon.config.example.providers;
 
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
+import org.jboss.windup.addon.config.example.java.Graph;
+import org.jboss.windup.addon.config.example.java.MavenDependency;
+import org.jboss.windup.addon.config.example.java.MavenPomFile;
+import org.jboss.windup.addon.config.example.java.XMLFile;
 import org.jboss.windup.addon.config.operation.Iteration;
 import org.jboss.windup.addon.config.selectables.Selection;
 import org.jboss.windup.graph.GraphContext;
@@ -28,7 +32,7 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
         return ConfigurationBuilder.begin()
 
                     .addRule()
-                    .when(Selection.exists(XMLFile.class, "xmls")
+                    .when(Selection.ofAll(XMLFile.class, "xmls")
                                 .withDoctype("http://maven.apache.org/POM/4.0.0")
                     )
                     .perform(Iteration.over(XMLFile.class, "xmls", "pom").as(MavenPomFile.class)
@@ -39,9 +43,9 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
                     )
 
                     .addRule()
-                    .when(Selection.exists(MavenPomFile.class, "poms"))
+                    .when(Selection.ofAll(MavenPomFile.class, "poms"))
                     .perform(Iteration.over(MavenPomFile.class, "poms", "pom")
-                                .when(Selection.exists(MavenDependency.class, "methods")
+                                .when(Selection.ofAll(MavenDependency.class, "methods")
                                             .blacklisted(false)
                                 )
                                 .perform(

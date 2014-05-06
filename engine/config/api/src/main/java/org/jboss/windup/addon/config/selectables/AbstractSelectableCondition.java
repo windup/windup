@@ -13,8 +13,8 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public abstract class AbstractSelectableCondition<SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>>
-            implements SelectableCondition<SELECTABLE, CONDITION>
+public abstract class AbstractSelectableCondition<SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
+            implements SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>
 {
     @Override
     public boolean evaluate(Rewrite event, EvaluationContext context)

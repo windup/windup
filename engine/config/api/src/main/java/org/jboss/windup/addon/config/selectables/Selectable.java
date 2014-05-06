@@ -6,10 +6,16 @@
  */
 package org.jboss.windup.addon.config.selectables;
 
+import java.util.concurrent.Callable;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface Selectable<CONDITION extends SelectableCondition<SELECTABLE, CONDITION>, SELECTABLE extends Selectable<CONDITION, SELECTABLE>>
+public interface Selectable<CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, PAYLOAD>
 {
     Class<CONDITION> getSelectableConditionType();
+
+    PAYLOAD getPayload();
+
+    SELECTABLE setPayload(Callable<PAYLOAD> payload);
 }

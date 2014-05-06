@@ -6,7 +6,12 @@
  */
 package org.jboss.windup.addon.config.impl;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Stack;
+
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.windup.addon.config.selectables.Selectable;
@@ -17,46 +22,100 @@ import org.jboss.windup.addon.config.spi.SelectionFactory;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
+@Singleton
 public class SelectionFactoryImpl implements SelectionFactory
 {
     @Inject
     private AddonRegistry registry;
 
     @Override
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> CONDITION createQuery(
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> CONDITION createQuery(
                 Class<SELECTABLE> selectable, String var)
     {
-        // TODO support scoping and name references
         SELECTABLE selectableInstance = registry.getServices(selectable).get();
         Class<CONDITION> conditionType = selectableInstance.getSelectableConditionType();
         CONDITION conditionInstance = registry.getServices(conditionType).get();
+        conditionInstance.setCollectionName(var);
         return conditionInstance;
     }
 
     @Override
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> Iterable<SELECTABLE> getQueryResult(
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> Iterable<SELECTABLE> getQueryResult(
                 Class<SELECTABLE> type, String var)
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new IllegalStateException("Not implemented.");
     }
 
     @Override
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE get(
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> SELECTABLE get(
                 Class<SELECTABLE> selectable, String var)
     {
-        // TODO support scoping and name references
         SELECTABLE selectableInstance = registry.getServices(selectable).get();
+        selectableInstance.setPayload(new LazyCurrentPayload(this, selectable).setVar(var));
         return selectableInstance;
     }
 
     @Override
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION>> SELECTABLE getCurrent(
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> SELECTABLE getCurrent(
                 Class<SELECTABLE> selectable)
     {
-        // TODO support scoping and name references
         SELECTABLE selectableInstance = registry.getServices(selectable).get();
+        selectableInstance.setPayload(new LazyCurrentPayload(this, selectable));
         return selectableInstance;
     }
 
+    /*
+     * SelectionStack
+     */
+
+    Stack<Iterable<?>> stack = new Stack<>();
+    HashMap<String, Iterable<?>> vars = new LinkedHashMap<>();
+    HashMap<Class<?>, Object> currents = new LinkedHashMap<>();
+
+    @Override
+    public void push(Iterable<?> item, String name)
+    {
+        if (vars.containsKey(name))
+            throw new IllegalArgumentException("Variable [" + name
+                        + "] already defined. Cannot re-use flow control variables.");
+
+        stack.push(item);
+        vars.put(name, item);
+    }
+
+    @Override
+    public Iterable<?> pop()
+    {
+        return stack.pop();
+    }
+
+    @Override
+    public Iterable<?> peek(String name)
+    {
+        return vars.get(name);
+    }
+
+    @Override
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> void setCurrentPayload(
+                Class<SELECTABLE> type, PAYLOAD element)
+    {
+        currents.put(type, element);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> PAYLOAD getCurrentPayload(
+                Class<SELECTABLE> type)
+    {
+        return (PAYLOAD) currents.get(type);
+    }
+
+    @Override
+    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> PAYLOAD getCurrentPayload(
+                Class<SELECTABLE> type, String var)
+    {
+        // TODO implement var selection
+        throw new IllegalStateException("Not implemented.");
+        // return (PAYLOAD) currents.get(type);
+    }
 }

@@ -4,18 +4,17 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.example;
+package org.jboss.windup.addon.config.example.people;
 
+import org.jboss.windup.addon.config.example.people.Person.Gender;
 import org.jboss.windup.addon.config.selectables.SelectableCondition;
-
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public interface XMLFileCondition extends SelectableCondition<XMLFile, XMLFileCondition>
+public interface PersonCondition extends SelectableCondition<Person, PersonCondition, PersonModel>
 {
+    PersonCondition named(String string);
 
-    XMLFileCondition withDoctype(String string);
-
+    PersonCondition gendered(Gender gender);
 }

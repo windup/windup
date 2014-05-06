@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.example;
+package org.jboss.windup.addon.config.example.java;
 
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.addon.config.operation.GraphOperation;
@@ -17,12 +17,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class Graph extends GraphOperation
 {
-    public static Graph replace(Selectable<?, ?> current)
+    public static Graph replace(Selectable<?, ?, ?> current)
     {
         return new Graph();
     }
 
-    public Graph with(Selectable<?, ?> current)
+    public Graph with(Selectable<?, ?, ?> current)
     {
         return this;
     }

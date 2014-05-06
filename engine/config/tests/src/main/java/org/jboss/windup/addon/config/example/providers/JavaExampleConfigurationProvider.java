@@ -4,11 +4,13 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.example;
+package org.jboss.windup.addon.config.example.providers;
 
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
+import org.jboss.windup.addon.config.example.java.JavaClass;
+import org.jboss.windup.addon.config.example.java.JavaMethod;
 import org.jboss.windup.addon.config.operation.Iteration;
 import org.jboss.windup.addon.config.operation.Log;
 import org.jboss.windup.addon.config.selectables.Selection;
@@ -40,7 +42,7 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                                 /*
                                  * Select all java classes with the FQCN matching "javax.(.*)", store the resultant list in a parameter named "types"
                                  */
-                                Selection.exists(JavaClass.class, "types").named("javax.{*}")
+                                Selection.ofAll(JavaClass.class, "types").named("javax.{*}")
                     )
                     
                     /*
@@ -49,16 +51,16 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                     .perform(
                                 /*
                                  * Iterate over the list of java types that were selected in the .when() clause. 
-                                 * Each iteration sets the current JavaClass into var "type", and into the "current scope" for the JavaClass type.
+                                 * Each iteration sets the current PersonFrame into var "type", and into the "current scope" for the PersonFrame type.
                                  */
                                 Iteration.over(JavaClass.class, "types", "type")
                                 
                                     .when( 
                                                 /*
-                                                 * Locate methods in the current JavaClass that match the given conditions. 
+                                                 * Locate methods in the current PersonFrame that match the given conditions. 
                                                  * The matching methods are stored into the var "methods"
                                                  */
-                                                Selection.exists(JavaMethod.class, "methods")
+                                                Selection.ofAll(JavaMethod.class, "methods")
                                                          .in(Selection.current(JavaClass.class))
                                                          .withSignature("toString()")
                                                          .definedBy("java.lang.Object")
