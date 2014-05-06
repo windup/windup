@@ -8,6 +8,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.dao.BaseDao;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
+import org.jboss.windup.graph.typedgraph.GraphTypeManager;
 
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -23,13 +24,16 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
 {
 
    protected final Class<T> type;
-   protected final String typeValue;
+   protected final String typeValueForSearch;
 
    @Inject
    GraphContext context;
    
    @Inject
-   GraphUtil graphUtil;
+   private GraphTypeManager graphTypeManager;
+   
+   @Inject
+   private GraphUtil graphUtil;
 
    public GraphContext getContext()
    {
@@ -45,7 +49,7 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
       {
          throw new IllegalArgumentException("Must contain annotation 'TypeValue'");
       }
-      this.typeValue = typeValue.value();
+      this.typeValueForSearch = typeValue.value();
    }
 
    public void delete(T obj)
@@ -89,12 +93,12 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
          regexFinal = builder.toString();
       }
 
-      return context.getFramed().query().has("type", typeValue).has(key, Text.REGEX, regexFinal).vertices(type);
+      return context.getFramed().query().has("type", Text.CONTAINS, typeValueForSearch).has(key, Text.REGEX, regexFinal).vertices(type);
    }
 
    public Iterable<T> hasAllProperties(String[] keys, String[] vals)
    {
-      FramedGraphQuery fgq = context.getFramed().query().has("type", this.typeValue);
+      FramedGraphQuery fgq = context.getFramed().query().has("type", Text.CONTAINS, this.typeValueForSearch);
 
       for (int i = 0, j = keys.length; i < j; i++)
       {
@@ -119,7 +123,7 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
 
    public Iterable<T> getAll()
    {
-      return context.getFramed().query().has("type", typeValue).vertices(type);
+      return context.getFramed().query().has("type", Text.CONTAINS, typeValueForSearch).vertices(type);
    }
 
    public TitanTransaction newTransaction()
@@ -161,24 +165,9 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
    public T castToType(VertexFrame v)
    {
       Vertex vertex = v.asVertex();
-      TypeValue value = type.getAnnotation(TypeValue.class);
-      TypeField field = type.getAnnotation(TypeField.class);
-
-      String property = "type";
-      if (field != null)
-      {
-         property = field.value();
-      }
-      String typeValue = this.type.getName();
-      if (value != null)
-      {
-         typeValue = value.value();
-      }
-
-      vertex.setProperty(property, typeValue);
+      graphTypeManager.addTypeToElement(type, vertex);
       context.getGraph().commit();
       return context.getFramed().frame(vertex, type);
-
    }
 
    public T castToType(Vertex vertex)

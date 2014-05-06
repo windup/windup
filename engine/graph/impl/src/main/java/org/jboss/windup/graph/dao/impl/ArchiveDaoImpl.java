@@ -8,6 +8,7 @@ import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
+import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -26,7 +27,7 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().getVertices("type", typeValue))
+                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
                     // class model.

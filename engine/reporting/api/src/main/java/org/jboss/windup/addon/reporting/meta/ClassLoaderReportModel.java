@@ -5,7 +5,7 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("ClassloaderReport")
+@TypeValue("ClassloaderReportModel")
 public interface ClassLoaderReportModel extends ReportModel
 {
     @Property("type")

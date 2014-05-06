@@ -3,7 +3,7 @@ package org.jboss.windup.addon.reporting.meta;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("ClassloaderReport")
+@TypeValue("ClassReferenceModel")
 public interface ClassReferenceModel extends ReportModel
 {
     @Property("className")

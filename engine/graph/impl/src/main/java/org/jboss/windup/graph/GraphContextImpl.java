@@ -50,8 +50,6 @@ public class GraphContextImpl implements GraphContext {
 		conf.setProperty("storage.index.search.client-only", "false");
 		conf.setProperty("storage.index.search.local-mode", "true");
 		
-		final String INDEX_NAME = "search";
-		
 		graph = TitanFactory.open(conf);
 		//graph.createKeyIndex("archiveEntry", Vertex.class);
 		//graph.createKeyIndex("filePath", Vertex.class, new Parameter<String, String>("type", "UNIQUE"));
@@ -79,7 +77,7 @@ public class GraphContextImpl implements GraphContext {
 				indexed("search", Vertex.class).make();
 		
 		TitanKey typeKey = graph.makeKey("type").dataType(String.class).
-				indexed(Vertex.class).make();
+				indexed("search", Vertex.class).make();
 		
 		TitanKey filePath = graph.makeKey("filePath").dataType(String.class).
 				indexed(Vertex.class).unique().make();

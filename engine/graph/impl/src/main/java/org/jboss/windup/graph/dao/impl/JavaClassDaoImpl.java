@@ -10,6 +10,7 @@ import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
+import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -45,12 +46,12 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
 
     public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
-        return getContext().getFramed().query().has("type", typeValue).has("packageName", packageName).vertices(type);
+        return getContext().getFramed().query().has("type", Text.CONTAINS, typeValueForSearch).has("packageName", packageName).vertices(type);
     }
 
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
-        return getContext().getFramed().query().has("type", typeValue).has("majorVersion", version.getMajor())
+        return getContext().getFramed().query().has("type", Text.CONTAINS, typeValueForSearch).has("majorVersion", version.getMajor())
                     .has("minorVersion", version.getMinor()).vertices(type);
     }
 
@@ -59,7 +60,7 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
 
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().getVertices("type", typeValue))
+                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
                     // class model.
@@ -82,7 +83,7 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().getVertices("type", typeValue))
+                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
                     // class model.
@@ -137,7 +138,7 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().getVertices("type", typeValue))
+                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
                     // class model.
@@ -155,7 +156,7 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
     {
         // for all java classes
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().getVertices("type", this.typeValue))
+                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
                     .as("clz").has("blacklistCandidate").back("clz").cast(Vertex.class);
         return context.getFramed().frameVertices(pipeline, JavaClassModel.class);
     }
@@ -163,7 +164,7 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
     public Iterable<JavaClassModel> findClassesLeveragingCandidateBlacklists()
     {
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().getVertices("type", this.typeValue))
+                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
                     .has("blacklistCandidate")
                     .in("extends", "imports", "implements")
                     .dedup();
@@ -188,7 +189,7 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
     {
         // for all java classes
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().getVertices("type", this.typeValue))
+                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
                     .has("customerPackage").V();
         return context.getFramed().frameVertices(pipeline, JavaClassModel.class);
     }

@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -48,11 +49,12 @@ public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacetModel> implements M
 	}
 	
 	public boolean isMavenConfiguration(XmlResourceModel resource) {
-        return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", this.typeValue).back("facet").iterator().hasNext();
+        return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.typeValueForSearch).back("facet").iterator().hasNext();
     }
     
     public MavenFacetModel getMavenConfigurationFromResource(XmlResourceModel resource) {
-        Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", this.typeValue).back("facet").iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.typeValueForSearch).back("facet").iterator();
         if(v.hasNext()) {
             return context.getFramed().frame(v.next(), this.type);
         }

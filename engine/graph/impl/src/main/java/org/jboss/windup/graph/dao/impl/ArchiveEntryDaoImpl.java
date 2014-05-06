@@ -29,7 +29,7 @@ public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResourceModel> 
     public Iterable<ArchiveEntryResourceModel> findByArchive(final ArchiveResourceModel resource)
     {
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().getVertices("type", typeValue))
+                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
                     // class model.
@@ -86,6 +86,6 @@ public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResourceModel> 
         }
 
         LOG.debug("Regex: " + regex);
-        return context.getFramed().query().has("type", typeValue).has("archiveEntry", Text.REGEX, regex).vertices(type);
+        return context.getFramed().query().has("type", Text.CONTAINS, typeValueForSearch).has("archiveEntry", Text.REGEX, regex).vertices(type);
     }
 }
