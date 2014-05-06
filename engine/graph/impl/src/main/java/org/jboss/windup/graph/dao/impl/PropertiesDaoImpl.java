@@ -27,7 +27,7 @@ public class PropertiesDaoImpl extends BaseDaoImpl<PropertiesMetaModel> implemen
                     .iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), PropertiesMetaModel.class);
+            return getContext().getFramed().frame(v.next(), PropertiesMetaModel.class);
         }
 
         return null;

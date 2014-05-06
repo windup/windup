@@ -22,9 +22,16 @@ public class GraphContextImpl implements GraphContext {
 	private TitanGraph graph;
 	private BatchGraph<TitanGraph> batch;
 	private FramedGraph<TitanGraph> framed;
+	private GraphTypeRegistry graphTypeRegistry;
 	
 	public TitanGraph getGraph() {
 		return graph;
+	}
+	
+	@Override
+	public GraphTypeRegistry getGraphTypeRegistry()
+	{
+	    return graphTypeRegistry;
 	}
 	
 	public BatchGraph<TitanGraph> getBatch() {
@@ -36,6 +43,8 @@ public class GraphContextImpl implements GraphContext {
 	}
 	
 	public GraphContextImpl(File diskCache, GraphTypeRegistry graphTypeRegistry) {
+	    this.graphTypeRegistry = graphTypeRegistry;
+	    
 		FileUtils.deleteQuietly(diskCache);
 		
 		File lucene = new File(diskCache, "graphsearch");

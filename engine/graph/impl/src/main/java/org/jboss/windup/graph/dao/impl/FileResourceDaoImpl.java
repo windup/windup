@@ -25,7 +25,7 @@ public class FileResourceDaoImpl extends BaseDaoImpl<FileResourceModel> implemen
 		if(entry == null) {
 			entry = this.create();
 			entry.setFilePath(filePath);
-			context.getGraph().commit();
+			getContext().getGraph().commit();
 		}
 		
 		return entry;
@@ -53,6 +53,6 @@ public class FileResourceDaoImpl extends BaseDaoImpl<FileResourceModel> implemen
 		}
 
 		LOG.debug("Regex: "+regex);
-		return context.getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch()).has("filePath", Text.REGEX, regex).vertices(getType());
+		return getContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch()).has("filePath", Text.REGEX, regex).vertices(getType());
 	}
 }

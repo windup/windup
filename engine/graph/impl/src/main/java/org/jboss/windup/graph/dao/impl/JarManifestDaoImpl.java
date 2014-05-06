@@ -34,7 +34,7 @@ public class JarManifestDaoImpl extends BaseDaoImpl<JarManifestModel> implements
         Iterator<Vertex> v = (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("manifestFacet").iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), JarManifestModel.class);
+            return getContext().getFramed().frame(v.next(), JarManifestModel.class);
         }
 
         return null;

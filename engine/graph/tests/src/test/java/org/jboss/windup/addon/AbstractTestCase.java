@@ -1,13 +1,11 @@
 package org.jboss.windup.addon;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.junit.runner.RunWith;
 
 
 /**
@@ -16,7 +14,6 @@ import org.junit.runner.RunWith;
  * 
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-@RunWith(Arquillian.class)
 public class AbstractTestCase
 {
 

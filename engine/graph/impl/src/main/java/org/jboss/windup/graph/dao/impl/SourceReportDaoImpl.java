@@ -23,7 +23,7 @@ public class SourceReportDaoImpl extends BaseDaoImpl<SourceReportModel> implemen
     {
         if (hasSourceReport(resource))
         {
-            SourceReportModel report = context.getFramed().frame(
+            SourceReportModel report = getContext().getFramed().frame(
                         resource.asVertex().getVertices(Direction.OUT, "sourceReport").iterator().next(),
                         SourceReportModel.class);
             return report.getReportFile();

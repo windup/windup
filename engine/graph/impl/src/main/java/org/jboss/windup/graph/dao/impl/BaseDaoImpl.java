@@ -27,10 +27,7 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
     private final String typeValueForSearch;
 
     @Inject
-    GraphContext context;
-
-    @Inject
-    private GraphTypeManager graphTypeManager;
+    private GraphContext context;
 
     @Inject
     private GraphUtil graphUtil;
@@ -166,7 +163,7 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
     public T castToType(VertexFrame v)
     {
         Vertex vertex = v.asVertex();
-        graphTypeManager.addTypeToElement(type, vertex);
+        context.getGraphTypeRegistry().addTypeToElement(type, vertex);
         context.getGraph().commit();
         return context.getFramed().frame(vertex, type);
     }

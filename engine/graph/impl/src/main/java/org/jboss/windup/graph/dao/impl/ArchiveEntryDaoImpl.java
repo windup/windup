@@ -28,7 +28,7 @@ public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResourceModel> 
 
     public Iterable<ArchiveEntryResourceModel> findByArchive(final ArchiveResourceModel resource)
     {
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
+        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getContext()
                     .getGraph().query().has("type", Text.CONTAINS, getTypeValueForSearch()).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
@@ -41,7 +41,7 @@ public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResourceModel> 
                             return v.iterator().next().getId().equals(resource.asVertex().getId());
                         }
                     });
-        return context.getFramed().frameVertices(pipeline, ArchiveEntryResourceModel.class);
+        return getContext().getFramed().frameVertices(pipeline, ArchiveEntryResourceModel.class);
     }
 
     public Iterable<ArchiveEntryResourceModel> findArchiveEntry(String value)
@@ -86,6 +86,6 @@ public class ArchiveEntryDaoImpl extends BaseDaoImpl<ArchiveEntryResourceModel> 
         }
 
         LOG.debug("Regex: " + regex);
-        return context.getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch()).has("archiveEntry", Text.REGEX, regex).vertices(getType());
+        return getContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch()).has("archiveEntry", Text.REGEX, regex).vertices(getType());
     }
 }

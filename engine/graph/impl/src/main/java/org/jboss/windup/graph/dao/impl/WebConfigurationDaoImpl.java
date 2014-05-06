@@ -34,7 +34,7 @@ public class WebConfigurationDaoImpl extends BaseDaoImpl<WebConfigurationFacetMo
                     .in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), this.getType());
+            return getContext().getFramed().frame(v.next(), this.getType());
         }
 
         return null;

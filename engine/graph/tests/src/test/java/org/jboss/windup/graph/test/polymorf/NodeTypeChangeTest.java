@@ -20,12 +20,12 @@ public class NodeTypeChangeTest
     private Graph g;
     
     @Before
-    void setUpEnv(){
+    public void setUpEnv() {
         this.g = GraphCreator.createFamilyGraph();
     }
     
     @After
-    void tearDown(){
+    public void tearDown() {
         this.g.shutdown();
     }
     

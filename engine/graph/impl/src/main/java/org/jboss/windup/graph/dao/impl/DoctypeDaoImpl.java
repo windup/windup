@@ -37,7 +37,7 @@ public class DoctypeDaoImpl extends BaseDaoImpl<DoctypeMetaModel> implements Doc
 	
 
 	public Iterator<DoctypeMetaModel> findByProperties(String publicId, String systemId) {
-		FramedGraphQuery query = context.getFramed().query();
+		FramedGraphQuery query = getContext().getFramed().query();
 		if(StringUtils.isNotBlank(publicId)) {
 			query.has("publicId", publicId);
 		}

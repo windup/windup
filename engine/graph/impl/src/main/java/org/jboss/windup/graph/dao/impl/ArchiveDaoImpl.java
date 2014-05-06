@@ -26,7 +26,7 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements
     public Iterable<ArchiveResourceModel> findAllRootArchives()
     {
         // iterate through all vertices
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
+        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getContext()
                     .getGraph().query().has("type", Text.CONTAINS, getTypeValueForSearch()).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
@@ -44,7 +44,7 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements
                             return false;
                         }
                     });
-        return context.getFramed().frameVertices(pipeline, ArchiveResourceModel.class);
+        return getContext().getFramed().frameVertices(pipeline, ArchiveResourceModel.class);
     }
 
     public boolean isArchiveResource(ResourceModel resource)
@@ -59,7 +59,7 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements
                     .iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), ArchiveResourceModel.class);
+            return getContext().getFramed().frame(v.next(), ArchiveResourceModel.class);
         }
 
         return null;

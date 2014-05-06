@@ -33,7 +33,7 @@ public class EJBConfigurationDaoImpl extends BaseDaoImpl<EjbConfigurationFacetMo
                     .in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), EjbConfigurationFacetModel.class);
+            return getContext().getFramed().frame(v.next(), EjbConfigurationFacetModel.class);
         }
 
         return null;

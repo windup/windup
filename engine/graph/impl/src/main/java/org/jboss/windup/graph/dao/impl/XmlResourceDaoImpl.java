@@ -53,7 +53,7 @@ public class XmlResourceDaoImpl extends BaseDaoImpl<XmlResourceModel> implements
     public XmlResourceModel getXmlFromResource(ResourceModel resource) {
         Iterator<Vertex> v = (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("xmlResourceFacet").iterator();
         if(v.hasNext()) {
-            return context.getFramed().frame(v.next(), XmlResourceModel.class);
+            return getContext().getFramed().frame(v.next(), XmlResourceModel.class);
         }
         
         return null;
