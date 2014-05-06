@@ -10,6 +10,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.dao.XmlResourceDao;
 import org.jboss.windup.graph.model.meta.BaseMetaModel;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
@@ -44,7 +45,7 @@ public class GraphTypeManagerTest
     @Inject
     private GraphContext context;
     @Inject
-    private XmlResourceDao xmlResourceDao;
+    private GraphUtil graphUtil;
 
     @Test
     public void testGraphTypeHandling() throws Exception
@@ -55,7 +56,7 @@ public class GraphTypeManagerTest
        BaseMetaModel baseMetaModel = context.getFramed().addVertex(null, BaseMetaModel.class);
        
        // Now cast it to an xml object
-       xmlResourceDao.castToType(baseMetaModel);
+       graphUtil.addTypeToModel(baseMetaModel, XmlResourceModel.class);
        
        // Now reload it as a base meta object (this returns an iterable, but there should only be one result)
        Iterable<Vertex> vertices = context.getFramed().query().has("type", Text.CONTAINS, BaseMetaModel.class.getAnnotation(TypeValue.class).value()).vertices();

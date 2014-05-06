@@ -29,7 +29,7 @@ public class FurnaceGraphModelScanner
     public List<Class<?>> scan()
     {
         List<Class<?>> discoveredClasses = new ArrayList<>();
-        
+
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
             List<String> discoveredClassNames = new ArrayList<>();
@@ -45,11 +45,15 @@ public class FurnaceGraphModelScanner
                     handleArchiveByFile(addonFile, discoveredClassNames);
                 }
             }
-            for (String discoveredClassName : discoveredClassNames) {
-                try {
+            for (String discoveredClassName : discoveredClassNames)
+            {
+                try
+                {
                     Class<?> clazz = addon.getClassLoader().loadClass(discoveredClassName);
                     discoveredClasses.add(clazz);
-                } catch (ClassNotFoundException cnfe) {
+                }
+                catch (ClassNotFoundException cnfe)
+                {
                     LOG.warn("Failed to load class for name: " + discoveredClassName);
                 }
             }

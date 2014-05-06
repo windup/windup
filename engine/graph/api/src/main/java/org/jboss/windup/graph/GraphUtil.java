@@ -1,5 +1,7 @@
 package org.jboss.windup.graph;
 
+import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+
 import com.tinkerpop.blueprints.Vertex;
 
 /**
@@ -10,6 +12,18 @@ import com.tinkerpop.blueprints.Vertex;
  */
 public interface GraphUtil
 {
+    /**
+     * Adds the specified type to this frame, and returns a new object
+     * that implements this type.
+     * 
+     * @see GraphTypeManagerTest
+     * 
+     * @param frame
+     * @param type
+     * @return
+     */
+    public <T extends WindupVertexFrame> T addTypeToModel(WindupVertexFrame frame, Class<T> type);
+    
     /**
      * 
      * This method takes a generic Vertex and casts that type the specified type. 
