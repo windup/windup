@@ -2,6 +2,8 @@ package org.jboss.windup.addon.config;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -12,6 +14,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.addon.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
+import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -41,11 +44,14 @@ public class ReadXMLConfigurationTest
         return archive;
     }
 
+    @Inject
+    private GraphTypeRegistry graphTypeRegistry;
+    
     @Test
     public void testRunWindup() throws Exception
     {
         final File folder = File.createTempFile("windupGraph", "");
-        final GraphContext context = new GraphContextImpl(folder);
+        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
         final ConfigurationLoader loader = ConfigurationLoader.create(context);
         final Configuration configuration = loader.loadConfiguration(context);
 

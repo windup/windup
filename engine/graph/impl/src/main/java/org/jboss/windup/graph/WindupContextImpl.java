@@ -6,9 +6,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
+import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +20,9 @@ public class WindupContextImpl implements WindupContext
 {
     private static final Logger LOG = LoggerFactory.getLogger(WindupContext.class);
 
+    @Inject
+    private GraphTypeRegistry graphTypeRegistry;
+    
     private File runDirectory;
     private GraphContext graphContext;
 
@@ -25,7 +30,7 @@ public class WindupContextImpl implements WindupContext
     {
         if (graphContext == null)
         {
-            graphContext = new GraphContextImpl(new File(getRunDirectory(), "windup-graph"));
+            graphContext = new GraphContextImpl(new File(getRunDirectory(), "windup-graph"), graphTypeRegistry);
         }
         return graphContext;
     }

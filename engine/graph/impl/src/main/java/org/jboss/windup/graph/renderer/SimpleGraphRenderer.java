@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
@@ -51,9 +53,8 @@ public class SimpleGraphRenderer {
 		framed = factory.create(graph);
 	}
 	
-	@TypeField("type") 
 	@TypeValue("RenderableVertex")
-	public static interface RenderableVertex extends VertexFrame {
+	public static interface RenderableVertex extends WindupVertexFrame {
 		
 		@Property("label")
 		public void setLabel(String label);

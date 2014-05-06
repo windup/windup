@@ -6,9 +6,8 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeField("type") 
 @TypeValue("Meta")
-public interface BaseMetaModel extends VertexFrame {
+public interface BaseMetaModel extends WindupVertexFrame {
 
 	@GremlinGroovy("it.in('meta')")
 	public Vertex getMetaReference();

@@ -1,14 +1,14 @@
 package org.jboss.windup.graph.model.meta.javaclass;
 
+import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.VertexFrame;
-import com.tinkerpop.frames.modules.typedgraph.TypeField;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeField("type")
-public interface JavaClassMetaFacetModel extends VertexFrame {
+@TypeValue("JavaClassMetaFacetModel")
+public interface JavaClassMetaFacetModel extends WindupVertexFrame {
 
 	@Adjacency(label="javaFacet", direction=Direction.OUT)
 	public void setJavaClassFacet(JavaClassModel facet);
