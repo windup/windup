@@ -9,8 +9,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
-import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.JarManifestDao;
 import org.jboss.windup.graph.model.meta.JarManifestModel;
@@ -30,16 +28,10 @@ public class ManifestVisitor extends AbstractGraphVisitor
     private static final Logger LOG = LoggerFactory.getLogger(ManifestVisitor.class);
 
     @Inject
-    private WindupContext context;
-
-    @Inject
     private ArchiveEntryDao archiveEntryDao;
 
     @Inject
     private JarManifestDao jarManifestDao;
-    
-    @Inject
-    private GraphUtil graphUtil;
 
     @Override
     public VisitorPhase getPhase()
@@ -61,7 +53,7 @@ public class ManifestVisitor extends AbstractGraphVisitor
     public void visitArchiveEntry(ArchiveEntryResourceModel entry)
     {
         JarManifestModel jarManifest = jarManifestDao.create();
-        JarArchiveModel archive = graphUtil.castToType(entry.getArchive().asVertex(), JarArchiveModel.class);
+        JarArchiveModel archive = (JarArchiveModel) entry.getArchive();
         jarManifest.setResource(entry);
         jarManifest.setJarArchive(archive);
 

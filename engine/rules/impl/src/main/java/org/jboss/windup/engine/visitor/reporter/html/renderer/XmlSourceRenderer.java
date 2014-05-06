@@ -17,7 +17,6 @@ import org.jboss.windup.engine.visitor.reporter.html.model.ApplicationContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.ReportContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.SourceReport;
 import org.jboss.windup.engine.visitor.reporter.html.model.SourceReport.SourceLineAnnotations;
-import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
@@ -49,9 +48,6 @@ public class XmlSourceRenderer extends AbstractGraphVisitor
 
     @Inject
     private NamingUtility namingUtility;
-    
-    @Inject
-    private GraphUtil graphUtil;
 
     private final Configuration cfg;
 
@@ -60,7 +56,7 @@ public class XmlSourceRenderer extends AbstractGraphVisitor
     {
         return VisitorPhase.REPORTING;
     }
-    
+
     public XmlSourceRenderer()
     {
         cfg = new Configuration();
@@ -121,7 +117,7 @@ public class XmlSourceRenderer extends AbstractGraphVisitor
             String name = null;
             if (entry.getResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResourceModel.class);
+                ArchiveEntryResourceModel resource = (ArchiveEntryResourceModel) entry.getResource();
                 name = resource.getArchiveEntry();
                 name = StringUtils.substringAfterLast(name, "/");
 
@@ -131,7 +127,7 @@ public class XmlSourceRenderer extends AbstractGraphVisitor
             {
                 // TODO: fix this for non-archive XML.
                 // This should recurse back to find the root directory.
-                FileResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), FileResourceModel.class);
+                FileResourceModel resource = (FileResourceModel) entry.getResource();
                 name = resource.asFile().getName();
                 fullName = name;
             }

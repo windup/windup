@@ -11,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.WindupContext;
-import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
@@ -38,9 +37,6 @@ public class JavaDecompilerVisitor extends AbstractGraphVisitor
     private JavaClassDao javaClassDao;
 
     @Inject
-    private ArchiveEntryDao archiveEntryDao;
-
-    @Inject
     private FileResourceDao fileDao;
 
     private final DecompilerAdapter decompiler;
@@ -50,7 +46,7 @@ public class JavaDecompilerVisitor extends AbstractGraphVisitor
     {
         return VisitorPhase.INITIAL_ANALYSIS;
     }
-    
+
     public JavaDecompilerVisitor()
     {
         decompiler = new JadretroDecompilerAdapter();
@@ -61,7 +57,8 @@ public class JavaDecompilerVisitor extends AbstractGraphVisitor
     {
         // count the iterations so that we can commit periodically.
         int count = 1;
-        for (org.jboss.windup.graph.model.resource.JavaClassModel candidate : javaClassDao.findClassesLeveragingCandidateBlacklists())
+        for (org.jboss.windup.graph.model.resource.JavaClassModel candidate : javaClassDao
+                    .findClassesLeveragingCandidateBlacklists())
         {
             LOG.info("Processing candidate: " + candidate.getQualifiedName());
             // now, we should see if the class matches the customer package...
@@ -81,12 +78,12 @@ public class JavaDecompilerVisitor extends AbstractGraphVisitor
                     ResourceModel resource = resources.next();
                     if (resource instanceof ArchiveEntryResourceModel)
                     {
-                        ArchiveEntryResourceModel ae = archiveEntryDao.castToType(resource.asVertex());
+                        ArchiveEntryResourceModel ae = (ArchiveEntryResourceModel) resource;
                         fileReference = ae.asFile();
                     }
                     else if (resource instanceof FileResourceModel)
                     {
-                        FileResourceModel fr = fileDao.castToType(resource.asVertex());
+                        FileResourceModel fr = (FileResourceModel) resource;
                         fileReference = fr.asFile();
                     }
 

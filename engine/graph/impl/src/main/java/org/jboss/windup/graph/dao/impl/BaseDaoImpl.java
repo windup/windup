@@ -8,7 +8,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.dao.BaseDao;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
-import org.jboss.windup.graph.typedgraph.GraphTypeManager;
 
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -16,7 +15,6 @@ import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.VertexFrame;
-import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -168,11 +166,6 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
         return context.getFramed().frame(vertex, type);
     }
 
-    public T castToType(Vertex vertex)
-    {
-        return graphUtil.castToType(vertex, type);
-    }
-
     public void commit()
     {
         this.context.getGraph().commit();
@@ -182,7 +175,7 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
     {
         return type;
     }
-    
+
     protected String getTypeValueForSearch()
     {
         return typeValueForSearch;

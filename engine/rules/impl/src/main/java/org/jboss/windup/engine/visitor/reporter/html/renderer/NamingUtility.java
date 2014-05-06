@@ -3,14 +3,12 @@ package org.jboss.windup.engine.visitor.reporter.html.renderer;
 import java.io.File;
 
 import javax.inject.Inject;
-import org.apache.commons.lang.StringUtils;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.visitor.reporter.html.model.LinkName;
 import org.jboss.windup.engine.visitor.reporter.html.model.Name;
 import org.jboss.windup.engine.visitor.reporter.html.model.ReportContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.SimpleName;
-import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
 import org.jboss.windup.graph.model.meta.ApplicationReferenceModel;
@@ -32,18 +30,13 @@ public class NamingUtility
     private ApplicationReferenceDao applicationReferenceDao;
 
     @Inject
-    private WindupContext context;
-
-    @Inject
     private SourceReportDao sourceReportDao;
-    
-    @Inject
-    private GraphUtil graphUtil;
 
     public String getApplicationName()
     {
-        for( ApplicationReferenceModel appRef : applicationReferenceDao.getAll() ){
-            return StringUtils.defaultIfBlank( appRef.getArchive().getArchiveName(),  "Unnamed" );
+        for (ApplicationReferenceModel appRef : applicationReferenceDao.getAll())
+        {
+            return StringUtils.defaultIfBlank(appRef.getArchive().getArchiveName(), "Unnamed");
         }
         return "Unknown";
     }
@@ -57,7 +50,7 @@ public class NamingUtility
         {
             if (archive.getParentResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResourceModel parentEntry = graphUtil.castToType(archive.getParentResource().asVertex(), ArchiveEntryResourceModel.class);
+                ArchiveEntryResourceModel parentEntry = (ArchiveEntryResourceModel) archive.getParentResource();
                 // prepend
                 path = parentEntry.getArchiveEntry() + "/" + path;
                 archive = archive.getParentArchive();
@@ -80,7 +73,7 @@ public class NamingUtility
         {
             if (archive.getParentResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResourceModel parentEntry = graphUtil.castToType(archive.getParentResource().asVertex(), ArchiveEntryResourceModel.class);
+                ArchiveEntryResourceModel parentEntry = (ArchiveEntryResourceModel) archive.getParentResource();
                 // prepend
                 path = parentEntry.getArchiveEntry() + "/" + path;
                 archive = archive.getParentArchive();
@@ -164,12 +157,12 @@ public class NamingUtility
     {
         if (entry.getResource() instanceof ArchiveEntryResourceModel)
         {
-            ArchiveEntryResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResourceModel.class);
+            ArchiveEntryResourceModel resource = (ArchiveEntryResourceModel) entry.getResource();
             return resource.getArchiveEntry();
         }
         else if (entry.getResource() instanceof FileResourceModel)
         {
-            FileResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), FileResourceModel.class);
+            FileResourceModel resource = (FileResourceModel) entry.getResource();
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");
@@ -180,12 +173,12 @@ public class NamingUtility
     {
         if (manifest.getResource() instanceof ArchiveEntryResourceModel)
         {
-            ArchiveEntryResourceModel resource = graphUtil.castToType(manifest.getResource().asVertex(), ArchiveEntryResourceModel.class);
+            ArchiveEntryResourceModel resource = (ArchiveEntryResourceModel) manifest.getResource();
             return resource.getArchiveEntry();
         }
         else if (manifest.getResource() instanceof FileResourceModel)
         {
-            FileResourceModel resource = graphUtil.castToType(manifest.getResource().asVertex(), FileResourceModel.class);
+            FileResourceModel resource = (FileResourceModel) manifest.getResource();
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");
@@ -196,12 +189,12 @@ public class NamingUtility
     {
         if (xml.getResource() instanceof ArchiveEntryResourceModel)
         {
-            ArchiveEntryResourceModel resource = graphUtil.castToType(xml.getResource().asVertex(), ArchiveEntryResourceModel.class);
+            ArchiveEntryResourceModel resource = (ArchiveEntryResourceModel) xml.getResource();
             return resource.getArchiveEntry();
         }
         else if (xml.getResource() instanceof FileResourceModel)
         {
-            FileResourceModel resource = graphUtil.castToType(xml.getResource().asVertex(), FileResourceModel.class);
+            FileResourceModel resource = (FileResourceModel) xml.getResource();
             return resource.getFilePath();
         }
         LOG.warn("Link is null.");

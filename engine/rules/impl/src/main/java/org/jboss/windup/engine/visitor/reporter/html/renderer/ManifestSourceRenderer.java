@@ -17,7 +17,6 @@ import org.jboss.windup.engine.visitor.reporter.html.model.ApplicationContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.ReportContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.SourceReport;
 import org.jboss.windup.engine.visitor.reporter.html.model.SourceReport.SourceLineAnnotations;
-import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.dao.JarManifestDao;
@@ -50,9 +49,6 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
     @Inject
     private WindupContext context;
 
-    @Inject
-    private GraphUtil graphUtil;
-    
     private final Configuration cfg;
 
     @Override
@@ -60,7 +56,7 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
     {
         return VisitorPhase.REPORTING;
     }
-    
+
     public ManifestSourceRenderer()
     {
         cfg = new Configuration();
@@ -120,7 +116,7 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
             String name = null;
             if (entry.getResource() instanceof ArchiveEntryResourceModel)
             {
-                ArchiveEntryResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), ArchiveEntryResourceModel.class);
+                ArchiveEntryResourceModel resource = (ArchiveEntryResourceModel) entry.getResource();
                 name = resource.getArchiveEntry();
                 name = StringUtils.substringAfterLast(name, "/");
 
@@ -128,7 +124,7 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
             }
             else if (entry.getResource() instanceof FileResourceModel)
             {
-                FileResourceModel resource = graphUtil.castToType(entry.getResource().asVertex(), FileResourceModel.class);
+                FileResourceModel resource = (FileResourceModel) entry.getResource();
                 name = resource.asFile().getName();
 
                 fullName = name;

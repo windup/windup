@@ -10,7 +10,7 @@ public class GraphUtilImpl implements GraphUtil
 {
     @Inject
     private GraphContext graphContext;
-    
+
     @Override
     public <T extends WindupVertexFrame> T addTypeToModel(WindupVertexFrame frame, Class<T> type)
     {
@@ -19,11 +19,4 @@ public class GraphUtilImpl implements GraphUtil
         graphContext.getGraph().commit();
         return graphContext.getFramed().frame(vertex, type);
     }
-    
-    @Override
-    public <T> T castToType(Vertex vertex, Class<T> type)
-    {
-        return graphContext.getFramed().frame(vertex, type);
-    }
-
 }
