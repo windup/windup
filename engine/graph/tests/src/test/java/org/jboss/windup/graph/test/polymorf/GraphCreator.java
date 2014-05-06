@@ -1,11 +1,8 @@
 package org.jboss.windup.graph.test.polymorf;
 
-import java.io.File;
-
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 
 /**
  * Creates test graphs with some data.
@@ -14,9 +11,9 @@ import com.tinkerpop.blueprints.Vertex;
  */
 public class GraphCreator
 {
-    public static Graph createFamilyGraph(File dir)
+    public static Graph createFamilyGraph()
     {
-        TitanGraph g = TitanFactory.open(dir.getAbsolutePath());
+        Graph g = new TinkerGraph();
 
         // Manipulation through BluePrints API.
 

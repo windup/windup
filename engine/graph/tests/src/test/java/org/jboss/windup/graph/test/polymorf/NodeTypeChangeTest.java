@@ -1,11 +1,6 @@
 package org.jboss.windup.graph.test.polymorf;
 
-import java.io.File;
-
-import org.jboss.forge.furnace.impl.util.Files;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.junit.Test;
-
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraph;
@@ -13,6 +8,8 @@ import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * 
@@ -20,47 +17,50 @@ import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
  */
 public class NodeTypeChangeTest
 {
+    private Graph g;
+    
+    @Before
+    void setUpEnv(){
+        this.g = GraphCreator.createFamilyGraph();
+    }
+    
+    @After
+    void tearDown(){
+        this.g.shutdown();
+    }
+    
 
     @Test
     public void testNodeTypeChange()
     {
-        File graphDir = OperatingSystemUtils.getTempDirectory();
-        try
-        {
-            Graph g = GraphCreator.createFamilyGraph(graphDir);
+        
+        Module tgmp = new TypedGraphModuleBuilder()
+                    .withClass(SpecialPerson.class).build();
 
-            Module tgmp = new TypedGraphModuleBuilder()
-                        .withClass(SpecialPerson.class).build();
+        FramedGraphFactory factory = new FramedGraphFactory(new GremlinGroovyModule(), tgmp);
+        FramedGraph<Graph> framed = factory.create(g);
 
-            FramedGraphFactory factory = new FramedGraphFactory(new GremlinGroovyModule(), tgmp);
-            FramedGraph<Graph> framed = factory.create(g);
+        final Vertex v = g.getVertices().iterator().next();
 
-            final Vertex v = g.getVertices().iterator().next();
+        // Should be Person.
+        Person foo = framed.frame(v, Person.class);
+        System.out.println("Person: " + foo + " " + asString(foo));
 
-            // Should be Person.
-            Person foo = framed.frame(v, Person.class);
-            System.out.println("Person: " + foo + " " + asString(foo));
+        // Try to retype
+        v.setProperty("type", "special");
 
-            // Try to retype
-            v.setProperty("type", "special");
+        // Should be SpecialPerson.
+        SpecialPerson foo2 = (SpecialPerson) framed.frame(v, Person.class);
+        System.out.println("SpecialPerson: " + foo2 + " " + asString(foo2));
 
-            // Should be SpecialPerson.
-            SpecialPerson foo2 = (SpecialPerson) framed.frame(v, Person.class);
-            System.out.println("SpecialPerson: " + foo2 + " " + asString(foo2));
+        // Unknown type - should be Person.
+        v.setProperty("type", "aaaaaa");
 
-            // Unknown type - should be Person.
-            v.setProperty("type", "aaaaaa");
-
-            foo = framed.frame(v, Person.class);
-            System.out.println("Not SpecialPerson: " + foo + " " + asString(foo));
-        }
-        finally
-        {
-            Files.delete(graphDir, true);
-        }
-
+        foo = framed.frame(v, Person.class);
+        System.out.println("Not SpecialPerson: " + foo + " " + asString(foo));
     }
 
+    
     private static String asString(Person p)
     {
         if (p == null)
