@@ -49,14 +49,14 @@ public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacetModel> implements M
 	}
 	
 	public boolean isMavenConfiguration(XmlResourceModel resource) {
-        return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.typeValueForSearch).back("facet").iterator().hasNext();
+        return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator().hasNext();
     }
     
     public MavenFacetModel getMavenConfigurationFromResource(XmlResourceModel resource) {
         @SuppressWarnings("unchecked")
-        Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.typeValueForSearch).back("facet").iterator();
+        Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator();
         if(v.hasNext()) {
-            return context.getFramed().frame(v.next(), this.type);
+            return context.getFramed().frame(v.next(), this.getType());
         }
         
         return null;

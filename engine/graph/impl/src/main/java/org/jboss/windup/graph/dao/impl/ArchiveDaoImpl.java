@@ -27,7 +27,7 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getGraph().query().has("type", Text.CONTAINS, typeValueForSearch).vertices())
+                    .getGraph().query().has("type", Text.CONTAINS, getTypeValueForSearch()).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
                     // class model.

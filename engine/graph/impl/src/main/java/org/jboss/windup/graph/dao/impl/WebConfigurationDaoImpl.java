@@ -24,17 +24,17 @@ public class WebConfigurationDaoImpl extends BaseDaoImpl<WebConfigurationFacetMo
     public boolean isWebConfiguration(XmlResourceModel resource)
     {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet")
-                    .has("type", Text.CONTAINS, this.typeValueForSearch).back("facet").iterator().hasNext();
+                    .has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator().hasNext();
     }
 
     public WebConfigurationFacetModel getWebConfigurationFromResource(XmlResourceModel resource)
     {
         @SuppressWarnings("unchecked")
         Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
-                    .in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.typeValueForSearch).back("facet").iterator();
+                    .in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator();
         if (v.hasNext())
         {
-            return context.getFramed().frame(v.next(), this.type);
+            return context.getFramed().frame(v.next(), this.getType());
         }
 
         return null;

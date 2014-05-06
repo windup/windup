@@ -30,7 +30,7 @@ public class NamespaceDaoImpl extends BaseDaoImpl<NamespaceMetaModel> implements
 	}
 	
 	public NamespaceMetaModel createNamespaceSchemaLocation(String namespaceURI, String schemaLocation) {
-		Iterable<NamespaceMetaModel> results = getContext().getFramed().query().has("type", Text.CONTAINS, typeValueForSearch).has("namespaceURI", namespaceURI).has("schemaLocation", schemaLocation).vertices(type);
+		Iterable<NamespaceMetaModel> results = getContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch()).has("namespaceURI", namespaceURI).has("schemaLocation", schemaLocation).vertices(getType());
 		
 		for(NamespaceMetaModel result : results) {
 			return result;

@@ -53,6 +53,6 @@ public class FileResourceDaoImpl extends BaseDaoImpl<FileResourceModel> implemen
 		}
 
 		LOG.debug("Regex: "+regex);
-		return context.getFramed().query().has("type", Text.CONTAINS, typeValueForSearch).has("filePath", Text.REGEX, regex).vertices(type);
+		return context.getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch()).has("filePath", Text.REGEX, regex).vertices(getType());
 	}
 }
