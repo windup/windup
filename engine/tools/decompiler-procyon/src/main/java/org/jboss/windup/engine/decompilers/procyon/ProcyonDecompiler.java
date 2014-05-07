@@ -1,5 +1,6 @@
 package org.jboss.windup.engine.decompilers.procyon;
 
+import com.strobel.assembler.metadata.ClasspathTypeLoader;
 import com.strobel.assembler.metadata.CompositeTypeLoader;
 import com.strobel.assembler.metadata.IMetadataResolver;
 import com.strobel.assembler.metadata.JarTypeLoader;
@@ -138,7 +139,14 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
     @Override
     public void decompileJar( File jarFile, File destDir, DecompilationConf conf ) throws DecompilationEx {
         
+        log.info("Decompiling .jar '" + jarFile.getPath() + "' to '" + destDir + "'...");
+        
+        
         // Verify input.
+        if( jarFile == null )
+            throw new DecompilationEx("Param jarFile is null.");
+        if( destDir == null )
+            throw new DecompilationEx("Param destDir is null.");
         if( ! jarFile.exists() )
             throw new DecompilationEx(".jar file not found: " + jarFile.getPath());
         if( destDir.exists() && ! destDir.isDirectory() )
@@ -156,6 +164,11 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
         final DecompilerSettings settings = new DecompilerSettings();
         settings.setOutputDirectory( destDir.getPath() );
         settings.setShowSyntheticMembers(false);
+        
+        // Add ClasspathTypeLoader if nothing is set yet.
+        if( settings.getTypeLoader() == null )
+            // java.class.path + sun.boot.class.path
+            settings.setTypeLoader( new ClasspathTypeLoader() );
 
         // Add JarTypeLoader to the set of loaders.
         settings.setTypeLoader(
@@ -209,7 +222,7 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
         final String fileName = type.getName() + settings.getLanguage().getFileExtension();
         final String packageName = type.getPackageName();
 
-        final String subDir = StringUtils.defaultIfBlank(packageName, "").replace('.', File.pathSeparatorChar);
+        final String subDir = StringUtils.defaultIfBlank(packageName, "").replace('.', File.separatorChar);
         final String outputPath = PathHelper.combine( outputDirectory, subDir, fileName );
 
         final File outputFile = new File(outputPath);

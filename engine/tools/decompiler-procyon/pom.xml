@@ -14,6 +14,31 @@
     
     <name>Windup Decompiler - Procyon</name>
     
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals><goal>copy</goal></goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.wicket</groupId>
+                                    <artifactId>wicket-core</artifactId>
+                                    <version>6.11.0</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>target/TestJars</outputDirectory>
+                            <destFileName>wicket-core-6.11.0</destFileName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
     <dependencies>
         <dependency>
             <groupId>org.bitbucket.mstrobel</groupId>
@@ -24,6 +49,36 @@
             <groupId>org.bitbucket.mstrobel</groupId>
             <artifactId>procyon-compilertools</artifactId>
             <version>0.5.25</version>
+        </dependency>
+        
+        
+        
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-standalone</artifactId>
+            <version>1.1.4.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Test jar -->
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-core</artifactId>
+            <version>6.11.0</version>
+        </dependency>
+        
+        
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j.adapters</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.0-beta4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>2.0-rc1</version>
+            <type>pom</type>
         </dependency>
     </dependencies>
     
