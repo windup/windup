@@ -12,12 +12,6 @@
     <artifactId>tests</artifactId>
     
     <name>Windup Engine - Tests</name>
-    
-
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>

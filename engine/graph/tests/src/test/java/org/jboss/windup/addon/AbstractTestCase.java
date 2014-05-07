@@ -6,7 +6,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-
+import org.junit.Test;
 
 /**
  * This is here for reference.
@@ -31,6 +31,12 @@ public class AbstractTestCase
             AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
         );
       return archive;
+   }
+   
+   // To prevent "Exception: No runnable methods"
+   @Test
+   public void foo(){
+   
    }
 
 }

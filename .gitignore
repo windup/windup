@@ -17,3 +17,4 @@ docs/reference/src/main/docbook/en-US/version_info.xml
 atlassian-ide-plugin.xml
 .externalToolBuilders
 bin
+/engine/graph/tests/src/test/java/org/jboss/windup/graph/test/polymorf/SubtypeQueryTest.java
