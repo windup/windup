@@ -3,6 +3,7 @@
 Get involved at: http://windup.jboss.org
 
 * Forums: https://community.jboss.org/en/windup
+* Issue Tracker: https://issues.jboss.org/browse/WINDUP
 * Users Mailing List: windup-users@lists.jboss.org
 * Dev Mailing List: windup-dev@lists.jboss.org
 * Commits Mailing List: windup-commits@lists.jboss.org
