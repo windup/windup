@@ -6,9 +6,8 @@
  */
 package org.jboss.windup.addon.config.operation;
 
-import org.jboss.windup.addon.config.selectables.Selectable;
-import org.jboss.windup.addon.config.selectables.SelectableCondition;
-import org.jboss.windup.addon.config.spi.SelectionFactory;
+import org.jboss.windup.addon.config.selectables.SelectionFactory;
+import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;
@@ -22,15 +21,14 @@ import org.ocpsoft.rewrite.event.Rewrite;
 public class Iteration extends DefaultOperationBuilder
 {
 
-    private final Class<? extends Selectable<?, ?, ?>> type;
+    private final Class<? extends WindupVertexFrame> type;
     private final String source;
     private final String var;
-    private Class<?> castType;
     private Condition condition;
     private Operation operation;
 
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> Iteration(
-                Class<SELECTABLE> type, String source, String var)
+    public Iteration(
+                Class<? extends WindupVertexFrame> type, String source, String var)
     {
         this.type = type;
         this.source = source;
@@ -40,19 +38,9 @@ public class Iteration extends DefaultOperationBuilder
     /**
      * Begin an {@link Iteration}
      */
-    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
-                Iteration over(Class<SELECTABLE> selectable, String source, String var)
+    public static Iteration over(Class<? extends WindupVertexFrame> selectable, String source, String var)
     {
         return new Iteration(selectable, source, var);
-    }
-
-    /**
-     * Cast each iterated element to the given type (if possible.)
-     */
-    public Iteration as(Class<?> castType)
-    {
-        this.castType = castType;
-        return this;
     }
 
     public Iteration when(Condition condition)
@@ -78,11 +66,11 @@ public class Iteration extends DefaultOperationBuilder
         if (operation != null)
         {
             SelectionFactory factory = (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
-            Iterable<?> peek = factory.peek(source);
-            for (Object element : peek)
+            Iterable<WindupVertexFrame> peek = factory.peek(source);
+            for (WindupVertexFrame element : peek)
             {
-                factory.setCurrentPayload((Class) type, element);
-                if (condition != null && condition.evaluate(event, context))
+                factory.setCurrentPayload(type, element);
+                if (condition == null || condition.evaluate(event, context))
                 {
                     if (operation != null)
                         operation.perform(event, context);

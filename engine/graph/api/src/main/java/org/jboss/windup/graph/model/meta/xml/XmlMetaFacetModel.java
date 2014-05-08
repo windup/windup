@@ -8,18 +8,21 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("XmlMetaFacetModel")
-public interface XmlMetaFacetModel extends WindupVertexFrame {
+@TypeValue(XmlMetaFacetModel.TYPE)
+public interface XmlMetaFacetModel extends WindupVertexFrame
+{
+    public static final String TYPE = "XmlMetaFacetModel";
+    public static final String PROPERTY_ROOT_TAG_NAME = "rootTagName";
 
-	@Adjacency(label="xmlFacet", direction=Direction.OUT)
-	public void setXmlFacet(XmlResourceModel facet);
-	
-	@Adjacency(label="xmlFacet", direction=Direction.OUT)
-	public XmlResourceModel getXmlFacet();
-	
-	@Property("rootTagName")
-	public String getRootTagName();
+    @Adjacency(label = "xmlFacet", direction = Direction.OUT)
+    public void setXmlFacet(XmlResourceModel facet);
 
-	@Property("rootTagName")
-	public void setRootTagName(String rootTagName);
+    @Adjacency(label = "xmlFacet", direction = Direction.OUT)
+    public XmlResourceModel getXmlFacet();
+
+    @Property(PROPERTY_ROOT_TAG_NAME)
+    public String getRootTagName();
+
+    @Property(PROPERTY_ROOT_TAG_NAME)
+    public void setRootTagName(String rootTagName);
 }
