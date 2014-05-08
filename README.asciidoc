@@ -34,10 +34,7 @@ JBoss Forge, version [ 2.4.2-SNAPSHOT ] - JBoss, by Red Hat, Inc. [ http://forge
 +
 [source,text]
 ----
-[bin]$ addon-install
-Group ID (The value of <groupId> from the addon's pom.xml):  org.jboss.windup.legacy.application
-Name (The value of <artifactId> from the addon's pom.xml):  legacy-windup
-Version (The value of <version> from the addon's pom.xml):  2.0.0.Alpha1
+[bin]$ addon-install --groupId org.jboss.windup.legacy.application --name legacy-windup --version 2.0.0.Alpha1
 ----
 
 4. Run windup-1x via forge. Example:
