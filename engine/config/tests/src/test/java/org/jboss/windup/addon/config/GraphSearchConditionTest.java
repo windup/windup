@@ -16,7 +16,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.addon.config.graphsearch.GraphSearchFactory;
+import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.addon.config.operation.GraphOperation;
 import org.jboss.windup.addon.config.operation.Iteration;
@@ -63,9 +63,6 @@ public class GraphSearchConditionTest
     @Inject
     private SelectionFactory selectionFactory;
 
-    @Inject
-    private GraphSearchFactory graphSearchFactory;
-
     @Test
     public void testTypeFilter()
     {
@@ -101,7 +98,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         Configuration configuration = ConfigurationBuilder.begin()
                     .addRule()
-                    .when(graphSearchFactory.create("xmlModels").has(XmlMetaFacetModel.class))
+                    .when(GraphSearchConditionBuilder.create("xmlModels").has(XmlMetaFacetModel.class))
                     .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels", "xml")
                                 .perform(new GraphOperation()
                                 {
@@ -163,7 +160,7 @@ public class GraphSearchConditionTest
         Configuration configuration = ConfigurationBuilder
                     .begin()
                     .addRule()
-                    .when(graphSearchFactory
+                    .when(GraphSearchConditionBuilder
                                 .create("xmlModels")
                                 .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                                             GraphSearchPropertyComparisonType.EQUALS,
@@ -224,7 +221,7 @@ public class GraphSearchConditionTest
         Configuration configuration = ConfigurationBuilder
                     .begin()
                     .addRule()
-                    .when(graphSearchFactory
+                    .when(GraphSearchConditionBuilder
                                 .create("xmlModels")
                                 .has(XmlMetaFacetModel.class)
                                 .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,

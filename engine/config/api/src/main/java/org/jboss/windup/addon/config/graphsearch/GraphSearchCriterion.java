@@ -1,8 +1,8 @@
-package org.jboss.windup.addon.config.impl.graphsearch;
+package org.jboss.windup.addon.config.graphsearch;
 
 import com.tinkerpop.frames.FramedGraphQuery;
 
-public abstract class GraphSearchCriterion
+public interface GraphSearchCriterion
 {
     public abstract void query(FramedGraphQuery q);
 }

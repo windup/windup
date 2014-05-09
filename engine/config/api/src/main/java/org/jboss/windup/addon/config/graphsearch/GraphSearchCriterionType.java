@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.config.impl.graphsearch;
+package org.jboss.windup.addon.config.graphsearch;
 
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 
@@ -6,7 +6,7 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-public class GraphSearchCriterionType extends GraphSearchCriterion
+class GraphSearchCriterionType implements GraphSearchCriterion
 {
     String typeValue;
 
