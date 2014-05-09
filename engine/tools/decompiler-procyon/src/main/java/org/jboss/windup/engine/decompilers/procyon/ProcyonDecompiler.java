@@ -15,6 +15,7 @@ import com.strobel.decompiler.PlainTextOutput;
 import com.strobel.decompiler.languages.BytecodeLanguage;
 import com.strobel.decompiler.languages.LineNumberPosition;
 import com.strobel.decompiler.languages.TypeDecompilationResults;
+import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import com.strobel.io.PathHelper;
 import java.io.File;
 import java.io.IOException;
@@ -93,19 +94,17 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
         
         // Get settings.
         DecompilerSettings settings = conf.getDecompilerSettings();
+        settings.setFormattingOptions( new JavaFormattingOptions() );
 
         final FileOutputWriter writer = createFileWriter(resolvedType, settings);
         final PlainTextOutput output;
 
         output = new PlainTextOutput(writer);
-
         output.setUnicodeOutputEnabled(settings.isUnicodeOutputEnabled());
-
-        if (settings.getLanguage() instanceof BytecodeLanguage) {
+        if (settings.getLanguage() instanceof BytecodeLanguage)
             output.setIndentToken("  ");
-        }
 
-
+        // Create DecompilationOptions
         DecompilationOptions options = new DecompilationOptions();
         options.setSettings( settings );  // I'm missing why these two classes are split.
         
@@ -204,7 +203,7 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
                     metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
             }
             catch(Throwable th) {
-                log.error("Error during decompilation of " + typeName + ": " + th.getMessage(), th);
+                log.error("Error during decompilation of " + typeName + ":\n    " + th.getMessage(), th);
                 exs.add( th ); // Throw at the end?
             }
         }
