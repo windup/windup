@@ -1,5 +1,6 @@
 package org.jboss.windup.engine.decompilers.api;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,12 +23,17 @@ public class JarDecompilationResults {
     }
     
     public void addFailed( DecompilationPathEx ex ){
-        failed.add( ex );
+        this.failed.add( ex );
     }
     
 
     public List<DecompilationPathEx> getFailed() {
-        return failed;
+        return Collections.unmodifiableList( this.failed );
     }
 
+
+    public int getDecompiledCount() {
+        return this.decompiledCount;
+    }
+    
 }// class

@@ -35,7 +35,7 @@ public interface IDecompiler {
          *      Sources from archives will be put into the same named directories, e.g.
          *          foo.ear/bar.jar/src/com/foo/bar/Baz.java
          */
-        public void decompileJar( File srcJar, File destDir, DecompilationConf conf  ) throws DecompilationEx;
+        public JarDecompilationResults decompileJar( File srcJar, File destDir, DecompilationConf conf  ) throws DecompilationEx;
     }
     
     public static interface Dir {

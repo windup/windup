@@ -10,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -17,6 +19,7 @@ import org.junit.Test;
  */
 //@RunWith(Arquillian.class) // Arquillian doesn't run @Before methods?? ARQ-1070
 public class IDecompilerTest {
+    private static final Logger log = LoggerFactory.getLogger( IDecompilerTest.class );
     
     public IDecompilerTest() {
     }
@@ -51,11 +54,18 @@ public class IDecompilerTest {
         final ProcyonConf procyonConf = new ProcyonConf();
 
         IDecompiler.Jar dec = new ProcyonDecompiler();
-        dec.decompileJar( new File("target/TestJars/wicket-core-6.11.0.jar"), this.destDir, procyonConf);
-
-        final String subPath = "src/org/apache/wicket/util/LazyInitializer.java";
+        JarDecompilationResults res = dec.decompileJar( new File("target/TestJars/wicket-core-6.11.0.jar"), this.destDir, procyonConf);
         
-        Assert.assertTrue("Decompiled class files exist", new File( this.destDir, subPath).exists() );
+        Assert.assertNotNull( "Results object returned", res );
+        //Assert.assertEquals( "No failed compilations", 0, res.getFailed().size() );
+        Assert.assertTrue("At most one (known) failed compilation.", res.getFailed().size() <= 1 );
+        log.info("Compilation results: {} succeeded, {} failed.", res.getDecompiledCount(), res.getFailed().size() );
+        
+
+        final String subPath = "org/apache/wicket/model/LoadableDetachableModel.java";
+        
+        final File oneDestFile = new File( this.destDir, subPath);
+        Assert.assertTrue("Decompiled class files exist:\n    "+ oneDestFile.getAbsolutePath(), oneDestFile.exists() );
     }
     
 }

@@ -19,9 +19,7 @@ import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import com.strobel.io.PathHelper;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -139,7 +137,7 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
      *  Extracts the archive and decompiles all .class files found.
      */
     @Override
-    public void decompileJar( File jarFile, File destDir, DecompilationConf conf_ ) throws DecompilationEx {
+    public JarDecompilationResults decompileJar( File jarFile, File destDir, DecompilationConf conf_ ) throws DecompilationEx {
         
         log.info("Decompiling .jar '" + jarFile.getPath() + "' to '" + destDir + "'...");
         
@@ -218,6 +216,8 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
             }
             // Throw a compound exception?
         }
+        
+        return res;
     }// decompileJar
     
     
