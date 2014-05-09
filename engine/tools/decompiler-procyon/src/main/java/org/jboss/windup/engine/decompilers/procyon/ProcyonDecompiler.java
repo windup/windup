@@ -139,7 +139,7 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
      *  Extracts the archive and decompiles all .class files found.
      */
     @Override
-    public void decompileJar( File jarFile, File destDir, DecompilationConf conf ) throws DecompilationEx {
+    public void decompileJar( File jarFile, File destDir, DecompilationConf conf_ ) throws DecompilationEx {
         
         log.info("Decompiling .jar '" + jarFile.getPath() + "' to '" + destDir + "'...");
         
@@ -163,7 +163,10 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
         }
 
         // Settings
-        final DecompilerSettings settings = new DecompilerSettings();
+        ProcyonConf conf = this.retypeConf( conf_ );
+        DecompilerSettings settings = conf.getDecompilerSettings();
+        if( settings == null )
+            settings = new DecompilerSettings();
         settings.setOutputDirectory( destDir.getPath() );
         settings.setShowSyntheticMembers(false);
         
@@ -181,7 +184,7 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
         );
 
         // NoRetry keeps list of failed types.
-        MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
+        MetadataSystem metadataSystem = new NoRetryMetadataSystem( settings.getTypeLoader() );
         //metadataSystem.setEagerMethodLoadingEnabled();
         
         int classesDecompiled = 0;
@@ -190,7 +193,7 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
 
         // For each entry in the archive...
         final Enumeration<JarEntry> entries = jar.entries();
-        while (entries.hasMoreElements()) {
+        while( entries.hasMoreElements() ) {
             final JarEntry entry = entries.nextElement();
             final String name = entry.getName();
 

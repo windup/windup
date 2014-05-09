@@ -3,7 +3,6 @@ package org.jboss.windup.engine.decompilers.api;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.windup.engine.decompilers.procyon.ProcyonConf;
 import org.jboss.windup.engine.decompilers.procyon.ProcyonDecompiler;
 import org.junit.After;
@@ -11,7 +10,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  *
