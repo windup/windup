@@ -19,6 +19,7 @@ import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import com.strobel.io.PathHelper;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +28,9 @@ import java.util.jar.JarFile;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.decompilers.api.DecompilationConf;
 import org.jboss.windup.engine.decompilers.api.DecompilationEx;
+import org.jboss.windup.engine.decompilers.api.DecompilationPathEx;
 import org.jboss.windup.engine.decompilers.api.IDecompiler;
+import org.jboss.windup.engine.decompilers.api.JarDecompilationResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,7 +185,8 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
         //metadataSystem.setEagerMethodLoadingEnabled();
         
         int classesDecompiled = 0;
-        List<Throwable> exs = new LinkedList<>();
+        //List<Throwable> exs = new LinkedList<>();
+        JarDecompilationResults res = new JarDecompilationResults();
 
         // For each entry in the archive...
         final Enumeration<JarEntry> entries = jar.entries();
@@ -197,15 +201,19 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
 
             try {
                 this.decompileType( metadataSystem, typeName, conf );
+                res.addDecompiled( name );
 
-                // Taken from mstrobel's, not sure what's the reason.
+                // Taken from mstrobel's, not sure what's the purpose.
                 if (++classesDecompiled % 100 == 0)
                     metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
             }
             catch(Throwable th) {
-                log.error("Error during decompilation of " + typeName + ":\n    " + th.getMessage(), th);
-                exs.add( th ); // Throw at the end?
+                String msg = "Error during decompilation of " + jarFile.getPath() + "!" + name + ":\n    " + th.getMessage();
+                DecompilationPathEx ex = new DecompilationPathEx( msg, name, th );
+                log.error(msg, ex);
+                res.addFailed( ex );
             }
+            // Throw a compound exception?
         }
     }// decompileJar
     
