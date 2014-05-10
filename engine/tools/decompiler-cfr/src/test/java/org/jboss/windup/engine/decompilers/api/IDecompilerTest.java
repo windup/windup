@@ -3,9 +3,8 @@ package org.jboss.windup.engine.decompilers.api;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.apache.commons.io.FileUtils;
-import org.jboss.windup.engine.decompilers.procyon.ProcyonConf;
-import org.jboss.windup.engine.decompilers.procyon.ProcyonDecompiler;
+import org.jboss.windup.engine.decompilers.procyon.CfrConf;
+import org.jboss.windup.engine.decompilers.procyon.CfrDecompiler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,8 +37,7 @@ public class IDecompilerTest {
         // Re-create the directory.
         //this.destDir = new File( FileUtils.getTempDirectory(), "WindupDecompTest" );
         this.destDir = new File( "target/DecompTest" );
-        //this.destDir.delete();
-        FileUtils.deleteQuietly( destDir );
+        this.destDir.delete();
         Files.createDirectory( this.destDir.toPath() );
         this.destDir.deleteOnExit();
     }
@@ -53,9 +51,9 @@ public class IDecompilerTest {
     @Test
     public void testSomeMethod() throws DecompilationEx {
         
-        final ProcyonConf procyonConf = new ProcyonConf();
+        final CfrConf procyonConf = new CfrConf();
 
-        IDecompiler.Jar dec = new ProcyonDecompiler();
+        IDecompiler.Jar dec = new CfrDecompiler();
         JarDecompilationResults res = dec.decompileJar( new File("target/TestJars/wicket-core-6.11.0.jar"), this.destDir, procyonConf);
         
         Assert.assertNotNull( "Results object returned", res );
