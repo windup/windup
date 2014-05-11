@@ -4,7 +4,7 @@ package org.jboss.windup.engine.decompilers.api;
  *
  *  @author Ondrej Zizka, ozizka at redhat.com
  */
-public class DecompilationPathEx extends Exception {
+public class DecompilationPathEx extends DecompilationEx {
 
     private final String path;
     

@@ -23,7 +23,7 @@ public interface IDecompiler {
          * @param srcDir
          * @param destDir  Where to put the decompiled .java files.
          */
-        public void decompileType( File srcClassFile, File destFile, DecompilationConf conf ) throws DecompilationEx;
+        public void decompileClassFile( File srcClassFile, File destFile, DecompilationConf conf ) throws DecompilationEx;
     }
 
     public static interface Jar {
