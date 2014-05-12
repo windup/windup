@@ -94,12 +94,22 @@
         
         
         <!-- Tests -->
+        <!--
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-standalone</artifactId>
             <version>1.1.4.Final</version>
             <scope>test</scope>
         </dependency>
+        -->
+        <dependency>
+            <groupId>org.jboss.windup.engine</groupId>
+            <artifactId>decompilers-api</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        
         <!-- Test jar -->
         <dependency>
             <groupId>org.apache.wicket</groupId>

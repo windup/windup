@@ -45,7 +45,8 @@ public class CfrDecompiler implements IDecompiler.Conf<CfrConf>, IDecompiler.Jar
         
         CfrConf conf = this.retypeConf( conf_ );
 
-
+        // CFR has no documentation, no API, it's an immature project.
+        // To be revisited later.
     }    
     
     
