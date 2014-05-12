@@ -105,8 +105,7 @@ public class GraphSearchConditionTest
                                     @Override
                                     public void perform(GraphRewrite event, EvaluationContext context)
                                     {
-                                        SelectionFactory factory = (SelectionFactory) event.getRewriteContext().get(
-                                                    SelectionFactory.class);
+                                        SelectionFactory factory = SelectionFactory.instance(event);
                                         XmlMetaFacetModel xmlFacetModel = factory
                                                     .getCurrentPayload(XmlMetaFacetModel.class);
                                         typeSearchResults.add(xmlFacetModel);

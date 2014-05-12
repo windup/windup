@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Stack;
 
+import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 
 /**
@@ -34,6 +35,11 @@ public class SelectionFactory
 
         stack.push(item);
         vars.put(name, item);
+    }
+
+    public static SelectionFactory instance(GraphRewrite event)
+    {
+        return (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
     }
 
     public Iterable<WindupVertexFrame> pop()
