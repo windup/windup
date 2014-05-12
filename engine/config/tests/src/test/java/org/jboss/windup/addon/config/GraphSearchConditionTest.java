@@ -99,7 +99,7 @@ public class GraphSearchConditionTest
         methodModelToString.setJavaClass(classModel2);
         methodModelToString.setMethodName("toString");
 
-        final List<MavenFacetModel> typeSearchResults = new ArrayList<>();
+        final List<JavaMethodModel> methodModelList = new ArrayList<>();
 
         Configuration configuration = ConfigurationBuilder
                     .begin()
@@ -118,7 +118,7 @@ public class GraphSearchConditionTest
                                             .create("javaClasses")
                                             .has(JavaClassModel.class)
                                             .withProperty("qualifiedName", GraphSearchPropertyComparisonType.REGEX,
-                                                        "javax\\.*")
+                                                        "com\\.example\\..*")
                     )
 
                     /*
@@ -144,8 +144,9 @@ public class GraphSearchConditionTest
                                                             }
                                                         })
                                             ,
+                                            JavaMethodModel.class,
                                             "javaClasses",
-                                            "javaClass")
+                                            "javaMethod")
                                             .perform(
                                                         new GraphOperation()
                                                         {
@@ -158,6 +159,7 @@ public class GraphSearchConditionTest
                                                                             .instance(event);
                                                                 JavaMethodModel methodModel = selection
                                                                             .getCurrentPayload(JavaMethodModel.class);
+                                                                methodModelList.add(methodModel);
                                                                 LOG.info("Overridden "
                                                                             + methodModel.getMethodName()
                                                                             +
@@ -171,6 +173,11 @@ public class GraphSearchConditionTest
 
         Subset.evaluate(configuration).perform(event, evaluationContext);
 
+        Assert.assertTrue(methodModelList.size() == 1);
+        Assert.assertNotNull(methodModelList.get(0));
+        Assert.assertNotNull(methodModelList.get(0).getJavaClass());
+        Assert.assertEquals("toString", methodModelList.get(0).getMethodName());
+        Assert.assertEquals(classModel2.getQualifiedName(), methodModelList.get(0).getJavaClass().getQualifiedName());
     }
 
     @Test

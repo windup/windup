@@ -56,8 +56,18 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return this;
     }
 
+    public void setInitialVertices(Iterable<Vertex> initialVertices)
+    {
+        this.initialVertices = initialVertices;
+    }
+
     public Iterable<Vertex> getResults(GraphRewrite event)
     {
+        for (GraphSearchGremlinCriterion c : criteria)
+        {
+            c.query(pipeline);
+        }
+
         Iterable<Vertex> vertices;
         if (initialVertices == null)
         {

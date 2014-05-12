@@ -6,6 +6,9 @@
  */
 package org.jboss.windup.addon.config.operation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
@@ -42,9 +45,10 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     public Iteration(
-                GraphSearchConditionBuilderGremlin gremlinQuery, String source, String var)
+                GraphSearchConditionBuilderGremlin gremlinQuery, Class<? extends WindupVertexFrame> type,
+                String source, String var)
     {
-        this.type = null;
+        this.type = type;
         this.gremlinQuery = gremlinQuery;
         this.source = source;
         this.var = var;
@@ -58,9 +62,10 @@ public class Iteration extends DefaultOperationBuilder
         return new Iteration(selectable, source, var);
     }
 
-    public static Iteration query(GraphSearchConditionBuilderGremlin gremlin, String source, String var)
+    public static Iteration query(GraphSearchConditionBuilderGremlin gremlin, Class<? extends WindupVertexFrame> type,
+                String source, String var)
     {
-        return new Iteration(gremlin, source, var);
+        return new Iteration(gremlin, type, source, var);
     }
 
     public Iteration when(Condition condition)
@@ -104,6 +109,14 @@ public class Iteration extends DefaultOperationBuilder
     {
         if (gremlinQuery != null)
         {
+            Iterable<WindupVertexFrame> initialFrames = factory.peek(source);
+            List<Vertex> initialVertices = new ArrayList<>();
+            for (WindupVertexFrame frame : initialFrames)
+            {
+                initialVertices.add(frame.asVertex());
+            }
+
+            gremlinQuery.setInitialVertices(initialVertices);
             Iterable<Vertex> v = gremlinQuery.getResults(event);
             return GraphUtil.toVertexFrames(event.getGraphContext(), v);
         }
