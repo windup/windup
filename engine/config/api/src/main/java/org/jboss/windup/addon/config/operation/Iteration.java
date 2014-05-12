@@ -6,21 +6,14 @@
  */
 package org.jboss.windup.addon.config.operation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jboss.windup.addon.config.GraphRewrite;
-import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
-import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
-
-import com.tinkerpop.blueprints.Vertex;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -29,7 +22,7 @@ import com.tinkerpop.blueprints.Vertex;
 public class Iteration extends DefaultOperationBuilder
 {
     private final Class<? extends WindupVertexFrame> type;
-    private final GraphSearchConditionBuilderGremlin gremlinQuery;
+
     private final String source;
     private final String var;
     private Condition condition;
@@ -39,17 +32,6 @@ public class Iteration extends DefaultOperationBuilder
                 Class<? extends WindupVertexFrame> type, String source, String var)
     {
         this.type = type;
-        this.gremlinQuery = null;
-        this.source = source;
-        this.var = var;
-    }
-
-    public Iteration(
-                GraphSearchConditionBuilderGremlin gremlinQuery, Class<? extends WindupVertexFrame> type,
-                String source, String var)
-    {
-        this.type = type;
-        this.gremlinQuery = gremlinQuery;
         this.source = source;
         this.var = var;
     }
@@ -62,10 +44,10 @@ public class Iteration extends DefaultOperationBuilder
         return new Iteration(selectable, source, var);
     }
 
-    public static Iteration query(GraphSearchConditionBuilderGremlin gremlin, Class<? extends WindupVertexFrame> type,
+    public static IterationQuery overQuery(Class<? extends WindupVertexFrame> type,
                 String source, String var)
     {
-        return new Iteration(gremlin, type, source, var);
+        return new IterationQuery(type, source, var);
     }
 
     public Iteration when(Condition condition)
@@ -105,24 +87,13 @@ public class Iteration extends DefaultOperationBuilder
         }
     }
 
-    private Iterable<WindupVertexFrame> findFrames(GraphRewrite event, SelectionFactory factory)
+    Iterable<WindupVertexFrame> findFrames(GraphRewrite event, SelectionFactory factory)
     {
-        if (gremlinQuery != null)
-        {
-            Iterable<WindupVertexFrame> initialFrames = factory.peek(source);
-            List<Vertex> initialVertices = new ArrayList<>();
-            for (WindupVertexFrame frame : initialFrames)
-            {
-                initialVertices.add(frame.asVertex());
-            }
+        return factory.peek(source);
+    }
 
-            gremlinQuery.setInitialVertices(initialVertices);
-            Iterable<Vertex> v = gremlinQuery.getResults(event);
-            return GraphUtil.toVertexFrames(event.getGraphContext(), v);
-        }
-        else
-        {
-            return factory.peek(source);
-        }
+    String getSource()
+    {
+        return source;
     }
 }

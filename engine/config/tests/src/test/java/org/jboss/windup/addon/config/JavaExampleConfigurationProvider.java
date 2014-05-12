@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchGremlinCriterion;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.addon.config.operation.GraphOperation;
@@ -70,24 +69,20 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                                 /*
                                  * Search the "javaClasses" for Java methods named "toString"
                                  */
-                                Iteration.query(
-                                            GraphSearchConditionBuilderGremlin.create()
-                                                        .withCriterion(new GraphSearchGremlinCriterion()
-                                                        {
-
-                                                            @Override
-                                                            public void query(GremlinPipeline<Vertex, Vertex> pipeline)
-                                                            {
-                                                                // use a Gremlin query to filter down to vertices
-                                                                // matching this
-                                                                pipeline.out("javaMethod")
-                                                                            .has("methodName", "toString");
-                                                            }
-                                                        })
-                                            ,
-                                            JavaMethodModel.class,
+                                Iteration.overQuery(JavaMethodModel.class,
                                             "javaClasses",
                                             "javaMethod")
+                                            .withCriterion(new GraphSearchGremlinCriterion()
+                                            {
+                                                @Override
+                                                public void query(GremlinPipeline<Vertex, Vertex> pipeline)
+                                                {
+                                                    // use a Gremlin query to filter down to vertices
+                                                    // matching this
+                                                    pipeline.out("javaMethod")
+                                                                .has("methodName", "toString");
+                                                }
+                                            })
                                             .perform(
                                                         new GraphOperation()
                                                         {
