@@ -36,7 +36,7 @@ public class XmlExampleConfigurationProvider3 extends WindupConfigurationProvide
                     .addRule()
                     .when(GraphSearchConditionBuilder
                                 .create("xmlModels")
-                                .has(XmlMetaFacetModel.class)
+                                .as(XmlMetaFacetModel.class)
                                 .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                                             GraphSearchPropertyComparisonType.EQUALS,
                                             "xmlTag2"))

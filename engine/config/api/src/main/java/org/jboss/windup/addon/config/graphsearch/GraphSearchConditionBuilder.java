@@ -16,8 +16,8 @@ import com.tinkerpop.frames.FramedGraphQuery;
 
 public class GraphSearchConditionBuilder extends GraphCondition
 {
-    private String variableName;
-    private List<GraphSearchCriterion> graphSearchCriteria = new ArrayList<>();
+    private final String variableName;
+    private final List<GraphSearchCriterion> graphSearchCriteria = new ArrayList<>();
 
     private GraphSearchConditionBuilder(String variableName)
     {
@@ -39,7 +39,7 @@ public class GraphSearchConditionBuilder extends GraphCondition
         return new GraphSearchConditionBuilderGremlin(this);
     }
 
-    public GraphSearchConditionBuilder has(Class<? extends WindupVertexFrame> clazz)
+    public GraphSearchConditionBuilder as(Class<? extends WindupVertexFrame> clazz)
     {
         graphSearchCriteria.add(new GraphSearchCriterionType(clazz));
         return this;

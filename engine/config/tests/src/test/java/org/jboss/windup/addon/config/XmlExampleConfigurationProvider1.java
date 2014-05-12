@@ -36,7 +36,7 @@ public class XmlExampleConfigurationProvider1 extends WindupConfigurationProvide
     {
         Configuration configuration = ConfigurationBuilder.begin()
                     .addRule()
-                    .when(GraphSearchConditionBuilder.create("xmlModels").has(XmlMetaFacetModel.class))
+                    .when(GraphSearchConditionBuilder.create("xmlModels").as(XmlMetaFacetModel.class))
                     .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels", "xml")
                                 .perform(new GraphOperation()
                                 {
