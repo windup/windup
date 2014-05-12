@@ -40,11 +40,6 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         this.initialVertices = initialVertices;
     }
 
-    public static GraphSearchConditionBuilderGremlin create()
-    {
-        return new GraphSearchConditionBuilderGremlin();
-    }
-
     public static GraphSearchConditionBuilderGremlin create(String collectionName, Iterable<Vertex> initial)
     {
         return new GraphSearchConditionBuilderGremlin(collectionName, initial);
