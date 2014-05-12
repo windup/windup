@@ -85,6 +85,6 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         SelectionFactory factory = (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
         factory.push(frames, variableName);
 
-        return false;
+        return !frames.isEmpty();
     }
 }
