@@ -48,20 +48,11 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter
 {
     private static final Log LOG = LogFactory.getLog(JadretroDecompilerAdapter.class);
 
-    private final String APP_NAME;
+    private static final String APP_NAME = SystemUtils.IS_OS_WINDOWS ? "jad.exe" : "jad";
 
-    public JadretroDecompilerAdapter()
-    {
-        if (SystemUtils.IS_OS_WINDOWS)
-        {
-            APP_NAME = "jad.exe";
-        }
-        else
-        {
-            APP_NAME = "jad";
-        }
-    }
+    private static final int DECOMPILER_TIMEOUT = 60000;
 
+    
     /*
      * (non-Javadoc)
      * 
@@ -90,6 +81,12 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter
         LOG.info("... Complete");
     }
 
+
+    
+    /**
+     *  Decompiles given .class file to a .java file at the given destination  path,
+     *  using jad decompiler which is expected to be at system PATH.
+     */
     private void executeJad(File classLocation, File sourceOutputLocation)
     {
 
@@ -115,21 +112,18 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter
             DefaultExecutor executor = new DefaultExecutor();
             executor.setExitValue(0);
             executor.setWorkingDirectory(FileUtils.getUserDirectory());
-            ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
+            ExecuteWatchdog watchdog = new ExecuteWatchdog( DECOMPILER_TIMEOUT );
 
             executor.setWatchdog(watchdog);
             int exitValue = executor.execute(cmdLine, EnvironmentUtils.getProcEnvironment());
 
-            LOG.debug("Decompiler exited with exit code: " + exitValue);
-
-            if (!sourceOutputLocation.exists())
-            {
-                LOG.error("Expected decompiled source: "
-                            + sourceOutputLocation.getAbsolutePath()
-                            + "; did not find file.  This likey means that the decompiler did not successfully decompile the class.");
+    
+            if (!sourceOutputLocation.exists()) {
+                LOG.debug("Decompiler exited with exit code: " + exitValue);
+                LOG.error("Didn't find expected decompiled source: " + sourceOutputLocation.getAbsolutePath()
+                    + "\n    This likely means that the decompiler did not successfully decompile the class.");
             }
-            else
-            {
+            else {
                 LOG.debug("Decompiled to: " + sourceOutputLocation.getAbsolutePath());
             }
 
