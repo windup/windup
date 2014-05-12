@@ -31,7 +31,6 @@ import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
 import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
-import org.jboss.windup.graph.model.resource.JavaMethodModel;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,8 +41,6 @@ import org.ocpsoft.rewrite.config.Subset;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
@@ -51,8 +48,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 @RunWith(Arquillian.class)
 public class GraphSearchConditionTest
 {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GraphSearchConditionTest.class);
 
     @Deployment
     @Dependencies({
@@ -79,29 +74,10 @@ public class GraphSearchConditionTest
     @Test
     public void testJavaMethodModel()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
-        GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
-
-        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel1.setQualifiedName("com.example.Class1NoToString");
-        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel2.setQualifiedName("com.example.Class2HasToString");
-
-        JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
-        methodModelSomeMethod.setJavaClass(classModel2);
-        methodModelSomeMethod.setMethodName("foo");
-        JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
-        methodModelToString.setJavaClass(classModel2);
-        methodModelToString.setMethodName("toString");
-
-        final List<MavenFacetModel> typeSearchResults = new ArrayList<>();
-
-        Configuration configuration = ConfigurationBuilder
+        /*
+         * Begin the current rules configuration
+         */
+        return ConfigurationBuilder
                     .begin()
                     .addRule()
 
@@ -131,46 +107,57 @@ public class GraphSearchConditionTest
                                  * iteration sets the current PersonFrame into var "type", and into the "current scope"
                                  * for the PersonFrame type.
                                  */
-                                Iteration.query(
-                                            GraphSearchConditionBuilderGremlin.create()
-                                                        .withCriterion(new GraphSearchGremlinCriterion()
-                                                        {
+                                Iteration.over(JavaClassModel.class, "javaClasses", "javaClass")
+                                            .when(
+                                                        GraphSearchConditionBuilderGremlin.create("methods", )
+                                                                    .withCriterion(new GraphSearchGremlinCriterion()
+                                                                    {
+                                                                        @Override
+                                                                        public void query(
+                                                                                    GremlinPipeline<Vertex, Vertex> pipeline)
+                                                                        {
+                                                                            
+                                                                            /*
+                                                                             * Locate methods in the current PersonFrame that match the
+                                                                             * given conditions. The matching methods are stored into the
+                                                                             * var "methods"
+                                                                             */
+                                                                            Selection.ofAll(JavaMethod.class, "methods")
+                                                                                        .in(Selection.current(JavaClass.class))
+                                                                                        .withSignature("toString()")
+                                                                                        .definedBy("java.lang.Object")
+                                                                        }
+                                                                    })
 
-                                                            @Override
-                                                            public void query(GremlinPipeline<Vertex, Vertex> pipeline)
-                                                            {
-                                                                pipeline.out("javaMethod")
-                                                                            .has("methodName", "toString");
-                                                            }
-                                                        })
-                                            ,
-                                            "javaClasses",
-                                            "javaClass")
+                                            )
                                             .perform(
-                                                        new GraphOperation()
-                                                        {
-
-                                                            @Override
-                                                            public void perform(GraphRewrite event,
-                                                                        EvaluationContext context)
-                                                            {
-                                                                SelectionFactory selection = SelectionFactory
-                                                                            .instance(event);
-                                                                JavaMethodModel methodModel = selection
-                                                                            .getCurrentPayload(JavaMethodModel.class);
-                                                                LOG.info("Overridden "
-                                                                            + methodModel.getMethodName()
-                                                                            +
-                                                                            " Method in type: "
-                                                                            + methodModel.getJavaClass()
-                                                                                        .getQualifiedName());
-                                                            }
-                                                        }
+                                                        /*
+                                                         * Iterate over the JavaMethod instances found in "methods",
+                                                         * storing each instance in var "method"
+                                                         */
+                                                        Iteration.over(JavaMethod.class, "methods", "method")
+                                                                    /*
+                                                                     * Skip directly to perform, no conditions required
+                                                                     */
+                                                                    .perform(
+                                                                                /*
+                                                                                 * Do something with the information
+                                                                                 * we've found so far
+                                                                                 */
+                                                                                Log.message(Level.INFO,
+                                                                                            "Overridden "
+                                                                                                        + Selection.get(
+                                                                                                                    JavaMethod.class,
+                                                                                                                    "method")
+                                                                                                                    .getName()
+                                                                                                        +
+                                                                                                        " Method in type: "
+                                                                                                        + Selection.current(
+                                                                                                                    JavaClass.class)
+                                                                                                                    .getName())
+                                                                    )
                                             )
                     );
-
-        Subset.evaluate(configuration).perform(event, evaluationContext);
-
     }
 
     @Test
@@ -219,7 +206,7 @@ public class GraphSearchConditionTest
                                     @Override
                                     public void perform(GraphRewrite event, EvaluationContext context)
                                     {
-                                        SelectionFactory factory = SelectionFactory.instance(event);
+                                        SelectionFactory factory = event.getSelectionFactory();
                                         MavenFacetModel mavenFacetModel = factory
                                                     .getCurrentPayload(MavenFacetModel.class);
                                         typeSearchResults.add(mavenFacetModel);
@@ -273,7 +260,11 @@ public class GraphSearchConditionTest
                                     @Override
                                     public void perform(GraphRewrite event, EvaluationContext context)
                                     {
+<<<<<<< Updated upstream
                                         SelectionFactory factory = SelectionFactory.instance(event);
+=======
+                                        SelectionFactory factory = event.getSelectionFactory();
+>>>>>>> Stashed changes
                                         XmlMetaFacetModel xmlFacetModel = factory
                                                     .getCurrentPayload(XmlMetaFacetModel.class);
                                         typeSearchResults.add(xmlFacetModel);
@@ -338,7 +329,7 @@ public class GraphSearchConditionTest
                                     @Override
                                     public void perform(GraphRewrite event, EvaluationContext context)
                                     {
-                                        SelectionFactory factory = SelectionFactory.instance(event);
+                                        SelectionFactory factory = event.getSelectionFactory();
                                         XmlMetaFacetModel xmlFacetModel = factory
                                                     .getCurrentPayload(XmlMetaFacetModel.class);
                                         typeSearchResults.add(xmlFacetModel);
@@ -399,7 +390,7 @@ public class GraphSearchConditionTest
                                     @Override
                                     public void perform(GraphRewrite event, EvaluationContext context)
                                     {
-                                        SelectionFactory factory = SelectionFactory.instance(event);
+                                        SelectionFactory factory = event.getSelectionFactory();
                                         XmlMetaFacetModel xmlFacetModel = factory
                                                     .getCurrentPayload(XmlMetaFacetModel.class);
                                         typeSearchResults.add(xmlFacetModel);

@@ -31,8 +31,9 @@ class GraphSearchCriterionProperty implements GraphSearchCriterion
             break;
         case REGEX:
             q.has(this.propertyName, Text.REGEX, searchValue);
+            break;
         default:
-            throw new IllegalArgumentException("Unrecognized query type: " + q);
+            throw new IllegalArgumentException("Unrecognized query type: " + searchType);
         }
     }
 }
