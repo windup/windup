@@ -8,7 +8,12 @@
     </parent>
     <artifactId>graph</artifactId>
     
-    <name>Windup Engine - Graph</name>
+    <name>Windup Engine - Graph addon</name>
+    <description>It's necessary as a classified POM artifact for Furnace addon-manager to pick up.
+        If we were not using the "exploded" project layout, this is where the code would be.
+        UIWizard and forge command could go here. There or the IMPL. there's no real difference between the two.
+        Most of the time in forge this module just remains empty.
+    </description>
     
     <dependencies>
         <dependency>
