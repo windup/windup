@@ -18,3 +18,4 @@ atlassian-ide-plugin.xml
 .externalToolBuilders
 bin
 /engine/graph/tests/src/test/java/org/jboss/windup/graph/test/polymorf/SubtypeQueryTest.java
+*.orig
