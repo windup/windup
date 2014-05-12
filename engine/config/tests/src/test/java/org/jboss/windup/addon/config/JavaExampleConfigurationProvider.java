@@ -57,7 +57,7 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                                  */
                                 GraphSearchConditionBuilder
                                             .create("javaClasses")
-                                            .as(JavaClassModel.class)
+                                            .ofType(JavaClassModel.class)
                                             .withProperty("qualifiedName", GraphSearchPropertyComparisonType.REGEX,
                                                         "com\\.example\\..*")
                     )

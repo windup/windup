@@ -39,7 +39,7 @@ public class GraphSearchConditionBuilder extends GraphCondition
         return new GraphSearchConditionBuilderGremlin(this);
     }
 
-    public GraphSearchConditionBuilder as(Class<? extends WindupVertexFrame> clazz)
+    public GraphSearchConditionBuilder ofType(Class<? extends WindupVertexFrame> clazz)
     {
         graphSearchCriteria.add(new GraphSearchCriterionType(clazz));
         return this;

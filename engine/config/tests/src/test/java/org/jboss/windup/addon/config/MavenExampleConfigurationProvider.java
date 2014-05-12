@@ -34,12 +34,12 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
     {
         Configuration configuration = ConfigurationBuilder.begin()
                     .addRule()
-                    .when(GraphSearchConditionBuilder.create("xmlModels").as(XmlMetaFacetModel.class))
+                    .when(GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class))
                     .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels", "xml")
                                 .perform(TypeOperation.addType(XmlMetaFacetModel.class, MavenFacetModel.class))
                     )
                     .addRule()
-                    .when(GraphSearchConditionBuilder.create("mavenModels").as(MavenFacetModel.class))
+                    .when(GraphSearchConditionBuilder.create("mavenModels").ofType(MavenFacetModel.class))
                     .perform(Iteration.over(MavenFacetModel.class, "mavenModels", "maven")
                                 .perform(new GraphOperation()
                                 {
