@@ -11,7 +11,6 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.dao.XmlResourceDao;
 import org.jboss.windup.graph.model.meta.BaseMetaModel;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
@@ -28,46 +27,46 @@ public class GraphTypeManagerTest
 {
     @Deployment
     @Dependencies({
-             @AddonDependency(name = "org.jboss.windup.addon:graph"),
-             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+                @AddonDependency(name = "org.jboss.windup.addon:graph"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
-       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                .addBeansXML()
-                .addAsAddonDependencies(
-                         AddonDependencyEntry.create("org.jboss.windup.addon:graph"),
-                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                );
-       return archive;
+        ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+                    .addBeansXML()
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.addon:graph"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
+        return archive;
     }
 
     @Inject
     private GraphContext context;
-    @Inject
-    private GraphUtil graphUtil;
 
     @Test
     public void testGraphTypeHandling() throws Exception
     {
-       Assert.assertNotNull(context);
-       
-       // First, create a base object
-       BaseMetaModel baseMetaModel = context.getFramed().addVertex(null, BaseMetaModel.class);
-       
-       // Now cast it to an xml object
-       graphUtil.addTypeToModel(baseMetaModel, XmlResourceModel.class);
-       
-       // Now reload it as a base meta object (this returns an iterable, but there should only be one result)
-       Iterable<Vertex> vertices = context.getFramed().query().has("type", Text.CONTAINS, BaseMetaModel.class.getAnnotation(TypeValue.class).value()).vertices();
-       for (Vertex v : vertices) {
-           WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
-           
-           // because the type information is stored in the Vertex, this should include at least the following types:
-           //  - BaseMetaModel
-           //  - XmlResourceModel
-           Assert.assertTrue(framed instanceof BaseMetaModel);
-           Assert.assertTrue(framed instanceof XmlResourceModel);
-       }
+        Assert.assertNotNull(context);
+
+        // First, create a base object
+        BaseMetaModel baseMetaModel = context.getFramed().addVertex(null, BaseMetaModel.class);
+
+        // Now cast it to an xml object
+        GraphUtil.addTypeToModel(context, baseMetaModel, XmlResourceModel.class);
+
+        // Now reload it as a base meta object (this returns an iterable, but there should only be one result)
+        Iterable<Vertex> vertices = context.getFramed().query()
+                    .has("type", Text.CONTAINS, BaseMetaModel.class.getAnnotation(TypeValue.class).value()).vertices();
+        for (Vertex v : vertices)
+        {
+            WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
+
+            // because the type information is stored in the Vertex, this should include at least the following types:
+            // - BaseMetaModel
+            // - XmlResourceModel
+            Assert.assertTrue(framed instanceof BaseMetaModel);
+            Assert.assertTrue(framed instanceof XmlResourceModel);
+        }
     }
 }

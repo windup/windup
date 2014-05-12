@@ -5,7 +5,6 @@ import java.util.Iterator;
 import javax.inject.Inject;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.dao.BaseDao;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
 
@@ -26,9 +25,6 @@ public class BaseDaoImpl<T extends VertexFrame> implements BaseDao<T>
 
     @Inject
     private GraphContext context;
-
-    @Inject
-    private GraphUtil graphUtil;
 
     public GraphContext getContext()
     {

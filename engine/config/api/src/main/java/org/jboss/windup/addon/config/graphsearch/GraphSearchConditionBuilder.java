@@ -29,6 +29,16 @@ public class GraphSearchConditionBuilder extends GraphCondition
         return new GraphSearchConditionBuilder(collectionName);
     }
 
+    public GraphSearchConditionBuilderGremlin gremlin()
+    {
+        if (graphSearchCriteria.isEmpty())
+        {
+            throw new IllegalArgumentException(
+                        "You must apply at least one basic filter (type or property based) before switching to Gremlin");
+        }
+        return new GraphSearchConditionBuilderGremlin(this);
+    }
+
     public GraphSearchConditionBuilder has(Class<? extends WindupVertexFrame> clazz)
     {
         graphSearchCriteria.add(new GraphSearchCriterionType(clazz));
@@ -47,8 +57,7 @@ public class GraphSearchConditionBuilder extends GraphCondition
         return this;
     }
 
-    @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
+    Iterable<Vertex> getResults(GraphRewrite event)
     {
         FramedGraphQuery query = event.getGraphContext().getFramed().query();
 
@@ -57,8 +66,21 @@ public class GraphSearchConditionBuilder extends GraphCondition
             c.query(query);
         }
 
+        return query.vertices();
+    }
+
+    String getVariableName()
+    {
+        return variableName;
+    }
+
+    @Override
+    public boolean evaluate(GraphRewrite event, EvaluationContext context)
+    {
+        Iterable<Vertex> vertices = getResults(event);
+
         Set<WindupVertexFrame> frames = new HashSet<>();
-        for (Vertex v : query.vertices())
+        for (Vertex v : vertices)
         {
             WindupVertexFrame frame = event.getGraphContext().getFramed().frame(v, WindupVertexFrame.class);
             frames.add(frame);

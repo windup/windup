@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.GraphVisitor;
 import org.jboss.windup.engine.visitor.VisitorPhase;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
@@ -30,23 +31,23 @@ public class ArchiveTypingVisitor extends AbstractGraphVisitor
     private static final Logger LOG = LoggerFactory.getLogger(ArchiveTypingVisitor.class);
 
     @Inject
-    private GraphUtil graphUtil;
-    
+    private GraphContext graphContext;
+
     @Inject
     private ArchiveDao archiveDao;
-    
+
     @Override
     public List<Class<? extends GraphVisitor>> getDependencies()
     {
         return super.generateDependencies(ZipArchiveGraphVisitor.class, DirectoryVisitor.class);
     }
-    
+
     @Override
     public VisitorPhase getPhase()
     {
         return VisitorPhase.DISCOVERY;
     }
-    
+
     @Override
     public void run()
     {
@@ -64,15 +65,15 @@ public class ArchiveTypingVisitor extends AbstractGraphVisitor
 
         if (StringUtils.endsWith(filePath, ".jar"))
         {
-            graphUtil.addTypeToModel(file, JarArchiveModel.class);
+            GraphUtil.addTypeToModel(graphContext, file, JarArchiveModel.class);
         }
         else if (StringUtils.endsWith(filePath, ".war"))
         {
-            graphUtil.addTypeToModel(file, WarArchiveModel.class);
+            GraphUtil.addTypeToModel(graphContext, file, WarArchiveModel.class);
         }
         else if (StringUtils.endsWith(filePath, ".ear"))
         {
-            graphUtil.addTypeToModel(file, EarArchiveModel.class);
+            GraphUtil.addTypeToModel(graphContext, file, EarArchiveModel.class);
         }
         else
         {
