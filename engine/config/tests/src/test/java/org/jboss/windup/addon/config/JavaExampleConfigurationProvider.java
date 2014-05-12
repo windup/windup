@@ -52,8 +52,8 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                      */
                     .when(
                                 /*
-                                 * Select all java classes with the FQCN matching "javax.(.*)", store the resultant list
-                                 * in a parameter named "types"
+                                 * Select all java classes with the FQCN matching "com.example.(.*)", store the
+                                 * resultant list in a parameter named "javaClasses"
                                  */
                                 GraphSearchConditionBuilder
                                             .create("javaClasses")
@@ -68,9 +68,7 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                      */
                     .perform(
                                 /*
-                                 * Iterate over the list of java types that were selected in the .when() clause. Each
-                                 * iteration sets the current PersonFrame into var "type", and into the "current scope"
-                                 * for the PersonFrame type.
+                                 * Search the "javaClasses" for Java methods named "toString"
                                  */
                                 Iteration.query(
                                             GraphSearchConditionBuilderGremlin.create()
@@ -80,6 +78,8 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                                                             @Override
                                                             public void query(GremlinPipeline<Vertex, Vertex> pipeline)
                                                             {
+                                                                // use a Gremlin query to filter down to vertices
+                                                                // matching this
                                                                 pipeline.out("javaMethod")
                                                                             .has("methodName", "toString");
                                                             }
