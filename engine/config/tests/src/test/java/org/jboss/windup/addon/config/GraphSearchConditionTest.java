@@ -26,7 +26,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.Subset;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 import org.slf4j.Logger;
@@ -91,7 +90,7 @@ public class GraphSearchConditionTest
         JavaExampleConfigurationProvider provider = new JavaExampleConfigurationProvider();
         Configuration configuration = provider.getConfiguration(context);
 
-        Subset.evaluate(configuration).perform(event, evaluationContext);
+        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
         List<JavaMethodModel> methodModelList = provider.getResults();
         Assert.assertTrue(methodModelList.size() == 1);
@@ -133,7 +132,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         MavenExampleConfigurationProvider provider = new MavenExampleConfigurationProvider();
         Configuration configuration = provider.getConfiguration(context);
-        Subset.evaluate(configuration).perform(event, evaluationContext);
+        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(4, provider.getSearchResults().size());
     }
@@ -170,7 +169,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider1 provider = new XmlExampleConfigurationProvider1();
         Configuration configuration = provider.getConfiguration(context);
-        Subset.evaluate(configuration).perform(event, evaluationContext);
+        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(4, provider.getTypeSearchResults().size());
         Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag1"));
@@ -212,7 +211,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider2 provider = new XmlExampleConfigurationProvider2();
         Configuration configuration = provider.getConfiguration(context);
-        Subset.evaluate(configuration).perform(event, evaluationContext);
+        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(1, provider.getTypeSearchResults().size());
         Assert.assertEquals("xmlTag3", provider.getTypeSearchResults().get(0).getRootTagName());
@@ -250,7 +249,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider3 provider = new XmlExampleConfigurationProvider3();
         Configuration configuration = provider.getConfiguration(context);
-        Subset.evaluate(configuration).perform(event, evaluationContext);
+        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(1, provider.getTypeSearchResults().size());
         XmlMetaFacetModel result1 = provider.getTypeSearchResults().get(0);

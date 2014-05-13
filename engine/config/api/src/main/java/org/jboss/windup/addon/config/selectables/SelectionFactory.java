@@ -32,10 +32,9 @@ public class SelectionFactory
         return (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
     }
 
-    public void push(Iterable<WindupVertexFrame> item, String name)
+    public void push()
     {
         Map<String, Iterable<WindupVertexFrame>> newFrame = new HashMap<>();
-        newFrame.put(name, item);
         deque.push(newFrame);
     }
 
@@ -44,7 +43,23 @@ public class SelectionFactory
         return deque.pop();
     }
 
-    public Iterable<WindupVertexFrame> peek(String name)
+    private Map<String, Iterable<WindupVertexFrame>> peek()
+    {
+        return deque.peek();
+    }
+
+    public void setVariable(String name, Iterable<WindupVertexFrame> iterable)
+    {
+        Map<String, Iterable<WindupVertexFrame>> frame = peek();
+        if (findVariable(name) != null)
+        {
+            throw new IllegalArgumentException("Variable \"" + name
+                        + "\" has already been assigned and cannot be reassigned");
+        }
+        frame.put(name, iterable);
+    }
+
+    public Iterable<WindupVertexFrame> findVariable(String name)
     {
         Iterator<Map<String, Iterable<WindupVertexFrame>>> descIter = deque.descendingIterator();
         Iterable<WindupVertexFrame> result = null;

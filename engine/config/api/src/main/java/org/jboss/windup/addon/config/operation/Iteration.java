@@ -125,6 +125,7 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
                 }
             }
             getPayloadManager().removeCurrentPayload(factory);
+            factory.pop();
         }
     }
 }

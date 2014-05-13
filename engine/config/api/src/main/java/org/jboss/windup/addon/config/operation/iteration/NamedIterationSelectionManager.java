@@ -27,7 +27,7 @@ public class NamedIterationSelectionManager implements IterationSelectionManager
     @Override
     public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, SelectionFactory factory)
     {
-        return factory.peek(source);
+        return factory.findVariable(source);
     }
 
 }

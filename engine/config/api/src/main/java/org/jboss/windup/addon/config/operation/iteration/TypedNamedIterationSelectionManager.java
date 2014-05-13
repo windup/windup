@@ -30,7 +30,7 @@ public class TypedNamedIterationSelectionManager implements IterationSelectionMa
     public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, SelectionFactory factory)
     {
         // TODO verify type
-        return factory.peek(source);
+        return factory.findVariable(source);
     }
 
 }
