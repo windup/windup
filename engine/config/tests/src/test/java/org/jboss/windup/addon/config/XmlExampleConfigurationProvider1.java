@@ -46,7 +46,7 @@ public class XmlExampleConfigurationProvider1 extends WindupConfigurationProvide
                                     {
                                         SelectionFactory factory = SelectionFactory.instance(event);
                                         XmlMetaFacetModel xmlFacetModel = factory
-                                                    .getCurrentPayload(XmlMetaFacetModel.class);
+                                                    .getCurrentPayload(XmlMetaFacetModel.class, "xml");
                                         typeSearchResults.add(xmlFacetModel);
                                         if (xmlRootNames.contains(xmlFacetModel.getRootTagName()))
                                         {

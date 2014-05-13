@@ -94,7 +94,8 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                                                                 SelectionFactory selection = SelectionFactory
                                                                             .instance(event);
                                                                 JavaMethodModel methodModel = selection
-                                                                            .getCurrentPayload(JavaMethodModel.class);
+                                                                            .getCurrentPayload(JavaMethodModel.class,
+                                                                                        "javaMethod");
                                                                 results.add(methodModel);
                                                                 LOG.info("Overridden "
                                                                             + methodModel.getMethodName()

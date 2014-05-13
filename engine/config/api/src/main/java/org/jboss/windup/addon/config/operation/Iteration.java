@@ -76,14 +76,14 @@ public class Iteration extends DefaultOperationBuilder
             Iterable<WindupVertexFrame> peek = findFrames(event, factory);
             for (WindupVertexFrame element : peek)
             {
-                factory.setCurrentPayload(type, element);
+                factory.setCurrentPayload(var, element);
                 if (condition == null || condition.evaluate(event, context))
                 {
                     if (operation != null)
                         operation.perform(event, context);
                 }
             }
-            factory.setCurrentPayload((Class<? extends WindupVertexFrame>) type, null);
+            factory.setCurrentPayload(var, null);
         }
     }
 

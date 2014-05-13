@@ -6,9 +6,11 @@
  */
 package org.jboss.windup.addon.config.selectables;
 
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Stack;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
@@ -22,44 +24,73 @@ public class SelectionFactory
     /*
      * SelectionStack
      */
-
-    Stack<Iterable<WindupVertexFrame>> stack = new Stack<>();
-    HashMap<String, Iterable<WindupVertexFrame>> vars = new LinkedHashMap<>();
-    HashMap<Class<? extends WindupVertexFrame>, WindupVertexFrame> currents = new LinkedHashMap<>();
-
-    public void push(Iterable<WindupVertexFrame> item, String name)
-    {
-        if (vars.containsKey(name))
-            throw new IllegalArgumentException("Variable [" + name
-                        + "] already defined. Cannot re-use flow control variables.");
-
-        stack.push(item);
-        vars.put(name, item);
-    }
+    Deque<Map<String, Iterable<WindupVertexFrame>>> deque = new LinkedList<>();
+    Map<String, WindupVertexFrame> currents = new HashMap<>();
 
     public static SelectionFactory instance(GraphRewrite event)
     {
         return (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
     }
 
-    public Iterable<WindupVertexFrame> pop()
+    public void push(Iterable<WindupVertexFrame> item, String name)
     {
-        return stack.pop();
+        Map<String, Iterable<WindupVertexFrame>> newFrame = new HashMap<>();
+        newFrame.put(name, item);
+        deque.push(newFrame);
+    }
+
+    public Map<String, Iterable<WindupVertexFrame>> pop()
+    {
+        return deque.pop();
     }
 
     public Iterable<WindupVertexFrame> peek(String name)
     {
-        return vars.get(name);
+        Iterator<Map<String, Iterable<WindupVertexFrame>>> descIter = deque.descendingIterator();
+        Iterable<WindupVertexFrame> result = null;
+        while (descIter.hasNext())
+        {
+            Map<String, Iterable<WindupVertexFrame>> frame = descIter.next();
+            result = frame.get(name);
+            if (result != null)
+            {
+                break;
+            }
+        }
+        return result;
     }
 
-    public void setCurrentPayload(Class<? extends WindupVertexFrame> type, WindupVertexFrame element)
+    public void setCurrentPayload(String name, WindupVertexFrame element)
     {
-        currents.put(type, element);
+        currents.put(name, element);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends WindupVertexFrame> T getCurrentPayload(Class<T> type)
+    public <T extends WindupVertexFrame> T getCurrentPayload(Class<T> type, String name)
     {
-        return (T) currents.get(type);
+        Object object = currents.get(name);
+        if (object == null)
+        {
+            return null;
+        }
+        else
+        {
+            if (!type.isAssignableFrom(object.getClass()))
+            {
+                StringBuilder implementedInterfaces = new StringBuilder();
+                for (Class<?> iface : type.getInterfaces())
+                {
+                    if (implementedInterfaces.length() != 0)
+                    {
+                        implementedInterfaces.append(", ");
+                    }
+                    implementedInterfaces.append(iface.getName());
+                }
+                throw new IllegalArgumentException("Variable \"" + name + "\" does not implement expected interface \""
+                            + type.getCanonicalName() + "\", actual implemented interfaces are: "
+                            + implementedInterfaces.toString());
+            }
+            return (T) object;
+        }
     }
 }

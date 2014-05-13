@@ -36,7 +36,7 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
                     .addRule()
                     .when(GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class))
                     .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels", "xml")
-                                .perform(TypeOperation.addType(XmlMetaFacetModel.class, MavenFacetModel.class))
+                                .perform(TypeOperation.addType("xml", MavenFacetModel.class))
                     )
                     .addRule()
                     .when(GraphSearchConditionBuilder.create("mavenModels").ofType(MavenFacetModel.class))
@@ -47,8 +47,8 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
                                     public void perform(GraphRewrite event, EvaluationContext context)
                                     {
                                         SelectionFactory factory = SelectionFactory.instance(event);
-                                        MavenFacetModel mavenFacetModel = factory
-                                                    .getCurrentPayload(MavenFacetModel.class);
+                                        MavenFacetModel mavenFacetModel = factory.getCurrentPayload(
+                                                    MavenFacetModel.class, "maven");
                                         results.add(mavenFacetModel);
                                     }
                                 })
