@@ -18,8 +18,6 @@ import org.jboss.windup.addon.config.operation.iteration.IterationQueryImpl;
 import org.jboss.windup.addon.config.operation.iteration.IterationSelectionManager;
 import org.jboss.windup.addon.config.operation.iteration.NamedIterationPayloadManager;
 import org.jboss.windup.addon.config.operation.iteration.NamedIterationSelectionManager;
-import org.jboss.windup.addon.config.operation.iteration.TypedIterationPayloadManager;
-import org.jboss.windup.addon.config.operation.iteration.TypedIterationSelectionManager;
 import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationPayloadManager;
 import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationSelectionManager;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
@@ -50,14 +48,6 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
     public abstract void setPayloadManager(IterationPayloadManager payloadManager);
 
     /**
-     * Begin an {@link Iteration} over the current selection of the given type.
-     */
-    public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType)
-    {
-        return new IterationImpl(new TypedIterationSelectionManager(sourceType));
-    }
-
-    /**
      * Begin an {@link Iteration} over the named selection of the given type.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
@@ -74,13 +64,6 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
     }
 
     @Override
-    public IterationBuilderVar var(Class<? extends WindupVertexFrame> varType)
-    {
-        setPayloadManager(new TypedIterationPayloadManager(varType));
-        return this;
-    }
-
-    @Override
     public IterationBuilderVar var(Class<? extends WindupVertexFrame> varType, String var)
     {
         setPayloadManager(new TypedNamedIterationPayloadManager(varType, var));
@@ -92,12 +75,6 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
     {
         setPayloadManager(new NamedIterationPayloadManager(var));
         return this;
-    }
-
-    @Override
-    public IterationQuery queryFor(Class<? extends WindupVertexFrame> varType)
-    {
-        return new IterationQueryImpl(this, new TypedIterationPayloadManager(varType));
     }
 
     @Override

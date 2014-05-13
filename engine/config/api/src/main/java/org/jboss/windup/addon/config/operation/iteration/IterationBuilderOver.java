@@ -17,22 +17,12 @@ public interface IterationBuilderOver
     /**
      * Configure the iteration variable.
      */
-    public IterationBuilderVar var(Class<? extends WindupVertexFrame> varType);
-
-    /**
-     * Configure the iteration variable.
-     */
     public IterationBuilderVar var(Class<? extends WindupVertexFrame> varType, String var);
 
     /**
      * Configure the iteration variable.
      */
     public IterationBuilderVar var(String var);
-
-    /**
-     * Iterate over the results of a query
-     */
-    public IterationQuery queryFor(Class<? extends WindupVertexFrame> varType);
 
     /**
      * Iterate over the results of a query
