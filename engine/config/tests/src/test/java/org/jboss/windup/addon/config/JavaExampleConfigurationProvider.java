@@ -59,53 +59,40 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                                             .ofType(JavaClassModel.class)
                                             .withProperty("qualifiedName", GraphSearchPropertyComparisonType.REGEX,
                                                         "com\\.example\\..*")
+
                     )
 
                     /*
                      * If all conditions of the .when() clause were satisfied, the following conditions will be
                      * evaluated
                      */
-                    .perform(
-                                /*
-                                 * Search the "javaClasses" for Java methods named "toString"
-                                 */
-                                Iteration.overQuery(JavaMethodModel.class,
-                                            "javaClasses",
-                                            "javaMethod")
-                                            .withCriterion(new GraphSearchGremlinCriterion()
-                                            {
-                                                @Override
-                                                public void query(GremlinPipeline<Vertex, Vertex> pipeline)
-                                                {
-                                                    // use a Gremlin query to filter down to vertices
-                                                    // matching this
-                                                    pipeline.out("javaMethod")
-                                                                .has("methodName", "toString");
-                                                }
-                                            })
-                                            .perform(
-                                                        new GraphOperation()
-                                                        {
-
-                                                            @Override
-                                                            public void perform(GraphRewrite event,
-                                                                        EvaluationContext context)
-                                                            {
-                                                                SelectionFactory selection = SelectionFactory
-                                                                            .instance(event);
-                                                                JavaMethodModel methodModel = selection
-                                                                            .getCurrentPayload(JavaMethodModel.class,
-                                                                                        "javaMethod");
-                                                                results.add(methodModel);
-                                                                LOG.info("Overridden "
-                                                                            + methodModel.getMethodName()
-                                                                            +
-                                                                            " Method in type: "
-                                                                            + methodModel.getJavaClass()
-                                                                                        .getQualifiedName());
-                                                            }
-                                                        }
-                                            )
+                    .perform(Iteration.overQuery(JavaMethodModel.class, "javaClasses", "javaMethod")
+                                .withCriterion(new GraphSearchGremlinCriterion()
+                                {
+                                    @Override
+                                    public void query(GremlinPipeline<Vertex, Vertex> pipeline)
+                                    {
+                                        /*
+                                         * Search the "javaClasses" for Java methods named "toString". Use a Gremlin
+                                         * query to filter down to JavaMethod vertices matching this.
+                                         */
+                                        pipeline.out("javaMethod")
+                                                    .has("methodName", "toString");
+                                    }
+                                })
+                                .perform(new GraphOperation()
+                                {
+                                    @Override
+                                    public void perform(GraphRewrite event, EvaluationContext context)
+                                    {
+                                        SelectionFactory selection = SelectionFactory.instance(event);
+                                        JavaMethodModel methodModel = selection.getCurrentPayload(
+                                                    JavaMethodModel.class, "javaMethod");
+                                        results.add(methodModel);
+                                        LOG.info("Overridden " + methodModel.getMethodName() + " Method in type: "
+                                                    + methodModel.getJavaClass().getQualifiedName());
+                                    }
+                                })
                     );
         return configuration;
     }
