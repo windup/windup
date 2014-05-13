@@ -6,6 +6,7 @@
  */
 package org.jboss.windup.addon.config.operation.iteration;
 
+import org.jboss.windup.addon.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 
@@ -29,13 +30,16 @@ public class TypedNamedIterationPayloadManager implements IterationPayloadManage
     public void setCurrentPayload(SelectionFactory factory, WindupVertexFrame element)
     {
         // TODO verify type
+        if (!varType.isAssignableFrom(element.getClass()))
+        {
+            throw new IllegalTypeArgumentException(var, varType, element.getClass());
+        }
         factory.setCurrentPayload(var, element);
     }
 
     @Override
     public void removeCurrentPayload(SelectionFactory factory)
     {
-        // TODO verify type
         factory.setCurrentPayload(var, null);
     }
 

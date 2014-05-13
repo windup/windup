@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.jboss.windup.addon.config.GraphRewrite;
+import org.jboss.windup.addon.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 
 /**
@@ -92,18 +93,7 @@ public class SelectionFactory
         {
             if (!type.isAssignableFrom(object.getClass()))
             {
-                StringBuilder implementedInterfaces = new StringBuilder();
-                for (Class<?> iface : type.getInterfaces())
-                {
-                    if (implementedInterfaces.length() != 0)
-                    {
-                        implementedInterfaces.append(", ");
-                    }
-                    implementedInterfaces.append(iface.getName());
-                }
-                throw new IllegalArgumentException("Variable \"" + name + "\" does not implement expected interface \""
-                            + type.getCanonicalName() + "\", actual implemented interfaces are: "
-                            + implementedInterfaces.toString());
+                throw new IllegalTypeArgumentException(name, type, object.getClass());
             }
             return (T) object;
         }
