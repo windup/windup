@@ -40,7 +40,7 @@ public class XmlExampleConfigurationProvider3 extends WindupConfigurationProvide
                                 .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                                             GraphSearchPropertyComparisonType.EQUALS,
                                             "xmlTag2"))
-                    .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels", "xml")
+                    .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
                                 .perform(new GraphOperation()
                                 {
                                     @Override

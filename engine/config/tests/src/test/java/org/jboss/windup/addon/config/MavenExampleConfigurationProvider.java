@@ -12,7 +12,7 @@ import java.util.List;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.addon.config.operation.GraphOperation;
 import org.jboss.windup.addon.config.operation.Iteration;
-import org.jboss.windup.addon.config.operation.TypeOperation;
+import org.jboss.windup.addon.config.operation.iteration.TypeOperation;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
@@ -35,12 +35,12 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
         Configuration configuration = ConfigurationBuilder.begin()
                     .addRule()
                     .when(GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class))
-                    .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels", "xml")
+                    .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
                                 .perform(TypeOperation.addType("xml", MavenFacetModel.class))
                     )
                     .addRule()
                     .when(GraphSearchConditionBuilder.create("mavenModels").ofType(MavenFacetModel.class))
-                    .perform(Iteration.over(MavenFacetModel.class, "mavenModels", "maven")
+                    .perform(Iteration.over(MavenFacetModel.class, "mavenModels").var("maven")
                                 .perform(new GraphOperation()
                                 {
                                     @Override

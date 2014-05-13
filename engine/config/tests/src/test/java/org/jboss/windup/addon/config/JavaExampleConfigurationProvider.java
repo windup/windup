@@ -66,7 +66,7 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                      * If all conditions of the .when() clause were satisfied, the following conditions will be
                      * evaluated
                      */
-                    .perform(Iteration.overQuery(JavaMethodModel.class, "javaClasses", "javaMethod")
+                    .perform(Iteration.over("javaClasses").queryFor(JavaMethodModel.class, "javaMethod")
                                 .withCriterion(new GraphSearchGremlinCriterion()
                                 {
                                     @Override
@@ -76,8 +76,7 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                                          * Search the "javaClasses" for Java methods named "toString". Use a Gremlin
                                          * query to filter down to JavaMethod vertices matching this.
                                          */
-                                        pipeline.out("javaMethod")
-                                                    .has("methodName", "toString");
+                                        pipeline.out("javaMethod").has("methodName", "toString");
                                     }
                                 })
                                 .perform(new GraphOperation()
