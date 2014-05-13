@@ -39,9 +39,9 @@ public class Iteration extends DefaultOperationBuilder
     /**
      * Begin an {@link Iteration}
      */
-    public static Iteration over(Class<? extends WindupVertexFrame> selectable, String source, String var)
+    public static Iteration over(Class<? extends WindupVertexFrame> type, String source, String var)
     {
-        return new Iteration(selectable, source, var);
+        return new Iteration(type, source, var);
     }
 
     public static IterationQuery overQuery(Class<? extends WindupVertexFrame> type,
