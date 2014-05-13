@@ -114,6 +114,7 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
         if (operation != null)
         {
             SelectionFactory factory = SelectionFactory.instance(event);
+            factory.push();
             Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, factory);
             for (WindupVertexFrame element : frames)
             {
