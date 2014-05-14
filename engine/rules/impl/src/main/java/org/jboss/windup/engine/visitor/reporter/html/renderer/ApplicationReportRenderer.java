@@ -9,8 +9,8 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.engine.visitor.reporter.html.model.ApplicationReport;
 import org.jboss.windup.engine.visitor.reporter.html.model.ArchiveReport;
 import org.jboss.windup.engine.visitor.reporter.html.model.ArchiveReport.ResourceReportRow;
@@ -85,9 +85,9 @@ public class ApplicationReportRenderer extends AbstractGraphVisitor
     private File reportReference;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
 
     @PostConstruct

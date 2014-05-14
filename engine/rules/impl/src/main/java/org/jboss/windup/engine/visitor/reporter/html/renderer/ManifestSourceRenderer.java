@@ -11,8 +11,8 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.engine.visitor.reporter.html.model.ApplicationContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.ReportContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.SourceReport;
@@ -52,9 +52,9 @@ public class ManifestSourceRenderer extends AbstractGraphVisitor
     private final Configuration cfg;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
 
     public ManifestSourceRenderer()

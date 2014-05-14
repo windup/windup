@@ -29,6 +29,12 @@ public class XmlExampleConfigurationProvider3 extends WindupConfigurationProvide
     final List<XmlMetaFacetModel> typeSearchResults = new ArrayList<>();
 
     @Override
+    public RulePhase getPhase()
+    {
+        return RulePhase.DISCOVERY;
+    }
+
+    @Override
     public Configuration getConfiguration(GraphContext context)
     {
         Configuration configuration = ConfigurationBuilder

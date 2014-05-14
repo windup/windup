@@ -2,8 +2,8 @@ package org.jboss.windup.engine.visitor.reporter;
 
 import javax.inject.Inject;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JarArchiveDao;
 import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
@@ -25,9 +25,9 @@ public class ArchiveProvidesReporter extends AbstractGraphVisitor
     private JarArchiveDao jarDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
 
     @Override

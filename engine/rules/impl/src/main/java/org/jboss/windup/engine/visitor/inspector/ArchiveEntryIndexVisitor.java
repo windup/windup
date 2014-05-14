@@ -10,10 +10,10 @@ import java.util.zip.ZipFile;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.GraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
@@ -50,9 +50,9 @@ public class ArchiveEntryIndexVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.DISCOVERY;
+        return RulePhase.DISCOVERY;
     }
 
     @Override

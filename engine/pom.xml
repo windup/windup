@@ -23,7 +23,10 @@
         <module>reporting</module>
         <module>tools/decompilers-api</module>
         <module>tools/decompiler-procyon</module>
-        <module>tools/decompiler-jad</module>
+	<!--
+		(jsightler) - 2014/05/14 - Commenting out as this is hanging the build for me at the moment
+        <module>tools/decompiler-jad</module> 
+	-->
         <!--
         <module>tools/decompiler-cfr</module>
         Currently unusable - no API for CFR, but let's keep it for now in case it improves.

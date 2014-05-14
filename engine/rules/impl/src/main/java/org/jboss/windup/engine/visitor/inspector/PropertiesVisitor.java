@@ -7,8 +7,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.PropertiesDao;
@@ -36,9 +36,9 @@ public class PropertiesVisitor extends AbstractGraphVisitor {
     private PropertiesDao propertiesDao;
     
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.INITIAL_ANALYSIS;
+        return RulePhase.INITIAL_ANALYSIS;
     }
     
     @Override

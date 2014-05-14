@@ -3,6 +3,7 @@ package org.jboss.windup.engine.provider;
 import javax.inject.Inject;
 
 import org.jboss.windup.addon.config.GraphRewrite;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.addon.config.operation.GraphOperation;
@@ -23,6 +24,12 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
 {
     @Inject
     ApplicationReferenceDao applicationReferenceDao;
+
+    @Override
+    public RulePhase getPhase()
+    {
+        return RulePhase.DISCOVERY;
+    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

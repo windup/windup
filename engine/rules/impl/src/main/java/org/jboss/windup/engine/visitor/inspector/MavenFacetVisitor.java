@@ -7,10 +7,10 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.util.exception.MarshallingException;
 import org.jboss.windup.engine.util.xml.XmlUtil;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.MavenFacetDao;
 import org.jboss.windup.graph.dao.XmlResourceDao;
 import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
@@ -47,9 +47,9 @@ public class MavenFacetVisitor extends AbstractGraphVisitor
     private XmlResourceDao xmlResourceDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.INITIAL_ANALYSIS;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     @Override

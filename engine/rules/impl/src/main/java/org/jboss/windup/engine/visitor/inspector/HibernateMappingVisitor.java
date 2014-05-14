@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.util.xml.XmlUtil;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.DoctypeDao;
 import org.jboss.windup.graph.dao.HibernateEntityDao;
 import org.jboss.windup.graph.dao.HibernateMappingDao;
@@ -53,9 +53,9 @@ public class HibernateMappingVisitor extends AbstractGraphVisitor
     private XmlResourceDao xmlResourceDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.INITIAL_ANALYSIS;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     @Override

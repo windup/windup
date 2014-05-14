@@ -4,8 +4,8 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.renderer.GraphRDFRenderer;
 
 public class RDFReporter extends AbstractGraphVisitor
@@ -14,9 +14,9 @@ public class RDFReporter extends AbstractGraphVisitor
     private GraphRDFRenderer graphRdfRenderer;
     
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
 
     @Override

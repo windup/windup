@@ -1,8 +1,8 @@
 package org.jboss.windup.engine.visitor.inspector;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +40,9 @@ public class DebugVisitor extends AbstractGraphVisitor
     }
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
 
     @Override

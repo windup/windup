@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.slf4j.Logger;
@@ -26,9 +26,9 @@ public class BlacklistMethodCandidateVisitor extends AbstractGraphVisitor {
     private JavaClassDao javaClassDao;
     
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.MIGRATION_RULES;
+        return RulePhase.MIGRATION_RULES;
     }
     
     @Override

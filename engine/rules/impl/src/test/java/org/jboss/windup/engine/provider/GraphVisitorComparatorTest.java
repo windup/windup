@@ -3,9 +3,9 @@ package org.jboss.windup.engine.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.GraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,9 +21,9 @@ public class GraphVisitorComparatorTest
             return deps;
         }
         @Override
-        public VisitorPhase getPhase()
+        public RulePhase getPhase()
         {
-            return VisitorPhase.DISCOVERY;
+            return RulePhase.DISCOVERY;
         }
         @Override
         public void run()
@@ -45,9 +45,9 @@ public class GraphVisitorComparatorTest
             return l;
         }
         @Override
-        public VisitorPhase getPhase()
+        public RulePhase getPhase()
         {
-            return VisitorPhase.DISCOVERY;
+            return RulePhase.DISCOVERY;
         }
         @Override
         public void run()
@@ -69,9 +69,9 @@ public class GraphVisitorComparatorTest
             return l;
         }
         @Override
-        public VisitorPhase getPhase()
+        public RulePhase getPhase()
         {
-            return VisitorPhase.DISCOVERY;
+            return RulePhase.DISCOVERY;
         }
         @Override
         public void run()
@@ -86,9 +86,9 @@ public class GraphVisitorComparatorTest
     
     private class VisitorPhase2Class1 extends AbstractGraphVisitor {
         @Override
-        public VisitorPhase getPhase()
+        public RulePhase getPhase()
         {
-            return VisitorPhase.INITIAL_ANALYSIS;
+            return RulePhase.INITIAL_ANALYSIS;
         }
         @Override
         public void run()

@@ -32,6 +32,12 @@ public class XmlExampleConfigurationProvider1 extends WindupConfigurationProvide
     final Set<String> xmlRootNames = new HashSet<>();
 
     @Override
+    public RulePhase getPhase()
+    {
+        return RulePhase.DISCOVERY;
+    }
+
+    @Override
     public Configuration getConfiguration(GraphContext context)
     {
         Configuration configuration = ConfigurationBuilder.begin()

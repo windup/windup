@@ -2,9 +2,11 @@ package org.jboss.windup.engine.visitor.reporter;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.inject.Inject;
+
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.renderer.GraphMLRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +25,9 @@ public class GraphRenderReporter extends AbstractGraphVisitor
     private GraphMLRenderer graphMLRenderer;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
 
     @Override

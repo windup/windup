@@ -2,8 +2,8 @@ package org.jboss.windup.engine.visitor.reporter;
 
 import javax.inject.Inject;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.EJBConfigurationDao;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacetModel;
 import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacetModel;
@@ -27,9 +27,9 @@ public class EjbConfigurationReporter extends AbstractGraphVisitor
     private EJBConfigurationDao ejbConfigurationDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
 
     @Override

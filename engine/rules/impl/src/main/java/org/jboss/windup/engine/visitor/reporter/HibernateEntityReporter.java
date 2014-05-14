@@ -2,8 +2,8 @@ package org.jboss.windup.engine.visitor.reporter;
 
 import javax.inject.Inject;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.HibernateEntityDao;
 import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityFacetModel;
 import org.slf4j.Logger;
@@ -24,9 +24,9 @@ public class HibernateEntityReporter extends AbstractGraphVisitor
     private HibernateEntityDao hibernateEntityDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
 
     @Override

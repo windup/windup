@@ -1,6 +1,6 @@
-package org.jboss.windup.engine.visitor;
+package org.jboss.windup.addon.config;
 
-public enum VisitorPhase
+public enum RulePhase
 {
     /**
      * Called during resource discovery (finding all files in archives, etc)
@@ -32,7 +32,7 @@ public enum VisitorPhase
     
     
     private int priority;
-    VisitorPhase(int priority) {
+    RulePhase(int priority) {
         this.priority = priority;
     }
     public int getPriority()

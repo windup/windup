@@ -2,8 +2,8 @@ package org.jboss.windup.engine.visitor.inspector;
 
 import javax.inject.Inject;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.slf4j.Logger;
@@ -25,9 +25,9 @@ public class CustomerPackageVisitor extends AbstractGraphVisitor {
     private JavaClassDao javaClassDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.MIGRATION_RULES;
+        return RulePhase.MIGRATION_RULES;
     }
     
     @Override

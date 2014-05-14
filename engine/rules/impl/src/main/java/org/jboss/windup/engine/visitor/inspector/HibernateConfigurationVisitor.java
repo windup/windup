@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.DoctypeDao;
 import org.jboss.windup.graph.dao.HibernateConfigurationDao;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
@@ -35,9 +35,9 @@ public class HibernateConfigurationVisitor extends AbstractGraphVisitor
     private HibernateConfigurationDao hibernateConfigurationDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.INITIAL_ANALYSIS;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     @Override

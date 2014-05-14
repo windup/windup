@@ -38,6 +38,12 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
     private final List<JavaMethodModel> results = new ArrayList<>();
 
     @Override
+    public RulePhase getPhase()
+    {
+        return RulePhase.DISCOVERY;
+    }
+
+    @Override
     public Configuration getConfiguration(GraphContext context)
     {
 

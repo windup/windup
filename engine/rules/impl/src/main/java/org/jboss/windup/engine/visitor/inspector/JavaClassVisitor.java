@@ -6,8 +6,8 @@ import javax.inject.Inject;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveEntryDao;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.JavaMethodDao;
@@ -36,9 +36,9 @@ public class JavaClassVisitor extends AbstractGraphVisitor
     private JavaMethodDao javaMethodDao;
     
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.INITIAL_ANALYSIS;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     @Override

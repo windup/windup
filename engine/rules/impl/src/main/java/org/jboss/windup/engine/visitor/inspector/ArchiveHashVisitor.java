@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
@@ -31,9 +31,9 @@ public class ArchiveHashVisitor extends AbstractGraphVisitor
     private ArchiveDao archiveDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.INITIAL_ANALYSIS;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     @Override

@@ -7,10 +7,10 @@ import java.util.zip.ZipFile;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.GraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.dao.ArchiveDao;
 import org.jboss.windup.graph.dao.FileResourceDao;
@@ -47,9 +47,9 @@ public class ZipArchiveGraphVisitor extends AbstractGraphVisitor
     }
     
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.DISCOVERY;
+        return RulePhase.DISCOVERY;
     }
 
     @Override

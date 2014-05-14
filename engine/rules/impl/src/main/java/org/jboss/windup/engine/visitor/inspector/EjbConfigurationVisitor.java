@@ -9,11 +9,11 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.util.xml.DoctypeUtils;
 import org.jboss.windup.engine.util.xml.NamespaceUtils;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.GraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.EJBConfigurationDao;
 import org.jboss.windup.graph.dao.EJBEntityDao;
 import org.jboss.windup.graph.dao.EJBSessionBeanDao;
@@ -75,9 +75,9 @@ public class EjbConfigurationVisitor extends AbstractGraphVisitor
     }
     
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.INITIAL_ANALYSIS;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     @Override

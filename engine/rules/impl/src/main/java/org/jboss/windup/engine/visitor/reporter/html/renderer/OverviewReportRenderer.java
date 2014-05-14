@@ -9,9 +9,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
 import org.jboss.windup.engine.visitor.GraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.engine.visitor.reporter.html.model.Level;
 import org.jboss.windup.engine.visitor.reporter.html.model.LinkName;
 import org.jboss.windup.engine.visitor.reporter.html.model.OverviewReport;
@@ -33,9 +33,9 @@ public class OverviewReportRenderer extends AbstractGraphVisitor
     private final Configuration cfg;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.REPORTING;
+        return RulePhase.REPORTING;
     }
     
     @Override

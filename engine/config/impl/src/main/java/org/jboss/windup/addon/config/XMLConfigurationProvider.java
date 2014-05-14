@@ -22,6 +22,12 @@ import org.w3c.dom.Document;
 public class XMLConfigurationProvider extends WindupConfigurationProvider
 {
     @Override
+    public RulePhase getPhase()
+    {
+        return RulePhase.DISCOVERY;
+    }
+
+    @Override
     public boolean handles(Object payload)
     {
         return payload instanceof GraphContext;
@@ -36,7 +42,7 @@ public class XMLConfigurationProvider extends WindupConfigurationProvider
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             dbFactory.setNamespaceAware(true);
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            
+
             // FIXME This needs a more comprehensive XML location strategy
             Document doc = dBuilder.parse(classloader.getResourceAsStream("META-INF/windup-rewrite-xml-config.xml"));
 

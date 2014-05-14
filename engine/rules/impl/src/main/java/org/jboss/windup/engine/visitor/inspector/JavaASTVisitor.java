@@ -22,8 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
@@ -44,9 +44,9 @@ public class JavaASTVisitor extends AbstractGraphVisitor {
     private JavaClassDao javaClassDao;
     
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.MIGRATION_RULES;
+        return RulePhase.MIGRATION_RULES;
     }
     
     @Override

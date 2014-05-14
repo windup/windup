@@ -2,6 +2,7 @@ package org.jboss.windup.engine.visitor;
 
 import java.util.List;
 
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.graph.model.meta.JarManifestModel;
 import org.jboss.windup.graph.model.meta.PropertiesMetaModel;
 import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacetModel;
@@ -23,7 +24,7 @@ import org.jboss.windup.graph.model.resource.WarArchiveModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 public interface GraphVisitor {
-    public VisitorPhase getPhase();
+    public RulePhase getPhase();
     public List<Class<? extends GraphVisitor>> getDependencies();
     
 	public void run();

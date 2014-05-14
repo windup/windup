@@ -6,6 +6,10 @@
  */
 package org.jboss.windup.addon.config;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
 
@@ -15,15 +19,29 @@ import org.ocpsoft.rewrite.config.ConfigurationProvider;
  */
 public abstract class WindupConfigurationProvider implements ConfigurationProvider<GraphContext>
 {
+    public abstract RulePhase getPhase();
+
+    public List<Class<? extends WindupConfigurationProvider>> getDependencies()
+    {
+        return Collections.emptyList();
+    }
+
     @Override
     public int priority()
     {
-        return 0;
+        return getPhase().getPriority();
     }
 
     @Override
     public boolean handles(Object payload)
     {
         return payload instanceof GraphContext;
+    }
+
+    @SafeVarargs
+    protected final List<Class<? extends WindupConfigurationProvider>> generateDependencies(
+                Class<? extends WindupConfigurationProvider>... deps)
+    {
+        return Arrays.asList(deps);
     }
 }

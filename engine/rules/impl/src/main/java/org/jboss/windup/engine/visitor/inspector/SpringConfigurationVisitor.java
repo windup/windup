@@ -7,8 +7,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.engine.visitor.AbstractGraphVisitor;
-import org.jboss.windup.engine.visitor.VisitorPhase;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.dao.SpringBeanDao;
 import org.jboss.windup.graph.dao.SpringConfigurationDao;
@@ -45,9 +45,9 @@ public class SpringConfigurationVisitor extends AbstractGraphVisitor
     private JavaClassDao javaClassDao;
 
     @Override
-    public VisitorPhase getPhase()
+    public RulePhase getPhase()
     {
-        return VisitorPhase.INITIAL_ANALYSIS;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     @Override
