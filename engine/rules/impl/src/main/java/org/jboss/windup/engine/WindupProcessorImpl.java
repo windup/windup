@@ -1,13 +1,13 @@
 package org.jboss.windup.engine;
 
-import java.util.List;
+import java.io.File;
 
 import javax.inject.Inject;
 
 import org.jboss.windup.addon.engine.WindupProcessor;
-import org.jboss.windup.engine.provider.VisitorChainProvider;
-import org.jboss.windup.engine.visitor.GraphVisitor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.dao.FileResourceDao;
+import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class WindupProcessorImpl implements WindupProcessor
     private GraphContext graphContext;
 
     @Inject
-    private VisitorChainProvider provider;
+    private FileResourceDao fileResourceDao;
 
     @Inject
     private ConfigurationProcessorImpl configProcessor;
@@ -33,14 +33,16 @@ public class WindupProcessorImpl implements WindupProcessor
     @Override
     public void execute()
     {
-        final List<GraphVisitor> visitorChain = this.provider.getSortedVisitorChain();
-
-        LOG.info("Executing: " + visitorChain.size() + " visitors...");
-        for (final GraphVisitor visitor : visitorChain)
-        {
-            LOG.info("Processing: " + visitor + " - Class: " + visitor.getClass());
-            visitor.run();
-        }
+        // final List<GraphVisitor> visitorChain = this.provider.getSortedVisitorChain();
+        //
+        // LOG.info("Executing: " + visitorChain.size() + " visitors...");
+        // for (final GraphVisitor visitor : visitorChain)
+        // {
+        // LOG.info("Processing: " + visitor + " - Class: " + visitor.getClass());
+        // visitor.run();
+        // }
+        File r1 = new File("../../test_files/Windup1x-javaee-example.war");
+        FileResourceModel r1g = fileResourceDao.createByFilePath(r1.getAbsolutePath());
 
         this.configProcessor.run(graphContext);
 

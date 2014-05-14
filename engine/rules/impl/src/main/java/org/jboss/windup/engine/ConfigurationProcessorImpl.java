@@ -6,12 +6,15 @@
  */
 package org.jboss.windup.engine;
 
+import javax.inject.Inject;
+
 import org.jboss.windup.addon.config.GraphRewrite;
+import org.jboss.windup.addon.config.GraphSubset;
 import org.jboss.windup.addon.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationLoader;
-import org.ocpsoft.rewrite.config.Subset;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
@@ -20,6 +23,9 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
  */
 public class ConfigurationProcessorImpl
 {
+    @Inject
+    private SelectionFactory selectionFactory;
+
     public void run(GraphContext context)
     {
         final ConfigurationLoader loader = ConfigurationLoader.create(context);
@@ -29,7 +35,9 @@ public class ConfigurationProcessorImpl
 
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
+        GraphRewrite event = new GraphRewrite(context);
+        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
 
-        Subset.evaluate(configuration).perform(new GraphRewrite(context), evaluationContext);
+        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
     }
 }
