@@ -6,9 +6,22 @@
  */
 package org.jboss.windup.addon.config.operation;
 
-import org.jboss.windup.addon.config.selectables.Selectable;
-import org.jboss.windup.addon.config.selectables.SelectableCondition;
-import org.jboss.windup.addon.config.spi.SelectionFactory;
+import org.jboss.windup.addon.config.GraphRewrite;
+import org.jboss.windup.addon.config.operation.iteration.IterationBuilderComplete;
+import org.jboss.windup.addon.config.operation.iteration.IterationBuilderOver;
+import org.jboss.windup.addon.config.operation.iteration.IterationBuilderVar;
+import org.jboss.windup.addon.config.operation.iteration.IterationBuilderWhen;
+import org.jboss.windup.addon.config.operation.iteration.IterationImpl;
+import org.jboss.windup.addon.config.operation.iteration.IterationPayloadManager;
+import org.jboss.windup.addon.config.operation.iteration.IterationQuery;
+import org.jboss.windup.addon.config.operation.iteration.IterationQueryImpl;
+import org.jboss.windup.addon.config.operation.iteration.IterationSelectionManager;
+import org.jboss.windup.addon.config.operation.iteration.NamedIterationPayloadManager;
+import org.jboss.windup.addon.config.operation.iteration.NamedIterationSelectionManager;
+import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationPayloadManager;
+import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationSelectionManager;
+import org.jboss.windup.addon.config.selectables.SelectionFactory;
+import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;
@@ -19,76 +32,101 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class Iteration extends DefaultOperationBuilder
+public abstract class Iteration extends DefaultOperationBuilder implements IterationBuilderOver,
+            IterationBuilderComplete, IterationBuilderWhen, IterationBuilderVar
 {
-
-    private final Class<? extends Selectable<?, ?, ?>> type;
-    private final String source;
-    private final String var;
-    private Class<?> castType;
     private Condition condition;
     private Operation operation;
 
-    public <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD> Iteration(
-                Class<SELECTABLE> type, String source, String var)
+    /*
+     * Abstract methods.
+     */
+    public abstract IterationSelectionManager getSelectionManager();
+
+    public abstract IterationPayloadManager getPayloadManager();
+
+    public abstract void setPayloadManager(IterationPayloadManager payloadManager);
+
+    /**
+     * Begin an {@link Iteration} over the named selection of the given type.
+     */
+    public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
-        this.type = type;
-        this.source = source;
-        this.var = var;
+        return new IterationImpl(new TypedNamedIterationSelectionManager(sourceType, source));
     }
 
     /**
-     * Begin an {@link Iteration}
+     * Begin an {@link Iteration} over the named selection.
      */
-    public static <SELECTABLE extends Selectable<CONDITION, SELECTABLE, PAYLOAD>, CONDITION extends SelectableCondition<SELECTABLE, CONDITION, PAYLOAD>, PAYLOAD>
-                Iteration over(Class<SELECTABLE> selectable, String source, String var)
+    public static IterationBuilderOver over(String source)
     {
-        return new Iteration(selectable, source, var);
+        return new IterationImpl(new NamedIterationSelectionManager(source));
     }
 
-    /**
-     * Cast each iterated element to the given type (if possible.)
-     */
-    public Iteration as(Class<?> castType)
+    @Override
+    public IterationBuilderVar var(Class<? extends WindupVertexFrame> varType, String var)
     {
-        this.castType = castType;
+        setPayloadManager(new TypedNamedIterationPayloadManager(varType, var));
         return this;
     }
 
-    public Iteration when(Condition condition)
+    @Override
+    public IterationBuilderVar var(String var)
+    {
+        setPayloadManager(new NamedIterationPayloadManager(var));
+        return this;
+    }
+
+    @Override
+    public IterationQuery queryFor(Class<? extends WindupVertexFrame> varType, String var)
+    {
+        return new IterationQueryImpl(this, new TypedNamedIterationPayloadManager(varType, var));
+    }
+
+    @Override
+    public IterationQuery queryFor(String var)
+    {
+        return new IterationQueryImpl(this, new NamedIterationPayloadManager(var));
+    }
+
+    @Override
+    public IterationBuilderWhen when(Condition condition)
     {
         this.condition = condition;
         return this;
     }
 
-    public Iteration perform(Operation operation)
+    @Override
+    public IterationBuilderComplete perform(Operation operation)
     {
         this.operation = operation;
         return this;
     }
 
-    /*
-     * Ideally this method is encapsulated in an implementation class that the user would never see when configuring an
-     * Iteration
-     */
     @Override
-    @SuppressWarnings("unchecked")
     public void perform(Rewrite event, EvaluationContext context)
+    {
+        perform((GraphRewrite) event, context);
+    }
+
+    public void perform(GraphRewrite event, EvaluationContext context)
     {
         if (operation != null)
         {
-            SelectionFactory factory = (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
-            Iterable<?> peek = factory.peek(source);
-            for (Object element : peek)
+            SelectionFactory factory = SelectionFactory.instance(event);
+            factory.push();
+            Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, factory);
+            for (WindupVertexFrame element : frames)
             {
-                factory.setCurrentPayload((Class) type, element);
-                if (condition != null && condition.evaluate(event, context))
+                getPayloadManager().setCurrentPayload(factory, element);
+                if (condition == null || condition.evaluate(event, context))
                 {
                     if (operation != null)
                         operation.perform(event, context);
                 }
             }
-            factory.setCurrentPayload((Class) type, null);
+            getPayloadManager().removeCurrentPayload(factory);
+            factory.pop();
         }
     }
 }

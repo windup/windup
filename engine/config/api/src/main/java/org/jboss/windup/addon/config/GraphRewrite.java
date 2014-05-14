@@ -6,6 +6,7 @@
  */
 package org.jboss.windup.addon.config;
 
+import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.ocpsoft.rewrite.context.Context;
@@ -27,6 +28,16 @@ public class GraphRewrite implements Rewrite
     public GraphRewrite(GraphContext context)
     {
         this.graphContext = context;
+    }
+
+    public void selectionPush()
+    {
+        SelectionFactory.instance(this).push();
+    }
+
+    public void selectionPop()
+    {
+        SelectionFactory.instance(this).pop();
     }
 
     public ResourceModel getResource()
