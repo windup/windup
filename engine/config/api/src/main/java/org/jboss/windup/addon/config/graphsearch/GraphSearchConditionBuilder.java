@@ -14,6 +14,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 
+
+/**
+ *  The GraphSearchConditionBuilderGremlin criteria just exposes the GremlinPipeline
+ */
 public class GraphSearchConditionBuilder extends GraphCondition
 {
     private final String variableName;
