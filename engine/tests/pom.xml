@@ -13,48 +13,6 @@
     
     <name>Windup Engine - Tests</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
-            <artifactId>graph</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.rules</groupId>
-            <artifactId>rules</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>furnace-test-harness</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>arquillian-furnace-classpath</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi</artifactId>
-            <classifier>forge-addon</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.migr.as</groupId>
-            <artifactId>WindRide</artifactId>
-            <version>1.1.0</version>
-            <scope>test</scope>
-        </dependency>
-
-
-    </dependencies>
-
 
     <build>
         <plugins>
@@ -92,4 +50,59 @@
             </plugin>
         </plugins>
     </build>    
+
+
+    <dependencies>
+        
+        <!-- Project deps -->
+        <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>graph</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules</groupId>
+            <artifactId>rules</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+
+        <!-- Forge & Furnace -->
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>furnace-test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-furnace-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+
+        <!-- WindRide - legacy server migration -->
+        <dependency>
+            <groupId>org.jboss.migr.as</groupId>
+            <artifactId>WindRide</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>
