@@ -30,6 +30,7 @@ public class TypeOperation extends GraphOperation
         SelectionFactory selectionFactory = SelectionFactory.instance(event);
         WindupVertexFrame currentFrame = selectionFactory
                     .getCurrentPayload(WindupVertexFrame.class, variableName);
-        GraphUtil.addTypeToModel(event.getGraphContext(), currentFrame, newType);
+        WindupVertexFrame newFrame = GraphUtil.addTypeToModel(event.getGraphContext(), currentFrame, newType);
+        selectionFactory.setCurrentPayload(variableName, newFrame);
     }
 }

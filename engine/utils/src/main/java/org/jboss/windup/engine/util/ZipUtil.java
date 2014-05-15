@@ -17,44 +17,77 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ZipUtil {
-	private static final Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
-	
-	private static Set<String> supportedExtensions;
-	
-	public static File unzipToTemp(ZipFile file, ZipEntry entry) throws IOException {
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			String entryExtension = StringUtils.substringAfterLast(entry.getName(), ".");
-			File temp = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString()+"."+entryExtension);
-			in = file.getInputStream(entry);
-			out = new FileOutputStream(temp);
-			
-			IOUtils.copy(in, out);
-			LOG.debug("Extracting entry: "+entry.getName()+" to: "+temp.getAbsolutePath());
-			return temp;
-		}
-		catch(Exception e) {
-			throw new IOException("Exception extracting entry: "+entry.getName(), e);
-		}
-		finally {
-	        IOUtils.closeQuietly(in);
-	        IOUtils.closeQuietly(out);
-		}
-	}
-	
-	public static boolean endsWithZipExtension(String path) {
-        for(String extension : getZipExtensions()) {
-            if(StringUtils.endsWith(path, "." + extension)) {
+public class ZipUtil
+{
+    private static final Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
+
+    private static Set<String> supportedExtensions;
+
+    public static File unzipToTemp(ZipFile file, ZipEntry entry) throws IOException
+    {
+        InputStream in = null;
+        OutputStream out = null;
+        try
+        {
+            String entryExtension = StringUtils.substringAfterLast(entry.getName(), ".");
+            File temp = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString() + "." + entryExtension);
+            in = file.getInputStream(entry);
+            out = new FileOutputStream(temp);
+
+            IOUtils.copy(in, out);
+            LOG.debug("Extracting entry: " + entry.getName() + " to: " + temp.getAbsolutePath());
+            return temp;
+        }
+        catch (Exception e)
+        {
+            throw new IOException("Exception extracting entry: " + entry.getName(), e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
+        }
+    }
+
+    public static String getEndsWithZipRegularExpression()
+    {
+        Set<String> zipExtensions = getZipExtensions();
+        final String regex;
+        if (zipExtensions.size() == 1)
+        {
+            regex = ".+\\." + zipExtensions.iterator().next() + "$";
+        }
+        else
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.append("\\b(");
+            for (String value : zipExtensions)
+            {
+                builder.append("|");
+                builder.append(value);
+            }
+            builder.append(")\\b");
+            regex = ".+\\." + builder.toString() + "$";
+        }
+        return regex;
+    }
+
+    public static boolean endsWithZipExtension(String path)
+    {
+        for (String extension : getZipExtensions())
+        {
+            if (StringUtils.endsWith(path, "." + extension))
+            {
                 return true;
             }
         }
         return false;
     }
-    
-    public static Set<String> getZipExtensions() {
-        if (supportedExtensions == null) {
+
+    public static Set<String> getZipExtensions()
+    {
+        if (supportedExtensions == null)
+        {
             Set<String> extensions = new HashSet<String>();
             extensions.add("war");
             extensions.add("ear");
@@ -63,7 +96,7 @@ public class ZipUtil {
             extensions.add("rar");
             supportedExtensions = extensions;
         }
-        
+
         return supportedExtensions;
     }
 }
