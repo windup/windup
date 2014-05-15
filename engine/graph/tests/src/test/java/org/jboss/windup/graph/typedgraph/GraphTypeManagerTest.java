@@ -58,8 +58,10 @@ public class GraphTypeManagerTest
         // Now reload it as a base meta object (this returns an iterable, but there should only be one result)
         Iterable<Vertex> vertices = context.getFramed().query()
                     .has("type", Text.CONTAINS, BaseMetaModel.class.getAnnotation(TypeValue.class).value()).vertices();
+        int numberFound = 0;
         for (Vertex v : vertices)
         {
+            numberFound++;
             WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
 
             // because the type information is stored in the Vertex, this should include at least the following types:
@@ -68,5 +70,6 @@ public class GraphTypeManagerTest
             Assert.assertTrue(framed instanceof BaseMetaModel);
             Assert.assertTrue(framed instanceof XmlResourceModel);
         }
+        Assert.assertEquals(1, numberFound);
     }
 }
