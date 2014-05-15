@@ -8,7 +8,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 class GraphSearchCriterionType implements GraphSearchCriterion
 {
-    String typeValue;
+    private String typeValue;
 
     public GraphSearchCriterionType(Class<? extends WindupVertexFrame> clazz)
     {

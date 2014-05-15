@@ -26,15 +26,6 @@ public class WindupProcessorImpl implements WindupProcessor
     @Override
     public void execute()
     {
-        // final List<GraphVisitor> visitorChain = this.provider.getSortedVisitorChain();
-        //
-        // LOG.info("Executing: " + visitorChain.size() + " visitors...");
-        // for (final GraphVisitor visitor : visitorChain)
-        // {
-        // LOG.info("Processing: " + visitor + " - Class: " + visitor.getClass());
-        // visitor.run();
-        // }
-
         this.configProcessor.run(graphContext);
 
         LOG.info("Execution complete.");

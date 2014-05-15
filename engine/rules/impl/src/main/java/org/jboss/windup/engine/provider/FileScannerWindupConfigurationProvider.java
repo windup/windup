@@ -5,21 +5,16 @@ import javax.inject.Inject;
 import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.addon.config.graphsearch.GraphSearchGremlinCriterion;
+import org.jboss.windup.addon.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.addon.config.operation.Iteration;
 import org.jboss.windup.addon.config.operation.ruleelement.AddArchiveReferenceInformation;
-import org.jboss.windup.addon.config.operation.ruleelement.TypeOperation;
+import org.jboss.windup.addon.config.operation.ruleelement.RecurseDirectoryAndAddFiles;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.ApplicationReferenceDao;
-import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 public class FileScannerWindupConfigurationProvider extends WindupConfigurationProvider
 {
@@ -35,31 +30,37 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder.begin()
+        return ConfigurationBuilder
+                    .begin()
+                    .addRule()
+                    .when(GraphSearchConditionBuilder
+                                .create("inputDirectories")
+                                .ofType(FileResourceModel.class)
+                                .withProperty(FileResourceModel.PROPERTY_IS_DIRECTORY, true)
+                    )
+                    .perform(
+                                Iteration.over("inputDirectories").var(FileResourceModel.class, "directory")
+                                            .perform(
+                                                        RecurseDirectoryAndAddFiles.add("directory")
+                                            )
+                    )
                     .addRule()
                     .when(
                                 GraphSearchConditionBuilder
                                             .create("inputFiles")
                                             .ofType(FileResourceModel.class)
-                                            .gremlin()
-                                            .withCriterion(new GraphSearchGremlinCriterion()
-                                            {
-
-                                                @Override
-                                                public void query(GremlinPipeline<Vertex, Vertex> pipeline)
-                                                {
-                                                    pipeline.has("filePath", Text.REGEX,
-                                                                ZipUtil.getEndsWithZipRegularExpression());
-                                                }
-                                            })
-
+                                            .withProperty(FileResourceModel.PROPERTY_IS_DIRECTORY, false)
+                                            .withProperty(FileResourceModel.PROPERTY_FILE_PATH,
+                                                        GraphSearchPropertyComparisonType.REGEX,
+                                                        ZipUtil.getEndsWithZipRegularExpression())
                     )
                     .perform(
-                                Iteration.over("inputFiles").var(FileResourceModel.class, "file")
-                                            .perform(TypeOperation.addType("file", ArchiveResourceModel.class)
-                                                        .and(AddArchiveReferenceInformation.addReferenceInformation()
-                                                        )
+                                Iteration.over("inputFiles")
+                                            .var(FileResourceModel.class, "file")
+                                            .perform(
+                                                        AddArchiveReferenceInformation.addReferenceInformation("file")
                                             )
                     );
+
     }
 }

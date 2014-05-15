@@ -14,9 +14,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 
-
 /**
- *  The GraphSearchConditionBuilderGremlin criteria just exposes the GremlinPipeline
+ * The GraphSearchConditionBuilderGremlin criteria just exposes the GremlinPipeline
  */
 public class GraphSearchConditionBuilder extends GraphCondition
 {
@@ -49,13 +48,13 @@ public class GraphSearchConditionBuilder extends GraphCondition
         return this;
     }
 
-    public GraphSearchConditionBuilder withProperty(String property, String searchValue)
+    public GraphSearchConditionBuilder withProperty(String property, Object searchValue)
     {
         return withProperty(property, GraphSearchPropertyComparisonType.EQUALS, searchValue);
     }
 
     public GraphSearchConditionBuilder withProperty(String property, GraphSearchPropertyComparisonType searchType,
-                String searchValue)
+                Object searchValue)
     {
         graphSearchCriteria.add(new GraphSearchCriterionProperty(property, searchType, searchValue));
         return this;

@@ -128,8 +128,7 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
                 getPayloadManager().setCurrentPayload(factory, element);
                 if (condition == null || condition.evaluate(event, context))
                 {
-                    if (operation != null)
-                        operation.perform(event, context);
+                    operation.perform(event, context);
                 }
             }
             getPayloadManager().removeCurrentPayload(factory);

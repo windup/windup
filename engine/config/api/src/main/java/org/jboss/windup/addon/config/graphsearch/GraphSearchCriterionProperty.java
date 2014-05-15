@@ -7,10 +7,10 @@ class GraphSearchCriterionProperty implements GraphSearchCriterion
 {
     private String propertyName;
     private GraphSearchPropertyComparisonType searchType;
-    private String searchValue;
+    private Object searchValue;
 
     public GraphSearchCriterionProperty(String propertyName, GraphSearchPropertyComparisonType searchType,
-                String searchValue)
+                Object searchValue)
     {
         super();
         this.propertyName = propertyName;
