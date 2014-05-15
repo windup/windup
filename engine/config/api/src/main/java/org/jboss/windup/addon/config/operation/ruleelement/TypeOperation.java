@@ -7,7 +7,7 @@ import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class TypeOperation extends AbstractIterationRuleElement<WindupVertexFrame>
+public class TypeOperation extends AbstractIterationOperator<WindupVertexFrame>
 {
     private Class<? extends WindupVertexFrame> newType;
 

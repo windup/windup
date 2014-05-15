@@ -9,7 +9,7 @@ import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class AddArchiveReferenceInformation extends AbstractIterationRuleElement<FileResourceModel>
+public class AddArchiveReferenceInformation extends AbstractIterationOperator<FileResourceModel>
 {
     public AddArchiveReferenceInformation(String variableName)
     {

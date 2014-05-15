@@ -6,12 +6,12 @@ import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public abstract class AbstractIterationRuleElement<T extends WindupVertexFrame> extends GraphOperation
+public abstract class AbstractIterationOperator<T extends WindupVertexFrame> extends GraphOperation
 {
     Class<T> clazz;
     private String variableName;
 
-    public AbstractIterationRuleElement(Class<T> clazz, String variableName)
+    public AbstractIterationOperator(Class<T> clazz, String variableName)
     {
         this.clazz = clazz;
         this.variableName = variableName;
