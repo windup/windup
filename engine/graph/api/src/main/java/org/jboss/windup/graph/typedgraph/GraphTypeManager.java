@@ -46,17 +46,22 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
                 {
                     throw new IllegalArgumentException("Type value for class: " + kind.getCanonicalName() + " is "
                                 + typeValue + " but this value must not contain the \"" + DELIMITER + "\" character");
-                } else {
-                    for (int p = 0; p < typeValue.length(); p++) {
-                        if (!Character.isLetterOrDigit(typeValue.charAt(p))) {
-                            throw new IllegalArgumentException("Type value for class: " + kind.getCanonicalName() + " is "
-                                        + typeValue + " but this value must only contain numbers and letters");        
+                }
+                else
+                {
+                    for (int p = 0; p < typeValue.length(); p++)
+                    {
+                        if (!Character.isLetterOrDigit(typeValue.charAt(p)))
+                        {
+                            throw new IllegalArgumentException("Type value for class: " + kind.getCanonicalName()
+                                        + " is "
+                                        + typeValue + " but this value must only contain numbers and letters");
                         }
                     }
                 }
 
                 // store the value in a delimited list
-                String currentPropertyValue = element.getProperty(typeValue);
+                String currentPropertyValue = element.getProperty(typeFieldName);
                 if (currentPropertyValue == null)
                 {
                     // if there is no current value, initialize with one value
