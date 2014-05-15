@@ -12,7 +12,7 @@ import java.util.List;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.addon.config.operation.GraphOperation;
 import org.jboss.windup.addon.config.operation.Iteration;
-import org.jboss.windup.addon.config.operation.iteration.TypeOperation;
+import org.jboss.windup.addon.config.operation.ruleelement.TypeOperation;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;

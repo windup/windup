@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.config.operation.iteration;
+package org.jboss.windup.addon.config.operation.ruleelement;
 
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.addon.config.operation.GraphOperation;

@@ -22,6 +22,7 @@ import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationPayl
 import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationSelectionManager;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;
@@ -87,6 +88,12 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
     public IterationQuery queryFor(String var)
     {
         return new IterationQueryImpl(this, new NamedIterationPayloadManager(var));
+    }
+
+    public IterationBuilderWhen all(Condition... condition)
+    {
+        this.condition = And.all(condition);
+        return this;
     }
 
     @Override
