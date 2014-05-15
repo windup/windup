@@ -3,22 +3,17 @@ package org.jboss.windup.addon.config.operation.ruleelement;
 import java.io.File;
 
 import org.jboss.windup.addon.config.GraphRewrite;
-import org.jboss.windup.addon.config.operation.GraphOperation;
-import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.meta.ApplicationReferenceModel;
 import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class AddArchiveReferenceInformation extends GraphOperation
+public class AddArchiveReferenceInformation extends AbstractIterationRuleElement<FileResourceModel>
 {
-
-    private String variableName;
-
     public AddArchiveReferenceInformation(String variableName)
     {
-        this.variableName = variableName;
+        super(FileResourceModel.class, variableName);
     }
 
     public static AddArchiveReferenceInformation addReferenceInformation(String variableName)
@@ -27,14 +22,8 @@ public class AddArchiveReferenceInformation extends GraphOperation
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
+    public void perform(GraphRewrite event, EvaluationContext context, FileResourceModel fileResourceModel)
     {
-        SelectionFactory factory = SelectionFactory
-                    .instance(event);
-
-        FileResourceModel fileResourceModel = factory
-                    .getCurrentPayload(
-                                FileResourceModel.class, variableName);
         File file = new File(fileResourceModel.getFilePath());
         ArchiveResourceModel archiveResourceModel = GraphUtil.addTypeToModel(event.getGraphContext(),
                     fileResourceModel, ArchiveResourceModel.class);

@@ -7,14 +7,13 @@ import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class TypeOperation extends GraphOperation
+public class TypeOperation extends AbstractIterationRuleElement<WindupVertexFrame>
 {
-    private String variableName;
     private Class<? extends WindupVertexFrame> newType;
 
     private TypeOperation(String variableName, Class<? extends WindupVertexFrame> newType)
     {
-        this.variableName = variableName;
+        super(WindupVertexFrame.class, variableName);
         this.newType = newType;
     }
 
@@ -25,12 +24,10 @@ public class TypeOperation extends GraphOperation
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
+    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
         SelectionFactory selectionFactory = SelectionFactory.instance(event);
-        WindupVertexFrame currentFrame = selectionFactory
-                    .getCurrentPayload(WindupVertexFrame.class, variableName);
-        WindupVertexFrame newFrame = GraphUtil.addTypeToModel(event.getGraphContext(), currentFrame, newType);
-        selectionFactory.setCurrentPayload(variableName, newFrame);
+        WindupVertexFrame newFrame = GraphUtil.addTypeToModel(event.getGraphContext(), payload, newType);
+        selectionFactory.setCurrentPayload(getVariableName(), newFrame);
     }
 }

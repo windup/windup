@@ -7,19 +7,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.jboss.windup.addon.config.GraphRewrite;
-import org.jboss.windup.addon.config.operation.GraphOperation;
-import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class RecurseDirectoryAndAddFiles extends GraphOperation
+public class RecurseDirectoryAndAddFiles extends AbstractIterationRuleElement<FileResourceModel>
 {
-    private String variableName;
-
     public RecurseDirectoryAndAddFiles(String variableName)
     {
-        this.variableName = variableName;
+        super(FileResourceModel.class, variableName);
     }
 
     public static RecurseDirectoryAndAddFiles add(String variableName)
@@ -28,14 +24,9 @@ public class RecurseDirectoryAndAddFiles extends GraphOperation
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
+    public void perform(GraphRewrite event, EvaluationContext context, FileResourceModel resourceModel)
     {
-        SelectionFactory factory = SelectionFactory
-                    .instance(event);
-
-        FileResourceModel resourceModel = factory.getCurrentPayload(FileResourceModel.class, variableName);
         visitFile(event.getGraphContext(), resourceModel);
-
     }
 
     private void visitFile(GraphContext ctx, FileResourceModel file)
