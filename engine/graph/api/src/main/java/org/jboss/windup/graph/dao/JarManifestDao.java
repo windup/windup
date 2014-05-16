@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.JarManifestModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 public interface JarManifestDao extends BaseDao<JarManifestModel>

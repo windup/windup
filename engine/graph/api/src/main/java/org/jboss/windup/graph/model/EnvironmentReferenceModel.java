@@ -1,4 +1,6 @@
-package org.jboss.windup.graph.model.meta;
+package org.jboss.windup.graph.model;
+
+import org.jboss.windup.graph.model.meta.BaseMetaModel;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

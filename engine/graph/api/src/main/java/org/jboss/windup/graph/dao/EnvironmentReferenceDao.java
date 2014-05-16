@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.dao;
 
-import org.jboss.windup.graph.model.meta.EnvironmentReferenceModel;
+import org.jboss.windup.graph.model.EnvironmentReferenceModel;
 
 public interface EnvironmentReferenceDao extends BaseDao<EnvironmentReferenceModel> {
 

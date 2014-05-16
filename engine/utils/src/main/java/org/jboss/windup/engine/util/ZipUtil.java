@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.engine.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,35 @@ public class ZipUtil
     private static final Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
 
     private static Set<String> supportedExtensions;
+
+    public static void unzipToFolder(File inputFile, File outputDir) throws IOException
+    {
+        try (ZipFile zipFile = new ZipFile(inputFile))
+        {
+            Enumeration<? extends ZipEntry> entryEnum = zipFile.entries();
+            while (entryEnum.hasMoreElements())
+            {
+                ZipEntry entry = entryEnum.nextElement();
+                String entryName = entry.getName();
+                File destFile = new File(outputDir, entryName);
+                if (!entry.isDirectory())
+                {
+                    File parentDir = destFile.getParentFile();
+                    if (!parentDir.isDirectory() && !parentDir.mkdirs())
+                    {
+                        throw new WindupException("Unable to create directory: " + parentDir.getAbsolutePath());
+                    }
+                    try (InputStream zipInputStream = zipFile.getInputStream(entry))
+                    {
+                        try (FileOutputStream outputStream = new FileOutputStream(destFile))
+                        {
+                            IOUtils.copy(zipInputStream, outputStream);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public static File unzipToTemp(ZipFile file, ZipEntry entry) throws IOException
     {

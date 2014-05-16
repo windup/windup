@@ -1,5 +1,6 @@
 package org.jboss.windup.graph.model.resource;
 
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
@@ -81,7 +82,7 @@ public interface JavaClassModel extends ResourceModel
     public Iterable<JavaMethodModel> getJavaMethods();
 
     @GremlinGroovy("it.in('javaClassFacet').in('childArchiveEntry')")
-    public Iterable<ArchiveResourceModel> getArchivesProvidingClass();
+    public Iterable<ArchiveModel> getArchivesProvidingClass();
 
     @GremlinGroovy("it.sideEffect{x=it}.out('extends', 'imports', 'implements').dedup().filter{it!=x}")
     public Iterable<JavaClassModel> dependsOnJavaClass();

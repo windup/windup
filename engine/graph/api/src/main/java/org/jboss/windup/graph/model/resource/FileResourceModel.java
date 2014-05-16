@@ -23,6 +23,18 @@ public interface FileResourceModel extends ResourceModel
     @Property(PROPERTY_IS_DIRECTORY)
     public boolean isDirectory();
 
+    @Property("md5Hash")
+    public String getMD5Hash();
+
+    @Property("md5Hash")
+    public void setMD5Hash(String md5Hash);
+
+    @Property("sha1Hash")
+    public String getSHA1Hash();
+
+    @Property("sha1Hash")
+    public void setSHA1Hash(String sha1Hash);
+
     // implemented via a handler that makes sure the isDirectory property is set as well
     @JavaHandler
     public void setFilePath(String filePath);

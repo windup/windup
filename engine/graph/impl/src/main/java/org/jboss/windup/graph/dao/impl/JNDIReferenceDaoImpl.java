@@ -3,7 +3,7 @@ package org.jboss.windup.graph.dao.impl;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.JNDIReferenceDao;
-import org.jboss.windup.graph.model.meta.JNDIReferenceModel;
+import org.jboss.windup.graph.model.JNDIReferenceModel;
 
 @Singleton
 public class JNDIReferenceDaoImpl extends BaseDaoImpl<JNDIReferenceModel> implements JNDIReferenceDao {

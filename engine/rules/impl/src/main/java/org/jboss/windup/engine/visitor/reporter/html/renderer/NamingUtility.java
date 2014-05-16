@@ -11,11 +11,11 @@ import org.jboss.windup.engine.visitor.reporter.html.model.ReportContext;
 import org.jboss.windup.engine.visitor.reporter.html.model.SimpleName;
 import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.dao.SourceReportDao;
-import org.jboss.windup.graph.model.meta.ApplicationReferenceModel;
-import org.jboss.windup.graph.model.meta.JarManifestModel;
+import org.jboss.windup.graph.model.ApplicationReferenceModel;
+import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.JarManifestModel;
 import org.jboss.windup.graph.model.meta.PropertiesMetaModel;
 import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
-import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
@@ -45,44 +45,44 @@ public class NamingUtility
     {
         String path = resource.getArchiveEntry();
 
-        ArchiveResourceModel archive = resource.getArchive();
+        ArchiveModel archive = resource.getArchive();
         while (archive != null)
         {
-            if (archive.getParentResource() instanceof ArchiveEntryResourceModel)
-            {
-                ArchiveEntryResourceModel parentEntry = (ArchiveEntryResourceModel) archive.getParentResource();
-                // prepend
-                path = parentEntry.getArchiveEntry() + "/" + path;
-                archive = archive.getParentArchive();
-            }
-            else if (archive.getParentResource() instanceof FileResourceModel)
-            {
-                path = archive.getArchiveName() + "/" + path;
-                archive = archive.getParentArchive();
-            }
+            // if (archive.getParentResource() instanceof ArchiveEntryResourceModel)
+            // {
+            // ArchiveEntryResourceModel parentEntry = (ArchiveEntryResourceModel) archive.getParentResource();
+            // // prepend
+            // path = parentEntry.getArchiveEntry() + "/" + path;
+            // archive = archive.getParentArchive();
+            // }
+            // else if (archive.getParentResource() instanceof FileResourceModel)
+            // {
+            // path = archive.getArchiveName() + "/" + path;
+            // archive = archive.getParentArchive();
+            // }
         }
         return path;
     }
 
-    protected String buildFullPath(ArchiveResourceModel resource)
+    protected String buildFullPath(ArchiveModel resource)
     {
         String path = resource.getArchiveName();
 
-        ArchiveResourceModel archive = resource;
+        ArchiveModel archive = resource;
         while (archive != null)
         {
-            if (archive.getParentResource() instanceof ArchiveEntryResourceModel)
-            {
-                ArchiveEntryResourceModel parentEntry = (ArchiveEntryResourceModel) archive.getParentResource();
-                // prepend
-                path = parentEntry.getArchiveEntry() + "/" + path;
-                archive = archive.getParentArchive();
-            }
-            else if (archive.getParentResource() instanceof FileResourceModel)
-            {
-                path = archive.getArchiveName() + "/" + path;
-                archive = archive.getParentArchive();
-            }
+            // if (archive.getParentResource() instanceof ArchiveEntryResourceModel)
+            // {
+            // ArchiveEntryResourceModel parentEntry = (ArchiveEntryResourceModel) archive.getParentResource();
+            // // prepend
+            // path = parentEntry.getArchiveEntry() + "/" + path;
+            // archive = archive.getParentArchive();
+            // }
+            // else if (archive.getParentResource() instanceof FileResourceModel)
+            // {
+            // path = archive.getArchiveName() + "/" + path;
+            // archive = archive.getParentArchive();
+            // }
         }
         return path;
     }

@@ -5,7 +5,7 @@ import java.util.Iterator;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.ArchiveDao;
-import org.jboss.windup.graph.model.resource.ArchiveResourceModel;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -16,14 +16,14 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
 @Singleton
-public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements ArchiveDao
+public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveModel> implements ArchiveDao
 {
     public ArchiveDaoImpl()
     {
-        super(ArchiveResourceModel.class);
+        super(ArchiveModel.class);
     }
 
-    public Iterable<ArchiveResourceModel> findAllRootArchives()
+    public Iterable<ArchiveModel> findAllRootArchives()
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getContext()
@@ -44,7 +44,7 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements
                             return false;
                         }
                     });
-        return getContext().getFramed().frameVertices(pipeline, ArchiveResourceModel.class);
+        return getContext().getFramed().frameVertices(pipeline, ArchiveModel.class);
     }
 
     public boolean isArchiveResource(ResourceModel resource)
@@ -53,13 +53,13 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveResourceModel> implements
                     .hasNext();
     }
 
-    public ArchiveResourceModel getArchiveFromResource(ResourceModel resource)
+    public ArchiveModel getArchiveFromResource(ResourceModel resource)
     {
         Iterator<Vertex> v = (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("archiveResourceFacet")
                     .iterator();
         if (v.hasNext())
         {
-            return getContext().getFramed().frame(v.next(), ArchiveResourceModel.class);
+            return getContext().getFramed().frame(v.next(), ArchiveModel.class);
         }
 
         return null;

@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model.meta;
+package org.jboss.windup.graph.model;
 
 import java.io.File;
 import java.io.InputStream;
