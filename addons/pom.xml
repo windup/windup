@@ -8,12 +8,15 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>addons</artifactId>
+    <artifactId>addons-parent</artifactId>
     <packaging>pom</packaging>
     
     <name>Windup Addons</name>
     <description>A place for addons for the Windup engine.</description>
+    
     <modules>
-        <module>server/EapRecognition</module>
+        <module>server/JBossEapRecognition</module>
+        <module>server/ServerMigrationUtils</module>
     </modules>
+    
 </project>
