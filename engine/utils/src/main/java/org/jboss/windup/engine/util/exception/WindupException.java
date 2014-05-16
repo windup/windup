@@ -1,4 +1,4 @@
-package org.jboss.windup.engine.ex;
+package org.jboss.windup.engine.util.exception;
 
 /**
  *  Root Windup exception to inherit other Windup-specific exceptions from.

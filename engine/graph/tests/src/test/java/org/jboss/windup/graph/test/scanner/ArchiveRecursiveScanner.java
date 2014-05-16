@@ -11,8 +11,10 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+
 import javax.inject.Inject;
-import org.jboss.windup.engine.ex.WindupException;
+
+import org.jboss.windup.engine.util.exception.WindupException;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
 import org.slf4j.Logger;
