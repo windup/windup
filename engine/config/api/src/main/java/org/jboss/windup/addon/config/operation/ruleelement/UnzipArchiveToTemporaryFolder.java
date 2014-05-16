@@ -104,6 +104,11 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                 {
+                    FileResourceModel childFile = event.getGraphContext().getFramed()
+                                .addVertex(null, FileResourceModel.class);
+                    childFile.setFilePath(file.toAbsolutePath().toString());
+                    archiveModel.addContainedFileModel(childFile);
+
                     if (ZipUtil.endsWithZipExtension(file.toAbsolutePath().toString()))
                     {
                         File newZipFile = file.toFile();

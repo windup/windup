@@ -43,5 +43,6 @@ public class UnzipArchivesToTempConfigurationProvider extends WindupConfiguratio
                                                         UnzipArchiveToTemporaryFolder.unzip("archive")
                                             ).endIteration()
                     );
+
     }
 }

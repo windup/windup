@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.jboss.windup.graph.model.ArchiveModel;
+
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
@@ -34,6 +38,17 @@ public interface FileResourceModel extends ResourceModel
 
     @Property("sha1Hash")
     public void setSHA1Hash(String sha1Hash);
+
+    /**
+     * Indicates the archive that contained this file
+     * 
+     * @return
+     */
+    @Adjacency(label = "archiveFiles", direction = Direction.IN)
+    public ArchiveModel getParentArchive();
+
+    @Adjacency(label = "archiveFiles", direction = Direction.IN)
+    public void setParentArchive(ArchiveModel parentArchive);
 
     // implemented via a handler that makes sure the isDirectory property is set as well
     @JavaHandler
