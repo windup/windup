@@ -98,6 +98,7 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                                                     + methodModel.getJavaClass().getQualifiedName());
                                     }
                                 })
+                                .endIteration()
                     );
         return configuration;
     }

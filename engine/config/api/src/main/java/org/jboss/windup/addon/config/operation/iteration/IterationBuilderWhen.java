@@ -14,5 +14,5 @@ import org.ocpsoft.rewrite.config.Operation;
  */
 public interface IterationBuilderWhen
 {
-    IterationBuilderComplete perform(Operation operation);
+    IterationBuilderPerform perform(Operation operation);
 }

@@ -6,16 +6,15 @@
  */
 package org.jboss.windup.addon.config.operation.iteration;
 
-import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Operation;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface IterationBuilderVar
+public interface IterationBuilderPerform
 {
-    IterationBuilderWhen when(Condition condition);
-
-    IterationBuilderPerform perform(Operation operation);
+    IterationBuilderOtherwise otherwise(Operation operation);
+    
+    IterationBuilderComplete endIteration();
 }

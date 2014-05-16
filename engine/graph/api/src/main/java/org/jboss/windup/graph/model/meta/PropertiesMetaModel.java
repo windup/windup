@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("PropertiesMeta")
+@TypeValue("PropertiesMeta") 
 public interface PropertiesMetaModel extends ResourceModel
 {
 
@@ -34,9 +34,11 @@ public interface PropertiesMetaModel extends ResourceModel
     @JavaHandler
     public Set<String> keySet();
 
+    @Override
     @JavaHandler
     public InputStream asInputStream() throws RuntimeException;
 
+    @Override
     @JavaHandler
     public File asFile() throws RuntimeException;
 

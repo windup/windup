@@ -16,5 +16,5 @@ public interface IterationQueryCriteria extends IterationQuery
 {
     IterationBuilderWhen when(Condition condition);
 
-    IterationBuilderComplete perform(Operation operation);
+    IterationBuilderPerform perform(Operation operation);
 }

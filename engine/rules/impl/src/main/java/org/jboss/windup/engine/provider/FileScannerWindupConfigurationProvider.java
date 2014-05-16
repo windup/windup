@@ -42,7 +42,7 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
                                 Iteration.over("inputDirectories").var(FileResourceModel.class, "directory")
                                             .perform(
                                                         RecurseDirectoryAndAddFiles.add("directory")
-                                            )
+                                            ).endIteration()
                     )
                     .addRule()
                     .when(
@@ -59,7 +59,7 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
                                             .var(FileResourceModel.class, "file")
                                             .perform(
                                                         AddArchiveReferenceInformation.addReferenceInformation("file")
-                                            )
+                                            ).endIteration()
                     );
 
     }

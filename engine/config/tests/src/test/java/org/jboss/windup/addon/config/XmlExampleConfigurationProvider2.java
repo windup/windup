@@ -57,6 +57,7 @@ public class XmlExampleConfigurationProvider2 extends WindupConfigurationProvide
                                         typeSearchResults.add(xmlFacetModel);
                                     }
                                 })
+                                .endIteration()
                     );
         return configuration;
     }

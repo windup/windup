@@ -38,26 +38,33 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        Configuration configuration = ConfigurationBuilder.begin()
+        Configuration configuration = ConfigurationBuilder
+                    .begin()
+
                     .addRule()
                     .when(GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class))
-                    .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
-                                .perform(TypeOperation.addType("xml", MavenFacetModel.class))
+                    .perform(
+                                Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
+                                            .perform(TypeOperation.addType("xml", MavenFacetModel.class))
+                                            .endIteration()
                     )
+
                     .addRule()
                     .when(GraphSearchConditionBuilder.create("mavenModels").ofType(MavenFacetModel.class))
-                    .perform(Iteration.over(MavenFacetModel.class, "mavenModels").var("maven")
-                                .perform(new GraphOperation()
-                                {
-                                    @Override
-                                    public void perform(GraphRewrite event, EvaluationContext context)
-                                    {
-                                        SelectionFactory factory = SelectionFactory.instance(event);
-                                        MavenFacetModel mavenFacetModel = factory.getCurrentPayload(
-                                                    MavenFacetModel.class, "maven");
-                                        results.add(mavenFacetModel);
-                                    }
-                                })
+                    .perform(
+                                Iteration.over(MavenFacetModel.class, "mavenModels").var("maven")
+                                            .perform(new GraphOperation()
+                                            {
+                                                @Override
+                                                public void perform(GraphRewrite event, EvaluationContext context)
+                                                {
+                                                    SelectionFactory factory = SelectionFactory.instance(event);
+                                                    MavenFacetModel mavenFacetModel = factory.getCurrentPayload(
+                                                                MavenFacetModel.class, "maven");
+                                                    results.add(mavenFacetModel);
+                                                }
+                                            })
+                                            .endIteration()
                     );
         return configuration;
     }

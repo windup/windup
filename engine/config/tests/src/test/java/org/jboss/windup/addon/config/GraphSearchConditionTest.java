@@ -28,15 +28,10 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
 public class GraphSearchConditionTest
 {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GraphSearchConditionTest.class);
-
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.addon:config"),
@@ -172,11 +167,14 @@ public class GraphSearchConditionTest
         GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(4, provider.getTypeSearchResults().size());
+        Assert.assertEquals(3, provider.getXmlRootNames().size());
         Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag1"));
         Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag2"));
-        Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag3"));
+        Assert.assertFalse(provider.getXmlRootNames().contains("xmlTag3"));
         Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag4"));
         Assert.assertFalse(provider.getXmlRootNames().contains("xmlTag5"));
+        Assert.assertEquals(1, provider.getExcludedXmlRootNames().size());
+        Assert.assertTrue(provider.getExcludedXmlRootNames().contains("xmlTag3"));
     }
 
     @Test

@@ -6,9 +6,14 @@
  */
 package org.jboss.windup.addon.config.operation;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.addon.config.operation.iteration.IterationBuilderComplete;
+import org.jboss.windup.addon.config.operation.iteration.IterationBuilderOtherwise;
 import org.jboss.windup.addon.config.operation.iteration.IterationBuilderOver;
+import org.jboss.windup.addon.config.operation.iteration.IterationBuilderPerform;
 import org.jboss.windup.addon.config.operation.iteration.IterationBuilderVar;
 import org.jboss.windup.addon.config.operation.iteration.IterationBuilderWhen;
 import org.jboss.windup.addon.config.operation.iteration.IterationImpl;
@@ -23,6 +28,7 @@ import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationSele
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.And;
+import org.ocpsoft.rewrite.config.CompositeOperation;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;
@@ -33,15 +39,14 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public abstract class Iteration extends DefaultOperationBuilder implements IterationBuilderOver,
-            IterationBuilderComplete, IterationBuilderWhen, IterationBuilderVar
+public abstract class Iteration extends DefaultOperationBuilder implements IterationBuilderOver, IterationBuilderVar,
+            IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise, IterationBuilderComplete,
+            CompositeOperation
 {
     private Condition condition;
-    private Operation operation;
+    private Operation operationPerform;
+    private Operation operationOtherwise;
 
-    /*
-     * Abstract methods.
-     */
     public abstract IterationSelectionManager getSelectionManager();
 
     public abstract IterationPayloadManager getPayloadManager();
@@ -104,9 +109,22 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
     }
 
     @Override
-    public IterationBuilderComplete perform(Operation operation)
+    public IterationBuilderPerform perform(Operation operation)
     {
-        this.operation = operation;
+        this.operationPerform = operation;
+        return this;
+    }
+
+    @Override
+    public IterationBuilderOtherwise otherwise(Operation operation)
+    {
+        this.operationOtherwise = operation;
+        return this;
+    }
+
+    @Override
+    public IterationBuilderComplete endIteration()
+    {
         return this;
     }
 
@@ -118,21 +136,34 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
 
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-        if (operation != null)
+        SelectionFactory factory = SelectionFactory.instance(event);
+        factory.push();
+        Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, factory);
+        for (WindupVertexFrame element : frames)
         {
-            SelectionFactory factory = SelectionFactory.instance(event);
-            factory.push();
-            Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, factory);
-            for (WindupVertexFrame element : frames)
+            getPayloadManager().setCurrentPayload(factory, element);
+            if (condition == null || condition.evaluate(event, context))
             {
-                getPayloadManager().setCurrentPayload(factory, element);
-                if (condition == null || condition.evaluate(event, context))
+                if (operationPerform != null)
                 {
-                    operation.perform(event, context);
+                    operationPerform.perform(event, context);
                 }
             }
-            getPayloadManager().removeCurrentPayload(factory);
-            factory.pop();
+            else if (condition != null)
+            {
+                if (operationOtherwise != null)
+                {
+                    operationOtherwise.perform(event, context);
+                }
+            }
         }
+        getPayloadManager().removeCurrentPayload(factory);
+        factory.pop();
+    }
+
+    @Override
+    public List<Operation> getOperations()
+    {
+        return Arrays.asList(operationPerform, operationOtherwise);
     }
 }

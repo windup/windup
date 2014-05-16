@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("JarManifestMeta")
+@TypeValue("JarManifestMeta") 
 public interface JarManifestModel extends ResourceModel
 {
 
@@ -41,9 +41,11 @@ public interface JarManifestModel extends ResourceModel
     @JavaHandler
     public Set<String> keySet();
 
+    @Override
     @JavaHandler
     public InputStream asInputStream() throws RuntimeException;
 
+    @Override
     @JavaHandler
     public File asFile() throws RuntimeException;
 
