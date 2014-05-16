@@ -6,7 +6,7 @@ import org.jboss.loom.ex.MigrationException;
 /**
  *  Simple WindRide addon service - takes the WindRide arguments as input.
  */
-public interface IWindRideService 
+public interface WindRideService 
 {
     public void doMigration( Configuration conf ) throws MigrationException;
     
