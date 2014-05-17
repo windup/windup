@@ -6,27 +6,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * 
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class JadDecompilerTest extends IDecompilerTestBase {
-    private static final Logger log = LoggerFactory.getLogger( JadDecompilerTest.class );
-    
+public class JadDecompilerTest extends IDecompilerTestBase
+{
+    private static final Logger log = LoggerFactory.getLogger(JadDecompilerTest.class);
+
     @Override
-    protected DecompilationConf createConf() {
+    protected DecompilationConf createConf()
+    {
         return new JadConf();
     }
 
-
     @Override
-    protected IDecompiler.Jar getDecompiler() {
+    protected Decompiler.Jar getDecompiler()
+    {
         return new JadRetroDecompiler();
     }
 
-
     @Override
-    protected boolean isTestFailedOverExpectations( JarDecompilationResults res ) {
-        return ( res.getFailed().size() > 25 );
+    protected boolean isTestFailedOverExpectations(JarDecompilationResults res)
+    {
+        return (res.getFailed().size() > 25);
     }
 
 }// class
