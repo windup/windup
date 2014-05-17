@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class ProcyonDecompilerTest extends IDecompilerTestBase {
+public class ProcyonDecompilerTest extends DecompilerTestBase {
     private static final Logger log = LoggerFactory.getLogger( ProcyonDecompilerTest.class );
     
     @Override

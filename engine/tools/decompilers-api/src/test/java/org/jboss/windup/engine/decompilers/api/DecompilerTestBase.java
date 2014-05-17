@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 //@RunWith(Arquillian.class) // Arquillian doesn't run @Before methods?? ARQ-1070
-public abstract class IDecompilerTestBase {
+public abstract class DecompilerTestBase {
     private final Logger log = LoggerFactory.getLogger( this.getClass() );
     
     private File destDir;

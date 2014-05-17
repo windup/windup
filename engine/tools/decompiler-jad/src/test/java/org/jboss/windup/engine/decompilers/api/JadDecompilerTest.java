@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class JadDecompilerTest extends IDecompilerTestBase
+public class JadDecompilerTest extends DecompilerTestBase
 {
     private static final Logger log = LoggerFactory.getLogger(JadDecompilerTest.class);
 
