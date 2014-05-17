@@ -80,7 +80,7 @@
         <dependency>
             <groupId>org.benf.cfr</groupId>
             <artifactId>cfr-decompiler</artifactId>
-            <version>0.78</version>
+            <version>0.79</version>
         </dependency>
         
         
