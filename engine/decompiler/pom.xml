@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jboss.windup.engine</groupId>
+        <artifactId>windup-engine-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.jboss.windup.engine</groupId>
+    <artifactId>decompiler</artifactId>
+    <packaging>pom</packaging>
+    
+    <name>Windup Engine - Decompiler</name>
+    
+
+    <modules>
+        <module>decompiler-api</module>
+        <module>decompiler-procyon</module>
+	<!--
+		(jsightler) - 2014/05/14 - Commenting out as this is hanging the build for me at the moment
+        <module>decompiler-jad</module> 
+	-->
+        <!--
+        <module>decompiler-cfr</module>
+        Currently unusable - no API for CFR, but let's keep it for now in case it improves.
+        -->
+    </modules>
+    
+</project>

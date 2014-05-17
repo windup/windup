@@ -20,7 +20,7 @@ public class CfrDecompilerTest extends DecompilerTestBase
     }
 
     @Override
-    protected IDecompiler.Jar getDecompiler()
+    protected Decompiler.Jar getDecompiler()
     {
         return new CfrDecompiler();
     }

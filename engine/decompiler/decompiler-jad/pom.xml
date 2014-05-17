@@ -74,7 +74,7 @@
         <!-- Project deps -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>decompilers-api</artifactId>
+            <artifactId>decompiler-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         
@@ -105,7 +105,7 @@
         
         <dependency>
             <groupId>org.jboss.windup.engine</groupId>
-            <artifactId>decompilers-api</artifactId>
+            <artifactId>decompiler-api</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
