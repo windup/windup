@@ -57,7 +57,7 @@ public abstract class IDecompilerTestBase {
 
 
     @Test
-    public void testDecompileWicketJar() throws DecompilationEx {
+    public void testDecompileWicketJar() throws DecompilationException {
         
         DecompilationConf decConf = this.createConf();
 
@@ -72,7 +72,7 @@ public abstract class IDecompilerTestBase {
             // Build the report text.
             StringBuilder sb = new StringBuilder();
             sb.append("Failed decompilation of " + res.getFailed().size() + " classes: ");
-            for( DecompilationEx dex : res.getFailed() ) {
+            for( DecompilationException dex : res.getFailed() ) {
                 sb.append("\n    ").append( dex.getMessage() );
             }
             

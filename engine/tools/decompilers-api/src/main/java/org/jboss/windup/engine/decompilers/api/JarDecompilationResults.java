@@ -15,19 +15,19 @@ public class JarDecompilationResults {
 
     private int decompiledCount = 0;
     
-    private List<DecompilationPathEx> failed = new LinkedList();
+    private List<DecompilationPathException> failed = new LinkedList();
 
     
     public void addDecompiled( String path ){
         this.decompiledCount++;
     }
     
-    public void addFailed( DecompilationPathEx ex ){
+    public void addFailed( DecompilationPathException ex ){
         this.failed.add( ex );
     }
     
 
-    public List<DecompilationPathEx> getFailed() {
+    public List<DecompilationPathException> getFailed() {
         return Collections.unmodifiableList( this.failed );
     }
 

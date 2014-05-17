@@ -25,8 +25,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.decompilers.api.DecompilationConf;
-import org.jboss.windup.engine.decompilers.api.DecompilationEx;
-import org.jboss.windup.engine.decompilers.api.DecompilationPathEx;
+import org.jboss.windup.engine.decompilers.api.DecompilationException;
+import org.jboss.windup.engine.decompilers.api.DecompilationPathException;
 import org.jboss.windup.engine.decompilers.api.IDecompiler;
 import org.jboss.windup.engine.decompilers.api.JarDecompilationResults;
 import org.slf4j.Logger;
@@ -137,27 +137,27 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
      *  Extracts the archive and decompiles all .class files found.
      */
     @Override
-    public JarDecompilationResults decompileJar( File jarFile, File destDir, DecompilationConf conf_ ) throws DecompilationEx {
+    public JarDecompilationResults decompileJar( File jarFile, File destDir, DecompilationConf conf_ ) throws DecompilationException {
         
         log.info("Decompiling .jar '" + jarFile.getPath() + "' to '" + destDir + "'...");
         
         
         // Verify input.
         if( jarFile == null )
-            throw new DecompilationEx("Param jarFile is null.");
+            throw new DecompilationException("Param jarFile is null.");
         if( destDir == null )
-            throw new DecompilationEx("Param destDir is null.");
+            throw new DecompilationException("Param destDir is null.");
         if( ! jarFile.exists() )
-            throw new DecompilationEx(".jar file not found: " + jarFile.getPath());
+            throw new DecompilationException(".jar file not found: " + jarFile.getPath());
         if( destDir.exists() && ! destDir.isDirectory() )
-            throw new DecompilationEx("Destination path is not a directory: " + destDir.getAbsolutePath() );
+            throw new DecompilationException("Destination path is not a directory: " + destDir.getAbsolutePath() );
             
         // Load the .jar
         final JarFile jar;
         try {
             jar = new JarFile(jarFile);
         } catch( IOException ex ) {
-            throw new DecompilationEx("Can't load .jar: " + jarFile.getPath(), ex);
+            throw new DecompilationException("Can't load .jar: " + jarFile.getPath(), ex);
         }
 
         // Settings
@@ -210,7 +210,7 @@ public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecomp
             }
             catch(Throwable th) {
                 String msg = "Error during decompilation of " + jarFile.getPath() + "!" + name + ":\n    " + th.getMessage();
-                DecompilationPathEx ex = new DecompilationPathEx( msg, name, th );
+                DecompilationPathException ex = new DecompilationPathException( msg, name, th );
                 log.error(msg, ex);
                 res.addFailed( ex );
             }

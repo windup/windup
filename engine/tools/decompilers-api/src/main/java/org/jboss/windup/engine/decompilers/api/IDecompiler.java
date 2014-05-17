@@ -23,7 +23,7 @@ public interface IDecompiler {
          * @param srcDir
          * @param destDir  Where to put the decompiled .java files.
          */
-        public void decompileClassFile( File srcClassFile, File destFile, DecompilationConf conf ) throws DecompilationEx;
+        public void decompileClassFile( File srcClassFile, File destFile, DecompilationConf conf ) throws DecompilationException;
     }
 
     public static interface Jar {
@@ -35,7 +35,7 @@ public interface IDecompiler {
          *      Sources from archives will be put into the same named directories, e.g.
          *          foo.ear/bar.jar/src/com/foo/bar/Baz.java
          */
-        public JarDecompilationResults decompileJar( File srcJar, File destDir, DecompilationConf conf  ) throws DecompilationEx;
+        public JarDecompilationResults decompileJar( File srcJar, File destDir, DecompilationConf conf  ) throws DecompilationException;
     }
     
     public static interface Dir {
@@ -47,7 +47,7 @@ public interface IDecompiler {
          *      Sources from archives will be put into the same named directories, e.g.
          *          foo.ear/bar.jar/src/com/foo/bar/Baz.java
          */
-        public void decompileDir( File srcDir, File destDir, DecompilationConf conf ) throws DecompilationEx;
+        public void decompileDir( File srcDir, File destDir, DecompilationConf conf ) throws DecompilationException;
         
     }
     
