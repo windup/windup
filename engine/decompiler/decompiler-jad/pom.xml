@@ -12,7 +12,7 @@
     <artifactId>decompiler-jad</artifactId>
     <packaging>jar</packaging>
     
-    <name>Windup Decompiler - Jad</name>
+    <name>Windup Engine - Decompiler JAD</name>
     
     <build>
         <resources>

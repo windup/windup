@@ -12,7 +12,7 @@
     <artifactId>decompiler-api</artifactId>
     <packaging>jar</packaging>
     
-    <name>Windup Decompiler API</name>
+    <name>Windup Engine - Decompiler API</name>
     
     <build>
         <resources>

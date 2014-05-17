@@ -12,7 +12,7 @@
     <artifactId>decompiler-procyon</artifactId>
     <packaging>jar</packaging>
     
-    <name>Windup Decompiler - Procyon</name>
+    <name>Windup Engine - Decompiler Procyon</name>
     
     <build>
         <resources>
