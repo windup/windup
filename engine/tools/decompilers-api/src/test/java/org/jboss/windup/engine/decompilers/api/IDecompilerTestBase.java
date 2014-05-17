@@ -27,7 +27,7 @@ public abstract class IDecompilerTestBase {
     protected abstract DecompilationConf createConf();
 
     // Override to return the tested compiler.
-    protected abstract IDecompiler.Jar getDecompiler();
+    protected abstract Decompiler.Jar getDecompiler();
     
     // Override to determine whether the results are too bad.
     protected abstract boolean isTestFailedOverExpectations( JarDecompilationResults res );
@@ -61,7 +61,7 @@ public abstract class IDecompilerTestBase {
         
         DecompilationConf decConf = this.createConf();
 
-        IDecompiler.Jar dec = this.getDecompiler();
+        Decompiler.Jar dec = this.getDecompiler();
         JarDecompilationResults res = dec.decompileJar( new File("target/TestJars/wicket-core-6.11.0.jar"), this.destDir, decConf);
         
         Assert.assertNotNull( "Results object returned", res );

@@ -6,7 +6,7 @@ import java.io.File;
  * A set of interfaces to decompile .class files, archives, or directories with mix of those.
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public interface IDecompiler {
+public interface Decompiler {
     
     
     public static interface Conf<T extends DecompilationConf> {

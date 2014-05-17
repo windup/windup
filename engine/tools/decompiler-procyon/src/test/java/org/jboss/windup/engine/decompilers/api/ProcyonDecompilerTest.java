@@ -19,7 +19,7 @@ public class ProcyonDecompilerTest extends IDecompilerTestBase {
 
 
     @Override
-    protected IDecompiler.Jar getDecompiler() {
+    protected Decompiler.Jar getDecompiler() {
         return new ProcyonDecompiler();
     }
 

@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.engine.decompilers.api.DecompilationConf;
 import org.jboss.windup.engine.decompilers.api.DecompilationException;
 import org.jboss.windup.engine.decompilers.api.DecompilationPathException;
-import org.jboss.windup.engine.decompilers.api.IDecompiler;
+import org.jboss.windup.engine.decompilers.api.Decompiler;
 import org.jboss.windup.engine.decompilers.api.JarDecompilationResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * 
  *  @author Ondrej Zizka, ozizka at redhat.com
  */
-public class ProcyonDecompiler implements IDecompiler.Conf<ProcyonConf>, IDecompiler.Jar {
+public class ProcyonDecompiler implements Decompiler.Conf<ProcyonConf>, Decompiler.Jar {
     private static final Logger log = LoggerFactory.getLogger( ProcyonDecompiler.class );
     
     
