@@ -21,10 +21,15 @@ This project has an agreed apon source format style documented via an Eclipse co
 
 To install an alpha release of Windup, simply take the following steps:
 
-1. Install Forge 2 from:
+1. Configure your Maven settings to use the JBoss Nexus community repository: 
+http://repository.jboss.org/nexus/content/groups/public/. 
+If you are new to Maven, details on how to configure Maven can be found here: 
+https://community.jboss.org/wiki/MavenGettingStarted-Users.
+
+2. Install Forge 2 from:
 https://github.com/forge/core#jboss-forge-20
 
-2. Run the `forge` cli or Eclipse plugin with `CTRL+4`
+3. Run the `forge` cli or Eclipse plugin with `CTRL+4`
 +
 [source,text]
 ----
@@ -38,14 +43,14 @@ localhost:Desktop user$ forge
 JBoss Forge, version [ 2.4.2-SNAPSHOT ] - JBoss, by Red Hat, Inc. [ http://forge.jboss.org ]
 ----
 
-3. Run "addon-install" with the following parameters:
+4. Run "addon-install" with the following parameters:
 +
 [source,text]
 ----
 [bin]$ addon-install --groupId org.jboss.windup.legacy.application --name legacy-windup --version 2.0.0.Alpha1
 ----
 
-4. Run windup-1x via forge. Example:
+5. Run windup-1x via forge. Example:
 +
 [source,text]
 ----
