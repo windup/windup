@@ -9,24 +9,26 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class ProcyonDecompilerTest extends DecompilerTestBase {
-    private static final Logger log = LoggerFactory.getLogger( ProcyonDecompilerTest.class );
-    
+public class ProcyonDecompilerTest extends DecompilerTestBase
+{
+    private static final Logger log = LoggerFactory.getLogger(ProcyonDecompilerTest.class);
+
     @Override
-    protected DecompilationConf createConf() {
+    protected DecompilationConf createConf()
+    {
         return new ProcyonConf();
     }
 
-
     @Override
-    protected Decompiler.Jar getDecompiler() {
+    protected Decompiler.Jar getDecompiler()
+    {
         return new ProcyonDecompiler();
     }
 
-
     @Override
-    protected boolean isTestFailedOverExpectations( JarDecompilationResults res ) {
-        return ( res.getFailed().size() > 1 );
+    protected boolean isTestFailedOverExpectations(JarDecompilationResults res)
+    {
+        return (res.getFailed().size() > 1);
     }
 
 }// class
