@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/90" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<security-role-assignment>
+		<role-name>WebRunAsRole</role-name>
+		<principal-name>Admin</principal-name>
+	</security-role-assignment>
+	<run-as-role-assignment>
+		<role-name>WebRunAsRole</role-name>
+		<run-as-principal-name>Admin</run-as-principal-name>
+	</run-as-role-assignment>
+	<context-root>jee-example-web</context-root>
+</weblogic-web-app>

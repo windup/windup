@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<!-- See https://docs.jboss.org/author/display/WFLY8/jboss-ejb3.xml+Reference -->
+<jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
+               xmlns="http://java.sun.com/xml/ns/javaee"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:c="urn:clustering:1.0"
+               xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
+               version="3.1"
+               impl-version="2.0">
+
+    <assembly-descriptor>
+        <s:security>
+          <ejb-name>*</ejb-name>
+          <s:run-as-principal>Admin</s:run-as-principal>
+        </s:security>
+    </assembly-descriptor>
+    
+</jboss:ejb-jar>

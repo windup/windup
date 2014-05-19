@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,5 +96,44 @@ public abstract class DecompilerTestBase
         final File oneDestFile = new File(this.destDir, subPath);
         Assert.assertTrue("Decompiled class files exist:\n    " + oneDestFile.getAbsolutePath(), oneDestFile.exists());
     }
+    
+    
+    /* Have to comment out - JUnit doen't follow @Ignore in subclasses?
+    @Test @Ignore("No weblogic war yet")
+    public void testDecompileWar() throws DecompilationException {
+        
+        DecompilationConf decConf = this.createConf();
+
+        Decompiler.Jar dec = this.getDecompiler();
+        JarDecompilationResults res = dec.decompileJar( new File("target/TestJars/weblogic-sample.war"), this.destDir, decConf);
+        
+        Assert.assertNotNull( "Results object returned", res );
+        
+        // Some classes failed?
+        if( ! res.getFailed().isEmpty() ){
+            
+            // Build the report text.
+            StringBuilder sb = new StringBuilder();
+            sb.append("Failed decompilation of " + res.getFailed().size() + " classes: ");
+            for( DecompilationException dex : res.getFailed() ) {
+                sb.append("\n    ").append( dex.getMessage() );
+            }
+            
+            // Some of the classes fail with various compilers.
+            // The test may determine whether it's over limit or not.
+            if( this.isTestFailedOverExpectations( res ) )
+                Assert.fail( sb.toString() );
+            else
+                log.error( sb.toString() );
+        }
+        log.info("Compilation results: {} succeeded, {} failed.", res.getDecompiledCount(), res.getFailed().size() );
+        
+
+        final String subPath = "org/apache/wicket/model/LoadableDetachableModel.java";
+        
+        final File oneDestFile = new File( this.destDir, subPath);
+        Assert.assertTrue("Decompiled class files exist:\n    "+ oneDestFile.getAbsolutePath(), oneDestFile.exists() );
+    }
+    */
 
 }// class

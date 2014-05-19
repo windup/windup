@@ -41,6 +41,7 @@
         <module>engine</module>
         <module>legacy</module>
         <module>addons</module>
+        <module>sample-apps</module>
     </modules>
 
     <build>

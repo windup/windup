@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-application xmlns="http://www.bea.com/ns/weblogic/90">
+
+    <!-- Moved to LogEventSubscriber
+	<module>
+		<name>LogEventQueue</name>
+		<type>JMS</type>
+		<path>LogEventQueue-jms.xml</path>
+	</module>
+    -->
+    
+</weblogic-application>

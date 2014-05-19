@@ -2,12 +2,16 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
+    
     <groupId>com.jboss.windup.test</groupId>
     <artifactId>windup-regression-test</artifactId>
-    <packaging>pom</packaging>
-    <name>parent</name>
     <version>1.0-SNAPSHOT</version>
-    <description/>
+    <packaging>pom</packaging>
+    
+    <name>Windup Regression test</name>
+    
+    <description>The original Windup sample apps.</description>
+    
     <modules>
         <module>windup-regression-ejb1</module>
         <module>windup-regression-ejb3</module>
@@ -40,11 +44,12 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.14</version>
+                <version>1.2.17</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+    
     <build>
         <plugins>
             <plugin>
@@ -68,6 +73,8 @@
             </plugins>
         </pluginManagement>
     </build>
+    
+    
     <repositories>
         <repository>
             <id>jboss-public-repository-group</id>
@@ -84,4 +91,5 @@
             </snapshots>
         </repository>
     </repositories>
+    
 </project>
