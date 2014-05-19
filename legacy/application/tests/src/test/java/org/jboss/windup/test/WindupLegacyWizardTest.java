@@ -21,14 +21,14 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.WindupService;
-import org.jboss.windup.impl.ui.WindupWizard;
+import org.jboss.windup.WindupLegacyService;
+import org.jboss.windup.impl.ui.WindupLegacyWizard;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupWizardTest
+public class WindupLegacyWizardTest
 {
     private static final String SAMPLE_FILE_DATA = "<?xml version=\"1.0\"?>\n<test></test>";
 
@@ -42,7 +42,7 @@ public class WindupWizardTest
         ForgeArchive archive = ShrinkWrap
                     .create(ForgeArchive.class)
                     .addBeansXML()
-                    .addAsResource(WindupWizardTest.class.getResource("/test.jar"), "/test.jar")
+                    .addAsResource(WindupLegacyWizardTest.class.getResource("/test.jar"), "/test.jar")
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                 AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
@@ -56,14 +56,14 @@ public class WindupWizardTest
     private UITestHarness uiTestHarness;
 
     @Inject
-    private WindupService windupService;
+    private WindupLegacyService windupService;
 
     @Test
     public void testNewMigration() throws Exception
     {
         Assert.assertNotNull(windupService);
         Assert.assertNotNull(uiTestHarness);
-        try (WizardCommandController controller = uiTestHarness.createWizardController(WindupWizard.class))
+        try (WizardCommandController controller = uiTestHarness.createWizardController(WindupLegacyWizard.class))
         {
             File inputFile = File.createTempFile("windupwizardtest", "jar");
             inputFile.deleteOnExit();

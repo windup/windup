@@ -30,17 +30,17 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.windup.WindupEnvironment;
-import org.jboss.windup.WindupService;
+import org.jboss.windup.WindupLegacyService;
 import org.jboss.windup.engine.util.SharedProperties;
 
-public class WindupWizard implements UIWizard, UICommand
+public class WindupLegacyWizard implements UIWizard, UICommand
 {
     private static final String KEY_SUPPLEMENTAL_RULES_DIRECTORY = "WindupWizard.supplementalRulesDirectory";
     
-    private static Logger log = Logger.getLogger(WindupWizard.class.getName());
+    private static Logger log = Logger.getLogger(WindupLegacyWizard.class.getName());
 
     @Inject
-    private WindupService windup;
+    private WindupLegacyService windup;
 
     @Inject
     private AddonRegistry registry;

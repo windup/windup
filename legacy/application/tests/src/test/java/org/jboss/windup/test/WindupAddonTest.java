@@ -16,7 +16,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.WindupService;
+import org.jboss.windup.WindupLegacyService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +42,7 @@ public class WindupAddonTest
     }
 
     @Inject
-    private WindupService windup;
+    private WindupLegacyService windup;
 
     @Test
     public void testWindupServiceInjectionNotNull()
