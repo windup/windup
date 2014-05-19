@@ -7,19 +7,21 @@
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
+    
     <groupId>org.jboss.windup.addon</groupId>
     <artifactId>graph-parent</artifactId>
+    <packaging>pom</packaging>
     
     <name>Windup Engine - Graph Parent</name>
     
-    <packaging>pom</packaging>
+    
     <modules>
         <module>addon</module>
         <module>api</module>
         <module>impl</module>
-        <module>spi</module>
         <module>tests</module>
     </modules>
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -46,8 +48,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <build>
-        <plugins>
-        </plugins>
-    </build>
+    
 </project>
