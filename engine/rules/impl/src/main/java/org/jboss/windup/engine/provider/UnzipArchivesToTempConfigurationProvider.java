@@ -6,6 +6,7 @@ import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.addon.config.operation.Iteration;
+import org.jboss.windup.addon.config.operation.ruleelement.ProcyonDecompilerOperation;
 import org.jboss.windup.addon.config.operation.ruleelement.UnzipArchiveToTemporaryFolder;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -40,8 +41,11 @@ public class UnzipArchivesToTempConfigurationProvider extends WindupConfiguratio
                     .perform(
                                 Iteration.over("inputArchives").var(FileResourceModel.class, "archive")
                                             .perform(
-                                                        UnzipArchiveToTemporaryFolder.unzip("archive")
-                                            ).endIteration()
+                                                        UnzipArchiveToTemporaryFolder
+                                                                    .unzip("archive")
+                                                                    .and(new ProcyonDecompilerOperation("archive"))
+                                            )
+                                            .endIteration()
                     );
 
     }
