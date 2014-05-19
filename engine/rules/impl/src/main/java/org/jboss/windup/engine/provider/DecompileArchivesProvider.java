@@ -6,13 +6,13 @@ import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.addon.config.operation.Iteration;
-import org.jboss.windup.addon.config.operation.ruleelement.UnzipArchiveToTemporaryFolder;
+import org.jboss.windup.addon.config.operation.ruleelement.ProcyonDecompilerOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class UnzipArchivesToTempConfigurationProvider extends WindupConfigurationProvider
+public class DecompileArchivesProvider extends WindupConfigurationProvider
 {
     @Override
     public RulePhase getPhase()
@@ -23,7 +23,7 @@ public class UnzipArchivesToTempConfigurationProvider extends WindupConfiguratio
     @Override
     public List<Class<? extends WindupConfigurationProvider>> getDependencies()
     {
-        return generateDependencies(FileScannerWindupConfigurationProvider.class);
+        return generateDependencies(UnzipArchivesToTempConfigurationProvider.class);
     }
 
     @Override
@@ -32,18 +32,17 @@ public class UnzipArchivesToTempConfigurationProvider extends WindupConfiguratio
         return ConfigurationBuilder
                     .begin()
                     .addRule()
-                    .when(GraphSearchConditionBuilder
-                                .create("inputArchives")
-                                .ofType(ArchiveModel.class)
-                    )
-                    .perform(
-                                Iteration.over("inputArchives").var(ArchiveModel.class, "archive")
+                    .when(
+                                GraphSearchConditionBuilder
+                                            .create("allUnzippedArchives")
+                                            .ofType(ArchiveModel.class)
+                    ).perform(
+                                Iteration.over("allUnzippedArchives").var(ArchiveModel.class, "archive")
                                             .perform(
-                                                        UnzipArchiveToTemporaryFolder
-                                                                    .unzip("archive")
-                                            )
-                                            .endIteration()
+                                                        new ProcyonDecompilerOperation("archive")
+                                            ).endIteration()
                     );
 
     }
+
 }

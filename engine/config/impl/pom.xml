@@ -47,13 +47,6 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        
-        <dependency>
-            <groupId>org.jboss.windup.engine</groupId>
-            <artifactId>decompiler-api</artifactId>
-            <scope>provided</scope>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.jboss.windup.engine</groupId>
             <artifactId>decompiler-procyon</artifactId>

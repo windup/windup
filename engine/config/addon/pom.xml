@@ -67,6 +67,13 @@
             <artifactId>config-spi</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.engine</groupId>
+            <artifactId>decompiler-procyon</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
     
 </project>
