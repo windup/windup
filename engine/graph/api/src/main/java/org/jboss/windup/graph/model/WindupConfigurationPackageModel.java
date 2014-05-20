@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.ui;
+package org.jboss.windup.graph.model;
 
 import org.jboss.windup.graph.model.meta.WindupVertexFrame;
 
@@ -6,7 +6,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("WindupServiceConfigurationPackageModel")
-public interface WindupServiceConfigurationPackageModel extends WindupVertexFrame
+public interface WindupConfigurationPackageModel extends WindupVertexFrame
 {
     @Property("packageName")
     public String getPackageName();

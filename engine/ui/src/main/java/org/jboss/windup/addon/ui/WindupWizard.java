@@ -24,6 +24,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 
 public class WindupWizard implements UIWizard, UICommand
 {
@@ -79,7 +80,7 @@ public class WindupWizard implements UIWizard, UICommand
         boolean fetchRemote = this.fetchRemote.getValue();
         boolean sourceMode = this.sourceMode.getValue();
 
-        WindupServiceConfigurationModel cfg = windupService.createServiceConfiguration();
+        WindupConfigurationModel cfg = windupService.createServiceConfiguration();
         cfg.setInputPath(inputFile.getAbsolutePath());
         cfg.setOutputPath(outputFile.getAbsolutePath());
         cfg.setInputPath(inputFile.getAbsolutePath());

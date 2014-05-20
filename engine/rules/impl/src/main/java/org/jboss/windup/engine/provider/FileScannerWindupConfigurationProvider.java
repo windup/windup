@@ -1,5 +1,7 @@
 package org.jboss.windup.engine.provider;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.windup.addon.config.RulePhase;
@@ -25,6 +27,12 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public List<Class<? extends WindupConfigurationProvider>> getDependencies()
+    {
+        return generateDependencies(CreateInputFileConfigurationProvider.class);
     }
 
     @Override

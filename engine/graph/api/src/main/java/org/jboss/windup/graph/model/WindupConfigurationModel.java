@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.ui;
+package org.jboss.windup.graph.model;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("WindupServiceConfiguration")
-public interface WindupServiceConfigurationModel extends WindupVertexFrame
+public interface WindupConfigurationModel extends WindupVertexFrame
 {
     @Property("inputPath")
     String getInputPath();
@@ -28,22 +28,22 @@ public interface WindupServiceConfigurationModel extends WindupVertexFrame
     void setOutputPath(String outputPath);
 
     @Adjacency(label = "scanJavaPackages", direction = Direction.OUT)
-    Iterable<WindupServiceConfigurationPackageModel> getScanJavaPackages();
+    Iterable<WindupConfigurationPackageModel> getScanJavaPackages();
 
     @Adjacency(label = "scanJavaPackages", direction = Direction.OUT)
-    void addScanJavaPackages(WindupServiceConfigurationPackageModel scanJavaPackage);
+    void addScanJavaPackages(WindupConfigurationPackageModel scanJavaPackage);
 
     @Adjacency(label = "scanJavaPackages", direction = Direction.OUT)
-    void setScanJavaPackages(Iterable<WindupServiceConfigurationPackageModel> scanJavaPackage);
+    void setScanJavaPackages(Iterable<WindupConfigurationPackageModel> scanJavaPackage);
 
     @Adjacency(label = "excludeJavaPackages", direction = Direction.OUT)
-    Iterable<WindupServiceConfigurationPackageModel> getExcludeJavaPackages();
+    Iterable<WindupConfigurationPackageModel> getExcludeJavaPackages();
 
     @Adjacency(label = "excludeJavaPackages", direction = Direction.OUT)
-    void addExcludeJavaPackage(WindupServiceConfigurationPackageModel scanJavaPackage);
+    void addExcludeJavaPackage(WindupConfigurationPackageModel scanJavaPackage);
 
     @Adjacency(label = "excludeJavaPackages", direction = Direction.OUT)
-    void setExcludeJavaPackages(Iterable<WindupServiceConfigurationPackageModel> scanJavaPackage);
+    void setExcludeJavaPackages(Iterable<WindupConfigurationPackageModel> scanJavaPackage);
 
     @JavaHandler
     void setScanJavaPackageList(Iterable<String> pkgs);
@@ -63,17 +63,17 @@ public interface WindupServiceConfigurationModel extends WindupVertexFrame
     @Property("sourceMode")
     void setSourceMode(boolean sourceMode);
 
-    abstract class Impl implements WindupServiceConfigurationModel, JavaHandlerContext<Vertex>
+    abstract class Impl implements WindupConfigurationModel, JavaHandlerContext<Vertex>
     {
         public void setScanJavaPackageList(Iterable<String> pkgs)
         {
-            setScanJavaPackages(new ArrayList<WindupServiceConfigurationPackageModel>());
+            setScanJavaPackages(new ArrayList<WindupConfigurationPackageModel>());
             if (pkgs != null)
             {
                 for (String pkg : pkgs)
                 {
-                    WindupServiceConfigurationPackageModel m = g().addVertex(null,
-                                WindupServiceConfigurationPackageModel.class);
+                    WindupConfigurationPackageModel m = g().addVertex(null,
+                                WindupConfigurationPackageModel.class);
                     m.setPackageName(pkg);
                     addScanJavaPackages(m);
                 }
@@ -82,13 +82,13 @@ public interface WindupServiceConfigurationModel extends WindupVertexFrame
 
         public void setExcludeJavaPackageList(Iterable<String> pkgs)
         {
-            setExcludeJavaPackages(new ArrayList<WindupServiceConfigurationPackageModel>());
+            setExcludeJavaPackages(new ArrayList<WindupConfigurationPackageModel>());
             if (pkgs != null)
             {
                 for (String pkg : pkgs)
                 {
-                    WindupServiceConfigurationPackageModel m = g().addVertex(null,
-                                WindupServiceConfigurationPackageModel.class);
+                    WindupConfigurationPackageModel m = g().addVertex(null,
+                                WindupConfigurationPackageModel.class);
                     m.setPackageName(pkg);
                     addExcludeJavaPackage(m);
                 }

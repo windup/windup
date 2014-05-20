@@ -1,10 +1,12 @@
 package org.jboss.windup.addon.ui;
 
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+
 public interface WindupService
 {
 
-    public WindupServiceConfigurationModel createServiceConfiguration();
+    public WindupConfigurationModel createServiceConfiguration();
 
-    public void execute(WindupServiceConfigurationModel cfg);
+    public void execute(WindupConfigurationModel cfg);
 
 }
