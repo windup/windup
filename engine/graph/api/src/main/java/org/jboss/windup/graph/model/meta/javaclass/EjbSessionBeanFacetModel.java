@@ -1,8 +1,5 @@
 package org.jboss.windup.graph.model.meta.javaclass;
 
-import java.util.Iterator;
-
-import org.jboss.windup.graph.model.meta.BaseMetaModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.renderer.Label;
 
@@ -12,67 +9,62 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("EJBSessionBean")
-public interface EjbSessionBeanFacetModel extends JavaClassMetaFacetModel {
+public interface EjbSessionBeanFacetModel extends JavaClassMetaModel
+{
 
-	@Label
-	@Property("ejbSessionBeanName")
-	public String getSessionBeanName();
+    @Label
+    @Property("ejbSessionBeanName")
+    public String getSessionBeanName();
 
-	@Property("ejbSessionBeanName")
-	public void setSessionBeanName(String ejbSessionBeanName);
+    @Property("ejbSessionBeanName")
+    public void setSessionBeanName(String ejbSessionBeanName);
 
-	@Property("sessionType")
-	public String getSessionType();
+    @Property("sessionType")
+    public String getSessionType();
 
-	@Property("sessionType")
-	public void setSessionType(String sessionType);
-	
-	@Property("transactionType")
-	public String getTransactionType();
+    @Property("sessionType")
+    public void setSessionType(String sessionType);
 
-	@Property("transactionType")
-	public void setTransactionType(String transactionType);
-	
-	@Property("displayName")
-	public String getDisplayName();
+    @Property("transactionType")
+    public String getTransactionType();
 
-	@Property("displayName")
-	public void setDisplayName(String displayName);
-	
-	@Property("ejbId")
-	public String getEjbId();
+    @Property("transactionType")
+    public void setTransactionType(String transactionType);
 
-	@Property("ejbId")
-	public void setEjbId(String id);
-	
-	@Adjacency(label = "ejbLocal", direction = Direction.OUT)
-	public void setEjbLocal(JavaClassModel ejbLocal);
+    @Property("displayName")
+    public String getDisplayName();
 
-	@Adjacency(label = "ejbLocal", direction = Direction.OUT)
-	public JavaClassModel getEjbLocal();
-	
-	@Adjacency(label = "ejbRemote", direction = Direction.OUT)
-	public void setEjbRemote(JavaClassModel ejbRemote);
+    @Property("displayName")
+    public void setDisplayName(String displayName);
 
-	@Adjacency(label = "ejbRemote", direction = Direction.OUT)
-	public JavaClassModel getEjbRemote();
-	
-	@Adjacency(label = "ejbLocalHome", direction = Direction.OUT)
-	public void setEjbLocalHome(JavaClassModel ejbLocalHome);
+    @Property("ejbId")
+    public String getEjbId();
 
-	@Adjacency(label = "ejbLocalHome", direction = Direction.OUT)
-	public JavaClassModel getEjbLocalHome();
-	
-	@Adjacency(label = "ejbHome", direction = Direction.OUT)
-	public void setEjbHome(JavaClassModel ejbHome);
+    @Property("ejbId")
+    public void setEjbId(String id);
 
-	@Adjacency(label = "ejbHome", direction = Direction.OUT)
-	public JavaClassModel getEjbHome();
-	
+    @Adjacency(label = "ejbLocal", direction = Direction.OUT)
+    public void setEjbLocal(JavaClassModel ejbLocal);
 
-	@Adjacency(label="meta", direction=Direction.OUT)
-	public Iterator<BaseMetaModel> getMeta();
-	
-	@Adjacency(label="meta", direction=Direction.OUT)
-	public void addMeta(final BaseMetaModel resource);
+    @Adjacency(label = "ejbLocal", direction = Direction.OUT)
+    public JavaClassModel getEjbLocal();
+
+    @Adjacency(label = "ejbRemote", direction = Direction.OUT)
+    public void setEjbRemote(JavaClassModel ejbRemote);
+
+    @Adjacency(label = "ejbRemote", direction = Direction.OUT)
+    public JavaClassModel getEjbRemote();
+
+    @Adjacency(label = "ejbLocalHome", direction = Direction.OUT)
+    public void setEjbLocalHome(JavaClassModel ejbLocalHome);
+
+    @Adjacency(label = "ejbLocalHome", direction = Direction.OUT)
+    public JavaClassModel getEjbLocalHome();
+
+    @Adjacency(label = "ejbHome", direction = Direction.OUT)
+    public void setEjbHome(JavaClassModel ejbHome);
+
+    @Adjacency(label = "ejbHome", direction = Direction.OUT)
+    public JavaClassModel getEjbHome();
+
 }

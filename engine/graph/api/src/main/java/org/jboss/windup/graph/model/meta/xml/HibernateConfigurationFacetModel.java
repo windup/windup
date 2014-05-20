@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import org.jboss.windup.graph.model.meta.HibernateSessionFactoryModel;
+import org.jboss.windup.graph.model.HibernateSessionFactoryModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;

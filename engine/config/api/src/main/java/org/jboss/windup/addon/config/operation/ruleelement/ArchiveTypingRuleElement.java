@@ -6,7 +6,7 @@ import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.EarArchiveModel;
 import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.jboss.windup.graph.model.resource.WarArchiveModel;

@@ -9,7 +9,7 @@ import org.jboss.windup.addon.config.graphsearch.GraphSearchGremlinCriterion;
 import org.jboss.windup.addon.config.operation.Iteration;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.common.util.Assert;
 
 import com.tinkerpop.blueprints.Vertex;

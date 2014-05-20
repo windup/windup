@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model.meta;
+package org.jboss.windup.graph.model;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.VertexFrame;

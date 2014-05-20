@@ -1,7 +1,5 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
-
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 

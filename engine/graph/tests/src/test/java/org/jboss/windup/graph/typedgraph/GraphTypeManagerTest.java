@@ -11,8 +11,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.model.meta.BaseMetaModel;
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,14 +50,15 @@ public class GraphTypeManagerTest
         Assert.assertNotNull(context);
 
         // First, create a base object
-        BaseMetaModel baseMetaModel = context.getFramed().addVertex(null, BaseMetaModel.class);
+        XmlResourceModel initialModelType = context.getFramed().addVertex(null, XmlResourceModel.class);
 
         // Now cast it to an xml object
-        GraphUtil.addTypeToModel(context, baseMetaModel, XmlResourceModel.class);
+        GraphUtil.addTypeToModel(context, initialModelType, MavenFacetModel.class);
 
         // Now reload it as a base meta object (this returns an iterable, but there should only be one result)
         Iterable<Vertex> vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, BaseMetaModel.class.getAnnotation(TypeValue.class).value()).vertices();
+                    .has("type", Text.CONTAINS, XmlResourceModel.class.getAnnotation(TypeValue.class).value())
+                    .vertices();
         int numberFound = 0;
         for (Vertex v : vertices)
         {
@@ -67,8 +68,8 @@ public class GraphTypeManagerTest
             // because the type information is stored in the Vertex, this should include at least the following types:
             // - BaseMetaModel
             // - XmlResourceModel
-            Assert.assertTrue(framed instanceof BaseMetaModel);
             Assert.assertTrue(framed instanceof XmlResourceModel);
+            Assert.assertTrue(framed instanceof MavenFacetModel);
         }
         Assert.assertEquals(1, numberFound);
     }

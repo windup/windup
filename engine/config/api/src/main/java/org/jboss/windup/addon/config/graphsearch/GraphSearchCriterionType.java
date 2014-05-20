@@ -1,6 +1,6 @@
 package org.jboss.windup.addon.config.graphsearch;
 
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.frames.FramedGraphQuery;

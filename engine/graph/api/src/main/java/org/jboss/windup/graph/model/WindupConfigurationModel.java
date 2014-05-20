@@ -2,8 +2,6 @@ package org.jboss.windup.graph.model;
 
 import java.util.ArrayList;
 
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
-
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;

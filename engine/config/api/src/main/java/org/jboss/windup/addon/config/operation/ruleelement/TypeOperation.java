@@ -4,7 +4,7 @@ import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.addon.config.operation.GraphOperation;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class TypeOperation extends AbstractIterationOperator<WindupVertexFrame>

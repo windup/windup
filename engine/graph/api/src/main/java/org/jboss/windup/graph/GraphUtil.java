@@ -3,7 +3,7 @@ package org.jboss.windup.graph;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Vertex;
 

@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model.resource;
 
-import org.jboss.windup.graph.model.meta.BaseMetaModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
@@ -9,7 +9,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("JavaParameter")
-public interface JavaParameterModel extends BaseMetaModel
+public interface JavaParameterModel extends WindupVertexFrame
 {
 
     @Adjacency(label = "methodParameter", direction = Direction.IN)

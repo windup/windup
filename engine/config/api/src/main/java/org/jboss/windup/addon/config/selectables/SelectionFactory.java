@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.addon.config.exception.IllegalTypeArgumentException;
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

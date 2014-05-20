@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model.meta;
+package org.jboss.windup.graph.model;
 
 import java.io.File;
 import java.io.InputStream;
@@ -15,15 +15,15 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("PropertiesMeta") 
-public interface PropertiesMetaModel extends ResourceModel
+@TypeValue("PropertiesModel"
+            + "")
+public interface PropertiesModel extends WindupVertexFrame
 {
+    @Adjacency(label = "propertiesFileResource", direction = Direction.IN)
+    public FileResourceModel getFileResource();
 
-    @Adjacency(label = "propertiesFacet", direction = Direction.IN)
-    public ResourceModel getResource();
-
-    @Adjacency(label = "propertiesFacet", direction = Direction.IN)
-    public void setResource(ResourceModel resource);
+    @Adjacency(label = "propertiesFileResource", direction = Direction.IN)
+    public void setFileResource(FileResourceModel resource);
 
     @JavaHandler
     public String getProperty(String property);
@@ -34,15 +34,13 @@ public interface PropertiesMetaModel extends ResourceModel
     @JavaHandler
     public Set<String> keySet();
 
-    @Override
     @JavaHandler
     public InputStream asInputStream() throws RuntimeException;
 
-    @Override
     @JavaHandler
     public File asFile() throws RuntimeException;
 
-    abstract class Impl implements PropertiesMetaModel, JavaHandlerContext<Vertex>
+    abstract class Impl implements PropertiesModel, JavaHandlerContext<Vertex>
     {
 
         @Override
@@ -50,10 +48,11 @@ public interface PropertiesMetaModel extends ResourceModel
         {
             try
             {
-                ResourceModel underlyingResource = this.getResource();
+                ResourceModel underlyingResource = this.getFileResource();
                 if (underlyingResource instanceof ArchiveEntryResourceModel)
                 {
-                    ArchiveEntryResourceModel resource = frame(underlyingResource.asVertex(), ArchiveEntryResourceModel.class);
+                    ArchiveEntryResourceModel resource = frame(underlyingResource.asVertex(),
+                                ArchiveEntryResourceModel.class);
                     return resource.asInputStream();
                 }
                 else if (underlyingResource instanceof FileResourceModel)
@@ -62,7 +61,7 @@ public interface PropertiesMetaModel extends ResourceModel
                     return resource.asInputStream();
                 }
 
-                return this.getResource().asInputStream();
+                return this.getFileResource().asInputStream();
             }
             catch (Exception e)
             {
@@ -75,10 +74,11 @@ public interface PropertiesMetaModel extends ResourceModel
         {
             try
             {
-                ResourceModel underlyingResource = this.getResource();
+                ResourceModel underlyingResource = this.getFileResource();
                 if (underlyingResource instanceof ArchiveEntryResourceModel)
                 {
-                    ArchiveEntryResourceModel resource = frame(underlyingResource.asVertex(), ArchiveEntryResourceModel.class);
+                    ArchiveEntryResourceModel resource = frame(underlyingResource.asVertex(),
+                                ArchiveEntryResourceModel.class);
                     return resource.asFile();
                 }
                 else if (underlyingResource instanceof FileResourceModel)
@@ -86,7 +86,7 @@ public interface PropertiesMetaModel extends ResourceModel
                     FileResourceModel resource = frame(underlyingResource.asVertex(), FileResourceModel.class);
                     return resource.asFile();
                 }
-                return this.getResource().asFile();
+                return this.getFileResource().asFile();
             }
             catch (Exception e)
             {

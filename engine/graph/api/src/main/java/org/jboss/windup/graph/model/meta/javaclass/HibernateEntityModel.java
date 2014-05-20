@@ -4,7 +4,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("HibernateEntityFacet")
-public interface HibernateEntityFacetModel extends JavaClassMetaFacetModel {
+public interface HibernateEntityModel extends JavaClassMetaModel {
 
 	@Property("specificationVersion")
 	public String getSpecificationVersion();

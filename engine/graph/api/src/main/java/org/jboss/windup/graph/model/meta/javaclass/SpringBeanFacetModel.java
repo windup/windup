@@ -9,7 +9,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("SpringBeanFacet")
-public interface SpringBeanFacetModel extends JavaClassMetaFacetModel {
+public interface SpringBeanFacetModel extends JavaClassMetaModel {
 
 	@Label
 	@Property("springBeanName")

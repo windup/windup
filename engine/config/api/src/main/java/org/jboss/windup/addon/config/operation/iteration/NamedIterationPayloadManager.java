@@ -7,7 +7,7 @@
 package org.jboss.windup.addon.config.operation.iteration;
 
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

@@ -1,28 +1,27 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.meta.BaseMetaModel;
-
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("EnvironmentReference")
-public interface EnvironmentReferenceModel extends BaseMetaModel {
+public interface EnvironmentReferenceModel extends WindupVertexFrame
+{
 
-	@Property("referenceId")
-	public String getReferenceId();
+    @Property("referenceId")
+    public String getReferenceId();
 
-	@Property("referenceId")
-	public void setReferenceId(String resourceId);
-	
-	@Property("name")
-	public String getName();
-	
-	@Property("name")
-	public void setName(String name);
-	
-	@Property("referenceType")
-	public String getReferenceType();
+    @Property("referenceId")
+    public void setReferenceId(String resourceId);
 
-	@Property("referenceType")
-	public void setReferenceType(String referenceType);
+    @Property("name")
+    public String getName();
+
+    @Property("name")
+    public void setName(String name);
+
+    @Property("referenceType")
+    public String getReferenceType();
+
+    @Property("referenceType")
+    public void setReferenceType(String referenceType);
 }

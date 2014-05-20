@@ -8,7 +8,7 @@ import java.util.Set;
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.addon.config.condition.GraphCondition;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.tinkerpop.blueprints.Vertex;

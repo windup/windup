@@ -26,7 +26,7 @@ import org.jboss.windup.addon.config.operation.iteration.NamedIterationSelection
 import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationPayloadManager;
 import org.jboss.windup.addon.config.operation.iteration.TypedNamedIterationSelectionManager;
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
-import org.jboss.windup.graph.model.meta.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.CompositeOperation;
 import org.ocpsoft.rewrite.config.Condition;
