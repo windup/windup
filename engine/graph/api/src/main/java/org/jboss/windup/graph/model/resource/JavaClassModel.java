@@ -90,10 +90,16 @@ public interface JavaClassModel extends ResourceModel
     @GremlinGroovy("it.sideEffect{x=it}.in('extends', 'imports', 'implements').dedup().filter{it!=x}")
     public Iterable<JavaClassModel> providesForJavaClass();
 
-    @GremlinGroovy(value = "it.has('blacklistCandidate').hasNext()", frame = false)
+    @Property("blacklistCandidate")
+    public void setBlacklistCandidate(boolean blacklistCandidate);
+
+    @Property("blacklistCandidate")
     public boolean isBlacklistCandidate();
 
-    @GremlinGroovy(value = "it.has('customerPackage').hasNext()", frame = false)
+    @Property("customerPackage")
+    public void setCustomerPackage(boolean customerPackage);
+
+    @Property("customerPackage")
     public boolean isCustomerPackage();
 
 }
