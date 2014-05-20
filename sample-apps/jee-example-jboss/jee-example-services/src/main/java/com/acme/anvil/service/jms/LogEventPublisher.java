@@ -7,10 +7,12 @@ import javax.inject.Inject;
 import javax.jms.JMSContext;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
+import javax.transaction.InvalidTransactionException;
+import javax.transaction.SystemException;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import org.apache.log4j.Logger;
-import weblogic.transaction.ClientTransactionManager;
-import weblogic.transaction.TransactionHelper;
+
 
 @Stateless
 public class LogEventPublisher {
@@ -20,14 +22,17 @@ public class LogEventPublisher {
     
     @Inject private JMSContext context;
     @Resource(mappedName = QUEUE_JNDI_NAME) Queue myQueue;    
-
+    @Inject TransactionManager ctm;
     
-	public void publishLogEvent(LogEvent logEvent) {
+	public void publishLogEvent(LogEvent logEvent) throws SystemException, InvalidTransactionException {
 		// Get a reference to the transaction manager to suspend the current transaction incase of exception.
-		ClientTransactionManager ctm = TransactionHelper.getTransactionHelper().getTransactionManager();
+		//ClientTransactionManager ctm = TransactionHelper.getTransactionHelper().getTransactionManager();
+        
+        
+        
 		Transaction saveTx = null;
 		try {
-			saveTx = ctm.forceSuspend(); // Forced
+			saveTx = ctm.suspend();
 
                 /*
                 Context ic = getContext();
@@ -41,7 +46,7 @@ public class LogEventPublisher {
             context.createProducer().send( myQueue, logMsg );
 
 		} finally {
-			ctm.forceResume(saveTx);
+			ctm.resume(saveTx);
 		}
 	}
 

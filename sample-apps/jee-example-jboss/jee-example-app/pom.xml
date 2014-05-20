@@ -24,14 +24,14 @@
 			        </configuration>
 					<modules>
 						<webModule>
-							<groupId>org.windup.example</groupId>
-							<artifactId>jee-example-web</artifactId>
+							<groupId>org.jboss.windup.test.apps.jboss</groupId>
+							<artifactId>sample-jee-jboss-web</artifactId>
 							<bundleFileName>jee-example-web.war</bundleFileName>
 							<contextRoot>/jee-example-web</contextRoot>
 						</webModule>
 						<ejbModule>
-							<groupId>org.windup.example</groupId>
-							<artifactId>jee-example-services</artifactId>
+							<groupId>org.jboss.windup.test.apps.jboss</groupId>
+							<artifactId>sample-jee-jboss-services</artifactId>
 							<bundleFileName>jee-example-services.jar</bundleFileName>
 						</ejbModule>
 					</modules>
@@ -41,18 +41,21 @@
 	</build>
     
 	<dependencies>
+        
+        <!-- Project deps -->
 		<dependency>
-            <groupId>org.jboss.windup.test.apps</groupId>
-			<artifactId>jee-example-web</artifactId>
+            <groupId>org.jboss.windup.test.apps.jboss</groupId>
+			<artifactId>sample-jee-jboss-web</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
-            <groupId>org.jboss.windup.test.apps</groupId>
-			<artifactId>jee-example-services</artifactId>
+            <groupId>org.jboss.windup.test.apps.jboss</groupId>
+			<artifactId>sample-jee-jboss-services</artifactId>
 			<version>${project.version}</version>
 			<type>ejb</type>
 		</dependency>
+        
 	</dependencies>
     
 </project>

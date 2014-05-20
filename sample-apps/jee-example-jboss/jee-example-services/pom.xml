@@ -73,7 +73,7 @@
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
 
-        <!-- WebLogic -->
+        <!-- WebLogic 
         <dependency>
             <groupId>weblogic</groupId>
             <artifactId>wlfullclient</artifactId>
@@ -86,6 +86,8 @@
             <version>10.3.6</version>
             <scope>provided</scope>
         </dependency>
+        -->
+        
     </dependencies>
 
 </project>

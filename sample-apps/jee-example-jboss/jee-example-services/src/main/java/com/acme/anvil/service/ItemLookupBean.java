@@ -10,6 +10,8 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
+import javax.transaction.InvalidTransactionException;
+import javax.transaction.SystemException;
 import org.apache.log4j.Logger;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 
@@ -20,7 +22,7 @@ public class ItemLookupBean implements SessionBean {
 	private static final Logger LOG = Logger.getLogger(ItemLookup.class);
 	
     @EJB LogEventPublisher publisher;
-	public Item lookupItem(long id) {
+	public Item lookupItem(long id) throws SystemException, InvalidTransactionException {
 		LOG.info("Calling lookupItem.");
 		
 		//stubbed out.

@@ -11,15 +11,13 @@
 	<artifactId>sample-jee-jboss-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>JEE Example</name>
+    <name>JBoss EAP Java EE 6 Example</name>
     <description>Example EAR, WAR, EJB JAR that use Weblogic vendor specific APIs.  </description>
 
     <modules>
 		<module>jee-example-services</module>
-        <!--
 		<module>jee-example-web</module>
 		<module>jee-example-app</module>
-        -->
 	</modules>
 
     <properties>

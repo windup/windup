@@ -14,10 +14,12 @@
     <name>JEE Example Web Application</name>
 
     <dependencies>
+        <!-- Project deps -->
         <dependency>
-            <groupId>org.jboss.windup.test.apps</groupId>
-            <artifactId>jee-example-services</artifactId>
+            <groupId>org.jboss.windup.test.apps.jboss</groupId>
+            <artifactId>sample-jee-jboss-services</artifactId>
 			<version>${project.version}</version>
+            <type>ejb</type>
             <scope>provided</scope>
         </dependency>
         

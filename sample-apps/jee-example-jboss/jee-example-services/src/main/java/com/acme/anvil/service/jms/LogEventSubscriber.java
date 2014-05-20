@@ -12,11 +12,12 @@ import javax.jms.ObjectMessage;
 import org.apache.log4j.Logger;
 
 import com.acme.anvil.vo.LogEvent;
+import javax.ejb.EJBException;
+import javax.ejb.MessageDriven;
+import javax.ejb.MessageDrivenContext;
 import javax.jms.JMSConnectionFactoryDefinition;
 import javax.jms.JMSDestinationDefinition;
 
-import weblogic.ejb.GenericMessageDrivenBean;
-import weblogic.ejbgen.MessageDriven;
 
 // Not sure about this annotation, but my idea is that 
 // having it at any "Java EE component class" will make the server create the queue.
@@ -28,13 +29,13 @@ import weblogic.ejbgen.MessageDriven;
 @JMSConnectionFactoryDefinition(name = "java:/AnotherConnectionFactory") 
 
 @MessageDriven(
-   ejbName = "LogEventSubscriber",
-   destinationJndiName = "java:jboss/jms/queue/LogEventQueue",
-   destinationType = "javax.jms.Topic",
-   runAsPrincipalName = "anvil_user",
-   runAs = "anvil_user"
+   name = "LogEventSubscriber"
+   //destinationJndiName = "java:jboss/jms/queue/LogEventQueue",
+   //destinationType = "javax.jms.Topic",
+   //runAsPrincipalName = "anvil_user",
+   //runAs = "anvil_user"
 )
-public class LogEventSubscriber extends GenericMessageDrivenBean implements MessageDrivenBean, MessageListener {
+public class LogEventSubscriber implements MessageDrivenBean, MessageListener {
 
 	private static final Logger LOG = Logger.getLogger(LogEventSubscriber.class);
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy 'at' HH:mm:ss z");
@@ -53,4 +54,14 @@ public class LogEventSubscriber extends GenericMessageDrivenBean implements Mess
 			LOG.error("Exception reading message.", e);
 		}
 	}
+
+
+    @Override
+    public void setMessageDrivenContext( MessageDrivenContext mdc ) throws EJBException {
+    }
+
+
+    @Override
+    public void ejbRemove() throws EJBException {
+    }
 }
