@@ -1,23 +1,17 @@
-package org.jboss.windup.engine.decompilers.procyon;
+package org.jboss.windup.engine.decompiler.procyon;
 
 import java.util.EnumSet;
 
-import org.jboss.windup.engine.decompilers.api.DecompilationConf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.strobel.decompiler.DecompilerSettings;
-import com.strobel.decompiler.LineNumberFormatter;
 
 /**
  * Procyon-specific configuration.
  * 
  * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ProcyonConf extends DecompilationConf
+public class ProcyonConfiguration
 {
-    private static final Logger log = LoggerFactory.getLogger(ProcyonConf.class);
-
     private DecompilerSettings decompilerSettings = new DecompilerSettings();
 
     private EnumSet<LineNumberFormatter.LineNumberOption> lineNumberOptions = EnumSet
@@ -30,9 +24,10 @@ public class ProcyonConf extends DecompilationConf
         return includeNested;
     }
 
-    public void setIncludeNested(boolean includeNested)
+    public ProcyonConfiguration setIncludeNested(boolean includeNested)
     {
         this.includeNested = includeNested;
+        return this;
     }
 
     public DecompilerSettings getDecompilerSettings()
@@ -40,9 +35,10 @@ public class ProcyonConf extends DecompilationConf
         return decompilerSettings;
     }
 
-    public void setDecompilerSettings(DecompilerSettings decompilerSettings)
+    public ProcyonConfiguration setDecompilerSettings(DecompilerSettings decompilerSettings)
     {
         this.decompilerSettings = decompilerSettings;
+        return this;
     }
 
     public EnumSet<LineNumberFormatter.LineNumberOption> getLineNumberOptions()
@@ -50,9 +46,10 @@ public class ProcyonConf extends DecompilationConf
         return lineNumberOptions;
     }
 
-    public void setLineNumberOptions(EnumSet<LineNumberFormatter.LineNumberOption> lineNumberOptions)
+    public ProcyonConfiguration setLineNumberOptions(EnumSet<LineNumberFormatter.LineNumberOption> lineNumberOptions)
     {
         this.lineNumberOptions = lineNumberOptions;
+        return this;
     }
 
-}// class
+}

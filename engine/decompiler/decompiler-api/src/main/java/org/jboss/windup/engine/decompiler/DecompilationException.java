@@ -1,12 +1,11 @@
-package org.jboss.windup.engine.decompilers.api;
+package org.jboss.windup.engine.decompiler;
 
 /**
- *
  * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DecompilationException extends Exception
 {
-
     private static final long serialVersionUID = -8377473815060311293L;
 
     public DecompilationException(String message)
@@ -19,9 +18,4 @@ public class DecompilationException extends Exception
         super(message, cause);
     }
 
-    public DecompilationException(Throwable cause)
-    {
-        super(cause);
-    }
-
-}// class
+}

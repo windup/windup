@@ -1,4 +1,4 @@
-package org.jboss.windup.engine.decompilers.procyon;
+package org.jboss.windup.engine.decompiler.procyon;
 
 import java.io.File;
 import java.io.FileOutputStream;

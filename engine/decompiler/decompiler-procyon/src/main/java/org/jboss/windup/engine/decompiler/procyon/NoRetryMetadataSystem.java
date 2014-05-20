@@ -1,10 +1,7 @@
-package org.jboss.windup.engine.decompilers.procyon;
+package org.jboss.windup.engine.decompiler.procyon;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.strobel.assembler.metadata.ITypeLoader;
 import com.strobel.assembler.metadata.MetadataSystem;
@@ -17,8 +14,6 @@ import com.strobel.assembler.metadata.TypeDefinition;
  */
 final class NoRetryMetadataSystem extends MetadataSystem
 {
-    private static final Logger log = LoggerFactory.getLogger(NoRetryMetadataSystem.class);
-
     private final Set<String> _failedTypes = new HashSet<>();
 
     NoRetryMetadataSystem()
