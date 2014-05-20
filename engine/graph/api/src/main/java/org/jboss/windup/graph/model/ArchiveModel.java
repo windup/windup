@@ -45,4 +45,10 @@ public interface ArchiveModel extends WindupVertexFrame
 
     @Adjacency(label = "archiveFiles", direction = Direction.OUT)
     public void addContainedFileModel(FileResourceModel archiveFile);
+
+    @Adjacency(label = "decompiledFiles", direction = Direction.OUT)
+    public Iterable<FileResourceModel> getDecompiledFileModels();
+
+    @Adjacency(label = "decompiledFiles", direction = Direction.OUT)
+    public void addDecompiledFileModel(FileResourceModel archiveFile);
 }

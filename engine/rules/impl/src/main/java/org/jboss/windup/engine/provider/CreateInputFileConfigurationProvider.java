@@ -1,7 +1,5 @@
 package org.jboss.windup.engine.provider;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
@@ -9,7 +7,6 @@ import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.addon.config.operation.Iteration;
 import org.jboss.windup.addon.config.operation.ruleelement.AbstractIterationOperator;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -18,9 +15,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class CreateInputFileConfigurationProvider extends WindupConfigurationProvider
 {
-    @Inject
-    ApplicationReferenceDao applicationReferenceDao;
-
     @Override
     public RulePhase getPhase()
     {

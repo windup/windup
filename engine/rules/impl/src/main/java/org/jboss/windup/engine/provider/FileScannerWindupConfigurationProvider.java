@@ -2,8 +2,6 @@ package org.jboss.windup.engine.provider;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
@@ -13,16 +11,12 @@ import org.jboss.windup.addon.config.operation.ruleelement.AddArchiveReferenceIn
 import org.jboss.windup.addon.config.operation.ruleelement.RecurseDirectoryAndAddFiles;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.ApplicationReferenceDao;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 public class FileScannerWindupConfigurationProvider extends WindupConfigurationProvider
 {
-    @Inject
-    ApplicationReferenceDao applicationReferenceDao;
-
     @Override
     public RulePhase getPhase()
     {

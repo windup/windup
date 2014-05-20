@@ -17,6 +17,17 @@ public class DecompilationResult
 {
     private final List<DecompilationFailure> failed = new LinkedList<>();
     private final Set<String> decompiled = new HashSet<>();
+    private final Set<String> decompiledOutputFiles = new HashSet<>();
+
+    public void addDecompiledOutputFile(String path)
+    {
+        this.decompiledOutputFiles.add(path);
+    }
+
+    public Set<String> getDecompiledOutputFiles()
+    {
+        return this.decompiledOutputFiles;
+    }
 
     public void addDecompiled(String path)
     {

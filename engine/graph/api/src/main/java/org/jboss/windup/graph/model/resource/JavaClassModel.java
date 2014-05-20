@@ -11,9 +11,8 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("JavaClassResource")
-public interface JavaClassModel extends ResourceModel
+public interface JavaClassModel extends FileResourceModel
 {
-
     @Adjacency(label = "javaClassFacet", direction = Direction.IN)
     public Iterable<ResourceModel> getResources();
 

@@ -209,8 +209,12 @@ public class ProcyonDecompiler implements Decompiler
 
             try
             {
-                this.decompileType(metadataSystem, typeName);
-                res.addDecompiled(name);
+                File outputFile = this.decompileType(metadataSystem, typeName);
+                if (outputFile != null)
+                {
+                    res.addDecompiled(name);
+                    res.addDecompiledOutputFile(outputFile.getAbsolutePath());
+                }
 
                 // Taken from mstrobel's, not sure what's the purpose.
                 if (++classesDecompiled % 100 == 0)
@@ -229,7 +233,7 @@ public class ProcyonDecompiler implements Decompiler
         return res;
     }
 
-    private void decompileType(final MetadataSystem metadataSystem, final String typeName) throws IOException
+    private File decompileType(final MetadataSystem metadataSystem, final String typeName) throws IOException
     {
         log.debug("Decompiling " + typeName);
 
@@ -251,20 +255,20 @@ public class ProcyonDecompiler implements Decompiler
         if (type == null)
         {
             log.error("Failed to load class: %s", typeName);
-            return;
+            return null;
         }
 
         final TypeDefinition resolvedType = type.resolve();
         if (resolvedType == null)
         {
             log.error("Failed to load class: %s", typeName);
-            return;
+            return null;
         }
 
         if (!configuration.isIncludeNested()
                     && (resolvedType.isNested() || resolvedType.isAnonymous() || resolvedType.isSynthetic()))
         {
-            return;
+            return null;
         }
 
         DecompilerSettings settings = configuration.getDecompilerSettings();
@@ -299,6 +303,7 @@ public class ProcyonDecompiler implements Decompiler
 
             lineFormatter.reformatFile();
         }
+        return writer.getFile();
     }
 
     private DecompilerSettings getDefaultSettings(File outputDir)
