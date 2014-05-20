@@ -1,7 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -12,8 +10,8 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.addon.engine.WindupProcessor;
-import org.jboss.windup.graph.dao.FileResourceDao;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +42,7 @@ public class WindupArchitectureTest
     private WindupProcessor processor;
 
     @Inject
-    private FileResourceDao fileResourceDao;
+    private GraphContext graphContext;
 
     @Test
     public void testRunWindup() throws Exception
@@ -52,8 +50,9 @@ public class WindupArchitectureTest
         Assert.assertNotNull(processor);
         Assert.assertNotNull(processor.toString());
 
-        File r1 = new File("../../test_files/Windup1x-javaee-example.war");
-        FileResourceModel r1g = fileResourceDao.createByFilePath(r1.getAbsolutePath());
+        String inputPath = "../../test_files/Windup1x-javaee-example.war";
+        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
+        windupCfg.setInputPath(inputPath);
 
         processor.execute();
     }

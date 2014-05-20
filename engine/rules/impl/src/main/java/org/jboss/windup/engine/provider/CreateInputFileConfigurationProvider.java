@@ -36,7 +36,6 @@ public class CreateInputFileConfigurationProvider extends WindupConfigurationPro
                     .when(GraphSearchConditionBuilder
                                 .create("inputConfigurations")
                                 .ofType(WindupConfigurationModel.class)
-                                .withProperty(FileResourceModel.PROPERTY_IS_DIRECTORY, true)
                     )
                     .perform(
                                 Iteration.over("inputConfigurations")
