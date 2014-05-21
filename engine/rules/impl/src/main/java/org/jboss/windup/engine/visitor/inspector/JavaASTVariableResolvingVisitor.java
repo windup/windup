@@ -13,16 +13,12 @@ package org.jboss.windup.engine.visitor.inspector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
@@ -52,7 +48,8 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.jboss.windup.engine.visitor.inspector.decompiler.ClassCandidate;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Runs through the source code and checks "type" uses against the blacklisted class entries.
@@ -68,55 +65,30 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
     // (org.example.Sample(x, y, z)) will never match the blacklist candidate
     // present in the blacklist candidate set (org.example.Sample)
 
-    private static final Log LOG = LogFactory.getLog(JavaASTVariableResolvingVisitor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JavaASTVariableResolvingVisitor.class);
 
     private final CompilationUnit cu;
     private final WindupContext windupContext;
-    private final JavaClassModel javaClass;
     private final JavaClassDao javaClassDao;
 
     private final Map<String, String> classNameToFullyQualified = new HashMap<String, String>();
 
-    Set<String> names = new HashSet<String>();
-    Map<String, String> nameInstance = new HashMap<String, String>();
-    Set<String> blacklistCandidates = new HashSet<String>();
-
-    public JavaASTVariableResolvingVisitor(CompilationUnit cu, JavaClassDao javaClassDao, WindupContext context,
-                JavaClassModel javaClass)
+    public JavaASTVariableResolvingVisitor(CompilationUnit cu, JavaClassDao javaClassDao, WindupContext context)
     {
         this.cu = cu;
         this.javaClassDao = javaClassDao;
-        this.javaClass = javaClass;
         this.windupContext = context;
 
-        // creates an in-memory cache if all qualified blacklist candidates.
-        // this set is leveraged to determine whether to catalog.
-        for (JavaClassModel clz : javaClassDao.findLeveragedCandidateBlacklists(javaClass))
-        {
-            LOG.info("Blacklist w/in Class[" + javaClass.getQualifiedName() + "]: " + clz.getQualifiedName());
-            blacklistCandidates.add(clz.getQualifiedName());
-        }
-
-        for (JavaClassModel javaImport : javaClass.getImports())
-        {
-            classNameToFullyQualified.put(StringUtils.substringAfterLast(javaImport.getQualifiedName(), "."),
-                        javaImport.getQualifiedName());
-        }
-
-        this.names.add("this");
-        this.nameInstance.put("this", javaClass.getQualifiedName());
-        this.classNameToFullyQualified.put(StringUtils.substringAfterLast(javaClass.getQualifiedName(), "."),
-                    javaClass.getQualifiedName());
+        // for (JavaClassModel javaImport : javaClass.getImports())
+        // {
+        // classNameToFullyQualified.put(StringUtils.substringAfterLast(javaImport.getQualifiedName(), "."),
+        // javaImport.getQualifiedName());
+        // }
     }
 
     private void processConstructor(ConstructorType interest, int lineStart, int startPosition, int length,
                 String decoratorPrefix, JavaSourceType sourceType)
     {
-        if (!blacklistCandidates.contains(interest.getQualifiedName()))
-        {
-            return;
-        }
-
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, interest.toString());
         // results.add(dr);
         LOG.info("Prefix: " + decoratorPrefix);
@@ -126,11 +98,6 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
     private void processMethod(MethodType interest, int lineStart, int startPosition, int length,
                 String decoratorPrefix, JavaSourceType sourceType)
     {
-        if (!blacklistCandidates.contains(interest.getQualifiedName()))
-        {
-            return;
-        }
-
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, interest.toString());
         // results.add(dr);
         LOG.info("Prefix: " + decoratorPrefix);
@@ -148,11 +115,6 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             {
                 sourceString = classNameToFullyQualified.get(sourceString);
             }
-        }
-
-        if (!blacklistCandidates.contains(sourceString))
-        {
-            return;
         }
 
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, sourceString);
@@ -179,14 +141,15 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             }
         }
 
-        if (!blacklistCandidates.contains(sourceString))
-        {
-            return;
-        }
-
         ClassCandidate dr = new ClassCandidate(sourcePosition, startPosition, length, sourceString);
         // results.add(dr);
         LOG.info("Prefix: " + decoratorPrefix);
+        if (type instanceof SimpleType)
+        {
+            SimpleType sType = (SimpleType) type;
+            LOG.info("The type name is: " + sType.getName().getFullyQualifiedName() + " and " + sourceString);
+
+        }
         LOG.info("Candidate: " + dr);
     }
 
@@ -203,11 +166,6 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             {
                 sourceString = classNameToFullyQualified.get(sourceString);
             }
-        }
-
-        if (!blacklistCandidates.contains(sourceString))
-        {
-            return;
         }
 
         ClassCandidate dr = new ClassCandidate(lineNumber, startPosition, length, sourceString);
@@ -238,8 +196,8 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                     typeName = classNameToFullyQualified.get(typeName);
                 }
                 // now add it as a local variable.
-                this.names.add(type.getName().toString());
-                this.nameInstance.put(type.getName().toString(), typeName);
+                // this.names.add(type.getName().toString());
+                // this.nameInstance.put(type.getName().toString(), typeName);
 
                 processType(type.getType(), "Method parameter", JavaSourceType.TYPE);
             }
@@ -312,8 +270,8 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             }
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             frag.resolveBinding();
-            this.names.add(frag.getName().getIdentifier());
-            this.nameInstance.put(frag.getName().toString(), nodeType.toString());
+            // this.names.add(frag.getName().getIdentifier());
+            // this.nameInstance.put(frag.getName().toString(), nodeType.toString());
 
             processType(node.getType(), "Declaring type", JavaSourceType.TYPE);
         }
@@ -362,7 +320,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                     }
                     else
                     {
-                        LOG.warn(clzInterface);
+                        LOG.warn("" + clzInterface);
                     }
                 }
             }
@@ -375,7 +333,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             }
             else
             {
-                LOG.warn(clzSuperClasses);
+                LOG.warn("" + clzSuperClasses);
             }
         }
 
@@ -397,8 +355,8 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             }
 
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
-            this.names.add(frag.getName().getIdentifier());
-            this.nameInstance.put(frag.getName().toString(), nodeType.toString());
+            // this.names.add(frag.getName().getIdentifier());
+            // this.nameInstance.put(frag.getName().toString(), nodeType.toString());
         }
         processType(node.getType(), "Declaring type", JavaSourceType.TYPE);
 
@@ -409,15 +367,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
     public boolean visit(ImportDeclaration node)
     {
         String name = node.getName().toString();
-        if (!node.isOnDemand())
-        {
-            String clzName = StringUtils.substringAfterLast(name, ".");
-            classNameToFullyQualified.put(clzName, name);
-            processInterest(node.getName().toString(), cu.getLineNumber(node.getName().getStartPosition()),
-                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), "Import of",
-                        JavaSourceType.IMPORT);
-        }
-        else
+        if (node.isOnDemand())
         {
             for (String knownClz : classNameToFullyQualified.values())
             {
@@ -428,6 +378,14 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                                 "Leads to import of", JavaSourceType.IMPORT);
                 }
             }
+        }
+        else
+        {
+            String clzName = StringUtils.substringAfterLast(name, ".");
+            classNameToFullyQualified.put(clzName, name);
+            processInterest(node.getName().toString(), cu.getLineNumber(node.getName().getStartPosition()),
+                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), "Import of",
+                        JavaSourceType.IMPORT);
         }
 
         return super.visit(node);
@@ -451,10 +409,10 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
 
         String objRef = StringUtils.substringBefore(nodeName, "." + node.getName().toString());
 
-        if (nameInstance.containsKey(objRef))
-        {
-            objRef = nameInstance.get(objRef);
-        }
+        // if (nameInstance.containsKey(objRef))
+        // {
+        // objRef = nameInstance.get(objRef);
+        // }
 
         if (classNameToFullyQualified.containsKey(objRef))
         {
@@ -495,15 +453,15 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         {
             if (o instanceof SimpleName)
             {
-                String name = nameInstance.get(o.toString());
-                if (name != null)
-                {
-                    resolvedParams.add(name);
-                }
-                else
-                {
-                    resolvedParams.add("Undefined");
-                }
+                // String name = nameInstance.get(o.toString());
+                // if (name != null)
+                // {
+                // resolvedParams.add(name);
+                // }
+                // else
+                // {
+                // resolvedParams.add("Undefined");
+                // }
             }
             else if (o instanceof StringLiteral)
             {
@@ -513,14 +471,14 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             {
                 String field = ((FieldAccess) o).getName().toString();
 
-                if (names.contains(field))
-                {
-                    resolvedParams.add(nameInstance.get(field));
-                }
-                else
-                {
-                    resolvedParams.add("Undefined");
-                }
+                // if (names.contains(field))
+                // {
+                // resolvedParams.add(nameInstance.get(field));
+                // }
+                // else
+                // {
+                // resolvedParams.add("Undefined");
+                // }
             }
             else if (o instanceof CastExpression)
             {
@@ -605,10 +563,10 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
     {
         // temporarily remove to resolve arrays
         objRef = StringUtils.removeEnd(objRef, "[]");
-        if (nameInstance.containsKey(objRef))
-        {
-            objRef = nameInstance.get(objRef);
-        }
+        // if (nameInstance.containsKey(objRef))
+        // {
+        // objRef = nameInstance.get(objRef);
+        // }
 
         if (classNameToFullyQualified.containsKey(objRef))
         {

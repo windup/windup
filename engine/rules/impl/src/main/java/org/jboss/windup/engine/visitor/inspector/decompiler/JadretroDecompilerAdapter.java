@@ -22,8 +22,8 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.environment.EnvironmentUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Facade for the Jadretro library's main method and the Jad decompiler execution.
@@ -46,13 +46,12 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JadretroDecompilerAdapter implements DecompilerAdapter
 {
-    private static final Log LOG = LogFactory.getLog(JadretroDecompilerAdapter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JadretroDecompilerAdapter.class);
 
     private static final String APP_NAME = SystemUtils.IS_OS_WINDOWS ? "jad.exe" : "jad";
 
     private static final int DECOMPILER_TIMEOUT = 60000;
 
-    
     /*
      * (non-Javadoc)
      * 
@@ -81,11 +80,9 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter
         LOG.info("... Complete");
     }
 
-
-    
     /**
-     *  Decompiles given .class file to a .java file at the given destination  path,
-     *  using jad decompiler which is expected to be at system PATH.
+     * Decompiles given .class file to a .java file at the given destination path, using jad decompiler which is
+     * expected to be at system PATH.
      */
     private void executeJad(File classLocation, File sourceOutputLocation)
     {
@@ -112,18 +109,19 @@ public class JadretroDecompilerAdapter implements DecompilerAdapter
             DefaultExecutor executor = new DefaultExecutor();
             executor.setExitValue(0);
             executor.setWorkingDirectory(FileUtils.getUserDirectory());
-            ExecuteWatchdog watchdog = new ExecuteWatchdog( DECOMPILER_TIMEOUT );
+            ExecuteWatchdog watchdog = new ExecuteWatchdog(DECOMPILER_TIMEOUT);
 
             executor.setWatchdog(watchdog);
             int exitValue = executor.execute(cmdLine, EnvironmentUtils.getProcEnvironment());
 
-    
-            if (!sourceOutputLocation.exists()) {
+            if (!sourceOutputLocation.exists())
+            {
                 LOG.debug("Decompiler exited with exit code: " + exitValue);
                 LOG.error("Didn't find expected decompiled source: " + sourceOutputLocation.getAbsolutePath()
-                    + "\n    This likely means that the decompiler did not successfully decompile the class.");
+                            + "\n    This likely means that the decompiler did not successfully decompile the class.");
             }
-            else {
+            else
+            {
                 LOG.debug("Decompiled to: " + sourceOutputLocation.getAbsolutePath());
             }
 
