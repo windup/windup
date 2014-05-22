@@ -6,7 +6,12 @@
  */
 package org.jboss.windup.addon.config;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.jboss.windup.addon.config.selectables.SelectionFactory;
+import org.jboss.windup.engine.util.exception.WindupException;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.ocpsoft.rewrite.context.Context;
@@ -20,14 +25,33 @@ import org.ocpsoft.rewrite.event.Rewrite;
  */
 public class GraphRewrite implements Rewrite
 {
+    private static final String WINDUP_TEMP_PREFIX = "windup";
+
     private final GraphContext graphContext;
     private final Context context = new ContextBase()
     {
     };
+    private Path tempDirectory;
 
     public GraphRewrite(GraphContext context)
     {
         this.graphContext = context;
+    }
+
+    public Path getWindupTemporaryFolder()
+    {
+        if (this.tempDirectory == null)
+        {
+            try
+            {
+                this.tempDirectory = Files.createTempDirectory(WINDUP_TEMP_PREFIX);
+            }
+            catch (IOException e)
+            {
+                throw new WindupException("Error creating temporary directory for windup due to: " + e.getMessage(), e);
+            }
+        }
+        return this.tempDirectory;
     }
 
     public void selectionPush()

@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import org.apache.commons.io.FileUtils;
 import org.jboss.windup.addon.config.GraphRewrite;
 import org.jboss.windup.engine.util.ZipUtil;
 import org.jboss.windup.engine.util.exception.WindupException;
@@ -35,47 +35,59 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
-        File tempDirectory = FileUtils.getTempDirectory();
-
         // create a temp folder for all archive contents
-        File windupTempArchiveFolder = new File(tempDirectory, WINDUP_TEMP_ARCHIVE_FOLDER_NAME);
+        Path windupTempFolder = event.getWindupTemporaryFolder();
+        Path windupTempUnzippedArchiveFolder = Paths.get(windupTempFolder.toString(), "archives");
+        if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
+        {
+            try
+            {
+                Files.createDirectories(windupTempUnzippedArchiveFolder);
+            }
+            catch (IOException e)
+            {
+                throw new WindupException("Failed to create temporary folder: " + windupTempUnzippedArchiveFolder
+                            + " due to: " + e.getMessage(), e);
+            }
+        }
 
         if (payload instanceof FileResourceModel)
         {
             FileResourceModel fileResourceModel = (FileResourceModel) payload;
-            unzipToTempDirectory(event, windupTempArchiveFolder, fileResourceModel.asFile(), payload);
+            unzipToTempDirectory(event, windupTempUnzippedArchiveFolder, fileResourceModel.asFile(), payload);
         }
     }
 
-    private void unzipToTempDirectory(final GraphRewrite event, final File tempFolder,
+    private void unzipToTempDirectory(final GraphRewrite event, final Path tempFolder,
                 final File inputZipFile,
                 final ArchiveModel archiveModel)
     {
         // Setup a temp folder for the archive
         String appArchiveName = archiveModel.getArchiveName();
-        File appArchiveFolder = new File(tempFolder, appArchiveName);
-        if (appArchiveFolder.exists())
+        Path appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName);
+
+        int fileIdx = 1;
+        // if it is already created, try another folder name
+        while (Files.exists(appArchiveFolder))
         {
-            try
-            {
-                FileUtils.deleteDirectory(appArchiveFolder);
-            }
-            catch (IOException e)
-            {
-                throw new WindupException("Could purge existing temporary directory for application \""
-                            + appArchiveName + "\" at \"" + appArchiveFolder.getAbsolutePath() + "\"");
-            }
+            appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName + "." + fileIdx);
+            fileIdx++;
         }
-        if (!appArchiveFolder.mkdirs())
+
+        try
+        {
+            Files.createDirectories(appArchiveFolder);
+        }
+        catch (IOException e)
         {
             throw new WindupException("Could not create a temporary directory for application \""
-                        + appArchiveName + "\" at \"" + appArchiveFolder.getAbsolutePath() + "\"");
+                        + appArchiveName + "\" at \"" + appArchiveFolder.toString() + "\" due to: " + e.getMessage(), e);
         }
 
         // unzip to the temp folder
         try
         {
-            ZipUtil.unzipToFolder(inputZipFile, appArchiveFolder);
+            ZipUtil.unzipToFolder(inputZipFile, appArchiveFolder.toFile());
         }
         catch (IOException e)
         {
@@ -88,7 +100,7 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
 
         FileResourceModel newFileModel = event.getGraphContext().getFramed()
                     .addVertex(null, FileResourceModel.class);
-        newFileModel.setFilePath(appArchiveFolder.getAbsolutePath());
+        newFileModel.setFilePath(appArchiveFolder.toAbsolutePath().toString());
         // mark the path to the archive
         archiveModel.setUnzippedDirectory(newFileModel);
 
@@ -100,7 +112,7 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
         try
         {
             // scan for subarchives, unzip those, and set their parent objects
-            Files.walkFileTree(appArchiveFolder.toPath(), new SimpleFileVisitor<Path>()
+            Files.walkFileTree(appArchiveFolder, new SimpleFileVisitor<Path>()
             {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
@@ -126,7 +138,7 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
         }
         catch (IOException e)
         {
-            throw new WindupException("Failed to walk directory tree: " + appArchiveFolder.getAbsolutePath()
+            throw new WindupException("Failed to walk directory tree: " + appArchiveFolder.toString()
                         + " due to: " + e.getMessage(), e);
         }
     }
