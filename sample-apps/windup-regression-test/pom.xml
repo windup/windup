@@ -8,14 +8,14 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     
-    <name>Windup Regression test</name>
+    <name>Windup Regression tests</name>
     
     <description>The original Windup sample apps.</description>
     
     <modules>
         <module>windup-regression-ejb1</module>
-        <module>windup-regression-ejb3</module>
         <module>windup-regression-ejb2</module>
+        <module>windup-regression-ejb3</module>
         <module>windup-regression-war</module>
         <module>windup-regression-ear</module>
         <module>windup-regression-axis1</module>
@@ -55,7 +55,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>2.5.1</version>
                 <configuration>
                     <compilerVersion>1.7</compilerVersion>
                     <source>1.7</source>
@@ -68,7 +68,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.12</version>
+                    <version>2.17</version>
                 </plugin>
             </plugins>
         </pluginManagement>

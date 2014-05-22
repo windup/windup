@@ -19,7 +19,7 @@
     <groupId>com.jboss.windup.test</groupId>
     <artifactId>windup-regression-axis2</artifactId>
 
-    <name>windup-regression-axis2</name>
+    <name>Windup Regression - Axis 2</name>
 
     <build>
 
@@ -31,6 +31,7 @@
         </resources>
 
     </build>
+    
     <dependencies>
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -49,6 +50,7 @@
             <version>1.6.2</version>
         </dependency>
     </dependencies>
+    
     <repositories>
         <repository>
             <id>apache.snapshots</id>
@@ -59,4 +61,5 @@
             </releases>
         </repository>
     </repositories>
+    
 </project>

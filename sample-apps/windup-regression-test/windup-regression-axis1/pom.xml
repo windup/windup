@@ -19,7 +19,7 @@
     <groupId>com.jboss.windup.test</groupId>
     <artifactId>windup-regression-axis1</artifactId>
     
-    <name>windup-regression-axis1</name>
+    <name>Windup Regression - Axis 1</name>
     
     <build>
         <sourceDirectory>src</sourceDirectory>
