@@ -19,5 +19,6 @@
     <modules>
         <module>windup-regression-test</module>
         <module>jee-example-jboss</module>
+        <module>jee-example-weblogic</module>
     </modules>
 </project>

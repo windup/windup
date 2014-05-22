@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.windup.test.apps</groupId>
+        <artifactId>sample-apps-parent</artifactId>
+    	<version>2.0.0-SNAPSHOT</version>
+    </parent>
+    
+    <groupId>org.jboss.windup.test.apps.weblogic</groupId>
+	<artifactId>sample-jee-weblogic-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>WebLogic Java EE 6 Example</name>
+    <description>Example EAR, WAR, EJB JAR that use Weblogic vendor specific APIs.  </description>
+
+    <modules>
+		<module>jee-example-services</module>
+		<module>jee-example-web</module>
+		<module>jee-example-app</module>
+	</modules>
+
+    <properties>
+        <weblogic.version>10.3</weblogic.version>
+    </properties>
+
+    <build>
+		<plugins>
+			<plugin>
+				<groupId>org.jboss.windup</groupId>
+				<artifactId>windup-maven-plugin</artifactId>
+                <version>0.7.0</version>
+				<configuration>
+					<packages>
+						<package>com.acme</package>
+					</packages>
+					<source>true</source>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+    <dependencies>
+        
+        <!-- To test missing dependencies detection. Breaks build.
+		<dependency>
+			<groupId>org.migration.support</groupId>
+			<artifactId>migration-support</artifactId>
+			<version>1.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+        -->
+        
+        <dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		
+        <dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>ejb-api</artifactId>
+			<version>3.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+</project>

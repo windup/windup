@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.jboss.windup.test.apps.weblogic</groupId>
+        <artifactId>sample-jee-weblogic-parent</artifactId>
+    	<version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.jboss.windup.test.apps.weblogic</groupId>
+    <artifactId>sample-jee-weblogic-services</artifactId>
+    <packaging>ejb</packaging>
+
+    <name>JEE Example EJB Services</name>
+
+    <dependencies>
+
+        <!-- To test missing dependencies detection. Breaks build.
+        <dependency>
+            <groupId>org.migration.support</groupId>
+            <artifactId>migration-support</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.ejb</groupId>
+            <artifactId>ejb-api</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- @TransactionTimeout -->
+        <dependency>
+            <groupId>org.jboss.ejb3</groupId>
+            <artifactId>jboss-ejb3-ext-api</artifactId>
+            <version>2.1.0.redhat-1</version>
+            <type>jar</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>javaee</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>5</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.1.4.GA</version>
+            <scope>provided</scope>
+        </dependency>
+        
+		<dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.5</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+
+        <!-- WebLogic 
+        <dependency>
+            <groupId>weblogic</groupId>
+            <artifactId>wlfullclient</artifactId>
+            <version>10.3.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic</groupId>
+            <artifactId>ejbgen</artifactId>
+            <version>10.3.6</version>
+            <scope>provided</scope>
+        </dependency>
+        -->
+        
+    </dependencies>
+
+</project>

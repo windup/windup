@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.jboss.windup.test.apps.weblogic</groupId>
+        <artifactId>sample-jee-weblogic-parent</artifactId>
+    	<version>2.0.0-SNAPSHOT</version>
+    </parent>
+    
+    <groupId>org.jboss.windup.test.apps.weblogic</groupId>
+	<artifactId>sample-jee-weblogic-app</artifactId>
+	<packaging>ear</packaging>
+    
+	<name>JEE Example App</name>
+    
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<configuration>
+                        <packagingIncludes>**/migration-support-*.jar</packagingIncludes>
+			        </configuration>
+					<modules>
+						<webModule>
+							<groupId>org.jboss.windup.test.apps.weblogic</groupId>
+							<artifactId>sample-jee-weblogic-web</artifactId>
+							<bundleFileName>jee-example-web.war</bundleFileName>
+							<contextRoot>/jee-example-web</contextRoot>
+						</webModule>
+						<ejbModule>
+							<groupId>org.jboss.windup.test.apps.weblogic</groupId>
+							<artifactId>sample-jee-weblogic-services</artifactId>
+							<bundleFileName>jee-example-services.jar</bundleFileName>
+						</ejbModule>
+					</modules>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+    
+	<dependencies>
+        
+        <!-- Project deps -->
+		<dependency>
+            <groupId>org.jboss.windup.test.apps.weblogic</groupId>
+			<artifactId>sample-jee-weblogic-web</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+            <groupId>org.jboss.windup.test.apps.weblogic</groupId>
+			<artifactId>sample-jee-weblogic-services</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+		</dependency>
+        
+	</dependencies>
+    
+</project>
