@@ -13,16 +13,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jboss.logging.Logger;
+import org.apache.commons.lang.time.DateUtils;
 
+import weblogic.i18n.logging.NonCatalogLogger;
+import weblogic.servlet.security.ServletAuthentication;
 
 public class LoginFilter implements Filter {
 
-	private static final Logger log = Logger.getLogger(LoginFilter.class);
+	private NonCatalogLogger ncl = new NonCatalogLogger("LoginFilter");
 	
 
 	public void destroy() {
-		log.debug("LoginFilter destroy.");
+		ncl.debug("LoginFilter destroy.");
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
@@ -34,6 +36,6 @@ public class LoginFilter implements Filter {
 	}
 
 	public void init(FilterConfig config) throws ServletException {
-		log.debug("LoginFilter init.");
+		ncl.debug("LoginFilter init.");
 	}
 }
