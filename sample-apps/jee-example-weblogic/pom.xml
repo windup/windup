@@ -26,6 +26,20 @@
 
     <build>
 		<plugins>
+            <!-- Do not compile, because it won't (missing WebLogic deps). -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+			</plugin>
+            
+            <!-- Run Windup over this project, with com.acme stated as customer's package. -->
 			<plugin>
 				<groupId>org.jboss.windup</groupId>
 				<artifactId>windup-maven-plugin</artifactId>
@@ -39,6 +53,33 @@
 			</plugin>
 		</plugins>
 	</build>
+    
+    
+    <profiles>
+        <!-- Build with manually installed dependencies. -->
+        <profile>
+            <id>manualDeps</id>
+            
+            <build>
+                <plugins>
+                    <!-- Do compile. (Overrides disabled compiling above.) -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.1</version>
+                        <executions>
+                            <execution>
+                                <id>default-compile</id>
+                                <phase>compile</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            
+        </profile>
+    </profiles>
+    
 
     <dependencies>
         
