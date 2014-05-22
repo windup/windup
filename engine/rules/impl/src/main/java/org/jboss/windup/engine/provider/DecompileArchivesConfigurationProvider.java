@@ -12,7 +12,7 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class DecompileArchivesProvider extends WindupConfigurationProvider
+public class DecompileArchivesConfigurationProvider extends WindupConfigurationProvider
 {
     @Override
     public RulePhase getPhase()
@@ -23,7 +23,7 @@ public class DecompileArchivesProvider extends WindupConfigurationProvider
     @Override
     public List<Class<? extends WindupConfigurationProvider>> getDependencies()
     {
-        return generateDependencies(UnzipArchivesToTempConfigurationProvider.class);
+        return generateDependencies(IndexClassFilesConfigurationProvider.class);
     }
 
     @Override

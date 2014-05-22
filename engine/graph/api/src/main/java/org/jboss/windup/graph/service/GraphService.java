@@ -41,4 +41,9 @@ public class GraphService<T extends WindupVertexFrame>
 
         return result;
     }
+
+    GraphContext getGraphContext()
+    {
+        return context;
+    }
 }

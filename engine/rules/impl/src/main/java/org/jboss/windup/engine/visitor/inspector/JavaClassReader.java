@@ -46,7 +46,8 @@ public class JavaClassReader extends EmptyVisitor
 
         for (String interfaceName : obj.getInterfaceNames())
         {
-            org.jboss.windup.graph.model.resource.JavaClassModel interfaceClass = javaClassDao.createJavaClass(interfaceName);
+            org.jboss.windup.graph.model.resource.JavaClassModel interfaceClass = javaClassDao
+                        .createJavaClass(interfaceName);
             // then we make the connection.
             current.addImplements(interfaceClass);
         }

@@ -1,6 +1,8 @@
 package org.jboss.windup.addon.config.operation;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 
 import org.jboss.windup.addon.config.GraphRewrite;
@@ -13,6 +15,7 @@ import org.jboss.windup.engine.decompiler.procyon.ProcyonDecompiler;
 import org.jboss.windup.engine.util.exception.WindupException;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -45,11 +48,26 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperator<Archiv
                 {
                     FileResourceModel decompiledFileModel = fileService.getByUniqueProperty(
                                 FileResourceModel.PROPERTY_FILE_PATH, decompiledOutputFile);
-                    if (decompiledFileModel == null)
+
+                    if (decompiledOutputFile.endsWith(".java"))
                     {
-                        decompiledFileModel = event.getGraphContext().getFramed()
-                                    .addVertex(null, FileResourceModel.class);
-                        decompiledFileModel.setFilePath(decompiledOutputFile);
+                        if (decompiledFileModel == null)
+                        {
+                            decompiledFileModel = event.getGraphContext().getFramed()
+                                        .addVertex(null, FileResourceModel.class);
+                            decompiledFileModel.setFilePath(decompiledOutputFile);
+                        }
+
+                        Path classFilepath = Paths.get(decompiledOutputFile.substring(0,
+                                    decompiledOutputFile.length() - 5)
+                                    + ".class");
+                        FileResourceModel classFileModel = fileService.getByUniqueProperty(
+                                    FileResourceModel.PROPERTY_FILE_PATH, classFilepath);
+                        if (classFileModel != null && classFileModel instanceof JavaClassModel)
+                        {
+                            JavaClassModel classModel = (JavaClassModel) classFileModel;
+                            classModel.setDecompiledSource(decompiledFileModel);
+                        }
                     }
                     payload.addDecompiledFileModel(decompiledFileModel);
                 }

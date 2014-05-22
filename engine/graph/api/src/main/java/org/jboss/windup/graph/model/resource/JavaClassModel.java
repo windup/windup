@@ -19,6 +19,12 @@ public interface JavaClassModel extends FileResourceModel
     @Adjacency(label = "javaClassFacet", direction = Direction.IN)
     public void addResource(ResourceModel resource);
 
+    @Property("className")
+    public void setClassName(String className);
+
+    @Property("className")
+    public String getClassName();
+
     @Label
     @Property("qualifiedName")
     public String getQualifiedName();
@@ -65,11 +71,17 @@ public interface JavaClassModel extends FileResourceModel
     @GremlinGroovy("it.in('javaClassFacet').in('child').dedup")
     public Iterable<JarArchiveModel> providedBy();
 
-    @Adjacency(label = "source", direction = Direction.OUT)
-    public void setSource(FileResourceModel source);
+    @Adjacency(label = "decompiledSource", direction = Direction.OUT)
+    public void setDecompiledSource(FileResourceModel source);
 
-    @Adjacency(label = "source", direction = Direction.OUT)
-    public FileResourceModel getSource();
+    @Adjacency(label = "decompiledSource", direction = Direction.OUT)
+    public FileResourceModel getDecompiledSource();
+
+    @Adjacency(label = "originalSource", direction = Direction.OUT)
+    public void setOriginalSource(FileResourceModel source);
+
+    @Adjacency(label = "originalSource", direction = Direction.OUT)
+    public FileResourceModel getOriginalSource();
 
     @GremlinGroovy("it.out('javaMethod').has('methodName', methodName)")
     public Iterable<JavaMethodModel> getMethod(@GremlinParam("methodName") String methodName);
