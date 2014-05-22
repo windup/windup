@@ -19,6 +19,18 @@
     <modules>
         <module>windup-regression-test</module>
         <module>jee-example-jboss</module>
+        <!-- See README.txt.
         <module>jee-example-weblogic</module>
+        -->
     </modules>
+    
+    <profiles>
+        <!-- Build with manually installed dependencies. -->
+        <profile>
+            <id>manualDeps</id>
+            <modules>
+                <module>jee-example-weblogic</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
