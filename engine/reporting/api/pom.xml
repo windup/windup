@@ -21,13 +21,6 @@
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.addon.reporting</groupId>
-            <artifactId>reporting-spi</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.freemarker</groupId>
@@ -38,12 +31,6 @@
         <dependency>
             <groupId>org.jboss.windup.addon</groupId>
             <artifactId>config-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
-            <artifactId>config-spi</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

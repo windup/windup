@@ -45,11 +45,5 @@
             <artifactId>graph-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
-            <artifactId>graph-spi</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 </project>
