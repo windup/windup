@@ -11,7 +11,9 @@
     
     
     <groupId>org.jboss.windup.addons.server</groupId>
-    <artifactId>ServerMigrationUtils</artifactId>
+    <artifactId>server-migration-utils</artifactId>
+    
+    <name>Server Migration Utils</name>
     
     <build>
         <plugins>
