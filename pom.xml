@@ -44,6 +44,7 @@
         <module>legacy</module>
         <module>addons</module>
         <module>sample-apps</module>
+        <module>GroovyTry</module>
     </modules>
 
     <build>
