@@ -14,7 +14,7 @@
     <modules>
         <module>graph</module>
         <module>config</module>
-        <module>tests</module>
+        <module>tests/core</module>
         <module>utils</module>
         <module>rules</module>
         <module>reporting</module>
