@@ -7,15 +7,22 @@
 package org.jboss.windup.addon.groovy;
 
 import groovy.lang.Binding;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
 import org.jboss.windup.engine.util.exception.WindupException;
@@ -32,6 +39,8 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
 {
     @Inject
     private FurnaceGroovyRuleScanner scanner;
+    @Inject
+    private Furnace furnace;
 
     @Override
     public Configuration getConfiguration(GraphContext context)
@@ -44,7 +53,10 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
         Binding binding = new Binding();
         binding.setVariable("foo", new Integer(2));
 
-        GroovyShell shell = new GroovyShell(binding);
+        CompilerConfiguration config = new CompilerConfiguration();
+        config.addCompilationCustomizers(new ImportCustomizer());
+        ClassLoader loader = getCompositeClassloader();
+        GroovyShell shell = new GroovyShell(new GroovyClassLoader(loader), binding, config);
 
         for (URL resource : getScripts())
         {
@@ -64,6 +76,27 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
         }
 
         return builder;
+    }
+
+    private ClassLoader getCompositeClassloader()
+    {
+        List<ClassLoader> loaders = new ArrayList<>();
+        AddonFilter filter = new AddonFilter()
+        {
+            @Override
+            public boolean accept(Addon addon)
+            {
+                // TODO this should only accept addons that depend on windup-config addon or whatever we call that
+                return true;
+            }
+        };
+        
+        for (Addon addon : furnace.getAddonRegistry().getAddons(filter))
+        {
+            loaders.add(addon.getClassLoader());
+        }
+        
+        return new FurnaceCompositeClassLoader(getClass().getClassLoader(), loaders);
     }
 
     private Iterable<URL> getScripts()
