@@ -101,7 +101,7 @@ public class ReportEngine {
      * @param outputLocation  Where to store the resulting reports.
      *        If null, inputLocation + "-doc" is used. If the directory doesn't exist, it is created.
      */
-	private void process(File inputLocation, File outputLocation) throws IOException {
+	public void process(File inputLocation, File outputLocation) throws IOException {
         if( ! inputLocation.exists() ) {
             throw new FileNotFoundException("Input file or directory not found: " + inputLocation);
 		}
