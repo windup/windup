@@ -50,7 +50,7 @@ public class WindupArchitectureTest
         Assert.assertNotNull(processor);
         Assert.assertNotNull(processor.toString());
 
-        String inputPath = "../../test_files/Windup1x-javaee-example.war";
+        String inputPath = "../../../test_files/Windup1x-javaee-example.war";
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
 

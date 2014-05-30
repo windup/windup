@@ -13,6 +13,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("JavaClassResource")
 public interface JavaClassModel extends FileResourceModel
 {
+    public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
+
     @Adjacency(label = "javaClassFacet", direction = Direction.IN)
     public Iterable<ResourceModel> getResources();
 
@@ -26,10 +28,10 @@ public interface JavaClassModel extends FileResourceModel
     public String getClassName();
 
     @Label
-    @Property("qualifiedName")
+    @Property(PROPERTY_QUALIFIED_NAME)
     public String getQualifiedName();
 
-    @Property("qualifiedName")
+    @Property(PROPERTY_QUALIFIED_NAME)
     public void setQualifiedName(String qualifiedName);
 
     @Property("packageName")

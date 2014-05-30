@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -78,12 +79,6 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         this.cu = cu;
         this.javaClassDao = javaClassDao;
         this.windupContext = context;
-
-        // for (JavaClassModel javaImport : javaClass.getImports())
-        // {
-        // classNameToFullyQualified.put(StringUtils.substringAfterLast(javaImport.getQualifiedName(), "."),
-        // javaImport.getQualifiedName());
-        // }
     }
 
     private void processConstructor(ConstructorType interest, int lineStart, int startPosition, int length,
@@ -424,6 +419,13 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                     cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), "Usage of",
                     JavaSourceType.METHOD);
 
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(PackageDeclaration node)
+    {
+        LOG.info("Found package: " + node.getName().toString());
         return super.visit(node);
     }
 
