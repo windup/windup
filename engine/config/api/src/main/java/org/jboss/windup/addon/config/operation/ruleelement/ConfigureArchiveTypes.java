@@ -12,16 +12,16 @@ import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.jboss.windup.graph.model.resource.WarArchiveModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class ArchiveTypingRuleElement extends AbstractIterationOperator<ArchiveModel>
+public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveModel>
 {
-    public ArchiveTypingRuleElement(String variableName)
+    public ConfigureArchiveTypes(String variableName)
     {
         super(ArchiveModel.class, variableName);
     }
 
-    public static ArchiveTypingRuleElement addTypes(String variableName)
+    public static ConfigureArchiveTypes forVar(String variableName)
     {
-        return new ArchiveTypingRuleElement(variableName);
+        return new ConfigureArchiveTypes(variableName);
     }
 
     @Override

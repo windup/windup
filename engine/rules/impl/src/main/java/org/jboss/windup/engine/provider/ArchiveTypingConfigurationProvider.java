@@ -6,7 +6,7 @@ import org.jboss.windup.addon.config.RulePhase;
 import org.jboss.windup.addon.config.WindupConfigurationProvider;
 import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.addon.config.operation.Iteration;
-import org.jboss.windup.addon.config.operation.ruleelement.ArchiveTypingRuleElement;
+import org.jboss.windup.addon.config.operation.ruleelement.ConfigureArchiveTypes;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -39,7 +39,7 @@ public class ArchiveTypingConfigurationProvider extends WindupConfigurationProvi
                     .perform(
                                 Iteration.over("archives").var("archive")
                                             .perform(
-                                                        ArchiveTypingRuleElement.addTypes("archive")
+                                                        ConfigureArchiveTypes.forVar("archive")
                                             ).endIteration()
                     );
     }

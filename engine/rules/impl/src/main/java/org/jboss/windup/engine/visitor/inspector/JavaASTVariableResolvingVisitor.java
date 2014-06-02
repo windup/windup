@@ -13,9 +13,11 @@ package org.jboss.windup.engine.visitor.inspector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -49,6 +51,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.jboss.windup.engine.visitor.inspector.decompiler.ClassCandidate;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
+import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +75,9 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
     private final WindupContext windupContext;
     private final JavaClassDao javaClassDao;
 
-    private final Map<String, String> classNameToFullyQualified = new HashMap<String, String>();
+    private final List<String> wildcardImports = new ArrayList<>();
+    private final Set<String> classNameLookedUp = new HashSet<>();
+    private final Map<String, String> classNameToFQCN = new HashMap<>();
 
     public JavaASTVariableResolvingVisitor(CompilationUnit cu, JavaClassDao javaClassDao, WindupContext context)
     {
@@ -85,7 +90,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                 String decoratorPrefix, JavaSourceType sourceType)
     {
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, interest.toString());
-        // results.add(dr);
+
         LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
     }
@@ -94,9 +99,51 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                 String decoratorPrefix, JavaSourceType sourceType)
     {
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, interest.toString());
-        // results.add(dr);
+
         LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
+    }
+
+    private String resolveClassname(String sourceClassname)
+    {
+        if (!StringUtils.contains(sourceClassname, "."))
+        {
+            if (classNameLookedUp.contains(sourceClassname))
+            {
+                String qualifiedName = classNameToFQCN.get(sourceClassname);
+                if (qualifiedName != null)
+                {
+                    return qualifiedName;
+                }
+                else
+                {
+                    return sourceClassname;
+                }
+            }
+            else
+            {
+                classNameLookedUp.add(sourceClassname);
+                for (String wildcardImport : wildcardImports)
+                {
+                    String candidateQualifiedName = wildcardImport + "." + sourceClassname;
+
+                    Iterable<JavaClassModel> javaClassModels = javaClassDao.findByJavaPackage(wildcardImport);
+                    for (JavaClassModel javaClassModel : javaClassModels)
+                    {
+                        if (candidateQualifiedName.equals(javaClassModel.getQualifiedName()))
+                        {
+                            classNameToFQCN.put(sourceClassname, candidateQualifiedName);
+                            return candidateQualifiedName;
+                        }
+                    }
+                }
+                return sourceClassname;
+            }
+        }
+        else
+        {
+            return sourceClassname;
+        }
     }
 
     private void processInterest(String interest, int lineStart, int startPosition, int length, String decoratorPrefix,
@@ -104,16 +151,10 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
     {
 
         String sourceString = interest;
-        if (!StringUtils.contains(sourceString, "."))
-        {
-            if (classNameToFullyQualified.containsKey(sourceString))
-            {
-                sourceString = classNameToFullyQualified.get(sourceString);
-            }
-        }
+        sourceString = resolveClassname(sourceString);
 
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, sourceString);
-        // results.add(dr);
+
         LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
     }
@@ -128,16 +169,10 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         int length = type.getLength();
 
         String sourceString = type.toString();
-        if (!StringUtils.contains(sourceString, "."))
-        {
-            if (classNameToFullyQualified.containsKey(sourceString))
-            {
-                sourceString = classNameToFullyQualified.get(sourceString);
-            }
-        }
+        sourceString = resolveClassname(sourceString);
 
         ClassCandidate dr = new ClassCandidate(sourcePosition, startPosition, length, sourceString);
-        // results.add(dr);
+
         LOG.info("Prefix: " + decoratorPrefix);
         if (type instanceof SimpleType)
         {
@@ -154,17 +189,10 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             return;
 
         String sourceString = name.toString();
-
-        if (!StringUtils.contains(sourceString, "."))
-        {
-            if (classNameToFullyQualified.containsKey(sourceString))
-            {
-                sourceString = classNameToFullyQualified.get(sourceString);
-            }
-        }
+        sourceString = resolveClassname(sourceString);
 
         ClassCandidate dr = new ClassCandidate(lineNumber, startPosition, length, sourceString);
-        // TODO: results.add(dr);
+
         LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
     }
@@ -186,10 +214,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             {
                 // make it fully qualified.
                 String typeName = type.getType().toString();
-                if (classNameToFullyQualified.containsKey(typeName))
-                {
-                    typeName = classNameToFullyQualified.get(typeName);
-                }
+                typeName = resolveClassname(typeName);
                 // now add it as a local variable.
                 // this.names.add(type.getName().toString());
                 // this.nameInstance.put(type.getName().toString(), typeName);
@@ -256,13 +281,8 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         for (int i = 0; i < node.fragments().size(); ++i)
         {
             String nodeType = node.getType().toString();
-            if (!StringUtils.contains(nodeType, "."))
-            {
-                if (classNameToFullyQualified.containsKey(nodeType))
-                {
-                    nodeType = classNameToFullyQualified.get(nodeType);
-                }
-            }
+            nodeType = resolveClassname(nodeType);
+
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             frag.resolveBinding();
             // this.names.add(frag.getName().getIdentifier());
@@ -341,13 +361,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         for (int i = 0; i < node.fragments().size(); ++i)
         {
             String nodeType = node.getType().toString();
-            if (!StringUtils.contains(nodeType, "."))
-            {
-                if (classNameToFullyQualified.containsKey(nodeType))
-                {
-                    nodeType = classNameToFullyQualified.get(nodeType);
-                }
-            }
+            nodeType = resolveClassname(nodeType);
 
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             // this.names.add(frag.getName().getIdentifier());
@@ -364,6 +378,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         String name = node.getName().toString();
         if (node.isOnDemand())
         {
+            wildcardImports.add(name);
             for (String knownClz : classNameToFullyQualified.values())
             {
                 if (StringUtils.startsWith(knownClz, name))
@@ -377,7 +392,8 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         else
         {
             String clzName = StringUtils.substringAfterLast(name, ".");
-            classNameToFullyQualified.put(clzName, name);
+            classNameLookedUp.add(clzName);
+            classNameToFQCN.put(clzName, name);
             processInterest(node.getName().toString(), cu.getLineNumber(node.getName().getStartPosition()),
                         cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), "Import of",
                         JavaSourceType.IMPORT);
@@ -409,10 +425,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         // objRef = nameInstance.get(objRef);
         // }
 
-        if (classNameToFullyQualified.containsKey(objRef))
-        {
-            objRef = classNameToFullyQualified.get(objRef);
-        }
+        objRef = resolveClassname(objRef);
 
         MethodType methodCall = new MethodType(objRef, node.getName().toString(), resolvedParams);
         processMethod(methodCall, cu.getLineNumber(node.getName().getStartPosition()),
@@ -433,10 +446,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
     public boolean visit(ClassInstanceCreation node)
     {
         String nodeType = node.getType().toString();
-        if (classNameToFullyQualified.containsKey(nodeType))
-        {
-            nodeType = classNameToFullyQualified.get(nodeType);
-        }
+        nodeType = resolveClassname(nodeType);
 
         List<String> resolvedParams = this.methodParameterGuesser(node.arguments());
 
@@ -529,10 +539,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             else if (o instanceof ClassInstanceCreation)
             {
                 String nodeType = ((ClassInstanceCreation) o).getType().toString();
-                if (classNameToFullyQualified.containsKey(nodeType))
-                {
-                    nodeType = classNameToFullyQualified.get(nodeType.toString());
-                }
+                nodeType = resolveClassname(nodeType);
                 resolvedParams.add(nodeType);
             }
             else if (o instanceof org.eclipse.jdt.core.dom.CharacterLiteral)
@@ -570,10 +577,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         // objRef = nameInstance.get(objRef);
         // }
 
-        if (classNameToFullyQualified.containsKey(objRef))
-        {
-            objRef = classNameToFullyQualified.get(objRef);
-        }
+        objRef = resolveClassname(objRef);
 
         return objRef;
     }
