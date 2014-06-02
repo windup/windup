@@ -379,14 +379,13 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         if (node.isOnDemand())
         {
             wildcardImports.add(name);
-            for (String knownClz : classNameToFullyQualified.values())
+
+            Iterable<JavaClassModel> classModels = javaClassDao.findByJavaPackage(name);
+            for (JavaClassModel classModel : classModels)
             {
-                if (StringUtils.startsWith(knownClz, name))
-                {
-                    processInterest(knownClz, cu.getLineNumber(node.getName().getStartPosition()),
-                                cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
-                                "Leads to import of", JavaSourceType.IMPORT);
-                }
+                processInterest(classModel.getQualifiedName(), cu.getLineNumber(node.getName().getStartPosition()),
+                            cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
+                            "Leads to import of", JavaSourceType.IMPORT);
             }
         }
         else
