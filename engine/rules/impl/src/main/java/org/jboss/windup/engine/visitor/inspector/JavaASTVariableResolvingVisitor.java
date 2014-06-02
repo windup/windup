@@ -63,21 +63,33 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaASTVariableResolvingVisitor extends ASTVisitor
 {
-
-    // TODO: Fix the Method and Constructor visitors to properly
-    // handle checking the blacklist. Because they don't pass just the class through, a blacklisted constructor
-    // (org.example.Sample(x, y, z)) will never match the blacklist candidate
-    // present in the blacklist candidate set (org.example.Sample)
-
     private static final Logger LOG = LoggerFactory.getLogger(JavaASTVariableResolvingVisitor.class);
 
     private final CompilationUnit cu;
     private final WindupContext windupContext;
     private final JavaClassDao javaClassDao;
 
+    /**
+     * Contains all wildcard imports (import com.example.*) lines from the source file.
+     * 
+     * These are used for type resolution throughout the class.
+     */
     private final List<String> wildcardImports = new ArrayList<>();
+
+    /**
+     * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will
+     * exist here even if no results were found.
+     */
     private final Set<String> classNameLookedUp = new HashSet<>();
+    /**
+     * Contains a map of class short names (eg, MyClass) to qualified names (eg, com.example.MyClass)
+     */
     private final Map<String, String> classNameToFQCN = new HashMap<>();
+
+    /**
+     * This is the list of blacklisted sections from the source file (where it is and the type being referenced)
+     */
+    private final List<ClassCandidate> results = new ArrayList<ClassCandidate>();
 
     public JavaASTVariableResolvingVisitor(CompilationUnit cu, JavaClassDao javaClassDao, WindupContext context)
     {
@@ -90,6 +102,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                 String decoratorPrefix, JavaSourceType sourceType)
     {
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, interest.toString());
+        results.add(dr);
 
         LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
@@ -99,6 +112,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                 String decoratorPrefix, JavaSourceType sourceType)
     {
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, interest.toString());
+        results.add(dr);
 
         LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
@@ -106,10 +120,15 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
 
     private String resolveClassname(String sourceClassname)
     {
+        // If the type contains a "." assume that it is fully qualified.
+        // FIXME - This is a carryover from the original Windup code, and I don't think
+        // that this assumption is valid.
         if (!StringUtils.contains(sourceClassname, "."))
         {
+            // Check if we have already looked this one up
             if (classNameLookedUp.contains(sourceClassname))
             {
+                // if yes, then just use the looked up name from the map
                 String qualifiedName = classNameToFQCN.get(sourceClassname);
                 if (qualifiedName != null)
                 {
@@ -117,26 +136,31 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
                 }
                 else
                 {
+                    // otherwise, just return the provided name (unchanged)
                     return sourceClassname;
                 }
             }
             else
             {
+                // if this name has not been resolved before, go ahead and resolve it from the graph (if possible)
                 classNameLookedUp.add(sourceClassname);
                 for (String wildcardImport : wildcardImports)
                 {
                     String candidateQualifiedName = wildcardImport + "." + sourceClassname;
 
+                    // search every wildcard import for this name
                     Iterable<JavaClassModel> javaClassModels = javaClassDao.findByJavaPackage(wildcardImport);
                     for (JavaClassModel javaClassModel : javaClassModels)
                     {
                         if (candidateQualifiedName.equals(javaClassModel.getQualifiedName()))
                         {
+                            // we found it... put it in the map and return the result
                             classNameToFQCN.put(sourceClassname, candidateQualifiedName);
                             return candidateQualifiedName;
                         }
                     }
                 }
+                // nothing was found, so just return the original value
                 return sourceClassname;
             }
         }
@@ -154,6 +178,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         sourceString = resolveClassname(sourceString);
 
         ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, sourceString);
+        results.add(dr);
 
         LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
@@ -172,6 +197,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         sourceString = resolveClassname(sourceString);
 
         ClassCandidate dr = new ClassCandidate(sourcePosition, startPosition, length, sourceString);
+        results.add(dr);
 
         LOG.info("Prefix: " + decoratorPrefix);
         if (type instanceof SimpleType)
@@ -192,6 +218,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
         sourceString = resolveClassname(sourceString);
 
         ClassCandidate dr = new ClassCandidate(lineNumber, startPosition, length, sourceString);
+        results.add(dr);
 
         LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
