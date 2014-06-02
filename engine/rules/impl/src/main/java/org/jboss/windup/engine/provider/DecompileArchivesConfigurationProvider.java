@@ -23,7 +23,7 @@ public class DecompileArchivesConfigurationProvider extends WindupConfigurationP
     @Override
     public List<Class<? extends WindupConfigurationProvider>> getDependencies()
     {
-        return generateDependencies(IndexClassFilesConfigurationProvider.class);
+        return generateDependencies(DiscoverJavaFilesConfigurationProvider.class);
     }
 
     @Override

@@ -53,6 +53,21 @@ public class WindupArchitectureTest
         String inputPath = "../../../test_files/Windup1x-javaee-example.war";
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
+        windupCfg.setSourceMode(false);
+
+        processor.execute();
+    }
+
+    @Test
+    public void testRunWindupSourceMode() throws Exception
+    {
+        Assert.assertNotNull(processor);
+        Assert.assertNotNull(processor.toString());
+
+        String inputPath = "../../../test_files/src_example";
+        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
+        windupCfg.setInputPath(inputPath);
+        windupCfg.setSourceMode(true);
 
         processor.execute();
     }
