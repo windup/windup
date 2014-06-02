@@ -144,20 +144,18 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
             {
                 // if this name has not been resolved before, go ahead and resolve it from the graph (if possible)
                 classNameLookedUp.add(sourceClassname);
+
+                // search every wildcard import for this name
                 for (String wildcardImport : wildcardImports)
                 {
                     String candidateQualifiedName = wildcardImport + "." + sourceClassname;
 
-                    // search every wildcard import for this name
-                    Iterable<JavaClassModel> javaClassModels = javaClassDao.findByJavaPackage(wildcardImport);
-                    for (JavaClassModel javaClassModel : javaClassModels)
+                    JavaClassModel jcm = javaClassDao.getJavaClass(candidateQualifiedName);
+                    if (jcm != null)
                     {
-                        if (candidateQualifiedName.equals(javaClassModel.getQualifiedName()))
-                        {
-                            // we found it... put it in the map and return the result
-                            classNameToFQCN.put(sourceClassname, candidateQualifiedName);
-                            return candidateQualifiedName;
-                        }
+                        // we found it... put it in the map and return the result
+                        classNameToFQCN.put(sourceClassname, candidateQualifiedName);
+                        return candidateQualifiedName;
                     }
                 }
                 // nothing was found, so just return the original value

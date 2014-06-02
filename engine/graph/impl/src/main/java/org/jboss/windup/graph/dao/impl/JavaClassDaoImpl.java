@@ -26,6 +26,11 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
         super(JavaClassModel.class);
     }
 
+    public JavaClassModel getJavaClass(String qualifiedName)
+    {
+        return getByUniqueProperty("qualifiedName", qualifiedName);
+    }
+
     public synchronized JavaClassModel createJavaClass(String qualifiedName)
     {
         JavaClassModel clz = getByUniqueProperty("qualifiedName", qualifiedName);
@@ -46,12 +51,14 @@ public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements Jav
 
     public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
-        return getContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch()).has("packageName", packageName).vertices(getType());
+        return getContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+                    .has("packageName", packageName).vertices(getType());
     }
 
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
-        return getContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch()).has("majorVersion", version.getMajor())
+        return getContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+                    .has("majorVersion", version.getMajor())
                     .has("minorVersion", version.getMinor()).vertices(getType());
     }
 
