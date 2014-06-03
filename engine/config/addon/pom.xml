@@ -8,7 +8,7 @@
     </parent>
     <artifactId>config</artifactId>
     
-    <name>Windup Engine - Config</name>
+    <name>Windup Engine - Config Parent</name>
     
     <build>
         <plugins>

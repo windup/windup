@@ -11,9 +11,17 @@
     <name>Windup Engine - Graph API</name>
     
     <dependencies>
+        <!-- Project deps -->
         <dependency>
             <groupId>org.jboss.windup.addon</groupId>
             <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.engine</groupId>
+            <artifactId>windup-logging</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
             <scope>provided</scope>
