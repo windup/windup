@@ -13,6 +13,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -22,6 +23,7 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * 
  */
+@Ignore
 public class LoadGroovyRulesTest
 {
     @Deployment
