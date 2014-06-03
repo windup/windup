@@ -16,6 +16,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.tinkerpop.blueprints.Vertex;
+
 @RunWith(Arquillian.class)
 public class WindupArchitectureTest
 {
@@ -55,7 +57,17 @@ public class WindupArchitectureTest
         windupCfg.setInputPath(inputPath);
         windupCfg.setSourceMode(false);
 
-        processor.execute();
+        try
+        {
+            processor.execute();
+        }
+        finally
+        {
+            for (Vertex v : graphContext.getGraph().getVertices())
+            {
+                v.remove();
+            }
+        }
     }
 
     @Test
@@ -69,6 +81,16 @@ public class WindupArchitectureTest
         windupCfg.setInputPath(inputPath);
         windupCfg.setSourceMode(true);
 
-        processor.execute();
+        try
+        {
+            processor.execute();
+        }
+        finally
+        {
+            for (Vertex v : graphContext.getGraph().getVertices())
+            {
+                v.remove();
+            }
+        }
     }
 }
