@@ -60,12 +60,6 @@
                 <artifactId>config-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.jboss.windup.addon</groupId>
-                <artifactId>config-spi</artifactId>
-                <version>${project.version}</version>
-                <classifier>forge-addon</classifier>
-            </dependency>
             
             <!-- Furnace CDI redefined? -->
             <dependency>

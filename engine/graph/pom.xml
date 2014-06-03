@@ -40,12 +40,6 @@
                 <artifactId>graph-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.jboss.windup.addon</groupId>
-                <artifactId>graph-spi</artifactId>
-                <version>${project.version}</version>
-                <classifier>forge-addon</classifier>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     

@@ -21,6 +21,12 @@
     
     <dependencies>
         <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>graph</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
@@ -36,10 +42,6 @@
             <artifactId>arquillian-furnace-classpath</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
-            <artifactId>graph</artifactId>
-            <classifier>forge-addon</classifier>
-        </dependency>
+        
     </dependencies>
 </project>
