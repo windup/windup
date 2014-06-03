@@ -10,6 +10,15 @@
     
     <name>Windup Engine - Graph Tests</name>
     
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/java</directory>
+                <excludes> <exclude>**/*.java</exclude> </excludes>
+            </testResource>
+        </testResources>
+    </build>
+    
     <dependencies>
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
