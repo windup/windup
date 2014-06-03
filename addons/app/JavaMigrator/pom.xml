@@ -4,15 +4,16 @@
     
     <parent>
         <groupId>org.jboss.windup</groupId>
-        <artifactId>windup-parent</artifactId>
+        <artifactId>addons-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../../../</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     
-    <artifactId>jboss-eap-recognition</artifactId>
-
-    <name>JBoss EAP Recognition</name>    
-    <description>Recognizes which JBoss server is in given directory.</description>
+    <groupId>org.jboss.windup.addons</groupId>
+    <artifactId>java-migrator</artifactId>
+    
+    <name>Java Scanner</name>
+    <description>Java files related module. TBD.</description>
     
     <build>
         <plugins>
@@ -34,29 +35,4 @@
         </plugins>
     </build>
 
-
-    <dependencies>
-        
-        <!-- Project deps -->
-        <dependency>
-            <groupId>org.jboss.windup.addons.server</groupId>
-            <artifactId>server-migration-utils</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
-            <artifactId>utils</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-        
-    </dependencies>
-    
 </project>

@@ -17,6 +17,19 @@
     <modules>
         <module>server/JBossEapRecognition</module>
         <module>server/ServerMigrationUtils</module>
+        <module>app/JavaMigrator</module>
     </modules>
+    
+    <dependencies>
+        
+        <!-- Default deps -->
+        <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        
+    </dependencies>
     
 </project>
