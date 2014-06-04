@@ -42,7 +42,7 @@
     <modules>
         <module>engine</module>
         <module>legacy</module>
-        <module>addons</module>
+        <module>rules</module>
         <module>sample-apps</module>
     </modules>
 
