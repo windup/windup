@@ -9,7 +9,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     
-    <groupId>org.jboss.windup.engine.ext</groupId>
+    <groupId>org.jboss.windup.ext</groupId>
     <artifactId>windup-config-groovy</artifactId>
     
     <name>Windup Ext: Groovy</name>
