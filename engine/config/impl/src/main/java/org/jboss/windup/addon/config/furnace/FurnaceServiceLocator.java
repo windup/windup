@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.config.furnace;
+package org.jboss.windup.config.furnace;
 
 import java.util.ArrayList;
 import java.util.Collection;

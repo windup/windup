@@ -1,12 +1,12 @@
-package org.jboss.windup.addon.config.parser.xml;
+package org.jboss.windup.config.parser.xml;
 
 import static org.joox.JOOX.$;
 
 import java.util.List;
 
-import org.jboss.windup.addon.config.parser.ElementHandler;
-import org.jboss.windup.addon.config.parser.NamespaceElementHandler;
-import org.jboss.windup.addon.config.parser.ParserContext;
+import org.jboss.windup.config.parser.ElementHandler;
+import org.jboss.windup.config.parser.NamespaceElementHandler;
+import org.jboss.windup.config.parser.ParserContext;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "rules", namespace = "http://windup.jboss.org/v1/xml")

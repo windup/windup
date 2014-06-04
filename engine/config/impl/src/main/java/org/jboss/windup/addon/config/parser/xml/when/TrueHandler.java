@@ -1,8 +1,8 @@
-package org.jboss.windup.addon.config.parser.xml.when;
+package org.jboss.windup.config.parser.xml.when;
 
-import org.jboss.windup.addon.config.parser.ElementHandler;
-import org.jboss.windup.addon.config.parser.NamespaceElementHandler;
-import org.jboss.windup.addon.config.parser.ParserContext;
+import org.jboss.windup.config.parser.ElementHandler;
+import org.jboss.windup.config.parser.NamespaceElementHandler;
+import org.jboss.windup.config.parser.ParserContext;
 import org.ocpsoft.rewrite.config.True;
 import org.w3c.dom.Element;
 

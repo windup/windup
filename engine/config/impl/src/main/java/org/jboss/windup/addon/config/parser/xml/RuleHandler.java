@@ -1,12 +1,12 @@
-package org.jboss.windup.addon.config.parser.xml;
+package org.jboss.windup.config.parser.xml;
 
 import static org.joox.JOOX.$;
 
 import java.util.List;
 
-import org.jboss.windup.addon.config.parser.ElementHandler;
-import org.jboss.windup.addon.config.parser.NamespaceElementHandler;
-import org.jboss.windup.addon.config.parser.ParserContext;
+import org.jboss.windup.config.parser.ElementHandler;
+import org.jboss.windup.config.parser.NamespaceElementHandler;
+import org.jboss.windup.config.parser.ParserContext;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderPerform;

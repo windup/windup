@@ -8,11 +8,11 @@ package org.jboss.windup.engine;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.addon.config.GraphConfigurationLoader;
-import org.jboss.windup.addon.config.GraphRewrite;
-import org.jboss.windup.addon.config.GraphSubset;
-import org.jboss.windup.addon.config.runner.DefaultEvaluationContext;
-import org.jboss.windup.addon.config.selectables.SelectionFactory;
+import org.jboss.windup.config.GraphConfigurationLoader;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.GraphSubset;
+import org.jboss.windup.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;

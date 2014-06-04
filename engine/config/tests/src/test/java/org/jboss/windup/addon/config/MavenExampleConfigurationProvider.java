@@ -4,16 +4,19 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config;
+package org.jboss.windup.config;
 
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.RulePhase;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.addon.config.operation.GraphOperation;
-import org.jboss.windup.addon.config.operation.Iteration;
-import org.jboss.windup.addon.config.operation.ruleelement.TypeOperation;
-import org.jboss.windup.addon.config.selectables.SelectionFactory;
+import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
+import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.ruleelement.TypeOperation;
+import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;

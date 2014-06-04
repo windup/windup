@@ -1,5 +1,7 @@
-package org.jboss.windup.addon.config;
+package org.jboss.windup.config;
 
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.GraphSubset;
 import java.io.File;
 import java.util.List;
 
@@ -13,8 +15,8 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.addon.config.runner.DefaultEvaluationContext;
-import org.jboss.windup.addon.config.selectables.SelectionFactory;
+import org.jboss.windup.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
 import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;

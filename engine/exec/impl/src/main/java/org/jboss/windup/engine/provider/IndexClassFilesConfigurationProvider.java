@@ -2,12 +2,12 @@ package org.jboss.windup.engine.provider;
 
 import java.util.List;
 
-import org.jboss.windup.addon.config.RulePhase;
-import org.jboss.windup.addon.config.WindupConfigurationProvider;
-import org.jboss.windup.addon.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.addon.config.graphsearch.GraphSearchPropertyComparisonType;
-import org.jboss.windup.addon.config.operation.Iteration;
-import org.jboss.windup.addon.config.operation.ruleelement.AddClassFileMetadata;
+import org.jboss.windup.config.RulePhase;
+import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
+import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.ruleelement.AddClassFileMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.ocpsoft.rewrite.config.Configuration;

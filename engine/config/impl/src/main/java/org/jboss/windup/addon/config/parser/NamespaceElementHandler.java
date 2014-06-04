@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.config.parser;
+package org.jboss.windup.config.parser;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

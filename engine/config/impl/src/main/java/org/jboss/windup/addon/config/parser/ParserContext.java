@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.config.parser;
+package org.jboss.windup.config.parser;
 
 import static org.joox.JOOX.$;
 
@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.windup.addon.config.ConfigurationException;
-import org.jboss.windup.addon.config.parser.util.Annotations;
-import org.jboss.windup.addon.config.parser.util.HandlerId;
+import org.jboss.windup.config.ConfigurationException;
+import org.jboss.windup.config.parser.util.Annotations;
+import org.jboss.windup.config.parser.util.HandlerId;
 import org.ocpsoft.common.services.ServiceLoader;
 import org.ocpsoft.common.util.Iterators;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;

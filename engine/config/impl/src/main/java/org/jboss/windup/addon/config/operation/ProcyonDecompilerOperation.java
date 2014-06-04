@@ -1,12 +1,12 @@
-package org.jboss.windup.addon.config.operation;
+package org.jboss.windup.config.operation;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
-import org.jboss.windup.addon.config.GraphRewrite;
-import org.jboss.windup.addon.config.operation.ruleelement.AbstractIterationOperator;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
 import org.jboss.windup.engine.decompiler.DecompilationException;
 import org.jboss.windup.engine.decompiler.DecompilationResult;
 import org.jboss.windup.engine.decompiler.Decompiler;

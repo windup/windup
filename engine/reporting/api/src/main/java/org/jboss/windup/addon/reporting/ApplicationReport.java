@@ -1,7 +1,7 @@
 package org.jboss.windup.addon.reporting;
 
-import org.jboss.windup.addon.config.GraphRewrite;
-import org.jboss.windup.addon.config.operation.GraphOperation;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

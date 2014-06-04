@@ -1,5 +1,6 @@
-package org.jboss.windup.addon.config;
+package org.jboss.windup.config;
 
+import org.jboss.windup.config.GraphRewrite;
 import java.io.File;
 
 import javax.inject.Inject;
@@ -11,7 +12,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.addon.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;

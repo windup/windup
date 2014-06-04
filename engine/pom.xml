@@ -24,7 +24,6 @@
         <module>reporting</module>
         <module>decompiler</module>
         <module>ui</module>
-        <module>groovy</module>
         <module>logging</module>
     </modules>
     

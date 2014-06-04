@@ -1,5 +1,7 @@
-package org.jboss.windup.addon.config;
+package org.jboss.windup.config;
 
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.ConfigurationException;
 import javax.inject.Inject;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
@@ -8,7 +10,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.jboss.windup.addon.config.condition.GraphCondition;
+import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.graph.dao.XmlResourceDao;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;

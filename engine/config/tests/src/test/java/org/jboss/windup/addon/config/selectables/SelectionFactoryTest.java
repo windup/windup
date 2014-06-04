@@ -1,5 +1,6 @@
-package org.jboss.windup.addon.config.selectables;
+package org.jboss.windup.config.selectables;
 
+import org.jboss.windup.config.selectables.SelectionFactory;
 import java.io.File;
 
 import javax.inject.Inject;
@@ -12,9 +13,9 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.addon.config.GraphRewrite;
-import org.jboss.windup.addon.config.exception.IllegalTypeArgumentException;
-import org.jboss.windup.addon.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.exception.IllegalTypeArgumentException;
+import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
 import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;

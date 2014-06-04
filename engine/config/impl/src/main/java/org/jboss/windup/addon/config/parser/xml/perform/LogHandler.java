@@ -1,12 +1,12 @@
-package org.jboss.windup.addon.config.parser.xml.perform;
+package org.jboss.windup.config.parser.xml.perform;
 
 import static org.joox.JOOX.$;
 
-import org.jboss.windup.addon.config.ConfigurationException;
-import org.jboss.windup.addon.config.operation.Log;
-import org.jboss.windup.addon.config.parser.ElementHandler;
-import org.jboss.windup.addon.config.parser.NamespaceElementHandler;
-import org.jboss.windup.addon.config.parser.ParserContext;
+import org.jboss.windup.config.ConfigurationException;
+import org.jboss.windup.config.operation.Log;
+import org.jboss.windup.config.parser.ElementHandler;
+import org.jboss.windup.config.parser.NamespaceElementHandler;
+import org.jboss.windup.config.parser.ParserContext;
 import org.ocpsoft.logging.Logger.Level;
 import org.ocpsoft.rewrite.config.Operation;
 import org.w3c.dom.Element;

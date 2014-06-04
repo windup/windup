@@ -4,9 +4,9 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.addon.config.parser.util;
+package org.jboss.windup.config.parser.util;
 
-import org.jboss.windup.addon.config.parser.ElementHandler;
+import org.jboss.windup.config.parser.ElementHandler;
 
 /**
  * Identifies an {@link ElementHandler} by its tag name and namespace.
