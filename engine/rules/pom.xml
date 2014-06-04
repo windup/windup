@@ -18,9 +18,9 @@
         <module>addon</module>
         <module>api</module>
         <module>impl</module>
-        <module>spi</module>
         <module>tests</module>
     </modules>
+    
     <dependencyManagement>
         <dependencies>
             
@@ -66,12 +66,6 @@
                 <artifactId>rules-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.jboss.windup.rules</groupId>
-                <artifactId>rules-spi</artifactId>
-                <version>${project.version}</version>
-                <classifier>forge-addon</classifier>
-            </dependency>
             
             <dependency>
                 <groupId>org.jboss.forge.furnace.container</groupId>
@@ -81,8 +75,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <build>
-        <plugins>
-        </plugins>
-    </build>
+
 </project>

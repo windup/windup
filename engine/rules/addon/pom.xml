@@ -9,7 +9,36 @@
     <artifactId>rules</artifactId>
     
     <name>Windup Engine - Rules</name>
-    
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jboss.forge.furnace</groupId>
+                <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
+                <executions>
+                    <execution>
+                        <id>generate-dot</id>
+                        <phase>prepare-package</phase>
+                        <goals> <goal>generate-dot</goal> </goals>
+                        <configuration> <attach>true</attach> </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-forge-addon</id>
+                        <phase>package</phase>
+                        <goals> <goal>jar</goal> </goals>
+                        <configuration> <classifier>forge-addon</classifier> </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+        
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.addon</groupId>
@@ -41,46 +70,6 @@
             <artifactId>rules-impl</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.rules</groupId>
-            <artifactId>rules-spi</artifactId>
-            <classifier>forge-addon</classifier>
-        </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jboss.forge.furnace</groupId>
-                <artifactId>furnace-maven-plugin</artifactId>
-                <version>${version.furnace}</version>
-                <executions>
-                    <execution>
-                        <id>generate-dot</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>generate-dot</goal>
-                        </goals>
-                        <configuration>
-                            <attach>true</attach>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create-forge-addon</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>forge-addon</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+
 </project>
