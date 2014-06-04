@@ -46,7 +46,7 @@ public class ApplicationReportTest extends AbstractTestCase
                     .addClass(AbstractTestCase.class)
                     .addAsResource(new File("src/test/resources/reports"))
                     .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.addon.reporting:reporting"),
+                                AddonDependencyEntry.create("org.jboss.windup.engine.core.reporting:reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;

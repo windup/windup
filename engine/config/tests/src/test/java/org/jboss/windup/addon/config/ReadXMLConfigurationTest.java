@@ -29,7 +29,7 @@ public class ReadXMLConfigurationTest
 
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.addon:config"),
+                @AddonDependency(name = "org.jboss.windup.engine.core:config"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -37,7 +37,7 @@ public class ReadXMLConfigurationTest
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.addon:config"),
+                                AddonDependencyEntry.create("org.jboss.windup.engine.core:config"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;
