@@ -27,7 +27,7 @@ public class GraphTypeManagerTest
 {
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:graph"),
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -35,7 +35,7 @@ public class GraphTypeManagerTest
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.graph:graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;
