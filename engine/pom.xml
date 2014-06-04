@@ -20,7 +20,7 @@
         <module>config</module>
         <module>tests/core</module>
         <module>utils</module>
-        <module>rules</module>
+        <module>exec</module>
         <module>reporting</module>
         <module>decompiler</module>
         <module>ui</module>
