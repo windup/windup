@@ -8,8 +8,8 @@
         <relativePath>../../</relativePath>
     </parent>
     
-    <groupId>org.jboss.windup.addon</groupId>
-    <artifactId>graph-parent</artifactId>
+    <groupId>org.jboss.windup.engine.core</groupId>
+    <artifactId>windup-graph-parent</artifactId>
     <packaging>pom</packaging>
     
     <name>Windup Engine - Graph Parent</name>
