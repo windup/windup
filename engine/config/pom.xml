@@ -1,25 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.jboss.windup.engine</groupId>
         <artifactId>windup-engine-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
+
     <groupId>org.jboss.windup.engine.core</groupId>
     <artifactId>config-parent</artifactId>
+    <packaging>pom</packaging>
 
     <name>Windup Engine - Config Parent</name>
     
-    <packaging>pom</packaging>
     <modules>
         <module>addon</module>
         <module>api</module>
         <module>impl</module>
         <module>tests</module>
     </modules>
+    
     <dependencyManagement>
         <dependencies>
+
+            <!-- Project deps -->
+            <dependency>
+                <groupId>org.jboss.windup.engine.core</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>forge-addon</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.engine.core</groupId>
+                <artifactId>config-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.engine.core</groupId>
+                <artifactId>config-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
             <dependency>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-api</artifactId>
@@ -43,22 +65,6 @@
                 <artifactId>furnace-test-harness</artifactId>
                 <version>${version.furnace}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.windup.engine.core</groupId>
-                <artifactId>config</artifactId>
-                <version>${project.version}</version>
-                <classifier>forge-addon</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.windup.engine.core</groupId>
-                <artifactId>config-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.windup.engine.core</groupId>
-                <artifactId>config-impl</artifactId>
-                <version>${project.version}</version>
             </dependency>
             
             <!-- Furnace CDI redefined? -->
