@@ -7,7 +7,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>graph</artifactId>
+    <artifactId>windup-graph</artifactId>
     
     <name>Windup Engine - Graph addon</name>
     <description>It's necessary as a classified POM artifact for Furnace addon-manager to pick up.
@@ -56,11 +56,11 @@
         
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>graph-api</artifactId>
+            <artifactId>windup-graph-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>graph-impl</artifactId>
+            <artifactId>windup-graph-impl</artifactId>
             <scope>runtime</scope>
         </dependency>
 

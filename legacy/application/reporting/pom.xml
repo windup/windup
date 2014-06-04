@@ -7,7 +7,7 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>reporting</artifactId>
+    <artifactId>windup-reporting</artifactId>
     <name>Legacy Windup - Application - Reporting</name>
 
     <dependencies>

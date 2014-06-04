@@ -26,18 +26,18 @@
         <dependencies>
             <dependency>
                 <groupId>org.jboss.windup.graph</groupId>
-                <artifactId>graph</artifactId>
+                <artifactId>windup-graph</artifactId>
                 <version>${project.version}</version>
                 <classifier>forge-addon</classifier>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.graph</groupId>
-                <artifactId>graph-api</artifactId>
+                <artifactId>windup-graph-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.graph</groupId>
-                <artifactId>graph-impl</artifactId>
+                <artifactId>windup-graph-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

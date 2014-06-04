@@ -20,7 +20,7 @@
         <!-- Project deps -->
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>graph</artifactId>
+            <artifactId>windup-graph</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>

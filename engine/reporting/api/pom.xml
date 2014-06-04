@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>graph-api</artifactId>
+            <artifactId>windup-graph-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

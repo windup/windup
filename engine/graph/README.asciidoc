@@ -29,7 +29,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 ----
 <dependency>
    <groupId>org.jboss.windup.core.graph</groupId>
-   <artifactId>graph</artifactId>
+   <artifactId>windup-graph</artifactId>
    <classifier>forge-addon</classifier>
    <version>${version}</version>
 </dependency>

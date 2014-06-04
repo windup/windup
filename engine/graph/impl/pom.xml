@@ -7,7 +7,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>graph-impl</artifactId>
+    <artifactId>windup-graph-impl</artifactId>
     
     <name>Windup Engine - Graph Impl</name>
     
@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>graph-api</artifactId>
+            <artifactId>windup-graph-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

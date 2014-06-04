@@ -7,7 +7,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>graph-tests</artifactId>
+    <artifactId>windup-graph-tests</artifactId>
     
     <name>Windup Engine - Graph Tests</name>
     
@@ -23,7 +23,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>graph</artifactId>
+            <artifactId>windup-graph</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
 

@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>graph-impl</artifactId>
+            <artifactId>windup-graph-impl</artifactId>
             <scope>provided</scope>
             <version>${project.version}</version>
         </dependency>
