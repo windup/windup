@@ -26,12 +26,8 @@
                     <execution>
                         <id>generate-dot</id>
                         <phase>prepare-package</phase>
-                        <goals>
-                            <goal>generate-dot</goal>
-                        </goals>
-                        <configuration>
-                            <attach>true</attach>
-                        </configuration>
+                        <goals> <goal>generate-dot</goal> </goals>
+                        <configuration> <attach>true</attach> </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -50,11 +46,22 @@
     </build>
     
     <dependencies>
+        <!-- Project deps -->
         <dependency>
             <groupId>org.jboss.windup.addon</groupId>
             <artifactId>utils</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>graph-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.addon</groupId>
+            <artifactId>graph-impl</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Furnace -->
@@ -65,15 +72,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
-            <artifactId>graph-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
-            <artifactId>graph-impl</artifactId>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
     
 </project>
