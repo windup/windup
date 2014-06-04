@@ -40,7 +40,7 @@
         
         <!-- Project deps -->
         <dependency>
-            <groupId>org.jboss.windup.addons.server</groupId>
+            <groupId>org.jboss.windup.rules.server</groupId>
             <artifactId>server-migration-utils</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
