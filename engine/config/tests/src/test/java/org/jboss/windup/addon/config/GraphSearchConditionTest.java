@@ -34,7 +34,7 @@ public class GraphSearchConditionTest
 {
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.engine.core:config"),
+                @AddonDependency(name = "org.jboss.windup.engine.core.config:config"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -47,7 +47,7 @@ public class GraphSearchConditionTest
                                 XmlExampleConfigurationProvider2.class,
                                 XmlExampleConfigurationProvider3.class)
                     .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.engine.core:config"),
+                                AddonDependencyEntry.create("org.jboss.windup.engine.core.config:config"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;
