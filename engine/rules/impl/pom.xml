@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-        <groupId>org.jboss.windup.rules</groupId>
-        <artifactId>windup-rules-parent</artifactId>
+        <groupId>org.jboss.windup.exec</groupId>
+        <artifactId>windup-exec-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>windup-rules-impl</artifactId>
+    <artifactId>windup-exec-impl</artifactId>
 
-    <name>Windup Engine - Rules Impl</name>
+    <name>Windup Engine - Rules Executor Impl</name>
 
     <dependencies>
         <!-- Project deps -->
@@ -42,8 +42,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.rules</groupId>
-            <artifactId>windup-rules-api</artifactId>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
