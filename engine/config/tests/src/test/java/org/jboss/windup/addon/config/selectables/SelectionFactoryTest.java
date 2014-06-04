@@ -36,7 +36,7 @@ public class SelectionFactoryTest
 
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.config:config"),
+                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -44,7 +44,7 @@ public class SelectionFactoryTest
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:config"),
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;
