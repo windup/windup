@@ -36,7 +36,7 @@ public class ApplicationReportTest extends AbstractTestCase
 
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.core.reporting:reporting"),
+                @AddonDependency(name = "org.jboss.windup.engine.core.reporting:reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
