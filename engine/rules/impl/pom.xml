@@ -11,7 +11,7 @@
     
     <artifactId>windup-exec-impl</artifactId>
 
-    <name>Windup Engine - Rules Executor Impl</name>
+    <name>Windup Engine - Rules Exec Impl</name>
 
     <dependencies>
         <!-- Project deps -->

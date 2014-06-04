@@ -31,7 +31,7 @@ public class WindupWizardTest
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules:windup-rules"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
     })
     public static ForgeArchive getDeployment()
@@ -43,7 +43,7 @@ public class WindupWizardTest
                     .addAsResource(WindupWizardTest.class.getResource("/test.jar"), "/test.jar")
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules:windup-rules"),
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                 AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
                     );

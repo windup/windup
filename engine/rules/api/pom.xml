@@ -10,7 +10,7 @@
     
     <artifactId>windup-exec-api</artifactId>
     
-    <name>Windup Engine - Rules API</name>
+    <name>Windup Engine - Exec API</name>
     
     <dependencies>
         <dependency>
