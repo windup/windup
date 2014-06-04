@@ -23,14 +23,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine.core.config</groupId>
+            <groupId>org.jboss.windup.config</groupId>
             <artifactId>config</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine.core.config</groupId>
+            <groupId>org.jboss.windup.config</groupId>
             <artifactId>config-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

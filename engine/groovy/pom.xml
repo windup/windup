@@ -29,7 +29,7 @@
         
         <!-- Project deps -->
         <dependency>
-            <groupId>org.jboss.windup.engine.core.config</groupId>
+            <groupId>org.jboss.windup.config</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>

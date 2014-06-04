@@ -21,13 +21,13 @@
             <classifier>forge-addon</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine.core.config</groupId>
+            <groupId>org.jboss.windup.config</groupId>
             <artifactId>config-api</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine.core.config</groupId>
+            <groupId>org.jboss.windup.config</groupId>
             <artifactId>config-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

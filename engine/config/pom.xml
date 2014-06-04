@@ -8,7 +8,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.jboss.windup.engine.core.config</groupId>
+    <groupId>org.jboss.windup.config</groupId>
     <artifactId>config-parent</artifactId>
     <packaging>pom</packaging>
 
@@ -26,18 +26,18 @@
 
             <!-- Project deps -->
             <dependency>
-                <groupId>org.jboss.windup.engine.core.config</groupId>
+                <groupId>org.jboss.windup.config</groupId>
                 <artifactId>config</artifactId>
                 <version>${project.version}</version>
                 <classifier>forge-addon</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.windup.engine.core.config</groupId>
+                <groupId>org.jboss.windup.config</groupId>
                 <artifactId>config-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.windup.engine.core.config</groupId>
+                <groupId>org.jboss.windup.config</groupId>
                 <artifactId>config-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
