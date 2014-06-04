@@ -18,7 +18,7 @@
             <version>2.0.12.Final</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine.core</groupId>
+            <groupId>org.jboss.windup.engine.core.graph</groupId>
             <artifactId>graph-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
