@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>org.jboss.windup.rules</groupId>
-    <artifactId>rules-parent</artifactId>
+    <artifactId>windup-rules-parent</artifactId>
     <packaging>pom</packaging>
 
     <name>Windup Engine - Rules Parent</name>
@@ -52,18 +52,18 @@
             
             <dependency>
                 <groupId>org.jboss.windup.rules</groupId>
-                <artifactId>rules</artifactId>
+                <artifactId>windup-rules</artifactId>
                 <version>${project.version}</version>
                 <classifier>forge-addon</classifier>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.rules</groupId>
-                <artifactId>rules-api</artifactId>
+                <artifactId>windup-rules-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.rules</groupId>
-                <artifactId>rules-impl</artifactId>
+                <artifactId>windup-rules-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
             

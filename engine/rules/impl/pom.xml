@@ -5,11 +5,11 @@
     
     <parent>
         <groupId>org.jboss.windup.rules</groupId>
-        <artifactId>rules-parent</artifactId>
+        <artifactId>windup-rules-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>rules-impl</artifactId>
+    <artifactId>windup-rules-impl</artifactId>
 
     <name>Windup Engine - Rules Impl</name>
 
@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules</groupId>
-            <artifactId>rules-api</artifactId>
+            <artifactId>windup-rules-api</artifactId>
             <scope>provided</scope>
         </dependency>
 

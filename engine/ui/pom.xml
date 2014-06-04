@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules</groupId>
-            <artifactId>rules</artifactId>
+            <artifactId>windup-rules</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
             <version>${project.version}</version>
