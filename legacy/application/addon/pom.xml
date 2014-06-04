@@ -34,7 +34,7 @@
 
 
         <dependency>
-            <groupId>org.jboss.windup.engine.core.utils</groupId>
+            <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version>
         </dependency>
