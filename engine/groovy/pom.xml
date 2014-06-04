@@ -10,7 +10,7 @@
     </parent>
     
     <groupId>org.jboss.windup.engine.ext</groupId>
-    <artifactId>config-groovy</artifactId>
+    <artifactId>windup-config-groovy</artifactId>
     
     <name>Windup Ext: Groovy</name>
     
@@ -30,7 +30,7 @@
         <!-- Project deps -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
-            <artifactId>config</artifactId>
+            <artifactId>windup-config</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>

@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>org.jboss.windup.config</groupId>
-    <artifactId>config-parent</artifactId>
+    <artifactId>windup-config-parent</artifactId>
     <packaging>pom</packaging>
 
     <name>Windup Engine - Config Parent</name>
@@ -27,18 +27,18 @@
             <!-- Project deps -->
             <dependency>
                 <groupId>org.jboss.windup.config</groupId>
-                <artifactId>config</artifactId>
+                <artifactId>windup-config</artifactId>
                 <version>${project.version}</version>
                 <classifier>forge-addon</classifier>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.config</groupId>
-                <artifactId>config-api</artifactId>
+                <artifactId>windup-config-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.config</groupId>
-                <artifactId>config-impl</artifactId>
+                <artifactId>windup-config-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
             

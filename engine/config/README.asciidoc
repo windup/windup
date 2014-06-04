@@ -29,7 +29,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 ----
 <dependency>
    <groupId>org.jboss.windup.utils</groupId>
-   <artifactId>config-java</artifactId>
+   <artifactId>windup-config-java</artifactId>
    <classifier>forge-addon</classifier>
    <version>${version}</version>
 </dependency>

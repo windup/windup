@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.windup.config</groupId>
-        <artifactId>config-parent</artifactId>
+        <artifactId>windup-config-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>config</artifactId>
+    <artifactId>windup-config</artifactId>
     
     <name>Windup Engine - Config Parent</name>
     
@@ -52,11 +52,11 @@
 
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
-            <artifactId>config-api</artifactId>
+            <artifactId>windup-config-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
-            <artifactId>config-impl</artifactId>
+            <artifactId>windup-config-impl</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

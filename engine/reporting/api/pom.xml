@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
-            <artifactId>config-api</artifactId>
+            <artifactId>windup-config-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

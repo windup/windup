@@ -22,13 +22,13 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
-            <artifactId>config-api</artifactId>
+            <artifactId>windup-config-api</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
-            <artifactId>config-impl</artifactId>
+            <artifactId>windup-config-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

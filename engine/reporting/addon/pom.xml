@@ -44,7 +44,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
-            <artifactId>config</artifactId>
+            <artifactId>windup-config</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
         </dependency>
