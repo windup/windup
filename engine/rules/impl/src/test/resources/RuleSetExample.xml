@@ -22,7 +22,7 @@
     <analysis>
         <jaxb class="DataSource.grovy"
               desc="Datasource definition"
-              note=
+              note=""
               pathMask="**/jboss-ejb.xml" xpath="/foo/bar/datasources/"/>
         
         <method class="org.jboss.as.Foo" name="getObsoleteFoo(Int,String,Date)" />
