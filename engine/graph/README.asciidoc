@@ -28,7 +28,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 [source,xml]
 ----
 <dependency>
-   <groupId>org.jboss.windup.addon</groupId>
+   <groupId>org.jboss.windup.core.graph</groupId>
    <artifactId>graph</artifactId>
    <classifier>forge-addon</classifier>
    <version>${version}</version>
