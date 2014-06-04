@@ -48,7 +48,7 @@
     <dependencies>
         <!-- Project deps -->
         <dependency>
-            <groupId>org.jboss.windup.engine.core.utils</groupId>
+            <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
