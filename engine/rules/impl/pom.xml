@@ -16,21 +16,21 @@
     <dependencies>
         <!-- Project deps -->
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>graph</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>config</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>config-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

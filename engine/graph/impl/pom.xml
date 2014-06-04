@@ -50,7 +50,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>graph-api</artifactId>
             <scope>provided</scope>
         </dependency>

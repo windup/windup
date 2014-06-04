@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jboss.windup.addon</groupId>
+        <groupId>org.jboss.windup.engine.core</groupId>
         <artifactId>config-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
@@ -13,13 +13,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>graph-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -37,7 +37,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>config-api</artifactId>
             <scope>provided</scope>
         </dependency>

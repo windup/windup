@@ -21,7 +21,7 @@
     
     <dependencies>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>graph</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>

@@ -19,7 +19,7 @@
         
         <!-- Project deps -->
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>graph</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
@@ -34,7 +34,7 @@
         </dependency>
         
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

@@ -7,7 +7,7 @@
         <artifactId>windup-engine-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-    <groupId>org.jboss.windup.addon</groupId>
+    <groupId>org.jboss.windup.engine.core</groupId>
     <artifactId>groovy</artifactId>
     <dependencyManagement>
         <dependencies>
@@ -21,7 +21,7 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
@@ -52,20 +52,20 @@
             <version>2.3.1</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>graph</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>graph-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.addon</groupId>
+            <groupId>org.jboss.windup.engine.core</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>

@@ -9,7 +9,7 @@
         <relativePath>../../</relativePath>
     </parent>
 
-    <groupId>org.jboss.windup.addon</groupId>
+    <groupId>org.jboss.windup.engine.core</groupId>
     <artifactId>utils</artifactId>
     
     <name>Windup Engine - Utils</name>
