@@ -44,7 +44,7 @@
         
         <!-- Project deps -->
         <dependency>
-            <groupId>org.jboss.windup.engine.core.graph</groupId>
+            <groupId>org.jboss.windup.graph</groupId>
             <artifactId>graph</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>

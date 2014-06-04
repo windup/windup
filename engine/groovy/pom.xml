@@ -36,7 +36,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine.core.graph</groupId>
+            <groupId>org.jboss.windup.graph</groupId>
             <artifactId>graph-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -76,7 +76,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine.core.graph</groupId>
+            <groupId>org.jboss.windup.graph</groupId>
             <artifactId>graph</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>

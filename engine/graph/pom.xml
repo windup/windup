@@ -8,7 +8,7 @@
         <relativePath>../../</relativePath>
     </parent>
     
-    <groupId>org.jboss.windup.engine.core.graph</groupId>
+    <groupId>org.jboss.windup.graph</groupId>
     <artifactId>windup-graph-parent</artifactId>
     <packaging>pom</packaging>
     
@@ -25,18 +25,18 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.jboss.windup.engine.core.graph</groupId>
+                <groupId>org.jboss.windup.graph</groupId>
                 <artifactId>graph</artifactId>
                 <version>${project.version}</version>
                 <classifier>forge-addon</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.windup.engine.core.graph</groupId>
+                <groupId>org.jboss.windup.graph</groupId>
                 <artifactId>graph-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.windup.engine.core.graph</groupId>
+                <groupId>org.jboss.windup.graph</groupId>
                 <artifactId>graph-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.windup.engine.core.graph</groupId>
+            <groupId>org.jboss.windup.graph</groupId>
             <artifactId>graph-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

@@ -30,7 +30,7 @@ public class LoadGroovyRulesTest
     @Dependencies({
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
                 @AddonDependency(name = "org.jboss.windup.engine.ext:groovy"),
-                @AddonDependency(name = "org.jboss.windup.engine.core.graph:graph")
+                @AddonDependency(name = "org.jboss.windup.graph:graph")
     })
     public static ForgeArchive getDeployment()
     {
@@ -40,7 +40,7 @@ public class LoadGroovyRulesTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                 AddonDependencyEntry.create("org.jboss.windup.engine.ext:groovy"),
-                                AddonDependencyEntry.create("org.jboss.windup.engine.core.graph:graph")
+                                AddonDependencyEntry.create("org.jboss.windup.graph:graph")
                     );
         return archive;
     }
