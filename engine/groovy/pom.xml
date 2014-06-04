@@ -2,13 +2,16 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
+    
     <parent>
         <groupId>org.jboss.windup.engine</groupId>
         <artifactId>windup-engine-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
+    
     <groupId>org.jboss.windup.engine.core</groupId>
     <artifactId>groovy</artifactId>
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -19,37 +22,14 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    
     <dependencies>
         <dependency>
-            <groupId>org.jboss.windup.engine.core</groupId>
+            <groupId>org.jboss.windup.engine.core.config</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        
-        
-        
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>furnace-test-harness</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>arquillian-furnace-classpath</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.engine.core.graph</groupId>
@@ -71,7 +51,32 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>furnace-test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-furnace-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
     </dependencies>
+    
     <build>
         <resources>
             <resource>
@@ -81,6 +86,7 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
+        
         <plugins>
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
@@ -90,12 +96,8 @@
                     <execution>
                         <id>generate-dot</id>
                         <phase>prepare-package</phase>
-                        <goals>
-                            <goal>generate-dot</goal>
-                        </goals>
-                        <configuration>
-                            <attach>true</attach>
-                        </configuration>
+                        <goals> <goal>generate-dot</goal> </goals>
+                        <configuration> <attach>true</attach> </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -105,12 +107,8 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>forge-addon</classifier>
-                        </configuration>
+                        <goals> <goal>jar</goal> </goals>
+                        <configuration> <classifier>forge-addon</classifier> </configuration>
                     </execution>
                 </executions>
             </plugin>

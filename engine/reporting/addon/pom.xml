@@ -43,7 +43,7 @@
     
     <dependencies>
         <dependency>
-            <groupId>org.jboss.windup.engine.core</groupId>
+            <groupId>org.jboss.windup.engine.core.config</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
