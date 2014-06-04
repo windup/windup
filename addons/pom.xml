@@ -8,10 +8,11 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>addons-parent</artifactId>
+    <groupId>org.jboss.windup.rules</groupId>
+    <artifactId>windup-rules-parent</artifactId>
     <packaging>pom</packaging>
     
-    <name>Windup Addons</name>
+    <name>Windup Addons (Rules)</name>
     <description>A place for addons for the Windup engine.</description>
     
     <modules>
