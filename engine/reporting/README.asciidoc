@@ -28,7 +28,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 [source,xml]
 ----
 <dependency>
-   <groupId>org.jboss.windup.engine.core.reporting</groupId>
+   <groupId>org.jboss.windup.reporting</groupId>
    <artifactId>reporting</artifactId>
    <classifier>forge-addon</classifier>
    <version>${version}</version>
