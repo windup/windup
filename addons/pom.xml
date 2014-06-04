@@ -16,9 +16,9 @@
     <description>A place for addons for the Windup engine.</description>
     
     <modules>
-        <module>server/JBossEapRecognition</module>
-        <module>server/ServerMigrationUtils</module>
-        <module>app/JavaMigrator</module>
+        <module>server/jboss-eap-recognition</module>
+        <module>server/server-migration-utils</module>
+        <module>app/java-scanner</module>
     </modules>
     
     <dependencies>
