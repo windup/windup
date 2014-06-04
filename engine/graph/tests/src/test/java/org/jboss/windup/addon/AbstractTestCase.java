@@ -19,7 +19,7 @@ public class AbstractTestCase
 
    @Deployment
    @Dependencies({
-            //@AddonDependency(name = "org.jboss.windup.rules:rules"),
+            //@AddonDependency(name = "org.jboss.windup.rules:windup-rules"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static ForgeArchive getDeployment()
@@ -27,7 +27,7 @@ public class AbstractTestCase
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
         .addBeansXML()
         .addAsAddonDependencies(
-            //AddonDependencyEntry.create("org.jboss.windup.rules:rules"),
+            //AddonDependencyEntry.create("org.jboss.windup.rules:windup-rules"),
             AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
         );
       return archive;

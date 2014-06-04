@@ -25,7 +25,7 @@ public class WindupArchitectureTest
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules:rules"),
+                @AddonDependency(name = "org.jboss.windup.rules:windup-rules"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -34,7 +34,7 @@ public class WindupArchitectureTest
                     .addBeansXML()
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules:rules"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules:windup-rules"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;
