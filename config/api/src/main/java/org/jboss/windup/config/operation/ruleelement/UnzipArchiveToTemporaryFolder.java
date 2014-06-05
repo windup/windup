@@ -17,9 +17,13 @@ import org.jboss.windup.graph.model.ApplicationReferenceModel;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<ArchiveModel>
 {
+    private static final Logger LOG = LoggerFactory.getLogger(UnzipArchiveToTemporaryFolder.class);
+    
     public static final String WINDUP_TEMP_ARCHIVE_FOLDER_NAME = "windup_temp_archive";
 
     public UnzipArchiveToTemporaryFolder(String variableName)
@@ -85,11 +89,12 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
         }
 
         // unzip to the temp folder
+        LOG.info("Unzipping " + inputZipFile.getPath() + " to " + appArchiveFolder.toString() );
         try
         {
             ZipUtil.unzipToFolder(inputZipFile, appArchiveFolder.toFile());
         }
-        catch (IOException e)
+        catch( Throwable e )
         {
             throw new WindupException("Unzipping archive: " + inputZipFile.getAbsolutePath() + " failed due to: "
                         + e.getMessage(), e);

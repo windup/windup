@@ -52,11 +52,8 @@
         
         <module>ext/groovy</module>
         <module>rules</module>
-        <module>legacy</module>
-        <!-- Sample apps build runs Windup Maven Plugin, so legacy needs to be above. To be changed later. -->
-        <module>sample-apps</module>
     </modules>
-
+    
     <build>
         
         <plugins>
@@ -99,7 +96,6 @@
         
     </build>
     
-    
     <profiles>
         <!-- Aggregated Javadoc -->
         <profile>
@@ -136,8 +132,17 @@
                 <javadoc.branding>Windup ${project.version}</javadoc.branding>
             </properties>
         </profile>
+
+        <profile>
+            <id>legacy</id>
+            <modules combine.children="append">
+                <module>legacy</module>
+                <!-- Sample apps build runs Windup Maven Plugin, so legacy needs to be above. To be changed later. -->
+                <module>sample-apps</module>
+            </modules>
+        </profile>
     </profiles>
-    
+
     
     <dependencies>
         

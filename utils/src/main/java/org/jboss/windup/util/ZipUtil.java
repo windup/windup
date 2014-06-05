@@ -27,6 +27,9 @@ public class ZipUtil
 
     public static void unzipToFolder(File inputFile, File outputDir) throws IOException
     {
+        if( inputFile == null ) throw new IllegalArgumentException("Argument inputFile is null.");
+        if( outputDir == null ) throw new IllegalArgumentException("Argument outputDir is null.");
+        
         try (ZipFile zipFile = new ZipFile(inputFile))
         {
             Enumeration<? extends ZipEntry> entryEnum = zipFile.entries();
