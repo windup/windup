@@ -43,9 +43,9 @@
         <module>engine</module>
         <module>ext/groovy</module>
         <module>rules</module>
-        <module>sample-apps</module>
-
         <module>legacy</module>
+        <!-- Sample apps build runs Windup Maven Plugin, so legacy needs to be above. To be changed later. -->
+        <module>sample-apps</module>
     </modules>
 
     <build>
