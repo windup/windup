@@ -9,7 +9,7 @@
     
     <artifactId>windup-exec-tests</artifactId>
     
-    <name>Windup Engine - exec Tests</name>
+    <name>Windup Engine - Rules Exec Tests</name>
     
     <dependencies>
         <dependency>

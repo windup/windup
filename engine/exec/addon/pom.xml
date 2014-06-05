@@ -8,7 +8,7 @@
     </parent>
     <artifactId>windup-exec</artifactId>
     
-    <name>Windup Engine - Rules Exec</name>
+    <name>Windup Engine - Rules Exec Addon</name>
 
     <build>
         <plugins>
