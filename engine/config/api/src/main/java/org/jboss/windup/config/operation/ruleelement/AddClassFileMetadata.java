@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.engine.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;

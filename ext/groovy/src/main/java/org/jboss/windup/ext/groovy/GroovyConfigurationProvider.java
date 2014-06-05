@@ -25,7 +25,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.engine.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;

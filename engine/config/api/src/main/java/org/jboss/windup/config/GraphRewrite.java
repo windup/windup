@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.jboss.windup.config.selectables.SelectionFactory;
-import org.jboss.windup.engine.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.ocpsoft.rewrite.context.Context;

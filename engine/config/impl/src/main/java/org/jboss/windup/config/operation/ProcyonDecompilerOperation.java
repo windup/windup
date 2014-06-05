@@ -7,12 +7,12 @@ import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
-import org.jboss.windup.engine.decompiler.DecompilationException;
-import org.jboss.windup.engine.decompiler.DecompilationResult;
-import org.jboss.windup.engine.decompiler.Decompiler;
-import org.jboss.windup.engine.decompiler.procyon.ProcyonConfiguration;
-import org.jboss.windup.engine.decompiler.procyon.ProcyonDecompiler;
-import org.jboss.windup.engine.util.exception.WindupException;
+import org.jboss.windup.decompiler.api.DecompilationException;
+import org.jboss.windup.decompiler.api.DecompilationResult;
+import org.jboss.windup.decompiler.api.Decompiler;
+import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
+import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
+import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;

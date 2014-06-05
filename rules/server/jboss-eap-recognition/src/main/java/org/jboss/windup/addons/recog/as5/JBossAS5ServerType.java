@@ -18,7 +18,7 @@ import org.jboss.windup.addons.recog.Version;
 import org.jboss.windup.addons.recog.VersionRange;
 import org.jboss.windup.addons.server.utils.compar.ComparisonResult;
 import org.jboss.windup.addons.server.utils.compar.FileHashComparer;
-import org.jboss.windup.engine.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

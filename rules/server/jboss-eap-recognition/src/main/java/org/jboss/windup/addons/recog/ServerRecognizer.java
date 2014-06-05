@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.jboss.windup.addons.recog.as5.JBossAS5ServerType;
 import org.jboss.windup.addons.recog.as7.JBossAS7ServerType;
-import org.jboss.windup.engine.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

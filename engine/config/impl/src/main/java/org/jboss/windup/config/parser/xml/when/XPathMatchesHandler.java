@@ -8,8 +8,8 @@ import org.jboss.windup.config.XPathMatchesCondition;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
-import org.jboss.windup.engine.util.xml.NamespaceEntry;
-import org.jboss.windup.engine.util.xml.NamespaceMapContext;
+import org.jboss.windup.util.xml.NamespaceEntry;
+import org.jboss.windup.util.xml.NamespaceMapContext;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "xpath-exists", namespace = "http://windup.jboss.org/v1/xml")

@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.persistence.oxm.annotations.XmlWriteOnly;
 import org.jboss.windup.addons.server.utils.compar.ComparisonResult;
-import org.jboss.windup.engine.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

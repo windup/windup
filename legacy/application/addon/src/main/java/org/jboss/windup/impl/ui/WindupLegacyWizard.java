@@ -31,7 +31,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.windup.WindupEnvironment;
 import org.jboss.windup.WindupLegacyService;
-import org.jboss.windup.engine.util.SharedProperties;
+import org.jboss.windup.util.SharedProperties;
 
 public class WindupLegacyWizard implements UIWizard, UICommand
 {

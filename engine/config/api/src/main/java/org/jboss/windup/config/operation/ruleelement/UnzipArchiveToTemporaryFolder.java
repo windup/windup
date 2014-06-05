@@ -10,8 +10,8 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.engine.util.ZipUtil;
-import org.jboss.windup.engine.util.exception.WindupException;
+import org.jboss.windup.util.ZipUtil;
+import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.ApplicationReferenceModel;
 import org.jboss.windup.graph.model.ArchiveModel;

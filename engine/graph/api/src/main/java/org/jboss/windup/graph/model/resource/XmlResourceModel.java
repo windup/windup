@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.jboss.windup.engine.util.xml.LocationAwareXmlReader;
+import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
 import org.w3c.dom.Document;
