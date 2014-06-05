@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.jboss.windup</groupId>
+        <artifactId>windup-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    
+    <groupId>org.jboss.windup.ext</groupId>
+    <artifactId>windup-config-groovy</artifactId>
+    
+    <name>Windup Ext: Groovy</name>
+    
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.forge.furnace.container</groupId>
+                <artifactId>cdi</artifactId>
+                <version>2.6.0.Final</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+    <dependencies>
+        
+        <!-- Project deps -->
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>        
+        
+        
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
+
+        <!-- Test deps -->
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>furnace-test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-furnace-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
+        
+    </dependencies>
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/groovy</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        
+        <plugins>
+            <plugin>
+                <groupId>org.jboss.forge.furnace</groupId>
+                <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
+                <executions>
+                    <execution>
+                        <id>generate-dot</id>
+                        <phase>prepare-package</phase>
+                        <goals> <goal>generate-dot</goal> </goals>
+                        <configuration> <attach>true</attach> </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-forge-addon</id>
+                        <phase>package</phase>
+                        <goals> <goal>jar</goal> </goals>
+                        <configuration> <classifier>forge-addon</classifier> </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

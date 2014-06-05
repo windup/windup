@@ -63,7 +63,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.legacy.application</groupId>
-            <artifactId>reporting</artifactId>
+            <artifactId>windup-reporting</artifactId>
             <version>${project.version}</version>
         </dependency>
 

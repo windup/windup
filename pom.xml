@@ -40,12 +40,20 @@
     </scm>
 
     <modules>
-        <module>engine</module>
-        <module>legacy</module>
-        <module>addons</module>
-        <module>sample-apps</module>
+        <module>graph</module>
+        <module>decompiler</module> <!-- Needed by one the JavaAST... rule in config/api. -->
+        <module>config</module>     <!-- TODO: Break parts of this into rules/app/... -->
+        <module>tests/core</module>
+        <module>utils</module>
+        <module>exec</module>       <!-- TODO: Break this into ext/config-xml and rules/app/... -->
+        <module>reporting</module>
+        <module>ui</module>
+        <module>logging</module>
+        
+        <module>ext/groovy</module>
+        <module>rules</module>
     </modules>
-
+    
     <build>
         
         <plugins>
@@ -87,6 +95,54 @@
         </pluginManagement>
         
     </build>
+    
+    <profiles>
+        <!-- Aggregated Javadoc -->
+        <profile>
+            <id>javadocDist</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>javadocs-dist</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                                <configuration>
+                                    <debug>true</debug>
+                                    <verbose>true</verbose>
+                                    <maxmemory>2400m</maxmemory>
+                                    <encoding>ISO-8859-1</encoding>
+                                    <windowtitle>${javadoc.branding} API</windowtitle>
+                                    <doctitle>${javadoc.branding} API</doctitle>
+                                    <header>${javadoc.branding}</header>
+                                    <footer>${javadoc.branding}</footer>
+                                    <includeDependencySources>true</includeDependencySources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <javadoc.branding>Windup ${project.version}</javadoc.branding>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>legacy</id>
+            <modules combine.children="append">
+                <module>legacy</module>
+                <!-- Sample apps build runs Windup Maven Plugin, so legacy needs to be above. To be changed later. -->
+                <module>sample-apps</module>
+            </modules>
+        </profile>
+    </profiles>
+
     
     <dependencies>
         

@@ -28,13 +28,9 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
+                        <goals> <goal>jar</goal> </goals>
                         <inherited>false</inherited>
-                        <configuration>
-                            <classifier>forge-addon</classifier>
-                        </configuration>
+                        <configuration> <classifier>forge-addon</classifier> </configuration>
                     </execution>
                 </executions>
             </plugin>

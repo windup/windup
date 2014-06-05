@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.jboss.windup</groupId>
+        <artifactId>windup-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../..</relativePath>
+    </parent>
+    
+    <artifactId>decompiler-cfr</artifactId>
+    <packaging>jar</packaging>
+    
+    <name>Windup Engine - Decompiler CFR</name>
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <excludes><exclude>**/*.java</exclude></excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- Copy Wicket Core jar as a test .jar for decompilation. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals><goal>copy</goal></goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.wicket</groupId>
+                                    <artifactId>wicket-core</artifactId>
+                                    <version>6.11.0</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>target/TestJars</outputDirectory>
+                            <destFileName>wicket-core-6.11.0</destFileName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- Forge addon creation -->
+            <plugin>
+                <groupId>org.jboss.forge.furnace</groupId>
+                <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
+                <executions><execution>
+                        <id>generate-dot</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>generate-dot</goal></goals>
+                        <configuration><attach>true</attach></configuration>
+                </execution></executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions> <execution>
+                        <id>create-forge-addon</id>
+                        <phase>package</phase>
+                        <goals><goal>jar</goal></goals>
+                        <configuration> <classifier>forge-addon</classifier> </configuration>
+                </execution> </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <dependencies>
+        <!-- Project deps -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>decompiler-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- CFR -->
+        <dependency>
+            <groupId>org.benf.cfr</groupId>
+            <artifactId>cfr-decompiler</artifactId>
+            <version>0.79</version>
+        </dependency>
+        
+        
+        
+        <!-- Tests -->
+        <!--
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-standalone</artifactId>
+            <version>1.1.4.Final</version>
+            <scope>test</scope>
+        </dependency>
+        -->
+        
+        <dependency>
+            <groupId>org.jboss.windup.tools</groupId>
+            <artifactId>decompiler-api</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Test jar -->
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-core</artifactId>
+            <version>6.11.0</version>
+        </dependency>
+        
+        
+        <!-- Logging -->
+        <!--
+        <dependency>
+            <groupId>org.apache.logging.log4j.adapters</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.0-beta4</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.apache.logging.log4j.adapters</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
+            <version>2.0-beta4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>2.0-rc1</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+    
+</project>
