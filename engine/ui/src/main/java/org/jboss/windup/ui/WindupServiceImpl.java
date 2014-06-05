@@ -1,8 +1,8 @@
-package org.jboss.windup.addon.ui;
+package org.jboss.windup.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.addon.engine.WindupProcessor;
+import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 

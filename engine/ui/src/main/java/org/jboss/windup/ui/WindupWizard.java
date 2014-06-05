@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.ui;
+package org.jboss.windup.ui;
 
 import java.io.File;
 import java.util.List;

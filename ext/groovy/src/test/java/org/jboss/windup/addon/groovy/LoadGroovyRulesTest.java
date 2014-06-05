@@ -1,5 +1,6 @@
 package org.jboss.windup.addon.groovy;
 
+import org.jboss.windup.ext.groovy.GroovyConfigurationProvider;
 import java.util.List;
 
 import javax.inject.Inject;

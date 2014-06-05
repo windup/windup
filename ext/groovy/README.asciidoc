@@ -28,8 +28,8 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 [source,xml]
 ----
 <dependency>
-   <groupId>org.jboss.windup.addon.groovy</groupId>
-   <artifactId>groovy</artifactId>
+   <groupId>org.jboss.windup.ext</groupId>
+   <artifactId>config-groovy</artifactId>
    <classifier>forge-addon</classifier>
    <version>${version}</version>
 </dependency>

@@ -1,5 +1,7 @@
 package org.jboss.windup.addon.ui;
 
+import org.jboss.windup.ui.WindupWizard;
+import org.jboss.windup.ui.WindupService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;

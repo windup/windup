@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.groovy;
+package org.jboss.windup.ext.groovy;
 
 import java.io.File;
 import java.io.IOException;
