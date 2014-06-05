@@ -96,7 +96,7 @@
         -->
         
         <dependency>
-            <groupId>org.jboss.windup.engine</groupId>
+            <groupId>org.jboss.windup.tools</groupId>
             <artifactId>decompiler-api</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>

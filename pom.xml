@@ -41,12 +41,12 @@
 
     <modules>
         <module>graph</module>
-        <module>config</module>
+        <module>decompiler</module> <!-- Needed by one the JavaAST... rule in config/api. -->
+        <module>config</module>     <!-- TODO: Break parts of this into rules/app/... -->
         <module>tests/core</module>
         <module>utils</module>
-        <module>exec</module>
+        <module>exec</module>       <!-- TODO: Break this into ext/config-xml and rules/app/... -->
         <module>reporting</module>
-        <module>decompiler</module>
         <module>ui</module>
         <module>logging</module>
         

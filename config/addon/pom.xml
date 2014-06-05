@@ -60,7 +60,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine</groupId>
+            <groupId>org.jboss.windup.tools</groupId>
             <artifactId>decompiler-procyon</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>

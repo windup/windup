@@ -10,6 +10,8 @@
         <relativePath>../..</relativePath>
     </parent>
 
+    <!-- Will be donated to Forge as an addon. -->
+    <groupId>org.jboss.windup.tools</groupId>
     <artifactId>decompiler-api</artifactId>
     <packaging>jar</packaging>
 
