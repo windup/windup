@@ -1,4 +1,4 @@
-package org.jboss.windup.exec.provider;
+package org.jboss.windup.rules.apps.javascanner.provider;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;

@@ -1,4 +1,4 @@
-package org.jboss.windup.exec.visitor.inspector.decompiler;
+package org.jboss.windup.rules.apps.javascanner.ast;
 
 public class ClassCandidate
 {

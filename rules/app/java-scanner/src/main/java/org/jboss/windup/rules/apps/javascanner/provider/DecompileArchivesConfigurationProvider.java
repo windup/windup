@@ -1,4 +1,4 @@
-package org.jboss.windup.exec.provider;
+package org.jboss.windup.rules.apps.javascanner.provider;
 
 import java.util.List;
 

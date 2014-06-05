@@ -32,6 +32,13 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>java-scanner</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
         
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
@@ -39,7 +46,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        
 
         <!-- Forge & Furnace -->
         <dependency>

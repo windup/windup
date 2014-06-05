@@ -1,4 +1,4 @@
-package org.jboss.windup.exec.provider;
+package org.jboss.windup.rules.apps.javascanner.provider;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +20,6 @@ import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
 import org.jboss.windup.config.selectables.SelectionFactory;
-import org.jboss.windup.util.exception.WindupException;
-import org.jboss.windup.exec.visitor.inspector.JavaASTVariableResolvingVisitor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
@@ -29,6 +27,8 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.javascanner.ast.JavaASTVariableResolvingVisitor;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;

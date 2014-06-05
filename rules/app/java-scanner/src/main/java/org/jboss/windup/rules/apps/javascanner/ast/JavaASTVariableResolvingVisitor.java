@@ -9,7 +9,7 @@
  *  Contributors:
  *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
  */
-package org.jboss.windup.exec.visitor.inspector;
+package org.jboss.windup.rules.apps.javascanner.ast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +48,6 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.jboss.windup.exec.visitor.inspector.decompiler.ClassCandidate;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
