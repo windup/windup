@@ -8,6 +8,10 @@ package org.jboss.windup.util.exception;
 public class WindupException extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
+    
+    public WindupException()
+    {
+    }
 
     public WindupException(String message)
     {
@@ -17,11 +21,6 @@ public class WindupException extends RuntimeException
     public WindupException(String message, Throwable cause)
     {
         super(message, cause);
-    }
-
-    public WindupException(Throwable cause)
-    {
-        super(cause);
     }
 
 }// class
