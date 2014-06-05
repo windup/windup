@@ -12,7 +12,7 @@
     <artifactId>windup-rules-parent</artifactId>
     <packaging>pom</packaging>
     
-    <name>Windup Addons (Rules)</name>
+    <name>Windup Rules (Addons)</name>
     <description>A place for addons for the Windup engine.</description>
     
     <modules>

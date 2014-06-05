@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.reporting;
+package org.jboss.windup.reporting;
 
 public abstract class AbstractTestCase
 {

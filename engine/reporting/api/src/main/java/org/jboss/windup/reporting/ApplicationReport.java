@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.reporting;
+package org.jboss.windup.reporting;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;

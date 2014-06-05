@@ -12,7 +12,7 @@
     <artifactId>windup-exec-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>Windup Engine - exec Parent (temp module)</name>
+    <name>Windup Engine - Exec Parent (temp module)</name>
 
     <modules>
         <module>addon</module>

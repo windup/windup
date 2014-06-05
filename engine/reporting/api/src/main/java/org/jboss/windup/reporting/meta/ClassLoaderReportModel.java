@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.reporting.meta;
+package org.jboss.windup.reporting.meta;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;

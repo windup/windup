@@ -1,5 +1,6 @@
-package org.jboss.windup.addon.reporting;
+package org.jboss.windup.reporting;
 
+import org.jboss.windup.reporting.ApplicationReport;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -16,8 +17,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
-import org.jboss.windup.addon.reporting.meta.ApplicationReportModel;
-import org.jboss.windup.addon.reporting.meta.ClassLoaderReportModel;
+import org.jboss.windup.reporting.meta.ApplicationReportModel;
+import org.jboss.windup.reporting.meta.ClassLoaderReportModel;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;

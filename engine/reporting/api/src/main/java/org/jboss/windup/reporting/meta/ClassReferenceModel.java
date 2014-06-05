@@ -1,4 +1,4 @@
-package org.jboss.windup.addon.reporting.meta;
+package org.jboss.windup.reporting.meta;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
