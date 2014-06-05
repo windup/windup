@@ -10,12 +10,12 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.util.ZipUtil;
-import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.ApplicationReferenceModel;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.util.ZipUtil;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<ArchiveModel>
 {
     private static final Logger LOG = LoggerFactory.getLogger(UnzipArchiveToTemporaryFolder.class);
-    
+
     public static final String WINDUP_TEMP_ARCHIVE_FOLDER_NAME = "windup_temp_archive";
 
     public UnzipArchiveToTemporaryFolder(String variableName)
@@ -39,26 +39,33 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
-        // create a temp folder for all archive contents
-        Path windupTempFolder = event.getWindupTemporaryFolder();
-        Path windupTempUnzippedArchiveFolder = Paths.get(windupTempFolder.toString(), "archives");
-        if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
-        {
-            try
-            {
-                Files.createDirectories(windupTempUnzippedArchiveFolder);
-            }
-            catch (IOException e)
-            {
-                throw new WindupException("Failed to create temporary folder: " + windupTempUnzippedArchiveFolder
-                            + " due to: " + e.getMessage(), e);
-            }
-        }
-
         if (payload instanceof FileResourceModel)
         {
             FileResourceModel fileResourceModel = (FileResourceModel) payload;
-            unzipToTempDirectory(event, windupTempUnzippedArchiveFolder, fileResourceModel.asFile(), payload);
+            File zipFile = fileResourceModel.asFile();
+
+            if (!zipFile.isFile())
+            {
+                throw new WindupException("Input file \"" + zipFile.getAbsolutePath() + "\" does not exist.");
+            }
+
+            // create a temp folder for all archive contents
+            Path windupTempFolder = event.getWindupTemporaryFolder();
+            Path windupTempUnzippedArchiveFolder = Paths.get(windupTempFolder.toString(), "archives");
+            if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
+            {
+                try
+                {
+                    Files.createDirectories(windupTempUnzippedArchiveFolder);
+                }
+                catch (IOException e)
+                {
+                    throw new WindupException("Failed to create temporary folder: " + windupTempUnzippedArchiveFolder
+                                + " due to: " + e.getMessage(), e);
+                }
+            }
+
+            unzipToTempDirectory(event, windupTempUnzippedArchiveFolder, zipFile, payload);
         }
     }
 
@@ -89,12 +96,12 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
         }
 
         // unzip to the temp folder
-        LOG.info("Unzipping " + inputZipFile.getPath() + " to " + appArchiveFolder.toString() );
+        LOG.info("Unzipping " + inputZipFile.getPath() + " to " + appArchiveFolder.toString());
         try
         {
             ZipUtil.unzipToFolder(inputZipFile, appArchiveFolder.toFile());
         }
-        catch( Throwable e )
+        catch (Throwable e)
         {
             throw new WindupException("Unzipping archive: " + inputZipFile.getAbsolutePath() + " failed due to: "
                         + e.getMessage(), e);
