@@ -1,8 +1,9 @@
 package org.jboss.windup.exec;
 
 import javax.inject.Inject;
-import org.jboss.windup.engine.WindupProcessor;
 
+import org.jboss.windup.config.ConfigurationProcessorImpl;
+import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
