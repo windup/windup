@@ -40,7 +40,16 @@
     </scm>
 
     <modules>
-        <module>engine</module>
+        <module>graph</module>
+        <module>config</module>
+        <module>tests/core</module>
+        <module>utils</module>
+        <module>exec</module>
+        <module>reporting</module>
+        <module>decompiler</module>
+        <module>ui</module>
+        <module>logging</module>
+        
         <module>ext/groovy</module>
         <module>rules</module>
         <module>legacy</module>
@@ -89,6 +98,46 @@
         </pluginManagement>
         
     </build>
+    
+    
+    <profiles>
+        <!-- Aggregated Javadoc -->
+        <profile>
+            <id>javadocDist</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>javadocs-dist</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                                <configuration>
+                                    <debug>true</debug>
+                                    <verbose>true</verbose>
+                                    <maxmemory>2400m</maxmemory>
+                                    <encoding>ISO-8859-1</encoding>
+                                    <windowtitle>${javadoc.branding} API</windowtitle>
+                                    <doctitle>${javadoc.branding} API</doctitle>
+                                    <header>${javadoc.branding}</header>
+                                    <footer>${javadoc.branding}</footer>
+                                    <includeDependencySources>true</includeDependencySources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <javadoc.branding>Windup ${project.version}</javadoc.branding>
+            </properties>
+        </profile>
+    </profiles>
+    
     
     <dependencies>
         
