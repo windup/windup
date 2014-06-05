@@ -21,7 +21,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.engine</groupId>
+            <groupId>org.jboss.windup</groupId>
             <artifactId>windup-logging</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
