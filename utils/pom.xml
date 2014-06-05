@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,9 +11,9 @@
 
     <groupId>org.jboss.windup.utils</groupId>
     <artifactId>utils</artifactId>
-    
+
     <name>Windup Engine - Utils</name>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -23,8 +24,12 @@
                     <execution>
                         <id>generate-dot</id>
                         <phase>prepare-package</phase>
-                        <goals> <goal>generate-dot</goal> </goals>
-                        <configuration> <attach>true</attach> </configuration>
+                        <goals>
+                            <goal>generate-dot</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -34,8 +39,12 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>package</phase>
-                        <goals> <goal>jar</goal> </goals>
-                        <configuration> <classifier>forge-addon</classifier> </configuration>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>forge-addon</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -43,19 +52,6 @@
     </build>
 
     <dependencies>
-        <!-- Moved to root pom. 
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        -->
-
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
