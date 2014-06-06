@@ -76,6 +76,32 @@
                     </execution> 
                 </executions>
             </plugin>
+            
+            <!-- Forge addon creation - to be inherited & activated using phase=prepare-package, resp. package. -->
+            <plugin>
+                <groupId>org.jboss.forge.furnace</groupId>
+                <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
+                <executions>
+                    <execution>
+                        <id>generate-dot</id>
+                        <phase>none</phase>
+                        <goals> <goal>generate-dot</goal> </goals>
+                        <configuration> <attach>true</attach> </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-forge-addon</id>
+                        <phase>none</phase>
+                        <goals> <goal>jar</goal> </goals>
+                        <configuration> <classifier>forge-addon</classifier> </configuration> </execution>
+                </executions>
+            </plugin>
+            
         </plugins>
         
         <pluginManagement>
