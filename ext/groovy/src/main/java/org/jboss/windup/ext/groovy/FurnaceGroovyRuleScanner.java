@@ -25,7 +25,7 @@ public class FurnaceGroovyRuleScanner
     @Inject
     private Furnace furnace;
 
-    public Iterable<URL> scan()
+    public Iterable<URL> scan(String expectedExtension)
     {
         List<URL> discoveredRuleFiles = new ArrayList<>();
 
@@ -37,11 +37,11 @@ public class FurnaceGroovyRuleScanner
             {
                 if (addonFile.isDirectory())
                 {
-                    handleDirectory(addonFile, null, discoveredRuleFileNames);
+                    handleDirectory(expectedExtension, addonFile, null, discoveredRuleFileNames);
                 }
                 else
                 {
-                    handleArchiveByFile(addonFile, discoveredRuleFileNames);
+                    handleArchiveByFile(expectedExtension, addonFile, discoveredRuleFileNames);
                 }
             }
 
@@ -55,7 +55,7 @@ public class FurnaceGroovyRuleScanner
         return discoveredRuleFiles;
     }
 
-    private void handleArchiveByFile(File file, List<String> discoveredFiles)
+    private void handleArchiveByFile(String expectedExtension, File file, List<String> discoveredFiles)
     {
         try
         {
@@ -67,7 +67,7 @@ public class FurnaceGroovyRuleScanner
             {
                 ZipEntry entry = entries.nextElement();
                 String name = entry.getName();
-                handle(name, new URL(archiveUrl + name), discoveredFiles);
+                handle(expectedExtension, name, new URL(archiveUrl + name), discoveredFiles);
             }
             zip.close();
         }
@@ -77,7 +77,7 @@ public class FurnaceGroovyRuleScanner
         }
     }
 
-    private void handleDirectory(File file, String path, List<String> discoveredFiles)
+    private void handleDirectory(String expectedExtension, File file, String path, List<String> discoveredFiles)
     {
         for (File child : file.listFiles())
         {
@@ -85,13 +85,13 @@ public class FurnaceGroovyRuleScanner
 
             if (child.isDirectory())
             {
-                handleDirectory(child, newPath, discoveredFiles);
+                handleDirectory(expectedExtension, child, newPath, discoveredFiles);
             }
             else
             {
                 try
                 {
-                    handle(newPath, child.toURI().toURL(), discoveredFiles);
+                    handle(expectedExtension, newPath, child.toURI().toURL(), discoveredFiles);
                 }
                 catch (MalformedURLException e)
                 {
@@ -101,12 +101,11 @@ public class FurnaceGroovyRuleScanner
         }
     }
 
-    protected void handle(String name, URL url, List<String> discoveredFiles)
+    protected void handle(String expectedExtension, String name, URL url, List<String> discoveredFiles)
     {
-        if (name.endsWith(".wrl") || name.endsWith(".windup.groovy")) // TODO handlers should be extensible
+        if (name.endsWith("." + expectedExtension)) // TODO handlers should be extensible
         {
             discoveredFiles.add(name);
         }
     }
-
 }

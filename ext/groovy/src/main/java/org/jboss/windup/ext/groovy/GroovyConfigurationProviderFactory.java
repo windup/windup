@@ -1,9 +1,3 @@
-/*
- * Copyright 2014 Red Hat, Inc. and/or its affiliates.
- *
- * Licensed under the Eclipse Public License version 1.0, available at
- * http://www.eclipse.org/legal/epl-v10.html
- */
 package org.jboss.windup.ext.groovy;
 
 import groovy.lang.Binding;
@@ -23,38 +17,23 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonFilter;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.graph.GraphContext;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
- */
-public class GroovyConfigurationProvider extends WindupConfigurationProvider
+public class GroovyConfigurationProviderFactory
 {
-    private static Logger LOG = LoggerFactory.getLogger(GroovyConfigurationProvider.class);
+    private static Logger LOG = LoggerFactory.getLogger(GroovyConfigurationProviderFactory.class);
 
     @Inject
     private FurnaceGroovyRuleScanner scanner;
     @Inject
     private Furnace furnace;
 
-    @Override
-    public Configuration getConfiguration(GraphContext context)
+    public List<WindupConfigurationProvider> getGroovyWindupConfigurationProviders()
     {
-        ConfigurationBuilder builder = ConfigurationBuilder.begin();
-
-        /*
-         * Bindings can be used to pre-configure syntactical variables, functions, and shortcuts for the groovy script.
-         */
         Binding binding = new Binding();
-        binding.setVariable("foo", new Integer(2));
+        binding.setVariable("configurationProviders", new Integer(2));
 
         CompilerConfiguration config = new CompilerConfiguration();
         config.addCompilationCustomizers(new ImportCustomizer());
@@ -65,15 +44,7 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
         {
             try (Reader reader = new InputStreamReader(resource.openStream()))
             {
-                @SuppressWarnings("unchecked")
-                List<Rule> rules = (List<Rule>) shell.evaluate(reader);
-                if (rules != null)
-                {
-                    for (Rule rule : rules)
-                    {
-                        builder.addRule(rule);
-                    }
-                }
+                shell.evaluate(reader);
             }
             catch (Exception e)
             {
@@ -82,7 +53,7 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
             }
         }
 
-        return builder;
+        return null;
     }
 
     private ClassLoader getCompositeClassloader()
@@ -108,14 +79,8 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
 
     private Iterable<URL> getScripts()
     {
-        Iterable<URL> scripts = scanner.scan("wrl");
+        Iterable<URL> scripts = scanner.scan("windup.groovy");
         return scripts;
-    }
-
-    @Override
-    public RulePhase getPhase()
-    {
-        return RulePhase.COMPOSITION;
     }
 
 }
