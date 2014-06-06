@@ -6,14 +6,10 @@
  */
 package org.jboss.windup.config;
 
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.config.RulePhase;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.config.graphsearch.GraphSearchGremlinCriterion;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
@@ -26,9 +22,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -76,18 +69,8 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
                      * evaluated
                      */
                     .perform(Iteration.over("javaClasses").queryFor(JavaMethodModel.class, "javaMethod")
-                                .withCriterion(new GraphSearchGremlinCriterion()
-                                {
-                                    @Override
-                                    public void query(GremlinPipeline<Vertex, Vertex> pipeline)
-                                    {
-                                        /*
-                                         * Search the "javaClasses" for Java methods named "toString". Use a Gremlin
-                                         * query to filter down to JavaMethod vertices matching this.
-                                         */
-                                        pipeline.out("javaMethod").has("methodName", "toString");
-                                    }
-                                })
+                                .out("javaMethod").has("methodName", "toString")
+                                .endQuery()
                                 .perform(new GraphOperation()
                                 {
                                     @Override
