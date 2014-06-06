@@ -9,7 +9,7 @@
     
     <artifactId>windup-config</artifactId>
     
-    <name>Windup Engine - Config Parent</name>
+    <name>Windup Engine - Config Addon</name>
     
     <build>
         <plugins>
