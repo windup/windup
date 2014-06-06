@@ -86,7 +86,7 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
             @Override
             public boolean accept(Addon addon)
             {
-                // TODO this should only accept addons that depend on windup-config addon or whatever we call that
+                // TODO this should only accept addons that depend on windup-config-groovy or whatever we call that
                 return true;
             }
         };
