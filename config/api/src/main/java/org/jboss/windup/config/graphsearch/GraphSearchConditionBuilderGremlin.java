@@ -26,6 +26,19 @@ import com.tinkerpop.pipes.util.structures.Pair;
 import com.tinkerpop.pipes.util.structures.Table;
 import com.tinkerpop.pipes.util.structures.Tree;
 
+/**
+ * Provides access to the full GremlinPipeline API:
+ * <ul>
+ * <li><a href="https://github.com/tinkerpop/gremlin/wiki">Gremlin Wiki</a></li>
+ * <li><a href="https://github.com/tinkerpop/gremlin/wiki/Gremlin-Steps">Gremlin Steps (Cheatsheet)</a></li>
+ * <li><a
+ * href="http://www.tinkerpop.com/docs/javadocs/gremlin/2.4.0/com/tinkerpop/gremlin/java/GremlinPipeline.html">Gremlin
+ * Pipeline Javadoc</a></li>
+ * </ul>
+ * 
+ * @author jsightler
+ * 
+ */
 public class GraphSearchConditionBuilderGremlin extends GraphCondition
 {
     private String variableName;
