@@ -25,18 +25,21 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 public class GroovyConfigurationProvider extends WindupConfigurationProvider
 {
+    private static Logger LOG = LoggerFactory.getLogger(GroovyConfigurationProvider.class);
+
     @Inject
     private FurnaceGroovyRuleScanner scanner;
     @Inject
@@ -64,14 +67,18 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
             {
                 @SuppressWarnings("unchecked")
                 List<Rule> rules = (List<Rule>) shell.evaluate(reader);
-                for (Rule rule : rules)
+                if (rules != null)
                 {
-                    builder.addRule(rule);
+                    for (Rule rule : rules)
+                    {
+                        builder.addRule(rule);
+                    }
                 }
             }
             catch (Exception e)
             {
-                throw new WindupException("Failed to evaluate configuration: ", e);
+                LOG.error("Error evaluating groovy script: " + resource.getFile() + " due to: " + e.getMessage(), e);
+                // throw new WindupException("Failed to evaluate configuration: ", e);
             }
         }
 
@@ -90,12 +97,12 @@ public class GroovyConfigurationProvider extends WindupConfigurationProvider
                 return true;
             }
         };
-        
+
         for (Addon addon : furnace.getAddonRegistry().getAddons(filter))
         {
             loaders.add(addon.getClassLoader());
         }
-        
+
         return new FurnaceCompositeClassLoader(getClass().getClassLoader(), loaders);
     }
 

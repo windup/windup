@@ -103,7 +103,7 @@ public class FurnaceGroovyRuleScanner
 
     protected void handle(String name, URL url, List<String> discoveredFiles)
     {
-        if (name.endsWith(".wrl")) // TODO handlers should be extensible
+        if (name.endsWith(".wrl") || name.endsWith(".windup.groovy")) // TODO handlers should be extensible
         {
             discoveredFiles.add(name);
         }

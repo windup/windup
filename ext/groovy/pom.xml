@@ -48,7 +48,7 @@
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
-        </dependency>        
+        </dependency>
         
         
         <dependency>
