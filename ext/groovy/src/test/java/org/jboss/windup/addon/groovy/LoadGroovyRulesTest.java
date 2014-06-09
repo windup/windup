@@ -11,7 +11,9 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.ext.groovy.GroovyConfigurationProvider;
+import org.jboss.windup.ext.groovy.GroovyConfigurationProviderFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,12 +52,27 @@ public class LoadGroovyRulesTest
     @Inject
     private GroovyConfigurationProvider provider;
 
+    @Inject
+    private GroovyConfigurationProviderFactory providerFactory;
+
+    @Test
+    public void testGroovyConfigurationProviderFactory() throws Exception
+    {
+        Assert.assertNotNull(providerFactory);
+
+        List<WindupConfigurationProvider> providers = providerFactory.getGroovyWindupConfigurationProviders();
+        for (WindupConfigurationProvider provider : providers)
+        {
+            Assert.assertNotNull(provider);
+        }
+    }
+
     @Test
     public void testLoadGroovyConfigs() throws Exception
     {
         Configuration configuration = provider.getConfiguration(context);
         List<Rule> rules = configuration.getRules();
 
-        Assert.assertEquals(1, rules.size());
+        Assert.assertEquals(0, rules.size());
     }
 }

@@ -4,11 +4,14 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -18,6 +21,8 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.ext.groovy.builder.WindupConfigurationProviderBuilder;
+import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,15 +35,36 @@ public class GroovyConfigurationProviderFactory
     @Inject
     private Furnace furnace;
 
+    @SuppressWarnings("unchecked")
     public List<WindupConfigurationProvider> getGroovyWindupConfigurationProviders()
     {
         Binding binding = new Binding();
-        binding.setVariable("configurationProviders", new Integer(2));
+        binding.setVariable("windupConfigurationProviderBuilders", new ArrayList<WindupConfigurationProviderBuilder>());
+        binding.setVariable("supportFunctions", new HashMap<>());
 
         CompilerConfiguration config = new CompilerConfiguration();
         config.addCompilationCustomizers(new ImportCustomizer());
         ClassLoader loader = getCompositeClassloader();
         GroovyShell shell = new GroovyShell(new GroovyClassLoader(loader), binding, config);
+
+        try (InputStream supportFuncsIS = getClass().getResourceAsStream(
+                    "/org/jboss/windup/addon/groovy/WindupGroovySupportFunctions.groovy"))
+        {
+            InputStreamReader isr = new InputStreamReader(supportFuncsIS);
+            shell.evaluate(isr);
+        }
+        catch (Exception e)
+        {
+            throw new WindupException("Failed to load support functions due to: " + e.getMessage(), e);
+        }
+        Map<String, ?> supportFunctions = (Map<String, ?>) binding.getVariable("supportFunctions");
+        for (Map.Entry<String, ?> supportFunctionEntry : supportFunctions.entrySet())
+        {
+            LOG.info("Binding function: " + supportFunctionEntry.getValue() + " to variable: "
+                        + supportFunctionEntry.getKey());
+            binding.setVariable(supportFunctionEntry.getKey(), supportFunctionEntry.getValue());
+        }
+        binding.setVariable("supportFunctions", null);
 
         for (URL resource : getScripts())
         {
@@ -53,7 +79,15 @@ public class GroovyConfigurationProviderFactory
             }
         }
 
-        return null;
+        List<WindupConfigurationProviderBuilder> builders = (List<WindupConfigurationProviderBuilder>) binding
+                    .getVariable("windupConfigurationProviderBuilders");
+
+        List<WindupConfigurationProvider> wcpList = new ArrayList<>(builders.size());
+        for (WindupConfigurationProviderBuilder builder : builders)
+        {
+            wcpList.add(builder.getWindupConfigurationProvider());
+        }
+        return wcpList;
     }
 
     private ClassLoader getCompositeClassloader()
