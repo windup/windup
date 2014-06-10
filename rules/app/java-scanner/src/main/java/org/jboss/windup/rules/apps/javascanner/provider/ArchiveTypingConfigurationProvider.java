@@ -22,7 +22,7 @@ public class ArchiveTypingConfigurationProvider extends WindupConfigurationProvi
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getDependencies()
+    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
     {
         return generateDependencies(FileScannerWindupConfigurationProvider.class);
     }

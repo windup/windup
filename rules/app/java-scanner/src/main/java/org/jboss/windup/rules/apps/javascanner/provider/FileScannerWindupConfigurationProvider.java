@@ -24,7 +24,7 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getDependencies()
+    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
     {
         return generateDependencies(CreateInputFileConfigurationProvider.class);
     }

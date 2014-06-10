@@ -21,7 +21,7 @@ public class UnzipArchivesToTempConfigurationProvider extends WindupConfiguratio
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getDependencies()
+    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
     {
         return generateDependencies(FileScannerWindupConfigurationProvider.class);
     }

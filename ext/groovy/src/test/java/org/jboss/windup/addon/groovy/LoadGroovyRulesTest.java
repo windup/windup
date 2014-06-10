@@ -1,7 +1,9 @@
 package org.jboss.windup.addon.groovy;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -12,8 +14,8 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.loader.WindupConfigurationProviderLoader;
 import org.jboss.windup.ext.groovy.GroovyConfigurationProvider;
-import org.jboss.windup.ext.groovy.GroovyConfigurationProviderFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,18 +55,20 @@ public class LoadGroovyRulesTest
     private GroovyConfigurationProvider provider;
 
     @Inject
-    private GroovyConfigurationProviderFactory providerFactory;
+    private Instance<WindupConfigurationProviderLoader> loaders;
 
     @Test
     public void testGroovyConfigurationProviderFactory() throws Exception
     {
-        Assert.assertNotNull(providerFactory);
+        Assert.assertNotNull(loaders);
 
-        List<WindupConfigurationProvider> providers = providerFactory.getGroovyWindupConfigurationProviders();
-        for (WindupConfigurationProvider provider : providers)
+        List<WindupConfigurationProvider> allProviders = new ArrayList<WindupConfigurationProvider>();
+        for (WindupConfigurationProviderLoader loader : loaders)
         {
-            Assert.assertNotNull(provider);
+            allProviders.addAll(loader.getProviders());
         }
+
+        Assert.assertTrue(allProviders.size() > 0);
     }
 
     @Test

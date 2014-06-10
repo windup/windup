@@ -23,7 +23,7 @@ public class IndexClassFilesConfigurationProvider extends WindupConfigurationPro
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getDependencies()
+    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
     {
         return generateDependencies(UnzipArchivesToTempConfigurationProvider.class);
     }

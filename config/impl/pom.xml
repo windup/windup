@@ -36,7 +36,12 @@
             <scope>provided</scope>
             <version>${project.version}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <scope>provided</scope>
+            <classifier>forge-addon</classifier>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>

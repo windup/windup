@@ -1,17 +1,19 @@
-package org.jboss.windup.config;
+package org.jboss.windup.config.loader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
+import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.graph.GraphContext;
-import org.ocpsoft.common.services.ServiceLoader;
-import org.ocpsoft.common.util.Iterators;
 import org.ocpsoft.rewrite.bind.Evaluation;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionVisit;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.ConfigurationLoader;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.OperationVisit;
@@ -33,20 +35,12 @@ public class GraphConfigurationLoader
 {
     public static Logger LOG = LoggerFactory.getLogger(GraphConfigurationLoader.class);
 
-    private final List<WindupConfigurationProvider> providers;
+    @Inject
+    private Instance<WindupConfigurationProviderLoader> loaders;
 
     @SuppressWarnings("unchecked")
-    public GraphConfigurationLoader(Object context)
+    public GraphConfigurationLoader()
     {
-        providers = GraphProviderSorter.sort(Iterators.asList(ServiceLoader.load(WindupConfigurationProvider.class)));
-    }
-
-    /**
-     * Get a new {@link ConfigurationLoader} instance.
-     */
-    public static GraphConfigurationLoader create(final Object context)
-    {
-        return new GraphConfigurationLoader(context);
     }
 
     /**
@@ -58,12 +52,23 @@ public class GraphConfigurationLoader
         return build(context);
     }
 
+    private List<WindupConfigurationProvider> getProviders()
+    {
+        List<WindupConfigurationProvider> allProviders = new ArrayList<WindupConfigurationProvider>();
+        for (WindupConfigurationProviderLoader loader : loaders)
+        {
+            allProviders.addAll(loader.getProviders());
+        }
+
+        return GraphProviderSorter.sort(allProviders);
+    }
+
     private Configuration build(GraphContext context)
     {
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
 
-        for (WindupConfigurationProvider provider : providers)
+        for (WindupConfigurationProvider provider : getProviders())
         {
             Configuration cfg = provider.getConfiguration(context);
             List<Rule> list = cfg.getRules();

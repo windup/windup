@@ -10,6 +10,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
 
@@ -19,9 +22,22 @@ import org.ocpsoft.rewrite.config.ConfigurationProvider;
  */
 public abstract class WindupConfigurationProvider implements ConfigurationProvider<GraphContext>
 {
+    @Inject
+    private Addon addon; // The current addon
+
+    public String getID()
+    {
+        return addon.getId().getName() + "." + getClass().getName();
+    }
+
     public abstract RulePhase getPhase();
 
-    public List<Class<? extends WindupConfigurationProvider>> getDependencies()
+    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+    {
+        return Collections.emptyList();
+    }
+
+    public List<String> getIDDependencies()
     {
         return Collections.emptyList();
     }

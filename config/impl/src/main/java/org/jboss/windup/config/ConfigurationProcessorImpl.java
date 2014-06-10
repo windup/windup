@@ -8,9 +8,7 @@ package org.jboss.windup.config;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.config.GraphConfigurationLoader;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.GraphSubset;
+import org.jboss.windup.config.loader.GraphConfigurationLoader;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
@@ -26,10 +24,12 @@ public class ConfigurationProcessorImpl
     @Inject
     private SelectionFactory selectionFactory;
 
+    @Inject
+    private GraphConfigurationLoader graphConfigurationLoader;
+
     public void run(GraphContext context)
     {
-        final GraphConfigurationLoader loader = GraphConfigurationLoader.create(context);
-        final Configuration configuration = loader.loadConfiguration(context);
+        final Configuration configuration = graphConfigurationLoader.loadConfiguration(context);
 
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
 

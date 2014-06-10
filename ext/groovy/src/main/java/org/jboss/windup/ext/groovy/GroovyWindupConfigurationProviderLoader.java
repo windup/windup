@@ -21,22 +21,20 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.loader.WindupConfigurationProviderLoader;
 import org.jboss.windup.ext.groovy.builder.WindupConfigurationProviderBuilder;
 import org.jboss.windup.util.exception.WindupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class GroovyConfigurationProviderFactory
+public class GroovyWindupConfigurationProviderLoader implements WindupConfigurationProviderLoader
 {
-    private static Logger LOG = LoggerFactory.getLogger(GroovyConfigurationProviderFactory.class);
 
     @Inject
     private FurnaceGroovyRuleScanner scanner;
     @Inject
     private Furnace furnace;
 
-    @SuppressWarnings("unchecked")
-    public List<WindupConfigurationProvider> getGroovyWindupConfigurationProviders()
+    @Override
+    public List<WindupConfigurationProvider> getProviders()
     {
         Binding binding = new Binding();
         binding.setVariable("windupConfigurationProviderBuilders", new ArrayList<WindupConfigurationProviderBuilder>());
@@ -60,8 +58,6 @@ public class GroovyConfigurationProviderFactory
         Map<String, ?> supportFunctions = (Map<String, ?>) binding.getVariable("supportFunctions");
         for (Map.Entry<String, ?> supportFunctionEntry : supportFunctions.entrySet())
         {
-            LOG.info("Binding function: " + supportFunctionEntry.getValue() + " to variable: "
-                        + supportFunctionEntry.getKey());
             binding.setVariable(supportFunctionEntry.getKey(), supportFunctionEntry.getValue());
         }
         binding.setVariable("supportFunctions", null);
@@ -74,8 +70,7 @@ public class GroovyConfigurationProviderFactory
             }
             catch (Exception e)
             {
-                LOG.error("Error evaluating groovy script: " + resource.getFile() + " due to: " + e.getMessage(), e);
-                // throw new WindupException("Failed to evaluate configuration: ", e);
+                throw new WindupException("Failed to evaluate configuration: ", e);
             }
         }
 

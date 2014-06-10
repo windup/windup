@@ -48,7 +48,7 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getDependencies()
+    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
     {
         return generateDependencies(IndexClassFilesConfigurationProvider.class);
     }

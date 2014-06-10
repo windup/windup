@@ -1,13 +1,18 @@
-package org.jboss.windup.config;
+package org.jboss.windup.config.loader;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.forge.furnace.proxy.Proxies;
+import org.jboss.windup.config.RulePhase;
+import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.util.exception.WindupException;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -35,13 +40,16 @@ public class GraphProviderSorter
         // Create a map to get back from Class to Object
         // (this helps as we will sort the dependencies by class, but we want to ultimately return a list of
         // GraphVisitor Objects)
+        IdentityHashMap<WindupConfigurationProvider, WindupConfigurationProvider> unwrappedToWrappedMap = new IdentityHashMap<>();
+
         IdentityHashMap<Class<? extends WindupConfigurationProvider>, WindupConfigurationProvider> classToCfgProviderMap = new IdentityHashMap<>();
+        Map<String, WindupConfigurationProvider> idToCfgProviderMap = new HashMap<>();
 
         // Now build a directed graph based upon the dependencies
-        DefaultDirectedWeightedGraph<Class<? extends WindupConfigurationProvider>, DefaultEdge> g = new DefaultDirectedWeightedGraph<>(
+        DefaultDirectedWeightedGraph<WindupConfigurationProvider, DefaultEdge> g = new DefaultDirectedWeightedGraph<>(
                     DefaultEdge.class);
         // Also, keep this around to make sure we didn't accidentally introduce any cyclic dependencies
-        CycleDetector<Class<? extends WindupConfigurationProvider>, DefaultEdge> cycleDetector = new CycleDetector<>(g);
+        CycleDetector<WindupConfigurationProvider, DefaultEdge> cycleDetector = new CycleDetector<>(g);
 
         // Add the initial vertices and the class to object mapping
         for (WindupConfigurationProvider v : tempList)
@@ -51,8 +59,11 @@ public class GraphProviderSorter
                         .unwrapProxyTypes(v
                                     .getClass());
 
+            WindupConfigurationProvider unwrappedObject = unwrap(v);
+            unwrappedToWrappedMap.put(unwrappedObject, v);
             classToCfgProviderMap.put(unproxiedClass, v);
-            g.addVertex(unproxiedClass);
+            idToCfgProviderMap.put(v.getID(), v);
+            g.addVertex(unwrappedObject);
         }
 
         // Keep a list of all visitors from the previous phase
@@ -63,11 +74,6 @@ public class GraphProviderSorter
         RulePhase previousPhase = null;
         for (WindupConfigurationProvider v : tempList)
         {
-            @SuppressWarnings("unchecked")
-            Class<? extends WindupConfigurationProvider> unproxiedClass = (Class<? extends WindupConfigurationProvider>) Proxies
-                        .unwrapProxyTypes(v
-                                    .getClass());
-
             if (v.getPhase() != previousPhase)
             {
                 // we've reached a new phase, so move the current phase to the last
@@ -77,20 +83,35 @@ public class GraphProviderSorter
             }
             currentCfgProviders.add(v);
 
-            // add dependencies for each visitor
-            for (Class<? extends WindupConfigurationProvider> clz : v.getDependencies())
+            // add dependencies for each visitor by class
+            for (Class<? extends WindupConfigurationProvider> clz : v.getClassDependencies())
             {
-                g.addEdge(clz, unproxiedClass);
+                WindupConfigurationProvider otherProvider = classToCfgProviderMap.get(clz);
+                if (otherProvider == null)
+                {
+                    throw new WindupException("Configuration Provider: " + v.getID() + " depends on class: "
+                                + clz.getCanonicalName() + " but this class could not be found!");
+                }
+                g.addEdge(unwrap(otherProvider), unwrap(v));
+            }
+
+            // add dependencies for each visitor by id
+            for (String depID : v.getIDDependencies())
+            {
+                WindupConfigurationProvider otherProvider = idToCfgProviderMap.get(depID);
+                if (otherProvider == null)
+                {
+                    throw new WindupException("Configuration Provider: " + v.getID()
+                                + " depends on configuration provider: "
+                                + depID + " but this provider could not be found!");
+                }
+                g.addEdge(unwrap(otherProvider), unwrap(v));
             }
 
             // also, add dependencies onto all visitors from the previous phase
             for (WindupConfigurationProvider prevV : previousCfgProviders)
             {
-                @SuppressWarnings("unchecked")
-                Class<? extends WindupConfigurationProvider> unproxiedPreviousClass = (Class<? extends WindupConfigurationProvider>) Proxies
-                            .unwrapProxyTypes(prevV.getClass());
-
-                g.addEdge(unproxiedPreviousClass, unproxiedClass);
+                g.addEdge(unwrap(prevV), unwrap(v));
             }
             previousPhase = v.getPhase();
         }
@@ -98,16 +119,15 @@ public class GraphProviderSorter
         if (cycleDetector.detectCycles())
         {
             // if we have cycles, then try to throw an exception with some usable data
-            Set<Class<? extends WindupConfigurationProvider>> cycles = cycleDetector.findCycles();
+            Set<WindupConfigurationProvider> cycles = cycleDetector.findCycles();
             StringBuilder errorSB = new StringBuilder();
-            for (Class<? extends WindupConfigurationProvider> cycle : cycles)
+            for (WindupConfigurationProvider cycle : cycles)
             {
-                errorSB.append("Found dependency cycle involving: " + cycle + "\n");
-                Set<Class<? extends WindupConfigurationProvider>> subCycleSet = cycleDetector
-                            .findCyclesContainingVertex(cycle);
-                for (Class<? extends WindupConfigurationProvider> subCycle : subCycleSet)
+                errorSB.append("Found dependency cycle involving: " + cycle.getID() + "\n");
+                Set<WindupConfigurationProvider> subCycleSet = cycleDetector.findCyclesContainingVertex(cycle);
+                for (WindupConfigurationProvider subCycle : subCycleSet)
                 {
-                    errorSB.append("\tSubcycle: " + subCycle + "\n");
+                    errorSB.append("\tSubcycle: " + subCycle.getID() + "\n");
                 }
             }
             throw new RuntimeException("Dependency cycles detected: " + errorSB.toString());
@@ -116,15 +136,20 @@ public class GraphProviderSorter
         // create the final results list
         List<WindupConfigurationProvider> result = new ArrayList<WindupConfigurationProvider>(tempList.size());
         // use topological ordering to make it all the right order
-        TopologicalOrderIterator<Class<? extends WindupConfigurationProvider>, DefaultEdge> iterator = new TopologicalOrderIterator<>(
+        TopologicalOrderIterator<WindupConfigurationProvider, DefaultEdge> iterator = new TopologicalOrderIterator<>(
                     g);
         while (iterator.hasNext())
         {
-            Class<? extends WindupConfigurationProvider> clz = iterator.next();
-            result.add(classToCfgProviderMap.get(clz));
+            WindupConfigurationProvider provider = iterator.next();
+            result.add(unwrappedToWrappedMap.get(provider));
         }
 
         return result;
 
+    }
+
+    private static WindupConfigurationProvider unwrap(WindupConfigurationProvider provider)
+    {
+        return Proxies.unwrap(provider);
     }
 }
