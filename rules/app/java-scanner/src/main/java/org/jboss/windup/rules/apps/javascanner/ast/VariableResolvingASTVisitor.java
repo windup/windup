@@ -60,9 +60,9 @@ import org.slf4j.LoggerFactory;
  * @author bradsdavis
  * 
  */
-public class JavaASTVariableResolvingVisitor extends ASTVisitor
+public class VariableResolvingASTVisitor extends ASTVisitor
 {
-    private static final Logger LOG = LoggerFactory.getLogger(JavaASTVariableResolvingVisitor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VariableResolvingASTVisitor.class);
 
     private final CompilationUnit cu;
     private final WindupContext windupContext;
@@ -90,7 +90,7 @@ public class JavaASTVariableResolvingVisitor extends ASTVisitor
      */
     private final List<ClassCandidate> results = new ArrayList<ClassCandidate>();
 
-    public JavaASTVariableResolvingVisitor(CompilationUnit cu, JavaClassDao javaClassDao, WindupContext context)
+    public VariableResolvingASTVisitor(CompilationUnit cu, JavaClassDao javaClassDao, WindupContext context)
     {
         this.cu = cu;
         this.javaClassDao = javaClassDao;

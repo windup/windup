@@ -27,7 +27,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileResourceModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.javascanner.ast.JavaASTVariableResolvingVisitor;
+import org.jboss.windup.rules.apps.javascanner.ast.VariableResolvingASTVisitor;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -152,7 +152,7 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
                                                                                                                                                             FileResourceModel payload)
                                                                                                                                                 {
                                                                                                                                                     final CompilationUnit cu = parseCompilationUnit(payload);
-                                                                                                                                                    cu.accept(new JavaASTVariableResolvingVisitor(
+                                                                                                                                                    cu.accept(new VariableResolvingASTVisitor(
                                                                                                                                                                 cu,
                                                                                                                                                                 javaClassDao,
                                                                                                                                                                 windupContext));
