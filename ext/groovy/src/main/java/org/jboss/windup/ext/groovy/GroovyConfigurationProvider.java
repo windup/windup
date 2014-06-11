@@ -6,28 +6,16 @@
  */
 package org.jboss.windup.ext.groovy;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyShell;
-
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.enterprise.inject.Vetoed;
 
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
-import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,86 +24,60 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
+@Vetoed
 public class GroovyConfigurationProvider extends WindupConfigurationProvider
 {
     private static Logger LOG = LoggerFactory.getLogger(GroovyConfigurationProvider.class);
 
-    @Inject
-    private FurnaceGroovyRuleScanner scanner;
-    @Inject
-    private Furnace furnace;
+    private String ruleID;
+    private RulePhase rulePhase;
+    private List<String> ruleDependencies;
+    private ConfigurationRuleBuilder completedConfiguration = null;
+
+    public GroovyConfigurationProvider(String ruleID, RulePhase rulePhase, List<String> ruleDependencies,
+                ConfigurationBuilder originalConfigBuilder)
+    {
+        this.ruleID = ruleID;
+        this.rulePhase = rulePhase;
+        this.ruleDependencies = ruleDependencies;
+
+        ConfigurationBuilder newConfigBuilder = ConfigurationBuilder.begin();
+        for (Rule rule : originalConfigBuilder.getRules())
+        {
+            if (completedConfiguration == null)
+            {
+                completedConfiguration = newConfigBuilder.addRule(rule);
+            }
+            else
+            {
+                completedConfiguration = completedConfiguration.addRule(rule);
+            }
+        }
+    }
+
+    @Override
+    public String getID()
+    {
+        return ruleID;
+    }
+
+    @Override
+    public List<String> getIDDependencies()
+    {
+        return ruleDependencies;
+    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConfigurationBuilder builder = ConfigurationBuilder.begin();
 
-        /*
-         * Bindings can be used to pre-configure syntactical variables, functions, and shortcuts for the groovy script.
-         */
-        Binding binding = new Binding();
-        binding.setVariable("foo", new Integer(2));
-
-        CompilerConfiguration config = new CompilerConfiguration();
-        config.addCompilationCustomizers(new ImportCustomizer());
-        ClassLoader loader = getCompositeClassloader();
-        GroovyShell shell = new GroovyShell(new GroovyClassLoader(loader), binding, config);
-
-        for (URL resource : getScripts())
-        {
-            try (Reader reader = new InputStreamReader(resource.openStream()))
-            {
-                @SuppressWarnings("unchecked")
-                List<Rule> rules = (List<Rule>) shell.evaluate(reader);
-                if (rules != null)
-                {
-                    for (Rule rule : rules)
-                    {
-                        builder.addRule(rule);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                LOG.error("Error evaluating groovy script: " + resource.getFile() + " due to: " + e.getMessage(), e);
-                // throw new WindupException("Failed to evaluate configuration: ", e);
-            }
-        }
-
-        return builder;
-    }
-
-    private ClassLoader getCompositeClassloader()
-    {
-        List<ClassLoader> loaders = new ArrayList<>();
-        AddonFilter filter = new AddonFilter()
-        {
-            @Override
-            public boolean accept(Addon addon)
-            {
-                // TODO this should only accept addons that depend on windup-config-groovy or whatever we call that
-                return true;
-            }
-        };
-
-        for (Addon addon : furnace.getAddonRegistry().getAddons(filter))
-        {
-            loaders.add(addon.getClassLoader());
-        }
-
-        return new FurnaceCompositeClassLoader(getClass().getClassLoader(), loaders);
-    }
-
-    private Iterable<URL> getScripts()
-    {
-        Iterable<URL> scripts = scanner.scan("wrl");
-        return scripts;
+        return completedConfiguration;
     }
 
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.COMPOSITION;
+        return rulePhase;
     }
 
 }

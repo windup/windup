@@ -8,7 +8,6 @@ import org.ocpsoft.common.util.Iterators;
 
 public class JavaWindupConfigurationProviderLoader implements WindupConfigurationProviderLoader
 {
-
     @Override
     @SuppressWarnings("unchecked")
     public List<WindupConfigurationProvider> getProviders()

@@ -19,9 +19,8 @@ import org.junit.runner.RunWith;
 import com.tinkerpop.blueprints.Vertex;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureTest
+public class WindupArchitectureSourceModeTest
 {
-
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
@@ -47,30 +46,6 @@ public class WindupArchitectureTest
 
     @Inject
     private GraphContext graphContext;
-
-    @Test
-    public void testRunWindup() throws Exception
-    {
-        Assert.assertNotNull(processor);
-        Assert.assertNotNull(processor.toString());
-
-        String inputPath = "../../test-files/Windup1x-javaee-example.war";
-        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(inputPath);
-        windupCfg.setSourceMode(false);
-
-        try
-        {
-            processor.execute();
-        }
-        finally
-        {
-            for (Vertex v : graphContext.getGraph().getVertices())
-            {
-                v.remove();
-            }
-        }
-    }
 
     @Test
     public void testRunWindupSourceMode() throws Exception

@@ -3,7 +3,6 @@ package org.jboss.windup.addon.groovy;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -11,18 +10,16 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.config.loader.WindupConfigurationProviderLoader;
-import org.jboss.windup.ext.groovy.GroovyConfigurationProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.Rule;
 
 @RunWith(Arquillian.class)
 /**
@@ -34,7 +31,8 @@ public class LoadGroovyRulesTest
     @Dependencies({
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph")
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:java-scanner"),
     })
     public static ForgeArchive getDeployment()
     {
@@ -44,7 +42,8 @@ public class LoadGroovyRulesTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph")
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-scanner")
                     );
         return archive;
     }
@@ -53,14 +52,16 @@ public class LoadGroovyRulesTest
     private GraphContext context;
 
     @Inject
-    private GroovyConfigurationProvider provider;
-
-    @Inject
-    private Imported<WindupConfigurationProviderLoader> loaders;
+    private Furnace furnace;
 
     @Test
     public void testGroovyConfigurationProviderFactory() throws Exception
     {
+        Assert.assertNotNull(furnace);
+
+        Imported<WindupConfigurationProviderLoader> loaders = furnace.getAddonRegistry().getServices(
+                    WindupConfigurationProviderLoader.class);
+
         Assert.assertNotNull(loaders);
 
         List<WindupConfigurationProvider> allProviders = new ArrayList<WindupConfigurationProvider>();
@@ -70,14 +71,5 @@ public class LoadGroovyRulesTest
         }
 
         Assert.assertTrue(allProviders.size() > 0);
-    }
-
-    @Test
-    public void testLoadGroovyConfigs() throws Exception
-    {
-        Configuration configuration = provider.getConfiguration(context);
-        List<Rule> rules = configuration.getRules();
-
-        Assert.assertEquals(0, rules.size());
     }
 }

@@ -5,12 +5,9 @@ import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.graph.GraphContext;
-import org.ocpsoft.rewrite.config.Configuration;
+import org.jboss.windup.ext.groovy.GroovyConfigurationProvider;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
-import org.ocpsoft.rewrite.config.Rule;
 
 public class WindupConfigurationProviderBuilder implements WindupConfigurationProviderBuilderSetPhase,
             WindupConfigurationProviderBuilderAddDependencies
@@ -28,38 +25,7 @@ public class WindupConfigurationProviderBuilder implements WindupConfigurationPr
 
     public WindupConfigurationProvider getWindupConfigurationProvider()
     {
-        return new WindupConfigurationProvider()
-        {
-            private ConfigurationRuleBuilder completedConfiguration = null;
-
-            {
-                ConfigurationBuilder builder = ConfigurationBuilder.begin();
-                for (Rule rule : configurationBuilder.getRules())
-                {
-                    if (completedConfiguration == null)
-                    {
-                        completedConfiguration = builder.addRule(rule);
-                    }
-                    else
-                    {
-                        completedConfiguration = completedConfiguration.addRule(rule);
-                    }
-                }
-            }
-
-            @Override
-            public Configuration getConfiguration(GraphContext context)
-            {
-
-                return completedConfiguration;
-            }
-
-            @Override
-            public RulePhase getPhase()
-            {
-                return rulePhase;
-            }
-        };
+        return new GroovyConfigurationProvider(id, rulePhase, dependencies, configurationBuilder);
     }
 
     public static WindupConfigurationProviderBuilderSetPhase buildWindupRule(String id)
