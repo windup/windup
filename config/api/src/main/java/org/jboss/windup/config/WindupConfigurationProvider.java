@@ -32,11 +32,30 @@ public abstract class WindupConfigurationProvider implements ConfigurationProvid
 
     public abstract RulePhase getPhase();
 
+    /**
+     * Returns a list of WindupConfigurationProvider classes that this instance depends on.
+     * 
+     * Dependencies can also be specified based on id ({@link #getIDDependencies}).
+     * 
+     * @return
+     */
     public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
     {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns a list of the WindupConfigurationProvider dependencies for this configuration provider.
+     * 
+     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
+     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
+     * IDs.
+     * 
+     * For depending upon Java-based rules, getClassDependencies is preferred. Dependencies of both types can be
+     * returned by a single WindupConfigurationProvider.
+     * 
+     * @return
+     */
     public List<String> getIDDependencies()
     {
         return Collections.emptyList();
@@ -57,6 +76,13 @@ public abstract class WindupConfigurationProvider implements ConfigurationProvid
     @SafeVarargs
     protected final List<Class<? extends WindupConfigurationProvider>> generateDependencies(
                 Class<? extends WindupConfigurationProvider>... deps)
+    {
+        return Arrays.asList(deps);
+    }
+
+    @SafeVarargs
+    protected final List<String> generateDependencies(
+                String... deps)
     {
         return Arrays.asList(deps);
     }
