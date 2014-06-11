@@ -18,7 +18,7 @@ import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
-public class GraphProviderSorter
+public class WindupConfigurationProviderSorter
 {
     public static List<WindupConfigurationProvider> sort(
                 List<WindupConfigurationProvider> windupConfigurationProviderList)

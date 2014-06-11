@@ -10,10 +10,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.ocpsoft.rewrite.config.Configuration;
 
-public class GraphVisitorComparatorTest
+public class WindupConfigurationProviderSorterTest
 {
 
-    private class VisitorPhase1Class1 extends WindupConfigurationProvider
+    private class WCPPhase1Class1 extends WindupConfigurationProvider
     {
         private List<Class<? extends WindupConfigurationProvider>> deps = new ArrayList<>();
 
@@ -48,13 +48,13 @@ public class GraphVisitorComparatorTest
         }
     }
 
-    private class VisitorPhase1Class2 extends WindupConfigurationProvider
+    private class WCPPhase1Class2 extends WindupConfigurationProvider
     {
         @Override
         public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
         {
             List<Class<? extends WindupConfigurationProvider>> l = new ArrayList<>();
-            l.add(VisitorPhase1Class1.class);
+            l.add(WCPPhase1Class1.class);
             return l;
         }
 
@@ -83,13 +83,13 @@ public class GraphVisitorComparatorTest
         }
     }
 
-    private class VisitorPhase1Class3 extends WindupConfigurationProvider
+    private class WCPPhase1Class3 extends WindupConfigurationProvider
     {
         @Override
         public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
         {
             List<Class<? extends WindupConfigurationProvider>> l = new ArrayList<>();
-            l.add(VisitorPhase1Class2.class);
+            l.add(WCPPhase1Class2.class);
             return l;
         }
 
@@ -118,7 +118,7 @@ public class GraphVisitorComparatorTest
         }
     }
 
-    private class VisitorPhase2Class1 extends WindupConfigurationProvider
+    private class WCPPhase2Class1 extends WindupConfigurationProvider
     {
         @Override
         public RulePhase getPhase()
@@ -149,45 +149,45 @@ public class GraphVisitorComparatorTest
     @Test
     public void testSort()
     {
-        WindupConfigurationProvider v1 = new VisitorPhase1Class1();
-        WindupConfigurationProvider v2 = new VisitorPhase1Class2();
-        WindupConfigurationProvider v3 = new VisitorPhase1Class3();
-        WindupConfigurationProvider v4 = new VisitorPhase2Class1();
-        List<WindupConfigurationProvider> visitors = new ArrayList<>();
-        visitors.add(v3);
-        visitors.add(v4);
-        visitors.add(v2);
-        visitors.add(v1);
+        WindupConfigurationProvider v1 = new WCPPhase1Class1();
+        WindupConfigurationProvider v2 = new WCPPhase1Class2();
+        WindupConfigurationProvider v3 = new WCPPhase1Class3();
+        WindupConfigurationProvider v4 = new WCPPhase2Class1();
+        List<WindupConfigurationProvider> configurationProviders = new ArrayList<>();
+        configurationProviders.add(v3);
+        configurationProviders.add(v4);
+        configurationProviders.add(v2);
+        configurationProviders.add(v1);
 
-        GraphProviderSorter sorter = new GraphProviderSorter();
-        List<WindupConfigurationProvider> sortedVisitors = sorter.sort(visitors);
+        List<WindupConfigurationProvider> sortedWCPList = WindupConfigurationProviderSorter
+                    .sort(configurationProviders);
 
-        System.out.println("Results: " + sortedVisitors);
+        System.out.println("Results: " + sortedWCPList);
 
-        Assert.assertEquals(v1, sortedVisitors.get(0));
-        Assert.assertEquals(v2, sortedVisitors.get(1));
-        Assert.assertEquals(v3, sortedVisitors.get(2));
-        Assert.assertEquals(v4, sortedVisitors.get(3));
+        Assert.assertEquals(v1, sortedWCPList.get(0));
+        Assert.assertEquals(v2, sortedWCPList.get(1));
+        Assert.assertEquals(v3, sortedWCPList.get(2));
+        Assert.assertEquals(v4, sortedWCPList.get(3));
     }
 
     @Test
     public void testSortCycle()
     {
-        VisitorPhase1Class1 v1 = new VisitorPhase1Class1();
-        v1.deps.add(VisitorPhase1Class3.class);
-        WindupConfigurationProvider v2 = new VisitorPhase1Class2();
-        WindupConfigurationProvider v3 = new VisitorPhase1Class3();
-        WindupConfigurationProvider v4 = new VisitorPhase2Class1();
-        List<WindupConfigurationProvider> visitors = new ArrayList<WindupConfigurationProvider>();
-        visitors.add(v3);
-        visitors.add(v4);
-        visitors.add(v2);
-        visitors.add(v1);
+        WCPPhase1Class1 v1 = new WCPPhase1Class1();
+        v1.deps.add(WCPPhase1Class3.class);
+        WindupConfigurationProvider v2 = new WCPPhase1Class2();
+        WindupConfigurationProvider v3 = new WCPPhase1Class3();
+        WindupConfigurationProvider v4 = new WCPPhase2Class1();
+        List<WindupConfigurationProvider> configurationProviders = new ArrayList<WindupConfigurationProvider>();
+        configurationProviders.add(v3);
+        configurationProviders.add(v4);
+        configurationProviders.add(v2);
+        configurationProviders.add(v1);
 
-        GraphProviderSorter sorter = new GraphProviderSorter();
         try
         {
-            List<WindupConfigurationProvider> sortedVisitors = sorter.sort(visitors);
+            List<WindupConfigurationProvider> sortedWCPList = WindupConfigurationProviderSorter
+                        .sort(configurationProviders);
             Assert.fail("No cycles detected");
         }
         catch (RuntimeException e)

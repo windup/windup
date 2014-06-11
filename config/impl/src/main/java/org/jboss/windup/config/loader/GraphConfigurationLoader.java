@@ -60,7 +60,7 @@ public class GraphConfigurationLoader
             allProviders.addAll(loader.getProviders());
         }
 
-        return GraphProviderSorter.sort(allProviders);
+        return WindupConfigurationProviderSorter.sort(allProviders);
     }
 
     private Configuration build(GraphContext context)
