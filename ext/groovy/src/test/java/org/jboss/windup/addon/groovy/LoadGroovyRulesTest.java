@@ -12,6 +12,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.config.loader.WindupConfigurationProviderLoader;
@@ -55,7 +56,7 @@ public class LoadGroovyRulesTest
     private GroovyConfigurationProvider provider;
 
     @Inject
-    private Instance<WindupConfigurationProviderLoader> loaders;
+    private Imported<WindupConfigurationProviderLoader> loaders;
 
     @Test
     public void testGroovyConfigurationProviderFactory() throws Exception
