@@ -2,19 +2,25 @@ package org.jboss.windup.rules.apps.javascanner.ast;
 
 public class ClassCandidate
 {
-
+    private final ClassCandidateType type;
     private final int lineNumber;
     private final String qualifiedName;
     private final int startPosition;
     private final int length;
 
-    public ClassCandidate(int lineNumber, int startPosition, int length, String qualifiedName)
+    public ClassCandidate(ClassCandidateType type, int lineNumber, int startPosition, int length, String qualifiedName)
     {
+        this.type = type;
         this.lineNumber = lineNumber;
         this.qualifiedName = qualifiedName;
 
         this.startPosition = startPosition;
         this.length = length;
+    }
+
+    public ClassCandidateType getType()
+    {
+        return type;
     }
 
     public int getLineNumber()
@@ -30,7 +36,7 @@ public class ClassCandidate
     @Override
     public String toString()
     {
-        return "ClassCandidate [lineNumber=" + lineNumber + ", qualifiedName="
+        return "ClassCandidate [type=" + type + ", lineNumber=" + lineNumber + ", qualifiedName="
                     + qualifiedName + ", startPosition=" + startPosition
                     + ", length=" + length + "]";
     }

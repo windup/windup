@@ -98,90 +98,40 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     }
 
     private void processConstructor(ConstructorType interest, int lineStart, int startPosition, int length,
-                String decoratorPrefix, JavaSourceType sourceType)
+                JavaSourceType sourceType)
     {
-        ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, interest.toString());
+        ClassCandidate dr = new ClassCandidate(ClassCandidateType.CONSTRUCTOR_CALL, lineStart, startPosition, length,
+                    interest.toString());
         results.add(dr);
 
-        LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
     }
 
     private void processMethod(MethodType interest, int lineStart, int startPosition, int length,
-                String decoratorPrefix, JavaSourceType sourceType)
+                JavaSourceType sourceType)
     {
-        ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, interest.toString());
+        ClassCandidate dr = new ClassCandidate(ClassCandidateType.METHOD_CALL, lineStart, startPosition, length,
+                    interest.toString());
         results.add(dr);
 
-        LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
     }
 
-    private String resolveClassname(String sourceClassname)
-    {
-        // If the type contains a "." assume that it is fully qualified.
-        // FIXME - This is a carryover from the original Windup code, and I don't think
-        // that this assumption is valid.
-        if (!StringUtils.contains(sourceClassname, "."))
-        {
-            // Check if we have already looked this one up
-            if (classNameLookedUp.contains(sourceClassname))
-            {
-                // if yes, then just use the looked up name from the map
-                String qualifiedName = classNameToFQCN.get(sourceClassname);
-                if (qualifiedName != null)
-                {
-                    return qualifiedName;
-                }
-                else
-                {
-                    // otherwise, just return the provided name (unchanged)
-                    return sourceClassname;
-                }
-            }
-            else
-            {
-                // if this name has not been resolved before, go ahead and resolve it from the graph (if possible)
-                classNameLookedUp.add(sourceClassname);
-
-                // search every wildcard import for this name
-                for (String wildcardImport : wildcardImports)
-                {
-                    String candidateQualifiedName = wildcardImport + "." + sourceClassname;
-
-                    JavaClassModel jcm = javaClassDao.getJavaClass(candidateQualifiedName);
-                    if (jcm != null)
-                    {
-                        // we found it... put it in the map and return the result
-                        classNameToFQCN.put(sourceClassname, candidateQualifiedName);
-                        return candidateQualifiedName;
-                    }
-                }
-                // nothing was found, so just return the original value
-                return sourceClassname;
-            }
-        }
-        else
-        {
-            return sourceClassname;
-        }
-    }
-
-    private void processInterest(String interest, int lineStart, int startPosition, int length, String decoratorPrefix,
+    private void processInterest(String interest, int lineStart, int startPosition, int length,
                 JavaSourceType sourceType)
     {
 
         String sourceString = interest;
         sourceString = resolveClassname(sourceString);
 
-        ClassCandidate dr = new ClassCandidate(lineStart, startPosition, length, sourceString);
+        ClassCandidate dr = new ClassCandidate(ClassCandidateType.IMPORT, lineStart, startPosition, length,
+                    sourceString);
         results.add(dr);
 
-        LOG.info("Prefix: " + decoratorPrefix);
         LOG.info("Candidate: " + dr);
     }
 
-    private void processType(Type type, String decoratorPrefix, JavaSourceType sourceType)
+    private void processType(Type type, ClassCandidateType classCandidateType)
     {
         if (type == null)
             return;
@@ -193,10 +143,10 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         String sourceString = type.toString();
         sourceString = resolveClassname(sourceString);
 
-        ClassCandidate dr = new ClassCandidate(sourcePosition, startPosition, length, sourceString);
+        ClassCandidate dr = new ClassCandidate(classCandidateType, sourcePosition, startPosition, length, sourceString);
         results.add(dr);
 
-        LOG.info("Prefix: " + decoratorPrefix);
+        LOG.info("Prefix: " + classCandidateType);
         if (type instanceof SimpleType)
         {
             SimpleType sType = (SimpleType) type;
@@ -206,7 +156,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         LOG.info("Candidate: " + dr);
     }
 
-    private void processName(Name name, String decoratorPrefix, int lineNumber, int startPosition, int length)
+    private void processName(Name name, ClassCandidateType type, int lineNumber, int startPosition, int length)
     {
         if (name == null)
             return;
@@ -214,10 +164,10 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         String sourceString = name.toString();
         sourceString = resolveClassname(sourceString);
 
-        ClassCandidate dr = new ClassCandidate(lineNumber, startPosition, length, sourceString);
+        ClassCandidate dr = new ClassCandidate(type, lineNumber, startPosition, length, sourceString);
         results.add(dr);
 
-        LOG.info("Prefix: " + decoratorPrefix);
+        LOG.info("Prefix: " + type);
         LOG.info("Candidate: " + dr);
     }
 
@@ -228,7 +178,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         Type returnType = node.getReturnType2();
         if (returnType != null)
         {
-            processType(returnType, "Return type", JavaSourceType.TYPE);
+            processType(returnType, ClassCandidateType.RETURN_TYPE);
         }
 
         List<SingleVariableDeclaration> parameters = (List<SingleVariableDeclaration>) node.parameters();
@@ -243,7 +193,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                 // this.names.add(type.getName().toString());
                 // this.nameInstance.put(type.getName().toString(), typeName);
 
-                processType(type.getType(), "Method parameter", JavaSourceType.TYPE);
+                processType(type.getType(), ClassCandidateType.METHOD_PARAMETER);
             }
         }
 
@@ -252,7 +202,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             for (Name name : throwsTypes)
             {
-                processName(name, "Throws", cu.getLineNumber(node.getStartPosition()),
+                processName(name, ClassCandidateType.THROWS_METHOD_DECLARATION,
+                            cu.getLineNumber(node.getStartPosition()),
                             cu.getColumnNumber(name.getStartPosition()), name.getLength());
             }
         }
@@ -264,7 +215,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     public boolean visit(InstanceofExpression node)
     {
         Type type = node.getRightOperand();
-        processType(type, "Instance Of", JavaSourceType.TYPE);
+        processType(type, ClassCandidateType.INSTANCE_OF);
 
         return super.visit(node);
     }
@@ -274,7 +225,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         if (node.getExpression() instanceof ClassInstanceCreation)
         {
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
-            processType(cic.getType(), "Throwing", JavaSourceType.TYPE);
+            processType(cic.getType(), ClassCandidateType.THROW_STATEMENT);
         }
 
         return super.visit(node);
@@ -283,7 +234,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     public boolean visit(org.eclipse.jdt.core.dom.CatchClause node)
     {
         Type catchType = node.getException().getType();
-        processType(catchType, "Catching", JavaSourceType.TYPE);
+        processType(catchType, ClassCandidateType.CATCH_EXCEPTION_STATEMENT);
 
         return super.visit(node);
     }
@@ -294,7 +245,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         if (node.getExpression() instanceof ClassInstanceCreation)
         {
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
-            processType(cic.getType(), "Declaring", JavaSourceType.TYPE);
+            processType(cic.getType(), ClassCandidateType.CONSTRUCTOR_CALL);
         }
         return super.visit(node);
     }
@@ -312,7 +263,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             // this.names.add(frag.getName().getIdentifier());
             // this.nameInstance.put(frag.getName().toString(), nodeType.toString());
 
-            processType(node.getType(), "Declaring type", JavaSourceType.TYPE);
+            processType(node.getType(), ClassCandidateType.FIELD_DECLARATION);
         }
         return true;
     }
@@ -320,7 +271,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(MarkerAnnotation node)
     {
-        processName(node.getTypeName(), "Annotation", cu.getLineNumber(node.getStartPosition()),
+        processName(node.getTypeName(), ClassCandidateType.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
                     cu.getColumnNumber(cu.getStartPosition()), cu.getLength());
         return super.visit(node);
     }
@@ -328,7 +279,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(NormalAnnotation node)
     {
-        processName(node.getTypeName(), "Annotation", cu.getLineNumber(node.getStartPosition()),
+        processName(node.getTypeName(), ClassCandidateType.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
                     cu.getColumnNumber(node.getStartPosition()), node.getLength());
         return super.visit(node);
     }
@@ -336,7 +287,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(SingleMemberAnnotation node)
     {
-        processName(node.getTypeName(), "Annotation", cu.getLineNumber(node.getStartPosition()),
+        processName(node.getTypeName(), ClassCandidateType.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
                     cu.getColumnNumber(node.getStartPosition()), node.getLength());
         return super.visit(node);
     }
@@ -355,7 +306,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                 {
                     if (clzInterface instanceof SimpleType)
                     {
-                        processType((SimpleType) clzInterface, "Implements Type", JavaSourceType.TYPE);
+                        processType((SimpleType) clzInterface, ClassCandidateType.IMPLEMENTS_TYPE);
                     }
                     else
                     {
@@ -368,7 +319,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             if (clzSuperClasses instanceof SimpleType)
             {
-                processType((SimpleType) clzSuperClasses, "Extends Type", JavaSourceType.TYPE);
+                processType((SimpleType) clzSuperClasses, ClassCandidateType.EXTENDS_TYPE);
             }
             else
             {
@@ -391,7 +342,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             // this.names.add(frag.getName().getIdentifier());
             // this.nameInstance.put(frag.getName().toString(), nodeType.toString());
         }
-        processType(node.getType(), "Declaring type", JavaSourceType.TYPE);
+        processType(node.getType(), ClassCandidateType.VARIABLE_DECLARATION);
 
         return super.visit(node);
     }
@@ -409,7 +360,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             {
                 processInterest(classModel.getQualifiedName(), cu.getLineNumber(node.getName().getStartPosition()),
                             cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
-                            "Leads to import of", JavaSourceType.IMPORT);
+                            JavaSourceType.IMPORT);
             }
         }
         else
@@ -418,7 +369,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             classNameLookedUp.add(clzName);
             classNameToFQCN.put(clzName, name);
             processInterest(node.getName().toString(), cu.getLineNumber(node.getName().getStartPosition()),
-                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), "Import of",
+                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
                         JavaSourceType.IMPORT);
         }
 
@@ -452,7 +403,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
         MethodType methodCall = new MethodType(objRef, node.getName().toString(), resolvedParams);
         processMethod(methodCall, cu.getLineNumber(node.getName().getStartPosition()),
-                    cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), "Usage of",
+                    cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
                     JavaSourceType.METHOD);
 
         return super.visit(node);
@@ -476,7 +427,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         ConstructorType resolvedConstructor = new ConstructorType(nodeType, resolvedParams);
         processConstructor(resolvedConstructor, cu.getLineNumber(node.getType().getStartPosition()),
                     cu.getColumnNumber(node.getType().getStartPosition()), node.getType().getLength(),
-                    "Constructing type", JavaSourceType.CONSTRUCT);
+                    JavaSourceType.CONSTRUCT);
 
         return super.visit(node);
     }
@@ -711,6 +662,56 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             builder.append(")");
 
             return builder.toString();
+        }
+    }
+
+    private String resolveClassname(String sourceClassname)
+    {
+        // If the type contains a "." assume that it is fully qualified.
+        // FIXME - This is a carryover from the original Windup code, and I don't think
+        // that this assumption is valid.
+        if (!StringUtils.contains(sourceClassname, "."))
+        {
+            // Check if we have already looked this one up
+            if (classNameLookedUp.contains(sourceClassname))
+            {
+                // if yes, then just use the looked up name from the map
+                String qualifiedName = classNameToFQCN.get(sourceClassname);
+                if (qualifiedName != null)
+                {
+                    return qualifiedName;
+                }
+                else
+                {
+                    // otherwise, just return the provided name (unchanged)
+                    return sourceClassname;
+                }
+            }
+            else
+            {
+                // if this name has not been resolved before, go ahead and resolve it from the graph (if possible)
+                classNameLookedUp.add(sourceClassname);
+
+                // search every wildcard import for this name
+                for (String wildcardImport : wildcardImports)
+                {
+                    String candidateQualifiedName = wildcardImport + "." + sourceClassname;
+
+                    JavaClassModel jcm = javaClassDao.getJavaClass(candidateQualifiedName);
+                    if (jcm != null)
+                    {
+                        // we found it... put it in the map and return the result
+                        classNameToFQCN.put(sourceClassname, candidateQualifiedName);
+                        return candidateQualifiedName;
+                    }
+                }
+                // nothing was found, so just return the original value
+                return sourceClassname;
+            }
+        }
+        else
+        {
+            return sourceClassname;
         }
     }
 
