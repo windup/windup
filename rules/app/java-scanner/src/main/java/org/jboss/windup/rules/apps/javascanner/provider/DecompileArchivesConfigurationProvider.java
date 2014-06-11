@@ -29,19 +29,15 @@ public class DecompileArchivesConfigurationProvider extends WindupConfigurationP
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(
-                                GraphSearchConditionBuilder
-                                            .create("allUnzippedArchives")
-                                            .ofType(ArchiveModel.class)
-                    ).perform(
-                                Iteration.over("allUnzippedArchives").var(ArchiveModel.class, "archive")
-                                            .perform(
-                                                        new ProcyonDecompilerOperation("archive")
-                                            ).endIteration()
-                    );
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(
+                GraphSearchConditionBuilder.create("allUnzippedArchives").ofType(ArchiveModel.class)
+            ).perform(
+                Iteration.over("allUnzippedArchives").var(ArchiveModel.class, "archive")
+                    .perform( new ProcyonDecompilerOperation("archive") )
+                .endIteration()
+            );
 
     }
 

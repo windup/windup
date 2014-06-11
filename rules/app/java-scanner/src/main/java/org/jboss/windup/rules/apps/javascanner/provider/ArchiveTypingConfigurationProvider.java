@@ -31,16 +31,15 @@ public class ArchiveTypingConfigurationProvider extends WindupConfigurationProvi
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(
-                                GraphSearchConditionBuilder.create("archives")
-                                            .ofType(ArchiveModel.class)
-                    )
+            .addRule()
+            .when(
+                GraphSearchConditionBuilder.create("archives").ofType(ArchiveModel.class)
+            )
+            .perform(
+                Iteration.over("archives").var("archive")
                     .perform(
-                                Iteration.over("archives").var("archive")
-                                            .perform(
-                                                        ConfigureArchiveTypes.forVar("archive")
-                                            ).endIteration()
-                    );
+                        ConfigureArchiveTypes.forVar("archive")
+                    ).endIteration()
+            );
     }
 }

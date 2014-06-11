@@ -24,34 +24,27 @@ public class CreateInputFileConfigurationProvider extends WindupConfigurationPro
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(GraphSearchConditionBuilder
-                                .create("inputConfigurations")
-                                .ofType(WindupConfigurationModel.class)
-                    )
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when( GraphSearchConditionBuilder.create("inputConfigurations").ofType(WindupConfigurationModel.class) )
+            .perform(
+                Iteration.over("inputConfigurations")
+                    .var(WindupConfigurationModel.class, "configuration")
                     .perform(
-                                Iteration.over("inputConfigurations")
-                                            .var(WindupConfigurationModel.class, "configuration")
-                                            .perform(
-                                                        new AbstractIterationOperator<WindupConfigurationModel>(
-                                                                    WindupConfigurationModel.class, "configuration")
-                                                        {
-                                                            @Override
-                                                            public void perform(GraphRewrite event,
-                                                                        EvaluationContext context,
-                                                                        WindupConfigurationModel payload)
-                                                            {
-                                                                FileResourceModel inputPath = event.getGraphContext()
-                                                                            .getFramed()
-                                                                            .addVertex(null, FileResourceModel.class);
-                                                                inputPath.setFilePath(payload.getInputPath());
-                                                            }
-                                                        }
-                                            ).endIteration()
-                    );
-
+                        new AbstractIterationOperator<WindupConfigurationModel>(
+                                    WindupConfigurationModel.class, "configuration")
+                        {
+                            @Override
+                            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
+                            {
+                                FileResourceModel inputPath = event.getGraphContext().getFramed()
+                                            .addVertex(null, FileResourceModel.class);
+                                inputPath.setFilePath(payload.getInputPath());
+                            }
+                        }
+                    )
+                .endIteration()
+            );
     }
 
 }

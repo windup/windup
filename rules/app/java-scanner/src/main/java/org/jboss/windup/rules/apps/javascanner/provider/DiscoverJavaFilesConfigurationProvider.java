@@ -33,6 +33,9 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ *  TODO:  WINDUP-85 - Introduce JavaFileModel
+ */
 public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationProvider
 {
     @Inject
@@ -53,20 +56,19 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
         return generateDependencies(IndexClassFilesConfigurationProvider.class);
     }
 
-    private CompilationUnit parseCompilationUnit(FileResourceModel fileResourceModel)
+    private CompilationUnit parseCompilationUnit(FileResourceModel fileModel)
     {
-        ASTParser parser = ASTParser
-                    .newParser(AST.JLS3);
+        ASTParser parser = ASTParser.newParser(AST.JLS3);
         parser.setBindingsRecovery(true);
         parser.setResolveBindings(true);
         try
         {
-            File sourceFile = fileResourceModel.asFile();
+            File sourceFile = fileModel.asFile();
             parser.setSource(FileUtils.readFileToString(sourceFile).toCharArray());
         }
         catch (IOException e)
         {
-            throw new WindupException("Failed to get source for file: " + fileResourceModel.getFilePath() + " due to: "
+            throw new WindupException("Failed to get source for file: " + fileModel.getFilePath() + " due to: "
                         + e.getMessage(), e);
         }
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -76,95 +78,68 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(
-                                GraphSearchConditionBuilder
-                                            .create("inputConfigurations")
-                                            .ofType(WindupConfigurationModel.class)
-                                            .withProperty(WindupConfigurationModel.PROPERTY_SOURCE_MODE, true)
-                    )
+        return ConfigurationBuilder.begin().addRule()
+            .when(
+                GraphSearchConditionBuilder
+                    .create("inputConfigurations")
+                    .ofType(WindupConfigurationModel.class)
+                    .withProperty(WindupConfigurationModel.PROPERTY_SOURCE_MODE, true)
+            )
+            .perform(
+                Iteration.over("inputConfigurations")
+                    .var("configuration")
                     .perform(
-                                Iteration.over("inputConfigurations")
-                                            .var("configuration")
+                        // A nested rule.
+                        GraphSubset.evaluate(
+                            ConfigurationBuilder.begin()
+                                .addRule()
+                                .when(
+                                    GraphSearchConditionBuilder
+                                        .create("javaSourceFiles")
+                                        .ofType(FileResourceModel.class)
+                                        .withProperty( FileResourceModel.PROPERTY_IS_DIRECTORY, false)
+                                        .withProperty( FileResourceModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX, ".*\\.java$")
+                                )
+                                .perform(
+                                    Iteration.over("javaSourceFiles")
+                                        .var(FileResourceModel.class, "javaSourceFile")
+                                        .perform(new AbstractIterationOperator<FileResourceModel>( FileResourceModel.class, "javaSourceFile")
+                                        {
+                                            @SuppressWarnings("unchecked")
+                                            @Override
+                                            public void perform( GraphRewrite event, EvaluationContext context, FileResourceModel payload)
+                                            {
+                                                SelectionFactory selectionFactory = SelectionFactory.instance(event);
+                                                WindupConfigurationModel windupCfg = 
+                                                        selectionFactory.getCurrentPayload( WindupConfigurationModel.class, "configuration");
+                                                indexJavaFile( event.getGraphContext(), payload, windupCfg );
+                                            }
+                                        } )
+                                    .endIteration()
+                                    .and(
+                                        Iteration.over("javaSourceFiles")
+                                            .var( FileResourceModel.class, "javaSourceFile")
                                             .perform(
-                                                        GraphSubset.evaluate(
-                                                                    ConfigurationBuilder
-                                                                                .begin()
-                                                                                .addRule()
-                                                                                .when(
-                                                                                            GraphSearchConditionBuilder
-                                                                                                        .create("javaSourceFiles")
-                                                                                                        .ofType(FileResourceModel.class)
-                                                                                                        .withProperty(
-                                                                                                                    FileResourceModel.PROPERTY_IS_DIRECTORY,
-                                                                                                                    false)
-                                                                                                        .withProperty(
-                                                                                                                    FileResourceModel.PROPERTY_FILE_PATH,
-                                                                                                                    GraphSearchPropertyComparisonType.REGEX,
-                                                                                                                    ".*\\.java$")
-                                                                                )
-                                                                                .perform(
-                                                                                            Iteration.over(
-                                                                                                        "javaSourceFiles")
-                                                                                                        .var(FileResourceModel.class,
-                                                                                                                    "javaSourceFile")
-                                                                                                        .perform(new AbstractIterationOperator<FileResourceModel>(
-                                                                                                                    FileResourceModel.class,
-                                                                                                                    "javaSourceFile")
-                                                                                                        {
-                                                                                                            @SuppressWarnings("unchecked")
-                                                                                                            @Override
-                                                                                                            public void perform(
-                                                                                                                        GraphRewrite event,
-                                                                                                                        EvaluationContext context,
-                                                                                                                        FileResourceModel payload)
-                                                                                                            {
-                                                                                                                SelectionFactory selectionFactory = SelectionFactory
-                                                                                                                            .instance(event);
-                                                                                                                WindupConfigurationModel windupCfg = selectionFactory
-                                                                                                                            .getCurrentPayload(
-                                                                                                                                        WindupConfigurationModel.class,
-                                                                                                                                        "configuration");
-                                                                                                                indexJavaFile(
-                                                                                                                            event.getGraphContext(),
-                                                                                                                            payload,
-                                                                                                                            windupCfg);
-                                                                                                            }
-
-                                                                                                        }
-                                                                                                        )
-                                                                                                        .endIteration()
-                                                                                                        .and(
-                                                                                                                    Iteration.over(
-                                                                                                                                "javaSourceFiles")
-                                                                                                                                .var(FileResourceModel.class,
-                                                                                                                                            "javaSourceFile")
-                                                                                                                                .perform(
-                                                                                                                                            new AbstractIterationOperator<FileResourceModel>(
-                                                                                                                                                        FileResourceModel.class,
-                                                                                                                                                        "javaSourceFile")
-                                                                                                                                            {
-                                                                                                                                                public void perform(
-                                                                                                                                                            GraphRewrite event,
-                                                                                                                                                            EvaluationContext context,
-                                                                                                                                                            FileResourceModel payload)
-                                                                                                                                                {
-                                                                                                                                                    final CompilationUnit cu = parseCompilationUnit(payload);
-                                                                                                                                                    cu.accept(new VariableResolvingASTVisitor(
-                                                                                                                                                                cu,
-                                                                                                                                                                javaClassDao,
-                                                                                                                                                                windupContext));
-                                                                                                                                                }
-                                                                                                                                            }
-                                                                                                                                )
-                                                                                                                                .endIteration()
-                                                                                                        )
-                                                                                ))).endIteration());
-
+                                                new AbstractIterationOperator<FileResourceModel>( FileResourceModel.class, "javaSourceFile")
+                                                {
+                                                    public void perform( GraphRewrite event, EvaluationContext context, FileResourceModel payload)
+                                                    {
+                                                        final CompilationUnit cu = parseCompilationUnit(payload);
+                                                        cu.accept(new VariableResolvingASTVisitor( cu, javaClassDao, windupContext));
+                                                    }
+                                                }
+                                            )
+                                        .endIteration()
+                                    )
+                                )// perform()
+                        )
+                    )// perform()
+                .endIteration()); // inputConfiguration
     }
 
+    
+    private static final int JAVA_SUFFIX_LEN = 5;
+    
     private void indexJavaFile(GraphContext graphCtx, FileResourceModel payload, WindupConfigurationModel windupCfg)
     {
         String inputDir = windupCfg.getInputPath();
@@ -176,17 +151,14 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
         if (filepath.startsWith(inputDir))
         {
             String classFilePath = filepath.substring(inputDir.length() + 1);
-            String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
-                        classFilePath.length() - 5);
+            String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0, classFilePath.length() - JAVA_SUFFIX_LEN);
             String typeName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1, qualifiedName.length());
 
             String packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
 
-            GraphService<JavaClassModel> graphService = new GraphService<>(graphCtx,
-                        JavaClassModel.class);
+            GraphService<JavaClassModel> graphService = new GraphService<>(graphCtx, JavaClassModel.class);
 
-            JavaClassModel javaClassModel = graphService.getByUniqueProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME,
-                        qualifiedName);
+            JavaClassModel javaClassModel = graphService.getByUniqueProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME, qualifiedName);
             if (javaClassModel == null)
             {
                 javaClassModel = graphCtx.getFramed().addVertex(null, JavaClassModel.class);

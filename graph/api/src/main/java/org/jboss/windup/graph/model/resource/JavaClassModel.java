@@ -10,6 +10,7 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+// TODO:  WINDUP-85 - Introduce JavaFileModel
 @TypeValue("JavaClassResource")
 public interface JavaClassModel extends FileResourceModel
 {
@@ -103,12 +104,14 @@ public interface JavaClassModel extends FileResourceModel
     @GremlinGroovy("it.sideEffect{x=it}.in('extends', 'imports', 'implements').dedup().filter{it!=x}")
     public Iterable<JavaClassModel> providesForJavaClass();
 
+    // TODO: Remove - residual of Brad's first prototype.
     @Property("blacklistCandidate")
     public void setBlacklistCandidate(boolean blacklistCandidate);
 
     @Property("blacklistCandidate")
     public boolean isBlacklistCandidate();
 
+    // TODO: Rename to "isAnalyze" - see #windup discussion form June 11th.
     @Property("customerPackage")
     public void setCustomerPackage(boolean customerPackage);
 
