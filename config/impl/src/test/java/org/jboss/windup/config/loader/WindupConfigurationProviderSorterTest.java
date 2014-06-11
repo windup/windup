@@ -1,6 +1,7 @@
 package org.jboss.windup.config.loader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
@@ -146,6 +147,74 @@ public class WindupConfigurationProviderSorterTest
         }
     }
 
+    private class WCPPhase2Class2 extends WindupConfigurationProvider
+    {
+        @Override
+        public RulePhase getPhase()
+        {
+            return RulePhase.INITIAL_ANALYSIS;
+        }
+
+        @Override
+        public List<String> getIDDependencies()
+        {
+            return Arrays.asList(new String[] { "Phase2Class1" });
+        }
+
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Phase2Class2";
+        }
+
+        @Override
+        public String getID()
+        {
+            return toString();
+        }
+    }
+
+    private class WCPPhase2Class3 extends WindupConfigurationProvider
+    {
+        @Override
+        public RulePhase getPhase()
+        {
+            return RulePhase.INITIAL_ANALYSIS;
+        }
+
+        @Override
+        public List<String> getIDDependencies()
+        {
+            return Arrays.asList(new String[] { "Phase2Class2" });
+        }
+
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Phase2Class3";
+        }
+
+        @Override
+        public String getID()
+        {
+            return toString();
+        }
+    }
+
     @Test
     public void testSort()
     {
@@ -153,7 +222,11 @@ public class WindupConfigurationProviderSorterTest
         WindupConfigurationProvider v2 = new WCPPhase1Class2();
         WindupConfigurationProvider v3 = new WCPPhase1Class3();
         WindupConfigurationProvider v4 = new WCPPhase2Class1();
+        WindupConfigurationProvider v5 = new WCPPhase2Class2();
+        WindupConfigurationProvider v6 = new WCPPhase2Class3();
         List<WindupConfigurationProvider> configurationProviders = new ArrayList<>();
+        configurationProviders.add(v6);
+        configurationProviders.add(v5);
         configurationProviders.add(v3);
         configurationProviders.add(v4);
         configurationProviders.add(v2);
@@ -168,6 +241,8 @@ public class WindupConfigurationProviderSorterTest
         Assert.assertEquals(v2, sortedWCPList.get(1));
         Assert.assertEquals(v3, sortedWCPList.get(2));
         Assert.assertEquals(v4, sortedWCPList.get(3));
+        Assert.assertEquals(v5, sortedWCPList.get(4));
+        Assert.assertEquals(v6, sortedWCPList.get(5));
     }
 
     @Test
