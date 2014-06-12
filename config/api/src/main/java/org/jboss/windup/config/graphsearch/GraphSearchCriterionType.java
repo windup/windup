@@ -3,8 +3,11 @@ package org.jboss.windup.config.graphsearch;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.thinkaurelius.titan.core.attribute.Text;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.util.Pipeline;
 
 class GraphSearchCriterionType implements GraphSearchCriterion
 {
@@ -12,6 +15,16 @@ class GraphSearchCriterionType implements GraphSearchCriterion
 
     public GraphSearchCriterionType(Class<? extends WindupVertexFrame> clazz)
     {
+        this.typeValue = getTypeValue( clazz );
+    }
+    
+    @Override
+    public void query(FramedGraphQuery q)
+    {
+        q.has("type", Text.CONTAINS, typeValue);
+    }
+    
+    private static String getTypeValue( Class<? extends WindupVertexFrame> clazz ) {
         TypeValue typeValueAnnotation = clazz.getAnnotation(TypeValue.class);
         if (typeValueAnnotation == null)
         {
@@ -19,13 +32,15 @@ class GraphSearchCriterionType implements GraphSearchCriterion
         }
         else
         {
-            this.typeValue = typeValueAnnotation.value();
+            return typeValueAnnotation.value();
         }
     }
 
-    @Override
-    public void query(FramedGraphQuery q)
-    {
-        q.has("type", Text.CONTAINS, typeValue);
+    /**
+     *  Adds a criterion to given pipeline which filters out vertices representing given WindupVertexFrame.
+     */
+    public static GremlinPipeline<Vertex, Vertex> addPipeFor( GremlinPipeline<Vertex, Vertex> pipeline, Class<? extends WindupVertexFrame> clazz ){
+        pipeline.has("type", Text.CONTAINS, getTypeValue( clazz ));
+        return pipeline;
     }
 }
