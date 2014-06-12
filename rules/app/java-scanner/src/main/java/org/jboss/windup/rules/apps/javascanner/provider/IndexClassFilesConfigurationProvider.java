@@ -9,7 +9,7 @@ import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AddClassFileMetadata;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
@@ -35,9 +35,9 @@ public class IndexClassFilesConfigurationProvider extends WindupConfigurationPro
             .addRule()
             .when(
                 GraphSearchConditionBuilder.create("classFiles")
-                    .ofType(FileResourceModel.class)
-                    .withProperty(FileResourceModel.PROPERTY_IS_DIRECTORY, false)
-                    .withProperty(FileResourceModel.PROPERTY_FILE_PATH,
+                    .ofType(FileModel.class)
+                    .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+                    .withProperty(FileModel.PROPERTY_FILE_PATH,
                         GraphSearchPropertyComparisonType.REGEX, ".*\\.class")
             ).perform(
                 Iteration.over("classFiles").var("classFile")

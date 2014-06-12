@@ -11,7 +11,7 @@ import org.jboss.windup.config.operation.ruleelement.AddArchiveReferenceInformat
 import org.jboss.windup.config.operation.ruleelement.RecurseDirectoryAndAddFiles;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
@@ -37,11 +37,11 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
             .addRule()
             .when(GraphSearchConditionBuilder
                 .create("inputDirectories")
-                .ofType(FileResourceModel.class)
-                .withProperty(FileResourceModel.PROPERTY_IS_DIRECTORY, true)
+                .ofType(FileModel.class)
+                .withProperty(FileModel.PROPERTY_IS_DIRECTORY, true)
             )
             .perform(
-                Iteration.over("inputDirectories").var(FileResourceModel.class, "directory")
+                Iteration.over("inputDirectories").var(FileModel.class, "directory")
                     .perform(
                         RecurseDirectoryAndAddFiles.add("directory")
                     ).endIteration()
@@ -50,15 +50,15 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
             .when(
                 GraphSearchConditionBuilder
                     .create("inputFiles")
-                    .ofType(FileResourceModel.class)
-                    .withProperty(FileResourceModel.PROPERTY_IS_DIRECTORY, false)
-                    .withProperty(FileResourceModel.PROPERTY_FILE_PATH,
+                    .ofType(FileModel.class)
+                    .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+                    .withProperty(FileModel.PROPERTY_FILE_PATH,
                         GraphSearchPropertyComparisonType.REGEX,
                         ZipUtil.getEndsWithZipRegularExpression())
             )
             .perform(
                 Iteration.over("inputFiles")
-                    .var(FileResourceModel.class, "file")
+                    .var(FileModel.class, "file")
                     .perform(
                         AddArchiveReferenceInformation.addReferenceInformation("file")
                     ).endIteration()

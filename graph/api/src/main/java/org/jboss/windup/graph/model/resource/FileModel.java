@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("FileResource")
-public interface FileResourceModel extends ResourceModel
+public interface FileModel extends ResourceModel
 {
 
     public static final String PROPERTY_FILE_PATH = "filePath";
@@ -60,7 +60,7 @@ public interface FileResourceModel extends ResourceModel
     @JavaHandler
     public InputStream asInputStream() throws RuntimeException;
 
-    abstract class Impl implements FileResourceModel, ResourceModel, JavaHandlerContext<Vertex>
+    abstract class Impl implements FileModel, ResourceModel, JavaHandlerContext<Vertex>
     {
 
         public void setFilePath(String filePath)

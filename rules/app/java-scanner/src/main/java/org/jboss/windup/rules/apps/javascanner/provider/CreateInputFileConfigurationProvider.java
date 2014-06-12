@@ -8,7 +8,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -37,8 +37,8 @@ public class CreateInputFileConfigurationProvider extends WindupConfigurationPro
                             @Override
                             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
                             {
-                                FileResourceModel inputPath = event.getGraphContext().getFramed()
-                                            .addVertex(null, FileResourceModel.class);
+                                FileModel inputPath = event.getGraphContext().getFramed()
+                                            .addVertex(null, FileModel.class);
                                 inputPath.setFilePath(payload.getInputPath());
                             }
                         }

@@ -8,14 +8,14 @@ import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class RecurseDirectoryAndAddFiles extends AbstractIterationOperator<FileResourceModel>
+public class RecurseDirectoryAndAddFiles extends AbstractIterationOperator<FileModel>
 {
     public RecurseDirectoryAndAddFiles(String variableName)
     {
-        super(FileResourceModel.class, variableName);
+        super(FileModel.class, variableName);
     }
 
     public static RecurseDirectoryAndAddFiles add(String variableName)
@@ -24,12 +24,12 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperator<FileR
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileResourceModel resourceModel)
+    public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)
     {
         visitFile(event.getGraphContext(), resourceModel);
     }
 
-    private void visitFile(GraphContext ctx, FileResourceModel file)
+    private void visitFile(GraphContext ctx, FileModel file)
     {
         String filePath = file.getFilePath();
         File fileReference = new File(filePath);
@@ -39,7 +39,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperator<FileR
             Collection<File> found = FileUtils.listFiles(fileReference, FileFileFilter.FILE, TrueFileFilter.INSTANCE);
             for (File reference : found)
             {
-                FileResourceModel subFile = ctx.getFramed().addVertex(null, FileResourceModel.class);
+                FileModel subFile = ctx.getFramed().addVertex(null, FileModel.class);
                 subFile.setFilePath(reference.getAbsolutePath());
                 visitFile(ctx, subFile);
             }

@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 // TODO:  WINDUP-85 - Introduce JavaFileModel
 @TypeValue("JavaClassResource")
-public interface JavaClassModel extends FileResourceModel
+public interface JavaClassModel extends FileModel
 {
     public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
 
@@ -75,16 +75,16 @@ public interface JavaClassModel extends FileResourceModel
     public Iterable<JarArchiveModel> providedBy();
 
     @Adjacency(label = "decompiledSource", direction = Direction.OUT)
-    public void setDecompiledSource(FileResourceModel source);
+    public void setDecompiledSource(FileModel source);
 
     @Adjacency(label = "decompiledSource", direction = Direction.OUT)
-    public FileResourceModel getDecompiledSource();
+    public FileModel getDecompiledSource();
 
     @Adjacency(label = "originalSource", direction = Direction.OUT)
-    public void setOriginalSource(FileResourceModel source);
+    public void setOriginalSource(FileModel source);
 
     @Adjacency(label = "originalSource", direction = Direction.OUT)
-    public FileResourceModel getOriginalSource();
+    public FileModel getOriginalSource();
 
     @GremlinGroovy("it.out('javaMethod').has('methodName', methodName)")
     public Iterable<JavaMethodModel> getMethod(@GremlinParam("methodName") String methodName);

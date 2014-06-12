@@ -64,8 +64,8 @@ public interface XmlResourceModel extends ResourceModel {
 						ArchiveEntryResourceModel resource = frame(underlyingResource.asVertex(), ArchiveEntryResourceModel.class);
 						return resource.asInputStream();
 				}
-				else if(underlyingResource instanceof FileResourceModel) {
-					FileResourceModel resource = frame(underlyingResource.asVertex(), FileResourceModel.class);
+				else if(underlyingResource instanceof FileModel) {
+					FileModel resource = frame(underlyingResource.asVertex(), FileModel.class);
 					return resource.asInputStream();
 				}
 				
@@ -84,8 +84,8 @@ public interface XmlResourceModel extends ResourceModel {
 					ArchiveEntryResourceModel resource = frame(underlyingResource.asVertex(), ArchiveEntryResourceModel.class);
 					return resource.asFile();
 				}
-				else if(underlyingResource instanceof FileResourceModel) {
-					FileResourceModel resource = frame(underlyingResource.asVertex(), FileResourceModel.class);
+				else if(underlyingResource instanceof FileModel) {
+					FileModel resource = frame(underlyingResource.asVertex(), FileModel.class);
 					return resource.asFile();
 				}
 				return this.getResource().asFile();

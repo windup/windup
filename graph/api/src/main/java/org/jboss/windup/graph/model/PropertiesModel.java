@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -20,10 +20,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface PropertiesModel extends WindupVertexFrame
 {
     @Adjacency(label = "propertiesFileResource", direction = Direction.IN)
-    public FileResourceModel getFileResource();
+    public FileModel getFileResource();
 
     @Adjacency(label = "propertiesFileResource", direction = Direction.IN)
-    public void setFileResource(FileResourceModel resource);
+    public void setFileResource(FileModel resource);
 
     @JavaHandler
     public String getProperty(String property);
@@ -55,9 +55,9 @@ public interface PropertiesModel extends WindupVertexFrame
                                 ArchiveEntryResourceModel.class);
                     return resource.asInputStream();
                 }
-                else if (underlyingResource instanceof FileResourceModel)
+                else if (underlyingResource instanceof FileModel)
                 {
-                    FileResourceModel resource = frame(underlyingResource.asVertex(), FileResourceModel.class);
+                    FileModel resource = frame(underlyingResource.asVertex(), FileModel.class);
                     return resource.asInputStream();
                 }
 
@@ -81,9 +81,9 @@ public interface PropertiesModel extends WindupVertexFrame
                                 ArchiveEntryResourceModel.class);
                     return resource.asFile();
                 }
-                else if (underlyingResource instanceof FileResourceModel)
+                else if (underlyingResource instanceof FileModel)
                 {
-                    FileResourceModel resource = frame(underlyingResource.asVertex(), FileResourceModel.class);
+                    FileModel resource = frame(underlyingResource.asVertex(), FileModel.class);
                     return resource.asFile();
                 }
                 return this.getFileResource().asFile();

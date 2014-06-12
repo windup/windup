@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
@@ -63,9 +63,9 @@ public interface JarManifestModel extends ResourceModel
                     ArchiveEntryResourceModel resource = frame(underlyingResource.asVertex(), ArchiveEntryResourceModel.class);
                     return resource.asInputStream();
                 }
-                else if (underlyingResource instanceof FileResourceModel)
+                else if (underlyingResource instanceof FileModel)
                 {
-                    FileResourceModel resource = frame(underlyingResource.asVertex(), FileResourceModel.class);
+                    FileModel resource = frame(underlyingResource.asVertex(), FileModel.class);
                     return resource.asInputStream();
                 }
 
@@ -88,9 +88,9 @@ public interface JarManifestModel extends ResourceModel
                     ArchiveEntryResourceModel resource = frame(underlyingResource.asVertex(), ArchiveEntryResourceModel.class);
                     return resource.asFile();
                 }
-                else if (underlyingResource instanceof FileResourceModel)
+                else if (underlyingResource instanceof FileModel)
                 {
-                    FileResourceModel resource = frame(underlyingResource.asVertex(), FileResourceModel.class);
+                    FileModel resource = frame(underlyingResource.asVertex(), FileModel.class);
                     return resource.asFile();
                 }
                 return this.getResource().asFile();

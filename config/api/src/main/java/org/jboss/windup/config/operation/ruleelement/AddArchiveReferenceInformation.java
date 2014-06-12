@@ -6,14 +6,14 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.ApplicationReferenceModel;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class AddArchiveReferenceInformation extends AbstractIterationOperator<FileResourceModel>
+public class AddArchiveReferenceInformation extends AbstractIterationOperator<FileModel>
 {
     public AddArchiveReferenceInformation(String variableName)
     {
-        super(FileResourceModel.class, variableName);
+        super(FileModel.class, variableName);
     }
 
     public static AddArchiveReferenceInformation addReferenceInformation(String variableName)
@@ -22,7 +22,7 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperator<Fi
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileResourceModel fileResourceModel)
+    public void perform(GraphRewrite event, EvaluationContext context, FileModel fileResourceModel)
     {
         File file = new File(fileResourceModel.getFilePath());
         ArchiveModel archiveResourceModel = GraphUtil.addTypeToModel(event.getGraphContext(),

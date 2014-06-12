@@ -14,7 +14,7 @@ import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -33,7 +33,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperator<Archiv
         if (payload.getUnzippedDirectory() != null)
         {
             Decompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
-            String archivePath = ((FileResourceModel) payload).getFilePath();
+            String archivePath = ((FileModel) payload).getFilePath();
             File archive = new File(archivePath);
             File outputDir = new File(payload.getUnzippedDirectory().getFilePath());
 
@@ -42,27 +42,27 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperator<Archiv
                 DecompilationResult result = decompiler.decompileArchive(archive, outputDir);
                 Set<String> decompiledOutputFileSet = result.getDecompiledOutputFiles();
 
-                GraphService<FileResourceModel> fileService = new GraphService<>(event.getGraphContext(),
-                            FileResourceModel.class);
+                GraphService<FileModel> fileService = new GraphService<>(event.getGraphContext(),
+                            FileModel.class);
                 for (String decompiledOutputFile : decompiledOutputFileSet)
                 {
-                    FileResourceModel decompiledFileModel = fileService.getByUniqueProperty(
-                                FileResourceModel.PROPERTY_FILE_PATH, decompiledOutputFile);
+                    FileModel decompiledFileModel = fileService.getByUniqueProperty(
+                                FileModel.PROPERTY_FILE_PATH, decompiledOutputFile);
 
                     if (decompiledOutputFile.endsWith(".java"))
                     {
                         if (decompiledFileModel == null)
                         {
                             decompiledFileModel = event.getGraphContext().getFramed()
-                                        .addVertex(null, FileResourceModel.class);
+                                        .addVertex(null, FileModel.class);
                             decompiledFileModel.setFilePath(decompiledOutputFile);
                         }
 
                         Path classFilepath = Paths.get(decompiledOutputFile.substring(0,
                                     decompiledOutputFile.length() - 5)
                                     + ".class");
-                        FileResourceModel classFileModel = fileService.getByUniqueProperty(
-                                    FileResourceModel.PROPERTY_FILE_PATH, classFilepath);
+                        FileModel classFileModel = fileService.getByUniqueProperty(
+                                    FileModel.PROPERTY_FILE_PATH, classFilepath);
                         if (classFileModel != null && classFileModel instanceof JavaClassModel)
                         {
                             JavaClassModel classModel = (JavaClassModel) classFileModel;

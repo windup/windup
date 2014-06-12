@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -17,8 +17,8 @@ public interface ApplicationReferenceModel extends WindupVertexFrame
     public ArchiveModel getArchive();
 
     @Adjacency(label = "directory", direction = Direction.OUT)
-    public FileResourceModel getFileResourceModel();
+    public FileModel getFileResourceModel();
 
     @Adjacency(label = "directory", direction = Direction.OUT)
-    public FileResourceModel setFileResourceModel(FileResourceModel model);
+    public FileModel setFileResourceModel(FileModel model);
 }

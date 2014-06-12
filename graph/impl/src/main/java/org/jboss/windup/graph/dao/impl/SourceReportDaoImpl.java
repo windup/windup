@@ -2,7 +2,7 @@ package org.jboss.windup.graph.dao.impl;
 
 import org.jboss.windup.graph.dao.SourceReportDao;
 import org.jboss.windup.graph.model.meta.report.SourceReportModel;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -19,7 +19,7 @@ public class SourceReportDaoImpl extends BaseDaoImpl<SourceReportModel> implemen
         return resource.asVertex().getVertices(Direction.OUT, "sourceReport").iterator().hasNext();
     }
 
-    public FileResourceModel getResourceReport(ResourceModel resource)
+    public FileModel getResourceReport(ResourceModel resource)
     {
         if (hasSourceReport(resource))
         {

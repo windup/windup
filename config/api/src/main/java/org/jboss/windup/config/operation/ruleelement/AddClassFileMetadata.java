@@ -7,20 +7,20 @@ import org.apache.bcel.classfile.JavaClass;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class AddClassFileMetadata extends AbstractIterationOperator<FileResourceModel>
+public class AddClassFileMetadata extends AbstractIterationOperator<FileModel>
 {
 
     public AddClassFileMetadata(String variableName)
     {
-        super(FileResourceModel.class, variableName);
+        super(FileModel.class, variableName);
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileResourceModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
         try
         {

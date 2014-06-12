@@ -13,7 +13,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.ApplicationReferenceModel;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.resource.FileResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -39,9 +39,9 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
-        if (payload instanceof FileResourceModel)
+        if (payload instanceof FileModel)
         {
-            FileResourceModel fileResourceModel = (FileResourceModel) payload;
+            FileModel fileResourceModel = (FileModel) payload;
             File zipFile = fileResourceModel.asFile();
 
             if (!zipFile.isFile())
@@ -110,8 +110,8 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
         // add a folder reference for this application
         ApplicationReferenceModel appRefModel = archiveModel.getApplicationReferenceModel();
 
-        FileResourceModel newFileModel = event.getGraphContext().getFramed()
-                    .addVertex(null, FileResourceModel.class);
+        FileModel newFileModel = event.getGraphContext().getFramed()
+                    .addVertex(null, FileModel.class);
         newFileModel.setFilePath(appArchiveFolder.toAbsolutePath().toString());
         // mark the path to the archive
         archiveModel.setUnzippedDirectory(newFileModel);
@@ -129,8 +129,8 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                 {
-                    FileResourceModel childFile = event.getGraphContext().getFramed()
-                                .addVertex(null, FileResourceModel.class);
+                    FileModel childFile = event.getGraphContext().getFramed()
+                                .addVertex(null, FileModel.class);
                     childFile.setFilePath(file.toAbsolutePath().toString());
                     archiveModel.addContainedFileModel(childFile);
 
