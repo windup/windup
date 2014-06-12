@@ -96,54 +96,6 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
                                 .when(
                                     GraphSearchConditionBuilder
                                         .create("javaSourceFiles")
-                                        .ofType(FileResourceModel.class)
-                                        .withProperty( FileResourceModel.PROPERTY_IS_DIRECTORY, false)
-                                        .withProperty( FileResourceModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX, ".*\\.java$")
-                                )
-                                .perform(
-                                    Iteration.over("javaSourceFiles")
-                                        .var(FileResourceModel.class, "javaSourceFile")
-                                        .perform(new AbstractIterationOperator<FileResourceModel>( FileResourceModel.class, "javaSourceFile")
-                                        {
-                                            @SuppressWarnings("unchecked")
-                                            @Override
-                                            public void perform( GraphRewrite event, EvaluationContext context, FileResourceModel payload)
-                                            {
-                                                SelectionFactory selectionFactory = SelectionFactory.instance(event);
-                                                WindupConfigurationModel windupCfg = 
-                                                        selectionFactory.getCurrentPayload( WindupConfigurationModel.class, "configuration");
-                                                indexJavaFile( event.getGraphContext(), payload, windupCfg );
-                                            }
-                                        } )
-                                    .endIteration()
-                                    .and(
-                                        Iteration.over("javaSourceFiles")
-                                            .var( FileResourceModel.class, "javaSourceFile")
-                                            .perform(
-                                                new AbstractIterationOperator<FileResourceModel>( FileResourceModel.class, "javaSourceFile")
-                                                {
-                                                    public void perform( GraphRewrite event, EvaluationContext context, FileResourceModel payload)
-                                                    {
-                                                        final CompilationUnit cu = parseCompilationUnit(payload);
-                                                        cu.accept(new VariableResolvingASTVisitor( cu, javaClassDao, windupContext));
-                                                    }
-                                                }
-                                            )
-                                        .endIteration()
-                                    )
-                                )// perform()
-                        )
-                    )// perform()
-Iteration.over("inputConfigurations")
-                    .var("configuration")
-                    .perform(
-                        // A nested rule.
-GraphSubset.evaluate(
-                            ConfigurationBuilder.begin()
-                                .addRule()
-                                .when(
-                                    GraphSearchConditionBuilder
-                                        .create("javaSourceFiles")
                                         .ofType(FileModel.class)
                                         .withProperty( FileModel.PROPERTY_IS_DIRECTORY, false)
                                         .withProperty( FileModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX, ".*\\.java$")
@@ -179,7 +131,8 @@ GraphSubset.evaluate(
                                             )
                                         .endIteration()
                                     )
-                                )                        )
+                                )// perform()
+                        )
                     )// perform()
                 .endIteration()); // inputConfiguration
     }
