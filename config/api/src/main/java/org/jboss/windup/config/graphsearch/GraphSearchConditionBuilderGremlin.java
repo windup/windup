@@ -106,7 +106,29 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return !frames.isEmpty();
     }
 
-    // gremlin pipeline methods
+    
+    
+    // -- Gremlin pipeline methods --
+
+    public GraphSearchConditionBuilderGremlin V()
+    {
+        pipeline.V();
+        return this;
+    }
+
+    public GraphSearchConditionBuilderGremlin V( String key, Object value )
+    {
+        pipeline.V(key, value);
+        return this;
+    }
+    
+    public GraphSearchConditionBuilderGremlin framedType( Class<? extends WindupVertexFrame> clazz ) {
+        GraphSearchCriterionType.addPipeFor( pipeline, clazz );
+        return this;
+    }
+
+    
+    
     public GraphSearchConditionBuilderGremlin step(final PipeFunction function)
     {
         pipeline.step(function);
