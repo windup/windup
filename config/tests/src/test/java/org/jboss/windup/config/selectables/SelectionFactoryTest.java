@@ -1,6 +1,7 @@
 package org.jboss.windup.config.selectables;
 
 import org.jboss.windup.config.selectables.SelectionFactory;
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -18,8 +19,8 @@ import org.jboss.windup.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
+import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
-import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.junit.Assert;
 import org.junit.Test;

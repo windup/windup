@@ -1,7 +1,9 @@
-package org.jboss.windup.graph.model.resource;
+package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.JarArchiveModel;
+import org.jboss.windup.graph.model.resource.JavaMethodModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;

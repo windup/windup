@@ -2,6 +2,7 @@ package org.jboss.windup.config;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphSubset;
+
 import java.io.File;
 import java.util.List;
 
@@ -19,9 +20,9 @@ import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
+import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
-import org.jboss.windup.graph.model.resource.JavaClassModel;
 import org.jboss.windup.graph.model.resource.JavaMethodModel;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.junit.Assert;

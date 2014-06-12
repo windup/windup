@@ -4,7 +4,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.JavaClassModel;
 
 buildWindupRule("ExampleBlacklistRule")
     .addRule()

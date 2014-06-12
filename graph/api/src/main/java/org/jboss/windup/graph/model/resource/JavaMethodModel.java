@@ -1,5 +1,6 @@
 package org.jboss.windup.graph.model.resource;
 
+import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;

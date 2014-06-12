@@ -15,7 +15,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.JavaMethodModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;

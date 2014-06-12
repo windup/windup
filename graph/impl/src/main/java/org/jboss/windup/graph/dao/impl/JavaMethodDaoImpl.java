@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.dao.JavaMethodDao;
 import org.jboss.windup.graph.dao.JavaParameterDao;
-import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.JavaMethodModel;
 import org.jboss.windup.graph.model.resource.JavaParameterModel;
 

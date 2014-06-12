@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;

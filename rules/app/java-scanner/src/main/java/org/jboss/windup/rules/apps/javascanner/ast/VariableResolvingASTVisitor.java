@@ -50,7 +50,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.jboss.windup.graph.WindupContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.resource.JavaClassModel;
+import org.jboss.windup.graph.model.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
