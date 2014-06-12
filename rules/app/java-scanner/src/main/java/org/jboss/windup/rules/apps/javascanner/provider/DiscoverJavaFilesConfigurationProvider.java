@@ -140,6 +140,10 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
     
     private static final int JAVA_SUFFIX_LEN = 5;
     
+    
+    /**
+     *  Set className, packageName, qualifiedName for the class, derived from it's path and file name.
+     */
     private void indexJavaFile(GraphContext graphCtx, FileResourceModel payload, WindupConfigurationModel windupCfg)
     {
         String inputDir = windupCfg.getInputPath();
@@ -148,24 +152,24 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
         String filepath = payload.getFilePath();
         filepath = Paths.get(filepath).toAbsolutePath().toString();
 
-        if (filepath.startsWith(inputDir))
+        if( ! filepath.startsWith(inputDir) )
+            return;
+        
+        String classFilePath = filepath.substring(inputDir.length() + 1);
+        String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0, classFilePath.length() - JAVA_SUFFIX_LEN);
+        String typeName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1, qualifiedName.length());
+
+        String packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
+
+        GraphService<JavaClassModel> graphService = new GraphService<>(graphCtx, JavaClassModel.class);
+
+        JavaClassModel javaClassModel = graphService.getByUniqueProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME, qualifiedName);
+        if (javaClassModel == null)
         {
-            String classFilePath = filepath.substring(inputDir.length() + 1);
-            String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0, classFilePath.length() - JAVA_SUFFIX_LEN);
-            String typeName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1, qualifiedName.length());
-
-            String packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
-
-            GraphService<JavaClassModel> graphService = new GraphService<>(graphCtx, JavaClassModel.class);
-
-            JavaClassModel javaClassModel = graphService.getByUniqueProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME, qualifiedName);
-            if (javaClassModel == null)
-            {
-                javaClassModel = graphCtx.getFramed().addVertex(null, JavaClassModel.class);
-                javaClassModel.setClassName(typeName);
-                javaClassModel.setPackageName(packageName);
-                javaClassModel.setQualifiedName(qualifiedName);
-            }
+            javaClassModel = graphCtx.getFramed().addVertex(null, JavaClassModel.class);
+            javaClassModel.setClassName(typeName);
+            javaClassModel.setPackageName(packageName);
+            javaClassModel.setQualifiedName(qualifiedName);
         }
     }
 
