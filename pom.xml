@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>  
-        <groupId>org.jboss</groupId>  
-        <artifactId>jboss-parent</artifactId>  
-        <version>14</version>  
+    <parent>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>14</version>
     </parent>
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-parent</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    
+
     <name>Windup Parent</name>
     <description>Migration Tools</description>
 
@@ -25,10 +26,11 @@
         <windup.scm.connection>scm:git:https://github.com/jsight/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:jsight/windup.git</windup.developer.connection>
         <windup.scm.url>http://github.com/windup/windup</windup.scm.url>
-        
-        <!-- This keeps javadoc from failing on projects with no actual .java source files -->
+
+        <!-- This keeps javadoc from failing on projects with no actual .java 
+            source files -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-        
+
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
     </properties>
 
@@ -49,35 +51,46 @@
         <module>reporting</module>
         <module>ui</module>
         <module>logging</module>
-        
+
         <module>ext/groovy</module>
         <module>rules</module>
     </modules>
-    
+
     <build>
-        
+
         <plugins>
             <!-- Local repo cleanup - project artifacts. -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <executions> <execution> <id>deleteLocalRepoProjectArtifacts</id> <goals><goal>remove-project-artifact</goal></goals> </execution> </executions>
+                <executions>
+                    <execution>
+                        <id>deleteLocalRepoProjectArtifacts</id>
+                        <goals>
+                            <goal>remove-project-artifact</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Local repo cleanup - dependencies. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <execution> 
-                        <id>deleteLocalRepoProjectDeps</id>  <goals> <goal>purge-local-repository</goal> </goals>
+                    <execution>
+                        <id>deleteLocalRepoProjectDeps</id>
+                        <goals>
+                            <goal>purge-local-repository</goal>
+                        </goals>
                         <configuration>
                             <skip>${skipDeleteDeps}</skip>
                         </configuration>
-                    </execution> 
+                    </execution>
                 </executions>
             </plugin>
-            
-            <!-- Forge addon creation - to be inherited & activated using phase=prepare-package, resp. package. -->
+
+            <!-- Forge addon creation - to be inherited & activated using 
+                phase=prepare-package, resp. package. -->
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
@@ -86,8 +99,12 @@
                     <execution>
                         <id>generate-dot</id>
                         <phase>none</phase>
-                        <goals> <goal>generate-dot</goal> </goals>
-                        <configuration> <attach>true</attach> </configuration>
+                        <goals>
+                            <goal>generate-dot</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -97,13 +114,31 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>none</phase>
-                        <goals> <goal>jar</goal> </goals>
-                        <configuration> <classifier>forge-addon</classifier> </configuration> </execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>forge-addon</classifier>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
-            
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>${testExcludeString}</exclude>
+                        </excludes>
+                        <argLine>
+                            -Xms512m -Xmx2048m -XX:MaxPermSize=512m
+                        </argLine>
+                    </configuration>
+            </plugin>
+
         </plugins>
-        
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -119,9 +154,9 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        
+
     </build>
-    
+
     <profiles>
         <!-- Aggregated Javadoc -->
         <profile>
@@ -163,15 +198,16 @@
             <id>legacy</id>
             <modules combine.children="append">
                 <module>legacy</module>
-                <!-- Sample apps build runs Windup Maven Plugin, so legacy needs to be above. To be changed later. -->
+                <!-- Sample apps build runs Windup Maven Plugin, so legacy 
+                    needs to be above. To be changed later. -->
                 <module>sample-apps</module>
             </modules>
         </profile>
     </profiles>
 
-    
+
     <dependencies>
-        
+
         <!-- Commons -->
         <dependency>
             <groupId>commons-io</groupId>
@@ -183,7 +219,7 @@
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
-        
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -200,7 +236,7 @@
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
         </dependency>
-        
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -209,13 +245,13 @@
         </dependency>
 
     </dependencies>
-    
-    
+
+
     <dependencyManagement>
         <dependencies>
-            
+
             <!-- Forge and Furnace -->
-            
+
             <!-- Forge BOM -->
             <dependency>
                 <groupId>org.jboss.forge</groupId>
@@ -233,7 +269,10 @@
                 <scope>provided</scope>
                 <!-- Not propagated to submodules :/ -->
                 <exclusions>
-                    <exclusion> <groupId>org.slf4j</groupId> <artifactId>slf4j-jdk14</artifactId> </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <!-- Furnace CDI impl -->
@@ -242,7 +281,10 @@
                 <artifactId>cdi-impl</artifactId>
                 <version>${version.furnace}</version>
                 <exclusions>
-                    <exclusion> <groupId>org.slf4j</groupId> <artifactId>slf4j-jdk14</artifactId> </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -257,8 +299,8 @@
                 <version>${version.furnace}</version>
                 <scope>test</scope>
             </dependency>
-            
+
         </dependencies>
     </dependencyManagement>
-    
+
 </project>

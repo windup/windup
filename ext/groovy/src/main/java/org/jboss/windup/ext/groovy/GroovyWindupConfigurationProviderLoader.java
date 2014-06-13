@@ -1,6 +1,7 @@
 package org.jboss.windup.ext.groovy;
 
 import groovy.lang.Binding;
+import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 
@@ -23,15 +24,19 @@ import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.config.loader.WindupConfigurationProviderLoader;
 import org.jboss.windup.ext.groovy.builder.WindupConfigurationProviderBuilder;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.exception.WindupException;
 
 public class GroovyWindupConfigurationProviderLoader implements WindupConfigurationProviderLoader
 {
-
     @Inject
     private FurnaceGroovyRuleScanner scanner;
     @Inject
     private Furnace furnace;
+    @Inject
+    private GroovyDSLSupport groovyDSLSupport;
+    @Inject
+    private GraphContext graphContext;
 
     @Override
     public List<WindupConfigurationProvider> getProviders()
@@ -39,6 +44,20 @@ public class GroovyWindupConfigurationProviderLoader implements WindupConfigurat
         Binding binding = new Binding();
         binding.setVariable("windupConfigurationProviderBuilders", new ArrayList<WindupConfigurationProviderBuilder>());
         binding.setVariable("supportFunctions", new HashMap<>());
+        binding.setVariable("graphContext", graphContext);
+        binding.setVariable("registerRegexBlackList", new Closure<Void>(this)
+        {
+            @Override
+            public Void call(Object... args)
+            {
+                String ruleID = (String) args[0];
+                String regexPattern = (String) args[1];
+                String hint = (String) args[2];
+
+                GroovyDSLSupport.registerInterest(graphContext, ruleID, regexPattern, hint);
+                return null;
+            }
+        });
 
         CompilerConfiguration config = new CompilerConfiguration();
         config.addCompilationCustomizers(new ImportCustomizer());

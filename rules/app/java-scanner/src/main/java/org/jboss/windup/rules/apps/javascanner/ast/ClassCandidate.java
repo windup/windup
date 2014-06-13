@@ -23,6 +23,16 @@ public class ClassCandidate
         return type;
     }
 
+    public int getStartPosition()
+    {
+        return startPosition;
+    }
+
+    public int getLength()
+    {
+        return length;
+    }
+
     public int getLineNumber()
     {
         return lineNumber;

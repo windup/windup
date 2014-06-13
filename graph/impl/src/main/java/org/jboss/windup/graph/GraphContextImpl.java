@@ -85,7 +85,7 @@ public class GraphContextImpl implements GraphContext
                     indexed(Vertex.class).make();
 
         TitanKey qualifiedNameKey = graph.makeKey("qualifiedName").dataType(String.class).
-                    indexed(Vertex.class).unique().make();
+                    indexed(Vertex.class).make();
 
         TitanKey archiveEntryKey = graph.makeKey("archiveEntry").dataType(String.class).
                     indexed("search", Vertex.class).make();
@@ -94,10 +94,10 @@ public class GraphContextImpl implements GraphContext
                     indexed("search", Vertex.class).make();
 
         TitanKey filePath = graph.makeKey("filePath").dataType(String.class).
-                    indexed(Vertex.class).unique().make();
+                    indexed(Vertex.class).make();
 
         TitanKey mavenIdentifier = graph.makeKey("mavenIdentifier").dataType(String.class).
-                    indexed(Vertex.class).unique().make();
+                    indexed(Vertex.class).make();
 
         batch = new BatchGraph<TitanGraph>(graph, 1000L);
 

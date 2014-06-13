@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.bind.Evaluation;
@@ -36,7 +36,7 @@ public class GraphConfigurationLoader
     public static Logger LOG = LoggerFactory.getLogger(GraphConfigurationLoader.class);
 
     @Inject
-    private Instance<WindupConfigurationProviderLoader> loaders;
+    private Imported<WindupConfigurationProviderLoader> loaders;
 
     @SuppressWarnings("unchecked")
     public GraphConfigurationLoader()
