@@ -6,11 +6,17 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.rules.apps.javascanner.ast.event.JavaScannerASTEvent;
 import org.jboss.windup.util.exception.WindupException;
 
 public class GroovyDSLSupport
 {
     private static Furnace furnace;
+
+    public void onJavaScannerASTEvent(@Observes JavaScannerASTEvent event)
+    {
+        System.out.println("Received JavaScannerASTEvent: " + event);
+    }
 
     public void setFurnace(@Observes PostStartup event, Furnace furnace)
     {

@@ -26,6 +26,7 @@ public class WindupArchitectureSourceModeTest
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:java-scanner"),
+                @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
     public static ForgeArchive getDeployment()
@@ -36,6 +37,7 @@ public class WindupArchitectureSourceModeTest
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-scanner"),
+                                AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;

@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -48,9 +51,11 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.jboss.windup.graph.WindupContext;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.model.JavaClassModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.apps.javascanner.ast.event.JavaScannerASTEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,9 +69,11 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 {
     private static final Logger LOG = LoggerFactory.getLogger(VariableResolvingASTVisitor.class);
 
-    private final CompilationUnit cu;
-    private final WindupContext windupContext;
-    private final JavaClassDao javaClassDao;
+    @Inject
+    private Event<JavaScannerASTEvent> javaScannerASTEvent;
+
+    private CompilationUnit cu;
+    private JavaClassDao javaClassDao;
 
     /**
      * Contains all wildcard imports (import com.example.*) lines from the source file.
@@ -85,16 +92,22 @@ public class VariableResolvingASTVisitor extends ASTVisitor
      */
     private final Map<String, String> classNameToFQCN = new HashMap<>();
 
-    /**
-     * This is the list of blacklisted sections from the source file (where it is and the type being referenced)
-     */
-    private final List<ClassCandidate> results = new ArrayList<ClassCandidate>();
+    private GraphContext graphContext;
+    private FileModel fileModel;
 
-    public VariableResolvingASTVisitor(CompilationUnit cu, JavaClassDao javaClassDao, WindupContext context)
+    public void init(CompilationUnit cu, FileModel fileModel, JavaClassDao javaClassDao,
+                GraphContext context)
     {
         this.cu = cu;
+        this.fileModel = fileModel;
         this.javaClassDao = javaClassDao;
-        this.windupContext = context;
+        this.graphContext = context;
+    }
+
+    private void fireJavaScannerEvent(ClassCandidate classCandidate)
+    {
+        JavaScannerASTEvent event = new JavaScannerASTEvent(graphContext, fileModel, classCandidate);
+        javaScannerASTEvent.fire(event);
     }
 
     private void processConstructor(ConstructorType interest, int lineStart, int startPosition, int length,
@@ -102,7 +115,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     {
         ClassCandidate dr = new ClassCandidate(ClassCandidateType.CONSTRUCTOR_CALL, lineStart, startPosition, length,
                     interest.toString());
-        results.add(dr);
+        fireJavaScannerEvent(dr);
 
         LOG.info("Candidate: " + dr);
     }
@@ -112,7 +125,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     {
         ClassCandidate dr = new ClassCandidate(ClassCandidateType.METHOD_CALL, lineStart, startPosition, length,
                     interest.toString());
-        results.add(dr);
+        fireJavaScannerEvent(dr);
 
         LOG.info("Candidate: " + dr);
     }
@@ -126,7 +139,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
         ClassCandidate dr = new ClassCandidate(ClassCandidateType.IMPORT, lineStart, startPosition, length,
                     sourceString);
-        results.add(dr);
+        fireJavaScannerEvent(dr);
 
         LOG.info("Candidate: " + dr);
     }
@@ -144,7 +157,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         sourceString = resolveClassname(sourceString);
 
         ClassCandidate dr = new ClassCandidate(classCandidateType, sourcePosition, startPosition, length, sourceString);
-        results.add(dr);
+        fireJavaScannerEvent(dr);
 
         LOG.info("Prefix: " + classCandidateType);
         if (type instanceof SimpleType)
@@ -165,7 +178,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         sourceString = resolveClassname(sourceString);
 
         ClassCandidate dr = new ClassCandidate(type, lineNumber, startPosition, length, sourceString);
-        results.add(dr);
+        fireJavaScannerEvent(dr);
 
         LOG.info("Prefix: " + type);
         LOG.info("Candidate: " + dr);
