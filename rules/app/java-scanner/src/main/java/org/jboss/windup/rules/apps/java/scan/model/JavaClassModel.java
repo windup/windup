@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.renderer.Label;

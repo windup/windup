@@ -1,7 +1,8 @@
-package org.jboss.windup.graph.dao;
+package org.jboss.windup.rules.apps.ejb.dao;
 
+import org.jboss.windup.graph.dao.BaseDao;
 import org.jboss.windup.graph.dao.exception.ArchiveIndexReaderException;
-import org.jboss.windup.graph.model.resource.JarArchiveModel;
+import org.jboss.windup.rules.apps.java.scan.model.JarArchiveModel;
 
 public interface JarArchiveDao extends BaseDao<JarArchiveModel> {
 

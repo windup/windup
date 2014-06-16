@@ -1,10 +1,10 @@
-package org.jboss.windup.graph.model.resource;
+package org.jboss.windup.rules.apps.java.scan.model;
 
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.JarManifestModel;
 
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 @TypeValue("JarArchiveResource")
 public interface JarArchiveModel extends ArchiveModel

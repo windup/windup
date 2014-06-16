@@ -7,9 +7,9 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jboss.windup.graph.dao.JarArchiveDao;
+import org.jboss.windup.rules.apps.ejb.dao.JarArchiveDao;
 import org.jboss.windup.graph.dao.exception.ArchiveIndexReaderException;
-import org.jboss.windup.graph.model.resource.JarArchiveModel;
+import org.jboss.windup.rules.apps.java.scan.model.JarArchiveModel;
 
 @Singleton
 public class JarArchiveDaoImpl extends BaseDaoImpl<JarArchiveModel> implements JarArchiveDao

@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.ejb.model;
 
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassMetaModel;
-import org.jboss.windup.graph.model.meta.xml.SpringConfigurationFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.meta.xml.SpringConfigurationFacetModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
