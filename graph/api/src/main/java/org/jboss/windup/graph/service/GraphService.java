@@ -6,6 +6,10 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.tinkerpop.frames.FramedGraphQuery;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
 public class GraphService<T extends WindupVertexFrame>
 {
     private Class<T> type;
@@ -15,6 +19,14 @@ public class GraphService<T extends WindupVertexFrame>
     {
         this.context = context;
         this.type = type;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Iterable<T> getAll()
+    {
+        FramedGraphQuery query = context.getFramed().query();
+        query.has(WindupVertexFrame.PROPERTY_TYPE, Text.CONTAINS, type.getAnnotation(TypeValue.class).value());
+        return (Iterable<T>) query.vertices();
     }
 
     public Iterable<T> getByProperty(String key, Object value)

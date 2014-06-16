@@ -1,14 +1,24 @@
 package org.jboss.windup.graph.model;
 
+import org.jboss.windup.graph.service.GraphService;
+
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
+/**
+ * The base {@link VertexFrame} type implemented by all model types.
+ */
 @TypeField("type")
 public interface WindupVertexFrame extends VertexFrame
 {
+    /**
+     * Stores the vertex types for graph lookup via {@link GraphService} and other query mechanisms.
+     */
+    public static final String PROPERTY_TYPE = "type";
+
     @JavaHandler
     public String toPrettyString();
 
