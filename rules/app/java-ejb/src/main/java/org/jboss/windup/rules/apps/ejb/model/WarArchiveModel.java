@@ -1,9 +1,10 @@
-package org.jboss.windup.graph.model.resource;
+package org.jboss.windup.rules.apps.ejb.model;
 
+import org.jboss.windup.rules.apps.java.scan.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.ejb.model.EjbEntityFacetModel;
 import org.jboss.windup.rules.apps.ejb.model.EjbSessionBeanFacetModel;
 import org.jboss.windup.rules.apps.ejb.model.SpringBeanFacetModel;
-import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.meta.xml.EjbConfigurationFacetModel;
 
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.rules.apps.java.scan.model;
 
 import java.io.File;
 import java.io.InputStream;
@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.jboss.windup.graph.model.resource.ArchiveEntryResourceModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.JarArchiveModel;
+import org.jboss.windup.rules.apps.java.scan.model.JarArchiveModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;

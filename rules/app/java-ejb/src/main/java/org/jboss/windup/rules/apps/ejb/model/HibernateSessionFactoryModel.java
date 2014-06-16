@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.rules.apps.ejb.model;
 
 import org.jboss.windup.rules.apps.ejb.model.HibernateEntityModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;

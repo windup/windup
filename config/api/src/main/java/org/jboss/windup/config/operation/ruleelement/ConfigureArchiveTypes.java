@@ -7,9 +7,9 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.EarArchiveModel;
-import org.jboss.windup.graph.model.resource.JarArchiveModel;
-import org.jboss.windup.graph.model.resource.WarArchiveModel;
+import org.jboss.windup.rules.apps.ejb.model.EarArchiveModel;
+import org.jboss.windup.rules.apps.java.scan.model.JarArchiveModel;
+import org.jboss.windup.rules.apps.ejb.model.WarArchiveModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveModel>

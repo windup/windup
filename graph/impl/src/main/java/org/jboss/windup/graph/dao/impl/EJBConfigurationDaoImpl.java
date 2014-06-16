@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import javax.inject.Singleton;
 
-import org.jboss.windup.graph.dao.EJBConfigurationDao;
-import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
+import org.jboss.windup.rules.apps.ejb.dao.EJBConfigurationDao;
+import org.jboss.windup.rules.apps.ejb.model.meta.xml.EjbConfigurationFacetModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;

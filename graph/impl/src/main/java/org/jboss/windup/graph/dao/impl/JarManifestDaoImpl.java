@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import javax.inject.Singleton;
 
-import org.jboss.windup.graph.dao.JarManifestDao;
-import org.jboss.windup.graph.model.JarManifestModel;
+import org.jboss.windup.rules.apps.java.scan.dao.JarManifestDao;
+import org.jboss.windup.rules.apps.java.scan.model.JarManifestModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

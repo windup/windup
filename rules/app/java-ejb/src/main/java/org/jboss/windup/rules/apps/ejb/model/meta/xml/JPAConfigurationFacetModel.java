@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model.meta.xml;
+package org.jboss.windup.rules.apps.ejb.model.meta.xml;
 
 import org.jboss.windup.rules.apps.ejb.model.JPAEntityFacetModel;
 import org.jboss.windup.graph.renderer.Label;
@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 
 @TypeValue("JPAConfigurationFacet")
 public interface JPAConfigurationFacetModel extends XmlMetaFacetModel {
