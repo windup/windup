@@ -19,13 +19,15 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.jboss.windup.tools</groupId>
             <artifactId>decompiler-procyon</artifactId>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
-            <version>${project.version}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>

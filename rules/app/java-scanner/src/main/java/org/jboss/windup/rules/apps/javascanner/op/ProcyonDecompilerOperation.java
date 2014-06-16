@@ -1,4 +1,4 @@
-package org.jboss.windup.config.operation.iteration;
+package org.jboss.windup.rules.apps.javascanner.op;
 
 import java.io.File;
 import java.nio.file.Path;
