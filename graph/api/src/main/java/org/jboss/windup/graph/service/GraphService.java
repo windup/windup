@@ -21,12 +21,11 @@ public class GraphService<T extends WindupVertexFrame>
         this.type = type;
     }
 
-    @SuppressWarnings("unchecked")
     public Iterable<T> getAll()
     {
         FramedGraphQuery query = context.getFramed().query();
         query.has(WindupVertexFrame.PROPERTY_TYPE, Text.CONTAINS, type.getAnnotation(TypeValue.class).value());
-        return (Iterable<T>) query.vertices();
+        return (Iterable<T>) query.vertices(type);
     }
 
     public Iterable<T> getByProperty(String key, Object value)
