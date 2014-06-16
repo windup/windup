@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.java.scan.dao.impl;
 
 import java.util.Iterator;
 
@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 @Singleton
 public class JarManifestDaoImpl extends BaseDaoImpl<JarManifestModel> implements JarManifestDao
