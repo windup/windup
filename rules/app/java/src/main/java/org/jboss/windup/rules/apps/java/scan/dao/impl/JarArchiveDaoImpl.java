@@ -4,12 +4,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import javax.inject.Singleton;
-
-import org.jboss.windup.rules.apps.ejb.dao.JarArchiveDao;
 import org.jboss.windup.graph.dao.exception.ArchiveIndexReaderException;
 import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
+import org.jboss.windup.rules.apps.java.scan.dao.JarArchiveDao;
 import org.jboss.windup.rules.apps.java.scan.model.JarArchiveModel;
 
 @Singleton
