@@ -1,8 +1,8 @@
 package org.jboss.windup.ext.groovy.blacklist;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.BlackListModel;
-import org.jboss.windup.graph.model.BlackListType;
+import org.jboss.windup.rules.apps.java.scan.model.BlackListModel;
+import org.jboss.windup.rules.apps.java.scan.model.BlackListType;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidate;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
