@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javabasic.model;
+package org.jboss.windup.rules.apps.javabasic;
 
 import org.jboss.windup.graph.renderer.Label;
 import com.tinkerpop.frames.Property;

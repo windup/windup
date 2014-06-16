@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.javabasic;
 
-import org.jboss.windup.rules.apps.javabasic.model.RegexModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

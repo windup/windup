@@ -22,7 +22,6 @@
         <!--
         <module>app/java-decompiler</module>
         -->
-        <module>app/java-basic-analysis</module>
     </modules>
     
     <dependencies>
