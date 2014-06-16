@@ -17,20 +17,24 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("JavaClassResource")
 public interface JavaClassModel extends WindupVertexFrame
 {
-    public static final String PROPERTY_CUSTOMER_PACKAGE = "customerPackage";
-    public static final String PROPERTY_BLACKLIST_CANDIDATE = "blacklistCandidate";
     public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
     public static final String PROPERTY_CLASS_NAME = "className";
     public static final String PROPERTY_PACKAGE_NAME = "packageName";
+
+    public static final String PROPERTY_CUSTOMER_PACKAGE = "customerPackage";
+    public static final String PROPERTY_BLACKLIST_CANDIDATE = "blacklistCandidate";
     public static final String PROPERTY_MAJOR_VERSION = "majorVersion";
     public static final String PROPERTY_MINOR_VERSION = "minorVersion";
 
+    
     @Adjacency(label = "javaClassFacet", direction = Direction.IN)
     public Iterable<ResourceModel> getResources();
 
     @Adjacency(label = "javaClassFacet", direction = Direction.IN)
     public void addResource(ResourceModel resource);
 
+    
+    // Properties derivable just from the file name.
     @Property(PROPERTY_CLASS_NAME)
     public void setClassName(String className);
 
@@ -50,6 +54,8 @@ public interface JavaClassModel extends WindupVertexFrame
     @Property(PROPERTY_PACKAGE_NAME)
     public void setPackageName(String packageName);
 
+    
+    
     @Property(PROPERTY_MAJOR_VERSION)
     public int getMajorVersion();
 
