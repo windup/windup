@@ -31,6 +31,14 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>rules-java</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
