@@ -1,11 +1,12 @@
-package org.jboss.windup.graph.model.meta.javaclass;
-
-import org.jboss.windup.graph.renderer.Label;
+package org.jboss.windup.rules.apps.ejb.model;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.renderer.Label;
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassMetaModel;
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 
 @TypeValue("EJBSessionBean")
 public interface EjbSessionBeanFacetModel extends JavaClassMetaModel

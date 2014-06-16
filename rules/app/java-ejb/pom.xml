@@ -19,7 +19,7 @@
         <!-- Other rules -->
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-java-basic</artifactId>
+            <artifactId>rules-java</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>

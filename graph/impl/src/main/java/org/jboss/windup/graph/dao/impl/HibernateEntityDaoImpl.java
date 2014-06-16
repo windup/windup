@@ -3,7 +3,7 @@ package org.jboss.windup.graph.dao.impl;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.HibernateEntityDao;
-import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityModel;
+import org.jboss.windup.rules.apps.ejb.model.HibernateEntityModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

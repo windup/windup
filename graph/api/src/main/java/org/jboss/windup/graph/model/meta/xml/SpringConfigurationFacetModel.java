@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.SpringBeanFacetModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;

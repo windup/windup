@@ -1,6 +1,5 @@
-package org.jboss.windup.graph.model.meta.javaclass;
+package org.jboss.windup.rules.apps.java.scan.model;
 
-import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
