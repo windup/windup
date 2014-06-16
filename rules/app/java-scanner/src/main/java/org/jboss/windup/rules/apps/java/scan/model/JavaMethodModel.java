@@ -1,6 +1,5 @@
-package org.jboss.windup.graph.model.resource;
+package org.jboss.windup.rules.apps.java.scan.model;
 
-import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
@@ -9,6 +8,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 @TypeValue("JavaMethod")
 public interface JavaMethodModel extends ResourceModel

@@ -1,13 +1,12 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.java.scan.dao;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.graph.dao.JavaMethodDao;
-import org.jboss.windup.graph.dao.JavaParameterDao;
-import org.jboss.windup.graph.model.JavaClassModel;
-import org.jboss.windup.graph.model.resource.JavaMethodModel;
-import org.jboss.windup.graph.model.resource.JavaParameterModel;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
+import org.jboss.windup.rules.apps.java.scan.model.JavaParameterModel;
 
 public class JavaMethodDaoImpl extends BaseDaoImpl<JavaMethodModel> implements JavaMethodDao
 {

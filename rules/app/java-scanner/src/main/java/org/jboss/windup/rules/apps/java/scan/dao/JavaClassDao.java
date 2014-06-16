@@ -1,6 +1,7 @@
-package org.jboss.windup.graph.dao;
+package org.jboss.windup.rules.apps.java.scan.dao;
 
-import org.jboss.windup.graph.model.JavaClassModel;
+import org.jboss.windup.graph.dao.BaseDao;
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 public interface JavaClassDao extends BaseDao<JavaClassModel>
