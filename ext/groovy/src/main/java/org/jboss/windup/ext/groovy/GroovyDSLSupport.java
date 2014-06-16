@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.jboss.windup.ext.groovy.blacklist.GroovyBlackListSupport;
 import org.jboss.windup.ext.groovy.blacklist.GroovyBlackListSupportRegex;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.javascanner.ast.event.JavaScannerASTEvent;
+import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
 
 public class GroovyDSLSupport
 {
