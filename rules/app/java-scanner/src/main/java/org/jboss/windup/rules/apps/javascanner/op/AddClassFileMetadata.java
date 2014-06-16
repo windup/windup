@@ -1,10 +1,11 @@
-package org.jboss.windup.config.operation.ruleelement;
+package org.jboss.windup.rules.apps.javascanner.op;
 
 import java.io.FileInputStream;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.FileModel;
