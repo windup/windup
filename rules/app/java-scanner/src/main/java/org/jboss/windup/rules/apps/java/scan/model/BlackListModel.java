@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.rules.apps.java.scan.model;
 
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * This indicates that a particular segment of code references a "black listed" API. This will indicate the

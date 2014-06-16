@@ -19,6 +19,7 @@
         <module>server/jboss-eap-recognition</module>
         <module>server/server-migration-utils</module>
         <module>app/java-scanner</module>
+        <module>app/java-ejb</module>
         <!--
         <module>app/java-decompiler</module>
         -->

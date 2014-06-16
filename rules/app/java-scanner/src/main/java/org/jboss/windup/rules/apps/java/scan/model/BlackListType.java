@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.rules.apps.java.scan.model;
 
 public enum BlackListType
 {

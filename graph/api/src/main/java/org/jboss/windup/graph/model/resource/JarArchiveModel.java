@@ -2,7 +2,6 @@ package org.jboss.windup.graph.model.resource;
 
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.JarManifestModel;
-import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
