@@ -166,6 +166,7 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return this;
     }
 
+    @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin loop(final int numberedStep,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction)
     {
@@ -180,6 +181,8 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin loop(final int numberedStep,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> emitFunction)
@@ -202,6 +205,8 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin back(final int numberedStep)
     {
         pipeline.back(numberedStep);
@@ -347,6 +352,8 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin memoize(final int numberedStep)
     {
         pipeline.memoize(numberedStep);
@@ -359,6 +366,8 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin memoize(final int numberedStep, final Map map)
     {
         pipeline.memoize(numberedStep, map);
@@ -595,6 +604,8 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin optional(final int numberedStep)
     {
         pipeline.optional(numberedStep);
