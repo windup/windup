@@ -140,6 +140,8 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public IterationQuery loop(final int numberedStep,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> emitFunction)
@@ -162,6 +164,8 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public IterationQuery back(final int numberedStep)
     {
         graphSearchConditionBuilderGremlin.back(numberedStep);
@@ -307,6 +311,8 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public IterationQuery memoize(final int numberedStep)
     {
         graphSearchConditionBuilderGremlin.memoize(numberedStep);
@@ -319,6 +325,8 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public IterationQuery memoize(final int numberedStep, final Map map)
     {
         graphSearchConditionBuilderGremlin.memoize(numberedStep, map);
@@ -555,6 +563,8 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
         return this;
     }
 
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public IterationQuery optional(final int numberedStep)
     {
         graphSearchConditionBuilderGremlin.optional(numberedStep);
