@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.meta.javaclass.HibernateEntityModel;
+import org.jboss.windup.rules.apps.ejb.model.HibernateEntityModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 import com.tinkerpop.blueprints.Direction;

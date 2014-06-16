@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import org.jboss.windup.graph.model.meta.javaclass.JPAEntityFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.JPAEntityFacetModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;

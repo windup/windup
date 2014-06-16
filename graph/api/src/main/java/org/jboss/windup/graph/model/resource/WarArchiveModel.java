@@ -1,8 +1,8 @@
 package org.jboss.windup.graph.model.resource;
 
-import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacetModel;
-import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacetModel;
-import org.jboss.windup.graph.model.meta.javaclass.SpringBeanFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.EjbEntityFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.EjbSessionBeanFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.SpringBeanFacetModel;
 import org.jboss.windup.graph.model.meta.xml.EjbConfigurationFacetModel;
 
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;

@@ -1,8 +1,8 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import org.jboss.windup.graph.model.meta.javaclass.EjbEntityFacetModel;
-import org.jboss.windup.graph.model.meta.javaclass.EjbSessionBeanFacetModel;
-import org.jboss.windup.graph.model.meta.javaclass.MessageDrivenBeanFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.EjbEntityFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.EjbSessionBeanFacetModel;
+import org.jboss.windup.rules.apps.ejb.model.MessageDrivenBeanFacetModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;

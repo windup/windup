@@ -1,5 +1,6 @@
-package org.jboss.windup.graph.model.meta.javaclass;
+package org.jboss.windup.rules.apps.ejb.model;
 
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassMetaModel;
 import org.jboss.windup.graph.renderer.Label;
 
 import com.tinkerpop.frames.Property;
