@@ -9,7 +9,7 @@
  *  Contributors:
  *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
  */
-package org.jboss.windup.rules.apps.javascanner.ast;
+package org.jboss.windup.rules.apps.java.scan.ast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +55,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.JavaClassDao;
 import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.rules.apps.javascanner.ast.event.JavaScannerASTEvent;
+import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

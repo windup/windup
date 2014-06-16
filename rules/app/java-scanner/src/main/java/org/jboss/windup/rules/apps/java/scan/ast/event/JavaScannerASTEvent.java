@@ -1,8 +1,8 @@
-package org.jboss.windup.rules.apps.javascanner.ast.event;
+package org.jboss.windup.rules.apps.java.scan.ast.event;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.rules.apps.javascanner.ast.ClassCandidate;
+import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidate;
 
 public class JavaScannerASTEvent
 {

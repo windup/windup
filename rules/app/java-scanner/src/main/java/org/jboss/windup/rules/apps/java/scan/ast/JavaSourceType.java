@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javascanner.ast;
+package org.jboss.windup.rules.apps.java.scan.ast;
 
 public enum JavaSourceType
 {

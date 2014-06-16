@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javabasic;
+package org.jboss.windup.rules.apps.java.basic;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +18,8 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
 import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.javascanner.model.JavaFileModel;
-import org.jboss.windup.rules.apps.javascanner.provider.DiscoverJavaFilesConfigurationProvider;
+import org.jboss.windup.rules.apps.java.scan.model.JavaFileModel;
+import org.jboss.windup.rules.apps.java.scan.provider.DiscoverJavaFilesConfigurationProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;

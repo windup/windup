@@ -10,9 +10,9 @@
     </parent>
     
     <groupId>org.jboss.windup.rules.apps</groupId>
-    <artifactId>java-scanner</artifactId>
+    <artifactId>rules-java</artifactId>
     
-    <name>Java Scanner</name>
+    <name>Java Basic Ruleset</name>
     <description>Java files related module. TBD.</description>
     
     <dependencies>

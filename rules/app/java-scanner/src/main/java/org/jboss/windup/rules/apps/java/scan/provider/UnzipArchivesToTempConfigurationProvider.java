@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javascanner.provider;
+package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.util.List;
 
@@ -6,15 +6,14 @@ import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.ConfigureArchiveTypes;
+import org.jboss.windup.config.operation.ruleelement.UnzipArchiveToTemporaryFolder;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class ArchiveTypingConfigurationProvider extends WindupConfigurationProvider
+public class UnzipArchivesToTempConfigurationProvider extends WindupConfigurationProvider
 {
-
     @Override
     public RulePhase getPhase()
     {
@@ -32,14 +31,14 @@ public class ArchiveTypingConfigurationProvider extends WindupConfigurationProvi
     {
         return ConfigurationBuilder.begin()
             .addRule()
-            .when(
-                GraphSearchConditionBuilder.create("archives").ofType(ArchiveModel.class)
+            .when(GraphSearchConditionBuilder.create("inputArchives").ofType(ArchiveModel.class)
             )
             .perform(
-                Iteration.over("archives").var("archive")
+                Iteration.over("inputArchives").var(ArchiveModel.class, "archive")
                     .perform(
-                        ConfigureArchiveTypes.forVar("archive")
-                    ).endIteration()
+                        UnzipArchiveToTemporaryFolder.unzip("archive")
+                    )
+                    .endIteration()
             );
     }
 }

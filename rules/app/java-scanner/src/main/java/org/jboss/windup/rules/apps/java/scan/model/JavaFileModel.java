@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javascanner.model;
+package org.jboss.windup.rules.apps.java.scan.model;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

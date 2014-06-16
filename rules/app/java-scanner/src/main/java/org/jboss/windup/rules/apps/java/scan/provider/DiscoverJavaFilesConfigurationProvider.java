@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javascanner.provider;
+package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.javascanner.ast.VariableResolvingASTVisitor;
+import org.jboss.windup.rules.apps.java.scan.ast.VariableResolvingASTVisitor;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
