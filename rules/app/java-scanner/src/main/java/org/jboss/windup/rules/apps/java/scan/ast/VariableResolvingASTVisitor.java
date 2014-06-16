@@ -72,8 +72,13 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Inject
     private Event<JavaScannerASTEvent> javaScannerASTEvent;
 
-    private CompilationUnit cu;
+    @Inject
+    private GraphContext graphContext;
+
+    @Inject
     private JavaClassDao javaClassDao;
+
+    private CompilationUnit cu;
 
     /**
      * Contains all wildcard imports (import com.example.*) lines from the source file.
@@ -92,16 +97,12 @@ public class VariableResolvingASTVisitor extends ASTVisitor
      */
     private final Map<String, String> classNameToFQCN = new HashMap<>();
 
-    private GraphContext graphContext;
     private FileModel fileModel;
 
-    public void init(CompilationUnit cu, FileModel fileModel, JavaClassDao javaClassDao,
-                GraphContext context)
+    public void init(CompilationUnit cu, FileModel fileModel)
     {
         this.cu = cu;
         this.fileModel = fileModel;
-        this.javaClassDao = javaClassDao;
-        this.graphContext = context;
     }
 
     private void fireJavaScannerEvent(ClassCandidate classCandidate)

@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>java-scanner</artifactId>
+            <artifactId>rules-java</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
@@ -46,14 +46,14 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
             <version>${project.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
-
+        
         <!-- Forge & Furnace -->
         <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>

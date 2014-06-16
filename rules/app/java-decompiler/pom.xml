@@ -19,7 +19,7 @@
         <!-- Other Windup rules -->
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>java-scanner</artifactId>
+            <artifactId>rules-java</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
             <scope>provided</scope>

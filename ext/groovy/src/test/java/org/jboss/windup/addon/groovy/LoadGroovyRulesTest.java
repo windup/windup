@@ -32,7 +32,7 @@ public class LoadGroovyRulesTest
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:java-scanner"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
     })
     public static ForgeArchive getDeployment()
     {
@@ -43,7 +43,7 @@ public class LoadGroovyRulesTest
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-scanner")
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java")
                     );
         return archive;
     }

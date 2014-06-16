@@ -38,6 +38,7 @@
             <artifactId>utils</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>

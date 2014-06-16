@@ -51,7 +51,14 @@
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>        
         
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
