@@ -2,9 +2,7 @@ package org.jboss.windup.config.operation.ruleelement;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.selectables.SelectionFactory;
@@ -17,22 +15,23 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveModel>
 {
-    //private @Inject Imported<ArchiveModelPointer> archiveModelPointers;
-    
-    private @Inject Furnace furnace;
+    //@Inject 
+    private Imported<ArchiveModelPointer> archiveModelPointers;
     
     private HashMap<String, Class> suffixToModelClass;
     
     
-    public ConfigureArchiveTypes(String variableName)
+    
+    public ConfigureArchiveTypes(String variableName, Imported<ArchiveModelPointer> archiveModelPointers)
     {
         super(ArchiveModel.class, variableName);
+        this.archiveModelPointers = archiveModelPointers;
     }
 
     
-    public static ConfigureArchiveTypes forVar(String variableName)
+    public static ConfigureArchiveTypes forVar(String variableName, Imported<ArchiveModelPointer> archiveModelPointers)
     {
-        return new ConfigureArchiveTypes(variableName);
+        return new ConfigureArchiveTypes(variableName, archiveModelPointers);
     }
 
     
@@ -71,9 +70,9 @@ public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveMode
 
 
     private void initTypes() {
-        Imported<ArchiveModelPointer> pointers = furnace.getAddonRegistry().getServices(ArchiveModelPointer.class);
+        //Imported<ArchiveModelPointer> pointers = FurnaceHolder.getFurnace().getAddonRegistry().getServices(ArchiveModelPointer.class);
         
-        for( ArchiveModelPointer ptr : pointers ) {
+        for( ArchiveModelPointer ptr : this.archiveModelPointers ) {
             this.suffixToModelClass.put( ptr.getArchiveFileSuffix(), ptr.getModelClass() );
         }
     }
