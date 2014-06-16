@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.ejb.dao.impl;
 
 import java.util.Iterator;
 
@@ -11,6 +11,7 @@ import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 @Singleton
 public class EJBConfigurationDaoImpl extends BaseDaoImpl<EjbConfigurationFacetModel> implements EJBConfigurationDao
