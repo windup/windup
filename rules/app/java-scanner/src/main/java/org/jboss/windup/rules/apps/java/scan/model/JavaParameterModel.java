@@ -1,6 +1,5 @@
-package org.jboss.windup.graph.model.resource;
+package org.jboss.windup.rules.apps.java.scan.model;
 
-import org.jboss.windup.graph.model.JavaClassModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.renderer.Label;
 

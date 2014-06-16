@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.java.scan.dao;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -6,8 +6,7 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jboss.windup.graph.dao.JavaClassDao;
-import org.jboss.windup.graph.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -16,6 +15,8 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
+import org.jboss.windup.rules.apps.java.scan.dao.JavaClassDao.JavaVersion;
 
 @Singleton
 public class JavaClassDaoImpl extends BaseDaoImpl<JavaClassModel> implements JavaClassDao
