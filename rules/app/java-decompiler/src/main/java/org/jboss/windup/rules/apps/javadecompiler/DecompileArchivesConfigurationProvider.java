@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javascanner.provider;
+package org.jboss.windup.rules.apps.javadecompiler;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.rules.apps.javascanner.op.ProcyonDecompilerOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.rules.apps.javascanner.provider.DiscoverJavaFilesConfigurationProvider;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 

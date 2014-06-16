@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javascanner.op;
+package org.jboss.windup.rules.apps.javadecompiler;
 
 import java.io.File;
 import java.nio.file.Path;
