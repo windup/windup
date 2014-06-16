@@ -10,10 +10,10 @@
     </parent>
     
     <groupId>org.jboss.windup.rules.apps</groupId>
-    <artifactId>rules-java-ejb</artifactId>
+    <artifactId>rules-java-ee</artifactId>
     
-    <name>Java EJB Ruleset</name>
-    <description>EJB related module.</description>
+    <name>Java EE Ruleset</name>
+    <description>Java EE related module. Currently everything not-core-java.</description>
     
     <dependencies>
         <!-- Other rules -->
