@@ -16,20 +16,20 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveModel>
 {
     //@Inject 
-    private Imported<ArchiveModelPointer> archiveModelPointers;
+    private Iterable<ArchiveModelPointer> archiveModelPointers;
     
     private HashMap<String, Class> suffixToModelClass;
     
     
     
-    public ConfigureArchiveTypes(String variableName, Imported<ArchiveModelPointer> archiveModelPointers)
+    public ConfigureArchiveTypes(String variableName, Iterable<ArchiveModelPointer> archiveModelPointers)
     {
         super(ArchiveModel.class, variableName);
         this.archiveModelPointers = archiveModelPointers;
     }
 
     
-    public static ConfigureArchiveTypes forVar(String variableName, Imported<ArchiveModelPointer> archiveModelPointers)
+    public static ConfigureArchiveTypes forVar(String variableName, Iterable<ArchiveModelPointer> archiveModelPointers)
     {
         return new ConfigureArchiveTypes(variableName, archiveModelPointers);
     }
