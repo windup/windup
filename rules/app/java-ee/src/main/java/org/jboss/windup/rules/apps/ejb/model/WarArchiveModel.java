@@ -1,13 +1,11 @@
 package org.jboss.windup.rules.apps.ejb.model;
 
 import org.jboss.windup.rules.apps.java.scan.model.JarArchiveModel;
-import org.jboss.windup.rules.apps.ejb.model.EjbEntityFacetModel;
-import org.jboss.windup.rules.apps.ejb.model.EjbSessionBeanFacetModel;
-import org.jboss.windup.rules.apps.ejb.model.SpringBeanFacetModel;
 import org.jboss.windup.rules.apps.ejb.model.meta.xml.EjbConfigurationFacetModel;
 
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.ArchiveModelPointer;
 
 @TypeValue("WarArchiveResource")
 public interface WarArchiveModel extends JarArchiveModel {
@@ -32,4 +30,17 @@ public interface WarArchiveModel extends JarArchiveModel {
 	
 	@GremlinGroovy("it.out('child').has('type', 'JarArchiveResource').out('child').out('javaClassFacet').out('javaFacet').has('type', 'SpringBeanFacet')")
 	public Iterable<SpringBeanFacetModel> getSpringBeans();
+    
+    
+    public static final class Pointer extends ArchiveModelPointer {
+        @Override
+        public String getArchiveFileSuffix() {
+            return ".war";
+        }
+
+        @Override
+        public Class getModelClass() {
+            return WarArchiveModel.class;
+        }
+    }
 }
