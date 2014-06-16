@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.selectables.SelectionFactory;
@@ -16,7 +17,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveModel>
 {
-    private @Inject Imported<ArchiveModelPointer> archiveModelPointers;
+    //private @Inject Imported<ArchiveModelPointer> archiveModelPointers;
+    
+    private @Inject Furnace furnace;
     
     private HashMap<String, Class> suffixToModelClass;
     
@@ -24,8 +27,6 @@ public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveMode
     public ConfigureArchiveTypes(String variableName)
     {
         super(ArchiveModel.class, variableName);
-        
-        initTypes();
     }
 
     
@@ -70,7 +71,9 @@ public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveMode
 
 
     private void initTypes() {
-        for( ArchiveModelPointer ptr : this.archiveModelPointers ) {
+        Imported<ArchiveModelPointer> pointers = furnace.getAddonRegistry().getServices(ArchiveModelPointer.class);
+        
+        for( ArchiveModelPointer ptr : pointers ) {
             this.suffixToModelClass.put( ptr.getArchiveFileSuffix(), ptr.getModelClass() );
         }
     }
