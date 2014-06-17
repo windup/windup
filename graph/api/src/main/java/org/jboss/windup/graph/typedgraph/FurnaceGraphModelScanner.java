@@ -18,6 +18,10 @@ import org.jboss.forge.furnace.util.AddonFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ *  Scans all Furnace addons for classes named *Model.class.
+ */
 public class FurnaceGraphModelScanner
 {
     private static final Logger LOG = LoggerFactory.getLogger(FurnaceGraphModelScanner.class);
@@ -29,8 +33,10 @@ public class FurnaceGraphModelScanner
     {
         List<Class<?>> discoveredClasses = new ArrayList<>();
 
+        // For each addon...
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
+            // Scan for class files, derive class names.
             List<String> discoveredClassNames = new ArrayList<>();
             List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
             for (File addonFile : addonResources)
@@ -44,6 +50,8 @@ public class FurnaceGraphModelScanner
                     handleArchiveByFile(addonFile, discoveredClassNames);
                 }
             }
+            
+            // Then try to load the classes.
             for (String discoveredClassName : discoveredClassNames)
             {
                 try
@@ -57,6 +65,7 @@ public class FurnaceGraphModelScanner
                 }
             }
         }
+        
         return discoveredClasses;
     }
 
