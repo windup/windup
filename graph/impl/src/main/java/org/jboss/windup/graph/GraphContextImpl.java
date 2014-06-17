@@ -24,6 +24,7 @@ public class GraphContextImpl implements GraphContext
     private BatchGraph<TitanGraph> batch;
     private FramedGraph<TitanGraph> framed;
     private GraphTypeRegistry graphTypeRegistry;
+    private File diskCacheDir;
 
     public TitanGraph getGraph()
     {
@@ -46,11 +47,13 @@ public class GraphContextImpl implements GraphContext
         return framed;
     }
 
+    @SuppressWarnings("unused")
     public GraphContextImpl(File diskCache, GraphTypeRegistry graphTypeRegistry)
     {
         this.graphTypeRegistry = graphTypeRegistry;
 
         FileUtils.deleteQuietly(diskCache);
+        this.diskCacheDir = diskCache;
 
         File lucene = new File(diskCache, "graphsearch");
         File berkley = new File(diskCache, "graph");
@@ -65,9 +68,6 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("storage.index.search.local-mode", "true");
 
         graph = TitanFactory.open(conf);
-        // graph.createKeyIndex("archiveEntry", Vertex.class);
-        // graph.createKeyIndex("filePath", Vertex.class, new Parameter<String, String>("type", "UNIQUE"));
-        // graph.createKeyIndex("type", Vertex.class);
 
         TitanKey namespaceURIKey = graph.makeKey("namespaceURI").dataType(String.class).
                     indexed(Vertex.class).make();
@@ -108,6 +108,12 @@ public class GraphContextImpl implements GraphContext
                     );
 
         framed = factory.create(graph);
+    }
+
+    @Override
+    public File getDiskCacheDirectory()
+    {
+        return diskCacheDir;
     }
 
 }
