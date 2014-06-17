@@ -44,6 +44,7 @@ public abstract class AbstractGroovyBlackListSupport implements GroovyBlackListS
         blackListModel.setHint(getHint());
         blackListModel.setQualifiedName(event.getClassCandidate().getQualifiedName());
         blackListModel.setRuleID(getRuleID());
+        blackListModel.setLineNumber(classCandidate.getLineNumber());
         blackListModel.setStartPosition(classCandidate.getStartPosition());
         blackListModel.setLength(classCandidate.getLength());
         return blackListModel;

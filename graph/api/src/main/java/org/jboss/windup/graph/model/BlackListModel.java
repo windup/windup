@@ -21,6 +21,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface BlackListModel extends WindupVertexFrame
 {
     public static final String PROPERTY_HINT = "hint";
+    public static final String PROPERTY_LINE_NUMBER = "lineNumber";
     public static final String PROPERTY_LENGTH = "length";
     public static final String PROPERTY_START_POSITION = "startPosition";
     public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
@@ -85,7 +86,18 @@ public interface BlackListModel extends WindupVertexFrame
     public JavaClassModel getReferencedJavaClassModel();
 
     /**
-     * Sets the start position for this entry within the file
+     * Sets the Line number position for this entry within the file
+     * 
+     * @return
+     */
+    @Property(PROPERTY_LINE_NUMBER)
+    public void setLineNumber(int lineNumber);
+
+    @Property(PROPERTY_LINE_NUMBER)
+    public int getLineNumber();
+
+    /**
+     * Sets the start position for this entry within the line
      * 
      * @return
      */
