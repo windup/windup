@@ -1,6 +1,5 @@
 package org.jboss.windup.config;
 
-
 import java.io.File;
 import java.util.List;
 
@@ -36,6 +35,7 @@ public class GraphSearchConditionTest
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -49,6 +49,7 @@ public class GraphSearchConditionTest
                                 XmlExampleConfigurationProvider3.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;
