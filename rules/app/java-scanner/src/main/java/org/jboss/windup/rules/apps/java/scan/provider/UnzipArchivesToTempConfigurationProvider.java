@@ -29,16 +29,11 @@ public class UnzipArchivesToTempConfigurationProvider extends WindupConfiguratio
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder.begin()
-            .addRule()
-            .when(GraphSearchConditionBuilder.create("inputArchives").ofType(ArchiveModel.class)
-            )
-            .perform(
-                Iteration.over("inputArchives").var(ArchiveModel.class, "archive")
-                    .perform(
-                        UnzipArchiveToTemporaryFolder.unzip("archive")
-                    )
-                    .endIteration()
-            );
+        return ConfigurationBuilder.begin().addRule()
+                    .when(GraphSearchConditionBuilder.create("inputArchives").ofType(ArchiveModel.class))
+                    .perform(Iteration.over("inputArchives").var(ArchiveModel.class, "archive")
+                                .perform(UnzipArchiveToTemporaryFolder.unzip("archive"))
+                                .endIteration()
+                    );
     }
 }

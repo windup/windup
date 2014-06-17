@@ -31,19 +31,18 @@ public class IndexClassFilesConfigurationProvider extends WindupConfigurationPro
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder.begin()
-            .addRule()
-            .when(
-                GraphSearchConditionBuilder.create("classFiles")
-                    .ofType(FileModel.class)
-                    .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-                    .withProperty(FileModel.PROPERTY_FILE_PATH,
-                        GraphSearchPropertyComparisonType.REGEX, ".*\\.class")
-            ).perform(
-                Iteration.over("classFiles").var("classFile")
-                    .perform(
-                        new AddClassFileMetadata("classFile")
-                    ).endIteration()
-            );
+        return ConfigurationBuilder
+                    .begin()
+
+                    .addRule()
+                    .when(GraphSearchConditionBuilder.create("classFiles")
+                                .ofType(FileModel.class)
+                                .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+                                .withProperty(FileModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX,
+                                            ".*\\.class")
+                    )
+                    .perform(Iteration.over("classFiles").var("classFile")
+                                .perform(new AddClassFileMetadata("classFile")).endIteration()
+                    );
     }
 }

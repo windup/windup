@@ -33,36 +33,28 @@ public class FileScannerWindupConfigurationProvider extends WindupConfigurationP
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder
-            .begin()
-            .addRule()
-            .when(GraphSearchConditionBuilder
-                .create("inputDirectories")
-                .ofType(FileModel.class)
-                .withProperty(FileModel.PROPERTY_IS_DIRECTORY, true)
-            )
-            .perform(
-                Iteration.over("inputDirectories").var(FileModel.class, "directory")
-                    .perform(
-                        RecurseDirectoryAndAddFiles.add("directory")
-                    ).endIteration()
-            )
-            .addRule()
-            .when(
-                GraphSearchConditionBuilder
-                    .create("inputFiles")
-                    .ofType(FileModel.class)
-                    .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-                    .withProperty(FileModel.PROPERTY_FILE_PATH,
-                        GraphSearchPropertyComparisonType.REGEX,
-                        ZipUtil.getEndsWithZipRegularExpression())
-            )
-            .perform(
-                Iteration.over("inputFiles")
-                    .var(FileModel.class, "file")
-                    .perform(
-                        AddArchiveReferenceInformation.addReferenceInformation("file")
-                    ).endIteration()
-            );
+                    .begin()
+
+                    .addRule()
+                    .when(GraphSearchConditionBuilder.create("inputDirectories")
+                                .ofType(FileModel.class)
+                                .withProperty(FileModel.PROPERTY_IS_DIRECTORY, true)
+                    )
+                    .perform(Iteration.over("inputDirectories").var(FileModel.class, "directory")
+                                .perform(RecurseDirectoryAndAddFiles.add("directory")).endIteration()
+                    )
+
+                    .addRule()
+                    .when(GraphSearchConditionBuilder.create("inputFiles")
+                                .ofType(FileModel.class)
+                                .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+                                .withProperty(FileModel.PROPERTY_FILE_PATH,
+                                            GraphSearchPropertyComparisonType.REGEX,
+                                            ZipUtil.getEndsWithZipRegularExpression())
+                    )
+                    .perform(Iteration.over("inputFiles").var(FileModel.class, "file")
+                                .perform(AddArchiveReferenceInformation.addReferenceInformation("file")).endIteration()
+                    );
 
     }
 }

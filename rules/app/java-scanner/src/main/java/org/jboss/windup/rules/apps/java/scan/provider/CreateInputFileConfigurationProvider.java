@@ -3,12 +3,11 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -25,26 +24,22 @@ public class CreateInputFileConfigurationProvider extends WindupConfigurationPro
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when( GraphSearchConditionBuilder.create("inputConfigurations").ofType(WindupConfigurationModel.class) )
-            .perform(
-                Iteration.over("inputConfigurations")
-                    .var(WindupConfigurationModel.class, "configuration")
-                    .perform(
-                        new AbstractIterationOperator<WindupConfigurationModel>(
-                                    WindupConfigurationModel.class, "configuration")
+
+                    .addRule()
+                    .perform(new GraphOperation()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context)
                         {
-                            @Override
-                            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
-                            {
-                                FileModel inputPath = event.getGraphContext().getFramed()
-                                            .addVertex(null, FileModel.class);
-                                inputPath.setFilePath(payload.getInputPath());
-                            }
+                            WindupConfigurationModel configuration = new GraphService<>(event.getGraphContext(),
+                                        WindupConfigurationModel.class).getUnique();
+
+                            FileModel inputPath = event.getGraphContext().getFramed()
+                                        .addVertex(null, FileModel.class);
+                            inputPath.setFilePath(configuration.getInputPath());
+
                         }
-                    )
-                .endIteration()
-            );
+                    });
     }
 
 }

@@ -124,8 +124,8 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
         public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
         {
             GraphContext graphContext = event.getGraphContext();
-            WindupConfigurationModel configuration = new GraphService<>(graphContext,
-                        WindupConfigurationModel.class).getAll().iterator().next();
+            WindupConfigurationModel configuration = new GraphService<>(graphContext, WindupConfigurationModel.class)
+                        .getUnique();
 
             String inputDir = configuration.getInputPath();
             inputDir = Paths.get(inputDir).toAbsolutePath().toString();
@@ -147,7 +147,7 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
 
             GraphService<JavaClassModel> graphService = new GraphService<>(graphContext, JavaClassModel.class);
 
-            JavaClassModel javaClassModel = graphService.getByUniqueProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME,
+            JavaClassModel javaClassModel = graphService.getUniqueByProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME,
                         qualifiedName);
             if (javaClassModel == null)
             {
