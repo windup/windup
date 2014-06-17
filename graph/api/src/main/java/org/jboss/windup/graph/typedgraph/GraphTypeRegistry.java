@@ -20,7 +20,7 @@ public class GraphTypeRegistry
     private static final Logger LOG = LoggerFactory.getLogger(GraphTypeRegistry.class);
 
     @Inject
-    private FurnaceGraphModelScanner scanner;
+    private ModelClassesFurnaceScanner scanner;
     
     @Inject
     private GraphTypeManager graphTypeManager;
@@ -33,9 +33,11 @@ public class GraphTypeRegistry
     @PostConstruct
     public void init()
     {
+        // Scan for all classes form *Model.class.
         List<Class<?>> classNames = scanner.scan();
         for (Class<?> clazz : classNames)
         {
+            // Add those extending WindupVertexFrame.
             LOG.info("Found class: " + clazz);
             if (WindupVertexFrame.class.isAssignableFrom(clazz))
             {
@@ -51,6 +53,9 @@ public class GraphTypeRegistry
         }
     }
 
+    /**
+     *  Build TinkerPop Frames module - a collection of models.
+     */
     public Module build()
     {
         return new AbstractModule()

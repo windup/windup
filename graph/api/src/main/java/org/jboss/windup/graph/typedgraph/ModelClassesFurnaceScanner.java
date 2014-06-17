@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 /**
  *  Scans all Furnace addons for classes named *Model.class.
  */
-public class FurnaceGraphModelScanner
+class ModelClassesFurnaceScanner
 {
-    private static final Logger LOG = LoggerFactory.getLogger(FurnaceGraphModelScanner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ModelClassesFurnaceScanner.class);
 
     @Inject
     private Furnace furnace;
