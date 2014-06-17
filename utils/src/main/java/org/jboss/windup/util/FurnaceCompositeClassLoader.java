@@ -13,13 +13,13 @@ public class FurnaceCompositeClassLoader extends ClassLoader
 
     public FurnaceCompositeClassLoader(List<ClassLoader> loaders)
     {
-        loaders.addAll(loaders);
+        this.loaders.addAll(loaders);
     }
 
     public FurnaceCompositeClassLoader(ClassLoader classLoader, List<ClassLoader> loaders)
     {
         super(classLoader);
-        loaders.addAll(loaders);
+        this.loaders.addAll(loaders);
     }
 
     @Override
