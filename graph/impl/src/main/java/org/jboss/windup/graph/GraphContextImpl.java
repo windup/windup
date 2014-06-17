@@ -10,15 +10,20 @@ import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanKey;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 import com.tinkerpop.frames.FramedGraph;
+import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
+import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
+import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 
 public class GraphContextImpl implements GraphContext
 {
+    private GraphApiCompositeClassLoaderProvider classLoaderProvider;
 
     private TitanGraph graph;
     private BatchGraph<TitanGraph> batch;
@@ -47,10 +52,11 @@ public class GraphContextImpl implements GraphContext
         return framed;
     }
 
-    @SuppressWarnings("unused")
-    public GraphContextImpl(File diskCache, GraphTypeRegistry graphTypeRegistry)
+    public GraphContextImpl(File diskCache, GraphTypeRegistry graphTypeRegistry,
+                GraphApiCompositeClassLoaderProvider classLoaderProvider)
     {
         this.graphTypeRegistry = graphTypeRegistry;
+        this.classLoaderProvider = classLoaderProvider;
 
         FileUtils.deleteQuietly(diskCache);
         this.diskCacheDir = diskCache;
@@ -101,7 +107,24 @@ public class GraphContextImpl implements GraphContext
 
         batch = new BatchGraph<TitanGraph>(graph, 1000L);
 
+        final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
         FramedGraphFactory factory = new FramedGraphFactory(
+                    new Module()
+                    {
+                        @Override
+                        public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
+                        {
+                            config.setFrameClassLoaderResolver(new FrameClassLoaderResolver()
+                            {
+                                @Override
+                                public ClassLoader resolveClassLoader(Class<?> frameType)
+                                {
+                                    return compositeClassLoader;
+                                }
+                            });
+                            return baseGraph;
+                        }
+                    },
                     new JavaHandlerModule(),
                     graphTypeRegistry.build(),
                     new GremlinGroovyModule()

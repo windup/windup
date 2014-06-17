@@ -14,6 +14,13 @@ import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 @Singleton
 public class GraphContextProvider
 {
+
+    @Inject
+    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
+
+    @Inject
+    private WindupContext windupContext;
+
     @Inject
     private GraphTypeRegistry graphTypeRegistry;
 
@@ -25,8 +32,8 @@ public class GraphContextProvider
     {
         if (graphContext == null)
         {
-            graphContext = new GraphContextImpl(new File(getRunDirectory(), "windup-graph"),
-                        graphTypeRegistry);
+            graphContext = new GraphContextImpl(new File(windupContext.getRunDirectory(), "windup-graph"),
+                        graphTypeRegistry, graphApiCompositeClassLoaderProvider);
         }
         return graphContext;
     }

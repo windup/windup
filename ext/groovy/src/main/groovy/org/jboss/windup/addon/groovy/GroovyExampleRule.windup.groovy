@@ -4,7 +4,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.graph.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 
 registerRegexBlackList("sampleRegexBlackListRule-001", "org.apache.wicket.util.string.CssUtils", "You shouldn't do that")
 

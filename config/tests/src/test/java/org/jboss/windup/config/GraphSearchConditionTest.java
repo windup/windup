@@ -15,6 +15,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
 import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
@@ -56,16 +57,29 @@ public class GraphSearchConditionTest
     }
 
     @Inject
+    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
+
+    @Inject
     private GraphTypeRegistry graphTypeRegistry;
 
     @Inject
     private SelectionFactory selectionFactory;
 
+    private GraphContext getGraphContext(File folder)
+    {
+        Assert.assertNotNull(graphApiCompositeClassLoaderProvider);
+
+        final GraphContextImpl context = new GraphContextImpl(folder, graphTypeRegistry,
+                    graphApiCompositeClassLoaderProvider);
+        return context;
+    }
+
     @Test
     public void testJavaMethodModel()
     {
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
+        final GraphContext context = getGraphContext(folder);
+
         GraphRewrite event = new GraphRewrite(context);
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -102,7 +116,7 @@ public class GraphSearchConditionTest
     {
         // build the initial graph
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
+        final GraphContext context = getGraphContext(folder);
 
         context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
         context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
@@ -139,7 +153,7 @@ public class GraphSearchConditionTest
     {
         // build the initial graph
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
+        final GraphContext context = getGraphContext(folder);
 
         context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
         context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
@@ -184,7 +198,7 @@ public class GraphSearchConditionTest
     {
         // build the initial graph
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
+        final GraphContext context = getGraphContext(folder);
 
         context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
         context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
@@ -222,7 +236,7 @@ public class GraphSearchConditionTest
     {
         // build the initial graph
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
+        final GraphContext context = getGraphContext(folder);
 
         context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
         context.getFramed().addVertex(null, WebConfigurationFacetModel.class);

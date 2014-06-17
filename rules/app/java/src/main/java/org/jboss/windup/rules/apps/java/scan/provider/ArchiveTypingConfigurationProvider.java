@@ -1,9 +1,10 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.util.List;
-import javax.inject.Inject;
-import org.jboss.forge.furnace.services.Imported;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
@@ -17,7 +18,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 public class ArchiveTypingConfigurationProvider extends WindupConfigurationProvider
 {
-    private @Inject Imported<ArchiveModelPointer> archiveModelPointers;
+    @Inject
+    private Imported<ArchiveModelPointer<? extends ArchiveModel>> archiveModelPointers;
 
     @Override
     public RulePhase getPhase()
@@ -34,16 +36,19 @@ public class ArchiveTypingConfigurationProvider extends WindupConfigurationProvi
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder.begin()
-            .addRule()
-            .when(
-                GraphSearchConditionBuilder.create("archives").ofType(ArchiveModel.class)
-            )
-            .perform(
-                Iteration.over("archives").var("archive")
+        return ConfigurationBuilder
+                    .begin()
+                    .addRule()
+                    .when(
+                                GraphSearchConditionBuilder.create("archives").ofType(ArchiveModel.class)
+                    )
                     .perform(
-                        ConfigureArchiveTypes.forVar("archive", this.archiveModelPointers)
-                    ).endIteration()
-            );
+                                Iteration.over("archives")
+                                            .var("archive")
+                                            .perform(
+                                                        ConfigureArchiveTypes.forVar("archive",
+                                                                    archiveModelPointers)
+                                            ).endIteration()
+                    );
     }
 }

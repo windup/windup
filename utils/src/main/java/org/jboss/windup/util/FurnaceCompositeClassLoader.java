@@ -1,4 +1,4 @@
-package org.jboss.windup.ext.groovy;
+package org.jboss.windup.util;
 
 import java.io.IOException;
 import java.net.URL;

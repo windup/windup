@@ -15,6 +15,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
 import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
@@ -53,6 +54,9 @@ public class SelectionFactoryTest
     }
 
     @Inject
+    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
+
+    @Inject
     private GraphTypeRegistry graphTypeRegistry;
 
     @Inject
@@ -62,7 +66,8 @@ public class SelectionFactoryTest
     public void testInvalidTypeGet()
     {
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
+        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry,
+                    graphApiCompositeClassLoaderProvider);
         GraphRewrite event = new GraphRewrite(context);
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();

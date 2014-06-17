@@ -25,6 +25,7 @@ import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.config.loader.WindupConfigurationProviderLoader;
 import org.jboss.windup.ext.groovy.builder.WindupConfigurationProviderBuilder;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.FurnaceCompositeClassLoader;
 import org.jboss.windup.util.exception.WindupException;
 
 public class GroovyWindupConfigurationProviderLoader implements WindupConfigurationProviderLoader

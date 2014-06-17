@@ -1,6 +1,5 @@
 package org.jboss.windup.config;
 
-import org.jboss.windup.config.GraphRewrite;
 import java.io.File;
 
 import javax.inject.Inject;
@@ -13,6 +12,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
@@ -45,13 +45,17 @@ public class ReadXMLConfigurationTest
     }
 
     @Inject
+    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
+
+    @Inject
     private GraphTypeRegistry graphTypeRegistry;
-    
+
     @Test
     public void testRunWindup() throws Exception
     {
         final File folder = File.createTempFile("windupGraph", "");
-        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry);
+        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry,
+                    graphApiCompositeClassLoaderProvider);
         final ConfigurationLoader loader = ConfigurationLoader.create(context);
         final Configuration configuration = loader.loadConfiguration(context);
 
