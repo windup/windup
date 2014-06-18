@@ -249,6 +249,14 @@
 
     <dependencyManagement>
         <dependencies>
+            
+            <!-- Jess Slighter's Frames classloading patch.
+                 https://github.com/jsight/frames/tree/classloaderresolver -->
+            <dependency>
+                <groupId>com.tinkerpop</groupId>
+                <artifactId>frames</artifactId>
+                <version>2.6.0-SNAPSHOT</version>
+            </dependency>
 
             <!-- Forge and Furnace -->
 
