@@ -23,8 +23,8 @@
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.19</version.freemarker>
 
-        <windup.scm.connection>scm:git:https://github.com/jsight/windup.git</windup.scm.connection>
-        <windup.developer.connection>scm:git:git@github.com:jsight/windup.git</windup.developer.connection>
+        <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
+        <windup.developer.connection>scm:git:git@github.com:windup/windup.git</windup.developer.connection>
         <windup.scm.url>http://github.com/windup/windup</windup.scm.url>
 
         <!-- This keeps javadoc from failing on projects with no actual .java 
