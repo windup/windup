@@ -52,10 +52,10 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.scan.dao.JavaClassDao;
-import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
+import org.jboss.windup.rules.apps.java.scan.dao.JavaClassDao;
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,12 +97,31 @@ public class VariableResolvingASTVisitor extends ASTVisitor
      */
     private final Map<String, String> classNameToFQCN = new HashMap<>();
 
+    /**
+     * Maintains a set of all variable names that have been resolved
+     */
+    private final Set<String> names = new HashSet<String>();
+
+    /**
+     * Maintains a map of nameInstances to fully qualified class names.
+     */
+    private final Map<String, String> nameInstance = new HashMap<String, String>();
+
     private FileModel fileModel;
 
     public void init(CompilationUnit cu, FileModel fileModel)
     {
         this.cu = cu;
         this.fileModel = fileModel;
+        this.wildcardImports.clear();
+        this.classNameLookedUp.clear();
+        this.classNameToFQCN.clear();
+        this.names.clear();
+        this.nameInstance.clear();
+
+        String packageName = cu.getPackage().getName().getFullyQualifiedName();
+        this.names.add("this");
+        this.nameInstance.put("this", packageName);
     }
 
     private void fireJavaScannerEvent(ClassCandidate classCandidate)

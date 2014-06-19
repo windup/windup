@@ -34,7 +34,6 @@ public class VariableResolvingASTVisitorTest
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-
     })
     public static ForgeArchive getDeployment()
     {
