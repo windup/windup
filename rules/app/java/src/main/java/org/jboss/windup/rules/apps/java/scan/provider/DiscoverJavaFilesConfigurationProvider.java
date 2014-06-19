@@ -19,8 +19,6 @@ import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.WindupContext;
-import org.jboss.windup.rules.apps.java.scan.dao.JavaClassDao;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -55,33 +53,31 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
     public Configuration getConfiguration(GraphContext context)
     {
         GraphSearchConditionBuilder javaSourceCanBeLocated = GraphSearchConditionBuilder
-                    .create("javaSourceFiles").ofType(FileModel.class)
-                    .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-                    .withProperty(FileModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX, ".*\\.java$");
+            .create("javaSourceFiles").ofType(FileModel.class)
+            .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+            .withProperty(FileModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX, ".*\\.java$");
 
         GraphSearchConditionBuilder sourceModeEnabled = GraphSearchConditionBuilder
-                    .create("inputConfigurations").ofType(WindupConfigurationModel.class)
-                    .withProperty(WindupConfigurationModel.PROPERTY_SOURCE_MODE, true);
+            .create("inputConfigurations").ofType(WindupConfigurationModel.class)
+            .withProperty(WindupConfigurationModel.PROPERTY_SOURCE_MODE, true);
 
-        return ConfigurationBuilder
-                    .begin()
+        return ConfigurationBuilder.begin()
+        .addRule()
+            .when(javaSourceCanBeLocated.and(sourceModeEnabled))
+            .perform(Iteration.over("javaSourceFiles").var(FileModel.class, "javaSourceFile")
 
-                    .addRule()
-                    .when(javaSourceCanBeLocated.and(sourceModeEnabled))
-                    .perform(Iteration.over("javaSourceFiles").var(FileModel.class, "javaSourceFile")
+                .perform(
+                    new IndexJavaFileIterationOperator(FileModel.class, "javaSourceFile")
+                )
+                .endIteration()
 
-                                .perform(
-                                            new IndexJavaFileIterationOperator(FileModel.class, "javaSourceFile")
-                                )
-                                .endIteration()
-
-                                .and(Iteration.over("javaSourceFiles").var(FileModel.class, "javaSourceFile")
-                                            .perform(
-                                                        new FireASTTypeNameEventsIterationOperator(
-                                                                    FileModel.class, "javaSourceFile")
-                                            )
-                                            .endIteration())
-                    );
+                .and(
+                    Iteration.over("javaSourceFiles").var(FileModel.class, "javaSourceFile").perform(
+                        new FireASTTypeNameEventsIterationOperator(FileModel.class, "javaSourceFile")
+                    )
+                    .endIteration()
+                )
+            );
     }
 
     private final class FireASTTypeNameEventsIterationOperator extends AbstractIterationOperator<FileModel>
