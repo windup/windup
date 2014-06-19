@@ -37,11 +37,6 @@
             <artifactId>blueprints-graph-sail</artifactId>
             <version>${version.tinkerpop.blueprints}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>joox</artifactId>
-            <version>1.2.0</version>
-        </dependency>
 
 
         <dependency>
