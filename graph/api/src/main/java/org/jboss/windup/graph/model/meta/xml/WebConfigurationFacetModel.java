@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model.meta.xml;
 
-import org.jboss.windup.graph.renderer.Label;
+import org.jboss.windup.reporting.renderer.api.Label;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

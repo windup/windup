@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer.html;
+package org.jboss.windup.reporting.renderer.html;
 
 import static org.joox.JOOX.$;
 
@@ -13,10 +13,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jboss.windup.graph.renderer.GraphWriter;
-import org.jboss.windup.graph.renderer.graphlib.GraphlibWriter;
-import org.jboss.windup.graph.renderer.graphlib.GraphvizConstants.GraphvizDirection;
-import org.jboss.windup.graph.renderer.graphlib.GraphvizConstants.GraphvizType;
+import org.jboss.windup.reporting.renderer.GraphWriter;
+import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
+import org.jboss.windup.reporting.renderer.dot.DotWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -24,18 +23,23 @@ import org.xml.sax.SAXException;
 
 import com.tinkerpop.blueprints.Graph;
 
-public class DagreD3JSHtmlWriter implements GraphWriter {
-	private static Logger LOG = LoggerFactory.getLogger(DagreD3JSHtmlWriter.class);
+public class VizJSHtmlWriter implements GraphWriter {
+	private static Logger LOG = LoggerFactory.getLogger(VizJSHtmlWriter.class);
 	
 	private final GraphWriter writer;
 
-	public DagreD3JSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabelProperty) {
-		this.writer = new GraphlibWriter(graph, GraphvizType.DIGRAPH, GraphvizDirection.TOP_TO_BOTTOM, "g", vertexLabelProperty, edgeLabelProperty);
+	public VizJSHtmlWriter(Graph graph) {
+		this.writer = new DotWriter(graph, "G", "qualifiedName", "", DotGraphType.DIGRAPH, "8pt");
 	}
+	
+	public VizJSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabel) {
+		this.writer = new DotWriter(graph, "G", vertexLabelProperty, edgeLabel, DotGraphType.DIGRAPH, "8pt");
+	}
+	
 
 	public void writeGraph(final OutputStream os) throws IOException {
 		// read in the html template resource.
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream("dagred3/HtmlTemplate.html");
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("vizjs/HtmlTemplate.html");
 
 		String result;
 		{
@@ -45,7 +49,7 @@ public class DagreD3JSHtmlWriter implements GraphWriter {
 		}
 		
 		if(LOG.isDebugEnabled())  {
-			LOG.debug("Graphlib: "+result);
+			LOG.debug("DOT: "+result);
 		}
 		
 		
@@ -54,7 +58,7 @@ public class DagreD3JSHtmlWriter implements GraphWriter {
 		try {
 			document = $(is).document();
 			// append in the gexf.
-			$(document).find("#graphlib-source").append(result);
+			$(document).find("#dot-source").append(result);
 
 			writeDocument(document, os);
 		} catch (SAXException e) {

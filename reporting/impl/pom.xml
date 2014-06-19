@@ -13,17 +13,37 @@
     <name>Windup Engine - Reporting Impl</name>
     
     <dependencies>
+        <!-- Project deps -->
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
             <artifactId>windup-reporting-api</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph-api</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>joox</artifactId>
+            <version>1.2.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openrdf.sesame</groupId>
+            <artifactId>sesame-sail-api</artifactId>
+            <version>2.7.10</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
     

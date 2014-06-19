@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer.graphviz;
+package org.jboss.windup.reporting.renderer.graphviz;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import javax.script.ScriptException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.jboss.windup.graph.renderer.dot.DotWriter;
+import org.jboss.windup.reporting.renderer.dot.DotWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer.dot;
+package org.jboss.windup.reporting.renderer.dot;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.graph.renderer.GraphWriter;
-import org.jboss.windup.graph.renderer.dot.DotConstants.DotGraphType;
+import org.jboss.windup.reporting.renderer.GraphWriter;
+import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;

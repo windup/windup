@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer.dot;
+package org.jboss.windup.reporting.renderer.dot;
 
 import java.util.HashMap;
 import java.util.Map;
