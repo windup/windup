@@ -4,12 +4,12 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.config;
+package org.jboss.windup.config.parser;
 
-import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.config.RulePhase;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.jboss.windup.config.RulePhase;
+import org.jboss.windup.config.WindupConfigurationProvider;
 
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.graph.GraphContext;
