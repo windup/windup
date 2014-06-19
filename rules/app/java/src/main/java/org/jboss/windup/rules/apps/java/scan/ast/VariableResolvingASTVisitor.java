@@ -120,8 +120,15 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         this.nameInstance.clear();
 
         String packageName = cu.getPackage().getName().getFullyQualifiedName();
-        this.names.add("this");
-        this.nameInstance.put("this", packageName);
+        List types = cu.types();
+        if (!types.isEmpty())
+        {
+            TypeDeclaration typeDeclaration = (TypeDeclaration) types.get(0);
+            String className = typeDeclaration.getName().getFullyQualifiedName();
+            String fqcn = packageName + "." + className;
+            this.names.add("this");
+            this.nameInstance.put("this", fqcn);
+        }
     }
 
     private void fireJavaScannerEvent(ClassCandidate classCandidate)
@@ -223,8 +230,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                 String typeName = type.getType().toString();
                 typeName = resolveClassname(typeName);
                 // now add it as a local variable.
-                // this.names.add(type.getName().toString());
-                // this.nameInstance.put(type.getName().toString(), typeName);
+                this.names.add(type.getName().toString());
+                this.nameInstance.put(type.getName().toString(), typeName);
 
                 processType(type.getType(), ClassCandidateType.METHOD_PARAMETER);
             }
@@ -293,8 +300,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             frag.resolveBinding();
-            // this.names.add(frag.getName().getIdentifier());
-            // this.nameInstance.put(frag.getName().toString(), nodeType.toString());
+            this.names.add(frag.getName().getIdentifier());
+            this.nameInstance.put(frag.getName().toString(), nodeType.toString());
 
             processType(node.getType(), ClassCandidateType.FIELD_DECLARATION);
         }
@@ -372,8 +379,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             nodeType = resolveClassname(nodeType);
 
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
-            // this.names.add(frag.getName().getIdentifier());
-            // this.nameInstance.put(frag.getName().toString(), nodeType.toString());
+            this.names.add(frag.getName().getIdentifier());
+            this.nameInstance.put(frag.getName().toString(), nodeType.toString());
         }
         processType(node.getType(), ClassCandidateType.VARIABLE_DECLARATION);
 
@@ -427,10 +434,10 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
         String objRef = StringUtils.substringBefore(nodeName, "." + node.getName().toString());
 
-        // if (nameInstance.containsKey(objRef))
-        // {
-        // objRef = nameInstance.get(objRef);
-        // }
+        if (nameInstance.containsKey(objRef))
+        {
+            objRef = nameInstance.get(objRef);
+        }
 
         objRef = resolveClassname(objRef);
 
@@ -472,15 +479,15 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             if (o instanceof SimpleName)
             {
-                // String name = nameInstance.get(o.toString());
-                // if (name != null)
-                // {
-                // resolvedParams.add(name);
-                // }
-                // else
-                // {
-                // resolvedParams.add("Undefined");
-                // }
+                String name = nameInstance.get(o.toString());
+                if (name != null)
+                {
+                    resolvedParams.add(name);
+                }
+                else
+                {
+                    resolvedParams.add("Undefined");
+                }
             }
             else if (o instanceof StringLiteral)
             {
@@ -490,14 +497,14 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             {
                 String field = ((FieldAccess) o).getName().toString();
 
-                // if (names.contains(field))
-                // {
-                // resolvedParams.add(nameInstance.get(field));
-                // }
-                // else
-                // {
-                // resolvedParams.add("Undefined");
-                // }
+                if (names.contains(field))
+                {
+                    resolvedParams.add(nameInstance.get(field));
+                }
+                else
+                {
+                    resolvedParams.add("Undefined");
+                }
             }
             else if (o instanceof CastExpression)
             {
@@ -579,10 +586,10 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     {
         // temporarily remove to resolve arrays
         objRef = StringUtils.removeEnd(objRef, "[]");
-        // if (nameInstance.containsKey(objRef))
-        // {
-        // objRef = nameInstance.get(objRef);
-        // }
+        if (nameInstance.containsKey(objRef))
+        {
+            objRef = nameInstance.get(objRef);
+        }
 
         objRef = resolveClassname(objRef);
 
