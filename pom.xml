@@ -255,7 +255,7 @@
             <dependency>
                 <groupId>com.tinkerpop</groupId>
                 <artifactId>frames</artifactId>
-                <version>2.6.0-SNAPSHOT</version>
+                <version>2.6.0-jsight-SNAPSHOT</version>
             </dependency>
 
             <!-- Forge and Furnace -->
