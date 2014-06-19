@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>org.jboss.windup.ext</groupId>
-    <artifactId>windup-config-groovy</artifactId>
+    <artifactId>windup-config-xml</artifactId>
 
-    <name>Windup Ext: Config - Groovy</name>
+    <name>Windup Ext: Config - XML</name>
 
     <dependencyManagement>
         <dependencies>
@@ -43,13 +43,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-java</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version>
@@ -57,7 +50,7 @@
             <scope>provided</scope>
         </dependency>
 
-
+        <!-- Forge / Furnace -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
@@ -65,10 +58,11 @@
             <scope>provided</scope>
         </dependency>
 
+        
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>2.3.1</version>
+            <groupId>org.jooq</groupId>
+            <artifactId>joox</artifactId>
+            <version>1.2.0</version>
         </dependency>
 
 
@@ -94,15 +88,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/groovy</directory>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-
         <plugins>
             <!-- Forge addon creation -->
             <plugin>
