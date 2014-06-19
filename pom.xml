@@ -55,7 +55,6 @@
         <module>ext/groovy</module>
         <module>ext/xml</module>
         <module>rules</module>
-        <module>ext/groovy</module>
     </modules>
 
     <build>
