@@ -6,9 +6,6 @@
  */
 package org.jboss.windup.config;
 
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.config.RulePhase;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,27 +38,28 @@ public class XmlExampleConfigurationProvider2 extends WindupConfigurationProvide
     public Configuration getConfiguration(GraphContext context)
     {
         Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(GraphSearchConditionBuilder
-                                .create("xmlModels")
-                                .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
-                                            GraphSearchPropertyComparisonType.EQUALS,
-                                            "xmlTag3"))
-                    .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
-                                .perform(new GraphOperation()
-                                {
-                                    @Override
-                                    public void perform(GraphRewrite event, EvaluationContext context)
-                                    {
-                                        SelectionFactory factory = SelectionFactory.instance(event);
-                                        XmlMetaFacetModel xmlFacetModel = factory
-                                                    .getCurrentPayload(XmlMetaFacetModel.class, "xml");
-                                        typeSearchResults.add(xmlFacetModel);
-                                    }
-                                })
-                                .endIteration()
-                    );
+        .begin()
+        .addRule()
+            .when(GraphSearchConditionBuilder
+                .create("xmlModels")
+                .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
+                            GraphSearchPropertyComparisonType.EQUALS,
+                            "xmlTag3"))
+            .perform(
+                Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
+                .perform(new GraphOperation()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context)
+                    {
+                        SelectionFactory factory = SelectionFactory.instance(event);
+                        XmlMetaFacetModel xmlFacetModel = 
+                                factory.getCurrentPayload(XmlMetaFacetModel.class, "xml");
+                        typeSearchResults.add(xmlFacetModel);
+                    }
+                })
+                .endIteration()
+            );
         return configuration;
     }
 
