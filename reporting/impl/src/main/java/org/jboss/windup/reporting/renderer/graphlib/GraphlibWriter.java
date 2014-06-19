@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer.graphlib;
+package org.jboss.windup.reporting.renderer.graphlib;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,9 +7,9 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.graph.renderer.GraphWriter;
-import org.jboss.windup.graph.renderer.graphlib.GraphvizConstants.GraphvizDirection;
-import org.jboss.windup.graph.renderer.graphlib.GraphvizConstants.GraphvizType;
+import org.jboss.windup.reporting.renderer.GraphWriter;
+import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizDirection;
+import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizType;
 import org.slf4j.LoggerFactory;
 
 import com.tinkerpop.blueprints.Direction;

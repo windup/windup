@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer.graphlib;
+package org.jboss.windup.reporting.renderer.graphlib;
 
 public class GraphvizConstants {
 

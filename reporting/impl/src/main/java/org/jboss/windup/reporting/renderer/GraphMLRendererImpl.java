@@ -1,14 +1,13 @@
-package org.jboss.windup.graph.renderer;
+package org.jboss.windup.reporting.renderer;
 
 import java.io.File;
 import java.io.FileOutputStream;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
-
 import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
+import org.jboss.windup.reporting.renderer.api.GraphMLRenderer;
+
 
 @ApplicationScoped
 public class GraphMLRendererImpl implements GraphMLRenderer

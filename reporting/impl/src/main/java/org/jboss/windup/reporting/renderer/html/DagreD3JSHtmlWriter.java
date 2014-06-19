@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer.html;
+package org.jboss.windup.reporting.renderer.html;
 
 import static org.joox.JOOX.$;
 
@@ -13,8 +13,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jboss.windup.graph.renderer.GraphWriter;
-import org.jboss.windup.graph.renderer.gexf.GexfWriter;
+import org.jboss.windup.reporting.renderer.GraphWriter;
+import org.jboss.windup.reporting.renderer.graphlib.GraphlibWriter;
+import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizDirection;
+import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -22,40 +24,37 @@ import org.xml.sax.SAXException;
 
 import com.tinkerpop.blueprints.Graph;
 
-public class SigmaJSHtmlWriter implements GraphWriter {
-	private static final Logger LOG = LoggerFactory.getLogger(SigmaJSHtmlWriter.class);
+public class DagreD3JSHtmlWriter implements GraphWriter {
+	private static Logger LOG = LoggerFactory.getLogger(DagreD3JSHtmlWriter.class);
 	
-	private final GexfWriter gexfWriter;
+	private final GraphWriter writer;
 
-	public SigmaJSHtmlWriter(Graph graph) {
-		this.gexfWriter = new GexfWriter(graph, "static", "directed", "qualifiedName", "");
-	}
-	
-	public SigmaJSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabel) {
-		this.gexfWriter = new GexfWriter(graph, "static", "directed", vertexLabelProperty, edgeLabel);
+	public DagreD3JSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabelProperty) {
+		this.writer = new GraphlibWriter(graph, GraphvizType.DIGRAPH, GraphvizDirection.TOP_TO_BOTTOM, "g", vertexLabelProperty, edgeLabelProperty);
 	}
 
 	public void writeGraph(final OutputStream os) throws IOException {
 		// read in the html template resource.
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream("sigmajs/HtmlTemplate.html");
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("dagred3/HtmlTemplate.html");
 
-		String result = null; 
+		String result;
 		{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			gexfWriter.writeGraph(baos);
+			writer.writeGraph(baos);
 			result = baos.toString();
 		}
 		
 		if(LOG.isDebugEnabled())  {
-			LOG.debug("GEXF: "+result);
+			LOG.debug("Graphlib: "+result);
 		}
+		
 		
 		// read the document.
 		Document document;
 		try {
 			document = $(is).document();
 			// append in the gexf.
-			$(document).find("#gexf-source").append(result);
+			$(document).find("#graphlib-source").append(result);
 
 			writeDocument(document, os);
 		} catch (SAXException e) {
@@ -76,5 +75,4 @@ public class SigmaJSHtmlWriter implements GraphWriter {
 			throw new IOException("Exception writing to output stream.", e);
 		}
 	}
-
 }

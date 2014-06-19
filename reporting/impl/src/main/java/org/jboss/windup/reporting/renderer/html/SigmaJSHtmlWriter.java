@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer.html;
+package org.jboss.windup.reporting.renderer.html;
 
 import static org.joox.JOOX.$;
 
@@ -13,9 +13,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jboss.windup.graph.renderer.GraphWriter;
-import org.jboss.windup.graph.renderer.dot.DotConstants.DotGraphType;
-import org.jboss.windup.graph.renderer.dot.DotWriter;
+import org.jboss.windup.reporting.renderer.GraphWriter;
+import org.jboss.windup.reporting.renderer.gexf.GexfWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -23,42 +22,40 @@ import org.xml.sax.SAXException;
 
 import com.tinkerpop.blueprints.Graph;
 
-public class VizJSHtmlWriter implements GraphWriter {
-	private static Logger LOG = LoggerFactory.getLogger(VizJSHtmlWriter.class);
+public class SigmaJSHtmlWriter implements GraphWriter {
+	private static final Logger LOG = LoggerFactory.getLogger(SigmaJSHtmlWriter.class);
 	
-	private final GraphWriter writer;
+	private final GexfWriter gexfWriter;
 
-	public VizJSHtmlWriter(Graph graph) {
-		this.writer = new DotWriter(graph, "G", "qualifiedName", "", DotGraphType.DIGRAPH, "8pt");
+	public SigmaJSHtmlWriter(Graph graph) {
+		this.gexfWriter = new GexfWriter(graph, "static", "directed", "qualifiedName", "");
 	}
 	
-	public VizJSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabel) {
-		this.writer = new DotWriter(graph, "G", vertexLabelProperty, edgeLabel, DotGraphType.DIGRAPH, "8pt");
+	public SigmaJSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabel) {
+		this.gexfWriter = new GexfWriter(graph, "static", "directed", vertexLabelProperty, edgeLabel);
 	}
-	
 
 	public void writeGraph(final OutputStream os) throws IOException {
 		// read in the html template resource.
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream("vizjs/HtmlTemplate.html");
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("sigmajs/HtmlTemplate.html");
 
-		String result;
+		String result = null; 
 		{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			writer.writeGraph(baos);
+			gexfWriter.writeGraph(baos);
 			result = baos.toString();
 		}
 		
 		if(LOG.isDebugEnabled())  {
-			LOG.debug("DOT: "+result);
+			LOG.debug("GEXF: "+result);
 		}
-		
 		
 		// read the document.
 		Document document;
 		try {
 			document = $(is).document();
 			// append in the gexf.
-			$(document).find("#dot-source").append(result);
+			$(document).find("#gexf-source").append(result);
 
 			writeDocument(document, os);
 		} catch (SAXException e) {
@@ -79,4 +76,5 @@ public class VizJSHtmlWriter implements GraphWriter {
 			throw new IOException("Exception writing to output stream.", e);
 		}
 	}
+
 }

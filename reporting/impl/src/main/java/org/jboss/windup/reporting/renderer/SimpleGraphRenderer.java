@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer;
+package org.jboss.windup.reporting.renderer;
 
 import java.io.File;
 import java.io.FileNotFoundException;

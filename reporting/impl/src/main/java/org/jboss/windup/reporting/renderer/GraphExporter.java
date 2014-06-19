@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer;
+package org.jboss.windup.reporting.renderer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,9 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.jboss.windup.graph.renderer.html.DagreD3JSHtmlWriter;
-import org.jboss.windup.graph.renderer.html.SigmaJSHtmlWriter;
-import org.jboss.windup.graph.renderer.html.VizJSHtmlWriter;
+import org.jboss.windup.reporting.renderer.html.DagreD3JSHtmlWriter;
+import org.jboss.windup.reporting.renderer.html.SigmaJSHtmlWriter;
+import org.jboss.windup.reporting.renderer.html.VizJSHtmlWriter;
 import org.slf4j.LoggerFactory;
 
 import com.tinkerpop.blueprints.Graph;

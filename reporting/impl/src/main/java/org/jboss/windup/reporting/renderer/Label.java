@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.renderer;
+package org.jboss.windup.reporting.renderer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
