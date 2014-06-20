@@ -120,7 +120,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         this.nameInstance.clear();
 
         String packageName = cu.getPackage().getName().getFullyQualifiedName();
-        List types = cu.types();
+        @SuppressWarnings("unchecked")
+        List<TypeDeclaration> types = cu.types();
         if (!types.isEmpty())
         {
             TypeDeclaration typeDeclaration = (TypeDeclaration) types.get(0);
@@ -429,8 +430,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
         String nodeName = StringUtils.removeStart(node.toString(), "this.");
 
-        List arguements = node.arguments();
-        List<String> resolvedParams = methodParameterGuesser(arguements);
+        List arguments = node.arguments();
+        List<String> resolvedParams = methodParameterGuesser(arguments);
 
         String objRef = StringUtils.substringBefore(nodeName, "." + node.getName().toString());
 
