@@ -11,6 +11,10 @@ import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 
+/**
+ *  Undocumented but important class.
+ *  Thanks for writing the purpose of the code into javadoc.
+ */
 public class GraphApiCompositeClassLoaderProvider
 {
     @Inject
@@ -19,6 +23,10 @@ public class GraphApiCompositeClassLoaderProvider
     @Inject
     private Furnace furnace;
 
+    /**
+     *  Creates a classloader which combines classloaders of all addons depending on Graph API
+     *  (which I guess is how we filter out modules which may have Model classes).
+     */
     public ClassLoader getCompositeClassLoader()
     {
         List<ClassLoader> loaders = new ArrayList<>();
