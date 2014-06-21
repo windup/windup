@@ -1,10 +1,7 @@
 package org.jboss.windup.rules.apps.java.scan.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
-import org.jboss.windup.graph.renderer.Label;
-
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
@@ -13,6 +10,8 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.reporting.renderer.api.Label;
+
 
 // TODO:  WINDUP-85 - Introduce JavaFileModel
 @TypeValue("JavaClassResource")

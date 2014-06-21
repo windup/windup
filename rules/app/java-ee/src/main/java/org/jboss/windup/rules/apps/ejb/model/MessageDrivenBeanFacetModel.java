@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.ejb.model;
 
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassMetaModel;
-import org.jboss.windup.graph.renderer.Label;
+import org.jboss.windup.reporting.renderer.api.Label;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

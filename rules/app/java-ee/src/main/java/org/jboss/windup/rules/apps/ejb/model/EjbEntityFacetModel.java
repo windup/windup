@@ -4,14 +4,13 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.windup.graph.renderer.Label;
+import org.jboss.windup.reporting.renderer.api.Label;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassMetaModel;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 
 @TypeValue("EJBEntityFacet")
 public interface EjbEntityFacetModel extends JavaClassMetaModel
 {
-
     @Label
     @Property("ejbEntityName")
     public String getEjbEntityName();

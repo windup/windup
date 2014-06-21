@@ -6,7 +6,6 @@
  */
 package org.jboss.windup.config;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
@@ -15,8 +14,8 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.TypeOperation;
 import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
+import org.jboss.windup.rules.apps.maven.model.MavenFacetModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -43,12 +42,12 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
         // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
         .addRule()
         .when(
-                GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class)
+            GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class)
         )
         .perform(
             Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
                 .perform(
-                        TypeOperation.addType("xml", MavenFacetModel.class)
+                    TypeOperation.addType("xml", MavenFacetModel.class)
                 )
             .endIteration()
         )
