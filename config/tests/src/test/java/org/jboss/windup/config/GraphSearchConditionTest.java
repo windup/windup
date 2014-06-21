@@ -13,12 +13,12 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.model.SomeModel;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
-import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
@@ -35,24 +35,24 @@ public class GraphSearchConditionTest
 {
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addClasses(MavenExampleConfigurationProvider.class,
-                                JavaExampleConfigurationProvider.class,
-                                XmlExampleConfigurationProvider1.class,
-                                XmlExampleConfigurationProvider2.class,
-                                XmlExampleConfigurationProvider3.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addClasses(MavenExampleConfigurationProvider.class,
+                JavaExampleConfigurationProvider.class,
+                XmlExampleConfigurationProvider1.class,
+                XmlExampleConfigurationProvider2.class,
+                XmlExampleConfigurationProvider3.class)
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
         return archive;
     }
 
@@ -118,10 +118,10 @@ public class GraphSearchConditionTest
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = getGraphContext(folder);
 
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
 
         XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
         xmlFacet1.setRootTagName("xmlTag1");
@@ -155,10 +155,10 @@ public class GraphSearchConditionTest
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = getGraphContext(folder);
 
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
 
         XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
         xmlFacet1.setRootTagName("xmlTag1");
@@ -200,10 +200,10 @@ public class GraphSearchConditionTest
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = getGraphContext(folder);
 
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
 
         XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
         xmlFacet1.setRootTagName("xmlTag1");
@@ -238,10 +238,10 @@ public class GraphSearchConditionTest
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = getGraphContext(folder);
 
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
-        context.getFramed().addVertex(null, WebConfigurationFacetModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
 
         XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
         xmlFacet1.setRootTagName("xmlTag1");
