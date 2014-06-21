@@ -32,6 +32,7 @@ public class GraphTypeManagerTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
             .addBeansXML()
+            .addClasses( FooModel.class, FooSubModel.class )
             .addAsAddonDependencies(
                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
