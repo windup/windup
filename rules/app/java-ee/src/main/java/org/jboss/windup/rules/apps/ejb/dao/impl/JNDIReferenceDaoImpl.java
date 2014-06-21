@@ -1,8 +1,9 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.ejb.dao.impl;
 
 import javax.inject.Singleton;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
-import org.jboss.windup.graph.dao.JNDIReferenceDao;
+import org.jboss.windup.rules.apps.ejb.dao.JNDIReferenceDao;
 import org.jboss.windup.graph.model.JNDIReferenceModel;
 
 @Singleton

@@ -1,13 +1,14 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.xml.dao.impl;
 
 import javax.inject.Singleton;
 
-import org.jboss.windup.graph.dao.NamespaceDao;
+import org.jboss.windup.rules.apps.xml.dao.NamespaceDao;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thinkaurelius.titan.core.attribute.Text;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 @Singleton
 public class NamespaceDaoImpl extends BaseDaoImpl<NamespaceMetaModel> implements NamespaceDao {

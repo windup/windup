@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.xml.dao.impl;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -8,8 +8,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.windup.graph.dao.NamespaceDao;
-import org.jboss.windup.graph.dao.XmlResourceDao;
+import org.jboss.windup.rules.apps.xml.dao.NamespaceDao;
+import org.jboss.windup.rules.apps.xml.dao.XmlResourceDao;
 import org.jboss.windup.graph.model.meta.xml.NamespaceMetaModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
@@ -17,6 +17,7 @@ import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import com.google.common.collect.Iterables;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 @Singleton
 public class XmlResourceDaoImpl extends BaseDaoImpl<XmlResourceModel> implements XmlResourceDao {

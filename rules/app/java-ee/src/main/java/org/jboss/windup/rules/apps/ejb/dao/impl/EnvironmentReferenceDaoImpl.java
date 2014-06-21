@@ -1,9 +1,10 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.ejb.dao.impl;
 
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.graph.dao.EnvironmentReferenceDao;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
+import org.jboss.windup.rules.apps.ejb.dao.EnvironmentReferenceDao;
 import org.jboss.windup.graph.model.EnvironmentReferenceModel;
 
 @Singleton

@@ -1,5 +1,6 @@
-package org.jboss.windup.graph.dao;
+package org.jboss.windup.rules.apps.xml.dao;
 
+import org.jboss.windup.graph.dao.BaseDao;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 

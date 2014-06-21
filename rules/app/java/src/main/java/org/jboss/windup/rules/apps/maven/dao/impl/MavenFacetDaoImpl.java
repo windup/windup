@@ -1,10 +1,10 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.maven.dao.impl;
 
 import java.util.Iterator;
 
 import javax.inject.Singleton;
 
-import org.jboss.windup.graph.dao.MavenFacetDao;
+import org.jboss.windup.rules.apps.maven.dao.MavenFacetDao;
 import org.jboss.windup.rules.apps.maven.model.MavenFacetModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 @Singleton
 public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacetModel> implements MavenFacetDao {
