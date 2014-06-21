@@ -3,7 +3,8 @@ package org.jboss.windup.rules.apps.java.scan.model;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.renderer.Label;
+import org.jboss.windup.reporting.renderer.api.Label;
+
 
 /**
  *  This is good for searches for Java files, which will be frequent.

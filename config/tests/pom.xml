@@ -11,6 +11,7 @@
     <name>Windup Engine - Config Tests</name>
     
     <dependencies>
+        <!-- Project deps -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config</artifactId>
@@ -29,7 +30,8 @@
             <scope>provided</scope>
             <version>${project.version}</version>
         </dependency>
-
+        
+        <!-- Rules -->
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>rules-java</artifactId>
@@ -37,6 +39,7 @@
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
+
 
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>

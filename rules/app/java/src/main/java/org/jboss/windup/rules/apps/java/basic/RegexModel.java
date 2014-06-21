@@ -1,9 +1,9 @@
 package org.jboss.windup.rules.apps.java.basic;
 
-import org.jboss.windup.graph.renderer.Label;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.reporting.renderer.api.Label;
 
 
 @TypeValue("Regex")
