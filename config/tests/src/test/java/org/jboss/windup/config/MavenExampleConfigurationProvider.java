@@ -6,12 +6,9 @@
  */
 package org.jboss.windup.config;
 
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.config.RulePhase;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
@@ -30,7 +27,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class MavenExampleConfigurationProvider extends WindupConfigurationProvider
 {
-    private final List<MavenFacetModel> results = new ArrayList<>();
+        private final List<MavenFacetModel> results = new LinkedList();
 
     @Override
     public RulePhase getPhase()
@@ -41,34 +38,40 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
+        Configuration configuration = ConfigurationBuilder.begin()
 
-                    .addRule()
-                    .when(GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class))
-                    .perform(
-                                Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
-                                            .perform(TypeOperation.addType("xml", MavenFacetModel.class))
-                                            .endIteration()
-                    )
+        // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
+        .addRule()
+        .when(
+                GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class)
+        )
+        .perform(
+            Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
+                .perform(
+                        TypeOperation.addType("xml", MavenFacetModel.class)
+                )
+            .endIteration()
+        )
 
-                    .addRule()
-                    .when(GraphSearchConditionBuilder.create("mavenModels").ofType(MavenFacetModel.class))
-                    .perform(
-                                Iteration.over(MavenFacetModel.class, "mavenModels").var("maven")
-                                            .perform(new GraphOperation()
-                                            {
-                                                @Override
-                                                public void perform(GraphRewrite event, EvaluationContext context)
-                                                {
-                                                    SelectionFactory factory = SelectionFactory.instance(event);
-                                                    MavenFacetModel mavenFacetModel = factory.getCurrentPayload(
-                                                                MavenFacetModel.class, "maven");
-                                                    results.add(mavenFacetModel);
-                                                }
-                                            })
-                                            .endIteration()
-                    );
+        // Add all MavenFacetModel vertices to this.results.
+        .addRule()
+        .when(
+                GraphSearchConditionBuilder.create("mavenModels").ofType(MavenFacetModel.class)
+        )
+        .perform(
+            Iteration.over(MavenFacetModel.class, "mavenModels").var("maven")
+            .perform(new GraphOperation()
+            {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context)
+                {
+                    SelectionFactory factory = SelectionFactory.instance(event);
+                    MavenFacetModel mavenFacetModel = factory.getCurrentPayload(MavenFacetModel.class, "maven");
+                    results.add(mavenFacetModel);
+                }
+            })
+            .endIteration()
+        );
         return configuration;
     }
 
@@ -76,5 +79,4 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
     {
         return results;
     }
-
 }
