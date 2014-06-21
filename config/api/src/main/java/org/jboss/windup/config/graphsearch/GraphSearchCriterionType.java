@@ -7,7 +7,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.util.Pipeline;
 
 class GraphSearchCriterionType implements GraphSearchCriterion
 {
