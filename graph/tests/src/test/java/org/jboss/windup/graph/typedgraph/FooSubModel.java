@@ -1,7 +1,6 @@
 package org.jboss.windup.graph.typedgraph;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.windup.graph.model.resource.ResourceModel;
 
 /**
  *

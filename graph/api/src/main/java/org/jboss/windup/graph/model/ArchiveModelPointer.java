@@ -1,7 +1,5 @@
 package org.jboss.windup.graph.model;
 
-import java.util.List;
-
 /**
  *  Points to an ArchiveType contained in a module,
  *  so it can be loaded in ConfigureArchiveTypes.

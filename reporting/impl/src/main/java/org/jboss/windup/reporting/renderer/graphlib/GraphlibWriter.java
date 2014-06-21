@@ -2,8 +2,6 @@ package org.jboss.windup.reporting.renderer.graphlib;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;

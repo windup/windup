@@ -1,23 +1,18 @@
 package org.jboss.windup.reporting.renderer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
-import com.tinkerpop.blueprints.impls.tg.TinkerGraphFactory;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
-import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
