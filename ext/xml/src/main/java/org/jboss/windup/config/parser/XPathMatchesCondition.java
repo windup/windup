@@ -8,7 +8,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.jboss.windup.config.ConfigurationException;
 import org.jboss.windup.config.GraphRewrite;
-
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
