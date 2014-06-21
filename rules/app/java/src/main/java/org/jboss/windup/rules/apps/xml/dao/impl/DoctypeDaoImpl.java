@@ -1,16 +1,17 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.rules.apps.xml.dao.impl;
 
 import java.util.Iterator;
 
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.graph.dao.DoctypeDao;
+import org.jboss.windup.rules.apps.xml.dao.DoctypeDao;
 import org.jboss.windup.graph.model.meta.xml.DoctypeMetaModel;
 
 import com.google.common.collect.Iterables;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 @Singleton
 public class DoctypeDaoImpl extends BaseDaoImpl<DoctypeMetaModel> implements DoctypeDao {
