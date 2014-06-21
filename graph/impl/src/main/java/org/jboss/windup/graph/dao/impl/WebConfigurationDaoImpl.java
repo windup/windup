@@ -5,7 +5,7 @@ import java.util.Iterator;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.WebConfigurationDao;
-import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
+import org.jboss.windup.rules.apps.web.model.WebConfigurationFacetModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;

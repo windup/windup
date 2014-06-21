@@ -1,11 +1,12 @@
-package org.jboss.windup.graph.model.meta.xml;
-
-import org.jboss.windup.reporting.renderer.api.Label;
+package org.jboss.windup.rules.apps.maven.model;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
+import org.jboss.windup.reporting.renderer.api.Label;
+
 
 @TypeValue("MavenFacet")
 public interface MavenFacetModel extends XmlMetaFacetModel {

@@ -1,13 +1,13 @@
 package org.jboss.windup.reporting.renderer;
 
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.oupls.sail.pg.PropertyGraphSail;
 import info.aduna.iteration.CloseableIteration;
-
 import java.io.File;
 import java.io.FileOutputStream;
-
 import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.renderer.api.GraphRDFRenderer;
 import org.openrdf.model.Namespace;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
@@ -19,8 +19,6 @@ import org.openrdf.sail.SailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.oupls.sail.pg.PropertyGraphSail;
 
 public class GraphRDFRendererImpl implements GraphRDFRenderer
 {
@@ -43,52 +41,39 @@ public class GraphRDFRendererImpl implements GraphRDFRenderer
             writer.startRDF();
 
             SailConnection sc = null;
-            try
-            {
+            try {
                 sc = sail.getConnection();
                 CloseableIteration<? extends Namespace, SailException> n = sc.getNamespaces();
-                try
-                {
-                    while (n.hasNext())
-                    {
+                try {
+                    while (n.hasNext()) {
                         Namespace ns = n.next();
                         writer.handleNamespace(ns.getPrefix(), ns.getName());
                     }
                 }
-                finally
-                {
+                finally {
                     n.close();
                 }
 
                 CloseableIteration<? extends Statement, SailException> i = sc.getStatements(null, null, null, false);
-                try
-                {
-                    while (i.hasNext())
-                    {
+                try {
+                    while (i.hasNext()) {
                         Statement stmt = i.next();
                         if (stmt.getSubject() != null && stmt.getPredicate() != null && stmt.getObject() != null)
-                        {
                             writer.handleStatement(stmt);
-                        }
                     }
                 }
-                finally
-                {
+                finally {
                     i.close();
                 }
             }
-            finally
-            {
+            finally {
                 if (sc != null)
-                {
                     sc.close();
-                }
             }
 
             writer.endRDF();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

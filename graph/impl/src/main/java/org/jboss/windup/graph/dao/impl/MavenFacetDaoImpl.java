@@ -5,7 +5,7 @@ import java.util.Iterator;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.MavenFacetDao;
-import org.jboss.windup.graph.model.meta.xml.MavenFacetModel;
+import org.jboss.windup.rules.apps.maven.model.MavenFacetModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
