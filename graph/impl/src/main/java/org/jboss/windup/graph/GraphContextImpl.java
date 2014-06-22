@@ -52,6 +52,8 @@ public class GraphContextImpl implements GraphContext
         return framed;
     }
 
+    
+    
     public GraphContextImpl(File diskCache, GraphTypeRegistry graphTypeRegistry,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider)
     {
@@ -64,6 +66,7 @@ public class GraphContextImpl implements GraphContext
         File lucene = new File(diskCache, "graphsearch");
         File berkley = new File(diskCache, "graph");
 
+        // TODO: Externalize this.
         Configuration conf = new BaseConfiguration();
         conf.setProperty("storage.directory", berkley.getAbsolutePath());
         conf.setProperty("storage.backend", "berkeleyje");
@@ -75,6 +78,8 @@ public class GraphContextImpl implements GraphContext
 
         graph = TitanFactory.open(conf);
 
+        // TODO: This has to load dynamically.
+        // E.g. get all Model classes and use some @Index annotation or such.
         TitanKey namespaceURIKey = graph.makeKey("namespaceURI").dataType(String.class).
                     indexed(Vertex.class).make();
 
@@ -107,31 +112,35 @@ public class GraphContextImpl implements GraphContext
 
         batch = new BatchGraph<TitanGraph>(graph, 1000L);
 
+        
+        
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
+        
+        final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver() {
+            public ClassLoader resolveClassLoader(Class<?> frameType) {
+                return compositeClassLoader;
+            }
+        };
+        
+        final Module fclrModule = new Module() {
+            @Override
+            public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
+            {
+                config.setFrameClassLoaderResolver( fclr );
+                return baseGraph;
+            }
+        };
+        
         FramedGraphFactory factory = new FramedGraphFactory(
-                    new Module()
-                    {
-                        @Override
-                        public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
-                        {
-                            config.setFrameClassLoaderResolver(new FrameClassLoaderResolver()
-                            {
-                                @Override
-                                public ClassLoader resolveClassLoader(Class<?> frameType)
-                                {
-                                    return compositeClassLoader;
-                                }
-                            });
-                            return baseGraph;
-                        }
-                    },
-                    new JavaHandlerModule(),
-                    graphTypeRegistry.build(),
-                    new GremlinGroovyModule()
-                    );
+            fclrModule,
+            new JavaHandlerModule(),
+            graphTypeRegistry.build(),
+            new GremlinGroovyModule()
+        );
 
         framed = factory.create(graph);
     }
+    
 
     @Override
     public File getDiskCacheDirectory()
