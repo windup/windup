@@ -34,7 +34,7 @@ public class XPathMatchesCondition extends GraphCondition
     {
         if( ! (event.getResource() instanceof XmlResourceModel) )
             return false;
-        
+
         final XmlResourceModel resource = (XmlResourceModel) event.getResource();
         try
         {
