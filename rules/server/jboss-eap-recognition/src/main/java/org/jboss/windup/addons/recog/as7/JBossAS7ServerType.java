@@ -38,7 +38,7 @@ public class JBossAS7ServerType implements IServerType {
     }
 
 
-    @Override
+    @Override @SuppressWarnings("deprecation")
     public String format( VersionRange versionRange ) {
         StringBuilder sb = new StringBuilder("JBoss ");
         
