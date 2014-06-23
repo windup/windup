@@ -18,6 +18,7 @@ import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.meta.xml.WebConfigurationFacetModel;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
@@ -47,7 +48,8 @@ public class GraphSearchConditionTest
                                 JavaExampleConfigurationProvider.class,
                                 XmlExampleConfigurationProvider1.class,
                                 XmlExampleConfigurationProvider2.class,
-                                XmlExampleConfigurationProvider3.class)
+                                XmlExampleConfigurationProvider3.class,
+                                WindupConfigurationExampleConfigurationProvider.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
@@ -72,6 +74,51 @@ public class GraphSearchConditionTest
         final GraphContextImpl context = new GraphContextImpl(folder, graphTypeRegistry,
                     graphApiCompositeClassLoaderProvider);
         return context;
+    }
+
+    @Test
+    public void testSingletonSelection()
+    {
+        final File folder = OperatingSystemUtils.createTempDir();
+        final GraphContext context = getGraphContext(folder);
+
+        GraphRewrite event = new GraphRewrite(context);
+        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+        final DefaultParameterValueStore values = new DefaultParameterValueStore();
+        evaluationContext.put(ParameterValueStore.class, values);
+        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
+
+        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+        windupCfg.setInputPath("/tmp/testpath");
+        windupCfg.setSourceMode(true);
+
+        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+        classModel1.setQualifiedName("com.example.Class1NoToString");
+        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+        classModel2.setQualifiedName("com.example.Class2HasToString");
+
+        JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
+        methodModelSomeMethod.setJavaClass(classModel2);
+        methodModelSomeMethod.setMethodName("foo");
+        JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
+        methodModelToString.setJavaClass(classModel2);
+        methodModelToString.setMethodName("toString");
+
+        WindupConfigurationExampleConfigurationProvider provider = new WindupConfigurationExampleConfigurationProvider();
+        Configuration configuration = provider.getConfiguration(context);
+
+        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
+
+        List<JavaMethodModel> methodModelList = provider.getResults();
+        Assert.assertTrue(methodModelList.size() == 1);
+        Assert.assertNotNull(methodModelList.get(0));
+        Assert.assertNotNull(methodModelList.get(0).getJavaClass());
+        Assert.assertEquals("toString", methodModelList.get(0).getMethodName());
+        Assert.assertEquals(classModel2.getQualifiedName(), methodModelList.get(0).getJavaClass().getQualifiedName());
+
+        WindupConfigurationModel foundCfgModel = provider.getConfig();
+        Assert.assertNotNull(foundCfgModel);
+        Assert.assertEquals(windupCfg.getInputPath(), foundCfgModel.getInputPath());
     }
 
     @Test
