@@ -1,7 +1,8 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.rules.server.javaee.model;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 @TypeValue("MailserverMeta")
 public interface MailserverModel extends WindupVertexFrame

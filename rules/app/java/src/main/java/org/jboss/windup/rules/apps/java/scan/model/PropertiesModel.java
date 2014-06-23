@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.rules.apps.java.scan.model;
 
 import java.io.File;
 import java.io.InputStream;
@@ -14,6 +14,7 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 @TypeValue("PropertiesModel"
             + "")

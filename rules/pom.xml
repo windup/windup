@@ -18,6 +18,7 @@
     <modules>
         <module>server/jboss-eap-recognition</module>
         <module>server/server-migration-utils</module>
+        <module>server/java-ee-server</module>
         <module>app/java</module>
         <module>app/java-ee</module>
         <!--
