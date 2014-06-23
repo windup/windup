@@ -165,7 +165,7 @@ public class GraphSubset extends DefaultOperationBuilder implements CompositeOpe
         return Collections.emptyList();
     }
 
-    class EvaluationContextImpl extends ContextBase implements EvaluationContext
+    private static class EvaluationContextImpl extends ContextBase implements EvaluationContext
     {
         private final List<Operation> preOperations = new ArrayList<Operation>();
         private final List<Operation> postOperations = new ArrayList<Operation>();
@@ -245,73 +245,7 @@ public class GraphSubset extends DefaultOperationBuilder implements CompositeOpe
             if( ! (rule instanceof RuleBuilder) )
                 continue;
 
-            ParameterizedCallback callback = new ParameterizedCallback()
-            {
-                @Override
-                public void call(Parameterized parameterized)
-                {
-                    Set<String> names = parameterized.getRequiredParameterNames();
-                    if( ! (rule instanceof RuleBuilder) )
-                        return;
-                    
-                    ParameterStore store = ((RuleBuilder) rule).getParameterStore();
-
-                    for (Entry<String, Parameter<?>> entry : parent)
-                    {
-                        String name = entry.getKey();
-                        Parameter<?> parentParam = entry.getValue();
-
-                        if (!store.contains(name))
-                        {
-                            store.get(name, parentParam);
-                            continue;
-                        }
-                        
-                        Parameter<?> parameter = store.get(name);
-                        for (Binding binding : parameter.getBindings())
-                        {
-                            if (!parentParam.getBindings().contains(binding))
-                                throwRedefinitionError(rule, name);
-                        }
-
-                        for (Constraint<?> constraint : parameter.getConstraints())
-                        {
-                            if (!parentParam.getConstraints().contains(constraint))
-                                throwRedefinitionError(rule, name);
-                        }
-
-                        for (Transposition<?> transposition : parameter.getTranspositions())
-                        {
-                            if (!parentParam.getTranspositions().contains(transposition))
-                                throwRedefinitionError(rule, name);
-                        }
-
-                        if (parentParam.getConverter() != null
-                                    && !parentParam.getConverter().equals(parameter.getConverter()))
-                            throwRedefinitionError(rule, name);
-
-                        if (parentParam.getValidator() != null
-                                    && !parentParam.getValidator().equals(parameter.getValidator()))
-                            throwRedefinitionError(rule, name);
-                    }
-
-                    for (String name : names)
-                    {
-                        Parameter<?> parameter = store.get(name, new DefaultParameter(name));
-                        if (parameter instanceof ConfigurableParameter<?>)
-                            ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(name));
-                    }
-                    parameterized.setParameterStore(store);
-
-                }
-
-                private void throwRedefinitionError(Rule rule, String name)
-                {
-                    throw new IllegalStateException("Subset cannot re-configure parameter [" + name
-                                + "] that was configured in parent Configuration. Re-definition was attempted at ["
-                                + rule + "] ");
-                }
-            };
+            ParameterizedCallback callback = new ParameterizedCallbackImpl(rule, parent);
 
             Visitor<Condition> conditionVisitor = new ParameterizedConditionVisitor(callback);
             new ConditionVisit(rule).accept(conditionVisitor);
@@ -320,4 +254,85 @@ public class GraphSubset extends DefaultOperationBuilder implements CompositeOpe
             new OperationVisit(rule).accept(operationVisitor);
         }
     }
+
+    
+    private static class ParameterizedCallbackImpl implements ParameterizedCallback {
+
+        private final Rule rule;
+        private final ParameterStore parent;
+
+
+        public ParameterizedCallbackImpl( Rule rule, ParameterStore parent ) {
+            this.rule = rule;
+            this.parent = parent;
+        }
+
+
+        @Override
+        public void call(Parameterized parameterized)
+        {
+            Set<String> names = parameterized.getRequiredParameterNames();
+            if( ! (rule instanceof RuleBuilder) )
+                return;
+            
+            ParameterStore store = ((RuleBuilder) rule).getParameterStore();
+            
+            for (Entry<String, Parameter<?>> entry : parent)
+            {
+                String name = entry.getKey();
+                Parameter<?> parentParam = entry.getValue();
+                
+                if (!store.contains(name))
+                {
+                    store.get(name, parentParam);
+                    continue;
+                }
+                
+                Parameter<?> parameter = store.get(name);
+                for (Binding binding : parameter.getBindings())
+                {
+                    if (!parentParam.getBindings().contains(binding))
+                        throwRedefinitionError(rule, name);
+                }
+                
+                for (Constraint<?> constraint : parameter.getConstraints())
+                {
+                    if (!parentParam.getConstraints().contains(constraint))
+                        throwRedefinitionError(rule, name);
+                }
+                
+                for (Transposition<?> transposition : parameter.getTranspositions())
+                {
+                    if (!parentParam.getTranspositions().contains(transposition))
+                        throwRedefinitionError(rule, name);
+                }
+                
+                if (parentParam.getConverter() != null
+                        && !parentParam.getConverter().equals(parameter.getConverter()))
+                    throwRedefinitionError(rule, name);
+                
+                if (parentParam.getValidator() != null
+                        && !parentParam.getValidator().equals(parameter.getValidator()))
+                    throwRedefinitionError(rule, name);
+            }
+            
+            for (String name : names)
+            {
+                Parameter<?> parameter = store.get(name, new DefaultParameter(name));
+                if (parameter instanceof ConfigurableParameter<?>)
+                    ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(name));
+            }
+            parameterized.setParameterStore(store);
+            
+        }
+
+
+        private void throwRedefinitionError(Rule rule, String name)
+        {
+            throw new IllegalStateException("Subset cannot re-configure parameter [" + name
+                    + "] that was configured in parent Configuration. Re-definition was attempted at ["
+                    + rule + "] ");
+        }
+
+    }// ParameterizedCallbackImpl
 }
