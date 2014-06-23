@@ -82,10 +82,15 @@ public class GraphContextImpl implements GraphContext
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
         String[] keys = new String[]{"namespaceURI", "schemaLocation", "publicId", "rootTagName", 
-            "systemId", "qualifiedName", "archiveEntry", "type", "filePath", "mavenIdentifier"};
+            "systemId", "qualifiedName", "filePath", "mavenIdentifier"};
         for( String key : keys )
         {
             graph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
+        }
+        
+        for( String key : new String[]{"archiveEntry", "type"} )
+        {
+            graph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
         }
         
 
