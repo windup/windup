@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.rules.apps.ejb.model;
 
 import java.util.Iterator;
 
@@ -6,6 +6,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 @TypeValue("JBossModuleMeta")
 public interface JBossModuleModel extends WindupVertexFrame

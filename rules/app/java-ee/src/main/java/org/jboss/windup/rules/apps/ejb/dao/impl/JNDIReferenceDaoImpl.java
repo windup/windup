@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 import org.jboss.windup.rules.apps.ejb.dao.JNDIReferenceDao;
-import org.jboss.windup.graph.model.JNDIReferenceModel;
+import org.jboss.windup.rules.apps.ejb.model.JNDIReferenceModel;
 
 @Singleton
 public class JNDIReferenceDaoImpl extends BaseDaoImpl<JNDIReferenceModel> implements JNDIReferenceDao {
