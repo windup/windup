@@ -1,15 +1,15 @@
 package org.jboss.windup.graph.typedgraph;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
 /**
- *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * 
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 @TypeValue("Foo")
-interface FooModel extends ResourceModel {
-
-    
+public interface FooModel extends ResourceModel
+{
 
 }// class

@@ -12,8 +12,8 @@ import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 
 /**
- *  Undocumented but important class.
- *  Thanks for writing the purpose of the code into javadoc.
+ * Provides a composite classloader of all addons that depend on this addon.
+ * 
  */
 public class GraphApiCompositeClassLoaderProvider
 {
@@ -24,8 +24,9 @@ public class GraphApiCompositeClassLoaderProvider
     private Furnace furnace;
 
     /**
-     *  Creates a classloader which combines classloaders of all addons depending on Graph API
-     *  (which I guess is how we filter out modules which may have Model classes).
+     * Creates a classloader which combines classloaders of all addons depending on Graph API. This insures that
+     * FramedGraph can always load all the relevant types of *Model classes (as all model classes will be in Addons that
+     * depend on Graph API).
      */
     public ClassLoader getCompositeClassLoader()
     {
