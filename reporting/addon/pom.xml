@@ -33,6 +33,7 @@
             <artifactId>windup-config</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+            <scope>provided</scope>
         </dependency>
   
         <dependency>
