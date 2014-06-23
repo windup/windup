@@ -19,6 +19,14 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>

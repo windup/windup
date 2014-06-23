@@ -1,7 +1,10 @@
 package org.jboss.windup.tests.application;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -26,6 +29,7 @@ public class WindupArchitectureSourceModeTest
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
@@ -37,6 +41,7 @@ public class WindupArchitectureSourceModeTest
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
@@ -58,6 +63,7 @@ public class WindupArchitectureSourceModeTest
         String inputPath = "../../test-files/src_example";
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
+        windupCfg.setOutputPath(new File(FileUtils.getTempDirectory(), "windupreport").getAbsolutePath());
         windupCfg.setSourceMode(true);
 
         try
