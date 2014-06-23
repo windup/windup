@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 import org.jboss.windup.rules.apps.ejb.dao.EnvironmentReferenceDao;
-import org.jboss.windup.graph.model.EnvironmentReferenceModel;
+import org.jboss.windup.rules.apps.ejb.model.EnvironmentReferenceModel;
 
 @Singleton
 public class EnvironmentReferenceDaoImpl extends BaseDaoImpl<EnvironmentReferenceModel> implements EnvironmentReferenceDao {
