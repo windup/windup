@@ -32,69 +32,76 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         typeRegistry.add(wvf);
     }
 
+    /**
+     *  Adds the type value to the field denoting which type the element represents.
+     */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
         Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
-        if (typeHoldingTypeField != null)
-        {
-            TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
-            if (typeValueAnnotation != null)
-            {
-                String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-                String typeValue = typeValueAnnotation.value();
-                if (typeValue.contains(DELIMITER))
-                {
-                    throw new IllegalArgumentException("Type value for class: " + kind.getCanonicalName() + " is "
-                                + typeValue + " but this value must not contain the \"" + DELIMITER + "\" character");
-                }
-                else
-                {
-                    for (int p = 0; p < typeValue.length(); p++)
-                    {
-                        if (!Character.isLetterOrDigit(typeValue.charAt(p)))
-                        {
-                            throw new IllegalArgumentException("Type value for class: " + kind.getCanonicalName()
-                                        + " is "
-                                        + typeValue + " but this value must only contain numbers and letters");
-                        }
-                    }
-                }
+        if (typeHoldingTypeField == null)
+            return;
+            
+        TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
+        if (typeValueAnnotation == null)
+            return;
+            
+        String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
+        String typeValue = typeValueAnnotation.value();
+        if (typeValue.contains(DELIMITER)) {
+            throw new IllegalArgumentException("Type value for class '" + kind.getCanonicalName()
+                + "' is '" + typeValue + "' but must not contain the \"" + DELIMITER + "\" character.");
+        }
+        if( ! StringUtils.isAlphanumeric( typeValue ) ) {
+            throw new IllegalArgumentException("Type value for class '" + kind.getCanonicalName()
+                + "' is '" + typeValue + "' but must be alphanumeric.");
+        }
 
-                // store the value in a delimited list
-                String currentPropertyValue = element.getProperty(typeFieldName);
-                if (currentPropertyValue == null)
-                {
-                    // if there is no current value, initialize with one value
-                    element.setProperty(typeFieldName, DELIMITER + typeValue + DELIMITER);
-                }
-                else if (!currentPropertyValue.contains(DELIMITER + typeValue + DELIMITER))
-                {
-                    // otherwise, append to the end, making sure that the list is terminated with the delimiter
-                    // character
-                    element.setProperty(typeFieldName, currentPropertyValue + typeValue + DELIMITER);
-                }
-            }
+        // Store the type value in a delimited list.
+        String currentPropertyValue = element.getProperty(typeFieldName);
+        if (currentPropertyValue == null)
+        {
+            // If there is no current value, initialize with "|typeValue".
+            element.setProperty(typeFieldName, DELIMITER + typeValue + DELIMITER);
+        }
+        else if (!currentPropertyValue.contains(DELIMITER + typeValue + DELIMITER))
+        {
+            // Otherwise, append to the end, making sure that the list is terminated with the delimiter.
+            element.setProperty(typeFieldName, currentPropertyValue + typeValue + DELIMITER);
         }
     }
 
+    
+    /**
+     *  Returns the classes which this edge represents, typically subclasses.
+     */
     @Override
     public Class<?>[] resolveTypes(Edge e, Class<?> defaultType)
     {
         return resolve(e, defaultType);
     }
 
+    /**
+     *  Returns the classes which this vertex represents, typically subclasses.
+     */
     @Override
     public Class<?>[] resolveTypes(Vertex v, Class<?> defaultType)
     {
         return resolve(v, defaultType);
     }
 
+    /**
+     *  Returns the classes which this vertex/edge represents, typically subclasses.
+     *  Always appends
+     */
     private Class<?>[] resolve(Element e, Class<?> defaultType)
     {
+        // The class field holding the name of the type holding property.
         Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(defaultType);
         if (typeHoldingTypeField != null)
         {
-            String valuesAll = e.getProperty(typeHoldingTypeField.getAnnotation(TypeField.class).value());
+            // Name of the graph element property holding the type list.
+            String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
+            String valuesAll = e.getProperty( propName );
             if (valuesAll != null)
             {
                 String[] valuesArray = StringUtils.split(valuesAll, DELIMITER);
@@ -102,10 +109,9 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
                 for (String value : valuesArray)
                 {
                     Class<?> type = typeRegistry.getType(typeHoldingTypeField, value);
-                    if (type != null)
-                    {
-                        resultClasses.add(type);
-                    }
+                    if (type == null)
+                        continue;
+                    resultClasses.add(type);
                 }
                 if (!resultClasses.isEmpty())
                 {
