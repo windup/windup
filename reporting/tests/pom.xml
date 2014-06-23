@@ -21,10 +21,18 @@
             <classifier>forge-addon</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config-api</artifactId>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>

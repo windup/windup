@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -72,6 +73,11 @@ public class CssJsResourceRenderingConfigurationProvider extends WindupConfigura
         try
         {
             String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+            if (path.endsWith(".jar") || path.endsWith(".jar!/"))
+            {
+                path = path.replace("file:", "jar:file:");
+            }
+
             File fpath = new File(path);
             if (fpath.isDirectory())
             {
@@ -80,7 +86,7 @@ public class CssJsResourceRenderingConfigurationProvider extends WindupConfigura
             }
             else
             {
-                FileSystem fs = FileSystems.newFileSystem(new URI(path), null);
+                FileSystem fs = FileSystems.newFileSystem(new URI(path), new HashMap<String, String>());
                 Path p = fs.getPath("reports/resources");
                 recursePath(p, outputPath);
             }
