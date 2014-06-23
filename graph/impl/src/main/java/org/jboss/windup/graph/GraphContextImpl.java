@@ -20,6 +20,7 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import java.util.Arrays;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -79,41 +80,19 @@ public class GraphContextImpl implements GraphContext
         graph = TitanFactory.open(conf);
 
         // TODO: This has to load dynamically.
-        // E.g. get all Model classes and use some @Index annotation or such.
-        TitanKey namespaceURIKey = graph.makeKey("namespaceURI").dataType(String.class).
-                    indexed(Vertex.class).make();
-
-        TitanKey schemaLocationKey = graph.makeKey("schemaLocation").dataType(String.class).
-                    indexed(Vertex.class).make();
-
-        TitanKey publicIdKey = graph.makeKey("publicId").dataType(String.class).
-                    indexed(Vertex.class).make();
-
-        TitanKey rootTagKey = graph.makeKey("rootTagName").dataType(String.class).
-                    indexed(Vertex.class).make();
-
-        TitanKey systemIdKey = graph.makeKey("systemId").dataType(String.class).
-                    indexed(Vertex.class).make();
-
-        TitanKey qualifiedNameKey = graph.makeKey("qualifiedName").dataType(String.class).
-                    indexed(Vertex.class).make();
-
-        TitanKey archiveEntryKey = graph.makeKey("archiveEntry").dataType(String.class).
-                    indexed("search", Vertex.class).make();
-
-        TitanKey typeKey = graph.makeKey("type").dataType(String.class).
-                    indexed("search", Vertex.class).make();
-
-        TitanKey filePath = graph.makeKey("filePath").dataType(String.class).
-                    indexed(Vertex.class).make();
-
-        TitanKey mavenIdentifier = graph.makeKey("mavenIdentifier").dataType(String.class).
-                    indexed(Vertex.class).make();
+        // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
+        String[] keys = new String[]{"namespaceURI", "schemaLocation", "publicId", "rootTagName", 
+            "systemId", "qualifiedName", "archiveEntry", "type", "filePath", "mavenIdentifier"};
+        for( String key : keys )
+        {
+            graph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
+        }
+        
 
         batch = new BatchGraph<TitanGraph>(graph, 1000L);
 
         
-        
+        // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
         
         final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver() {
@@ -131,11 +110,12 @@ public class GraphContextImpl implements GraphContext
             }
         };
         
+        // Frames with all the features.
         FramedGraphFactory factory = new FramedGraphFactory(
-            fclrModule,
-            new JavaHandlerModule(),
-            graphTypeRegistry.build(),
-            new GremlinGroovyModule()
+            fclrModule,                // Composite classloader
+            new JavaHandlerModule(),   // @JavaHandler
+            graphTypeRegistry.build(), // Model classes
+            new GremlinGroovyModule()  // @Gremlin
         );
 
         framed = factory.create(graph);
