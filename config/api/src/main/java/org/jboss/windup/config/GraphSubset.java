@@ -256,6 +256,9 @@ public class GraphSubset extends DefaultOperationBuilder implements CompositeOpe
     }
 
     
+    /**
+     * 
+     */
     private static class ParameterizedCallbackImpl implements ParameterizedCallback {
 
         private final Rule rule;
@@ -295,13 +298,13 @@ public class GraphSubset extends DefaultOperationBuilder implements CompositeOpe
                         throwRedefinitionError(rule, name);
                 }
                 
-                for (Constraint<?> constraint : parameter.getConstraints())
+                for (Constraint<String> constraint : parameter.getConstraints())
                 {
                     if (!parentParam.getConstraints().contains(constraint))
                         throwRedefinitionError(rule, name);
                 }
                 
-                for (Transposition<?> transposition : parameter.getTranspositions())
+                for (Transposition<String> transposition : parameter.getTranspositions())
                 {
                     if (!parentParam.getTranspositions().contains(transposition))
                         throwRedefinitionError(rule, name);
