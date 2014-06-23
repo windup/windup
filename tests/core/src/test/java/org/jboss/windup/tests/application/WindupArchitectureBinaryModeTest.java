@@ -1,7 +1,10 @@
 package org.jboss.windup.tests.application;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -59,6 +62,7 @@ public class WindupArchitectureBinaryModeTest
         String inputPath = "../../test-files/Windup1x-javaee-example.war";
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
+        windupCfg.setOutputPath(new File(FileUtils.getTempDirectory(), "windupreport").getAbsolutePath());
         windupCfg.setSourceMode(false);
 
         try
