@@ -1,11 +1,11 @@
-package org.jboss.windup.graph.dao.impl;
-
-import org.jboss.windup.graph.dao.SourceReportDao;
-import org.jboss.windup.graph.model.meta.report.SourceReportModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.ResourceModel;
+package org.jboss.windup.reporting.dao;
 
 import com.tinkerpop.blueprints.Direction;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
+import org.jboss.windup.reporting.meta.SourceReportModel;
+
 
 public class SourceReportDaoImpl extends BaseDaoImpl<SourceReportModel> implements SourceReportDao
 {
@@ -21,13 +21,12 @@ public class SourceReportDaoImpl extends BaseDaoImpl<SourceReportModel> implemen
 
     public FileModel getResourceReport(ResourceModel resource)
     {
-        if (hasSourceReport(resource))
-        {
-            SourceReportModel report = getContext().getFramed().frame(
-                        resource.asVertex().getVertices(Direction.OUT, "sourceReport").iterator().next(),
-                        SourceReportModel.class);
-            return report.getReportFile();
-        }
-        return null;
+        if( ! hasSourceReport(resource) )
+            return null;
+
+        SourceReportModel report = getContext().getFramed().frame(
+            resource.asVertex().getVertices(Direction.OUT, "sourceReport").iterator().next(),
+            SourceReportModel.class);
+        return report.getReportFile();
     }
 }

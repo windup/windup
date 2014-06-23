@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model.meta.report;
+package org.jboss.windup.reporting.meta;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
