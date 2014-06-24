@@ -11,11 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -111,14 +111,7 @@ public class CssJsResourceRenderingConfigurationProvider extends WindupConfigura
 
                 FileUtils.forceMkdir(resultFile.getParent().toFile());
                 FileOutputStream fos = new FileOutputStream(resultFile.toFile());
-                try
-                {
-                    Files.copy(file, fos);
-                }
-                finally
-                {
-                    IOUtils.closeQuietly(fos);
-                }
+                Files.copy(file, resultFile, StandardCopyOption.REPLACE_EXISTING);
                 return FileVisitResult.CONTINUE;
             }
         });

@@ -8,17 +8,11 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("SourceReport")
-public interface SourceReportModel extends ResourceModel {
-
-    @Adjacency(label="sourceReport", direction=Direction.IN)
-    public ResourceModel getResource();
-
-    @Adjacency(label="sourceReport", direction=Direction.IN)
-    public void setResource(ResourceModel resource);
-    
-    @Adjacency(label="reportFile", direction=Direction.OUT)
+public interface SourceReportModel extends ResourceModel
+{
+    @Adjacency(label = "reportFile", direction = Direction.OUT)
     public FileModel getReportFile();
-    
-    @Adjacency(label="reportFile", direction=Direction.OUT)
+
+    @Adjacency(label = "reportFile", direction = Direction.OUT)
     public void setReportFile(FileModel report);
 }

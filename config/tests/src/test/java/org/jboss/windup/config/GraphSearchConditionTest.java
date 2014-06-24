@@ -19,6 +19,7 @@ import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
@@ -35,24 +36,24 @@ public class GraphSearchConditionTest
 {
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-            .addBeansXML()
-            .addClasses(MavenExampleConfigurationProvider.class,
-                JavaExampleConfigurationProvider.class,
-                XmlExampleConfigurationProvider1.class,
-                XmlExampleConfigurationProvider2.class,
-                XmlExampleConfigurationProvider3.class)
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                    .addBeansXML()
+                    .addClasses(MavenExampleConfigurationProvider.class,
+                                JavaExampleConfigurationProvider.class,
+                                XmlExampleConfigurationProvider1.class,
+                                XmlExampleConfigurationProvider2.class,
+                                XmlExampleConfigurationProvider3.class)
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
         return archive;
     }
 

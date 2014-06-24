@@ -18,7 +18,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
-import org.jboss.windup.reporting.meta.ClassLoaderReportModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,12 +65,6 @@ public class ApplicationReportTest extends AbstractTestCase
         ApplicationReportModel appReportModel = context.getFramed().addVertex(null, ApplicationReportModel.class);
         appReportModel.setApplicationName("My Great Application");
 
-        ClassLoaderReportModel classLoaderReportModel = context.getFramed().addVertex(null,
-                    ClassLoaderReportModel.class);
-        classLoaderReportModel.setReferencedFrom("Blah blah blah");
-
-        appReportModel.addChildReport(classLoaderReportModel);
-
         freemarker.template.Configuration cfg = new freemarker.template.Configuration();
         cfg.setTemplateUpdateDelay(500);
         cfg.setClassForTemplateLoading(this.getClass(), "/");
@@ -84,7 +77,7 @@ public class ApplicationReportTest extends AbstractTestCase
         StringWriter sw = new StringWriter();
         template.process(objects, sw);
         String result = sw.toString();
-        Assert.assertTrue(result.contains("Child noCast.referencedFrom: Blah blah blah"));
+        Assert.assertTrue(result.contains("Application Name:"));
     }
 
     @Test
