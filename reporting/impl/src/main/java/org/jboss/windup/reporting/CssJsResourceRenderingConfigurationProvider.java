@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
@@ -110,7 +109,6 @@ public class CssJsResourceRenderingConfigurationProvider extends WindupConfigura
                 Path resultFile = resultPath.resolve(relativePath);
 
                 FileUtils.forceMkdir(resultFile.getParent().toFile());
-                FileOutputStream fos = new FileOutputStream(resultFile.toFile());
                 Files.copy(file, resultFile, StandardCopyOption.REPLACE_EXISTING);
                 return FileVisitResult.CONTINUE;
             }
