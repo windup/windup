@@ -37,19 +37,19 @@ public class SelectionFactoryTest
 
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-            .addBeansXML()
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                    .addBeansXML()
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
         return archive;
     }
 
@@ -89,8 +89,8 @@ public class SelectionFactoryTest
         {
             Assert.assertNotNull(e.getMessage());
             Assert.assertTrue(
-                e.getMessage()
-                    .contains("Variable \"classModel1\" does not implement expected interface \"org.jboss.windup.graph.model.meta.xml.MavenFacetModel\", actual implemented interfaces are"));
+                        e.getMessage()
+                                    .contains("Variable \"classModel1\" does not implement expected interface \"org.jboss.windup.rules.apps.maven.model.MavenFacetModel\", actual implemented interfaces are"));
         }
     }
 }
