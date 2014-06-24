@@ -17,6 +17,7 @@ import java.util.HashMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupConfigurationProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
@@ -26,6 +27,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class CssJsResourceRenderingConfigurationProvider extends WindupConfigurationProvider
 {
@@ -53,9 +55,8 @@ public class CssJsResourceRenderingConfigurationProvider extends WindupConfigura
                                                         new AbstractIterationOperator<WindupConfigurationModel>(
                                                                     WindupConfigurationModel.class, "cfg")
                                                         {
-                                                            public void perform(
-                                                                        org.jboss.windup.config.GraphRewrite event,
-                                                                        org.ocpsoft.rewrite.context.EvaluationContext context,
+                                                            public void perform(GraphRewrite event,
+                                                                        EvaluationContext context,
                                                                         WindupConfigurationModel payload)
                                                             {
                                                                 String outputPath = payload.getOutputPath();
