@@ -17,17 +17,17 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 public class NamedIterationSelectionManager implements IterationSelectionManager
 {
 
-    private final String source;
+    private final String varName;
 
-    public NamedIterationSelectionManager(String source)
+    public NamedIterationSelectionManager(String varName)
     {
-        this.source = source;
+        this.varName = varName;
     }
 
     @Override
     public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, SelectionFactory factory)
     {
-        return factory.findVariable(source);
+        return factory.findVariable(varName);
     }
 
 }
