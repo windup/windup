@@ -10,8 +10,12 @@ import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
+ * Sets or removes the current payload from the variable stack / payload manager (factory).
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
+ * TODO: Personally I'd remove the whole IterationPayloadManager interface
+ * and access VarStack directly.
  */
 public interface IterationPayloadManager
 {

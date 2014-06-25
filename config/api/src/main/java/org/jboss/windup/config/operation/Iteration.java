@@ -83,6 +83,7 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
         return this;
     }
 
+    
     @Override
     public IterationQuery queryFor(Class<? extends WindupVertexFrame> varType, String var)
     {
@@ -101,6 +102,10 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
         return this;
     }
 
+    /**
+     * A condition which decides for each frame whether .perform() 
+     * or otherwise() will be processed.
+     */
     @Override
     public IterationBuilderWhen when(Condition condition)
     {
@@ -108,6 +113,9 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
         return this;
     }
 
+    /**
+     *  Will be processed for frames which comply to the condition in when().
+     */
     @Override
     public IterationBuilderPerform perform(Operation operation)
     {
@@ -115,6 +123,9 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
         return this;
     }
 
+    /**
+     *  Will be processed for frames which DO NOT comply to the condition in when().
+     */
     @Override
     public IterationBuilderOtherwise otherwise(Operation operation)
     {
@@ -122,26 +133,37 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
         return this;
     }
 
+    /**
+     *  Visual cap of the iteration.
+     */
     @Override
     public IterationBuilderComplete endIteration()
     {
         return this;
     }
 
+    /**
+     *  Called internally to actually process the Iteration.
+     */
     @Override
     public void perform(Rewrite event, EvaluationContext context)
     {
         perform((GraphRewrite) event, context);
     }
 
+    /**
+     *  Called internally to actually process the Iteration.
+     *  Loops over the frames to iterate, and performs their
+     *  .perform( ... ) or .otherwise( ... ) parts.
+     */
     public void perform(GraphRewrite event, EvaluationContext context)
     {
         SelectionFactory factory = SelectionFactory.instance(event);
         factory.push();
         Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, factory);
-        for (WindupVertexFrame element : frames)
+        for (WindupVertexFrame frame : frames)
         {
-            getPayloadManager().setCurrentPayload(factory, element);
+            getPayloadManager().setCurrentPayload(factory, frame);
             if (condition == null || condition.evaluate(event, context))
             {
                 if (operationPerform != null)

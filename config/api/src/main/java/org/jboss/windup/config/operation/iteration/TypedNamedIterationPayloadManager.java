@@ -11,8 +11,12 @@ import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Basically, a NamedIterationPayloadManager + a type check.
  * 
+ * TODO: Personally I'd remove the whole IterationPayloadManager interface
+ * and access VarStack directly.
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class TypedNamedIterationPayloadManager implements IterationPayloadManager
 {
@@ -29,7 +33,6 @@ public class TypedNamedIterationPayloadManager implements IterationPayloadManage
     @Override
     public void setCurrentPayload(SelectionFactory factory, WindupVertexFrame element)
     {
-        // TODO verify type
         if (!varType.isAssignableFrom(element.getClass()))
         {
             throw new IllegalTypeArgumentException(var, varType, element.getClass());
