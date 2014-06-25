@@ -6,9 +6,12 @@
  */
 package org.jboss.windup.config.operation.iteration;
 
+import java.util.Iterator;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -17,20 +20,28 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 public class TypedNamedIterationSelectionManager implements IterationSelectionManager
 {
 
-    private final Class<? extends WindupVertexFrame> sourceType;
-    private final String source;
+    private final Class<? extends WindupVertexFrame> framesModel;
+    private final String varName;
 
-    public TypedNamedIterationSelectionManager(Class<? extends WindupVertexFrame> sourceType, String source)
+    public TypedNamedIterationSelectionManager(Class<? extends WindupVertexFrame> framesModel, String varName)
     {
-        this.sourceType = sourceType;
-        this.source = source;
+        this.framesModel = framesModel;
+        this.varName = varName;
     }
 
     @Override
     public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, SelectionFactory factory)
     {
-        // TODO verify type
-        return factory.findVariable(source);
+        final Iterable<WindupVertexFrame> frames = factory.findVariable(varName);
+
+        // Check the type.
+        final Iterator<WindupVertexFrame> it = frames.iterator();
+        if(it.hasNext()){
+            final Class<? extends WindupVertexFrame> actualType = it.next().getClass();
+            if( ! this.framesModel.isAssignableFrom( actualType ) )
+                throw new IllegalTypeArgumentException(varName, this.framesModel, actualType);
+        }
+        return frames;
     }
 
 }
