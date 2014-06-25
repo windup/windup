@@ -9,7 +9,6 @@ import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanKey;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
@@ -20,7 +19,6 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
-import java.util.Arrays;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -53,8 +51,6 @@ public class GraphContextImpl implements GraphContext
         return framed;
     }
 
-    
-    
     public GraphContextImpl(File diskCache, GraphTypeRegistry graphTypeRegistry,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider)
     {
@@ -81,51 +77,51 @@ public class GraphContextImpl implements GraphContext
 
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
-        String[] keys = new String[]{"namespaceURI", "schemaLocation", "publicId", "rootTagName", 
-            "systemId", "qualifiedName", "filePath", "mavenIdentifier"};
-        for( String key : keys )
+        String[] keys = new String[] { "namespaceURI", "schemaLocation", "publicId", "rootTagName",
+                    "systemId", "qualifiedName", "filePath", "mavenIdentifier" };
+        for (String key : keys)
         {
             graph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
-        
-        for( String key : new String[]{"archiveEntry", "type"} )
+
+        for (String key : new String[] { "archiveEntry", "type" })
         {
             graph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
         }
-        
 
         batch = new BatchGraph<TitanGraph>(graph, 1000L);
 
-        
         // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
-        
-        final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver() {
-            public ClassLoader resolveClassLoader(Class<?> frameType) {
+
+        final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver()
+        {
+            public ClassLoader resolveClassLoader(Class<?> frameType)
+            {
                 return compositeClassLoader;
             }
         };
-        
-        final Module fclrModule = new Module() {
+
+        final Module fclrModule = new Module()
+        {
             @Override
             public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
             {
-                config.setFrameClassLoaderResolver( fclr );
+                config.setFrameClassLoaderResolver(fclr);
                 return baseGraph;
             }
         };
-        
+
         // Frames with all the features.
         FramedGraphFactory factory = new FramedGraphFactory(
-            fclrModule,                // Composite classloader
-            new JavaHandlerModule(),   // @JavaHandler
-            graphTypeRegistry.build(), // Model classes
-            new GremlinGroovyModule()  // @Gremlin
+                    fclrModule, // Composite classloader
+                    new JavaHandlerModule(), // @JavaHandler
+                    graphTypeRegistry.build(), // Model classes
+                    new GremlinGroovyModule() // @Gremlin
         );
 
         framed = factory.create(graph);
     }
-    
 
     @Override
     public File getDiskCacheDirectory()
