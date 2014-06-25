@@ -18,8 +18,11 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * A variables stack, and also "current values" -
+ * keeps few layers of "key"->[vertices] maps, one per rule execution level,
+ * and current "cursor" (to an iterable) for iterations.
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class SelectionFactory
 {
@@ -29,27 +32,44 @@ public class SelectionFactory
     Deque<Map<String, Iterable<WindupVertexFrame>>> deque = new LinkedList<>();
     Map<String, WindupVertexFrame> currents = new HashMap<>();
 
+    /**
+     *  Gets an instance from a OCP rewrite context; created during rule init phase.
+     */
     public static SelectionFactory instance(GraphRewrite event)
     {
         return (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
     }
 
+    
+    /**
+     * Add new variables layer on top of the stack.
+     */
     public void push()
     {
         Map<String, Iterable<WindupVertexFrame>> newFrame = new HashMap<>();
         deque.push(newFrame);
     }
 
+    /**
+     * Remove the top variables layer from the the stack.
+     */
     public Map<String, Iterable<WindupVertexFrame>> pop()
     {
         return deque.pop();
     }
 
+    /**
+     *  Get the top variables layer from the stack.
+     */
     private Map<String, Iterable<WindupVertexFrame>> peek()
     {
         return deque.peek();
     }
 
+    /**
+     *  Set a variable in the top variables layer to given "collection" of the vertex frames.
+     *  Can't be reassigned - throws on attempt to reassign.
+     */
     public void setVariable(String name, Iterable<WindupVertexFrame> iterable)
     {
         Map<String, Iterable<WindupVertexFrame>> frame = peek();
@@ -61,6 +81,11 @@ public class SelectionFactory
         frame.put(name, iterable);
     }
 
+    
+    /**
+     * Type-safe wrapper around findVariable which gives only one framed vertex, 
+     * and checks if there is 0 or 1; throws otherwise.
+     */
     @SuppressWarnings("unchecked")
     public <T extends WindupVertexFrame> T findSingletonVariable(Class<T> type, String name)
     {
@@ -70,12 +95,15 @@ public class SelectionFactory
         if (iterator.hasNext())
         {
             Object foundObject = iterator.next();
+            
+            // Check the type.
             if (!type.isAssignableFrom(foundObject.getClass()))
             {
                 throw new IllegalTypeArgumentException(name, type, foundObject.getClass());
             }
             result = (T) foundObject;
 
+            // Check if there's just 1.
             if (iterator.hasNext())
             {
                 throw new WindupException("findSingleton called for variable \"" + name
@@ -85,6 +113,11 @@ public class SelectionFactory
         return result;
     }
 
+    
+    /**
+     * Searches the variables layers, top to bottom, for given name,
+     * and returns if found; null otherwise.
+     */
     public Iterable<WindupVertexFrame> findVariable(String name)
     {
         Iterator<Map<String, Iterable<WindupVertexFrame>>> descIter = deque.descendingIterator();
@@ -93,34 +126,38 @@ public class SelectionFactory
         {
             Map<String, Iterable<WindupVertexFrame>> frame = descIter.next();
             result = frame.get(name);
-            if (result != null)
-            {
+            if (result != null) {
                 break;
             }
         }
         return result;
     }
 
+    
+    /**
+     * Sets the "cursor" for given variable to given framed vertex; no validity checks!
+     */
     public void setCurrentPayload(String name, WindupVertexFrame element)
     {
         currents.put(name, element);
     }
 
+    
+    /**
+     *  Returns the "cursor" for given var name.
+     *  The variables typically keep an iterable; the "current payload" concept
+     *  holds the reference to the currently iterated vertex.
+     */
     @SuppressWarnings("unchecked")
     public <T extends WindupVertexFrame> T getCurrentPayload(Class<T> type, String name)
     {
         Object object = currents.get(name);
         if (object == null)
-        {
             return null;
-        }
-        else
-        {
-            if (!type.isAssignableFrom(object.getClass()))
-            {
-                throw new IllegalTypeArgumentException(name, type, object.getClass());
-            }
-            return (T) object;
-        }
+        
+        if (!type.isAssignableFrom(object.getClass()))
+            throw new IllegalTypeArgumentException(name, type, object.getClass());
+
+        return (T) object;
     }
 }
