@@ -36,28 +36,28 @@ public class GraphSearchConditionTest
 {
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addClasses(MavenExampleConfigurationProvider.class,
-                                JavaExampleConfigurationProvider.class,
-                                XmlExampleConfigurationProvider1.class,
-                                XmlExampleConfigurationProvider2.class,
-                                XmlExampleConfigurationProvider3.class,
-                                SomeModel.class,
-                                WindupConfigurationExampleConfigurationProvider.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addClasses(MavenExampleConfigurationProvider.class,
+                JavaExampleConfigurationProvider.class,
+                XmlExampleConfigurationProvider1.class,
+                XmlExampleConfigurationProvider2.class,
+                XmlExampleConfigurationProvider3.class,
+                SomeModel.class,
+                WindupConfigurationExampleConfigurationProvider.class)
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
         return archive;
     }
 
@@ -79,6 +79,36 @@ public class GraphSearchConditionTest
         return context;
     }
 
+    
+    
+    private DefaultEvaluationContext createEvalContext( GraphRewrite event ) {
+        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+        final DefaultParameterValueStore values = new DefaultParameterValueStore();
+        evaluationContext.put(ParameterValueStore.class, values);
+        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        return evaluationContext;
+    }
+
+
+    private void fillData( final GraphContext context ) {
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, SomeModel.class);
+
+        XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
+        xmlFacet1.setRootTagName("xmlTag1");
+        XmlMetaFacetModel xmlFacet2 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
+        xmlFacet2.setRootTagName("xmlTag2");
+        XmlMetaFacetModel xmlFacet3 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
+        xmlFacet3.setRootTagName("xmlTag3");
+        XmlMetaFacetModel xmlFacet4 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
+        xmlFacet4.setRootTagName("xmlTag4");
+    }
+
+    
+    
+    // TODO: Create shared method to set up the graph.
     @Test
     public void testSingletonSelection()
     {
@@ -86,10 +116,7 @@ public class GraphSearchConditionTest
         final GraphContext context = getGraphContext(folder);
 
         GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath("/tmp/testpath");
@@ -131,10 +158,7 @@ public class GraphSearchConditionTest
         final GraphContext context = getGraphContext(folder);
 
         GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
         classModel1.setQualifiedName("com.example.Class1NoToString");
@@ -168,27 +192,12 @@ public class GraphSearchConditionTest
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = getGraphContext(folder);
 
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-
-        XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet1.setRootTagName("xmlTag1");
-        XmlMetaFacetModel xmlFacet2 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet2.setRootTagName("xmlTag2");
-        XmlMetaFacetModel xmlFacet3 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet3.setRootTagName("xmlTag3");
-        XmlMetaFacetModel xmlFacet4 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet4.setRootTagName("xmlTag4");
+        fillData(context);
         context.getGraph().commit();
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         // build a configuration, and make sure it matches what we expect (4 items)
         MavenExampleConfigurationProvider provider = new MavenExampleConfigurationProvider();
@@ -198,6 +207,7 @@ public class GraphSearchConditionTest
         Assert.assertEquals(4, provider.getSearchResults().size());
     }
 
+
     @Test
     public void testTypeFilter()
     {
@@ -205,27 +215,12 @@ public class GraphSearchConditionTest
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = getGraphContext(folder);
 
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-
-        XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet1.setRootTagName("xmlTag1");
-        XmlMetaFacetModel xmlFacet2 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet2.setRootTagName("xmlTag2");
-        XmlMetaFacetModel xmlFacet3 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet3.setRootTagName("xmlTag3");
-        XmlMetaFacetModel xmlFacet4 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet4.setRootTagName("xmlTag4");
+        fillData(context);
         context.getGraph().commit();
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider1 provider = new XmlExampleConfigurationProvider1();
@@ -250,27 +245,12 @@ public class GraphSearchConditionTest
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = getGraphContext(folder);
 
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-
-        XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet1.setRootTagName("xmlTag1");
-        XmlMetaFacetModel xmlFacet2 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet2.setRootTagName("xmlTag2");
-        XmlMetaFacetModel xmlFacet3 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet3.setRootTagName("xmlTag3");
-        XmlMetaFacetModel xmlFacet4 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet4.setRootTagName("xmlTag4");
+        fillData(context);
         context.getGraph().commit();
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider2 provider = new XmlExampleConfigurationProvider2();
@@ -288,27 +268,12 @@ public class GraphSearchConditionTest
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = getGraphContext(folder);
 
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-
-        XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet1.setRootTagName("xmlTag1");
-        XmlMetaFacetModel xmlFacet2 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet2.setRootTagName("xmlTag2");
-        XmlMetaFacetModel xmlFacet3 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet3.setRootTagName("xmlTag3");
-        XmlMetaFacetModel xmlFacet4 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
-        xmlFacet4.setRootTagName("xmlTag4");
+        fillData(context);
         context.getGraph().commit();
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider3 provider = new XmlExampleConfigurationProvider3();
