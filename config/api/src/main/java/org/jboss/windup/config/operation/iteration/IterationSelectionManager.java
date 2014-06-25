@@ -11,6 +11,8 @@ import org.jboss.windup.config.selectables.SelectionFactory;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
+ * Retrieves proper Iterable of frames, from the variable stack.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface IterationSelectionManager
