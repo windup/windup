@@ -57,44 +57,48 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
     @Override
     public IterationSelectionManager getSelectionManager()
     {
-        return new IterationSelectionManager()
-        {
-            @Override
-            public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, SelectionFactory factory)
-            {
-                if (graphSearchConditionBuilderGremlin == null)
-                    return root.getSelectionManager().getFrames(event, factory);
-                // FIX: How could this be null?
-                
-                // The initial vertices are those matched by previous query constructs.
-                // Iteration.[initial vertices].queryFor().[gremlin pipe wrappers]
-                List<Vertex> initialVertices = new ArrayList<>();
-                Iterable<WindupVertexFrame> initialFrames = root.getSelectionManager().getFrames(event, factory);
-                for (WindupVertexFrame frame : initialFrames){
-                    initialVertices.add(frame.asVertex());
-                }
-
-                // Perform the query and convert to frames.
-                graphSearchConditionBuilderGremlin.setInitialVertices(initialVertices);
-                Iterable<Vertex> v = graphSearchConditionBuilderGremlin.getResults(event);
-                return GraphUtil.toVertexFrames(event.getGraphContext(), v);
-            }
-        };
+        return new GremlinIterationSelectionManager();
     }
     
+    private class GremlinIterationSelectionManager implements IterationSelectionManager {
 
+        @Override
+        public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, SelectionFactory factory)
+        {
+            if (graphSearchConditionBuilderGremlin == null)
+                return root.getSelectionManager().getFrames(event, factory);
+            // FIX: How could this be null?
+            
+            // The initial vertices are those matched by previous query constructs.
+            // Iteration.[initial vertices].queryFor().[gremlin pipe wrappers]
+            List<Vertex> initialVertices = new ArrayList<>();
+            Iterable<WindupVertexFrame> initialFrames = root.getSelectionManager().getFrames(event, factory);
+            for (WindupVertexFrame frame : initialFrames){
+                initialVertices.add(frame.asVertex());
+            }
+            
+            // Perform the query and convert to frames.
+            graphSearchConditionBuilderGremlin.setInitialVertices(initialVertices);
+            Iterable<Vertex> v = graphSearchConditionBuilderGremlin.getResults(event);
+            return GraphUtil.toVertexFrames(event.getGraphContext(), v);
+        }
+
+    }
+
+    
+    
     @Override
     public IterationPayloadManager getPayloadManager()
     {
         return payloadManager;
     }
 
+    
     @Override
     public IterationQueryCriteria endQuery()
     {
         return this;
     }
-
     
     
     
