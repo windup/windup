@@ -74,10 +74,9 @@ public class SelectionFactory
     {
         Map<String, Iterable<WindupVertexFrame>> frame = peek();
         if (findVariable(name) != null)
-        {
             throw new IllegalArgumentException("Variable \"" + name
                         + "\" has already been assigned and cannot be reassigned");
-        }
+
         frame.put(name, iterable);
     }
 
@@ -90,27 +89,25 @@ public class SelectionFactory
     public <T extends WindupVertexFrame> T findSingletonVariable(Class<T> type, String name)
     {
         Iterable<WindupVertexFrame> frames = findVariable(name);
-        T result = null;
+        if( null == frames )
+            throw new WindupException("Variable not found: " + name);
+        
         Iterator<WindupVertexFrame> iterator = frames.iterator();
-        if (iterator.hasNext())
-        {
-            Object foundObject = iterator.next();
-            
-            // Check the type.
-            if (!type.isAssignableFrom(foundObject.getClass()))
-            {
-                throw new IllegalTypeArgumentException(name, type, foundObject.getClass());
-            }
-            result = (T) foundObject;
+        if( ! iterator.hasNext() )
+            return null;
+        
+        Object obj = iterator.next();
+        
+        // Check if there's just 1.
+        if( iterator.hasNext() )
+            throw new WindupException("More than one frame present "
+                    + "under presumed singleton variable: " + name);
 
-            // Check if there's just 1.
-            if (iterator.hasNext())
-            {
-                throw new WindupException("findSingleton called for variable \"" + name
-                            + "\", but more than one result is present.");
-            }
-        }
-        return result;
+        // Check the type.
+        if( ! type.isAssignableFrom(obj.getClass()) )
+            throw new IllegalTypeArgumentException(name, type, obj.getClass());
+
+        return (T) obj;
     }
 
     
