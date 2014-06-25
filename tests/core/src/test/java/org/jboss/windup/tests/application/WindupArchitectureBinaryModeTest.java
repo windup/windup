@@ -75,6 +75,7 @@ public class WindupArchitectureBinaryModeTest
             {
                 v.remove();
             }
+            graphContext.getGraph().shutdown();
         }
     }
 }

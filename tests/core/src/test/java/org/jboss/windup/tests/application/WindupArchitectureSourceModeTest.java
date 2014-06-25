@@ -16,6 +16,7 @@ import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -76,6 +77,7 @@ public class WindupArchitectureSourceModeTest
             {
                 v.remove();
             }
+            graphContext.getGraph().shutdown();
         }
     }
 }
