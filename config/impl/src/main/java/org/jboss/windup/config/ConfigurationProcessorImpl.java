@@ -22,7 +22,7 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 public class ConfigurationProcessorImpl
 {
     @Inject
-    private VarStack selectionFactory;
+    private VarStack varStack;
 
     @Inject
     private GraphConfigurationLoader graphConfigurationLoader;
@@ -36,7 +36,7 @@ public class ConfigurationProcessorImpl
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
         GraphRewrite event = new GraphRewrite(context);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, varStack);
 
         GraphSubset.evaluate(configuration).perform(event, evaluationContext);
     }

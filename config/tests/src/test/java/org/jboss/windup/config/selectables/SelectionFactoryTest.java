@@ -60,7 +60,7 @@ public class SelectionFactoryTest
     private GraphTypeRegistry graphTypeRegistry;
 
     @Inject
-    private VarStack selectionFactory;
+    private VarStack varStack;
 
     @Test
     public void testInvalidTypeGet()
@@ -72,18 +72,18 @@ public class SelectionFactoryTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, varStack);
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
         classModel1.setQualifiedName("com.example.Class1NoToString");
         JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
         classModel2.setQualifiedName("com.example.Class2HasToString");
 
-        selectionFactory.push();
-        selectionFactory.setCurrentPayload("classModel1", classModel1);
+        varStack.push();
+        varStack.setCurrentPayload("classModel1", classModel1);
         try
         {
-            selectionFactory.getCurrentPayload(MavenFacetModel.class, "classModel1");
+            varStack.getCurrentPayload(MavenFacetModel.class, "classModel1");
         }
         catch (IllegalTypeArgumentException e)
         {

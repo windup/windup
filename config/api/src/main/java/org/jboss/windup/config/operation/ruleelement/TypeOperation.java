@@ -26,8 +26,8 @@ public class TypeOperation extends AbstractIterationOperator<WindupVertexFrame>
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
-        VarStack selectionFactory = VarStack.instance(event);
+        VarStack varStack = VarStack.instance(event);
         WindupVertexFrame newFrame = GraphUtil.addTypeToModel(event.getGraphContext(), payload, newType);
-        selectionFactory.setCurrentPayload(getVariableName(), newFrame);
+        varStack.setCurrentPayload(getVariableName(), newFrame);
     }
 }

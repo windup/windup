@@ -68,7 +68,7 @@ public class GraphSearchConditionTest
     private GraphTypeRegistry graphTypeRegistry;
 
     @Inject
-    private VarStack selectionFactory;
+    private VarStack varStack;
 
     private GraphContext getGraphContext(File folder)
     {
@@ -85,7 +85,7 @@ public class GraphSearchConditionTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, varStack);
         return evaluationContext;
     }
 

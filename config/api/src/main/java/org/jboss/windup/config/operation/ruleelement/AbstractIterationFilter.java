@@ -25,8 +25,8 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
-        VarStack selectionFactory = VarStack.instance(event);
-        T payload = selectionFactory
+        VarStack varStack = VarStack.instance(event);
+        T payload = varStack
                     .getCurrentPayload(clazz, getVariableName());
         return evaluate(event, context, payload);
     }
