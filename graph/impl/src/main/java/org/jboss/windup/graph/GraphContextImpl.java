@@ -61,11 +61,11 @@ public class GraphContextImpl implements GraphContext
         this.diskCacheDir = diskCache;
 
         File lucene = new File(diskCache, "graphsearch");
-        File berkley = new File(diskCache, "graph");
+        File berkeley = new File(diskCache, "graph");
 
         // TODO: Externalize this.
         Configuration conf = new BaseConfiguration();
-        conf.setProperty("storage.directory", berkley.getAbsolutePath());
+        conf.setProperty("storage.directory", berkeley.getAbsolutePath());
         conf.setProperty("storage.backend", "berkeleyje");
 
         conf.setProperty("storage.index.search.backend", "lucene");
