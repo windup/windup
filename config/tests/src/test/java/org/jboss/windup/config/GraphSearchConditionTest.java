@@ -15,7 +15,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.model.SomeModel;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
@@ -68,7 +68,7 @@ public class GraphSearchConditionTest
     private GraphTypeRegistry graphTypeRegistry;
 
     @Inject
-    private SelectionFactory selectionFactory;
+    private VarStack selectionFactory;
 
     private GraphContext getGraphContext(File folder)
     {
@@ -89,7 +89,7 @@ public class GraphSearchConditionTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, selectionFactory);
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath("/tmp/testpath");
@@ -134,7 +134,7 @@ public class GraphSearchConditionTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, selectionFactory);
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
         classModel1.setQualifiedName("com.example.Class1NoToString");
@@ -188,7 +188,7 @@ public class GraphSearchConditionTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, selectionFactory);
 
         // build a configuration, and make sure it matches what we expect (4 items)
         MavenExampleConfigurationProvider provider = new MavenExampleConfigurationProvider();
@@ -225,7 +225,7 @@ public class GraphSearchConditionTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, selectionFactory);
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider1 provider = new XmlExampleConfigurationProvider1();
@@ -270,7 +270,7 @@ public class GraphSearchConditionTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, selectionFactory);
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider2 provider = new XmlExampleConfigurationProvider2();
@@ -308,7 +308,7 @@ public class GraphSearchConditionTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, selectionFactory);
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleConfigurationProvider3 provider = new XmlExampleConfigurationProvider3();

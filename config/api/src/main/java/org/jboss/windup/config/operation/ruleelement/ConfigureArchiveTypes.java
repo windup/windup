@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -59,7 +59,7 @@ public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveMode
 
         if (newFrame != null)
         {
-            SelectionFactory.instance(event).setCurrentPayload(getVariableName(), newFrame);
+            VarStack.instance(event).setCurrentPayload(getVariableName(), newFrame);
         }
     }
 

@@ -25,7 +25,7 @@ import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.NamedIterationSelectionManager;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationSelectionManager;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.CompositeOperation;
@@ -158,7 +158,7 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
      */
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-        SelectionFactory factory = SelectionFactory.instance(event);
+        VarStack factory = VarStack.instance(event);
         factory.push();
         Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, factory);
         for (WindupVertexFrame frame : frames)

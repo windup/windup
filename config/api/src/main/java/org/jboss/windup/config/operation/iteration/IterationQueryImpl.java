@@ -8,7 +8,7 @@ import java.util.Map;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.common.util.Assert;
@@ -63,7 +63,7 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
     private class GremlinIterationSelectionManager implements IterationSelectionManager {
 
         @Override
-        public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, SelectionFactory factory)
+        public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack factory)
         {
             if (graphSearchConditionBuilderGremlin == null)
                 return root.getSelectionManager().getFrames(event, factory);

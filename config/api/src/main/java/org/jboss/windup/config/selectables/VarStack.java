@@ -24,7 +24,7 @@ import org.jboss.windup.util.exception.WindupException;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class SelectionFactory
+public class VarStack
 {
     /*
      * SelectionStack
@@ -35,9 +35,9 @@ public class SelectionFactory
     /**
      *  Gets an instance from a OCP rewrite context; created during rule init phase.
      */
-    public static SelectionFactory instance(GraphRewrite event)
+    public static VarStack instance(GraphRewrite event)
     {
-        return (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
+        return (VarStack) event.getRewriteContext().get(VarStack.class);
     }
 
     

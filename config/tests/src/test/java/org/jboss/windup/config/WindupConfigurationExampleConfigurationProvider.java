@@ -13,7 +13,7 @@ import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
@@ -83,7 +83,7 @@ public class WindupConfigurationExampleConfigurationProvider extends WindupConfi
                                     @Override
                                     public void perform(GraphRewrite event, EvaluationContext context)
                                     {
-                                        SelectionFactory selection = SelectionFactory.instance(event);
+                                        VarStack selection = VarStack.instance(event);
 
                                         WindupConfigurationExampleConfigurationProvider.this.config = selection
                                                     .findSingletonVariable(WindupConfigurationModel.class,

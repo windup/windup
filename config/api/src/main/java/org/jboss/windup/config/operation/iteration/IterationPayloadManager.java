@@ -6,7 +6,7 @@
  */
 package org.jboss.windup.config.operation.iteration;
 
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -19,7 +19,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  */
 public interface IterationPayloadManager
 {
-    void setCurrentPayload(SelectionFactory factory, WindupVertexFrame element);
+    void setCurrentPayload(VarStack factory, WindupVertexFrame element);
 
-    void removeCurrentPayload(SelectionFactory factory);
+    void removeCurrentPayload(VarStack factory);
 }

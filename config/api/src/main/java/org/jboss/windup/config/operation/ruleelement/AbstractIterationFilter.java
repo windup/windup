@@ -2,7 +2,7 @@ package org.jboss.windup.config.operation.ruleelement;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.GraphCondition;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -25,7 +25,7 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
-        SelectionFactory selectionFactory = SelectionFactory.instance(event);
+        VarStack selectionFactory = VarStack.instance(event);
         T payload = selectionFactory
                     .getCurrentPayload(clazz, getVariableName());
         return evaluate(event, context, payload);

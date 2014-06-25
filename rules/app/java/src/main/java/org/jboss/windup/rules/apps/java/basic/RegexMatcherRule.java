@@ -16,7 +16,7 @@ import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.scan.model.JavaFileModel;
 import org.jboss.windup.rules.apps.java.scan.provider.DiscoverJavaFilesConfigurationProvider;
@@ -64,7 +64,7 @@ public class RegexMatcherRule extends WindupConfigurationProvider
                                             @Override
                                             public void perform( GraphRewrite event, EvaluationContext context, RegexModel regex ) {
                                                 
-                                                SelectionFactory sf = SelectionFactory.instance(event);
+                                                VarStack sf = VarStack.instance(event);
                                                 JavaFileModel javaFile = sf.getCurrentPayload( JavaFileModel.class, "javaFile");
                                                 
                                                 getRegexMatches( javaFile.getFilePath(), regex.getRegex() );
@@ -73,9 +73,9 @@ public class RegexMatcherRule extends WindupConfigurationProvider
                                     )
                                     .endIteration()
                                 )// perform()
-                        )
-                    )
-                .endIteration()
+                                )
+                                    )
+                                    .endIteration()
             );
     }
 

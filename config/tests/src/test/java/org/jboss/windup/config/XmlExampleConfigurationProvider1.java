@@ -16,7 +16,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.junit.Assert;
@@ -65,7 +65,7 @@ public class XmlExampleConfigurationProvider1 extends WindupConfigurationProvide
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context)
                     {
-                        SelectionFactory factory = SelectionFactory.instance(event);
+                        VarStack factory = VarStack.instance(event);
                         XmlMetaFacetModel xmlFacetModel = factory
                                     .getCurrentPayload(XmlMetaFacetModel.class, "xml");
                         typeSearchResults.add(xmlFacetModel);

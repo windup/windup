@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.GraphCondition;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -100,7 +100,7 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
             frames.add(frame);
         }
 
-        SelectionFactory factory = (SelectionFactory) event.getRewriteContext().get(SelectionFactory.class);
+        VarStack factory = (VarStack) event.getRewriteContext().get(VarStack.class);
         factory.setVariable(variableName, frames);
 
         return !frames.isEmpty();

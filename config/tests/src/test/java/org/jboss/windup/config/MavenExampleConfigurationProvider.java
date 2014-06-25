@@ -12,7 +12,7 @@ import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.TypeOperation;
-import org.jboss.windup.config.selectables.SelectionFactory;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.jboss.windup.rules.apps.maven.model.MavenFacetModel;
@@ -64,7 +64,7 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context)
                 {
-                    SelectionFactory factory = SelectionFactory.instance(event);
+                    VarStack factory = VarStack.instance(event);
                     MavenFacetModel mavenFacetModel = factory.getCurrentPayload(MavenFacetModel.class, "maven");
                     results.add(mavenFacetModel);
                 }

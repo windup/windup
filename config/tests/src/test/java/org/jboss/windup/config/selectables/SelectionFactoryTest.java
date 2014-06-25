@@ -60,7 +60,7 @@ public class SelectionFactoryTest
     private GraphTypeRegistry graphTypeRegistry;
 
     @Inject
-    private SelectionFactory selectionFactory;
+    private VarStack selectionFactory;
 
     @Test
     public void testInvalidTypeGet()
@@ -72,7 +72,7 @@ public class SelectionFactoryTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(SelectionFactory.class, selectionFactory);
+        event.getRewriteContext().put(VarStack.class, selectionFactory);
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
         classModel1.setQualifiedName("com.example.Class1NoToString");
