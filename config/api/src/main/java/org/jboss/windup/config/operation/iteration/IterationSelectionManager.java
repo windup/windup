@@ -17,5 +17,5 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  */
 public interface IterationSelectionManager
 {
-    Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack factory);
+    Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack);
 }

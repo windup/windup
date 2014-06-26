@@ -100,8 +100,8 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
             frames.add(frame);
         }
 
-        VarStack factory = (VarStack) event.getRewriteContext().get(VarStack.class);
-        factory.setVariable(variableName, frames);
+        VarStack varStack = (VarStack) event.getRewriteContext().get(VarStack.class);
+        varStack.setVariable(variableName, frames);
 
         return !frames.isEmpty();
     }

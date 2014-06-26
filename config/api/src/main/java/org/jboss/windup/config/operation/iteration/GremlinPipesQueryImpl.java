@@ -64,12 +64,12 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
     private class GremlinIterationSelectionManager implements IterationSelectionManager
     {
         @Override
-        public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack factory)
+        public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack)
         {
             // The initial vertices are those matched by previous query constructs.
             // Iteration.[initial vertices].queryFor().[gremlin pipe wrappers]
             List<Vertex> initialVertices = new ArrayList<>();
-            Iterable<WindupVertexFrame> initialFrames = root.getSelectionManager().getFrames(event, factory);
+            Iterable<WindupVertexFrame> initialFrames = root.getSelectionManager().getFrames(event, varStack);
             for (WindupVertexFrame frame : initialFrames)
             {
                 initialVertices.add(frame.asVertex());

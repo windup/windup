@@ -25,9 +25,9 @@ public class NamedIterationSelectionManager implements IterationSelectionManager
     }
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack factory)
+    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack)
     {
-        return factory.findVariable(varName);
+        return varStack.findVariable(varName);
     }
 
 }

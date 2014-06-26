@@ -19,7 +19,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  */
 public interface IterationPayloadManager
 {
-    void setCurrentPayload(VarStack factory, WindupVertexFrame element);
+    void setCurrentPayload(VarStack varStack, WindupVertexFrame element);
 
-    void removeCurrentPayload(VarStack factory);
+    void removeCurrentPayload(VarStack varStack);
 }

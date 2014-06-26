@@ -23,15 +23,15 @@ public class NamedIterationPayloadManager implements IterationPayloadManager
     }
 
     @Override
-    public void setCurrentPayload(VarStack factory, WindupVertexFrame element)
+    public void setCurrentPayload(VarStack varStack, WindupVertexFrame element)
     {
-        factory.setCurrentPayload(var, element);
+        varStack.setCurrentPayload(var, element);
     }
 
     @Override
-    public void removeCurrentPayload(VarStack factory)
+    public void removeCurrentPayload(VarStack varStack)
     {
-        factory.setCurrentPayload(var, null);
+        varStack.setCurrentPayload(var, null);
     }
 
 }

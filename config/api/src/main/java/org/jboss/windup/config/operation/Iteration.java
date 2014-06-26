@@ -163,12 +163,12 @@ public abstract class Iteration extends DefaultOperationBuilder
      */
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-        VarStack factory = VarStack.instance(event);
-        factory.push();
-        Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, factory);
+        VarStack varStack = VarStack.instance(event);
+        varStack.push();
+        Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, varStack);
         for (WindupVertexFrame frame : frames)
         {
-            getPayloadManager().setCurrentPayload(factory, frame);
+            getPayloadManager().setCurrentPayload(varStack, frame);
             if (condition == null || condition.evaluate(event, context))
             {
                 if (operationPerform != null)
@@ -184,8 +184,8 @@ public abstract class Iteration extends DefaultOperationBuilder
                 }
             }
         }
-        getPayloadManager().removeCurrentPayload(factory);
-        factory.pop();
+        getPayloadManager().removeCurrentPayload(varStack);
+        varStack.pop();
     }
 
     @Override

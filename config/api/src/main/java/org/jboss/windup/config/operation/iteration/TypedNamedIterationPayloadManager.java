@@ -31,19 +31,19 @@ public class TypedNamedIterationPayloadManager implements IterationPayloadManage
     }
 
     @Override
-    public void setCurrentPayload(VarStack factory, WindupVertexFrame element)
+    public void setCurrentPayload(VarStack varStack, WindupVertexFrame element)
     {
         if (!varType.isAssignableFrom(element.getClass()))
         {
             throw new IllegalTypeArgumentException(var, varType, element.getClass());
         }
-        factory.setCurrentPayload(var, element);
+        varStack.setCurrentPayload(var, element);
     }
 
     @Override
-    public void removeCurrentPayload(VarStack factory)
+    public void removeCurrentPayload(VarStack varStack)
     {
-        factory.setCurrentPayload(var, null);
+        varStack.setCurrentPayload(var, null);
     }
 
 }

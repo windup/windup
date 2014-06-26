@@ -30,9 +30,9 @@ public class TypedNamedIterationSelectionManager implements IterationSelectionMa
     }
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack factory)
+    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack)
     {
-        final Iterable<WindupVertexFrame> frames = factory.findVariable(varName);
+        final Iterable<WindupVertexFrame> frames = varStack.findVariable(varName);
 
         // Check the type.
         final Iterator<WindupVertexFrame> it = frames.iterator();

@@ -64,7 +64,7 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context)
                 {
-                    VarStack factory = VarStack.instance(event);
+                    VarStack varStack = VarStack.instance(event);
                     MavenFacetModel mavenFacetModel = factory.getCurrentPayload(MavenFacetModel.class, "maven");
                     results.add(mavenFacetModel);
                 }
