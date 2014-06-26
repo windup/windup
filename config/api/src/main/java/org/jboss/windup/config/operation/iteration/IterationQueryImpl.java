@@ -25,17 +25,20 @@ import com.tinkerpop.pipes.transform.TransformPipe;
 import com.tinkerpop.pipes.util.structures.Pair;
 import com.tinkerpop.pipes.util.structures.Table;
 import com.tinkerpop.pipes.util.structures.Tree;
+import org.jboss.windup.config.operation.IterationRoot;
+
 
 /**
  * Gremlin Pipes adapter for Iteration.queryFor( ... ).
  */
 public class IterationQueryImpl extends Iteration implements IterationQueryCriteria
 {
-    private final Iteration root;
+    private final IterationRoot root;
     private final GraphSearchConditionBuilderGremlin graphSearchConditionBuilderGremlin;
     private IterationPayloadManager payloadManager;
 
-    public IterationQueryImpl(Iteration root, IterationPayloadManager manager)
+    
+    public IterationQueryImpl(IterationRoot root, IterationPayloadManager manager)
     {
         this.root = root;
         this.setPayloadManager(manager);

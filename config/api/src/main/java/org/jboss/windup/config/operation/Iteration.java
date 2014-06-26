@@ -39,9 +39,10 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public abstract class Iteration extends DefaultOperationBuilder implements IterationBuilderOver, IterationBuilderVar,
-            IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise, IterationBuilderComplete,
-            CompositeOperation
+public abstract class Iteration extends DefaultOperationBuilder 
+    implements IterationBuilderOver, IterationBuilderVar,
+        IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise,
+        IterationBuilderComplete, CompositeOperation, IterationRoot
 {
     private Condition condition;
     private Operation operationPerform;
@@ -87,12 +88,16 @@ public abstract class Iteration extends DefaultOperationBuilder implements Itera
     @Override
     public IterationQuery queryFor(Class<? extends WindupVertexFrame> varType, String var)
     {
+        // TODO - I'd prefer if we used Iteration.over(...).var(...).queryFor()...
+        //        It would make the API more comprehensible and clearer.
         return new IterationQueryImpl(this, new TypedNamedIterationPayloadManager(varType, var));
     }
 
     @Override
     public IterationQuery queryFor(String var)
     {
+        // TODO - I'd prefer if we used Iteration.over(...).var(...).queryFor()...
+        //        It would make the API more comprehensible and clearer.
         return new IterationQueryImpl(this, new NamedIterationPayloadManager(var));
     }
 
