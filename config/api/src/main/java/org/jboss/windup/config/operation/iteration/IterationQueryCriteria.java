@@ -12,7 +12,7 @@ import org.ocpsoft.rewrite.config.Operation;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface IterationQueryCriteria extends IterationQuery
+public interface IterationQueryCriteria extends GremlinPipesQuery
 {
     IterationBuilderWhen when(Condition condition);
 

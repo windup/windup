@@ -29,11 +29,11 @@ public interface IterationBuilderOver
      * Starts a gremlin query part; the query result is stored under given var name.
      * Refer to Gremlin Pipes for the subsequent API.
      */
-    public IterationQuery queryFor(Class<? extends WindupVertexFrame> varType, String var);
+    public GremlinPipesQuery queryFor(Class<? extends WindupVertexFrame> varType, String var);
 
     /**
      * Starts a gremlin query part; the query result is stored under given var name.
      * Refer to Gremlin Pipes for the subsequent API.
      */
-    public IterationQuery queryFor(String var);
+    public GremlinPipesQuery queryFor(String var);
 }

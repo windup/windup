@@ -31,14 +31,14 @@ import org.jboss.windup.config.operation.IterationRoot;
 /**
  * Gremlin Pipes adapter for Iteration.queryFor( ... ).
  */
-public class IterationQueryImpl extends Iteration implements IterationQueryCriteria
+public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCriteria
 {
     private final IterationRoot root;
     private final GraphSearchConditionBuilderGremlin graphSearchConditionBuilderGremlin;
     private IterationPayloadManager payloadManager;
 
     
-    public IterationQueryImpl(IterationRoot root, IterationPayloadManager manager)
+    public GremlinPipesQueryImpl(IterationRoot root, IterationPayloadManager manager)
     {
         this.root = root;
         this.setPayloadManager(manager);
@@ -97,51 +97,51 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
 
     // <editor-fold defaultstate="collapsed" desc="Gremlin pipes wrapping methods.">
 
-    public IterationQuery step(final PipeFunction function)
+    public GremlinPipesQuery step(final PipeFunction function)
     {
         graphSearchConditionBuilderGremlin.step(function);
         return this;
     }
 
-    public IterationQuery step(final Pipe<Vertex, Vertex> pipe)
+    public GremlinPipesQuery step(final Pipe<Vertex, Vertex> pipe)
     {
         graphSearchConditionBuilderGremlin.step(pipe);
         return this;
     }
 
-    public IterationQuery copySplit(final Pipe<Vertex, Vertex>... pipes)
+    public GremlinPipesQuery copySplit(final Pipe<Vertex, Vertex>... pipes)
     {
         graphSearchConditionBuilderGremlin.copySplit(pipes);
         return this;
     }
 
-    public IterationQuery exhaustMerge()
+    public GremlinPipesQuery exhaustMerge()
     {
         graphSearchConditionBuilderGremlin.exhaustMerge();
         return this;
     }
 
-    public IterationQuery fairMerge()
+    public GremlinPipesQuery fairMerge()
     {
         graphSearchConditionBuilderGremlin.fairMerge();
         return this;
     }
 
-    public IterationQuery ifThenElse(final PipeFunction<Vertex, Boolean> ifFunction,
+    public GremlinPipesQuery ifThenElse(final PipeFunction<Vertex, Boolean> ifFunction,
                 final PipeFunction<Vertex, Vertex> thenFunction, final PipeFunction<Vertex, Vertex> elseFunction)
     {
         graphSearchConditionBuilderGremlin.ifThenElse(ifFunction, thenFunction, elseFunction);
         return this;
     }
 
-    public IterationQuery loop(final int numberedStep,
+    public GremlinPipesQuery loop(final int numberedStep,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction)
     {
         graphSearchConditionBuilderGremlin.loop(numberedStep, whileFunction);
         return this;
     }
 
-    public IterationQuery loop(final String namedStep,
+    public GremlinPipesQuery loop(final String namedStep,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction)
     {
         graphSearchConditionBuilderGremlin.loop(namedStep, whileFunction);
@@ -150,7 +150,7 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
 
     @Deprecated
     @SuppressWarnings("deprecation")
-    public IterationQuery loop(final int numberedStep,
+    public GremlinPipesQuery loop(final int numberedStep,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> emitFunction)
     {
@@ -158,7 +158,7 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
         return this;
     }
 
-    public IterationQuery loop(final String namedStep,
+    public GremlinPipesQuery loop(final String namedStep,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction,
                 final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> emitFunction)
     {
@@ -166,7 +166,7 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
         return this;
     }
 
-    public IterationQuery and(final Pipe<Vertex, ?>... pipes)
+    public GremlinPipesQuery and(final Pipe<Vertex, ?>... pipes)
     {
         graphSearchConditionBuilderGremlin.and(pipes);
         return this;
@@ -174,146 +174,146 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
 
     @Deprecated
     @SuppressWarnings("deprecation")
-    public IterationQuery back(final int numberedStep)
+    public GremlinPipesQuery back(final int numberedStep)
     {
         graphSearchConditionBuilderGremlin.back(numberedStep);
         return this;
     }
 
-    public IterationQuery back(final String namedStep)
+    public GremlinPipesQuery back(final String namedStep)
     {
         graphSearchConditionBuilderGremlin.back(namedStep);
         return this;
     }
 
-    public IterationQuery dedup()
+    public GremlinPipesQuery dedup()
     {
         graphSearchConditionBuilderGremlin.dedup();
         return this;
     }
 
-    public IterationQuery dedup(final PipeFunction<Vertex, ?> dedupFunction)
+    public GremlinPipesQuery dedup(final PipeFunction<Vertex, ?> dedupFunction)
     {
         graphSearchConditionBuilderGremlin.dedup(dedupFunction);
         return this;
     }
 
-    public IterationQuery except(final Collection<Vertex> collection)
+    public GremlinPipesQuery except(final Collection<Vertex> collection)
     {
         graphSearchConditionBuilderGremlin.except(collection);
         return this;
     }
 
-    public IterationQuery except(final String... namedSteps)
+    public GremlinPipesQuery except(final String... namedSteps)
     {
         graphSearchConditionBuilderGremlin.except(namedSteps);
         return this;
     }
 
-    public IterationQuery filter(final PipeFunction<Vertex, Boolean> filterFunction)
+    public GremlinPipesQuery filter(final PipeFunction<Vertex, Boolean> filterFunction)
     {
         graphSearchConditionBuilderGremlin.filter(filterFunction);
         return this;
     }
 
-    public IterationQuery or(final Pipe<Vertex, ?>... pipes)
+    public GremlinPipesQuery or(final Pipe<Vertex, ?>... pipes)
     {
         graphSearchConditionBuilderGremlin.or(pipes);
         return this;
     }
 
-    public IterationQuery random(final Double bias)
+    public GremlinPipesQuery random(final Double bias)
     {
         graphSearchConditionBuilderGremlin.random(bias);
         return this;
     }
 
-    public IterationQuery range(final int low, final int high)
+    public GremlinPipesQuery range(final int low, final int high)
     {
         graphSearchConditionBuilderGremlin.range(low, high);
         return this;
     }
 
-    public IterationQuery retain(final Collection<Vertex> collection)
+    public GremlinPipesQuery retain(final Collection<Vertex> collection)
     {
         graphSearchConditionBuilderGremlin.retain(collection);
         return this;
     }
 
-    public IterationQuery retain(final String... namedSteps)
+    public GremlinPipesQuery retain(final String... namedSteps)
     {
         graphSearchConditionBuilderGremlin.retain(namedSteps);
         return this;
     }
 
-    public IterationQuery simplePath()
+    public GremlinPipesQuery simplePath()
     {
         graphSearchConditionBuilderGremlin.simplePath();
         return this;
     }
 
-    public IterationQuery has(final String key)
+    public GremlinPipesQuery has(final String key)
     {
         graphSearchConditionBuilderGremlin.has(key);
         return this;
     }
 
-    public IterationQuery hasNot(final String key)
+    public GremlinPipesQuery hasNot(final String key)
     {
         graphSearchConditionBuilderGremlin.hasNot(key);
         return this;
     }
 
-    public IterationQuery has(final String key, final Object value)
+    public GremlinPipesQuery has(final String key, final Object value)
     {
         graphSearchConditionBuilderGremlin.has(key, value);
         return this;
     }
 
-    public IterationQuery has(final String key, final Tokens.T compareToken, final Object value)
+    public GremlinPipesQuery has(final String key, final Tokens.T compareToken, final Object value)
     {
         graphSearchConditionBuilderGremlin.has(key, compareToken, value);
         return this;
     }
 
-    public IterationQuery has(final String key, final Predicate predicate, final Object value)
+    public GremlinPipesQuery has(final String key, final Predicate predicate, final Object value)
     {
         graphSearchConditionBuilderGremlin.has(key, predicate, value);
         return this;
     }
 
-    public IterationQuery hasNot(final String key, final Object value)
+    public GremlinPipesQuery hasNot(final String key, final Object value)
     {
         graphSearchConditionBuilderGremlin.hasNot(key, value);
         return this;
     }
 
-    public IterationQuery interval(final String key, final Comparable startValue,
+    public GremlinPipesQuery interval(final String key, final Comparable startValue,
                 final Comparable endValue)
     {
         graphSearchConditionBuilderGremlin.interval(key, startValue, endValue);
         return this;
     }
 
-    public IterationQuery gather()
+    public GremlinPipesQuery gather()
     {
         graphSearchConditionBuilderGremlin.gather();
         return this;
     }
 
-    public IterationQuery gather(final PipeFunction<List, ?> function)
+    public GremlinPipesQuery gather(final PipeFunction<List, ?> function)
     {
         graphSearchConditionBuilderGremlin.gather(function);
         return this;
     }
 
-    public IterationQuery _()
+    public GremlinPipesQuery _()
     {
         graphSearchConditionBuilderGremlin._();
         return this;
     }
 
-    public IterationQuery memoize(final String namedStep)
+    public GremlinPipesQuery memoize(final String namedStep)
     {
         graphSearchConditionBuilderGremlin.memoize(namedStep);
         return this;
@@ -321,13 +321,13 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
 
     @Deprecated
     @SuppressWarnings("deprecation")
-    public IterationQuery memoize(final int numberedStep)
+    public GremlinPipesQuery memoize(final int numberedStep)
     {
         graphSearchConditionBuilderGremlin.memoize(numberedStep);
         return this;
     }
 
-    public IterationQuery memoize(final String namedStep, final Map map)
+    public GremlinPipesQuery memoize(final String namedStep, final Map map)
     {
         graphSearchConditionBuilderGremlin.memoize(namedStep, map);
         return this;
@@ -335,237 +335,237 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
 
     @Deprecated
     @SuppressWarnings("deprecation")
-    public IterationQuery memoize(final int numberedStep, final Map map)
+    public GremlinPipesQuery memoize(final int numberedStep, final Map map)
     {
         graphSearchConditionBuilderGremlin.memoize(numberedStep, map);
         return this;
     }
 
-    public IterationQuery order()
+    public GremlinPipesQuery order()
     {
         graphSearchConditionBuilderGremlin.order();
         return this;
     }
 
-    public IterationQuery order(TransformPipe.Order order)
+    public GremlinPipesQuery order(TransformPipe.Order order)
     {
         graphSearchConditionBuilderGremlin.order(order);
         return this;
     }
 
-    public IterationQuery order(final PipeFunction<Pair<Vertex, Vertex>, Integer> compareFunction)
+    public GremlinPipesQuery order(final PipeFunction<Pair<Vertex, Vertex>, Integer> compareFunction)
     {
         graphSearchConditionBuilderGremlin.order(compareFunction);
         return this;
     }
 
-    public IterationQuery path(final PipeFunction... pathFunctions)
+    public GremlinPipesQuery path(final PipeFunction... pathFunctions)
     {
         graphSearchConditionBuilderGremlin.path(pathFunctions);
         return this;
     }
 
-    public IterationQuery scatter()
+    public GremlinPipesQuery scatter()
     {
         graphSearchConditionBuilderGremlin.scatter();
         return this;
     }
 
-    public IterationQuery select(final Collection<String> stepNames,
+    public GremlinPipesQuery select(final Collection<String> stepNames,
                 final PipeFunction... columnFunctions)
     {
         graphSearchConditionBuilderGremlin.select(stepNames, columnFunctions);
         return this;
     }
 
-    public IterationQuery select(final PipeFunction... columnFunctions)
+    public GremlinPipesQuery select(final PipeFunction... columnFunctions)
     {
         graphSearchConditionBuilderGremlin.select(columnFunctions);
         return this;
     }
 
-    public IterationQuery select()
+    public GremlinPipesQuery select()
     {
         graphSearchConditionBuilderGremlin.select();
         return this;
     }
 
-    public IterationQuery shuffle()
+    public GremlinPipesQuery shuffle()
     {
         graphSearchConditionBuilderGremlin.shuffle();
         return this;
     }
 
-    public IterationQuery cap()
+    public GremlinPipesQuery cap()
     {
         graphSearchConditionBuilderGremlin.cap();
         return this;
     }
 
-    public IterationQuery orderMap(TransformPipe.Order order)
+    public GremlinPipesQuery orderMap(TransformPipe.Order order)
     {
         graphSearchConditionBuilderGremlin.orderMap(order);
         return this;
     }
 
-    public IterationQuery orderMap(PipeFunction<Pair<Map.Entry, Map.Entry>, Integer> compareFunction)
+    public GremlinPipesQuery orderMap(PipeFunction<Pair<Map.Entry, Map.Entry>, Integer> compareFunction)
     {
         graphSearchConditionBuilderGremlin.orderMap(compareFunction);
         return this;
     }
 
-    public IterationQuery transform(final PipeFunction<Vertex, T> function)
+    public GremlinPipesQuery transform(final PipeFunction<Vertex, T> function)
     {
         graphSearchConditionBuilderGremlin.transform(function);
         return this;
     }
 
-    public IterationQuery bothE(final String... labels)
+    public GremlinPipesQuery bothE(final String... labels)
     {
         graphSearchConditionBuilderGremlin.bothE(labels);
         return this;
     }
 
-    public IterationQuery bothE(final int branchFactor, final String... labels)
+    public GremlinPipesQuery bothE(final int branchFactor, final String... labels)
     {
         graphSearchConditionBuilderGremlin.bothE(branchFactor, labels);
         return this;
     }
 
-    public IterationQuery both(final String... labels)
+    public GremlinPipesQuery both(final String... labels)
     {
         graphSearchConditionBuilderGremlin.both(labels);
         return this;
     }
 
-    public IterationQuery both(final int branchFactor, final String... labels)
+    public GremlinPipesQuery both(final int branchFactor, final String... labels)
     {
         graphSearchConditionBuilderGremlin.both(branchFactor, labels);
         return this;
     }
 
-    public IterationQuery bothV()
+    public GremlinPipesQuery bothV()
     {
         graphSearchConditionBuilderGremlin.bothV();
         return this;
     }
 
-    public IterationQuery idEdge(final Graph graph)
+    public GremlinPipesQuery idEdge(final Graph graph)
     {
         graphSearchConditionBuilderGremlin.idEdge(graph);
         return this;
     }
 
-    public IterationQuery id()
+    public GremlinPipesQuery id()
     {
         graphSearchConditionBuilderGremlin.id();
         return this;
     }
 
-    public IterationQuery idVertex(final Graph graph)
+    public GremlinPipesQuery idVertex(final Graph graph)
     {
         graphSearchConditionBuilderGremlin.idVertex(graph);
         return this;
     }
 
-    public IterationQuery inE(final String... labels)
+    public GremlinPipesQuery inE(final String... labels)
     {
         graphSearchConditionBuilderGremlin.inE(labels);
         return this;
     }
 
-    public IterationQuery inE(final int branchFactor, final String... labels)
+    public GremlinPipesQuery inE(final int branchFactor, final String... labels)
     {
         graphSearchConditionBuilderGremlin.inE(branchFactor, labels);
         return this;
     }
 
-    public IterationQuery in(final String... labels)
+    public GremlinPipesQuery in(final String... labels)
     {
         graphSearchConditionBuilderGremlin.in(labels);
         return this;
     }
 
-    public IterationQuery in(final int branchFactor, final String... labels)
+    public GremlinPipesQuery in(final int branchFactor, final String... labels)
     {
         graphSearchConditionBuilderGremlin.in(branchFactor, labels);
         return this;
     }
 
-    public IterationQuery inV()
+    public GremlinPipesQuery inV()
     {
         graphSearchConditionBuilderGremlin.inV();
         return this;
     }
 
-    public IterationQuery label()
+    public GremlinPipesQuery label()
     {
         graphSearchConditionBuilderGremlin.label();
         return this;
     }
 
-    public IterationQuery outE(final String... labels)
+    public GremlinPipesQuery outE(final String... labels)
     {
         graphSearchConditionBuilderGremlin.outE(labels);
         return this;
     }
 
-    public IterationQuery outE(final int branchFactor, final String... labels)
+    public GremlinPipesQuery outE(final int branchFactor, final String... labels)
     {
         graphSearchConditionBuilderGremlin.outE(branchFactor, labels);
         return this;
     }
 
-    public IterationQuery out(final String... labels)
+    public GremlinPipesQuery out(final String... labels)
     {
         graphSearchConditionBuilderGremlin.out(labels);
         return this;
     }
 
-    public IterationQuery out(final int branchFactor, final String... labels)
+    public GremlinPipesQuery out(final int branchFactor, final String... labels)
     {
         graphSearchConditionBuilderGremlin.out(branchFactor, labels);
         return this;
     }
 
-    public IterationQuery outV()
+    public GremlinPipesQuery outV()
     {
         graphSearchConditionBuilderGremlin.outV();
         return this;
     }
 
-    public IterationQuery map(final String... keys)
+    public GremlinPipesQuery map(final String... keys)
     {
         graphSearchConditionBuilderGremlin.map(keys);
         return this;
     }
 
-    public IterationQuery property(final String key)
+    public GremlinPipesQuery property(final String key)
     {
         graphSearchConditionBuilderGremlin.property(key);
         return this;
     }
 
-    public IterationQuery aggregate()
+    public GremlinPipesQuery aggregate()
     {
         graphSearchConditionBuilderGremlin.aggregate();
         return this;
     }
 
-    public IterationQuery aggregate(final Collection<Vertex> aggregate)
+    public GremlinPipesQuery aggregate(final Collection<Vertex> aggregate)
     {
         graphSearchConditionBuilderGremlin.aggregate(aggregate);
         return this;
     }
 
-    public IterationQuery aggregate(final Collection aggregate,
+    public GremlinPipesQuery aggregate(final Collection aggregate,
                 final PipeFunction<Vertex, ?> aggregateFunction)
     {
         graphSearchConditionBuilderGremlin.aggregate(aggregate, aggregateFunction);
         return this;
     }
 
-    public IterationQuery aggregate(final PipeFunction<Vertex, ?> aggregateFunction)
+    public GremlinPipesQuery aggregate(final PipeFunction<Vertex, ?> aggregateFunction)
     {
         graphSearchConditionBuilderGremlin.aggregate(aggregateFunction);
         return this;
@@ -573,209 +573,208 @@ public class IterationQueryImpl extends Iteration implements IterationQueryCrite
 
     @Deprecated
     @SuppressWarnings("deprecation")
-    public IterationQuery optional(final int numberedStep)
+    public GremlinPipesQuery optional(final int numberedStep)
     {
         graphSearchConditionBuilderGremlin.optional(numberedStep);
         return this;
     }
 
-    public IterationQuery optional(final String namedStep)
+    public GremlinPipesQuery optional(final String namedStep)
     {
         graphSearchConditionBuilderGremlin.optional(namedStep);
         return this;
     }
 
-    public IterationQuery groupBy(final Map<?, List<?>> map, final PipeFunction keyFunction,
+    public GremlinPipesQuery groupBy(final Map<?, List<?>> map, final PipeFunction keyFunction,
                 final PipeFunction valueFunction)
     {
         graphSearchConditionBuilderGremlin.groupBy(map, keyFunction, valueFunction);
         return this;
     }
 
-    public IterationQuery groupBy(final PipeFunction keyFunction, final PipeFunction valueFunction)
+    public GremlinPipesQuery groupBy(final PipeFunction keyFunction, final PipeFunction valueFunction)
     {
         graphSearchConditionBuilderGremlin.groupBy(keyFunction, valueFunction);
         return this;
     }
 
-    public IterationQuery groupBy(final Map reduceMap, final PipeFunction keyFunction,
+    public GremlinPipesQuery groupBy(final Map reduceMap, final PipeFunction keyFunction,
                 final PipeFunction valueFunction, final PipeFunction reduceFunction)
     {
         graphSearchConditionBuilderGremlin.groupBy(reduceMap, keyFunction, valueFunction, reduceFunction);
         return this;
     }
 
-    public IterationQuery groupBy(final PipeFunction keyFunction, final PipeFunction valueFunction,
+    public GremlinPipesQuery groupBy(final PipeFunction keyFunction, final PipeFunction valueFunction,
                 final PipeFunction reduceFunction)
     {
         graphSearchConditionBuilderGremlin.groupBy(keyFunction, valueFunction, reduceFunction);
         return this;
     }
 
-    public IterationQuery groupCount(final Map<?, Number> map, final PipeFunction keyFunction,
+    public GremlinPipesQuery groupCount(final Map<?, Number> map, final PipeFunction keyFunction,
                 final PipeFunction<Pair<?, Number>, Number> valueFunction)
     {
         graphSearchConditionBuilderGremlin.groupCount(map, keyFunction, valueFunction);
         return this;
     }
 
-    public IterationQuery groupCount(final PipeFunction keyFunction,
+    public GremlinPipesQuery groupCount(final PipeFunction keyFunction,
                 final PipeFunction<Pair<?, Number>, Number> valueFunction)
     {
         graphSearchConditionBuilderGremlin.groupCount(keyFunction, valueFunction);
         return this;
     }
 
-    public IterationQuery groupCount(final Map<?, Number> map, final PipeFunction keyFunction)
+    public GremlinPipesQuery groupCount(final Map<?, Number> map, final PipeFunction keyFunction)
     {
         graphSearchConditionBuilderGremlin.groupCount(map, keyFunction);
         return this;
     }
 
-    public IterationQuery groupCount(final PipeFunction keyFunction)
+    public GremlinPipesQuery groupCount(final PipeFunction keyFunction)
     {
         graphSearchConditionBuilderGremlin.groupCount(keyFunction);
         return this;
     }
 
-    public IterationQuery groupCount(final Map<?, Number> map)
+    public GremlinPipesQuery groupCount(final Map<?, Number> map)
     {
         graphSearchConditionBuilderGremlin.groupCount(map);
         return this;
     }
 
-    public IterationQuery groupCount()
+    public GremlinPipesQuery groupCount()
     {
         graphSearchConditionBuilderGremlin.groupCount();
         return this;
     }
 
-    public IterationQuery sideEffect(final PipeFunction<Vertex, ?> sideEffectFunction)
+    public GremlinPipesQuery sideEffect(final PipeFunction<Vertex, ?> sideEffectFunction)
     {
         graphSearchConditionBuilderGremlin.sideEffect(sideEffectFunction);
         return this;
     }
 
-    public IterationQuery store(final Collection<Vertex> storage)
+    public GremlinPipesQuery store(final Collection<Vertex> storage)
     {
         graphSearchConditionBuilderGremlin.store(storage);
         return this;
     }
 
-    public IterationQuery store(final Collection storage,
+    public GremlinPipesQuery store(final Collection storage,
                 final PipeFunction<Vertex, ?> storageFunction)
     {
         graphSearchConditionBuilderGremlin.store(storage, storageFunction);
         return this;
     }
 
-    public IterationQuery store()
+    public GremlinPipesQuery store()
     {
         graphSearchConditionBuilderGremlin.store();
         return this;
     }
 
-    public IterationQuery store(final PipeFunction<Vertex, ?> storageFunction)
+    public GremlinPipesQuery store(final PipeFunction<Vertex, ?> storageFunction)
     {
         graphSearchConditionBuilderGremlin.store(storageFunction);
         return this;
     }
 
-    public IterationQuery table(final Table table, final Collection<String> stepNames,
+    public GremlinPipesQuery table(final Table table, final Collection<String> stepNames,
                 final PipeFunction... columnFunctions)
     {
         graphSearchConditionBuilderGremlin.table(table, stepNames, columnFunctions);
         return this;
     }
 
-    public IterationQuery table(final Table table, final PipeFunction... columnFunctions)
+    public GremlinPipesQuery table(final Table table, final PipeFunction... columnFunctions)
     {
         graphSearchConditionBuilderGremlin.table(table, columnFunctions);
         return this;
     }
 
-    public IterationQuery table(final PipeFunction... columnFunctions)
+    public GremlinPipesQuery table(final PipeFunction... columnFunctions)
     {
         graphSearchConditionBuilderGremlin.table(columnFunctions);
         return this;
     }
 
-    public IterationQuery table(final Table table)
+    public GremlinPipesQuery table(final Table table)
     {
         graphSearchConditionBuilderGremlin.table(table);
         return this;
     }
 
-    public IterationQuery table()
+    public GremlinPipesQuery table()
     {
         graphSearchConditionBuilderGremlin.table();
         return this;
     }
 
-    public IterationQuery tree(final Tree tree, final PipeFunction... branchFunctions)
+    public GremlinPipesQuery tree(final Tree tree, final PipeFunction... branchFunctions)
     {
         graphSearchConditionBuilderGremlin.tree(tree, branchFunctions);
         return this;
     }
 
-    public IterationQuery tree(final PipeFunction... branchFunctions)
+    public GremlinPipesQuery tree(final PipeFunction... branchFunctions)
     {
         graphSearchConditionBuilderGremlin.tree(branchFunctions);
         return this;
     }
 
-    public IterationQuery linkOut(final String label, final String namedStep)
+    public GremlinPipesQuery linkOut(final String label, final String namedStep)
     {
         graphSearchConditionBuilderGremlin.linkOut(label, namedStep);
         return this;
     }
 
-    public IterationQuery linkIn(final String label, final String namedStep)
+    public GremlinPipesQuery linkIn(final String label, final String namedStep)
     {
         graphSearchConditionBuilderGremlin.linkIn(label, namedStep);
         return this;
     }
 
-    public IterationQuery linkBoth(final String label, final String namedStep)
+    public GremlinPipesQuery linkBoth(final String label, final String namedStep)
     {
         graphSearchConditionBuilderGremlin.linkBoth(label, namedStep);
         return this;
     }
 
-    public IterationQuery linkOut(final String label, final Vertex other)
+    public GremlinPipesQuery linkOut(final String label, final Vertex other)
     {
         graphSearchConditionBuilderGremlin.linkOut(label, other);
         return this;
     }
 
-    public IterationQuery linkIn(final String label, final Vertex other)
+    public GremlinPipesQuery linkIn(final String label, final Vertex other)
     {
         graphSearchConditionBuilderGremlin.linkIn(label, other);
         return this;
     }
 
-    public IterationQuery linkBoth(final String label, final Vertex other)
+    public GremlinPipesQuery linkBoth(final String label, final Vertex other)
     {
         graphSearchConditionBuilderGremlin.linkBoth(label, other);
         return this;
     }
 
-    public IterationQuery as(final String name)
+    public GremlinPipesQuery as(final String name)
     {
         graphSearchConditionBuilderGremlin.as(name);
         return this;
     }
 
-    public IterationQuery enablePath()
+    public GremlinPipesQuery enablePath()
     {
         graphSearchConditionBuilderGremlin.enablePath();
         return this;
     }
 
-    public IterationQuery cast(Class<Vertex> end)
+    public GremlinPipesQuery cast(Class<Vertex> end)
     {
         graphSearchConditionBuilderGremlin.cast(end);
         return this;
     }
-    // </editor-fold>
 }

@@ -18,8 +18,8 @@ import org.jboss.windup.config.operation.iteration.IterationBuilderVar;
 import org.jboss.windup.config.operation.iteration.IterationBuilderWhen;
 import org.jboss.windup.config.operation.iteration.IterationImpl;
 import org.jboss.windup.config.operation.iteration.IterationPayloadManager;
-import org.jboss.windup.config.operation.iteration.IterationQuery;
-import org.jboss.windup.config.operation.iteration.IterationQueryImpl;
+import org.jboss.windup.config.operation.iteration.GremlinPipesQuery;
+import org.jboss.windup.config.operation.iteration.GremlinPipesQueryImpl;
 import org.jboss.windup.config.operation.iteration.IterationSelectionManager;
 import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.NamedIterationSelectionManager;
@@ -86,19 +86,19 @@ public abstract class Iteration extends DefaultOperationBuilder
 
     
     @Override
-    public IterationQuery queryFor(Class<? extends WindupVertexFrame> varType, String var)
+    public GremlinPipesQuery queryFor(Class<? extends WindupVertexFrame> varType, String var)
     {
         // TODO - I'd prefer if we used Iteration.over(...).var(...).queryFor()...
         //        It would make the API more comprehensible and clearer.
-        return new IterationQueryImpl(this, new TypedNamedIterationPayloadManager(varType, var));
+        return new GremlinPipesQueryImpl(this, new TypedNamedIterationPayloadManager(varType, var));
     }
 
     @Override
-    public IterationQuery queryFor(String var)
+    public GremlinPipesQuery queryFor(String var)
     {
         // TODO - I'd prefer if we used Iteration.over(...).var(...).queryFor()...
         //        It would make the API more comprehensible and clearer.
-        return new IterationQueryImpl(this, new NamedIterationPayloadManager(var));
+        return new GremlinPipesQueryImpl(this, new NamedIterationPayloadManager(var));
     }
 
     public IterationBuilderWhen all(Condition... condition)
