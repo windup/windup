@@ -1,6 +1,5 @@
 package org.jboss.windup.config.operation.foreach;
 
-
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.groovy.jsr223.GremlinGroovyScriptEngineFactory;
@@ -16,11 +15,13 @@ import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Gremlin Groovy based query.
  * TODO: Move to Graph Impl when tested.
  * 
  * @author Ondrej Zizka, ozizka at redhat.com
+ * @see https://github.com/tinkerpop/gremlin/wiki/Using-Gremlin-through-Java
  */
 public class GremlinQuerier {
     private static final Logger log = LoggerFactory.getLogger( GremlinQuerier.class );
