@@ -39,6 +39,7 @@ import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
  * For.each("var").in("javaClasses") [.when()] .perform(...) [.otherwise(...)] .endFor();
+ * TODO: IterationBase - commons for For and Iteration.
  * 
  * @author Ondrej Zizka, ozizka@redhat.com
  * @see https://issues.jboss.org/browse/WINDUP-93

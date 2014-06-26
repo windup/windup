@@ -17,5 +17,5 @@ package org.jboss.windup.config.operation.foreach;
  */
 public interface GremlinQuery
 {
-    public GremlinQueryCriteria endQuery();
+    //public GremlinQueryCriteria endQuery();
 }

@@ -112,10 +112,4 @@ public class GremlinQueryImpl extends For implements GremlinQueryCriteria
         throw new UnsupportedOperationException( "Not needed in GremlinQueryImpl." );
     }
 
-    @Override
-    public GremlinQueryCriteria endQuery() {
-        return this;
-    }
-    
-    
 }
