@@ -24,13 +24,12 @@ import org.jboss.windup.util.exception.WindupException;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class VarStack
+public class VarStack implements IVarStack, ICurrentItems
 {
     /*
      * SelectionStack
      */
     Deque<Map<String, Iterable<WindupVertexFrame>>> deque = new LinkedList<>();
-    Map<String, WindupVertexFrame> currents = new HashMap<>();
 
     /**
      *  Gets an instance from a OCP rewrite context; created during rule init phase.
@@ -44,6 +43,7 @@ public class VarStack
     /**
      * Add new variables layer on top of the stack.
      */
+    @Override
     public void push()
     {
         Map<String, Iterable<WindupVertexFrame>> newFrame = new HashMap<>();
@@ -53,6 +53,7 @@ public class VarStack
     /**
      * Remove the top variables layer from the the stack.
      */
+    @Override
     public Map<String, Iterable<WindupVertexFrame>> pop()
     {
         return deque.pop();
@@ -70,6 +71,7 @@ public class VarStack
      *  Set a variable in the top variables layer to given "collection" of the vertex frames.
      *  Can't be reassigned - throws on attempt to reassign.
      */
+    @Override
     public void setVariable(String name, Iterable<WindupVertexFrame> iterable)
     {
         Map<String, Iterable<WindupVertexFrame>> frame = peek();
@@ -86,6 +88,7 @@ public class VarStack
      * and checks if there is 0 or 1; throws otherwise.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public <T extends WindupVertexFrame> T findSingletonVariable(Class<T> type, String name)
     {
         Iterable<WindupVertexFrame> frames = findVariable(name);
@@ -115,6 +118,7 @@ public class VarStack
      * Searches the variables layers, top to bottom, for given name,
      * and returns if found; null otherwise.
      */
+    @Override
     public Iterable<WindupVertexFrame> findVariable(String name)
     {
         Iterator<Map<String, Iterable<WindupVertexFrame>>> descIter = deque.descendingIterator();
@@ -130,31 +134,61 @@ public class VarStack
         return result;
     }
 
+
     
-    /**
-     * Sets the "cursor" for given variable to given framed vertex; no validity checks!
-     */
-    public void setCurrentPayload(String name, WindupVertexFrame element)
-    {
-        currents.put(name, element);
+    // -------- Payloads ---------- //
+    // TODO: WINDUP-97 Split
+    
+    private final CurrentItems payloads = new CurrentItems();
+
+
+    // Delegation
+    @Override
+    public void setCurrentPayload( String name, WindupVertexFrame element ) {
+        payloads.setCurrentItem( name, element );
+    }
+
+    @Override
+    public <T extends WindupVertexFrame> T getCurrentPayload( Class<T> type, String name ) {
+        return payloads.getCurrentItem( type, name );
     }
 
     
+    
     /**
-     *  Returns the "cursor" for given var name.
-     *  The variables typically keep an iterable; the "current payload" concept
-     *  holds the reference to the currently iterated vertex.
+     *  Keeps the current item. Doesn't work like an iterator, rather is set arbitrarily.
+     *  This could be reworked to use Iterators of the Iterables from the VarStack.
      */
-    @SuppressWarnings("unchecked")
-    public <T extends WindupVertexFrame> T getCurrentPayload(Class<T> type, String name)
+    public static class CurrentItems //implements ICurrentItems
     {
-        Object object = currents.get(name);
-        if (object == null)
-            return null;
-        
-        if (!type.isAssignableFrom(object.getClass()))
-            throw new IllegalTypeArgumentException(name, type, object.getClass());
 
-        return (T) object;
+        private Map<String, WindupVertexFrame> curPayloads = new HashMap<>();
+
+        /**
+         * Sets the "cursor" for given variable to given framed vertex; no validity checks!
+         */
+        public void setCurrentItem(String name, WindupVertexFrame element)
+        {
+            curPayloads.put(name, element);
+        }
+
+
+        /**
+         *  Returns the "cursor" for given var name.
+         *  The variables typically keep an iterable; the "current payload" concept
+         *  holds the reference to the currently iterated vertex.
+         */
+        @SuppressWarnings("unchecked")
+        public <T extends WindupVertexFrame> T getCurrentItem(Class<T> type, String name)
+        {
+            Object object = curPayloads.get(name);
+            if (object == null)
+                return null;
+
+            if (!type.isAssignableFrom(object.getClass()))
+                throw new IllegalTypeArgumentException(name, type, object.getClass());
+
+            return (T) object;
+        }
     }
 }
