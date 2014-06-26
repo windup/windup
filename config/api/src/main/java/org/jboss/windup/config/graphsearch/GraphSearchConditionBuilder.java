@@ -82,6 +82,7 @@ public class GraphSearchConditionBuilder extends GraphCondition
     {
         Iterable<Vertex> vertices = getResults(event);
 
+        // Frame the vertexes.
         Set<WindupVertexFrame> frames = new HashSet<>();
         for (Vertex v : vertices)
         {
@@ -89,6 +90,7 @@ public class GraphSearchConditionBuilder extends GraphCondition
             frames.add(frame);
         }
 
+        // Put the variable to the stack.
         VarStack varStack = (VarStack) event.getRewriteContext().get(VarStack.class);
         varStack.setVariable(variableName, frames);
 
