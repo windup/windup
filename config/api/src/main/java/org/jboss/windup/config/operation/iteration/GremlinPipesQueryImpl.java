@@ -45,12 +45,6 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         this.graphSearchConditionBuilderGremlin = new GraphSearchConditionBuilderGremlin();
     }
 
-    @Override
-    public void setPayloadManager(IterationPayloadManager payloadManager)
-    {
-        Assert.notNull(payloadManager, "Payload manager must not be null.");
-        this.payloadManager = payloadManager;
-    }
 
     /**
      * @returns A SelectionManager which performs a Gremlin query.
@@ -61,6 +55,10 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         return new GremlinIterationSelectionManager();
     }
 
+    
+    /**
+     * 
+     */
     private class GremlinIterationSelectionManager implements IterationSelectionManager
     {
         @Override
@@ -88,6 +86,21 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         }
     }
 
+
+    
+    @Override
+    public void setSelectionManager( IterationSelectionManager mgr ) {
+        // NO-OP, created internally.
+    }
+    
+
+    @Override
+    public void setPayloadManager(IterationPayloadManager payloadManager)
+    {
+        Assert.notNull(payloadManager, "Payload manager must not be null.");
+        this.payloadManager = payloadManager;
+    }
+
     @Override
     public IterationPayloadManager getPayloadManager()
     {
@@ -100,8 +113,10 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         return this;
     }
 
+    
+    
     // <editor-fold defaultstate="collapsed" desc="Gremlin pipes wrapping methods.">
-
+    
     public GremlinPipesQuery step(final PipeFunction function)
     {
         graphSearchConditionBuilderGremlin.step(function);
@@ -776,10 +791,12 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         graphSearchConditionBuilderGremlin.enablePath();
         return this;
     }
-
+    
     public GremlinPipesQuery cast(Class<Vertex> end)
     {
         graphSearchConditionBuilderGremlin.cast(end);
         return this;
     }
+    //</editor-fold>
+    
 }

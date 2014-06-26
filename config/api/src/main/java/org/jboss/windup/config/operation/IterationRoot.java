@@ -11,8 +11,11 @@ import org.jboss.windup.config.operation.iteration.IterationSelectionManager;
 public interface IterationRoot {
     
     public void setPayloadManager(IterationPayloadManager payloadManager);
+    
+    public IterationPayloadManager getPayloadManager();
+    
+    
+    public void setSelectionManager( IterationSelectionManager mgr );
 
     public IterationSelectionManager getSelectionManager();
-
-    public IterationPayloadManager getPayloadManager();
 }
