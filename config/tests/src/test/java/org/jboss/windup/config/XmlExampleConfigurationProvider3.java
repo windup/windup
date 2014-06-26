@@ -53,7 +53,7 @@ public class XmlExampleConfigurationProvider3 extends WindupConfigurationProvide
                     public void perform(GraphRewrite event, EvaluationContext context)
                     {
                         VarStack varStack = VarStack.instance(event);
-                        XmlMetaFacetModel xmlFacetModel = factory
+                        XmlMetaFacetModel xmlFacetModel = varStack
                                     .getCurrentPayload(XmlMetaFacetModel.class, "xml");
                         typeSearchResults.add(xmlFacetModel);
                     }

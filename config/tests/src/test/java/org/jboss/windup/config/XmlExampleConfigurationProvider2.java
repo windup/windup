@@ -54,7 +54,7 @@ public class XmlExampleConfigurationProvider2 extends WindupConfigurationProvide
                     {
                         VarStack varStack = VarStack.instance(event);
                         XmlMetaFacetModel xmlFacetModel = 
-                                factory.getCurrentPayload(XmlMetaFacetModel.class, "xml");
+                                varStack.getCurrentPayload(XmlMetaFacetModel.class, "xml");
                         typeSearchResults.add(xmlFacetModel);
                     }
                 })
