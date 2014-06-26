@@ -69,6 +69,7 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
             // The initial vertices are those matched by previous query constructs.
             // Iteration.[initial vertices].queryFor().[gremlin pipe wrappers]
             List<Vertex> initialVertices = new ArrayList<>();
+            // TODO: Doesn't the root SelectionManager have the same event and varStack?
             Iterable<WindupVertexFrame> initialFrames = root.getSelectionManager().getFrames(event, varStack);
             for (WindupVertexFrame frame : initialFrames)
             {
