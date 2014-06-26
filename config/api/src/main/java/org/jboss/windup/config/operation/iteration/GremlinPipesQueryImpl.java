@@ -66,22 +66,26 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         @Override
         public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack)
         {
-            // The initial vertices are those matched by previous query constructs.
-            // Iteration.[initial vertices].queryFor().[gremlin pipe wrappers]
-            List<Vertex> initialVertices = new ArrayList<>();
-            // TODO: Doesn't the root SelectionManager have the same event and varStack?
-            Iterable<WindupVertexFrame> initialFrames = root.getSelectionManager().getFrames(event, varStack);
-            for (WindupVertexFrame frame : initialFrames)
-            {
-                initialVertices.add(frame.asVertex());
-            }
+            List<Vertex> initialVertices = getInitialVertices( event, varStack );
 
             // Perform the query and convert to frames.
             graphSearchConditionBuilderGremlin.setInitialVertices(initialVertices);
             Iterable<Vertex> v = graphSearchConditionBuilderGremlin.getResults(event);
             return GraphUtil.toVertexFrames(event.getGraphContext(), v);
         }
-
+        
+        /**
+         *  The initial vertices are those matched by previous query constructs.
+         *  Iteration.[initial vertices].queryFor().[gremlin pipe wrappers]
+         */
+        private List<Vertex> getInitialVertices( GraphRewrite event, VarStack varStack ) {
+            List<Vertex> initialVertices = new ArrayList<>();
+            Iterable<WindupVertexFrame> initialFrames = root.getSelectionManager().getFrames(event, varStack);
+            // TODO: Doesn't the root SelectionManager have the same event and varStack?
+            for (WindupVertexFrame frame : initialFrames)
+                initialVertices.add(frame.asVertex());
+            return initialVertices;
+        }
     }
 
     @Override
