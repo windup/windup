@@ -128,83 +128,84 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
     }
 
     
+    //<editor-fold defaultstate="collapsed" desc="Gremlin Pipes wrapper methods">
     
     public GraphSearchConditionBuilderGremlin step(final PipeFunction function)
     {
         pipeline.step(function);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin step(final Pipe<Vertex, Vertex> pipe)
     {
         pipeline.step(pipe);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin copySplit(final Pipe<Vertex, Vertex>... pipes)
     {
         pipeline.copySplit(pipes);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin exhaustMerge()
     {
         pipeline.exhaustMerge();
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin fairMerge()
     {
         pipeline.fairMerge();
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin ifThenElse(final PipeFunction<Vertex, Boolean> ifFunction,
-                final PipeFunction<Vertex, Vertex> thenFunction, final PipeFunction<Vertex, Vertex> elseFunction)
+            final PipeFunction<Vertex, Vertex> thenFunction, final PipeFunction<Vertex, Vertex> elseFunction)
     {
         pipeline.ifThenElse(ifFunction, thenFunction, elseFunction);
         return this;
     }
-
+    
     @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin loop(final int numberedStep,
-                final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction)
+            final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction)
     {
         pipeline.loop(numberedStep, whileFunction);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin loop(final String namedStep,
-                final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction)
+            final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction)
     {
         pipeline.loop(namedStep, whileFunction);
         return this;
     }
-
+    
     @Deprecated
     @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin loop(final int numberedStep,
-                final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction,
-                final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> emitFunction)
+            final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction,
+            final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> emitFunction)
     {
         pipeline.loop(numberedStep, whileFunction, emitFunction);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin loop(final String namedStep,
-                final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction,
-                final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> emitFunction)
+            final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> whileFunction,
+            final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> emitFunction)
     {
         pipeline.loop(namedStep, whileFunction, emitFunction);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin and(final Pipe<Vertex, ?>... pipes)
     {
         pipeline.and(pipes);
         return this;
     }
-
+    
     @Deprecated
     @SuppressWarnings("deprecation")
     public GraphSearchConditionBuilderGremlin back(final int numberedStep)
@@ -212,134 +213,134 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         pipeline.back(numberedStep);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin back(final String namedStep)
     {
         pipeline.back(namedStep);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin dedup()
     {
         pipeline.dedup();
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin dedup(final PipeFunction<Vertex, ?> dedupFunction)
     {
         pipeline.dedup(dedupFunction);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin except(final Collection<Vertex> collection)
     {
         pipeline.except(collection);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin except(final String... namedSteps)
     {
         pipeline.except(namedSteps);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin filter(final PipeFunction<Vertex, Boolean> filterFunction)
     {
         pipeline.filter(filterFunction);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin or(final Pipe<Vertex, ?>... pipes)
     {
         pipeline.or(pipes);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin random(final Double bias)
     {
         pipeline.random(bias);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin range(final int low, final int high)
     {
         pipeline.range(low, high);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin retain(final Collection<Vertex> collection)
     {
         pipeline.retain(collection);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin retain(final String... namedSteps)
     {
         pipeline.retain(namedSteps);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin simplePath()
     {
         pipeline.simplePath();
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin has(final String key)
     {
         pipeline.has(key);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin hasNot(final String key)
     {
         pipeline.hasNot(key);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin has(final String key, final Object value)
     {
         pipeline.has(key, value);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin has(final String key, final Tokens.T compareToken, final Object value)
     {
         pipeline.has(key, compareToken, value);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin has(final String key, final Predicate predicate, final Object value)
     {
         pipeline.has(key, predicate, value);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin hasNot(final String key, final Object value)
     {
         pipeline.hasNot(key, value);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin interval(final String key, final Comparable startValue,
-                final Comparable endValue)
+            final Comparable endValue)
     {
         pipeline.interval(key, startValue, endValue);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin gather()
     {
         pipeline.gather();
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin gather(final PipeFunction<List, ?> function)
     {
         pipeline.gather(function);
         return this;
     }
-
+    
     public GraphSearchConditionBuilderGremlin _()
     {
         pipeline._();
@@ -810,4 +811,5 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         pipeline.cast(end);
         return this;
     }
+    //</editor-fold>
 }
