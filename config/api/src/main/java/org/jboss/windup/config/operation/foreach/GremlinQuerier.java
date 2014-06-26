@@ -2,6 +2,7 @@ package org.jboss.windup.config.operation.foreach;
 
 
 import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.groovy.jsr223.GremlinGroovyScriptEngineFactory;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
+import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +27,10 @@ public class GremlinQuerier {
     
     private final Graph graph;
 
+    private List<Vertex> initialVertices; // Optional, can be null.
+    
 
+    
     public GremlinQuerier( Graph graph ) {
         this.graph = graph;
     }
@@ -49,10 +54,16 @@ public class GremlinQuerier {
         //ScriptEngine engine = manager.getEngineByName("gremlin-groovy");
         ScriptEngine engine = new GremlinGroovyScriptEngineFactory().getScriptEngine();
         
-        List results = new LinkedList();
+        // Bindings
         Bindings bindings = engine.createBindings();
-        bindings.put("g", graph);
+        List results = new LinkedList();
         bindings.put("results", results);
+        bindings.put("g", graph);
+        if( this.initialVertices != null )
+            bindings.put("v", this.initialVertices);
+        else
+            if(query.startsWith("v."))
+                throw new WindupException("The query starts with 'v.', but you did not specify initial vertices!");
         
         if( params != null )
             bindings.putAll( params );
@@ -81,5 +92,14 @@ public class GremlinQuerier {
         return results;
     }
 
+    
+
+    public List<Vertex> getInitialVertices() {
+        return initialVertices;
+    }
+
+    public void setInitialVertices( List<Vertex> initialVertices ) {
+        this.initialVertices = initialVertices;
+    }
 
 }// class
