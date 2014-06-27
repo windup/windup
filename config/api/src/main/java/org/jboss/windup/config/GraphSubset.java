@@ -92,8 +92,9 @@ public class GraphSubset extends DefaultOperationBuilder implements CompositeOpe
         List<Rule> rules = config.getRules();
 
         final EvaluationContextImpl subContext = new EvaluationContextImpl();
-        for( Rule rule : rules )
-        {
+        for( int i = 0; i < rules.size(); i++ ) {
+            Rule rule = rules.get( i );
+            
             subContext.clear();
             subContext.put(ParameterStore.class, context.get(ParameterStore.class));
             ParameterValueStore values = (ParameterValueStore) context.get(ParameterValueStore.class);
@@ -167,8 +168,8 @@ public class GraphSubset extends DefaultOperationBuilder implements CompositeOpe
 
     private static class EvaluationContextImpl extends ContextBase implements EvaluationContext
     {
-        private final List<Operation> preOperations = new ArrayList<Operation>();
-        private final List<Operation> postOperations = new ArrayList<Operation>();
+        private final List<Operation> preOperations = new ArrayList<>();
+        private final List<Operation> postOperations = new ArrayList<>();
         private RewriteState state;
 
         public EvaluationContextImpl()
@@ -240,8 +241,9 @@ public class GraphSubset extends DefaultOperationBuilder implements CompositeOpe
     @Override
     public void setParameterStore(final ParameterStore parent)
     {
-        for (final Rule rule : config.getRules())
-        {
+        for( int i = 0; i < config.getRules().size(); i++ ) {
+            Rule rule = config.getRules().get(i);
+            
             if( ! (rule instanceof RuleBuilder) )
                 continue;
 
