@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.exception.NonUniqueResultException;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -19,6 +20,11 @@ public class GraphService<T extends WindupVertexFrame>
     {
         this.context = context;
         this.type = type;
+    }
+
+    public static WindupConfigurationModel getConfigurationModel(GraphContext context)
+    {
+        return new GraphService<>(context, WindupConfigurationModel.class).getUnique();
     }
 
     public Iterable<T> findAll()

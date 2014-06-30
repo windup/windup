@@ -11,9 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.jboss.windup.config.selectables.VarStack;
-import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
 import org.ocpsoft.rewrite.event.Flow;
@@ -62,11 +61,6 @@ public class GraphRewrite implements Rewrite
     public void selectionPop()
     {
         VarStack.instance(this).pop();
-    }
-
-    public ResourceModel getResource()
-    {
-        return null;
     }
 
     @Override

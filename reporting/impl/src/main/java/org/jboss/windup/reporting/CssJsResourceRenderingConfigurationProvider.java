@@ -34,7 +34,7 @@ public class CssJsResourceRenderingConfigurationProvider extends WindupConfigura
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.REPORTING;
+        return RulePhase.REPORT_RENDERING;
     }
 
     @Override

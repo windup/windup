@@ -56,6 +56,7 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
             <artifactId>windup-reporting-api</artifactId>

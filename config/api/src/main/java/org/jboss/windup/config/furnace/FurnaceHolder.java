@@ -12,8 +12,9 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.event.PostStartup;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Used by the config operations to get a reference to Furnace in order to lookup addons and services.
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class FurnaceHolder
 {

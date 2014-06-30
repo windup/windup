@@ -26,14 +26,19 @@ public enum RulePhase
      */
     MIGRATION_RULES(400),
     /**
-     * Reporting visitors produce reports based upon the information contained within the graph
+     * Reporting visitors produce report data in the graph that will later be used by report rendering
      */
-    REPORTING(500),
+    REPORT_GENERATION(500),
+
+    /**
+     * Actually renders the report into the expected
+     */
+    REPORT_RENDERING(600),
 
     /**
      * Clean up resources and close streams.
      */
-    FINALIZE(600);
+    FINALIZE(700);
 
     private int priority;
 

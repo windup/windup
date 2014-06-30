@@ -1,24 +1,67 @@
 package org.jboss.windup.reporting.meta;
 
-import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Report")
-public interface ReportModel extends ResourceModel
+public interface ReportModel extends WindupVertexFrame
 {
-    @Adjacency(label = "childReport", direction = Direction.IN)
-    public ApplicationReportModel getApplicationReport();
+    /**
+     * The name of the report (for example, 'Black List report for Foo.class')
+     * 
+     * @param reportName
+     */
+    @Property("reportName")
+    public void setReportName(String reportName);
 
-    @Adjacency(label = "childReport", direction = Direction.IN)
-    public void setApplicationReport(ApplicationReportModel archive);
+    @Property("reportName")
+    public String getReportName();
 
-    @Adjacency(label = "archiveResource", direction = Direction.OUT)
-    public void setApplicationArchive(ArchiveModel archiveResource);
+    /**
+     * The path to the template that produced this report (for example, /reports/blacklist.ftl)
+     * 
+     * @param templatePath
+     */
+    @Property("templatePath")
+    public void setTemplatePath(String templatePath);
 
-    @Adjacency(label = "archiveResource", direction = Direction.OUT)
-    public void getApplicationArchive();
+    @Property("templatePath")
+    public String getTemplatePath();
+
+    /**
+     * The templating technology used to produce this report (for example, freemarker)
+     * 
+     * @param templateType
+     */
+    @Property("templateType")
+    public void setTemplateType(TemplateType templateType);
+
+    @Property("templateType")
+    public TemplateType getTemplateType();
+
+    /**
+     * The parent report... this could be the root (index) or another level of summary report.
+     * 
+     * @return
+     */
+    @Adjacency(label = "parentReport", direction = Direction.IN)
+    public ReportModel getParentReport();
+
+    @Adjacency(label = "parentReport", direction = Direction.IN)
+    public void setParentReport(ReportModel parent);
+
+    /**
+     * The graph objects that took part in producing this report
+     * 
+     * @param wvf
+     */
+    @Adjacency(label = "relatedResource", direction = Direction.OUT)
+    public void addRelatedResource(WindupVertexFrame wvf);
+
+    @Adjacency(label = "relatedResource", direction = Direction.OUT)
+    public Iterable<WindupVertexFrame> getRelatedResources();
 }
