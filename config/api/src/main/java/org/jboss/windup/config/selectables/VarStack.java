@@ -18,9 +18,8 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
- * A variables stack, and also "current values" -
- * keeps few layers of "key"->[vertices] maps, one per rule execution level,
- * and current "cursor" (to an iterable) for iterations.
+ * A variables stack, and also "current values" - keeps few layers of "key"->[vertices] maps, one per rule execution
+ * level, and current "cursor" (to an iterable) for iterations.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -32,14 +31,13 @@ public class VarStack implements IVarStack, ICurrentItems
     Deque<Map<String, Iterable<WindupVertexFrame>>> deque = new LinkedList<>();
 
     /**
-     *  Gets an instance from a OCP rewrite context; created during rule init phase.
+     * Gets an instance from a OCP rewrite context; created during rule init phase.
      */
     public static VarStack instance(GraphRewrite event)
     {
         return (VarStack) event.getRewriteContext().get(VarStack.class);
     }
 
-    
     /**
      * Add new variables layer on top of the stack.
      */
@@ -60,7 +58,7 @@ public class VarStack implements IVarStack, ICurrentItems
     }
 
     /**
-     *  Get the top variables layer from the stack.
+     * Get the top variables layer from the stack.
      */
     private Map<String, Iterable<WindupVertexFrame>> peek()
     {
@@ -68,8 +66,8 @@ public class VarStack implements IVarStack, ICurrentItems
     }
 
     /**
-     *  Set a variable in the top variables layer to given "collection" of the vertex frames.
-     *  Can't be reassigned - throws on attempt to reassign.
+     * Set a variable in the top variables layer to given "collection" of the vertex frames. Can't be reassigned -
+     * throws on attempt to reassign.
      */
     @Override
     public void setVariable(String name, Iterable<WindupVertexFrame> iterable)
@@ -82,41 +80,38 @@ public class VarStack implements IVarStack, ICurrentItems
         frame.put(name, iterable);
     }
 
-    
     /**
-     * Type-safe wrapper around findVariable which gives only one framed vertex, 
-     * and checks if there is 0 or 1; throws otherwise.
+     * Type-safe wrapper around findVariable which gives only one framed vertex, and checks if there is 0 or 1; throws
+     * otherwise.
      */
     @SuppressWarnings("unchecked")
     @Override
     public <T extends WindupVertexFrame> T findSingletonVariable(Class<T> type, String name)
     {
         Iterable<WindupVertexFrame> frames = findVariable(name);
-        if( null == frames )
+        if (null == frames)
             throw new WindupException("Variable not found: " + name);
-        
+
         Iterator<WindupVertexFrame> iterator = frames.iterator();
-        if( ! iterator.hasNext() )
+        if (!iterator.hasNext())
             return null;
-        
+
         Object obj = iterator.next();
-        
+
         // Check if there's just 1.
-        if( iterator.hasNext() )
+        if (iterator.hasNext())
             throw new WindupException("More than one frame present "
-                    + "under presumed singleton variable: " + name);
+                        + "under presumed singleton variable: " + name);
 
         // Check the type.
-        if( ! type.isAssignableFrom(obj.getClass()) )
+        if (!type.isAssignableFrom(obj.getClass()))
             throw new IllegalTypeArgumentException(name, type, obj.getClass());
 
         return (T) obj;
     }
 
-    
     /**
-     * Searches the variables layers, top to bottom, for given name,
-     * and returns if found; null otherwise.
+     * Searches the variables layers, top to bottom, for given name, and returns if found; null otherwise.
      */
     @Override
     public Iterable<WindupVertexFrame> findVariable(String name)
@@ -127,39 +122,61 @@ public class VarStack implements IVarStack, ICurrentItems
         {
             Map<String, Iterable<WindupVertexFrame>> frame = descIter.next();
             result = frame.get(name);
-            if (result != null) {
+            if (result != null)
+            {
                 break;
             }
         }
         return result;
     }
 
+    public Map<String, Object> findAllVariablesAsMap(String... varNames)
+    {
+        Map<String, Object> results = new HashMap<String, Object>();
+        for (String varName : varNames)
+        {
+            // First, try to find it in the current iteration
+            WindupVertexFrame currentVar = getCurrentPayload(WindupVertexFrame.class, varName);
+            if (currentVar != null)
+            {
+                results.put(varName, currentVar);
+            }
+            else
+            {
+                // otherwise, look for it in the stack
+                Iterable<WindupVertexFrame> var = findVariable(varName);
+                if (var != null)
+                {
+                    results.put(varName, var);
+                }
+            }
+        }
+        return results;
+    }
 
-    
     // -------- Payloads ---------- //
     // TODO: WINDUP-97 Split
-    
-    private final CurrentItems payloads = new CurrentItems();
 
+    private final CurrentItems payloads = new CurrentItems();
 
     // Delegation
     @Override
-    public void setCurrentPayload( String name, WindupVertexFrame element ) {
-        payloads.setCurrentItem( name, element );
+    public void setCurrentPayload(String name, WindupVertexFrame element)
+    {
+        payloads.setCurrentItem(name, element);
     }
 
     @Override
-    public <T extends WindupVertexFrame> T getCurrentPayload( Class<T> type, String name ) {
-        return payloads.getCurrentItem( type, name );
+    public <T extends WindupVertexFrame> T getCurrentPayload(Class<T> type, String name)
+    {
+        return payloads.getCurrentItem(type, name);
     }
 
-    
-    
     /**
-     *  Keeps the current item. Doesn't work like an iterator, rather is set arbitrarily.
-     *  This could be reworked to use Iterators of the Iterables from the VarStack.
+     * Keeps the current item. Doesn't work like an iterator, rather is set arbitrarily. This could be reworked to use
+     * Iterators of the Iterables from the VarStack.
      */
-    public static class CurrentItems //implements ICurrentItems
+    public static class CurrentItems // implements ICurrentItems
     {
 
         private Map<String, WindupVertexFrame> curPayloads = new HashMap<>();
@@ -172,11 +189,9 @@ public class VarStack implements IVarStack, ICurrentItems
             curPayloads.put(name, element);
         }
 
-
         /**
-         *  Returns the "cursor" for given var name.
-         *  The variables typically keep an iterable; the "current payload" concept
-         *  holds the reference to the currently iterated vertex.
+         * Returns the "cursor" for given var name. The variables typically keep an iterable; the "current payload"
+         * concept holds the reference to the currently iterated vertex.
          */
         @SuppressWarnings("unchecked")
         public <T extends WindupVertexFrame> T getCurrentItem(Class<T> type, String name)
