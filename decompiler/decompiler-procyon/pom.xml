@@ -21,7 +21,9 @@
         <resources>
             <resource>
                 <directory>src/main/java</directory>
-                <excludes> <exclude>**/*.java</exclude> </excludes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
@@ -57,11 +59,21 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <executions> <execution> <id>generate-dot</id> <phase>prepare-package</phase> </execution> </executions>
+                <executions>
+                    <execution>
+                        <id>generate-dot</id>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <executions>  <execution>  <id>create-forge-addon</id>  <phase>package</phase>  </execution> </executions>
+                <executions>
+                    <execution>
+                        <id>create-forge-addon</id>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -111,8 +123,8 @@
 
 
         <!-- Logging -->
-        <!-- <dependency> <groupId>org.apache.logging.log4j.adapters</groupId> <artifactId>log4j-slf4j-impl</artifactId> 
-            <version>2.0-beta4</version> </dependency> -->
+        <!-- <dependency> <groupId>org.apache.logging.log4j.adapters</groupId> 
+            <artifactId>log4j-slf4j-impl</artifactId> <version>2.0-beta4</version> </dependency> -->
         <dependency>
             <groupId>org.apache.logging.log4j.adapters</groupId>
             <artifactId>log4j-to-slf4j</artifactId>
@@ -123,6 +135,11 @@
             <artifactId>log4j</artifactId>
             <version>2.0-rc1</version>
             <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
         </dependency>
     </dependencies>
 
