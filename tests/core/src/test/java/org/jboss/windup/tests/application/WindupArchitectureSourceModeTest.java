@@ -1,6 +1,8 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.inject.Inject;
 
@@ -63,7 +65,10 @@ public class WindupArchitectureSourceModeTest
         String inputPath = "../../test-files/src_example";
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
-        windupCfg.setOutputPath(new File(FileUtils.getTempDirectory(), "windupreport").getAbsolutePath());
+        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windupreport");
+        Files.createDirectories(outputPath);
+
+        windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
         windupCfg.setSourceMode(true);
 
         try

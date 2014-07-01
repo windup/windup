@@ -74,8 +74,10 @@ public class VarStack implements IVarStack, ICurrentItems
     {
         Map<String, Iterable<WindupVertexFrame>> frame = peek();
         if (findVariable(name) != null)
+        {
             throw new IllegalArgumentException("Variable \"" + name
                         + "\" has already been assigned and cannot be reassigned");
+        }
 
         frame.put(name, iterable);
     }
@@ -90,22 +92,30 @@ public class VarStack implements IVarStack, ICurrentItems
     {
         Iterable<WindupVertexFrame> frames = findVariable(name);
         if (null == frames)
+        {
             throw new WindupException("Variable not found: " + name);
+        }
 
         Iterator<WindupVertexFrame> iterator = frames.iterator();
         if (!iterator.hasNext())
+        {
             return null;
+        }
 
         Object obj = iterator.next();
 
         // Check if there's just 1.
         if (iterator.hasNext())
+        {
             throw new WindupException("More than one frame present "
                         + "under presumed singleton variable: " + name);
+        }
 
         // Check the type.
         if (!type.isAssignableFrom(obj.getClass()))
+        {
             throw new IllegalTypeArgumentException(name, type, obj.getClass());
+        }
 
         return (T) obj;
     }
@@ -198,10 +208,14 @@ public class VarStack implements IVarStack, ICurrentItems
         {
             Object object = curPayloads.get(name);
             if (object == null)
+            {
                 return null;
+            }
 
             if (!type.isAssignableFrom(object.getClass()))
+            {
                 throw new IllegalTypeArgumentException(name, type, object.getClass());
+            }
 
             return (T) object;
         }

@@ -11,7 +11,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.model.ApplicationReferenceModel;
+import org.jboss.windup.graph.model.ApplicationArchiveModel;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ZipUtil;
@@ -108,7 +108,7 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
         }
 
         // add a folder reference for this application
-        ApplicationReferenceModel appRefModel = archiveModel.getApplicationReferenceModel();
+        ApplicationArchiveModel appRefModel = archiveModel.getApplicationReferenceModel();
 
         FileModel newFileModel = event.getGraphContext().getFramed()
                     .addVertex(null, FileModel.class);
@@ -118,7 +118,7 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<Arc
 
         if (appRefModel != null)
         {
-            appRefModel.setFileResourceModel(newFileModel);
+            appRefModel.setUnzippedLocation(newFileModel);
         }
 
         try

@@ -15,7 +15,7 @@ import org.jboss.windup.config.operation.ruleelement.TypeOperation;
 import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
-import org.jboss.windup.rules.apps.maven.model.MavenFacetModel;
+import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -26,7 +26,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class MavenExampleConfigurationProvider extends WindupConfigurationProvider
 {
-        private final List<MavenFacetModel> results = new LinkedList();
+        private final List<MavenProjectModel> results = new LinkedList();
 
     @Override
     public RulePhase getPhase()
@@ -47,7 +47,7 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
         .perform(
             Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
                 .perform(
-                    TypeOperation.addType("xml", MavenFacetModel.class)
+                    TypeOperation.addType("xml", MavenProjectModel.class)
                 )
             .endIteration()
         )
@@ -55,17 +55,17 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
         // Add all MavenFacetModel vertices to this.results.
         .addRule()
         .when(
-                GraphSearchConditionBuilder.create("mavenModels").ofType(MavenFacetModel.class)
+                GraphSearchConditionBuilder.create("mavenModels").ofType(MavenProjectModel.class)
         )
         .perform(
-            Iteration.over(MavenFacetModel.class, "mavenModels").var("maven")
+            Iteration.over(MavenProjectModel.class, "mavenModels").var("maven")
             .perform(new GraphOperation()
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context)
                 {
                     VarStack varStack = VarStack.instance(event);
-                    MavenFacetModel mavenFacetModel = varStack.getCurrentPayload(MavenFacetModel.class, "maven");
+                    MavenProjectModel mavenFacetModel = varStack.getCurrentPayload(MavenProjectModel.class, "maven");
                     results.add(mavenFacetModel);
                 }
             })
@@ -74,7 +74,7 @@ public class MavenExampleConfigurationProvider extends WindupConfigurationProvid
         return configuration;
     }
 
-    public List<MavenFacetModel> getSearchResults()
+    public List<MavenProjectModel> getSearchResults()
     {
         return results;
     }

@@ -29,31 +29,39 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
 
     public void addTypeToRegistry(Class<? extends WindupVertexFrame> wvf)
     {
-        typeRegistry.add(wvf);
+        if (wvf.getAnnotation(TypeValue.class) != null)
+        {
+            // Do not attempt to add items where this is null... we use
+            // *Model types with no TypeValue to function as essentially
+            // "abstract" models that would never exist on their own (only as subclasses).
+            typeRegistry.add(wvf);
+        }
     }
 
     /**
-     *  Adds the type value to the field denoting which type the element represents.
+     * Adds the type value to the field denoting which type the element represents.
      */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
         Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
-            
+
         TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
         if (typeValueAnnotation == null)
             return;
-            
+
         String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
-        if (typeValue.contains(DELIMITER)) {
+        if (typeValue.contains(DELIMITER))
+        {
             throw new IllegalArgumentException("Type value for class '" + kind.getCanonicalName()
-                + "' is '" + typeValue + "' but must not contain the \"" + DELIMITER + "\" character.");
+                        + "' is '" + typeValue + "' but must not contain the \"" + DELIMITER + "\" character.");
         }
-        if( ! StringUtils.isAlphanumeric( typeValue ) ) {
+        if (!StringUtils.isAlphanumeric(typeValue))
+        {
             throw new IllegalArgumentException("Type value for class '" + kind.getCanonicalName()
-                + "' is '" + typeValue + "' but must be alphanumeric.");
+                        + "' is '" + typeValue + "' but must be alphanumeric.");
         }
 
         // Store the type value in a delimited list.
@@ -68,11 +76,25 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
             // Otherwise, append to the end, making sure that the list is terminated with the delimiter.
             element.setProperty(typeFieldName, currentPropertyValue + typeValue + DELIMITER);
         }
+
+        addSuperclassType(kind, element);
     }
 
-    
+    @SuppressWarnings("unchecked")
+    private void addSuperclassType(Class<? extends VertexFrame> kind, Element element)
+    {
+        for (Class<?> superInterface : kind.getInterfaces())
+        {
+            if (WindupVertexFrame.class.isAssignableFrom(superInterface))
+            {
+                addTypeToElement((Class<? extends VertexFrame>) superInterface, element);
+            }
+        }
+
+    }
+
     /**
-     *  Returns the classes which this edge represents, typically subclasses.
+     * Returns the classes which this edge represents, typically subclasses.
      */
     @Override
     public Class<?>[] resolveTypes(Edge e, Class<?> defaultType)
@@ -81,7 +103,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     }
 
     /**
-     *  Returns the classes which this vertex represents, typically subclasses.
+     * Returns the classes which this vertex represents, typically subclasses.
      */
     @Override
     public Class<?>[] resolveTypes(Vertex v, Class<?> defaultType)
@@ -90,8 +112,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     }
 
     /**
-     *  Returns the classes which this vertex/edge represents, typically subclasses.
-     *  Always appends
+     * Returns the classes which this vertex/edge represents, typically subclasses. Always appends
      */
     private Class<?>[] resolve(Element e, Class<?> defaultType)
     {
@@ -101,7 +122,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             // Name of the graph element property holding the type list.
             String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-            String valuesAll = e.getProperty( propName );
+            String valuesAll = e.getProperty(propName);
             if (valuesAll != null)
             {
                 String[] valuesArray = StringUtils.split(valuesAll, DELIMITER);

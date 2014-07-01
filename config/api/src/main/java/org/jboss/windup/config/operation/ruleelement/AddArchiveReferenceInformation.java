@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphUtil;
-import org.jboss.windup.graph.model.ApplicationReferenceModel;
+import org.jboss.windup.graph.model.ApplicationArchiveModel;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -30,8 +30,9 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperator<Fi
 
         archiveResourceModel.setArchiveName(file.getName());
 
-        ApplicationReferenceModel appRefModel = event.getGraphContext().getFramed()
-                    .addVertex(null, ApplicationReferenceModel.class);
-        appRefModel.setArchive(archiveResourceModel);
+        ApplicationArchiveModel appArchiveModel = event.getGraphContext().getFramed()
+                    .addVertex(null, ApplicationArchiveModel.class);
+        appArchiveModel.setOriginalArchive(archiveResourceModel);
+        appArchiveModel.setApplicationName(file.getName());
     }
 }

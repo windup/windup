@@ -23,16 +23,16 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>${application.applicationName} - Application Report</title>
-    <link href="../../resources/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../resources/css/windup.css" rel="stylesheet" media="screen">
+    <title>${applicationReport.applicationName} - Application Report</title>
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/windup.css" rel="stylesheet" media="screen">
   </head>
   <body role="document">
     
     <!-- Fixed navbar -->
     <div class="navbar-fixed-top windup-bar" role="navigation">
       <div class="container theme-showcase" role="main">
-        <img src="../../resources/img/windup-logo.png" class="logo"/>
+        <img src="resources/img/windup-logo.png" class="logo"/>
       </div>
     </div>
 
@@ -41,7 +41,7 @@
     <div class="container" role="main">
         <div class="row">
           <div class="page-header page-header-no-border">
-            <h1>Application Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${application.applicationName}</small></h1>
+            <h1>Application Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${applicationReport.applicationName}</small></h1>
              <div class="navbar navbar-default">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
@@ -67,25 +67,20 @@
         </div>
     </div>
 
-
-
-
-
-
     <div class="container theme-showcase" role="main">
 
-	<#list application.archives as archive>
-	<div class="panel panel-${archive.level.name()?lower_case}">
+	<#list applicationReport.childReports.iterator() as childReport>
+	<div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">${archive.applicationPath}</h3>
+            <h3 class="panel-title">${childReport.reportName}</h3>
         </div>
         <table class="table table-striped table-bordered">
           <tr>
             <th>Name</th><th>Technology</th><th>Issues</th>
           </tr>
-          <#list archive.resources as resource>
+<#--          <#list archive.resources as resource>
 			<@resourceRenderer resource/>
-          </#list>
+          </#list> -->
         </table>
     </div>
     </#list>
@@ -93,7 +88,7 @@
     </div> <!-- /container -->
 
 
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <script src="../../resources/js/bootstrap.min.js"></script>
+    <script src="resources/js/jquery-1.10.1.min.js"></script>
+    <script src="resources/js/bootstrap.min.js"></script>
   </body>
 </html>

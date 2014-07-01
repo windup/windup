@@ -58,7 +58,8 @@ public class CssJsResourceRenderingConfigurationProvider extends WindupConfigura
                                                                         EvaluationContext context,
                                                                         WindupConfigurationModel payload)
                                                             {
-                                                                String outputPath = payload.getOutputPath();
+                                                                String outputPath = payload.getOutputPath()
+                                                                            .getFilePath();
                                                                 copyCssResourcesToOutput(outputPath);
                                                             }
                                                         }

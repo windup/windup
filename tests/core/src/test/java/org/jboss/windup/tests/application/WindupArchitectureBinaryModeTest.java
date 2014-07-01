@@ -1,6 +1,8 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.inject.Inject;
 
@@ -28,6 +30,7 @@ public class WindupArchitectureBinaryModeTest
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
@@ -39,6 +42,7 @@ public class WindupArchitectureBinaryModeTest
                     .addBeansXML()
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
@@ -62,7 +66,11 @@ public class WindupArchitectureBinaryModeTest
         String inputPath = "../../test-files/Windup1x-javaee-example.war";
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
-        windupCfg.setOutputPath(new File(FileUtils.getTempDirectory(), "windupreport").getAbsolutePath());
+
+        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windupreport");
+        Files.createDirectories(outputPath);
+
+        windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
         windupCfg.setSourceMode(false);
 
         try
