@@ -28,7 +28,7 @@ public class VarStack implements IVarStack, ICurrentItems
     /*
      * SelectionStack
      */
-    Deque<Map<String, Iterable<WindupVertexFrame>>> deque = new LinkedList<>();
+    private final Deque<Map<String, Iterable<WindupVertexFrame>>> deque = new LinkedList<>();
 
     /**
      * Gets an instance from a OCP rewrite context; created during rule init phase.
