@@ -21,6 +21,7 @@ import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.reporting.meta.ApplicationReportModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,7 @@ import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
-public class FreeMarkerOperationTest extends AbstractTestCase
+public class FreeMarkerIterationOperationTest extends AbstractTestCase
 {
 
     @Deployment
@@ -88,6 +89,10 @@ public class FreeMarkerOperationTest extends AbstractTestCase
             Files.createDirectories(tempFolder);
         }
         cfgModel.setOutputPath(tempFolder.toAbsolutePath().toString());
+
+        ApplicationReportModel appReportModel = context.getFramed().addVertex(null, ApplicationReportModel.class);
+        appReportModel.setTemplatePath("/reports/templates/FreeMarkerOperationTest.ftl");
+        appReportModel.setReportFilename("testapplicationreport.html");
     }
 
     private DefaultEvaluationContext createEvalContext(GraphRewrite event)

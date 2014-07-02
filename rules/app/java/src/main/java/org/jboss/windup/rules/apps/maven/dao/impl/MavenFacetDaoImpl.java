@@ -5,7 +5,7 @@ import java.util.Iterator;
 import javax.inject.Singleton;
 
 import org.jboss.windup.rules.apps.maven.dao.MavenFacetDao;
-import org.jboss.windup.rules.apps.maven.model.MavenFacetModel;
+import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +16,16 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 @Singleton
-public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacetModel> implements MavenFacetDao {
+public class MavenFacetDaoImpl extends BaseDaoImpl<MavenProjectModel> implements MavenFacetDao {
 
 	private static Logger LOG = LoggerFactory.getLogger(MavenFacetDaoImpl.class);
 	
 	public MavenFacetDaoImpl() {
-		super(MavenFacetModel.class);
+		super(MavenProjectModel.class);
 	}
 	
-	public MavenFacetModel createMaven(String groupId, String artifactId, String version) {
-		MavenFacetModel facet = findByGroupArtifactVersion(groupId, artifactId, version);
+	public MavenProjectModel createMaven(String groupId, String artifactId, String version) {
+		MavenProjectModel facet = findByGroupArtifactVersion(groupId, artifactId, version);
 		if(facet == null) {
 			facet = create();
 			facet.setMavenIdentifier(generateMavenKey(groupId, artifactId, version));
@@ -37,9 +37,9 @@ public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacetModel> implements M
 		return facet;
 	}
 	
-	public MavenFacetModel findByGroupArtifactVersion(String groupId, String artifactId, String version) {
+	public MavenProjectModel findByGroupArtifactVersion(String groupId, String artifactId, String version) {
 		String key = generateMavenKey(groupId, artifactId, version);
-		MavenFacetModel facet = this.getByUniqueProperty("mavenIdentifier", key);
+		MavenProjectModel facet = this.getByUniqueProperty("mavenIdentifier", key);
 		
 		return facet;
 	}
@@ -53,7 +53,7 @@ public class MavenFacetDaoImpl extends BaseDaoImpl<MavenFacetModel> implements M
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator().hasNext();
     }
     
-    public MavenFacetModel getMavenConfigurationFromResource(XmlResourceModel resource) {
+    public MavenProjectModel getMavenConfigurationFromResource(XmlResourceModel resource) {
         @SuppressWarnings("unchecked")
         Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator();
         if(v.hasNext()) {

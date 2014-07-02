@@ -32,7 +32,7 @@ public interface ArchiveModel extends WindupVertexFrame
     public ArchiveModel getChildArchive();
 
     @Adjacency(label = "archive", direction = Direction.IN)
-    public ApplicationReferenceModel getApplicationReferenceModel();
+    public ApplicationArchiveModel getApplicationReferenceModel();
 
     @Adjacency(label = "unzippedDirectory", direction = Direction.OUT)
     public void setUnzippedDirectory(FileModel fileResourceModel);

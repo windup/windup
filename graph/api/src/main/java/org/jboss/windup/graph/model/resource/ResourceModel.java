@@ -5,9 +5,6 @@ import java.io.InputStream;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-
-@TypeValue("BaseResource")
 public interface ResourceModel extends WindupVertexFrame
 {
     public InputStream asInputStream();

@@ -66,7 +66,7 @@ public class FreeMarkerOperation extends GraphOperation
         try
         {
             WindupConfigurationModel windupCfg = GraphService.getConfigurationModel(event.getGraphContext());
-            String outputDir = windupCfg.getOutputPath();
+            String outputDir = windupCfg.getOutputPath().getFilePath();
             Path outputPath = Paths.get(outputDir, outputFilename);
 
             LOG.info("Reporting: Writing template \"{}\" to output file \"{}\"", templatePath, outputPath

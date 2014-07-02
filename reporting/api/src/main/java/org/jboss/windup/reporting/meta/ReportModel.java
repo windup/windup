@@ -22,6 +22,12 @@ public interface ReportModel extends WindupVertexFrame
     @Property("reportName")
     public String getReportName();
 
+    @Property("reportFilename")
+    public void setReportFilename(String reportFilename);
+
+    @Property("reportFilename")
+    public String getReportFilename();
+
     /**
      * The path to the template that produced this report (for example, /reports/blacklist.ftl)
      * 

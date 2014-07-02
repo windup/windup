@@ -5,18 +5,23 @@
 	<span class="label label-${tag.level.name()?lower_case}"><#nested/></span> 
 </#macro>
  
-<#macro applicationRenderer application>
-	<tr><td><a href="${application.applicationLink.url}">${application.applicationLink.name}</a></td>
+<#macro applicationReportRenderer applicationReport>
+	<tr><td><a href="${applicationReport.reportFilename}">${applicationReport.reportName}</a></td>
 		<td>
-			<#list application.technologyTags as tag>
+			<#-- <#list application.technologyTags as tag>
 		    <@tagRenderer tag>${tag.title}</@tagRenderer>
 		    </#list>
+		  -->
 		</td>
-		<td>${application.effort.name()?capitalize}</td>
 		<td>
+		  <#-- ${application.effort.name()?capitalize} -->
+		</td>
+		<td>
+		  <#--
 			<#list application.issueTags as tag>
 		    <@tagRenderer tag>${tag.title}</@tagRenderer>
 		    </#list>
+		  -->
 		</td>
 	</tr>
 </#macro>
@@ -61,15 +66,15 @@
             <th>Name</th><th>Technology</th><th>Effort</th><th>Issues</th>
           </tr>
           
-          <#list applications as application>
-			<@applicationRenderer application/>
+          <#list applicationReports as applicationReport>
+			       <@applicationReportRenderer applicationReport/>
           </#list>
           
         </table>
     </div> <!-- /container -->
 
 
-    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
   </body>
 </html>

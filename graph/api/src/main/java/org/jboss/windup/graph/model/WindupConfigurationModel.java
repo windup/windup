@@ -2,6 +2,8 @@ package org.jboss.windup.graph.model;
 
 import java.util.ArrayList;
 
+import org.jboss.windup.graph.model.resource.FileModel;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
@@ -17,20 +19,24 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     public static final String PROPERTY_FETCH_REMOTE_RESOURCES = "fetchRemoteResources";
     public static final String PROPERTY_EXCLUDE_JAVA_PACKAGES = "excludeJavaPackages";
     public static final String PROPERTY_SCAN_JAVA_PACKAGES = "scanJavaPackages";
-    public static final String PROPERTY_OUTPUT_PATH = "outputPath";
-    public static final String PROPERTY_INPUT_PATH = "inputPath";
 
-    @Property(PROPERTY_INPUT_PATH)
-    String getInputPath();
-
-    @Property(PROPERTY_INPUT_PATH)
+    @JavaHandler
     void setInputPath(String inputPath);
 
-    @Property(PROPERTY_OUTPUT_PATH)
-    String getOutputPath();
+    @Adjacency(label = "inputPath", direction = Direction.OUT)
+    FileModel getInputPath();
 
-    @Property(PROPERTY_OUTPUT_PATH)
+    @Adjacency(label = "inputPath", direction = Direction.OUT)
+    void setInputPath(FileModel inputPath);
+
+    @JavaHandler
     void setOutputPath(String outputPath);
+
+    @Adjacency(label = "outputPath", direction = Direction.OUT)
+    FileModel getOutputPath();
+
+    @Adjacency(label = "outputPath", direction = Direction.OUT)
+    void setOutputPath(FileModel outputPath);
 
     @Adjacency(label = PROPERTY_SCAN_JAVA_PACKAGES, direction = Direction.OUT)
     Iterable<WindupConfigurationPackageModel> getScanJavaPackages();
@@ -70,6 +76,20 @@ public interface WindupConfigurationModel extends WindupVertexFrame
 
     abstract class Impl implements WindupConfigurationModel, JavaHandlerContext<Vertex>
     {
+        public void setInputPath(String inputPath)
+        {
+            FileModel fileModel = this.g().addVertex(null, FileModel.class);
+            fileModel.setFilePath(inputPath);
+            setInputPath(fileModel);
+        }
+
+        public void setOutputPath(String inputPath)
+        {
+            FileModel fileModel = this.g().addVertex(null, FileModel.class);
+            fileModel.setFilePath(inputPath);
+            setOutputPath(fileModel);
+        }
+
         public void setScanJavaPackageList(Iterable<String> pkgs)
         {
             setScanJavaPackages(new ArrayList<WindupConfigurationPackageModel>());

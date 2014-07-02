@@ -7,18 +7,17 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("ApplicationReference")
-public interface ApplicationReferenceModel extends WindupVertexFrame
+public interface ApplicationArchiveModel extends ApplicationModel
 {
+    @Adjacency(label = "archive", direction = Direction.OUT)
+    public void setOriginalArchive(final ArchiveModel module);
 
     @Adjacency(label = "archive", direction = Direction.OUT)
-    public void setArchive(final ArchiveModel module);
-
-    @Adjacency(label = "archive", direction = Direction.OUT)
-    public ArchiveModel getArchive();
+    public ArchiveModel getOriginalArchive();
 
     @Adjacency(label = "directory", direction = Direction.OUT)
-    public FileModel getFileResourceModel();
+    public FileModel getUnzippedLocation();
 
     @Adjacency(label = "directory", direction = Direction.OUT)
-    public FileModel setFileResourceModel(FileModel model);
+    public FileModel setUnzippedLocation(FileModel model);
 }
