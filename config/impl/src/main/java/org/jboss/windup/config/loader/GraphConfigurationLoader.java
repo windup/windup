@@ -21,6 +21,7 @@ import org.ocpsoft.rewrite.config.ParameterizedCallback;
 import org.ocpsoft.rewrite.config.ParameterizedConditionVisitor;
 import org.ocpsoft.rewrite.config.ParameterizedOperationVisitor;
 import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.param.ConfigurableParameter;
 import org.ocpsoft.rewrite.param.DefaultParameter;
 import org.ocpsoft.rewrite.param.Parameter;
@@ -38,7 +39,6 @@ public class GraphConfigurationLoader
     @Inject
     private Imported<WindupConfigurationProviderLoader> loaders;
 
-    @SuppressWarnings("unchecked")
     public GraphConfigurationLoader()
     {
     }
@@ -74,6 +74,9 @@ public class GraphConfigurationLoader
             List<Rule> list = cfg.getRules();
             for (final Rule rule : list)
             {
+                if (rule instanceof Context)
+                    provider.enhanceMetadata((Context) rule);
+
                 result.addRule(rule);
 
                 if (rule instanceof ParameterizedRule)

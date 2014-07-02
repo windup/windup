@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 @Vetoed
 public class GroovyConfigurationProvider extends WindupConfigurationProvider
 {
-    private static Logger LOG = LoggerFactory.getLogger(GroovyConfigurationProvider.class);
+    private static Logger log = LoggerFactory.getLogger(GroovyConfigurationProvider.class);
 
     private String ruleID;
     private RulePhase rulePhase;
