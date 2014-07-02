@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.selectables.VarStack;
@@ -19,6 +20,7 @@ import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,12 @@ public class JavaExampleConfigurationProvider extends WindupConfigurationProvide
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        context.put(RuleMetadata.CATEGORY, "Java");
     }
 
     @Override

@@ -13,8 +13,7 @@ import java.nio.file.Path;
 import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.exception.WindupException;
-import org.ocpsoft.rewrite.context.Context;
-import org.ocpsoft.rewrite.context.ContextBase;
+import org.ocpsoft.rewrite.AbstractRewrite;
 import org.ocpsoft.rewrite.event.Flow;
 import org.ocpsoft.rewrite.event.Rewrite;
 
@@ -22,14 +21,11 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class GraphRewrite implements Rewrite
+public class GraphRewrite extends AbstractRewrite implements Rewrite
 {
     private static final String WINDUP_TEMP_PREFIX = "windup";
 
     private final GraphContext graphContext;
-    private final Context context = new ContextBase()
-    {
-    };
     private Path tempDirectory;
 
     public GraphRewrite(GraphContext context)
@@ -61,12 +57,6 @@ public class GraphRewrite implements Rewrite
     public void selectionPop()
     {
         VarStack.instance(this).pop();
-    }
-
-    @Override
-    public Context getRewriteContext()
-    {
-        return context;
     }
 
     @Override

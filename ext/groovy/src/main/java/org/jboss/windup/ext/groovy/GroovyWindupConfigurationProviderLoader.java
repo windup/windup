@@ -35,8 +35,6 @@ public class GroovyWindupConfigurationProviderLoader implements WindupConfigurat
     @Inject
     private Furnace furnace;
     @Inject
-    private GroovyDSLSupport groovyDSLSupport;
-    @Inject
     private GraphContext graphContext;
 
     @Override
@@ -44,10 +42,14 @@ public class GroovyWindupConfigurationProviderLoader implements WindupConfigurat
     {
         Binding binding = new Binding();
         binding.setVariable("windupConfigurationProviderBuilders", new ArrayList<WindupConfigurationProviderBuilder>());
+        
         binding.setVariable("supportFunctions", new HashMap<>());
         binding.setVariable("graphContext", graphContext);
+
         binding.setVariable("registerRegexBlackList", new Closure<Void>(this)
         {
+            private static final long serialVersionUID = -713007695435202539L;
+
             @Override
             public Void call(Object... args)
             {
@@ -75,17 +77,22 @@ public class GroovyWindupConfigurationProviderLoader implements WindupConfigurat
         {
             throw new WindupException("Failed to load support functions due to: " + e.getMessage(), e);
         }
+
+        @SuppressWarnings("unchecked")
         Map<String, ?> supportFunctions = (Map<String, ?>) binding.getVariable("supportFunctions");
+
         for (Map.Entry<String, ?> supportFunctionEntry : supportFunctions.entrySet())
         {
             binding.setVariable(supportFunctionEntry.getKey(), supportFunctionEntry.getValue());
         }
+
         binding.setVariable("supportFunctions", null);
 
         for (URL resource : getScripts())
         {
             try (Reader reader = new InputStreamReader(resource.openStream()))
             {
+                shell.setProperty("CURRENT_SCRIPT", resource.toExternalForm());
                 shell.evaluate(reader);
             }
             catch (Exception e)
@@ -94,15 +101,16 @@ public class GroovyWindupConfigurationProviderLoader implements WindupConfigurat
             }
         }
 
+        @SuppressWarnings("unchecked")
         List<WindupConfigurationProviderBuilder> builders = (List<WindupConfigurationProviderBuilder>) binding
                     .getVariable("windupConfigurationProviderBuilders");
 
-        List<WindupConfigurationProvider> wcpList = new ArrayList<>(builders.size());
+        List<WindupConfigurationProvider> result = new ArrayList<>(builders.size());
         for (WindupConfigurationProviderBuilder builder : builders)
         {
-            wcpList.add(builder.getWindupConfigurationProvider());
+            result.add(builder.getWindupConfigurationProvider());
         }
-        return wcpList;
+        return result;
     }
 
     private ClassLoader getCompositeClassloader()

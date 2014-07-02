@@ -20,6 +20,8 @@ import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.Rule;
 
 @RunWith(Arquillian.class)
 /**
@@ -64,12 +66,23 @@ public class LoadGroovyRulesTest
 
         Assert.assertNotNull(loaders);
 
-        List<WindupConfigurationProvider> allProviders = new ArrayList<WindupConfigurationProvider>();
+        List<WindupConfigurationProvider> providers = new ArrayList<WindupConfigurationProvider>();
         for (WindupConfigurationProviderLoader loader : loaders)
         {
-            allProviders.addAll(loader.getProviders());
+            providers.addAll(loader.getProviders());
         }
 
-        Assert.assertTrue(allProviders.size() > 0);
+        Assert.assertTrue(providers.size() > 0);
+        
+        for (WindupConfigurationProvider provider : providers)
+        {
+            Configuration configuration = provider.getConfiguration(context);
+            for (Rule rule : configuration.getRules())
+            {
+                System.out.println(rule);
+            }
+        }
+        
+        System.out.println("Done.");
     }
 }

@@ -13,8 +13,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
+import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.Context;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -23,21 +26,34 @@ import org.ocpsoft.rewrite.config.ConfigurationProvider;
 public abstract class WindupConfigurationProvider implements ConfigurationProvider<GraphContext>
 {
     @Inject
-    private Addon addon; // The current addon
+    private Addon addon;
 
     public String getID()
     {
         return addon.getId().getName() + "." + getClass().getName();
     }
 
+    /**
+     * Return the {@link RulePhase} in which the rules from this provider should be executed.
+     */
     public abstract RulePhase getPhase();
+
+    /**
+     * Specify additional meta-data about the {@link Rule} instances originating from this
+     * {@link WindupConfigurationProvider}.
+     */
+    public void enhanceMetadata(Context context)
+    {
+        if (!context.containsKey(RuleMetadata.CATEGORY))
+            context.put(RuleMetadata.CATEGORY, "none");
+        if (!context.containsKey(RuleMetadata.ORIGIN))
+            context.put(RuleMetadata.ORIGIN, this.getClass().getName());
+    }
 
     /**
      * Returns a list of WindupConfigurationProvider classes that this instance depends on.
      * 
      * Dependencies can also be specified based on id ({@link #getIDDependencies}).
-     * 
-     * @return
      */
     public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
     {
@@ -53,8 +69,6 @@ public abstract class WindupConfigurationProvider implements ConfigurationProvid
      * 
      * For depending upon Java-based rules, getClassDependencies is preferred. Dependencies of both types can be
      * returned by a single WindupConfigurationProvider.
-     * 
-     * @return
      */
     public List<String> getIDDependencies()
     {
@@ -81,8 +95,7 @@ public abstract class WindupConfigurationProvider implements ConfigurationProvid
     }
 
     @SafeVarargs
-    protected final List<String> generateDependencies(
-                String... deps)
+    protected final List<String> generateDependencies(String... deps)
     {
         return Arrays.asList(deps);
     }
