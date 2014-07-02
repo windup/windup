@@ -13,7 +13,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
@@ -30,9 +30,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * TODO: WINDUP-85 - Introduce JavaFileModel
  */
-public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationProvider
+public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
 {
     @Inject
     private VariableResolvingASTVisitor variableResolvingASTVisitor;
@@ -44,9 +43,9 @@ public class DiscoverJavaFilesConfigurationProvider extends WindupConfigurationP
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
-        return generateDependencies(IndexClassFilesConfigurationProvider.class);
+        return generateDependencies(IndexClassFilesRuleProvider.class);
     }
 
     @Override

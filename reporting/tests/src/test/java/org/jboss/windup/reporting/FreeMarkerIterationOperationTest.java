@@ -45,7 +45,7 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addClass(AbstractTestCase.class)
-                    .addClass(FreeMarkerOperationConfigurationProvider.class)
+                    .addClass(FreeMarkerOperationRuleProvider.class)
                     .addAsResource(new File("src/test/resources/reports"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -65,7 +65,7 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
     {
         final File folder = File.createTempFile("windupGraph", "");
 
-        FreeMarkerOperationConfigurationProvider provider = new FreeMarkerOperationConfigurationProvider();
+        FreeMarkerOperationRuleProvider provider = new FreeMarkerOperationRuleProvider();
 
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);

@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.UnzipArchiveToTemporaryFolder;
@@ -12,7 +12,7 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class UnzipArchivesToTempConfigurationProvider extends WindupConfigurationProvider
+public class UnzipArchivesToTempRuleProvider extends WindupRuleProvider
 {
     @Override
     public RulePhase getPhase()
@@ -21,9 +21,9 @@ public class UnzipArchivesToTempConfigurationProvider extends WindupConfiguratio
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
-        return generateDependencies(FileScannerWindupConfigurationProvider.class);
+        return generateDependencies(FileScannerWindupRuleProvider.class);
     }
 
     @Override

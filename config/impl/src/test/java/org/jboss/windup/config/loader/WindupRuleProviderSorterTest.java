@@ -5,21 +5,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.ocpsoft.rewrite.config.Configuration;
 
-public class WindupConfigurationProviderSorterTest
+public class WindupRuleProviderSorterTest
 {
 
-    private class WCPPhase1Class1 extends WindupConfigurationProvider
+    private class WCPPhase1Class1 extends WindupRuleProvider
     {
-        private List<Class<? extends WindupConfigurationProvider>> deps = new ArrayList<>();
+        private List<Class<? extends WindupRuleProvider>> deps = new ArrayList<>();
 
         @Override
-        public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
         {
             return deps;
         }
@@ -49,12 +49,12 @@ public class WindupConfigurationProviderSorterTest
         }
     }
 
-    private class WCPPhase1Class2 extends WindupConfigurationProvider
+    private class WCPPhase1Class2 extends WindupRuleProvider
     {
         @Override
-        public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
         {
-            List<Class<? extends WindupConfigurationProvider>> l = new ArrayList<>();
+            List<Class<? extends WindupRuleProvider>> l = new ArrayList<>();
             l.add(WCPPhase1Class1.class);
             return l;
         }
@@ -84,12 +84,12 @@ public class WindupConfigurationProviderSorterTest
         }
     }
 
-    private class WCPPhase1Class3 extends WindupConfigurationProvider
+    private class WCPPhase1Class3 extends WindupRuleProvider
     {
         @Override
-        public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
         {
-            List<Class<? extends WindupConfigurationProvider>> l = new ArrayList<>();
+            List<Class<? extends WindupRuleProvider>> l = new ArrayList<>();
             l.add(WCPPhase1Class2.class);
             return l;
         }
@@ -119,7 +119,7 @@ public class WindupConfigurationProviderSorterTest
         }
     }
 
-    private class WCPPhase2Class1 extends WindupConfigurationProvider
+    private class WCPPhase2Class1 extends WindupRuleProvider
     {
         @Override
         public RulePhase getPhase()
@@ -147,7 +147,7 @@ public class WindupConfigurationProviderSorterTest
         }
     }
 
-    private class WCPPhase2Class2 extends WindupConfigurationProvider
+    private class WCPPhase2Class2 extends WindupRuleProvider
     {
         @Override
         public RulePhase getPhase()
@@ -181,7 +181,7 @@ public class WindupConfigurationProviderSorterTest
         }
     }
 
-    private class WCPPhase2Class3 extends WindupConfigurationProvider
+    private class WCPPhase2Class3 extends WindupRuleProvider
     {
         @Override
         public RulePhase getPhase()
@@ -218,31 +218,31 @@ public class WindupConfigurationProviderSorterTest
     @Test
     public void testSort()
     {
-        WindupConfigurationProvider v1 = new WCPPhase1Class1();
-        WindupConfigurationProvider v2 = new WCPPhase1Class2();
-        WindupConfigurationProvider v3 = new WCPPhase1Class3();
-        WindupConfigurationProvider v4 = new WCPPhase2Class1();
-        WindupConfigurationProvider v5 = new WCPPhase2Class2();
-        WindupConfigurationProvider v6 = new WCPPhase2Class3();
-        List<WindupConfigurationProvider> configurationProviders = new ArrayList<>();
-        configurationProviders.add(v6);
-        configurationProviders.add(v5);
-        configurationProviders.add(v3);
-        configurationProviders.add(v4);
-        configurationProviders.add(v2);
-        configurationProviders.add(v1);
+        WindupRuleProvider v1 = new WCPPhase1Class1();
+        WindupRuleProvider v2 = new WCPPhase1Class2();
+        WindupRuleProvider v3 = new WCPPhase1Class3();
+        WindupRuleProvider v4 = new WCPPhase2Class1();
+        WindupRuleProvider v5 = new WCPPhase2Class2();
+        WindupRuleProvider v6 = new WCPPhase2Class3();
+        List<WindupRuleProvider> ruleProviders = new ArrayList<>();
+        ruleProviders.add(v6);
+        ruleProviders.add(v5);
+        ruleProviders.add(v3);
+        ruleProviders.add(v4);
+        ruleProviders.add(v2);
+        ruleProviders.add(v1);
 
-        List<WindupConfigurationProvider> sortedWCPList = WindupConfigurationProviderSorter
-                    .sort(configurationProviders);
+        List<WindupRuleProvider> sortedRCPList = WindupRuleProviderSorter
+                    .sort(ruleProviders);
 
-        System.out.println("Results: " + sortedWCPList);
+        System.out.println("Results: " + sortedRCPList);
 
-        Assert.assertEquals(v1, sortedWCPList.get(0));
-        Assert.assertEquals(v2, sortedWCPList.get(1));
-        Assert.assertEquals(v3, sortedWCPList.get(2));
-        Assert.assertEquals(v4, sortedWCPList.get(3));
-        Assert.assertEquals(v5, sortedWCPList.get(4));
-        Assert.assertEquals(v6, sortedWCPList.get(5));
+        Assert.assertEquals(v1, sortedRCPList.get(0));
+        Assert.assertEquals(v2, sortedRCPList.get(1));
+        Assert.assertEquals(v3, sortedRCPList.get(2));
+        Assert.assertEquals(v4, sortedRCPList.get(3));
+        Assert.assertEquals(v5, sortedRCPList.get(4));
+        Assert.assertEquals(v6, sortedRCPList.get(5));
     }
 
     @Test
@@ -250,19 +250,19 @@ public class WindupConfigurationProviderSorterTest
     {
         WCPPhase1Class1 v1 = new WCPPhase1Class1();
         v1.deps.add(WCPPhase1Class3.class);
-        WindupConfigurationProvider v2 = new WCPPhase1Class2();
-        WindupConfigurationProvider v3 = new WCPPhase1Class3();
-        WindupConfigurationProvider v4 = new WCPPhase2Class1();
-        List<WindupConfigurationProvider> configurationProviders = new ArrayList<WindupConfigurationProvider>();
-        configurationProviders.add(v3);
-        configurationProviders.add(v4);
-        configurationProviders.add(v2);
-        configurationProviders.add(v1);
+        WindupRuleProvider v2 = new WCPPhase1Class2();
+        WindupRuleProvider v3 = new WCPPhase1Class3();
+        WindupRuleProvider v4 = new WCPPhase2Class1();
+        List<WindupRuleProvider> ruleProviders = new ArrayList<WindupRuleProvider>();
+        ruleProviders.add(v3);
+        ruleProviders.add(v4);
+        ruleProviders.add(v2);
+        ruleProviders.add(v1);
 
         try
         {
-            List<WindupConfigurationProvider> sortedWCPList = WindupConfigurationProviderSorter
-                        .sort(configurationProviders);
+            List<WindupRuleProvider> sortedRCPList = WindupRuleProviderSorter
+                        .sort(ruleProviders);
             Assert.fail("No cycles detected");
         }
         catch (RuntimeException e)

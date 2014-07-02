@@ -1,7 +1,7 @@
-import org.jboss.windup.ext.groovy.builder.WindupConfigurationProviderBuilder
+import org.jboss.windup.ext.groovy.builder.WindupRuleProviderBuilder
 
 supportFunctions.buildWindupRule =  { id ->
-    WindupConfigurationProviderBuilder builder = WindupConfigurationProviderBuilder.buildWindupRule(id);
-    windupConfigurationProviderBuilders.add(builder);
+    WindupRuleProviderBuilder builder = WindupRuleProviderBuilder.buildWindupRule(id);
+    windupRuleProviderBuilders.add(builder);
     return builder;
 }

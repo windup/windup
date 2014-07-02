@@ -9,7 +9,7 @@ package org.jboss.windup.config.parser;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.graph.GraphContext;
@@ -21,7 +21,7 @@ import org.w3c.dom.Document;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class XMLConfigurationProvider extends WindupConfigurationProvider
+public class XMLRuleProvider extends WindupRuleProvider
 {
     @Override
     public RulePhase getPhase()

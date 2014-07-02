@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
@@ -13,7 +13,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class IndexClassFilesConfigurationProvider extends WindupConfigurationProvider
+public class IndexClassFilesRuleProvider extends WindupRuleProvider
 {
 
     @Override
@@ -23,9 +23,9 @@ public class IndexClassFilesConfigurationProvider extends WindupConfigurationPro
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
-        return generateDependencies(UnzipArchivesToTempConfigurationProvider.class);
+        return generateDependencies(UnzipArchivesToTempRuleProvider.class);
     }
 
     @Override

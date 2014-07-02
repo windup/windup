@@ -11,7 +11,7 @@ import java.util.List;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -25,16 +25,16 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @Vetoed
-public class GroovyConfigurationProvider extends WindupConfigurationProvider
+public class GroovyRuleProvider extends WindupRuleProvider
 {
-    private static Logger log = LoggerFactory.getLogger(GroovyConfigurationProvider.class);
+    private static Logger LOG = LoggerFactory.getLogger(GroovyRuleProvider.class);
 
     private String ruleID;
     private RulePhase rulePhase;
     private List<String> ruleDependencies;
     private ConfigurationRuleBuilder completedConfiguration = null;
 
-    public GroovyConfigurationProvider(String ruleID, RulePhase rulePhase, List<String> ruleDependencies,
+    public GroovyRuleProvider(String ruleID, RulePhase rulePhase, List<String> ruleDependencies,
                 ConfigurationBuilder originalConfigBuilder)
     {
         this.ruleID = ruleID;

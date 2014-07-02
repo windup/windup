@@ -2,7 +2,7 @@ package org.jboss.windup.reporting;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
@@ -13,7 +13,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CreateApplicationReportRuleProvider extends WindupConfigurationProvider
+public class CreateApplicationReportRuleProvider extends WindupRuleProvider
 {
 
     private static final String VAR_APPLICATION_MODEL = "applicationModel";

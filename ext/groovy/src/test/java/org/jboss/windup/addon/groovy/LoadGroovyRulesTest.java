@@ -14,14 +14,12 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupConfigurationProvider;
-import org.jboss.windup.config.loader.WindupConfigurationProviderLoader;
+import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.Rule;
 
 @RunWith(Arquillian.class)
 /**
@@ -57,32 +55,21 @@ public class LoadGroovyRulesTest
     private Furnace furnace;
 
     @Test
-    public void testGroovyConfigurationProviderFactory() throws Exception
+    public void testGroovyRuleProviderFactory() throws Exception
     {
         Assert.assertNotNull(furnace);
 
-        Imported<WindupConfigurationProviderLoader> loaders = furnace.getAddonRegistry().getServices(
-                    WindupConfigurationProviderLoader.class);
+        Imported<WindupRuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
+                    WindupRuleProviderLoader.class);
 
         Assert.assertNotNull(loaders);
 
-        List<WindupConfigurationProvider> providers = new ArrayList<WindupConfigurationProvider>();
-        for (WindupConfigurationProviderLoader loader : loaders)
+        List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
+        for (WindupRuleProviderLoader loader : loaders)
         {
-            providers.addAll(loader.getProviders());
+            allProviders.addAll(loader.getProviders());
         }
 
-        Assert.assertTrue(providers.size() > 0);
-        
-        for (WindupConfigurationProvider provider : providers)
-        {
-            Configuration configuration = provider.getConfiguration(context);
-            for (Rule rule : configuration.getRules())
-            {
-                System.out.println(rule);
-            }
-        }
-        
-        System.out.println("Done.");
+        Assert.assertTrue(allProviders.size() > 0);
     }
 }

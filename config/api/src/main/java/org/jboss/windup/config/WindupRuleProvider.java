@@ -16,14 +16,13 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
-import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public abstract class WindupConfigurationProvider implements ConfigurationProvider<GraphContext>
+public abstract class WindupRuleProvider implements ConfigurationProvider<GraphContext>
 {
     @Inject
     private Addon addon;
@@ -39,8 +38,7 @@ public abstract class WindupConfigurationProvider implements ConfigurationProvid
     public abstract RulePhase getPhase();
 
     /**
-     * Specify additional meta-data about the {@link Rule} instances originating from this
-     * {@link WindupConfigurationProvider}.
+     * Specify additional meta-data about the {@link Rule} instances originating from this {@link WindupRuleProvider}.
      */
     public void enhanceMetadata(Context context)
     {
@@ -51,24 +49,24 @@ public abstract class WindupConfigurationProvider implements ConfigurationProvid
     }
 
     /**
-     * Returns a list of WindupConfigurationProvider classes that this instance depends on.
+     * Returns a list of WindupRuleProvider classes that this instance depends on.
      * 
      * Dependencies can also be specified based on id ({@link #getIDDependencies}).
      */
-    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
         return Collections.emptyList();
     }
 
     /**
-     * Returns a list of the WindupConfigurationProvider dependencies for this configuration provider.
+     * Returns a list of the WindupRuleProvider dependencies for this configuration provider.
      * 
      * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
      * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
      * IDs.
      * 
      * For depending upon Java-based rules, getClassDependencies is preferred. Dependencies of both types can be
-     * returned by a single WindupConfigurationProvider.
+     * returned by a single WindupRuleProvider.
      */
     public List<String> getIDDependencies()
     {
@@ -88,14 +86,15 @@ public abstract class WindupConfigurationProvider implements ConfigurationProvid
     }
 
     @SafeVarargs
-    protected final List<Class<? extends WindupConfigurationProvider>> generateDependencies(
-                Class<? extends WindupConfigurationProvider>... deps)
+    protected final List<Class<? extends WindupRuleProvider>> generateDependencies(
+                Class<? extends WindupRuleProvider>... deps)
     {
         return Arrays.asList(deps);
     }
 
     @SafeVarargs
-    protected final List<String> generateDependencies(String... deps)
+    protected final List<String> generateDependencies(
+                String... deps)
     {
         return Arrays.asList(deps);
     }
