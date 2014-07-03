@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-lucene</artifactId>
-            <version>${version.titangraph}</version>
+            <version>${version.titangraph.lucene}</version>
         </dependency>
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>

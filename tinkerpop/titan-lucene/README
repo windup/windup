@@ -1,0 +1,11 @@
+This is a patch to TitanGraph's 0.4.4 code lucene index module to fix an issue with occasionally inconsistent search results from Lucene.
+
+The patch branch from Titan is available here:
+https://github.com/jsight/titan/tree/0.4.4_branch
+
+The Titan Bug report is here:
+https://github.com/thinkaurelius/titan/issues/656
+
+Further information on how the issue affects Windup is availabe at the following JIRA:
+https://issues.jboss.org/browse/WINDUP-75
+
