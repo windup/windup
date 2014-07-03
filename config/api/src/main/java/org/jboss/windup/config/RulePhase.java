@@ -3,14 +3,41 @@ package org.jboss.windup.config;
 public enum RulePhase
 {
     /**
+     * Called before resource discovery
+     */
+    PRE_DISCOVERY(90),
+
+    /**
      * Called during resource discovery (finding all files in archives, etc)
      */
     DISCOVERY(100),
+
+    /**
+     * Called after resource discovery
+     */
+    POST_DISCOVERY(110),
+
+    /**
+     * Before initial analysis tasks
+     */
+    PRE_INITIAL_ANALYSIS(190),
+
     /**
      * Called to perform basic analysis (extract all method names from class files, extract metadata from xml files,
      * etc)
      */
     INITIAL_ANALYSIS(200),
+
+    /**
+     * After initial analysis tasks
+     */
+    POST_INITIAL_ANALYSIS(210),
+
+    /**
+     * Before the composition step
+     */
+    PRE_COMPOSITION(290),
+
     /**
      * Perform high-level composition operations on the graph.
      * 
@@ -18,6 +45,17 @@ public enum RulePhase
      * operations, now that all metadata has been extracted
      */
     COMPOSITION(300),
+
+    /**
+     * After the composition step
+     */
+    POST_COMPOSITION(310),
+
+    /**
+     * Before the migration rules step
+     */
+    PRE_MIGRATION_RULES(390),
+
     /**
      * Migration rules will attach data to the graph associated with migration. This could include:
      * 
@@ -25,10 +63,31 @@ public enum RulePhase
      * indicate vendor specific APIs
      */
     MIGRATION_RULES(400),
+
+    /**
+     * After the migration rules
+     */
+    POST_MIGRATION_RULES(410),
+
+    /**
+     * Before report generation
+     */
+    PRE_REPORT_GENERATION(490),
+
     /**
      * Reporting visitors produce report data in the graph that will later be used by report rendering
      */
     REPORT_GENERATION(500),
+
+    /**
+     * After report generation
+     */
+    POST_REPORT_GENERATION(510),
+
+    /**
+     * Before report rendering
+     */
+    PRE_REPORT_RENDERING(590),
 
     /**
      * Actually renders the report into the expected
@@ -36,9 +95,24 @@ public enum RulePhase
     REPORT_RENDERING(600),
 
     /**
+     * After report rendering
+     */
+    POST_REPORT_RENDERING(610),
+
+    /**
+     * Immediately before finalize
+     */
+    PRE_FINALIZE(690),
+
+    /**
      * Clean up resources and close streams.
      */
-    FINALIZE(700);
+    FINALIZE(700),
+
+    /**
+     * Immediately after finalize
+     */
+    POST_FINALIZE(710);
 
     private int priority;
 

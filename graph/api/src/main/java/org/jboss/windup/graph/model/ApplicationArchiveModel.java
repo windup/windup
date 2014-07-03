@@ -6,7 +6,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("ApplicationReference")
+@TypeValue("ApplicationArchive")
 public interface ApplicationArchiveModel extends ApplicationModel
 {
     @Adjacency(label = "archive", direction = Direction.OUT)
