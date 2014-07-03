@@ -7,6 +7,10 @@ import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidate;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
 
+/**
+ * @author jsightler
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public abstract class AbstractGroovyBlackListSupport implements GroovyBlackListSupport
 {
     private final GraphContext graphContext;

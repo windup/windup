@@ -129,4 +129,10 @@ public class GraphContextImpl implements GraphContext
         return diskCacheDir;
     }
 
+    @Override
+    public String toString()
+    {
+        return "GraphContext: " + getDiskCacheDirectory();
+    }
+
 }

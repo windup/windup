@@ -7,10 +7,10 @@ import org.jboss.windup.config.metadata.RuleMetadata
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 
-registerRegexBlackList("sampleRegexBlackListRule-001", "org.apache.wicket.util.string.CssUtils", "You shouldn't do that")
+blacklistType("sampleRegexBlackListRule-001", "org.apache.wicket.util.string.CssUtils", "You shouldn't do that")
 
-buildWindupRule("ExampleBlacklistRule")
-    .setPhase(RulePhase.MIGRATION_RULES)
+ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
+
     .addRule()
     .when(
         GraphSearchConditionBuilder.create("javaClasses")

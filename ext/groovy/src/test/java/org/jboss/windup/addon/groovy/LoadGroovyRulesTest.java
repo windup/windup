@@ -13,13 +13,17 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ocpsoft.rewrite.config.RuleBuilder;
+import org.ocpsoft.rewrite.context.Context;
 
 @RunWith(Arquillian.class)
 /**
@@ -70,6 +74,19 @@ public class LoadGroovyRulesTest
             allProviders.addAll(loader.getProviders());
         }
 
+        boolean foundScriptPath = false;
+        for (WindupRuleProvider provider : allProviders)
+        {
+            Context context = RuleBuilder.define();
+            provider.enhanceMetadata(context);
+            System.out.println(context.get(RuleMetadata.ORIGIN));
+            if (((String) context.get(RuleMetadata.ORIGIN)).contains("org/jboss/windup/addon/groovy/GroovyExampleRule.windup.groovy"))
+            {
+                foundScriptPath = true;
+                break;
+            }
+        }
+        Assert.assertTrue("Script path should have been set in Rule Metatada", foundScriptPath);
         Assert.assertTrue(allProviders.size() > 0);
     }
 }

@@ -23,6 +23,7 @@ public class GroovyBlackListSupportRegex extends AbstractGroovyBlackListSupport
         if (regexPattern.matcher(qualName).matches())
         {
             BlackListModel blackListModel = createBlackListModel(event);
+            event.getContext().getGraph().addVertex(blackListModel);
         }
     }
 }

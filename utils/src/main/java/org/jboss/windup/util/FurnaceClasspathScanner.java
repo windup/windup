@@ -1,4 +1,4 @@
-package org.jboss.windup.ext.groovy;
+package org.jboss.windup.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,9 +18,13 @@ import org.jboss.forge.furnace.util.AddonFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FurnaceGroovyRuleScanner
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author jsightler
+ */
+public class FurnaceClasspathScanner
 {
-    private static final Logger LOG = LoggerFactory.getLogger(FurnaceGroovyRuleScanner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FurnaceClasspathScanner.class);
 
     @Inject
     private Furnace furnace;
