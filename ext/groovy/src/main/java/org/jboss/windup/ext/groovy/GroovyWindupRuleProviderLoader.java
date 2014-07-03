@@ -1,7 +1,6 @@
 package org.jboss.windup.ext.groovy;
 
 import groovy.lang.Binding;
-import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 
@@ -21,44 +20,40 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonFilter;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
-import org.jboss.windup.ext.groovy.builder.WindupRuleProviderBuilder;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.FurnaceClasspathScanner;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 import org.jboss.windup.util.exception.WindupException;
 
 public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 {
+    public static final String CURRENT_WINDUP_SCRIPT = "CURRENT_WINDUP_SCRIPT";
     @Inject
-    private FurnaceGroovyRuleScanner scanner;
+    private FurnaceClasspathScanner scanner;
     @Inject
     private Furnace furnace;
     @Inject
-    private GroovyDSLSupport groovyDSLSupport;
-    @Inject
     private GraphContext graphContext;
 
+    @Inject
+    private Imported<GroovyConfigMethod> methods;
+
     @Override
+    @SuppressWarnings("unchecked")
     public List<WindupRuleProvider> getProviders()
     {
         Binding binding = new Binding();
-        binding.setVariable("windupRuleProviderBuilders", new ArrayList<WindupRuleProviderBuilder>());
+        binding.setVariable("windupRuleProviderBuilders", new ArrayList<WindupRuleProvider>());
         binding.setVariable("supportFunctions", new HashMap<>());
         binding.setVariable("graphContext", graphContext);
-        binding.setVariable("registerRegexBlackList", new Closure<Void>(this)
-        {
-            @Override
-            public Void call(Object... args)
-            {
-                String ruleID = (String) args[0];
-                String regexPattern = (String) args[1];
-                String hint = (String) args[2];
 
-                GroovyDSLSupport.registerInterest(graphContext, ruleID, regexPattern, hint);
-                return null;
-            }
-        });
+        for (GroovyConfigMethod method : methods)
+        {
+            binding.setVariable(method.getName(graphContext), method.getClosure(graphContext));
+        }
 
         CompilerConfiguration config = new CompilerConfiguration();
         config.addCompilationCustomizers(new ImportCustomizer());
@@ -75,6 +70,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         {
             throw new WindupException("Failed to load support functions due to: " + e.getMessage(), e);
         }
+
         Map<String, ?> supportFunctions = (Map<String, ?>) binding.getVariable("supportFunctions");
         for (Map.Entry<String, ?> supportFunctionEntry : supportFunctions.entrySet())
         {
@@ -86,6 +82,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         {
             try (Reader reader = new InputStreamReader(resource.openStream()))
             {
+                binding.setVariable(CURRENT_WINDUP_SCRIPT, resource.toExternalForm());
                 shell.evaluate(reader);
             }
             catch (Exception e)
@@ -94,15 +91,10 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
             }
         }
 
-        List<WindupRuleProviderBuilder> builders = (List<WindupRuleProviderBuilder>) binding
+        List<WindupRuleProvider> providers = (List<WindupRuleProvider>) binding
                     .getVariable("windupRuleProviderBuilders");
 
-        List<WindupRuleProvider> wcpList = new ArrayList<>(builders.size());
-        for (WindupRuleProviderBuilder builder : builders)
-        {
-            wcpList.add(builder.getWindupRuleProvider());
-        }
-        return wcpList;
+        return providers;
     }
 
     private ClassLoader getCompositeClassloader()

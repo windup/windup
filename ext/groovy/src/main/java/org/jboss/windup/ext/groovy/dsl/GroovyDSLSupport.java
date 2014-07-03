@@ -1,15 +1,17 @@
-package org.jboss.windup.ext.groovy;
+package org.jboss.windup.ext.groovy.dsl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Singleton;
 
 import org.jboss.windup.ext.groovy.blacklist.GroovyBlackListSupport;
 import org.jboss.windup.ext.groovy.blacklist.GroovyBlackListSupportRegex;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
 
+@Singleton
 public class GroovyDSLSupport
 {
     private static List<GroovyBlackListSupport> groovyBlackListSupport = new ArrayList<>();
@@ -22,7 +24,7 @@ public class GroovyDSLSupport
         }
     }
 
-    public static void registerInterest(GraphContext graphContext, String ruleID, String regexPattern, String hint)
+    public void registerInterest(GraphContext graphContext, String ruleID, String regexPattern, String hint)
     {
         GroovyBlackListSupportRegex support = new GroovyBlackListSupportRegex(graphContext, hint, ruleID, regexPattern);
         groovyBlackListSupport.add(support);
