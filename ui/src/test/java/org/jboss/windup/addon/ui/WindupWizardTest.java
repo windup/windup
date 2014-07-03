@@ -1,7 +1,5 @@
 package org.jboss.windup.addon.ui;
 
-import org.jboss.windup.ui.WindupWizard;
-import org.jboss.windup.ui.WindupService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -22,6 +20,8 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.ui.WindupService;
+import org.jboss.windup.ui.WindupWizard;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +32,7 @@ public class WindupWizardTest
 
     @Deployment
     @Dependencies({
+                @AddonDependency(name = "org.jboss.windup:ui"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
@@ -41,9 +42,9 @@ public class WindupWizardTest
         ForgeArchive archive = ShrinkWrap
                     .create(ForgeArchive.class)
                     .addBeansXML()
-                    .addPackage(WindupWizard.class.getPackage())
                     .addAsResource(WindupWizardTest.class.getResource("/test.jar"), "/test.jar")
                     .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup:ui"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
