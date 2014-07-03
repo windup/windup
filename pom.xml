@@ -20,6 +20,7 @@
     <properties>
         <version.furnace>2.7.0.Final</version.furnace>
         <version.titangraph>0.4.4</version.titangraph>
+        <version.titangraph.lucene>0.4.4-winduppatch</version.titangraph.lucene>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.20</version.freemarker>
 
@@ -55,6 +56,8 @@
         <module>ext/groovy</module>
         <module>ext/xml</module>
         <module>rules</module>
+
+        <module>tinkerpop/titan-lucene</module>
     </modules>
 
     <build>
