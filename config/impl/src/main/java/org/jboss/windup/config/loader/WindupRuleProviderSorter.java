@@ -66,6 +66,8 @@ public class WindupRuleProviderSorter
             g.addVertex(unwrappedObject);
         }
 
+        checkForImproperPhaseDependencies(classToCfgProviderMap, tempList);
+
         // Keep a list of all visitors from the previous phase
         // This allows us to create edges from nodes in one phase to the next,
         // allowing the topological sort to sort by phases as well.
@@ -146,6 +148,29 @@ public class WindupRuleProviderSorter
 
         return result;
 
+    }
+
+    private static void checkForImproperPhaseDependencies(
+                IdentityHashMap<Class<? extends WindupRuleProvider>, WindupRuleProvider> classToCfgProviderMap,
+                List<WindupRuleProvider> ruleProviders)
+    {
+        for (WindupRuleProvider ruleProvider : ruleProviders)
+        {
+            RulePhase rulePhase = ruleProvider.getPhase();
+
+            for (Class<? extends WindupRuleProvider> classDep : ruleProvider.getClassDependencies())
+            {
+                WindupRuleProvider otherRuleProvider = classToCfgProviderMap.get(classDep);
+                if (rulePhase != otherRuleProvider.getPhase())
+                {
+                    throw new IncorrectPhaseDependencyException("Error, rule \"" + ruleProvider.getID()
+                                + "\" from phase \"" + rulePhase
+                                + "\" depends on rule \"" + otherRuleProvider.getID() + "\"" + " from phase \""
+                                + otherRuleProvider.getPhase()
+                                + "\". Rules must only depend on other rules from within the same phase.");
+                }
+            }
+        }
     }
 
     private static WindupRuleProvider unwrap(WindupRuleProvider provider)
