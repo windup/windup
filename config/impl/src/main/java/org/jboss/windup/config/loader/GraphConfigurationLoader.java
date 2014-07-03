@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.bind.Evaluation;
 import org.ocpsoft.rewrite.config.Condition;
@@ -37,7 +37,7 @@ public class GraphConfigurationLoader
     public static Logger LOG = LoggerFactory.getLogger(GraphConfigurationLoader.class);
 
     @Inject
-    private Imported<WindupConfigurationProviderLoader> loaders;
+    private Imported<WindupRuleProviderLoader> loaders;
 
     public GraphConfigurationLoader()
     {
@@ -52,15 +52,15 @@ public class GraphConfigurationLoader
         return build(context);
     }
 
-    private List<WindupConfigurationProvider> getProviders()
+    private List<WindupRuleProvider> getProviders()
     {
-        List<WindupConfigurationProvider> allProviders = new ArrayList<WindupConfigurationProvider>();
-        for (WindupConfigurationProviderLoader loader : loaders)
+        List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
+        for (WindupRuleProviderLoader loader : loaders)
         {
             allProviders.addAll(loader.getProviders());
         }
 
-        return WindupConfigurationProviderSorter.sort(allProviders);
+        return WindupRuleProviderSorter.sort(allProviders);
     }
 
     private Configuration build(GraphContext context)
@@ -68,7 +68,7 @@ public class GraphConfigurationLoader
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
 
-        for (WindupConfigurationProvider provider : getProviders())
+        for (WindupRuleProvider provider : getProviders())
         {
             Configuration cfg = provider.getConfiguration(context);
             List<Rule> list = cfg.getRules();

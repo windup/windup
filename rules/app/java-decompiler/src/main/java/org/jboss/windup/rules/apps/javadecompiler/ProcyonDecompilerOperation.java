@@ -12,11 +12,11 @@ import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
-import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class ProcyonDecompilerOperation extends AbstractIterationOperator<ArchiveModel>
@@ -46,8 +46,8 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperator<Archiv
                             FileModel.class);
                 for (String decompiledOutputFile : decompiledOutputFileSet)
                 {
-                    FileModel decompiledFileModel = fileService.getByUniqueProperty(
-                                FileModel.PROPERTY_FILE_PATH, decompiledOutputFile);
+                    FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.PROPERTY_FILE_PATH,
+                                decompiledOutputFile);
 
                     if (decompiledOutputFile.endsWith(".java"))
                     {
@@ -61,7 +61,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperator<Archiv
                         Path classFilepath = Paths.get(decompiledOutputFile.substring(0,
                                     decompiledOutputFile.length() - 5)
                                     + ".class");
-                        FileModel classFileModel = fileService.getByUniqueProperty(
+                        FileModel classFileModel = fileService.getUniqueByProperty(
                                     FileModel.PROPERTY_FILE_PATH, classFilepath);
                         if (classFileModel != null && classFileModel instanceof JavaClassModel)
                         {

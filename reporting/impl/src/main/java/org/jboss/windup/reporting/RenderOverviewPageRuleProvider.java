@@ -3,14 +3,14 @@ package org.jboss.windup.reporting;
 import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class RenderOverviewPageRuleProvider extends WindupConfigurationProvider
+public class RenderOverviewPageRuleProvider extends WindupRuleProvider
 {
     private static final String VAR_APPLICATION_REPORTS = "applicationReports";
     private static final String OUTPUT_FILENAME = "index.html";
@@ -23,7 +23,7 @@ public class RenderOverviewPageRuleProvider extends WindupConfigurationProvider
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
         return generateDependencies(ApplicationReportRenderingRuleProvider.class);
     }

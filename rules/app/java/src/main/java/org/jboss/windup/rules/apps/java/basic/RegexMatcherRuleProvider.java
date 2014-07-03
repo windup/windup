@@ -11,7 +11,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphSubset;
 
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupConfigurationProvider;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.config.operation.Iteration;
@@ -19,22 +19,22 @@ import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
 import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.scan.model.JavaFileModel;
-import org.jboss.windup.rules.apps.java.scan.provider.DiscoverJavaFilesConfigurationProvider;
+import org.jboss.windup.rules.apps.java.scan.provider.DiscoverJavaFilesRuleProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class RegexMatcherRule extends WindupConfigurationProvider
+public class RegexMatcherRuleProvider extends WindupRuleProvider
 {
     @Override public RulePhase getPhase(){
         return RulePhase.DISCOVERY;
     }
 
     @Override
-    public List<Class<? extends WindupConfigurationProvider>> getClassDependencies()
+    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
-        return generateDependencies(DiscoverJavaFilesConfigurationProvider.class);
+        return generateDependencies(DiscoverJavaFilesRuleProvider.class);
     }
 
     @Override

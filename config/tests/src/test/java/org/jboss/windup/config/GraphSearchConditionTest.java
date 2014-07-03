@@ -45,13 +45,13 @@ public class GraphSearchConditionTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
             .addBeansXML()
-            .addClasses(MavenExampleConfigurationProvider.class,
-                JavaExampleConfigurationProvider.class,
-                XmlExampleConfigurationProvider1.class,
-                XmlExampleConfigurationProvider2.class,
-                XmlExampleConfigurationProvider3.class,
+            .addClasses(MavenExampleRuleProvider.class,
+                JavaExampleRuleProvider.class,
+                XmlExampleRuleProvider1.class,
+                XmlExampleRuleProvider2.class,
+                XmlExampleRuleProvider3.class,
                 SomeModel.class,
-                WindupConfigurationExampleConfigurationProvider.class)
+                WindupConfigurationExampleRuleProvider.class)
             .addAsAddonDependencies(
                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
@@ -134,7 +134,7 @@ public class GraphSearchConditionTest
         methodModelToString.setJavaClass(classModel2);
         methodModelToString.setMethodName("toString");
 
-        WindupConfigurationExampleConfigurationProvider provider = new WindupConfigurationExampleConfigurationProvider();
+        WindupConfigurationExampleRuleProvider provider = new WindupConfigurationExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
 
         GraphSubset.evaluate(configuration).perform(event, evaluationContext);
@@ -172,7 +172,7 @@ public class GraphSearchConditionTest
         methodModelToString.setJavaClass(classModel2);
         methodModelToString.setMethodName("toString");
 
-        JavaExampleConfigurationProvider provider = new JavaExampleConfigurationProvider();
+        JavaExampleRuleProvider provider = new JavaExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
 
         GraphSubset.evaluate(configuration).perform(event, evaluationContext);
@@ -200,7 +200,7 @@ public class GraphSearchConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         // build a configuration, and make sure it matches what we expect (4 items)
-        MavenExampleConfigurationProvider provider = new MavenExampleConfigurationProvider();
+        MavenExampleRuleProvider provider = new MavenExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
         GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
@@ -223,7 +223,7 @@ public class GraphSearchConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         // build a configuration, and make sure it matches what we expect (4 items)
-        XmlExampleConfigurationProvider1 provider = new XmlExampleConfigurationProvider1();
+        XmlExampleRuleProvider1 provider = new XmlExampleRuleProvider1();
         Configuration configuration = provider.getConfiguration(context);
         GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
@@ -253,7 +253,7 @@ public class GraphSearchConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         // build a configuration, and make sure it matches what we expect (4 items)
-        XmlExampleConfigurationProvider2 provider = new XmlExampleConfigurationProvider2();
+        XmlExampleRuleProvider2 provider = new XmlExampleRuleProvider2();
         Configuration configuration = provider.getConfiguration(context);
         GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 
@@ -276,7 +276,7 @@ public class GraphSearchConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext( event );
 
         // build a configuration, and make sure it matches what we expect (4 items)
-        XmlExampleConfigurationProvider3 provider = new XmlExampleConfigurationProvider3();
+        XmlExampleRuleProvider3 provider = new XmlExampleRuleProvider3();
         Configuration configuration = provider.getConfiguration(context);
         GraphSubset.evaluate(configuration).perform(event, evaluationContext);
 

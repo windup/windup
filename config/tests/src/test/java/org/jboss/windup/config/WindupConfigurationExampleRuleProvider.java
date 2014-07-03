@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class WindupConfigurationExampleConfigurationProvider extends WindupConfigurationProvider
+public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(WindupConfigurationExampleConfigurationProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WindupConfigurationExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
     private WindupConfigurationModel config;
@@ -85,7 +85,7 @@ public class WindupConfigurationExampleConfigurationProvider extends WindupConfi
                                     {
                                         VarStack selection = VarStack.instance(event);
 
-                                        WindupConfigurationExampleConfigurationProvider.this.config = selection
+                                        WindupConfigurationExampleRuleProvider.this.config = selection
                                                     .findSingletonVariable(WindupConfigurationModel.class,
                                                                 "configuration");
 

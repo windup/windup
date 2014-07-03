@@ -24,7 +24,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class MavenExampleConfigurationProvider extends WindupConfigurationProvider
+public class MavenExampleRuleProvider extends WindupRuleProvider
 {
         private final List<MavenProjectModel> results = new LinkedList();
 

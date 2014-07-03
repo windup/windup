@@ -28,7 +28,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class XmlExampleConfigurationProvider1 extends WindupConfigurationProvider
+public class XmlExampleRuleProvider1 extends WindupRuleProvider
 {
     final List<XmlMetaFacetModel> typeSearchResults = new ArrayList<>();
     final Set<String> xmlRootNames = new HashSet<>();

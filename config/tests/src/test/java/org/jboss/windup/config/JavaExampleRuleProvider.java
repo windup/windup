@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class JavaExampleConfigurationProvider extends WindupConfigurationProvider
+public class JavaExampleRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(JavaExampleConfigurationProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JavaExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
 
