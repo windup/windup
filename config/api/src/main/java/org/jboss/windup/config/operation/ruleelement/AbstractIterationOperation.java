@@ -2,16 +2,17 @@ package org.jboss.windup.config.operation.ruleelement;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public abstract class AbstractIterationOperator<T extends WindupVertexFrame> extends GraphOperation
+public abstract class AbstractIterationOperation<T extends WindupVertexFrame> extends GraphOperation
 {
     Class<T> clazz;
     private String variableName;
 
-    public AbstractIterationOperator(Class<T> clazz, String variableName)
+    public AbstractIterationOperation(Class<T> clazz, String variableName)
     {
         this.clazz = clazz;
         this.variableName = variableName;
@@ -26,8 +27,7 @@ public abstract class AbstractIterationOperator<T extends WindupVertexFrame> ext
     public void perform(GraphRewrite event, EvaluationContext context)
     {
         VarStack varStack = VarStack.instance(event);
-        T payload = varStack
-                    .getCurrentPayload(clazz, getVariableName());
+        T payload = Iteration.getCurrentPayload(varStack, clazz, getVariableName());
         perform(event, context, payload);
     }
 

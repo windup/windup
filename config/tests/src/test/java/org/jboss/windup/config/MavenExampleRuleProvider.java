@@ -8,11 +8,11 @@ package org.jboss.windup.config;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.operation.ruleelement.TypeOperation;
-import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
@@ -26,7 +26,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class MavenExampleRuleProvider extends WindupRuleProvider
 {
-        private final List<MavenProjectModel> results = new LinkedList();
+    private final List<MavenProjectModel> results = new LinkedList<>();
 
     @Override
     public RulePhase getPhase()
@@ -59,14 +59,14 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
         )
         .perform(
             Iteration.over(MavenProjectModel.class, "mavenModels").var("maven")
-            .perform(new GraphOperation()
+            .perform(new AbstractIterationOperation<MavenProjectModel>(MavenProjectModel.class,
+                        "maven")
             {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context)
+                public void perform(GraphRewrite event, EvaluationContext context,
+                            MavenProjectModel mavenModel)
                 {
-                    VarStack varStack = VarStack.instance(event);
-                    MavenProjectModel mavenFacetModel = varStack.getCurrentPayload(MavenProjectModel.class, "maven");
-                    results.add(mavenFacetModel);
+                    results.add(mavenModel);
                 }
             })
             .endIteration()

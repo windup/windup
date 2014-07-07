@@ -6,7 +6,8 @@
  */
 package org.jboss.windup.config.operation.iteration;
 
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -25,13 +26,13 @@ public class NamedIterationPayloadManager implements IterationPayloadManager
     @Override
     public void setCurrentPayload(VarStack varStack, WindupVertexFrame element)
     {
-        varStack.setCurrentPayload(var, element);
+        Iteration.setCurrentPayload(varStack, var, element);
     }
 
     @Override
     public void removeCurrentPayload(VarStack varStack)
     {
-        varStack.setCurrentPayload(var, null);
+        Iteration.removeCurrentPayload(varStack, null, var);
     }
 
 }

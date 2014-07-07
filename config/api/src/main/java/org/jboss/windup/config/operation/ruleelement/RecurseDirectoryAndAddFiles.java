@@ -11,7 +11,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class RecurseDirectoryAndAddFiles extends AbstractIterationOperator<FileModel>
+public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<FileModel>
 {
     public RecurseDirectoryAndAddFiles(String variableName)
     {

@@ -8,7 +8,6 @@ import java.util.Map;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.common.util.Assert;
@@ -25,7 +24,9 @@ import com.tinkerpop.pipes.transform.TransformPipe;
 import com.tinkerpop.pipes.util.structures.Pair;
 import com.tinkerpop.pipes.util.structures.Table;
 import com.tinkerpop.pipes.util.structures.Tree;
+
 import org.jboss.windup.config.operation.IterationRoot;
+import org.jboss.windup.config.runner.VarStack;
 
 
 /**

@@ -5,7 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -13,7 +14,7 @@ import org.jboss.windup.graph.model.ArchiveModelPointer;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveModel>
+public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveModel>
 {
     // @Inject
     private Iterable<ArchiveModelPointer<? extends ArchiveModel>> archiveModelPointers;
@@ -49,26 +50,15 @@ public class ConfigureArchiveTypes extends AbstractIterationOperator<ArchiveMode
             }
         }
 
-        /*
-         * if (StringUtils.endsWith(filename, ".jar")) { newFrame = GraphUtil.addTypeToModel(graphContext, archiveModel,
-         * JarArchiveModel.class); } else if (StringUtils.endsWith(filename, ".war")) { newFrame =
-         * GraphUtil.addTypeToModel(graphContext, archiveModel, WarArchiveModel.class); } else if
-         * (StringUtils.endsWith(filename, ".ear")) { newFrame = GraphUtil.addTypeToModel(graphContext, archiveModel,
-         * EarArchiveModel.class); }/*
-         */
-
         if (newFrame != null)
         {
-            VarStack.instance(event).setCurrentPayload(getVariableName(), newFrame);
+            Iteration.setCurrentPayload(VarStack.instance(event), getVariableName(), newFrame);
         }
     }
 
     private void initTypes()
     {
-        // Imported<ArchiveModelPointer> pointers =
-        // FurnaceHolder.getFurnace().getAddonRegistry().getServices(ArchiveModelPointer.class);
-
-        for (ArchiveModelPointer ptr : this.archiveModelPointers)
+        for (ArchiveModelPointer<?> ptr : this.archiveModelPointers)
         {
             this.suffixToModelClass.put(ptr.getArchiveFileSuffix(), ptr.getModelClass());
         }

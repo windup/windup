@@ -17,7 +17,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -85,7 +85,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
                     );
     }
 
-    private final class FireASTTypeNameEventsIterationOperator extends AbstractIterationOperator<FileModel>
+    private final class FireASTTypeNameEventsIterationOperator extends AbstractIterationOperation<FileModel>
     {
         private FireASTTypeNameEventsIterationOperator(Class<FileModel> clazz, String variableName)
         {
@@ -114,7 +114,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         }
     }
 
-    private final class IndexJavaFileIterationOperator extends AbstractIterationOperator<FileModel>
+    private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<FileModel>
     {
         private static final int JAVA_SUFFIX_LEN = 5;
 

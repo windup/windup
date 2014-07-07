@@ -6,12 +6,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
@@ -78,8 +80,9 @@ public class FreeMarkerOperation extends GraphOperation
             Template template = cfg.getTemplate(templatePath);
 
             VarStack varStack = VarStack.instance(event);
-            Map<String, Object> objects = varStack.findAllVariablesAsMap(variableNames.toArray(new String[variableNames
-                        .size()]));
+            Map<String, Object> objects = findAllVariablesAsMap(varStack,
+                        variableNames.toArray(new String[variableNames
+                                    .size()]));
 
             try (FileWriter fw = new FileWriter(outputPath.toFile()))
             {
@@ -134,5 +137,40 @@ public class FreeMarkerOperation extends GraphOperation
                             + " encountered!");
             }
         }
+    }
+
+    /**
+     * Searches the variables layers, top to bottom, for the given variable names and returns them in a map of "name" ->
+     * {@link Iterable}<?> pairs.
+     */
+    static Map<String, Object> findAllVariablesAsMap(VarStack varStack, String... varNames)
+    {
+        Map<String, Object> results = new HashMap<String, Object>();
+        for (String varName : varNames)
+        {
+            WindupVertexFrame payload = null;
+            try
+            {
+                payload = Iteration.getCurrentPayload(varStack, null, varName);
+            }
+            catch (IllegalStateException | IllegalArgumentException e)
+            {
+                // oh well
+            }
+
+            if (payload != null)
+            {
+                results.put(varName, payload);
+            }
+            else
+            {
+                Iterable<WindupVertexFrame> var = varStack.findVariable(varName);
+                if (var != null)
+                {
+                    results.put(varName, var);
+                }
+            }
+        }
+        return results;
     }
 }

@@ -12,9 +12,8 @@ import java.util.List;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
@@ -76,17 +75,19 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
                      * If all conditions of the .when() clause were satisfied, the following conditions will be
                      * evaluated
                      */
-                    .perform(Iteration.over("javaClasses").queryFor(JavaMethodModel.class, "javaMethod")
-                                .out("javaMethod").has("methodName", "toString")
+                    .perform(Iteration
+                                .over("javaClasses")
+                                .queryFor(JavaMethodModel.class, "javaMethod")
+                                .out("javaMethod")
+                                .has("methodName", "toString")
                                 .endQuery()
-                                .perform(new GraphOperation()
+                                .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class,
+                                            "javaMethod")
                                 {
                                     @Override
-                                    public void perform(GraphRewrite event, EvaluationContext context)
+                                    public void perform(GraphRewrite event, EvaluationContext context,
+                                                JavaMethodModel methodModel)
                                     {
-                                        VarStack selection = VarStack.instance(event);
-                                        JavaMethodModel methodModel = selection.getCurrentPayload(
-                                                    JavaMethodModel.class, "javaMethod");
                                         results.add(methodModel);
                                         LOG.info("Overridden " + methodModel.getMethodName() + " Method in type: "
                                                     + methodModel.getJavaClass().getQualifiedName());

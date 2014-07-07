@@ -5,7 +5,7 @@ import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
 import org.jboss.windup.reporting.meta.TemplateType;
@@ -29,7 +29,7 @@ public class ApplicationReportRenderingRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        AbstractIterationOperator<ApplicationReportModel> setupTemplateOperation = new AbstractIterationOperator<ApplicationReportModel>(
+        AbstractIterationOperation<ApplicationReportModel> setupTemplateOperation = new AbstractIterationOperation<ApplicationReportModel>(
                     ApplicationReportModel.class, APP_REPORT_VAR)
         {
             @Override
