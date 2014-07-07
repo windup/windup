@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.decompiler.api.DecompilationException;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
@@ -19,7 +19,7 @@ import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class ProcyonDecompilerOperation extends AbstractIterationOperator<ArchiveModel>
+public class ProcyonDecompilerOperation extends AbstractIterationOperation<ArchiveModel>
 {
 
     public ProcyonDecompilerOperation(String variableName)

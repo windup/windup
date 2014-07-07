@@ -13,7 +13,7 @@ import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -38,28 +38,30 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         Configuration configuration = ConfigurationBuilder
-        .begin()
-        .addRule()
-            .when(GraphSearchConditionBuilder
-                .create("xmlModels")
-                .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
-                            GraphSearchPropertyComparisonType.EQUALS,
-                            "xmlTag3"))
-            .perform(
-                Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
-                .perform(new GraphOperation()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context)
-                    {
-                        VarStack varStack = VarStack.instance(event);
-                        XmlMetaFacetModel xmlFacetModel = 
-                                varStack.getCurrentPayload(XmlMetaFacetModel.class, "xml");
-                        typeSearchResults.add(xmlFacetModel);
-                    }
-                })
-                .endIteration()
-            );
+                    .begin()
+                    .addRule()
+                    .when(GraphSearchConditionBuilder
+                                .create("xmlModels")
+                                .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
+                                            GraphSearchPropertyComparisonType.EQUALS,
+                                            "xmlTag3"))
+                    .perform(
+                                Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
+                                            .perform(new GraphOperation()
+                                            {
+                                                @Override
+                                                public void perform(GraphRewrite event, EvaluationContext context)
+                                                {
+                                                    VarStack varStack = org.jboss.windup.config.runner.VarStack
+                                                                .instance(event);
+                                                    XmlMetaFacetModel xmlFacetModel =
+                                                                Iteration.getCurrentPayload(varStack,
+                                                                            XmlMetaFacetModel.class, "xml");
+                                                    typeSearchResults.add(xmlFacetModel);
+                                                }
+                                            })
+                                            .endIteration()
+                    );
         return configuration;
     }
 
