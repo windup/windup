@@ -12,11 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.junit.Assert;
@@ -60,14 +58,13 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                         return result;
                     }
                 })
-                .perform(new GraphOperation()
+                .perform(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
+                            "xml")
                 {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context)
+                    public void perform(GraphRewrite event, EvaluationContext context,
+                                XmlMetaFacetModel xmlFacetModel)
                     {
-                        VarStack varStack = VarStack.instance(event);
-                        XmlMetaFacetModel xmlFacetModel = varStack
-                                    .getCurrentPayload(XmlMetaFacetModel.class, "xml");
                         typeSearchResults.add(xmlFacetModel);
                         if (xmlRootNames.contains(xmlFacetModel.getRootTagName()))
                         {
@@ -76,7 +73,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                         xmlRootNames.add(xmlFacetModel.getRootTagName());
                     }
                 })
-                .otherwise(new AbstractIterationOperator<XmlMetaFacetModel>(XmlMetaFacetModel.class,
+                .otherwise(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
                             "xml")
                 {
                     @Override

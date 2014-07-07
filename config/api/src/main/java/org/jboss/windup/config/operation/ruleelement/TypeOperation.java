@@ -2,12 +2,13 @@ package org.jboss.windup.config.operation.ruleelement;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class TypeOperation extends AbstractIterationOperator<WindupVertexFrame>
+public class TypeOperation extends AbstractIterationOperation<WindupVertexFrame>
 {
     private Class<? extends WindupVertexFrame> newType;
 
@@ -28,6 +29,6 @@ public class TypeOperation extends AbstractIterationOperator<WindupVertexFrame>
     {
         VarStack varStack = VarStack.instance(event);
         WindupVertexFrame newFrame = GraphUtil.addTypeToModel(event.getGraphContext(), payload, newType);
-        varStack.setCurrentPayload(getVariableName(), newFrame);
+        Iteration.setCurrentPayload(varStack, getVariableName(), newFrame);
     }
 }

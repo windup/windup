@@ -6,24 +6,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphSubset;
-
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperator;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.scan.model.JavaFileModel;
 import org.jboss.windup.rules.apps.java.scan.provider.DiscoverJavaFilesRuleProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.tinkerpop.blueprints.Vertex;
 
 public class RegexMatcherRuleProvider extends WindupRuleProvider
 {
@@ -43,7 +46,7 @@ public class RegexMatcherRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
             .addRule()
             .when(
-                GraphSearchConditionBuilderGremlin.create("javaFiles", new ArrayList())
+                GraphSearchConditionBuilderGremlin.create("javaFiles", new ArrayList<Vertex>())
                 .V().framedType( JavaFileModel.class ).has("analyze")
             )
             .perform(
@@ -60,12 +63,12 @@ public class RegexMatcherRuleProvider extends WindupRuleProvider
                                 .perform(
                                     Iteration.over("regexes").var(RegexModel.class, "regex")
                                     .perform(
-                                        new AbstractIterationOperator<RegexModel>( RegexModel.class, "regex") {
+                                        new AbstractIterationOperation<RegexModel>( RegexModel.class, "regex") {
                                             @Override
                                             public void perform( GraphRewrite event, EvaluationContext context, RegexModel regex ) {
                                                 
                                                 VarStack sf = VarStack.instance(event);
-                                                JavaFileModel javaFile = sf.getCurrentPayload( JavaFileModel.class, "javaFile");
+                                                JavaFileModel javaFile = Iteration.getCurrentPayload(sf, JavaFileModel.class, "javaFile");
                                                 
                                                 getRegexMatches( javaFile.getFilePath(), regex.getRegex() );
                                             }

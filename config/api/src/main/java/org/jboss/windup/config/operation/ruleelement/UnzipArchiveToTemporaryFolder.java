@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperator<ArchiveModel>
+public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<ArchiveModel>
 {
     private static final Logger LOG = LoggerFactory.getLogger(UnzipArchiveToTemporaryFolder.class);
 

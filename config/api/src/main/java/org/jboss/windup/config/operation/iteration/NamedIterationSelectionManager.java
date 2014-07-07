@@ -7,7 +7,7 @@
 package org.jboss.windup.config.operation.iteration;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**

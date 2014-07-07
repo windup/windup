@@ -7,14 +7,14 @@
 package org.jboss.windup.config.operation.iteration;
 
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * Basically, a NamedIterationPayloadManager + a type check.
  * 
- * TODO: Personally I'd remove the whole IterationPayloadManager interface
- * and access VarStack directly.
+ * TODO: Personally I'd remove the whole IterationPayloadManager interface and access VarStack directly.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -37,13 +37,13 @@ public class TypedNamedIterationPayloadManager implements IterationPayloadManage
         {
             throw new IllegalTypeArgumentException(var, varType, element.getClass());
         }
-        varStack.setCurrentPayload(var, element);
+        Iteration.setCurrentPayload(varStack, var, element);
     }
 
     @Override
     public void removeCurrentPayload(VarStack varStack)
     {
-        varStack.setCurrentPayload(var, null);
+        Iteration.removeCurrentPayload(varStack, varType, var);
     }
 
 }

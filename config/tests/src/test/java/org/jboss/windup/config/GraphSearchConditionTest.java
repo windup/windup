@@ -15,7 +15,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.model.SomeModel;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
-import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
@@ -36,28 +35,28 @@ public class GraphSearchConditionTest
 {
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-            .addBeansXML()
-            .addClasses(MavenExampleRuleProvider.class,
-                JavaExampleRuleProvider.class,
-                XmlExampleRuleProvider1.class,
-                XmlExampleRuleProvider2.class,
-                XmlExampleRuleProvider3.class,
-                SomeModel.class,
-                WindupConfigurationExampleRuleProvider.class)
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                    .addBeansXML()
+                    .addClasses(MavenExampleRuleProvider.class,
+                                JavaExampleRuleProvider.class,
+                                XmlExampleRuleProvider1.class,
+                                XmlExampleRuleProvider2.class,
+                                XmlExampleRuleProvider3.class,
+                                SomeModel.class,
+                                WindupConfigurationExampleRuleProvider.class)
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
         return archive;
     }
 
@@ -66,9 +65,6 @@ public class GraphSearchConditionTest
 
     @Inject
     private GraphTypeRegistry graphTypeRegistry;
-
-    @Inject
-    private VarStack varStack;
 
     private GraphContext getGraphContext(File folder)
     {
@@ -79,18 +75,16 @@ public class GraphSearchConditionTest
         return context;
     }
 
-    
-    
-    private DefaultEvaluationContext createEvalContext( GraphRewrite event ) {
+    private DefaultEvaluationContext createEvalContext(GraphRewrite event)
+    {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, varStack);
         return evaluationContext;
     }
 
-
-    private void fillData( final GraphContext context ) {
+    private void fillData(final GraphContext context)
+    {
         context.getFramed().addVertex(null, SomeModel.class);
         context.getFramed().addVertex(null, SomeModel.class);
         context.getFramed().addVertex(null, SomeModel.class);
@@ -106,8 +100,6 @@ public class GraphSearchConditionTest
         xmlFacet4.setRootTagName("xmlTag4");
     }
 
-    
-    
     // TODO: Create shared method to set up the graph.
     @Test
     public void testSingletonSelection()
@@ -116,7 +108,7 @@ public class GraphSearchConditionTest
         final GraphContext context = getGraphContext(folder);
 
         GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext( event );
+        DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath("/tmp/testpath");
@@ -158,7 +150,7 @@ public class GraphSearchConditionTest
         final GraphContext context = getGraphContext(folder);
 
         GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext( event );
+        DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
         classModel1.setQualifiedName("com.example.Class1NoToString");
@@ -197,7 +189,7 @@ public class GraphSearchConditionTest
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext( event );
+        DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         // build a configuration, and make sure it matches what we expect (4 items)
         MavenExampleRuleProvider provider = new MavenExampleRuleProvider();
@@ -206,7 +198,6 @@ public class GraphSearchConditionTest
 
         Assert.assertEquals(4, provider.getSearchResults().size());
     }
-
 
     @Test
     public void testTypeFilter()
@@ -220,7 +211,7 @@ public class GraphSearchConditionTest
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext( event );
+        DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleRuleProvider1 provider = new XmlExampleRuleProvider1();
@@ -250,7 +241,7 @@ public class GraphSearchConditionTest
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext( event );
+        DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleRuleProvider2 provider = new XmlExampleRuleProvider2();
@@ -273,7 +264,7 @@ public class GraphSearchConditionTest
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext( event );
+        DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleRuleProvider3 provider = new XmlExampleRuleProvider3();

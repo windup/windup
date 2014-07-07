@@ -7,9 +7,10 @@
 package org.jboss.windup.config.operation.iteration;
 
 import java.util.Iterator;
+
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 

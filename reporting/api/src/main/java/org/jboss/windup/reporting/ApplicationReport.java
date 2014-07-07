@@ -4,13 +4,9 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ApplicationReport extends GraphOperation
 {
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationReport.class);
-
     private String applicationName;
     private String applicationVersion;
     private String applicationCreator;

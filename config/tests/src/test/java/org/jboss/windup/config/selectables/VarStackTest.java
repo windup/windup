@@ -1,6 +1,7 @@
 package org.jboss.windup.config.selectables;
 
 import java.io.File;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -15,9 +16,11 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextImpl;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
@@ -26,15 +29,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
 public class VarStackTest
 {
-
-    private static final Logger LOG = LoggerFactory.getLogger(VarStackTest.class);
-
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -59,9 +57,6 @@ public class VarStackTest
     @Inject
     private GraphTypeRegistry graphTypeRegistry;
 
-    @Inject
-    private VarStack varStack;
-
     @Test
     public void testInvalidTypeGet()
     {
@@ -72,25 +67,56 @@ public class VarStackTest
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, varStack);
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
         classModel1.setQualifiedName("com.example.Class1NoToString");
         JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
         classModel2.setQualifiedName("com.example.Class2HasToString");
 
-        varStack.push();
-        varStack.setCurrentPayload("classModel1", classModel1);
+        VarStack vars = VarStack.instance(event);
+        vars.push();
+        vars.setSingletonVariable("classModel1", classModel1);
         try
         {
-            varStack.getCurrentPayload(MavenProjectModel.class, "classModel1");
+            vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
         }
         catch (IllegalTypeArgumentException e)
         {
             Assert.assertNotNull(e.getMessage());
-            Assert.assertTrue(
-                        e.getMessage()
-                                    .contains("Variable \"classModel1\" does not implement expected interface \"org.jboss.windup.rules.apps.maven.model.MavenProjectModel\", actual implemented interfaces are"));
+            Assert.assertTrue(e
+                        .getMessage()
+                        .contains("Variable \"classModel1\" does not implement expected interface "
+                                    + "\"org.jboss.windup.rules.apps.maven.model.MavenProjectModel\", actual implemented interfaces are"));
+        }
+    }
+
+    @Test
+    public void testInvalidCountGet()
+    {
+        final File folder = OperatingSystemUtils.createTempDir();
+        final GraphContext context = new GraphContextImpl(folder, graphTypeRegistry,
+                    graphApiCompositeClassLoaderProvider);
+        GraphRewrite event = new GraphRewrite(context);
+        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+        final DefaultParameterValueStore values = new DefaultParameterValueStore();
+        evaluationContext.put(ParameterValueStore.class, values);
+
+        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+        classModel1.setQualifiedName("com.example.Class1NoToString");
+        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+        classModel2.setQualifiedName("com.example.Class2HasToString");
+
+        VarStack vars = VarStack.instance(event);
+        vars.push();
+        vars.setVariable("classModel1", Arrays.asList((WindupVertexFrame) classModel1, classModel2));
+        try
+        {
+            vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
+        }
+        catch (IllegalStateException e)
+        {
+            Assert.assertNotNull(e.getMessage());
+            Assert.assertTrue(e.getMessage().contains("More than one frame present"));
         }
     }
 }

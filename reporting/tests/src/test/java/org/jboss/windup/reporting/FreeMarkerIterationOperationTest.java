@@ -18,7 +18,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphSubset;
 import org.jboss.windup.config.runner.DefaultEvaluationContext;
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
@@ -63,8 +63,6 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
     @Test
     public void testApplicationReportFreemarker() throws Exception
     {
-        final File folder = File.createTempFile("windupGraph", "");
-
         FreeMarkerOperationRuleProvider provider = new FreeMarkerOperationRuleProvider();
 
         GraphRewrite event = new GraphRewrite(context);
@@ -97,7 +95,7 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
 
     private DefaultEvaluationContext createEvalContext(GraphRewrite event)
     {
-        final VarStack varStack = new VarStack();
+        final VarStack varStack = VarStack.instance(event);
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);

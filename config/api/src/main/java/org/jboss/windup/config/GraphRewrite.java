@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.jboss.windup.config.selectables.VarStack;
+import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.AbstractRewrite;
