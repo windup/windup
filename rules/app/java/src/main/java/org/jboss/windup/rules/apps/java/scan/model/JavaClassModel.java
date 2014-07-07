@@ -1,19 +1,18 @@
 package org.jboss.windup.rules.apps.java.scan.model;
 
+import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.reporting.renderer.api.Label;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.reporting.renderer.api.Label;
 
-
-// TODO:  WINDUP-85 - Introduce JavaFileModel
 @TypeValue("JavaClassResource")
 public interface JavaClassModel extends WindupVertexFrame
 {
@@ -26,14 +25,12 @@ public interface JavaClassModel extends WindupVertexFrame
     public static final String PROPERTY_MAJOR_VERSION = "majorVersion";
     public static final String PROPERTY_MINOR_VERSION = "minorVersion";
 
-    
     @Adjacency(label = "javaClassFacet", direction = Direction.IN)
     public Iterable<ResourceModel> getResources();
 
     @Adjacency(label = "javaClassFacet", direction = Direction.IN)
     public void addResource(ResourceModel resource);
 
-    
     // Properties derivable just from the file name.
     @Property(PROPERTY_CLASS_NAME)
     public void setClassName(String className);
@@ -54,8 +51,6 @@ public interface JavaClassModel extends WindupVertexFrame
     @Property(PROPERTY_PACKAGE_NAME)
     public void setPackageName(String packageName);
 
-    
-    
     @Property(PROPERTY_MAJOR_VERSION)
     public int getMajorVersion();
 
