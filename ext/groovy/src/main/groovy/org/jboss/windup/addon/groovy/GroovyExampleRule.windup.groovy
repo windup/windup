@@ -17,7 +17,7 @@ ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
             .ofType(JavaClassModel.class)
     )
     .perform(
-        Iteration.over("javaClasses").var("javaClass").perform(
+        Iteration.over("javaClasses").as("javaClass").perform(
             new GraphOperation  () {
                 public void perform(GraphRewrite event, EvaluationContext context) {
                     System.out.println("Performing rewrite operation")

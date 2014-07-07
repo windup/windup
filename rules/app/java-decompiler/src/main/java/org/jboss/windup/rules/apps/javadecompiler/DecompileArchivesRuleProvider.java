@@ -34,7 +34,7 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
                     .when(
                                 GraphSearchConditionBuilder.create("allUnzippedArchives").ofType(ArchiveModel.class)
                     ).perform(
-                                Iteration.over("allUnzippedArchives").var(ArchiveModel.class, "archive")
+                                Iteration.over("allUnzippedArchives").as(ArchiveModel.class, "archive")
                                             .perform(new ProcyonDecompilerOperation("archive"))
                                             .endIteration()
                     );
