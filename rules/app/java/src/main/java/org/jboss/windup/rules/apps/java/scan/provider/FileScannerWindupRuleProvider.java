@@ -32,7 +32,7 @@ public class FileScannerWindupRuleProvider extends WindupRuleProvider
                                 .ofType(FileModel.class)
                                 .withProperty(FileModel.PROPERTY_IS_DIRECTORY, true)
                     )
-                    .perform(Iteration.over("inputDirectories").var(FileModel.class, "directory")
+                    .perform(Iteration.over("inputDirectories").as(FileModel.class, "directory")
                                 .perform(RecurseDirectoryAndAddFiles.add("directory")).endIteration()
                     )
 
@@ -44,7 +44,7 @@ public class FileScannerWindupRuleProvider extends WindupRuleProvider
                                             GraphSearchPropertyComparisonType.REGEX,
                                             ZipUtil.getEndsWithZipRegularExpression())
                     )
-                    .perform(Iteration.over("inputFiles").var(FileModel.class, "file")
+                    .perform(Iteration.over("inputFiles").as(FileModel.class, "file")
                                 .perform(AddArchiveReferenceInformation.addReferenceInformation("file")).endIteration()
                     );
 

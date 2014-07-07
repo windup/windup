@@ -8,11 +8,11 @@ package org.jboss.windup.config;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.operation.ruleelement.TypeOperation;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
@@ -45,7 +45,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
             GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class)
         )
         .perform(
-            Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
+            Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
                 .perform(
                     TypeOperation.addType("xml", MavenProjectModel.class)
                 )
@@ -58,15 +58,15 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
                 GraphSearchConditionBuilder.create("mavenModels").ofType(MavenProjectModel.class)
         )
         .perform(
-            Iteration.over(MavenProjectModel.class, "mavenModels").var("maven")
-            .perform(new AbstractIterationOperation<MavenProjectModel>(MavenProjectModel.class,
-                        "maven")
+            Iteration.over(MavenProjectModel.class, "mavenModels").as("maven")
+            .perform(new GraphOperation()
             {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context,
-                            MavenProjectModel mavenModel)
+                public void perform(GraphRewrite event, EvaluationContext context)
                 {
-                    results.add(mavenModel);
+                    VarStack varStack = VarStack.instance(event);
+                    MavenProjectModel mavenFacetModel = varStack.getCurrentPayload(MavenProjectModel.class, "maven");
+                    results.add(mavenFacetModel);
                 }
             })
             .endIteration()

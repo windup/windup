@@ -49,7 +49,7 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
                     .when(configSearch)
                     .perform(
                                 Iteration.over("configuration")
-                                            .var("cfg")
+                                            .as("cfg")
                                             .perform(
                                                         new AbstractIterationOperation<WindupConfigurationModel>(
                                                                     WindupConfigurationModel.class, "cfg")

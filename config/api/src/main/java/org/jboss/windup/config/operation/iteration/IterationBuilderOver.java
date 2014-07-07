@@ -18,12 +18,12 @@ public interface IterationBuilderOver
      * Sets the name and type of the variable for this iteration's "current element".
      * The type server for automatic type check.
      */
-    public IterationBuilderVar var(Class<? extends WindupVertexFrame> varType, String var);
+    public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var);
 
     /**
      * Sets the name of the variable for this iteration's "current element".
      */
-    public IterationBuilderVar var(String var);
+    public IterationBuilderVar as(String var);
 
     /**
      * Starts a gremlin query part; the query result is stored under given var name.

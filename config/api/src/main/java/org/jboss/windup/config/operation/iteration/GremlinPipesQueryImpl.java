@@ -781,9 +781,9 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         return this;
     }
 
-    public GremlinPipesQuery as(final String name)
+    public GremlinPipesQuery named(final String name)
     {
-        graphSearchConditionBuilderGremlin.as(name);
+        graphSearchConditionBuilderGremlin.named(name);
         return this;
     }
 

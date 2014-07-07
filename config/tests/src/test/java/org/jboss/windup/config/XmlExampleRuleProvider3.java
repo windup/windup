@@ -11,8 +11,9 @@ import java.util.List;
 
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.selectables.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -45,14 +46,15 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
                 .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                             GraphSearchPropertyComparisonType.EQUALS,
                             "xmlTag2"))
-            .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
-                .perform(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
-                            "xml")
+            .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
+                .perform(new GraphOperation()
                 {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context,
-                                XmlMetaFacetModel xmlFacetModel)
+                    public void perform(GraphRewrite event, EvaluationContext context)
                     {
+                        VarStack varStack = VarStack.instance(event);
+                        XmlMetaFacetModel xmlFacetModel = varStack
+                                    .getCurrentPayload(XmlMetaFacetModel.class, "xml");
                         typeSearchResults.add(xmlFacetModel);
                     }
                 })
