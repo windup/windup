@@ -265,7 +265,7 @@ public interface GremlinPipesQuery
 
     public GremlinPipesQuery linkBoth(final String label, final Vertex other);
 
-    public GremlinPipesQuery as(final String name);
+    public GremlinPipesQuery named(final String name);
 
     public GremlinPipesQuery enablePath();
 

@@ -794,7 +794,7 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
         return this;
     }
 
-    public GraphSearchConditionBuilderGremlin as(final String name)
+    public GraphSearchConditionBuilderGremlin named(final String name)
     {
         pipeline.as(name);
         return this;

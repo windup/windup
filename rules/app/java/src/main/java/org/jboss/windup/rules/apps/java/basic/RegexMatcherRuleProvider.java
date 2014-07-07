@@ -47,7 +47,7 @@ public class RegexMatcherRuleProvider extends WindupRuleProvider
                 .V().framedType( JavaFileModel.class ).has("analyze")
             )
             .perform(
-                Iteration.over("javaFiles").var("javaFile")
+                Iteration.over("javaFiles").as("javaFile")
                     .perform(
                         // A nested rule.
                         GraphSubset.evaluate(
@@ -58,7 +58,7 @@ public class RegexMatcherRuleProvider extends WindupRuleProvider
                                         .withProperty( RegexModel.FOR_LANG, "java")
                                 )
                                 .perform(
-                                    Iteration.over("regexes").var(RegexModel.class, "regex")
+                                    Iteration.over("regexes").as(RegexModel.class, "regex")
                                     .perform(
                                         new AbstractIterationOperator<RegexModel>( RegexModel.class, "regex") {
                                             @Override

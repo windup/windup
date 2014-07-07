@@ -50,7 +50,7 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
                     .addRule()
                     .when(findApplicationModels)
                     .perform(
-                                Iteration.over(VAR_APPLICATION_MODELS).var(VAR_APPLICATION_MODEL)
+                                Iteration.over(VAR_APPLICATION_MODELS).as(VAR_APPLICATION_MODEL)
                                             .perform(addApplicationReport).endIteration()
                     );
 

@@ -48,7 +48,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
         .when(GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class))
             .perform(Iteration
                 .over(XmlMetaFacetModel.class, "xmlModels")
-                .var("xml")
+                .as("xml")
                 .when(new AbstractIterationFilter<XmlMetaFacetModel>(XmlMetaFacetModel.class, "xml")
                 {
                     @Override

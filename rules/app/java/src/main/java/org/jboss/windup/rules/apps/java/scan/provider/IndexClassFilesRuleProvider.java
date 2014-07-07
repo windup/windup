@@ -41,7 +41,7 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
                                 .withProperty(FileModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX,
                                             ".*\\.class")
                     )
-                    .perform(Iteration.over("classFiles").var("classFile")
+                    .perform(Iteration.over("classFiles").as("classFile")
                                 .perform(new AddClassFileMetadata("classFile")).endIteration()
                     );
     }

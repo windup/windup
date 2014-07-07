@@ -45,7 +45,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
             GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class)
         )
         .perform(
-            Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
+            Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
                 .perform(
                     TypeOperation.addType("xml", MavenProjectModel.class)
                 )
@@ -58,7 +58,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
                 GraphSearchConditionBuilder.create("mavenModels").ofType(MavenProjectModel.class)
         )
         .perform(
-            Iteration.over(MavenProjectModel.class, "mavenModels").var("maven")
+            Iteration.over(MavenProjectModel.class, "mavenModels").as("maven")
             .perform(new GraphOperation()
             {
                 @Override

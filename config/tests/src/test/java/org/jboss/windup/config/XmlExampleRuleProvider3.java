@@ -46,7 +46,7 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
                 .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                             GraphSearchPropertyComparisonType.EQUALS,
                             "xmlTag2"))
-            .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").var("xml")
+            .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
                 .perform(new GraphOperation()
                 {
                     @Override

@@ -47,7 +47,7 @@ public class ApplicationReportRenderingRuleProvider extends WindupRuleProvider
                     .begin()
                     .addRule()
                     .when(GraphSearchConditionBuilder.create(APP_REPORTS_VAR).ofType(ApplicationReportModel.class))
-                    .perform(Iteration.over(APP_REPORTS_VAR).var(APP_REPORT_VAR)
+                    .perform(Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
                                 .perform(setupTemplateOperation.and(reportOperation))
                                 .endIteration());
     }

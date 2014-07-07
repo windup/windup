@@ -31,7 +31,7 @@ public class UnzipArchivesToTempRuleProvider extends WindupRuleProvider
     {
         return ConfigurationBuilder.begin().addRule()
                     .when(GraphSearchConditionBuilder.create("inputArchives").ofType(ArchiveModel.class))
-                    .perform(Iteration.over("inputArchives").var(ArchiveModel.class, "archive")
+                    .perform(Iteration.over("inputArchives").as(ArchiveModel.class, "archive")
                                 .perform(UnzipArchiveToTemporaryFolder.unzip("archive"))
                                 .endIteration()
                     );

@@ -71,14 +71,14 @@ public abstract class Iteration extends DefaultOperationBuilder
     }
 
     @Override
-    public IterationBuilderVar var(Class<? extends WindupVertexFrame> varType, String var)
+    public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var)
     {
         setPayloadManager(new TypedNamedIterationPayloadManager(varType, var));
         return this;
     }
 
     @Override
-    public IterationBuilderVar var(String var)
+    public IterationBuilderVar as(String var)
     {
         setPayloadManager(new NamedIterationPayloadManager(var));
         return this;

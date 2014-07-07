@@ -66,7 +66,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
                     .when(javaSourceCanBeLocated.and(sourceModeEnabled))
                     .perform(Iteration
                                 .over("javaSourceFiles")
-                                .var(FileModel.class, "javaSourceFile")
+                                .as(FileModel.class, "javaSourceFile")
 
                                 .perform(
                                             new IndexJavaFileIterationOperator(FileModel.class, "javaSourceFile")
@@ -75,7 +75,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
 
                                 .and(
                                             Iteration.over("javaSourceFiles")
-                                                        .var(FileModel.class, "javaSourceFile")
+                                                        .as(FileModel.class, "javaSourceFile")
                                                         .perform(
                                                                     new FireASTTypeNameEventsIterationOperator(
                                                                                 FileModel.class, "javaSourceFile")

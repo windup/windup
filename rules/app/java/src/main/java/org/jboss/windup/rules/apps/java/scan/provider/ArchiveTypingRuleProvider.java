@@ -44,7 +44,7 @@ public class ArchiveTypingRuleProvider extends WindupRuleProvider
                     )
                     .perform(
                                 Iteration.over("archives")
-                                            .var("archive")
+                                            .as("archive")
                                             .perform(
                                                         ConfigureArchiveTypes.forVar("archive",
                                                                     archiveModelPointers)
