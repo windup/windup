@@ -31,6 +31,12 @@ public class GraphSearchConditionBuilder extends GraphCondition
     {
         return new GraphSearchConditionBuilder(collectionName);
     }
+    
+    public GraphSearchConditionBuilder addSearchCriterion(GraphSearchCriterion criterion) 
+    {
+    	graphSearchCriteria.add(criterion);
+    	return this;
+    }
 
     public GraphSearchConditionBuilderGremlin gremlin()
     {
