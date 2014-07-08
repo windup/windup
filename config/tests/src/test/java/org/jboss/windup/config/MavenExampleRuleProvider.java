@@ -16,7 +16,7 @@ import org.jboss.windup.config.operation.ruleelement.TypeOperation;
 import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
-import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
+import org.jboss.windup.rules.apps.java.scan.model.project.MavenProjectModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;

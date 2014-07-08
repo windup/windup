@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import javax.inject.Singleton;
 
+import org.jboss.windup.rules.apps.java.scan.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.maven.dao.MavenFacetDao;
-import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+
 import org.jboss.windup.graph.dao.impl.BaseDaoImpl;
 
 @Singleton

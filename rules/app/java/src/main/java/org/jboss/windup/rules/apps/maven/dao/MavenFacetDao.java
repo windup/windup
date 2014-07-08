@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.maven.dao;
 
 import org.jboss.windup.graph.dao.BaseDao;
-import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
+import org.jboss.windup.rules.apps.java.scan.model.project.MavenProjectModel;
 import org.jboss.windup.graph.model.resource.XmlResourceModel;
 
 public interface MavenFacetDao extends BaseDao<MavenProjectModel> {

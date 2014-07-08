@@ -23,7 +23,7 @@ import org.jboss.windup.graph.GraphContextImpl;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
-import org.jboss.windup.rules.apps.maven.model.MavenProjectModel;
+import org.jboss.windup.rules.apps.java.scan.model.project.MavenProjectModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
