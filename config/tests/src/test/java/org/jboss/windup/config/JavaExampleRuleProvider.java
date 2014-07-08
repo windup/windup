@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
+import org.jboss.windup.config.graphsearch.GremlinPipelineCriterion;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -23,6 +24,9 @@ import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -49,6 +53,17 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
+
+        GremlinPipelineCriterion methodNameCriterion = new GremlinPipelineCriterion()
+        {
+            @Override
+            public void configurePipeline(GremlinPipeline<Vertex, Vertex> pipeline)
+            {
+                pipeline
+                            .out("javaMethod")
+                            .has("methodName", "toString");
+            }
+        };
 
         Configuration configuration = ConfigurationBuilder
                     .begin()
@@ -78,8 +93,7 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
                     .perform(Iteration
                                 .over("javaClasses")
                                 .queryFor(JavaMethodModel.class, "javaMethod")
-                                .out("javaMethod")
-                                .has("methodName", "toString")
+                                .addCriterion(methodNameCriterion)
                                 .endQuery()
                                 .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class,
                                             "javaMethod")
