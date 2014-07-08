@@ -53,9 +53,9 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
-import org.jboss.windup.rules.apps.java.scan.dao.JavaClassDao;
-import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private GraphContext graphContext;
 
     @Inject
-    private JavaClassDao javaClassDao;
+    private JavaClassService javaClassDao;
 
     private CompilationUnit cu;
 
@@ -222,6 +222,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             processType(returnType, ClassCandidateType.RETURN_TYPE);
         }
 
+        @SuppressWarnings("unchecked")
         List<SingleVariableDeclaration> parameters = (List<SingleVariableDeclaration>) node.parameters();
         if (parameters != null)
         {
@@ -238,6 +239,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             }
         }
 
+        @SuppressWarnings("unchecked")
         List<Name> throwsTypes = node.thrownExceptions();
         if (throwsTypes != null)
         {
@@ -430,7 +432,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
         String nodeName = StringUtils.removeStart(node.toString(), "this.");
 
-        List arguments = node.arguments();
+        List<?> arguments = node.arguments();
         List<String> resolvedParams = methodParameterGuesser(arguments);
 
         String objRef = StringUtils.substringBefore(nodeName, "." + node.getName().toString());
@@ -473,7 +475,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         return super.visit(node);
     }
 
-    private List<String> methodParameterGuesser(List arguements)
+    private List<String> methodParameterGuesser(List<?> arguements)
     {
         List<String> resolvedParams = new ArrayList<String>(arguements.size());
         for (Object o : arguements)

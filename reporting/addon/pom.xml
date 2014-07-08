@@ -1,32 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.jboss.windup.reporting</groupId>
         <artifactId>windup-reporting-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-    
+
     <artifactId>windup-reporting</artifactId>
     <name>Windup Engine - Reporting Addon</name>
-    
-    <build>
-        <plugins>
-            <!-- Forge addon creation -->
-            <plugin>
-                <groupId>org.jboss.forge.furnace</groupId>
-                <artifactId>furnace-maven-plugin</artifactId>
-                <executions> <execution> <id>generate-dot</id> <phase>prepare-package</phase> </execution> </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>  <execution>  <id>create-forge-addon</id>  <phase>package</phase>  </execution> </executions>
-            </plugin>
-        </plugins>
-    </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
@@ -49,14 +34,14 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-  
+
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
             <artifactId>windup-reporting-api</artifactId>
@@ -66,8 +51,32 @@
             <groupId>org.jboss.windup.reporting</groupId>
             <artifactId>windup-reporting-impl</artifactId>
             <version>${project.version}</version>
-            <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
-    
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jboss.forge.furnace</groupId>
+                <artifactId>furnace-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-dot</id>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-forge-addon</id>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

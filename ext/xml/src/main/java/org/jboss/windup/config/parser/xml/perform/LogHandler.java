@@ -2,7 +2,7 @@ package org.jboss.windup.config.parser.xml.perform;
 
 import static org.joox.JOOX.$;
 
-import org.jboss.windup.config.ConfigurationException;
+import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.operation.Log;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;

@@ -4,7 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.List;
 
-import org.jboss.windup.config.ConfigurationException;
+import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;

@@ -7,6 +7,7 @@ import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.freemarker.FreeMarkerIterationOperation;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
 import org.jboss.windup.reporting.meta.TemplateType;
 import org.ocpsoft.rewrite.config.Configuration;

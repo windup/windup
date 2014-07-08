@@ -6,9 +6,9 @@
  */
 package org.jboss.windup.config.operation.iteration;
 
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -31,7 +31,7 @@ public class TypedNamedIterationPayloadManager implements IterationPayloadManage
     }
 
     @Override
-    public void setCurrentPayload(VarStack varStack, WindupVertexFrame element)
+    public void setCurrentPayload(Variables varStack, WindupVertexFrame element)
     {
         if (!varType.isAssignableFrom(element.getClass()))
         {
@@ -41,7 +41,7 @@ public class TypedNamedIterationPayloadManager implements IterationPayloadManage
     }
 
     @Override
-    public void removeCurrentPayload(VarStack varStack)
+    public void removeCurrentPayload(Variables varStack)
     {
         Iteration.removeCurrentPayload(varStack, varType, var);
     }

@@ -7,7 +7,7 @@
 package org.jboss.windup.config.operation.iteration;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.runner.VarStack;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -25,7 +25,7 @@ public class NamedIterationSelectionManager implements IterationSelectionManager
     }
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack)
+    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, Variables varStack)
     {
         return varStack.findVariable(varName);
     }

@@ -2,6 +2,7 @@ package org.jboss.windup.graph.dao.impl;
 
 import javax.inject.Singleton;
 
+import org.jboss.windup.graph.dao.BaseDaoImpl;
 import org.jboss.windup.graph.dao.FileResourceDao;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.slf4j.Logger;

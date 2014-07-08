@@ -14,15 +14,12 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.model.SomeModel;
-import org.jboss.windup.config.runner.DefaultEvaluationContext;
-import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphContextImpl;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
-import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
-import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
+import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,19 +58,7 @@ public class GraphSearchConditionTest
     }
 
     @Inject
-    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
-
-    @Inject
-    private GraphTypeRegistry graphTypeRegistry;
-
-    private GraphContext getGraphContext(File folder)
-    {
-        Assert.assertNotNull(graphApiCompositeClassLoaderProvider);
-
-        final GraphContextImpl context = new GraphContextImpl(folder, graphTypeRegistry,
-                    graphApiCompositeClassLoaderProvider);
-        return context;
-    }
+    private GraphContextFactory factory;
 
     private DefaultEvaluationContext createEvalContext(GraphRewrite event)
     {
@@ -105,7 +90,7 @@ public class GraphSearchConditionTest
     public void testSingletonSelection()
     {
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = getGraphContext(folder);
+        final GraphContext context = factory.create(folder);
 
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
@@ -129,7 +114,7 @@ public class GraphSearchConditionTest
         WindupConfigurationExampleRuleProvider provider = new WindupConfigurationExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
 
-        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
         List<JavaMethodModel> methodModelList = provider.getResults();
         Assert.assertTrue(methodModelList.size() == 1);
@@ -147,7 +132,7 @@ public class GraphSearchConditionTest
     public void testJavaMethodModel()
     {
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = getGraphContext(folder);
+        final GraphContext context = factory.create(folder);
 
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
@@ -167,7 +152,7 @@ public class GraphSearchConditionTest
         JavaExampleRuleProvider provider = new JavaExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
 
-        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
         List<JavaMethodModel> methodModelList = provider.getResults();
         Assert.assertTrue(methodModelList.size() == 1);
@@ -182,7 +167,7 @@ public class GraphSearchConditionTest
     {
         // build the initial graph
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = getGraphContext(folder);
+        final GraphContext context = factory.create(folder);
 
         fillData(context);
         context.getGraph().commit();
@@ -194,7 +179,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         MavenExampleRuleProvider provider = new MavenExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
-        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(4, provider.getSearchResults().size());
     }
@@ -204,7 +189,7 @@ public class GraphSearchConditionTest
     {
         // build the initial graph
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = getGraphContext(folder);
+        final GraphContext context = factory.create(folder);
 
         fillData(context);
         context.getGraph().commit();
@@ -216,7 +201,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleRuleProvider1 provider = new XmlExampleRuleProvider1();
         Configuration configuration = provider.getConfiguration(context);
-        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(4, provider.getTypeSearchResults().size());
         Assert.assertEquals(3, provider.getXmlRootNames().size());
@@ -234,7 +219,7 @@ public class GraphSearchConditionTest
     {
         // build the initial graph
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = getGraphContext(folder);
+        final GraphContext context = factory.create(folder);
 
         fillData(context);
         context.getGraph().commit();
@@ -246,7 +231,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleRuleProvider2 provider = new XmlExampleRuleProvider2();
         Configuration configuration = provider.getConfiguration(context);
-        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(1, provider.getTypeSearchResults().size());
         Assert.assertEquals("xmlTag3", provider.getTypeSearchResults().get(0).getRootTagName());
@@ -257,7 +242,7 @@ public class GraphSearchConditionTest
     {
         // build the initial graph
         final File folder = OperatingSystemUtils.createTempDir();
-        final GraphContext context = getGraphContext(folder);
+        final GraphContext context = factory.create(folder);
 
         fillData(context);
         context.getGraph().commit();
@@ -269,7 +254,7 @@ public class GraphSearchConditionTest
         // build a configuration, and make sure it matches what we expect (4 items)
         XmlExampleRuleProvider3 provider = new XmlExampleRuleProvider3();
         Configuration configuration = provider.getConfiguration(context);
-        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(1, provider.getTypeSearchResults().size());
         XmlMetaFacetModel result1 = provider.getTypeSearchResults().get(0);

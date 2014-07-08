@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.AbstractRewrite;
@@ -51,12 +50,12 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
 
     public void selectionPush()
     {
-        VarStack.instance(this).push();
+        Variables.instance(this).push();
     }
 
     public void selectionPop()
     {
-        VarStack.instance(this).pop();
+        Variables.instance(this).pop();
     }
 
     @Override

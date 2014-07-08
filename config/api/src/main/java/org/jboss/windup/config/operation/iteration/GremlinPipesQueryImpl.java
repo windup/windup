@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilderGremlin;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.ocpsoft.common.util.Assert;
+import org.jboss.windup.graph.util.GraphUtil;
 
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Predicate;
@@ -25,27 +25,20 @@ import com.tinkerpop.pipes.util.structures.Pair;
 import com.tinkerpop.pipes.util.structures.Table;
 import com.tinkerpop.pipes.util.structures.Tree;
 
-import org.jboss.windup.config.operation.IterationRoot;
-import org.jboss.windup.config.runner.VarStack;
-
-
 /**
  * Gremlin Pipes adapter for Iteration.queryFor( ... ).
  */
 public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCriteria
 {
-    private final IterationRoot root;
+    private final Iteration root;
     private final GraphSearchConditionBuilderGremlin graphSearchConditionBuilderGremlin;
-    private IterationPayloadManager payloadManager;
 
-    
-    public GremlinPipesQueryImpl(IterationRoot root, IterationPayloadManager manager)
+    public GremlinPipesQueryImpl(Iteration root, IterationPayloadManager manager)
     {
         this.root = root;
-        this.setPayloadManager(manager);
+        this.root.setPayloadManager(manager);
         this.graphSearchConditionBuilderGremlin = new GraphSearchConditionBuilderGremlin();
     }
-
 
     /**
      * @returns A SelectionManager which performs a Gremlin query.
@@ -56,28 +49,28 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         return new GremlinIterationSelectionManager();
     }
 
-    
     /**
      * 
      */
     private class GremlinIterationSelectionManager implements IterationSelectionManager
     {
         @Override
-        public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack)
+        public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, Variables varStack)
         {
-            List<Vertex> initialVertices = getInitialVertices( event, varStack );
+            List<Vertex> initialVertices = getInitialVertices(event, varStack);
 
             // Perform the query and convert to frames.
             graphSearchConditionBuilderGremlin.setInitialVertices(initialVertices);
             Iterable<Vertex> v = graphSearchConditionBuilderGremlin.getResults(event);
             return GraphUtil.toVertexFrames(event.getGraphContext(), v);
         }
-        
+
         /**
-         *  The initial vertices are those matched by previous query constructs.
-         *  Iteration.[initial vertices].queryFor().[gremlin pipe wrappers]
+         * The initial vertices are those matched by previous query constructs. Iteration.[initial
+         * vertices].queryFor().[gremlin pipe wrappers]
          */
-        private List<Vertex> getInitialVertices( GraphRewrite event, VarStack varStack ) {
+        private List<Vertex> getInitialVertices(GraphRewrite event, Variables varStack)
+        {
             List<Vertex> initialVertices = new ArrayList<>();
             Iterable<WindupVertexFrame> initialFrames = root.getSelectionManager().getFrames(event, varStack);
             // TODO: Doesn't the root SelectionManager have the same event and varStack?
@@ -87,25 +80,16 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         }
     }
 
-
-    
-    @Override
-    public void setSelectionManager( IterationSelectionManager mgr ) {
-        // NO-OP, created internally.
-    }
-    
-
     @Override
     public void setPayloadManager(IterationPayloadManager payloadManager)
     {
-        Assert.notNull(payloadManager, "Payload manager must not be null.");
-        this.payloadManager = payloadManager;
+        root.setPayloadManager(payloadManager);
     }
 
     @Override
     public IterationPayloadManager getPayloadManager()
     {
-        return payloadManager;
+        return root.getPayloadManager();
     }
 
     @Override
@@ -114,10 +98,8 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         return this;
     }
 
-    
-    
     // <editor-fold defaultstate="collapsed" desc="Gremlin pipes wrapping methods.">
-    
+
     public GremlinPipesQuery step(final PipeFunction function)
     {
         graphSearchConditionBuilderGremlin.step(function);
@@ -792,12 +774,12 @@ public class GremlinPipesQueryImpl extends Iteration implements IterationQueryCr
         graphSearchConditionBuilderGremlin.enablePath();
         return this;
     }
-    
+
     public GremlinPipesQuery cast(Class<Vertex> end)
     {
         graphSearchConditionBuilderGremlin.cast(end);
         return this;
     }
-    //</editor-fold>
-    
+    // </editor-fold>
+
 }

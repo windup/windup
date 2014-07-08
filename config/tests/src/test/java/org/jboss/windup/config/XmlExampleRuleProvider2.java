@@ -13,9 +13,8 @@ import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
+import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -52,7 +51,7 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
                                                 @Override
                                                 public void perform(GraphRewrite event, EvaluationContext context)
                                                 {
-                                                    VarStack varStack = org.jboss.windup.config.runner.VarStack
+                                                    Variables varStack = org.jboss.windup.config.Variables
                                                                 .instance(event);
                                                     XmlMetaFacetModel xmlFacetModel =
                                                                 Iteration.getCurrentPayload(varStack,

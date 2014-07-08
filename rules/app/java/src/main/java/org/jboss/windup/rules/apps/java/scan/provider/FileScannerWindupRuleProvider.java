@@ -5,10 +5,10 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AddArchiveReferenceInformation;
-import org.jboss.windup.config.operation.ruleelement.RecurseDirectoryAndAddFiles;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.apps.java.scan.operation.AddArchiveReferenceInformation;
+import org.jboss.windup.rules.apps.java.scan.operation.RecurseDirectoryAndAddFiles;
 import org.jboss.windup.util.ZipUtil;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -33,7 +33,7 @@ public class FileScannerWindupRuleProvider extends WindupRuleProvider
                                 .withProperty(FileModel.PROPERTY_IS_DIRECTORY, true)
                     )
                     .perform(Iteration.over("inputDirectories").as(FileModel.class, "directory")
-                                .perform(RecurseDirectoryAndAddFiles.add("directory")).endIteration()
+                                .perform(RecurseDirectoryAndAddFiles.startingAt("directory")).endIteration()
                     )
 
                     .addRule()
@@ -45,7 +45,7 @@ public class FileScannerWindupRuleProvider extends WindupRuleProvider
                                             ZipUtil.getEndsWithZipRegularExpression())
                     )
                     .perform(Iteration.over("inputFiles").as(FileModel.class, "file")
-                                .perform(AddArchiveReferenceInformation.addReferenceInformation("file")).endIteration()
+                                .perform(AddArchiveReferenceInformation.to("file")).endIteration()
                     );
 
     }

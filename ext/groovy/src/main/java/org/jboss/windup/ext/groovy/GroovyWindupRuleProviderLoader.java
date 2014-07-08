@@ -56,9 +56,9 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         }
 
         CompilerConfiguration config = new CompilerConfiguration();
-        config.addCompilationCustomizers(new ImportCustomizer());
+        // config.addCompilationCustomizers(new ImportCustomizer());
         ClassLoader loader = getCompositeClassloader();
-        GroovyShell shell = new GroovyShell(new GroovyClassLoader(loader), binding, config);
+        GroovyShell shell = new GroovyShell(loader, binding, config);
 
         try (InputStream supportFuncsIS = getClass().getResourceAsStream(
                     "/org/jboss/windup/addon/groovy/WindupGroovySupportFunctions.groovy"))

@@ -9,8 +9,8 @@ package org.jboss.windup.config.operation.iteration;
 import java.util.Iterator;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 
@@ -31,7 +31,7 @@ public class TypedNamedIterationSelectionManager implements IterationSelectionMa
     }
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack)
+    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, Variables varStack)
     {
         final Iterable<WindupVertexFrame> frames = varStack.findVariable(varName);
 

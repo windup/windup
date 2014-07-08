@@ -7,7 +7,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.rules.apps.java.scan.op.AddClassFileMetadata;
+import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -42,7 +42,7 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
                                             ".*\\.class")
                     )
                     .perform(Iteration.over("classFiles").as("classFile")
-                                .perform(new AddClassFileMetadata("classFile")).endIteration()
+                                .perform(AddClassFileMetadata.to("classFile")).endIteration()
                     );
     }
 }

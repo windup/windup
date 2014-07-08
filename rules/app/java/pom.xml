@@ -33,8 +33,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config-api</artifactId>
+            <groupId>org.jboss.windup.ext</groupId>
+            <artifactId>windup-config-groovy</artifactId>
+            <classifier>forge-addon</classifier>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -52,7 +53,7 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        
+
 
 
         <dependency>
@@ -100,6 +101,14 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/groovy</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <!-- Forge addon -->
             <plugin>
