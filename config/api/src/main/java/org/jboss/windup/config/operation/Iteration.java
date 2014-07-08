@@ -14,8 +14,6 @@ import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
-import org.jboss.windup.config.operation.iteration.GremlinPipesQuery;
-import org.jboss.windup.config.operation.iteration.GremlinPipesQueryImpl;
 import org.jboss.windup.config.operation.iteration.IterationBuilderComplete;
 import org.jboss.windup.config.operation.iteration.IterationBuilderOtherwise;
 import org.jboss.windup.config.operation.iteration.IterationBuilderOver;
@@ -86,22 +84,6 @@ public abstract class Iteration extends DefaultOperationBuilder
     {
         setPayloadManager(new NamedIterationPayloadManager(var));
         return this;
-    }
-
-    @Override
-    public GremlinPipesQuery queryFor(Class<? extends WindupVertexFrame> varType, String var)
-    {
-        // TODO - I'd prefer if we used Iteration.over(...).var(...).queryFor()...
-        // It would make the API more comprehensible and clearer.
-        return new GremlinPipesQueryImpl(this, new TypedNamedIterationPayloadManager(varType, var));
-    }
-
-    @Override
-    public GremlinPipesQuery queryFor(String var)
-    {
-        // TODO - I'd prefer if we used Iteration.over(...).var(...).queryFor()...
-        // It would make the API more comprehensible and clearer.
-        return new GremlinPipesQueryImpl(this, new NamedIterationPayloadManager(var));
     }
 
     public IterationBuilderWhen all(Condition... condition)

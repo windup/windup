@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
+import org.jboss.windup.config.graphsearch.GremlinPipelineCriterion;
+import org.jboss.windup.config.graphsearch.VarSelection;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -23,6 +25,9 @@ import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -50,6 +55,17 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
 
+        GremlinPipelineCriterion methodNameCriterion = new GremlinPipelineCriterion()
+        {
+            @Override
+            public void configurePipeline(GremlinPipeline<Vertex, Vertex> pipeline)
+            {
+                pipeline
+                            .out("javaMethod")
+                            .has("methodName", "toString");
+            }
+        };
+
         Configuration configuration = ConfigurationBuilder
                     .begin()
                     .addRule()
@@ -68,6 +84,10 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
                                             .ofType(JavaClassModel.class)
                                             .withProperty("qualifiedName", GraphSearchPropertyComparisonType.REGEX,
                                                         "com\\.example\\..*")
+                                            .and(
+                                                        VarSelection.query("javaClasses", "javaMethods")
+                                                                    .addCriterion(methodNameCriterion)
+                                            )
 
                     )
 
@@ -76,11 +96,8 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
                      * evaluated
                      */
                     .perform(Iteration
-                                .over("javaClasses")
-                                .queryFor(JavaMethodModel.class, "javaMethod")
-                                .out("javaMethod")
-                                .has("methodName", "toString")
-                                .endQuery()
+                                .over("javaMethods")
+                                .as("javaMethod")
                                 .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class,
                                             "javaMethod")
                                 {
