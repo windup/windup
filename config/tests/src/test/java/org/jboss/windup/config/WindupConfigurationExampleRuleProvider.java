@@ -12,11 +12,12 @@ import java.util.List;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.graphsearch.GremlinPipelineCriterion;
+import org.jboss.windup.config.graphsearch.VarSelection;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -37,6 +38,7 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
     private static final Logger LOG = LoggerFactory.getLogger(WindupConfigurationExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
+
     private WindupConfigurationModel config;
 
     @Override
@@ -76,9 +78,8 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
                                             .withProperty("qualifiedName", GraphSearchPropertyComparisonType.REGEX,
                                                         "com\\.example\\..*")
                                             .and(
-                                                        GraphSearchConditionBuilder
-                                                                    .create("configuration")
-                                                                    .ofType(WindupConfigurationModel.class)
+                                                        VarSelection.query("javaClasses", "javaMethods")
+                                                                    .addCriterion(methodNameCriterion)
                                             )
 
                     )
@@ -87,9 +88,7 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
                      * If all conditions of the .when() clause were satisfied, the following conditions will be
                      * evaluated
                      */
-                    .perform(Iteration.over("javaClasses").queryFor(JavaMethodModel.class, "javaMethod")
-                                .addCriterion(methodNameCriterion)
-                                .endQuery()
+                    .perform(Iteration.over("javaMethods").as(JavaMethodModel.class, "javaMethod")
                                 .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class,
                                             "javaMethod")
                                 {
@@ -97,9 +96,8 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
                                     public void perform(GraphRewrite event, EvaluationContext context,
                                                 JavaMethodModel methodModel)
                                     {
-                                        WindupConfigurationExampleRuleProvider.this.config = VarStack.instance(event)
-                                                    .findSingletonVariable(WindupConfigurationModel.class,
-                                                                "configuration");
+                                        WindupConfigurationExampleRuleProvider.this.config = GraphService
+                                                    .getConfigurationModel(event.getGraphContext());
 
                                         results.add(methodModel);
                                         LOG.info("Overridden " + methodModel.getMethodName() + " Method in type: "

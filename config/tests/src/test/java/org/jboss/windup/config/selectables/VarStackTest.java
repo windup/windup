@@ -86,7 +86,7 @@ public class VarStackTest
             Assert.assertTrue(e
                         .getMessage()
                         .contains("Variable \"classModel1\" does not implement expected interface "
-                                    + "\"org.jboss.windup.rules.apps.maven.model.MavenProjectModel\", actual implemented interfaces are"));
+                                    + "\"org.jboss.windup.rules.apps.java.scan.model.project.MavenProjectModel\", actual implemented interfaces are"));
         }
     }
 
