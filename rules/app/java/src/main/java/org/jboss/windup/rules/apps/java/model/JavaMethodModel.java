@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.model.resource.ResourceModel;
-import org.jboss.windup.reporting.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -20,7 +19,6 @@ public interface JavaMethodModel extends ResourceModel
     @Adjacency(label = "javaMethod", direction = Direction.IN)
     public void setJavaClass(JavaClassModel clz);
 
-    @Label
     @Property("methodName")
     public String getMethodName();
 
