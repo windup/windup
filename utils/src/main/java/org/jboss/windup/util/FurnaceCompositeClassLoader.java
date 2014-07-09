@@ -23,6 +23,32 @@ public class FurnaceCompositeClassLoader extends ClassLoader
     }
 
     @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
+    {
+        for (ClassLoader classLoader : loaders)
+        {
+            try
+            {
+                return classLoader.loadClass(name);
+            }
+            catch (ClassNotFoundException notFound)
+            {
+                // oh well
+            }
+        }
+
+        ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
+        if (contextLoader != null)
+        {
+            return contextLoader.loadClass(name);
+        }
+        else
+        {
+            return super.loadClass(name, resolve);
+        }
+    }
+
+    @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException
     {
         for (ClassLoader classLoader : loaders)
@@ -53,7 +79,11 @@ public class FurnaceCompositeClassLoader extends ClassLoader
     {
         for (ClassLoader classLoader : loaders)
         {
-            return classLoader.getResource(name);
+            URL resource = classLoader.getResource(name);
+            if (resource != null)
+            {
+                return resource;
+            }
         }
 
         ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
