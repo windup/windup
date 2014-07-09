@@ -24,9 +24,9 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.util.FurnaceClasspathScanner;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 {
