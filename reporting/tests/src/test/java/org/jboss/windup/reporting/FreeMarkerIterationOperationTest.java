@@ -15,10 +15,10 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.GraphSubset;
-import org.jboss.windup.config.runner.DefaultEvaluationContext;
-import org.jboss.windup.config.runner.VarStack;
+import org.jboss.windup.config.RuleSubset;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
@@ -71,7 +71,7 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
 
         Configuration configuration = provider.getConfiguration(context);
 
-        GraphSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Path outputFile = tempFolder.resolve(provider.getOutputFilename());
         String results = FileUtils.readFileToString(outputFile.toFile());
@@ -95,11 +95,11 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
 
     private DefaultEvaluationContext createEvalContext(GraphRewrite event)
     {
-        final VarStack varStack = VarStack.instance(event);
+        final Variables varStack = Variables.instance(event);
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(VarStack.class, varStack);
+        event.getRewriteContext().put(Variables.class, varStack);
         return evaluationContext;
     }
 }

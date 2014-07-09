@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,21 +11,15 @@
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-logging</artifactId>
-    
+
     <name>Windup Engine - Logging</name>
     <description>Only contains log4j.properties in hope that it would be picked up by Forge.</description>
-    
+
 
     <build>
-        <!--
-        <testResources>
-            <testResource>
-                <directory>src/test/java</directory>
-                <excludes><exclude>*.java</exclude></excludes>
-            </testResource>
-        </testResources>
-        -->
-        
+        <!-- <testResources> <testResource> <directory>src/test/java</directory> <excludes><exclude>*.java</exclude></excludes> 
+            </testResource> </testResources> -->
+
         <plugins>
             <!-- Set work dir to target/ -->
             <plugin>
@@ -43,30 +38,44 @@
                     <execution>
                         <id>copy-resources</id>
                         <phase>validate</phase>
-                        <goals> <goal>copy-resources</goal> </goals>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
                         <configuration>
                             <outputDirectory>${basedir}/target</outputDirectory>
-                            <resources>          
+                            <resources>
                                 <resource>
                                     <directory>src/test/java</directory>
-                                    <includes><include>logging.properties</include></includes>
+                                    <includes>
+                                        <include>logging.properties</include>
+                                    </includes>
                                     <filtering>false</filtering>
                                 </resource>
-                            </resources>              
-                        </configuration>            
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-            
+
             <!-- Forge addon creation -->
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <executions> <execution> <id>generate-dot</id> <phase>prepare-package</phase> </execution> </executions>
+                <executions>
+                    <execution>
+                        <id>generate-dot</id>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <executions>  <execution>  <id>create-forge-addon</id>  <phase>package</phase>  </execution> </executions>
+                <executions>
+                    <execution>
+                        <id>create-forge-addon</id>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

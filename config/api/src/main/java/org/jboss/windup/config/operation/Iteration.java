@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.config.operation.iteration.GremlinPipesQuery;
 import org.jboss.windup.config.operation.iteration.GremlinPipesQueryImpl;
@@ -29,7 +30,6 @@ import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.NamedIterationSelectionManager;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationSelectionManager;
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.CompositeOperation;
@@ -46,7 +46,7 @@ import org.ocpsoft.rewrite.event.Rewrite;
 public abstract class Iteration extends DefaultOperationBuilder
             implements IterationBuilderOver, IterationBuilderVar,
             IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise,
-            IterationBuilderComplete, CompositeOperation, IterationRoot
+            IterationBuilderComplete, CompositeOperation
 {
     private Condition condition;
     private Operation operationPerform;
@@ -91,16 +91,12 @@ public abstract class Iteration extends DefaultOperationBuilder
     @Override
     public GremlinPipesQuery queryFor(Class<? extends WindupVertexFrame> varType, String var)
     {
-        // TODO - I'd prefer if we used Iteration.over(...).var(...).queryFor()...
-        // It would make the API more comprehensible and clearer.
         return new GremlinPipesQueryImpl(this, new TypedNamedIterationPayloadManager(varType, var));
     }
 
     @Override
     public GremlinPipesQuery queryFor(String var)
     {
-        // TODO - I'd prefer if we used Iteration.over(...).var(...).queryFor()...
-        // It would make the API more comprehensible and clearer.
         return new GremlinPipesQueryImpl(this, new NamedIterationPayloadManager(var));
     }
 
@@ -164,7 +160,7 @@ public abstract class Iteration extends DefaultOperationBuilder
      */
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-        VarStack varStack = VarStack.instance(event);
+        Variables varStack = Variables.instance(event);
         varStack.push();
         Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, varStack);
         for (WindupVertexFrame frame : frames)
@@ -198,7 +194,7 @@ public abstract class Iteration extends DefaultOperationBuilder
     /**
      * Set the current {@link Iteration} payload.
      */
-    public static void setCurrentPayload(VarStack stack, String name, WindupVertexFrame frame)
+    public static void setCurrentPayload(Variables stack, String name, WindupVertexFrame frame)
                 throws IllegalArgumentException
     {
         Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
@@ -218,7 +214,7 @@ public abstract class Iteration extends DefaultOperationBuilder
      * Get the current {@link Iteration} payload.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends WindupVertexFrame> T getCurrentPayload(VarStack stack, Class<T> type, String name)
+    public static <T extends WindupVertexFrame> T getCurrentPayload(Variables stack, Class<T> type, String name)
                 throws IllegalStateException, IllegalArgumentException
     {
         Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
@@ -237,7 +233,7 @@ public abstract class Iteration extends DefaultOperationBuilder
     /**
      * Remove the current {@link Iteration} payload.
      */
-    public static <T extends WindupVertexFrame> T removeCurrentPayload(VarStack stack, Class<T> type, String name)
+    public static <T extends WindupVertexFrame> T removeCurrentPayload(Variables stack, Class<T> type, String name)
                 throws IllegalStateException, IllegalTypeArgumentException
     {
         T payload = getCurrentPayload(stack, type, name);

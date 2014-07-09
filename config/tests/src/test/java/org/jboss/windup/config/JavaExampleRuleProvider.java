@@ -15,8 +15,8 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
@@ -75,12 +75,11 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
                      * If all conditions of the .when() clause were satisfied, the following conditions will be
                      * evaluated
                      */
-                    .perform(Iteration
-                                .over("javaClasses")
+                    .perform(Iteration.over("javaClasses")
                                 .queryFor(JavaMethodModel.class, "javaMethod")
-                                .out("javaMethod")
-                                .has("methodName", "toString")
-                                .endQuery()
+                                   .out("javaMethod")
+                                   .has("methodName", "toString")
+                                   .endQuery()
                                 .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class,
                                             "javaMethod")
                                 {

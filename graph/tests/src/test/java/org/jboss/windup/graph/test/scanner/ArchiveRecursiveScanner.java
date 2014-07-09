@@ -14,7 +14,7 @@ import java.util.jar.JarInputStream;
 import javax.inject.Inject;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphUtil;
+import org.jboss.windup.graph.util.GraphUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

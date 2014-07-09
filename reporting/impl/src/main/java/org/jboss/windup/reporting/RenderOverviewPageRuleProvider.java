@@ -6,6 +6,7 @@ import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;

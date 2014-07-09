@@ -1,11 +1,11 @@
 package org.jboss.windup.config.operation.ruleelement;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.runner.VarStack;
-import org.jboss.windup.graph.GraphUtil;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.util.GraphUtil;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class TypeOperation extends AbstractIterationOperation<WindupVertexFrame>
@@ -27,7 +27,7 @@ public class TypeOperation extends AbstractIterationOperation<WindupVertexFrame>
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
-        VarStack varStack = VarStack.instance(event);
+        Variables varStack = Variables.instance(event);
         WindupVertexFrame newFrame = GraphUtil.addTypeToModel(event.getGraphContext(), payload, newType);
         Iteration.setCurrentPayload(varStack, getVariableName(), newFrame);
     }

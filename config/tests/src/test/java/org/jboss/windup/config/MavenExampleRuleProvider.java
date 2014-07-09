@@ -13,10 +13,9 @@ import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.TypeOperation;
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.meta.xml.XmlMetaFacetModel;
-import org.jboss.windup.rules.apps.java.scan.model.project.MavenProjectModel;
+import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
+import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -65,7 +64,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
                                                 @Override
                                                 public void perform(GraphRewrite event, EvaluationContext context)
                                                 {
-                                                    VarStack varStack = VarStack.instance(event);
+                                                    Variables varStack = Variables.instance(event);
                                                     MavenProjectModel mavenFacetModel = Iteration.getCurrentPayload(
                                                                 varStack,
                                                                 MavenProjectModel.class, "maven");

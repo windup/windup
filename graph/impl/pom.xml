@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.windup.graph</groupId>
@@ -8,11 +9,11 @@
     </parent>
 
     <artifactId>windup-graph-impl</artifactId>
-    
+
     <name>Windup Engine - Graph Impl</name>
-    
+
     <dependencies>
-        
+
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-logging</artifactId>
@@ -20,7 +21,14 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
@@ -31,11 +39,6 @@
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-lucene</artifactId>
             <version>${version.titangraph.lucene}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
-            <artifactId>blueprints-graph-sail</artifactId>
-            <version>${version.tinkerpop.blueprints}</version>
         </dependency>
 
 

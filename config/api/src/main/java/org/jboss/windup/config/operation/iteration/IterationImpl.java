@@ -32,11 +32,4 @@ public class IterationImpl extends Iteration
     {
         return payloadManager;
     }
-
-
-    @Override
-    public void setSelectionManager( IterationSelectionManager mgr ) {
-        //this.selectionManager = mgr;
-        throw new UnsupportedOperationException("Set IterationSelectionManager in a constructor.");
-    }
 }

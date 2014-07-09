@@ -9,7 +9,6 @@ package org.jboss.windup.config;
 import javax.inject.Inject;
 
 import org.jboss.windup.config.loader.GraphConfigurationLoader;
-import org.jboss.windup.config.runner.DefaultEvaluationContext;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
@@ -18,17 +17,18 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ConfigurationProcessorImpl
+public class ConfigurationProcessorImpl implements ConfigurationProcessor
 {
     @Inject
     private GraphConfigurationLoader graphConfigurationLoader;
 
+    @Override
     public void run(GraphContext context)
     {
         final Configuration configuration = graphConfigurationLoader.loadConfiguration(context);
 
         GraphRewrite event = new GraphRewrite(context);
-        GraphSubset.evaluate(configuration).perform(event, createEvaluationContext());
+        RuleSubset.evaluate(configuration).perform(event, createEvaluationContext());
     }
 
     private DefaultEvaluationContext createEvaluationContext()

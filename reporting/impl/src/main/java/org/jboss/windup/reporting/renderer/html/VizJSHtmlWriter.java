@@ -23,60 +23,70 @@ import org.xml.sax.SAXException;
 
 import com.tinkerpop.blueprints.Graph;
 
-public class VizJSHtmlWriter implements GraphWriter {
-	private static Logger LOG = LoggerFactory.getLogger(VizJSHtmlWriter.class);
-	
-	private final GraphWriter writer;
+public class VizJSHtmlWriter implements GraphWriter
+{
+    private static Logger LOG = LoggerFactory.getLogger(VizJSHtmlWriter.class);
 
-	public VizJSHtmlWriter(Graph graph) {
-		this.writer = new DotWriter(graph, "G", "qualifiedName", "", DotGraphType.DIGRAPH, "8pt");
-	}
-	
-	public VizJSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabel) {
-		this.writer = new DotWriter(graph, "G", vertexLabelProperty, edgeLabel, DotGraphType.DIGRAPH, "8pt");
-	}
-	
+    private final GraphWriter writer;
 
-	public void writeGraph(final OutputStream os) throws IOException {
-		// read in the html template resource.
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream("vizjs/HtmlTemplate.html");
+    public VizJSHtmlWriter(Graph graph)
+    {
+        this.writer = new DotWriter(graph, "G", "qualifiedName", "", DotGraphType.DIGRAPH, "8pt");
+    }
 
-		String result;
-		{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			writer.writeGraph(baos);
-			result = baos.toString();
-		}
-		
-		if(LOG.isDebugEnabled())  {
-			LOG.debug("DOT: "+result);
-		}
-		
-		
-		// read the document.
-		Document document;
-		try {
-			document = $(is).document();
-			// append in the gexf.
-			$(document).find("#dot-source").append(result);
+    public VizJSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabel)
+    {
+        this.writer = new DotWriter(graph, "G", vertexLabelProperty, edgeLabel, DotGraphType.DIGRAPH, "8pt");
+    }
 
-			writeDocument(document, os);
-		} catch (SAXException e) {
-			throw new IOException("Exception loading document.", e);
-		}
+    public void writeGraph(final OutputStream os) throws IOException
+    {
+        // read in the html template resource.
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("vizjs/HtmlTemplate.html");
 
-	}
+        String result;
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            writer.writeGraph(baos);
+            result = baos.toString();
+        }
 
-	public void writeDocument(final Document document, final OutputStream os) throws IOException {
-		try {
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer transformer = tFactory.newTransformer();
+        if (LOG.isDebugEnabled())
+        {
+            LOG.debug("DOT: " + result);
+        }
 
-			DOMSource source = new DOMSource(document);
-			StreamResult result = new StreamResult(os);
-			transformer.transform(source, result);
-		} catch (TransformerException e) {
-			throw new IOException("Exception writing to output stream.", e);
-		}
-	}
+        // read the document.
+        Document document;
+        try
+        {
+            document = $(is).document();
+            // append in the gexf.
+            $(document).find("#dot-source").append(result);
+
+            writeDocument(document, os);
+        }
+        catch (SAXException e)
+        {
+            throw new IOException("Exception loading document.", e);
+        }
+
+    }
+
+    public void writeDocument(final Document document, final OutputStream os) throws IOException
+    {
+        try
+        {
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            Transformer transformer = tFactory.newTransformer();
+
+            DOMSource source = new DOMSource(document);
+            StreamResult result = new StreamResult(os);
+            transformer.transform(source, result);
+        }
+        catch (TransformerException e)
+        {
+            throw new IOException("Exception writing to output stream.", e);
+        }
+    }
 }

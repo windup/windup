@@ -5,6 +5,7 @@ import java.util.Iterator;
 import javax.inject.Singleton;
 
 import org.jboss.windup.graph.dao.ArchiveDao;
+import org.jboss.windup.graph.dao.BaseDaoImpl;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 

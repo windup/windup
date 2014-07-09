@@ -7,7 +7,7 @@
 package org.jboss.windup.config.operation.iteration;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.runner.VarStack;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -41,5 +41,5 @@ public interface IterationSelectionManager
         the same event and varStack to root SelectionManager which is already there.
     */
     
-    Iterable<WindupVertexFrame> getFrames(GraphRewrite event, VarStack varStack);
+    Iterable<WindupVertexFrame> getFrames(GraphRewrite event, Variables varStack);
 }

@@ -3,8 +3,10 @@ package org.jboss.windup.config.parser;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jboss.windup.config.ConfigurationException;
+
+import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.util.Annotations;
+
 import static org.joox.JOOX.$;
 
 import org.ocpsoft.common.services.ServiceLoader;

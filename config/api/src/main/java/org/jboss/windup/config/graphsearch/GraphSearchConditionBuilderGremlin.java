@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -100,7 +100,7 @@ public class GraphSearchConditionBuilderGremlin extends GraphCondition
             frames.add(frame);
         }
 
-        VarStack varStack = (VarStack) event.getRewriteContext().get(VarStack.class);
+        Variables varStack = (Variables) event.getRewriteContext().get(Variables.class);
         varStack.setVariable(variableName, frames);
 
         return !frames.isEmpty();

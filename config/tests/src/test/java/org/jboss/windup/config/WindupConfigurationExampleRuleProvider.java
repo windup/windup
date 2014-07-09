@@ -13,11 +13,10 @@ import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.runner.VarStack;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.rules.apps.java.scan.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.model.JavaMethodModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -85,7 +84,7 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
                                     public void perform(GraphRewrite event, EvaluationContext context,
                                                 JavaMethodModel methodModel)
                                     {
-                                        WindupConfigurationExampleRuleProvider.this.config = VarStack.instance(event)
+                                        WindupConfigurationExampleRuleProvider.this.config = Variables.instance(event)
                                                     .findSingletonVariable(WindupConfigurationModel.class,
                                                                 "configuration");
 
