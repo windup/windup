@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.renderer.Label;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -16,7 +15,6 @@ public interface JavaFileModel extends FileModel
     public static final String PROPERTY_CLASS_NAME = "className";
     public static final String PROPERTY_PACKAGE_NAME = "packageName";
 
-    @Label
     @Property(PROPERTY_QUALIFIED_NAME)
     public String getQualifiedName();
 

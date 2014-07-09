@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.model.project;
 
-import org.jboss.windup.reporting.renderer.Label;
 import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
 
 import com.tinkerpop.frames.Property;
@@ -26,7 +25,6 @@ public interface MavenProjectModel extends ProjectModel, XmlMetaFacetModel
      * The full maven id (groupid, artifactid, and version)
      * 
      */
-    @Label
     @Property(PROPERTY_MAVEN_IDENTIFIER)
     public String getMavenIdentifier();
 
@@ -37,7 +35,6 @@ public interface MavenProjectModel extends ProjectModel, XmlMetaFacetModel
      * The Maven specification version
      * 
      */
-    @Label
     @Property(PROPERTY_SPECIFICATION_VERSION)
     public String getSpecificationVersion();
 
