@@ -14,10 +14,10 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -25,6 +25,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.VariableResolvingASTVisitor;
 import org.jboss.windup.util.exception.WindupException;
+import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -51,14 +52,16 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        GraphSearchConditionBuilder javaSourceCanBeLocated = GraphSearchConditionBuilder
-                    .create("javaSourceFiles").ofType(FileModel.class)
+        ConditionBuilder javaSourceCanBeLocated = Query
+                    .find(FileModel.class)
                     .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-                    .withProperty(FileModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX, ".*\\.java$");
+                    .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$")
+                    .as("javaSourceFiles");
 
-        GraphSearchConditionBuilder sourceModeEnabled = GraphSearchConditionBuilder
-                    .create("inputConfigurations").ofType(WindupConfigurationModel.class)
-                    .withProperty(WindupConfigurationModel.PROPERTY_SOURCE_MODE, true);
+        ConditionBuilder sourceModeEnabled = Query
+                    .find(WindupConfigurationModel.class)
+                    .withProperty(WindupConfigurationModel.PROPERTY_SOURCE_MODE, true)
+                    .as("inputConfigurations");
 
         return ConfigurationBuilder
                     .begin()

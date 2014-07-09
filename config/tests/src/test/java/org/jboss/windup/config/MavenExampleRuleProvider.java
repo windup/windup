@@ -9,10 +9,10 @@ package org.jboss.windup.config;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
+import org.jboss.windup.config.graph.TypeOperation;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.TypeOperation;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
@@ -42,7 +42,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
                     // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
                     .addRule()
                     .when(
-                                GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class)
+                                Query.find(XmlMetaFacetModel.class).as("xmlModels")
                     )
                     .perform(
                                 Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
@@ -55,7 +55,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
                     // Add all MavenFacetModel vertices to this.results.
                     .addRule()
                     .when(
-                                GraphSearchConditionBuilder.create("mavenModels").ofType(MavenProjectModel.class)
+                                Query.find(MavenProjectModel.class).as("mavenModels")
                     )
                     .perform(
                                 Iteration.over(MavenProjectModel.class, "mavenModels").as("maven")

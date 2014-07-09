@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.bind.Binding;
@@ -37,6 +39,7 @@ import org.ocpsoft.rewrite.config.ParameterizedConditionVisitor;
 import org.ocpsoft.rewrite.config.ParameterizedOperationVisitor;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.context.RewriteState;
@@ -88,51 +91,76 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
          */
         GraphRewrite event = (GraphRewrite) rewrite;
 
-        //List<Rule> cacheable = new ArrayList<>();
+        // List<Rule> cacheable = new ArrayList<>();
         List<Rule> rules = config.getRules();
 
         final EvaluationContextImpl subContext = new EvaluationContextImpl();
-        for( int i = 0; i < rules.size(); i++ ) {
-            Rule rule = rules.get( i );
-            
-            subContext.clear();
-            subContext.put(ParameterStore.class, context.get(ParameterStore.class));
-            ParameterValueStore values = (ParameterValueStore) context.get(ParameterValueStore.class);
-            subContext.put(ParameterValueStore.class, values);
-            subContext.setState(RewriteState.EVALUATING);
+        for (int i = 0; i < rules.size(); i++)
+        {
+            Rule rule = rules.get(i);
+            try
+            {
 
-            event.selectionPush();
-            if( ! rule.evaluate(event, subContext) )
-                continue;
-            
-            if( ! handleBindings(event, subContext, values) )
-                continue;
-            
-            subContext.setState(RewriteState.PERFORMING);
-            log.debug("Rule [" + rule + "] matched and will be performed.");
-            //cacheable.add(rule);
-            
-            List<Operation> preOperations = subContext.getPreOperations();
-            for( Operation preOperation : preOperations ) {
-                preOperation.perform( event, subContext );
+                subContext.clear();
+                subContext.put(ParameterStore.class, context.get(ParameterStore.class));
+                ParameterValueStore values = (ParameterValueStore) context.get(ParameterValueStore.class);
+                subContext.put(ParameterValueStore.class, values);
+                subContext.setState(RewriteState.EVALUATING);
+                subContext.put(Rule.class, rule);
+
+                event.selectionPush();
+                if (!rule.evaluate(event, subContext))
+                    continue;
+
+                if (!handleBindings(event, subContext, values))
+                    continue;
+
+                subContext.setState(RewriteState.PERFORMING);
+                log.debug("Rule [" + rule + "] matched and will be performed.");
+                // cacheable.add(rule);
+
+                List<Operation> preOperations = subContext.getPreOperations();
+                for (Operation preOperation : preOperations)
+                {
+                    preOperation.perform(event, subContext);
+                }
+
+                if (event.getFlow().isHandled())
+                    break;
+
+                rule.perform(event, subContext);
+
+                event.selectionPop();
+                if (event.getFlow().isHandled())
+                    break;
+
+                List<Operation> postOperations = subContext.getPostOperations();
+                for (Operation postOperation : postOperations)
+                {
+                    postOperation.perform(event, subContext);
+                }
+
+                if (event.getFlow().isHandled())
+                    break;
             }
+            catch (RuntimeException e)
+            {
+                String message = "Error encountered while evaluating rule: " + rule;
+                if (rule instanceof Context)
+                {
+                    Object origin = ((Context) rule).get(RuleMetadata.ORIGIN);
 
-            if (event.getFlow().isHandled())
-                break;
+                    if (origin != null)
+                        message += " from: " + origin;
 
-            rule.perform(event, subContext);
+                    Object location = ((Context) rule)
+                                .get(org.ocpsoft.rewrite.config.RuleMetadata.PROVIDER_LOCATION);
 
-            event.selectionPop();
-            if (event.getFlow().isHandled())
-                break;
-
-            List<Operation> postOperations = subContext.getPostOperations();
-            for( Operation postOperation : postOperations ) {
-                postOperation.perform( event, subContext );
+                    if (location != null)
+                        message += " defined in: " + location;
+                }
+                throw new WindupException(message, e);
             }
-
-            if (event.getFlow().isHandled())
-                break;
         }
     }
 
@@ -241,10 +269,11 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     @Override
     public void setParameterStore(final ParameterStore parent)
     {
-        for( int i = 0; i < config.getRules().size(); i++ ) {
+        for (int i = 0; i < config.getRules().size(); i++)
+        {
             Rule rule = config.getRules().get(i);
-            
-            if( ! (rule instanceof RuleBuilder) )
+
+            if (!(rule instanceof RuleBuilder))
                 continue;
 
             ParameterizedCallback callback = new ParameterizedCallbackImpl(rule, parent);
@@ -257,70 +286,69 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         }
     }
 
-    
     /**
      * 
      */
-    private static class ParameterizedCallbackImpl implements ParameterizedCallback {
+    private static class ParameterizedCallbackImpl implements ParameterizedCallback
+    {
 
         private final Rule rule;
         private final ParameterStore parent;
 
-
-        public ParameterizedCallbackImpl( Rule rule, ParameterStore parent ) {
+        public ParameterizedCallbackImpl(Rule rule, ParameterStore parent)
+        {
             this.rule = rule;
             this.parent = parent;
         }
-
 
         @Override
         public void call(Parameterized parameterized)
         {
             Set<String> names = parameterized.getRequiredParameterNames();
-            if( ! (rule instanceof RuleBuilder) )
+            if (!(rule instanceof RuleBuilder))
                 return;
-            
+
             ParameterStore store = ((RuleBuilder) rule).getParameterStore();
-            
+
             for (Entry<String, Parameter<?>> entry : parent)
             {
                 String name = entry.getKey();
                 Parameter<?> parentParam = entry.getValue();
-                
+
                 if (!store.contains(name))
                 {
                     store.get(name, parentParam);
                     continue;
                 }
-                
+
                 Parameter<?> parameter = store.get(name);
                 for (Binding binding : parameter.getBindings())
                 {
                     if (!parentParam.getBindings().contains(binding))
                         throwRedefinitionError(rule, name);
                 }
-                
+
                 for (Constraint<String> constraint : parameter.getConstraints())
                 {
                     if (!parentParam.getConstraints().contains(constraint))
                         throwRedefinitionError(rule, name);
                 }
-                
+
                 for (Transposition<String> transposition : parameter.getTranspositions())
                 {
                     if (!parentParam.getTranspositions().contains(transposition))
                         throwRedefinitionError(rule, name);
                 }
-                
+
                 if (parentParam.getConverter() != null
-                        && !parentParam.getConverter().equals(parameter.getConverter()))
+                            && !parentParam.getConverter().equals(parameter.getConverter()))
                     throwRedefinitionError(rule, name);
-                
+
                 if (parentParam.getValidator() != null
-                        && !parentParam.getValidator().equals(parameter.getValidator()))
+                            && !parentParam.getValidator().equals(parameter.getValidator()))
                     throwRedefinitionError(rule, name);
             }
-            
+
             for (String name : names)
             {
                 Parameter<?> parameter = store.get(name, new DefaultParameter(name));
@@ -328,15 +356,14 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(name));
             }
             parameterized.setParameterStore(store);
-            
-        }
 
+        }
 
         private void throwRedefinitionError(Rule rule, String name)
         {
             throw new IllegalStateException("Subset cannot re-configure parameter [" + name
-                    + "] that was configured in parent Configuration. Re-definition was attempted at ["
-                    + rule + "] ");
+                        + "] that was configured in parent Configuration. Re-definition was attempted at ["
+                        + rule + "] ");
         }
 
     }// ParameterizedCallbackImpl

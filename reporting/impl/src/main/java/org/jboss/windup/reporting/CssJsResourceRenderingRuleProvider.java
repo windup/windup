@@ -19,11 +19,12 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -40,8 +41,7 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        GraphSearchConditionBuilder configSearch = GraphSearchConditionBuilder.create("configuration").ofType(
-                    WindupConfigurationModel.class);
+        ConditionBuilder configSearch = Query.find(WindupConfigurationModel.class).as("configuration");
 
         Configuration configuration = ConfigurationBuilder
                     .begin()

@@ -1,4 +1,4 @@
-package org.jboss.windup.config.graphsearch;
+package org.jboss.windup.config.query;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
@@ -8,11 +8,11 @@ import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-class GraphSearchCriterionType implements GraphSearchCriterion
+class QueryTypeCriterion implements QueryFramesCriterion
 {
     private String typeValue;
 
-    public GraphSearchCriterionType(Class<? extends WindupVertexFrame> clazz)
+    public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {
         this.typeValue = getTypeValue( clazz );
     }

@@ -2,7 +2,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.metadata.RuleMetadata
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -13,8 +13,7 @@ ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
 
     .addRule()
     .when(
-        GraphSearchConditionBuilder.create("javaClasses")
-            .ofType(JavaClassModel.class)
+        Query.find(JavaClassModel.class).as("javaClasses")
     )
     .perform(
         Iteration.over("javaClasses").as("javaClass").perform(

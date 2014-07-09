@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
+import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
@@ -35,11 +35,11 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
                     .begin()
 
                     .addRule()
-                    .when(GraphSearchConditionBuilder.create("classFiles")
-                                .ofType(FileModel.class)
+                    .when(Query.find(FileModel.class)
                                 .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-                                .withProperty(FileModel.PROPERTY_FILE_PATH, GraphSearchPropertyComparisonType.REGEX,
+                                .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX,
                                             ".*\\.class")
+                                .as("classFiles")
                     )
                     .perform(Iteration.over("classFiles").as("classFile")
                                 .perform(AddClassFileMetadata.to("classFile")).endIteration()

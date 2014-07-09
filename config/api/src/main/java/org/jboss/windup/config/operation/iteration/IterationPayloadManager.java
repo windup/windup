@@ -7,19 +7,23 @@
 package org.jboss.windup.config.operation.iteration;
 
 import org.jboss.windup.config.Variables;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
- * Sets or removes the current payload from the variable stack / payload manager (factory).
+ * Sets or removes the current {@link Iteration} payload from the {@link Variables} stack.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
- * TODO: Personally I'd remove the whole IterationPayloadManager interface
- * and access VarStack directly.
  */
 public interface IterationPayloadManager
 {
+    /**
+     * Set the current {@link Iteration} payload.
+     */
     void setCurrentPayload(Variables varStack, WindupVertexFrame element);
 
+    /**
+     * Remove the current {@link Iteration} payload.
+     */
     void removeCurrentPayload(Variables varStack);
 }

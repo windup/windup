@@ -11,10 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
 import org.junit.Assert;
@@ -42,54 +42,55 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         Configuration configuration = ConfigurationBuilder.begin()
-        .addRule()
-        .when(GraphSearchConditionBuilder.create("xmlModels").ofType(XmlMetaFacetModel.class))
-            .perform(Iteration
-                .over(XmlMetaFacetModel.class, "xmlModels")
-                .as("xml")
-                .when(new AbstractIterationFilter<XmlMetaFacetModel>(XmlMetaFacetModel.class, "xml")
-                {
-                    @Override
-                    public boolean evaluate(GraphRewrite event, EvaluationContext context,
-                                XmlMetaFacetModel payload)
-                    {
-                        String rootTagName = payload.getRootTagName();
-                        boolean result = !"xmlTag3".equals(rootTagName);
-                        return result;
-                    }
-                })
-                .perform(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
-                            "xml")
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context,
-                                XmlMetaFacetModel xmlFacetModel)
-                    {
-                        typeSearchResults.add(xmlFacetModel);
-                        if (xmlRootNames.contains(xmlFacetModel.getRootTagName()))
-                        {
-                            Assert.fail("Tag found multiple times");
-                        }
-                        xmlRootNames.add(xmlFacetModel.getRootTagName());
-                    }
-                })
-                .otherwise(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
-                            "xml")
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context,
-                                XmlMetaFacetModel payload)
-                    {
-                        typeSearchResults.add(payload);
-                        if (excludedXmlRootNames.contains(payload.getRootTagName()))
-                        {
-                            Assert.fail("Tag found multiple times");
-                        }
-                        excludedXmlRootNames.add(payload.getRootTagName());
-                    }
-                })
-                .endIteration()
-            );
+                    .addRule()
+                    .when(Query.find(XmlMetaFacetModel.class)
+                                .as("xmlModels"))
+                    .perform(Iteration
+                                .over(XmlMetaFacetModel.class, "xmlModels")
+                                .as("xml")
+                                .when(new AbstractIterationFilter<XmlMetaFacetModel>(XmlMetaFacetModel.class, "xml")
+                                {
+                                    @Override
+                                    public boolean evaluate(GraphRewrite event, EvaluationContext context,
+                                                XmlMetaFacetModel payload)
+                                    {
+                                        String rootTagName = payload.getRootTagName();
+                                        boolean result = !"xmlTag3".equals(rootTagName);
+                                        return result;
+                                    }
+                                })
+                                .perform(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
+                                            "xml")
+                                {
+                                    @Override
+                                    public void perform(GraphRewrite event, EvaluationContext context,
+                                                XmlMetaFacetModel xmlFacetModel)
+                                    {
+                                        typeSearchResults.add(xmlFacetModel);
+                                        if (xmlRootNames.contains(xmlFacetModel.getRootTagName()))
+                                        {
+                                            Assert.fail("Tag found multiple times");
+                                        }
+                                        xmlRootNames.add(xmlFacetModel.getRootTagName());
+                                    }
+                                })
+                                .otherwise(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
+                                            "xml")
+                                {
+                                    @Override
+                                    public void perform(GraphRewrite event, EvaluationContext context,
+                                                XmlMetaFacetModel payload)
+                                    {
+                                        typeSearchResults.add(payload);
+                                        if (excludedXmlRootNames.contains(payload.getRootTagName()))
+                                        {
+                                            Assert.fail("Tag found multiple times");
+                                        }
+                                        excludedXmlRootNames.add(payload.getRootTagName());
+                                    }
+                                })
+                                .endIteration()
+                    );
         return configuration;
     }
 

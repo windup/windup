@@ -15,8 +15,6 @@ import java.util.Map;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
-import org.jboss.windup.config.operation.iteration.GremlinPipesQuery;
-import org.jboss.windup.config.operation.iteration.GremlinPipesQueryImpl;
 import org.jboss.windup.config.operation.iteration.IterationBuilderComplete;
 import org.jboss.windup.config.operation.iteration.IterationBuilderOtherwise;
 import org.jboss.windup.config.operation.iteration.IterationBuilderOver;
@@ -25,11 +23,11 @@ import org.jboss.windup.config.operation.iteration.IterationBuilderVar;
 import org.jboss.windup.config.operation.iteration.IterationBuilderWhen;
 import org.jboss.windup.config.operation.iteration.IterationImpl;
 import org.jboss.windup.config.operation.iteration.IterationPayloadManager;
-import org.jboss.windup.config.operation.iteration.IterationSelectionManager;
+import org.jboss.windup.config.operation.iteration.NamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
-import org.jboss.windup.config.operation.iteration.NamedIterationSelectionManager;
+import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
-import org.jboss.windup.config.operation.iteration.TypedNamedIterationSelectionManager;
+import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.CompositeOperation;
@@ -52,7 +50,7 @@ public abstract class Iteration extends DefaultOperationBuilder
     private Operation operationPerform;
     private Operation operationOtherwise;
 
-    public abstract IterationSelectionManager getSelectionManager();
+    public abstract FramesSelector getSelectionManager();
 
     public abstract IterationPayloadManager getPayloadManager();
 
@@ -63,7 +61,7 @@ public abstract class Iteration extends DefaultOperationBuilder
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
-        return new IterationImpl(new TypedNamedIterationSelectionManager(sourceType, source));
+        return new IterationImpl(new TypedNamedFramesSelector(sourceType, source));
     }
 
     /**
@@ -71,7 +69,7 @@ public abstract class Iteration extends DefaultOperationBuilder
      */
     public static IterationBuilderOver over(String source)
     {
-        return new IterationImpl(new NamedIterationSelectionManager(source));
+        return new IterationImpl(new NamedFramesSelector(source));
     }
 
     @Override
@@ -86,18 +84,6 @@ public abstract class Iteration extends DefaultOperationBuilder
     {
         setPayloadManager(new NamedIterationPayloadManager(var));
         return this;
-    }
-
-    @Override
-    public GremlinPipesQuery queryFor(Class<? extends WindupVertexFrame> varType, String var)
-    {
-        return new GremlinPipesQueryImpl(this, new TypedNamedIterationPayloadManager(varType, var));
-    }
-
-    @Override
-    public GremlinPipesQuery queryFor(String var)
-    {
-        return new GremlinPipesQueryImpl(this, new NamedIterationPayloadManager(var));
     }
 
     public IterationBuilderWhen all(Condition... condition)
@@ -160,12 +146,12 @@ public abstract class Iteration extends DefaultOperationBuilder
      */
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-        Variables varStack = Variables.instance(event);
-        varStack.push();
-        Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, varStack);
+        Variables variables = Variables.instance(event);
+        variables.push();
+        Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, context);
         for (WindupVertexFrame frame : frames)
         {
-            getPayloadManager().setCurrentPayload(varStack, frame);
+            getPayloadManager().setCurrentPayload(variables, frame);
             if (condition == null || condition.evaluate(event, context))
             {
                 if (operationPerform != null)
@@ -181,8 +167,8 @@ public abstract class Iteration extends DefaultOperationBuilder
                 }
             }
         }
-        getPayloadManager().removeCurrentPayload(varStack);
-        varStack.pop();
+        getPayloadManager().removeCurrentPayload(variables);
+        variables.pop();
     }
 
     @Override
