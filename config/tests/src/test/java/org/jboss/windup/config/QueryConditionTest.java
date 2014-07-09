@@ -28,7 +28,7 @@ import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
-public class GraphSearchConditionTest
+public class QueryConditionTest
 {
     @Deployment
     @Dependencies({

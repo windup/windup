@@ -15,8 +15,8 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 public interface IterationBuilderOver
 {
     /**
-     * Sets the name and type of the variable for this iteration's "current element".
-     * The type server for automatic type check.
+     * Sets the name and type of the variable for this iteration's "current element". The type server for automatic type
+     * check.
      */
     public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var);
 
@@ -25,15 +25,4 @@ public interface IterationBuilderOver
      */
     public IterationBuilderVar as(String var);
 
-    /**
-     * Starts a gremlin query part; the query result is stored under given var name.
-     * Refer to Gremlin Pipes for the subsequent API.
-     */
-    public GremlinPipesQuery queryFor(Class<? extends WindupVertexFrame> varType, String var);
-
-    /**
-     * Starts a gremlin query part; the query result is stored under given var name.
-     * Refer to Gremlin Pipes for the subsequent API.
-     */
-    public GremlinPipesQuery queryFor(String var);
 }

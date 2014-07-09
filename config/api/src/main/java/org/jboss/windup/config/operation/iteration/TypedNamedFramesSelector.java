@@ -11,35 +11,35 @@ import java.util.Iterator;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
+import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class TypedNamedIterationSelectionManager implements IterationSelectionManager
+public class TypedNamedFramesSelector implements FramesSelector
 {
-
     private final Class<? extends WindupVertexFrame> framesModel;
     private final String varName;
 
-    public TypedNamedIterationSelectionManager(Class<? extends WindupVertexFrame> framesModel, String varName)
+    public TypedNamedFramesSelector(Class<? extends WindupVertexFrame> framesModel, String varName)
     {
         this.framesModel = framesModel;
         this.varName = varName;
     }
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, Variables varStack)
+    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
     {
-        final Iterable<WindupVertexFrame> frames = varStack.findVariable(varName);
+        final Iterable<WindupVertexFrame> frames = Variables.instance(event).findVariable(varName);
 
-        // Check the type.
         final Iterator<WindupVertexFrame> it = frames.iterator();
-        if(it.hasNext()){
+        if (it.hasNext())
+        {
             final Class<? extends WindupVertexFrame> actualType = it.next().getClass();
-            if( ! this.framesModel.isAssignableFrom( actualType ) )
+            if (!this.framesModel.isAssignableFrom(actualType))
                 throw new IllegalTypeArgumentException(varName, this.framesModel, actualType);
         }
         return frames;

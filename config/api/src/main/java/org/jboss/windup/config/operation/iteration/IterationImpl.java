@@ -1,14 +1,15 @@
 package org.jboss.windup.config.operation.iteration;
 
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.selectors.FramesSelector;
 import org.ocpsoft.common.util.Assert;
 
 public class IterationImpl extends Iteration
 {
     private IterationPayloadManager payloadManager;
-    private final IterationSelectionManager selectionManager;
+    private final FramesSelector selectionManager;
 
-    public IterationImpl(IterationSelectionManager selectionManager)
+    public IterationImpl(FramesSelector selectionManager)
     {
         Assert.notNull(selectionManager, "Selection manager must not be null.");
         this.selectionManager = selectionManager;
@@ -22,7 +23,7 @@ public class IterationImpl extends Iteration
     }
 
     @Override
-    public IterationSelectionManager getSelectionManager()
+    public FramesSelector getSelectionManager()
     {
         return selectionManager;
     }

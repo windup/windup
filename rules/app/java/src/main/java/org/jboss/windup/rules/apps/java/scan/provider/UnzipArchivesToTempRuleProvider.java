@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToTemporaryFolder;
@@ -30,7 +30,7 @@ public class UnzipArchivesToTempRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin().addRule()
-                    .when(GraphSearchConditionBuilder.create("inputArchives").ofType(ArchiveModel.class))
+                    .when(Query.find(ArchiveModel.class).as("inputArchives"))
                     .perform(Iteration.over("inputArchives").as(ArchiveModel.class, "archive")
                                 .perform(UnzipArchiveToTemporaryFolder.unzip("archive"))
                                 .endIteration()

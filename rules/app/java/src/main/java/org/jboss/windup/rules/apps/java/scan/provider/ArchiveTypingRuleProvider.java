@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ArchiveModelPointer;
@@ -40,7 +40,7 @@ public class ArchiveTypingRuleProvider extends WindupRuleProvider
                     .begin()
                     .addRule()
                     .when(
-                                GraphSearchConditionBuilder.create("archives").ofType(ArchiveModel.class)
+                                Query.find(ArchiveModel.class).as("archives")
                     )
                     .perform(
                                 Iteration.over("archives")

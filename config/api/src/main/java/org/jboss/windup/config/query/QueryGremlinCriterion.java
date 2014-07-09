@@ -1,9 +1,12 @@
-package org.jboss.windup.config.graphsearch;
+package org.jboss.windup.config.query;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-public interface GraphSearchGremlinCriterion
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
+public interface QueryGremlinCriterion
 {
     public void query(GremlinPipeline<Vertex, Vertex> pipeline);
 }

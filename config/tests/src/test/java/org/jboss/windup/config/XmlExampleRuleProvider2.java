@@ -9,10 +9,10 @@ package org.jboss.windup.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
-import org.jboss.windup.config.graphsearch.GraphSearchPropertyComparisonType;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -39,11 +39,11 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
         Configuration configuration = ConfigurationBuilder
                     .begin()
                     .addRule()
-                    .when(GraphSearchConditionBuilder
-                                .create("xmlModels")
+                    .when(Query.find(XmlMetaFacetModel.class)
                                 .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
-                                            GraphSearchPropertyComparisonType.EQUALS,
-                                            "xmlTag3"))
+                                            QueryPropertyComparisonType.EQUALS,
+                                            "xmlTag3")
+                                .as("xmlModels"))
                     .perform(
                                 Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
                                             .perform(new GraphOperation()

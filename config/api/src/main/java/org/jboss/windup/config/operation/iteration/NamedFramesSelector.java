@@ -8,26 +8,26 @@ package org.jboss.windup.config.operation.iteration;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
+import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class NamedIterationSelectionManager implements IterationSelectionManager
+public class NamedFramesSelector implements FramesSelector
 {
-
     private final String varName;
 
-    public NamedIterationSelectionManager(String varName)
+    public NamedFramesSelector(String varName)
     {
         this.varName = varName;
     }
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, Variables varStack)
+    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
     {
-        return varStack.findVariable(varName);
+        return Variables.instance(event).findVariable(varName);
     }
-
 }

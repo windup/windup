@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
@@ -38,8 +38,7 @@ public class RenderOverviewPageRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder
                     .begin()
                     .addRule()
-                    .when(GraphSearchConditionBuilder.create(VAR_APPLICATION_REPORTS).ofType(
-                                ApplicationReportModel.class))
+                    .when(Query.find(ApplicationReportModel.class).as(VAR_APPLICATION_REPORTS))
                     .perform(generateReportOperation);
     }
 }

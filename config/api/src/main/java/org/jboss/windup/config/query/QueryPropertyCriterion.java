@@ -1,15 +1,15 @@
-package org.jboss.windup.config.graphsearch;
+package org.jboss.windup.config.query;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.frames.FramedGraphQuery;
 
-class GraphSearchCriterionProperty implements GraphSearchCriterion
+class QueryPropertyCriterion implements QueryFramesCriterion
 {
     private String propertyName;
-    private GraphSearchPropertyComparisonType searchType;
+    private QueryPropertyComparisonType searchType;
     private Object searchValue;
 
-    public GraphSearchCriterionProperty(String propertyName, GraphSearchPropertyComparisonType searchType,
+    public QueryPropertyCriterion(String propertyName, QueryPropertyComparisonType searchType,
                 Object searchValue)
     {
         super();
