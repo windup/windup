@@ -4,7 +4,6 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
-import org.jboss.windup.reporting.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -38,7 +37,6 @@ public interface JavaClassModel extends WindupVertexFrame
     @Property(PROPERTY_CLASS_NAME)
     public String getClassName();
 
-    @Label
     @Property(PROPERTY_QUALIFIED_NAME)
     public String getQualifiedName();
 

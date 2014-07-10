@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.typedgraph;
+package org.jboss.windup.util.furnace;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,42 +18,76 @@ import org.jboss.forge.furnace.util.AddonFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- *  Scans all Furnace addons for classes named *Model.class.
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author jsightler
  */
-class ModelClassesFurnaceScanner
+public class FurnaceClasspathScanner
 {
-    private static final Logger LOG = LoggerFactory.getLogger(ModelClassesFurnaceScanner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FurnaceClasspathScanner.class);
 
     @Inject
     private Furnace furnace;
 
-    public List<Class<?>> scan()
+    public Iterable<URL> scan(String fileExtension)
     {
-        List<Class<?>> discoveredClasses = new ArrayList<>();
+        return scan(new FurnaceScannerFileExtensionFilenameFilter(fileExtension));
+    }
 
-        // For each addon...
+    public Iterable<URL> scan(FurnaceScannerFilenameFilter filter)
+    {
+        List<URL> discoveredURLs = new ArrayList<>();
+
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
-            // Scan for class files, derive class names.
-            List<String> discoveredClassNames = new ArrayList<>();
+            List<String> discoveredFileNames = new ArrayList<>();
             List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
             for (File addonFile : addonResources)
             {
                 if (addonFile.isDirectory())
                 {
-                    handleDirectory(addonFile, null, discoveredClassNames);
+                    handleDirectory(filter, addonFile, null, discoveredFileNames);
                 }
                 else
                 {
-                    handleArchiveByFile(addonFile, discoveredClassNames);
+                    handleArchiveByFile(filter, addonFile, discoveredFileNames);
                 }
             }
-            
-            // Then try to load the classes.
-            for (String discoveredClassName : discoveredClassNames)
+
+            for (String discoveredFileName : discoveredFileNames)
             {
+                URL ruleFile = addon.getClassLoader().getResource(discoveredFileName);
+                if (ruleFile != null)
+                    discoveredURLs.add(ruleFile);
+            }
+        }
+        return discoveredURLs;
+    }
+
+    public Iterable<Class<?>> scanClasses(FurnaceScannerFilenameFilter filter)
+    {
+        List<Class<?>> discoveredClasses = new ArrayList<>();
+
+        for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
+        {
+            List<String> discoveredFileNames = new ArrayList<>();
+            List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
+            for (File addonFile : addonResources)
+            {
+                if (addonFile.isDirectory())
+                {
+                    handleDirectory(filter, addonFile, null, discoveredFileNames);
+                }
+                else
+                {
+                    handleArchiveByFile(filter, addonFile, discoveredFileNames);
+                }
+            }
+
+            // Then try to load the classes.
+            for (String discoveredFilename : discoveredFileNames)
+            {
+                String discoveredClassName = filenameToClassname(discoveredFilename);
                 try
                 {
                     Class<?> clazz = addon.getClassLoader().loadClass(discoveredClassName);
@@ -65,11 +99,10 @@ class ModelClassesFurnaceScanner
                 }
             }
         }
-        
         return discoveredClasses;
     }
 
-    private void handleArchiveByFile(File file, List<String> discoveredClasses)
+    private void handleArchiveByFile(FurnaceScannerFilenameFilter filter, File file, List<String> discoveredFiles)
     {
         try
         {
@@ -81,7 +114,7 @@ class ModelClassesFurnaceScanner
             {
                 ZipEntry entry = entries.nextElement();
                 String name = entry.getName();
-                handle(name, new URL(archiveUrl + name), discoveredClasses);
+                handle(filter, name, new URL(archiveUrl + name), discoveredFiles);
             }
             zip.close();
         }
@@ -91,7 +124,8 @@ class ModelClassesFurnaceScanner
         }
     }
 
-    private void handleDirectory(File file, String path, List<String> discoveredClasses)
+    private void handleDirectory(FurnaceScannerFilenameFilter filter, File file, String path,
+                List<String> discoveredFiles)
     {
         for (File child : file.listFiles())
         {
@@ -99,13 +133,13 @@ class ModelClassesFurnaceScanner
 
             if (child.isDirectory())
             {
-                handleDirectory(child, newPath, discoveredClasses);
+                handleDirectory(filter, child, newPath, discoveredFiles);
             }
             else
             {
                 try
                 {
-                    handle(newPath, child.toURI().toURL(), discoveredClasses);
+                    handle(filter, newPath, child.toURI().toURL(), discoveredFiles);
                 }
                 catch (MalformedURLException e)
                 {
@@ -115,19 +149,15 @@ class ModelClassesFurnaceScanner
         }
     }
 
-    protected void handle(String name, URL url, List<String> discoveredClasses)
+    private void handle(FurnaceScannerFilenameFilter filter, String name, URL url, List<String> discoveredFiles)
     {
-        if (name.endsWith("Model.class"))
+        if (filter.accept(name))
         {
-            String className = filenameToClassname(name);
-            discoveredClasses.add(className);
+            discoveredFiles.add(name);
         }
     }
 
-    /**
-     * Convert a path to a class file to a class name
-     */
-    public static String filenameToClassname(String filename)
+    private String filenameToClassname(String filename)
     {
         return filename.substring(0, filename.lastIndexOf(".class")).replace('/', '.').replace('\\', '.');
     }

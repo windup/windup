@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.reporting.renderer.Label;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -18,7 +17,6 @@ public interface JavaParameterModel extends WindupVertexFrame
     @Adjacency(label = "methodParameter", direction = Direction.IN)
     public void setJavaMethod(JavaMethodModel method);
 
-    @Label
     @Property("parameterPosition")
     public int getPosition();
 

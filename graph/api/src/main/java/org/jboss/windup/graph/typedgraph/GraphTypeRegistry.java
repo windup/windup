@@ -1,11 +1,11 @@
 package org.jboss.windup.graph.typedgraph;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
+import org.jboss.windup.util.furnace.FurnaceScannerFilenameFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +20,8 @@ public class GraphTypeRegistry
     private static final Logger LOG = LoggerFactory.getLogger(GraphTypeRegistry.class);
 
     @Inject
-    private ModelClassesFurnaceScanner scanner;
-    
+    private FurnaceClasspathScanner scanner;
+
     @Inject
     private GraphTypeManager graphTypeManager;
 
@@ -29,13 +29,23 @@ public class GraphTypeRegistry
     {
         graphTypeManager.addTypeToElement(kind, element);
     }
-    
+
     @PostConstruct
     public void init()
     {
         // Scan for all classes form *Model.class.
-        List<Class<?>> classNames = scanner.scan();
-        for (Class<?> clazz : classNames)
+        FurnaceScannerFilenameFilter modelClassFilter = new FurnaceScannerFilenameFilter()
+        {
+            @Override
+            public boolean accept(String name)
+            {
+                return name.endsWith("Model.class");
+            }
+        };
+
+        Iterable<Class<?>> classes = scanner.scanClasses(modelClassFilter);
+
+        for (Class<?> clazz : classes)
         {
             // Add those extending WindupVertexFrame.
             LOG.info("Found class: " + clazz);
@@ -54,7 +64,7 @@ public class GraphTypeRegistry
     }
 
     /**
-     *  Build TinkerPop Frames module - a collection of models.
+     * Build TinkerPop Frames module - a collection of models.
      */
     public Module build()
     {
