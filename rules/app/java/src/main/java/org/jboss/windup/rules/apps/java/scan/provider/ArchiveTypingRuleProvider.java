@@ -4,14 +4,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.ArchiveModelPointer;
+import org.jboss.windup.graph.typedgraph.GraphTypeManager;
 import org.jboss.windup.rules.apps.java.scan.operation.ConfigureArchiveTypes;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -19,7 +18,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 public class ArchiveTypingRuleProvider extends WindupRuleProvider
 {
     @Inject
-    private Imported<ArchiveModelPointer<? extends ArchiveModel>> archiveModelPointers;
+    private GraphTypeManager graphTypeManager;
 
     @Override
     public RulePhase getPhase()
@@ -45,10 +44,8 @@ public class ArchiveTypingRuleProvider extends WindupRuleProvider
                     .perform(
                                 Iteration.over("archives")
                                             .as("archive")
-                                            .perform(
-                                                        ConfigureArchiveTypes.forVar("archive",
-                                                                    archiveModelPointers)
-                                            ).endIteration()
+                                            .perform(ConfigureArchiveTypes.forVar("archive", graphTypeManager))
+                                            .endIteration()
                     );
     }
 }

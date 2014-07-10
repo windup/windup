@@ -1,13 +1,14 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.ArchiveType;
+import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.ArchiveModelPointer;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
-
 @TypeValue("JarArchiveResource")
+@ArchiveType(".jar")
 public interface JarArchiveModel extends ArchiveModel
 {
 
@@ -25,20 +26,4 @@ public interface JarArchiveModel extends ArchiveModel
 
     @GremlinGroovy("it.out('childArchiveEntry').out('manifestFacet')")
     public JarManifestModel getJarManifest();
-
-    @SuppressWarnings("rawtypes")
-    public static final class Pointer extends ArchiveModelPointer
-    {
-        @Override
-        public String getArchiveFileSuffix()
-        {
-            return ".jar";
-        }
-
-        @Override
-        public Class getModelClass()
-        {
-            return JarArchiveModel.class;
-        }
-    }
 }

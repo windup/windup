@@ -1,7 +1,12 @@
 package org.jboss.windup.graph.typedgraph;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -19,13 +24,20 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@Singleton
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger(GraphTypeManager.class);
 
     private static final String DELIMITER = "|";
 
+    private Set<Class<? extends WindupVertexFrame>> registeredTypes = new HashSet<Class<? extends WindupVertexFrame>>();
     private TypeRegistry typeRegistry = new TypeRegistry();
+
+    public Set<Class<? extends WindupVertexFrame>> getRegisteredTypes()
+    {
+        return Collections.unmodifiableSet(registeredTypes);
+    }
 
     public void addTypeToRegistry(Class<? extends WindupVertexFrame> wvf)
     {
@@ -35,6 +47,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
             // *Model types with no TypeValue to function as essentially
             // "abstract" models that would never exist on their own (only as subclasses).
             typeRegistry.add(wvf);
+            registeredTypes.add(wvf);
         }
     }
 

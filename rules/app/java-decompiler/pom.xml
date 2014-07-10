@@ -32,7 +32,6 @@
             <scope>provided</scope>
         </dependency>
 
-        
         <!-- Project deps -->
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>

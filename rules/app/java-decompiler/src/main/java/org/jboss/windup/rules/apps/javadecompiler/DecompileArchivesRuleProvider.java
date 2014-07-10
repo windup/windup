@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.graphsearch.GraphSearchConditionBuilder;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.rules.apps.java.scan.provider.DiscoverJavaFilesRuleProvider;
@@ -32,7 +32,7 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(
-                                GraphSearchConditionBuilder.create("allUnzippedArchives").ofType(ArchiveModel.class)
+                                Query.find(ArchiveModel.class).as("allUnzippedArchives")
                     ).perform(
                                 Iteration.over("allUnzippedArchives").as(ArchiveModel.class, "archive")
                                             .perform(new ProcyonDecompilerOperation("archive"))

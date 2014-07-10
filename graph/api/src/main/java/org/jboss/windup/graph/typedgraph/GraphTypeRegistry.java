@@ -2,6 +2,7 @@ package org.jboss.windup.graph.typedgraph;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
@@ -15,6 +16,7 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.AbstractModule;
 import com.tinkerpop.frames.modules.Module;
 
+@Singleton
 public class GraphTypeRegistry
 {
     private static final Logger LOG = LoggerFactory.getLogger(GraphTypeRegistry.class);
