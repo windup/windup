@@ -88,11 +88,11 @@ public interface JavaClassModel extends WindupVertexFrame
     @Adjacency(label = "decompiledSource", direction = Direction.OUT)
     public FileModel getDecompiledSource();
 
-    @Adjacency(label = "originalSource", direction = Direction.OUT)
-    public void setOriginalSource(FileModel source);
+    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    public void setOriginalSource(JavaFileModel source);
 
-    @Adjacency(label = "originalSource", direction = Direction.OUT)
-    public FileModel getOriginalSource();
+    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    public JavaFileModel getOriginalSource();
 
     @Adjacency(label = "classFile", direction = Direction.OUT)
     public FileModel getClassFile();
