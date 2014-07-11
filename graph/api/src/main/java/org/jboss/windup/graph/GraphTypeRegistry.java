@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.typedgraph;
+package org.jboss.windup.graph;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;

@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.java.model;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -24,15 +23,8 @@ public interface JavaClassModel extends WindupVertexFrame
     public static final String PROPERTY_MAJOR_VERSION = "majorVersion";
     public static final String PROPERTY_MINOR_VERSION = "minorVersion";
 
-    @Adjacency(label = "javaClassFacet", direction = Direction.IN)
-    public Iterable<ResourceModel> getResources();
-
-    @Adjacency(label = "javaClassFacet", direction = Direction.IN)
-    public void addResource(ResourceModel resource);
-
-    // Properties derivable just from the file name.
     @Property(PROPERTY_CLASS_NAME)
-    public void setClassName(String className);
+    public void setSimpleName(String className);
 
     @Property(PROPERTY_CLASS_NAME)
     public String getClassName();
@@ -118,14 +110,15 @@ public interface JavaClassModel extends WindupVertexFrame
     @GremlinGroovy("it.sideEffect{x=it}.in('extends', 'imports', 'implements').dedup().filter{it!=x}")
     public Iterable<JavaClassModel> providesForJavaClass();
 
-    // TODO: Remove - residual of Brad's first prototype.
+    /*
+     * TODO Review and rename these methods to something more appropriate
+     */
     @Property(PROPERTY_BLACKLIST_CANDIDATE)
     public void setBlacklistCandidate(boolean blacklistCandidate);
 
     @Property(PROPERTY_BLACKLIST_CANDIDATE)
     public boolean isBlacklistCandidate();
 
-    // TODO: Rename to "isAnalyze" - see #windup discussion form June 11th.
     @Property(PROPERTY_CUSTOMER_PACKAGE)
     public void setCustomerPackage(boolean customerPackage);
 

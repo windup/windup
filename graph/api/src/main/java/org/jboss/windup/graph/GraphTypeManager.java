@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.typedgraph;
+package org.jboss.windup.graph;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,8 +10,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -27,8 +25,6 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @Singleton
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
-    private static final Logger LOG = LoggerFactory.getLogger(GraphTypeManager.class);
-
     private static final String DELIMITER = "|";
 
     private Set<Class<? extends WindupVertexFrame>> registeredTypes = new HashSet<Class<? extends WindupVertexFrame>>();

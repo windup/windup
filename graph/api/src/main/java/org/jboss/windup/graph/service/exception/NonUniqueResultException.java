@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.dao.exception;
+package org.jboss.windup.graph.service.exception;
 
 public class NonUniqueResultException extends RuntimeException {
 	

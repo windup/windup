@@ -145,7 +145,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                     interest.toString());
         fireJavaScannerEvent(dr);
 
-        LOG.info("Candidate: " + dr);
+        LOG.trace("Candidate: " + dr);
     }
 
     private void processMethod(MethodType interest, int lineStart, int startPosition, int length,
@@ -155,7 +155,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                     interest.toString());
         fireJavaScannerEvent(dr);
 
-        LOG.info("Candidate: " + dr);
+        LOG.trace("Candidate: " + dr);
     }
 
     private void processInterest(String interest, int lineStart, int startPosition, int length,
@@ -169,7 +169,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                     sourceString);
         fireJavaScannerEvent(dr);
 
-        LOG.info("Candidate: " + dr);
+        LOG.trace("Candidate: " + dr);
     }
 
     private void processType(Type type, ClassCandidateType classCandidateType)
@@ -187,14 +187,14 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         ClassCandidate dr = new ClassCandidate(classCandidateType, sourcePosition, startPosition, length, sourceString);
         fireJavaScannerEvent(dr);
 
-        LOG.info("Prefix: " + classCandidateType);
+        LOG.trace("Prefix: " + classCandidateType);
         if (type instanceof SimpleType)
         {
             SimpleType sType = (SimpleType) type;
-            LOG.info("The type name is: " + sType.getName().getFullyQualifiedName() + " and " + sourceString);
+            LOG.trace("The type name is: " + sType.getName().getFullyQualifiedName() + " and " + sourceString);
 
         }
-        LOG.info("Candidate: " + dr);
+        LOG.trace("Candidate: " + dr);
     }
 
     private void processName(Name name, ClassCandidateType type, int lineNumber, int startPosition, int length)
@@ -208,8 +208,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         ClassCandidate dr = new ClassCandidate(type, lineNumber, startPosition, length, sourceString);
         fireJavaScannerEvent(dr);
 
-        LOG.info("Prefix: " + type);
-        LOG.info("Candidate: " + dr);
+        LOG.trace("Prefix: " + type);
+        LOG.trace("Candidate: " + dr);
     }
 
     @Override
@@ -353,7 +353,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                     }
                     else
                     {
-                        LOG.warn("" + clzInterface);
+                        LOG.trace("" + clzInterface);
                     }
                 }
             }
@@ -366,7 +366,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             }
             else
             {
-                LOG.warn("" + clzSuperClasses);
+                LOG.trace("" + clzSuperClasses);
             }
         }
 
@@ -455,7 +455,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(PackageDeclaration node)
     {
-        LOG.info("Found package: " + node.getName().toString());
+        LOG.trace("Found package: " + node.getName().toString());
         return super.visit(node);
     }
 
@@ -577,7 +577,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             }
             else
             {
-                LOG.info("Unable to determine type: " + o.getClass() + ReflectionToStringBuilder.toString(o));
+                LOG.trace("Unable to determine type: " + o.getClass() + ReflectionToStringBuilder.toString(o));
                 resolvedParams.add("Undefined");
             }
         }
@@ -740,12 +740,17 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                 {
                     String candidateQualifiedName = wildcardImport + "." + sourceClassname;
 
-                    JavaClassModel jcm = javaClassDao.getJavaClass(candidateQualifiedName);
-                    if (jcm != null)
+                    Iterable<JavaClassModel> models = javaClassDao.findAllByProperty(
+                                JavaClassModel.PROPERTY_QUALIFIED_NAME, candidateQualifiedName);
+                    if (models.iterator().hasNext())
                     {
                         // we found it... put it in the map and return the result
                         classNameToFQCN.put(sourceClassname, candidateQualifiedName);
                         return candidateQualifiedName;
+                    }
+                    else
+                    {
+                        javaClassDao.getOrCreate(candidateQualifiedName);
                     }
                 }
                 // nothing was found, so just return the original value

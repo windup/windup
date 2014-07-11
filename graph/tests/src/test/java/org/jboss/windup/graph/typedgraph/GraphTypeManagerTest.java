@@ -11,7 +11,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.util.GraphUtil;
+import org.jboss.windup.graph.service.GraphService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,18 +25,18 @@ public class GraphTypeManagerTest
 {
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-            .addBeansXML()
-            .addClasses( FooModel.class, FooSubModel.class )
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                    .addBeansXML()
+                    .addClasses(FooModel.class, FooSubModel.class)
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
         return archive;
     }
 
@@ -48,25 +48,20 @@ public class GraphTypeManagerTest
     {
         Assert.assertNotNull(context);
 
-        // First, create a base object
         FooModel initialModelType = context.getFramed().addVertex(null, FooModel.class);
 
-        // Now cast it to an xml object
-        GraphUtil.addTypeToModel(context, initialModelType, FooSubModel.class);
+        GraphService.addTypeToModel(context, initialModelType, FooSubModel.class);
 
-        // Now reload it as a base meta object (this returns an iterable, but there should only be one result)
         Iterable<Vertex> vertices = context.getFramed().query()
-            .has("type", Text.CONTAINS, FooModel.class.getAnnotation(TypeValue.class).value())
-            .vertices();
+                    .has("type", Text.CONTAINS, FooModel.class.getAnnotation(TypeValue.class).value())
+                    .vertices();
+
         int numberFound = 0;
         for (Vertex v : vertices)
         {
             numberFound++;
             WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
 
-            // because the type information is stored in the Vertex, this should include at least the following types:
-            // - FooModel
-            // - FooSubModel
             Assert.assertTrue(framed instanceof FooModel);
             Assert.assertTrue(framed instanceof FooSubModel);
         }

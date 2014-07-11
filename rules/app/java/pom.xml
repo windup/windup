@@ -17,6 +17,8 @@
     <description>Java files related module. TBD.</description>
 
     <dependencies>
+
+
         <!-- Project deps -->
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
@@ -84,6 +86,13 @@
             <groupId>org.eclipse.core</groupId>
             <artifactId>org.eclipse.core.resources</artifactId>
             <version>3.6.0.v20100526-0737</version>
+        </dependency>
+
+        <!-- Roaster for sane parsing and utilities, eventually favor this over Eclipse JDT -->
+        <dependency>
+            <groupId>org.jboss.forge.roaster</groupId>
+            <artifactId>roaster-jdt</artifactId>
+            <version>2.6.0.Final</version>
         </dependency>
 
         <dependency>

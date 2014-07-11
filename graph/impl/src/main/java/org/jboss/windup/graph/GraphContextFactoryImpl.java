@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
-import org.jboss.windup.graph.typedgraph.GraphTypeRegistry;
 
 @Singleton
 public class GraphContextFactoryImpl implements GraphContextFactory
