@@ -22,7 +22,9 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.util.GraphUtil;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.VariableResolvingASTVisitor;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -143,6 +145,9 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             {
                 return;
             }
+
+            // make sure we mark this as a Java file
+            JavaFileModel javaFileModel = GraphUtil.addTypeToModel(graphContext, payload, JavaFileModel.class);
 
             String classFilePath = filepath.substring(inputDir.length() + 1);
             String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
