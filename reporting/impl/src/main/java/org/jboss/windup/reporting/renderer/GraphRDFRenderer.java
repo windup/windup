@@ -2,13 +2,9 @@ package org.jboss.windup.reporting.renderer;
 
 import info.aduna.iteration.CloseableIteration;
 
-import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
 
-import javax.inject.Inject;
-
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.reporting.renderer.api.GraphRDFRenderer;
 import org.openrdf.model.Namespace;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
@@ -21,21 +17,22 @@ import org.openrdf.sail.SailException;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.oupls.sail.pg.PropertyGraphSail;
 
-public class GraphRDFRendererImpl implements GraphRDFRenderer
+public class GraphRDFRenderer extends AbstractGraphRenderer
 {
-    @Inject
-    private GraphContext graphContext;
 
     @Override
-    public void renderRDF(File outputFile)
+    public void renderGraph()
     {
         try
         {
-            Graph graph = graphContext.getGraph();
+            Path outputFolder = createOutputFolder("rdf");
+            Path outputFile = outputFolder.resolve("graph.rdf");
+
+            Graph graph = getContext().getGraph();
             Sail sail = new PropertyGraphSail(graph);
             sail.initialize();
 
-            FileOutputStream fos = new FileOutputStream(outputFile);
+            FileOutputStream fos = new FileOutputStream(outputFile.toFile());
             RDFWriter writer = Rio.createWriter(RDFFormat.NTRIPLES, fos);
             writer.startRDF();
 

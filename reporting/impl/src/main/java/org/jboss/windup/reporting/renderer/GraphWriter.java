@@ -6,6 +6,6 @@ import java.io.OutputStream;
 public interface GraphWriter
 {
 
-    public void writeGraph(OutputStream os) throws IOException;
+    public void writeGraph(OutputStream outputFile) throws IOException;
 
 }
