@@ -31,12 +31,6 @@
             <artifactId>windup-config-impl</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.tools</groupId>
-            <artifactId>decompiler-procyon</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
