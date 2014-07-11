@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -29,7 +30,8 @@ public interface BlackListModel extends WindupVertexFrame
     public static final String PROPERTY_START_POSITION = "startPosition";
     public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
     public static final String PROPERTY_RULE_ID = "ruleID";
-    public static final String PROPERTY_BLACK_LIST_TYPE = "blackListType";
+    public static final String PROPERTY_CLASS_CANDIDATE_TYPE = "candidateType";
+    public static final String PROPERTY_EFFORT = "effort";
 
     /**
      * Sets the file model associated with this blacklist entry. Black List entries may be associated with any type of
@@ -44,16 +46,27 @@ public interface BlackListModel extends WindupVertexFrame
     public FileModel getFileModel();
 
     /**
-     * Sets the type of blacklist entry (method call, implements interface, etc).
+     * Adds a class candidate type (e.g. IMPORT, TYPE etc.)
      * 
-     * @param blackListType
+     * @param type
      */
-    @Property(PROPERTY_BLACK_LIST_TYPE)
-    public void setBlackListType(BlackListType blackListType);
+    @Adjacency(label = PROPERTY_CLASS_CANDIDATE_TYPE, direction = Direction.OUT)
+    public void addClassCandidateType(ClassCandidateTypeModel type);
 
-    @Property(PROPERTY_BLACK_LIST_TYPE)
-    public BlackListType getBlackListType();
+    @Adjacency(label = PROPERTY_CLASS_CANDIDATE_TYPE, direction = Direction.OUT)
+    public Iterable<ClassCandidateTypeModel> getClassCandidateType();
+    
+    /**
+     * Sets the effort needed to fix the issue
+     * 
+     * @param effort
+     */
+    @Property(PROPERTY_EFFORT)
+    public void setEffort(int effort);
 
+    @Property(PROPERTY_EFFORT)
+    public int getEffort();
+    
     /**
      * Sets the ID of the rule that triggered this particular blacklist entry
      * 

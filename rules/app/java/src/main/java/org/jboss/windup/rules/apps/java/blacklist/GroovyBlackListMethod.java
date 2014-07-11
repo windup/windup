@@ -1,17 +1,17 @@
-package org.jboss.windup.rules.apps.java.groovy.blacklist;
+package org.jboss.windup.rules.apps.java.blacklist;
 
 import javax.inject.Inject;
 
 import groovy.lang.Closure;
 
 import org.jboss.windup.ext.groovy.GroovyConfigMethod;
-import org.jboss.windup.ext.groovy.java.events.GroovyJavaASTEventService;
+import org.jboss.windup.ext.java.events.JavaASTEventService;
 import org.jboss.windup.graph.GraphContext;
 
 public class GroovyBlackListMethod implements GroovyConfigMethod
 {
     @Inject
-    private GroovyJavaASTEventService dslSupport;
+    private JavaASTEventService dslSupport;
 
     @Override
     public String getName(GraphContext context)
@@ -32,8 +32,8 @@ public class GroovyBlackListMethod implements GroovyConfigMethod
                 String ruleID = (String) args[0];
                 String regexPattern = (String) args[1];
                 String hint = (String) args[2];
-
-                dslSupport.registerInterest(context, ruleID, regexPattern, hint);
+                BlackListRegex blackListSupportRegex = new BlackListRegex(ruleID, regexPattern, hint,0,null);
+                dslSupport.registerInterest(blackListSupportRegex);
                 return null;
             }
         };
