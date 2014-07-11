@@ -2,6 +2,8 @@ package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
@@ -11,15 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("JavaFile")
 public interface JavaFileModel extends FileModel
 {
-    public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
-    public static final String PROPERTY_CLASS_NAME = "className";
     public static final String PROPERTY_PACKAGE_NAME = "packageName";
-
-    @Property(PROPERTY_QUALIFIED_NAME)
-    public String getQualifiedName();
-
-    @Property(PROPERTY_QUALIFIED_NAME)
-    public void setQualifiedName(String qualifiedName);
 
     @Property(PROPERTY_PACKAGE_NAME)
     public String getPackageName();
@@ -27,10 +21,10 @@ public interface JavaFileModel extends FileModel
     @Property(PROPERTY_PACKAGE_NAME)
     public void setPackageName(String packageName);
 
-    @Property(PROPERTY_CLASS_NAME)
-    public void setClassName(String className);
+    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    public Iterable<JavaClassModel> getJavaClasses();
 
-    @Property(PROPERTY_CLASS_NAME)
-    public String getClassName();
+    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    public void addJavaClass(JavaClassModel javaClassModel);
 
 }
