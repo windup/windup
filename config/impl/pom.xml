@@ -30,13 +30,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.tools</groupId>
-            <artifactId>decompiler-procyon</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <scope>provided</scope>
