@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.operation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
@@ -10,30 +11,29 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.ArchiveModelPointer;
+import org.jboss.windup.graph.model.ArchiveType;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.typedgraph.GraphTypeManager;
 import org.jboss.windup.graph.util.GraphUtil;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveModel>
 {
-    // @Inject
-    private Iterable<ArchiveModelPointer<? extends ArchiveModel>> archiveModelPointers;
 
-    private HashMap<String, Class<? extends ArchiveModel>> suffixToModelClass = new HashMap<>();
+    private GraphTypeManager graphTypeManager;
 
-    public ConfigureArchiveTypes(String variableName,
-                Iterable<ArchiveModelPointer<? extends ArchiveModel>> archiveModelPointers)
+    private HashMap<String, Class<? extends WindupVertexFrame>> suffixToModelClass = new HashMap<>();
+
+    public ConfigureArchiveTypes(String variableName, GraphTypeManager graphTypeManager)
     {
         super(ArchiveModel.class, variableName);
-        this.archiveModelPointers = archiveModelPointers;
+        this.graphTypeManager = graphTypeManager;
         initTypes();
     }
 
-    public static ConfigureArchiveTypes forVar(String variableName,
-                Iterable<ArchiveModelPointer<? extends ArchiveModel>> archiveModelPointers)
+    public static ConfigureArchiveTypes forVar(String variableName, GraphTypeManager graphTypeManager)
     {
-        return new ConfigureArchiveTypes(variableName, archiveModelPointers);
+        return new ConfigureArchiveTypes(variableName, graphTypeManager);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
         String filename = archiveModel.getArchiveName();
         WindupVertexFrame newFrame = null;
 
-        for (Map.Entry<String, Class<? extends ArchiveModel>> entry : suffixToModelClass.entrySet())
+        for (Map.Entry<String, Class<? extends WindupVertexFrame>> entry : suffixToModelClass.entrySet())
         {
             if (StringUtils.endsWith(filename, entry.getKey()))
             {
@@ -59,9 +59,14 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
 
     private void initTypes()
     {
-        for (ArchiveModelPointer<?> ptr : this.archiveModelPointers)
+        Set<Class<? extends WindupVertexFrame>> frameClasses = graphTypeManager.getRegisteredTypes();
+        for (Class<? extends WindupVertexFrame> frameClass : frameClasses)
         {
-            this.suffixToModelClass.put(ptr.getArchiveFileSuffix(), ptr.getModelClass());
+            ArchiveType archiveType = frameClass.getAnnotation(ArchiveType.class);
+            if (archiveType != null)
+            {
+                this.suffixToModelClass.put(archiveType.value(), frameClass);
+            }
         }
     }
 }
