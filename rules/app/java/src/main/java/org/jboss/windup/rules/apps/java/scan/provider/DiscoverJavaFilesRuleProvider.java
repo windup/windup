@@ -149,6 +149,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
                         classFilePath.length() - JAVA_SUFFIX_LEN);
             String typeName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1, qualifiedName.length());
+
             String packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
 
             // make sure we mark this as a Java file
@@ -161,7 +162,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             javaClassModel.setPackageName(packageName);
             javaClassModel.setQualifiedName(qualifiedName);
             javaClassModel.setClassFile(javaFileModel);
-            
+
             javaFileModel.addJavaClass(javaClassModel);
         }
 

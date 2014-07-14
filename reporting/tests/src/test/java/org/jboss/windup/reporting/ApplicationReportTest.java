@@ -45,6 +45,7 @@ public class ApplicationReportTest extends AbstractTestCase
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addClass(AbstractTestCase.class)
+                    .addClass(ApplicationReport.class)
                     .addAsResource(new File("src/test/resources/reports"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),

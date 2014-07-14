@@ -1,7 +1,10 @@
 package org.jboss.windup.rules.apps.java.model.project;
 
-import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.rules.apps.xml.XmlResourceModel;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
@@ -12,14 +15,19 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  */
 @TypeValue("MavenFacet")
-public interface MavenProjectModel extends ProjectModel, XmlMetaFacetModel
+public interface MavenProjectModel extends ProjectModel
 {
-
     public static final String PROPERTY_URL = "url";
     public static final String PROPERTY_ARTIFACT_ID = "artifactId";
     public static final String PROPERTY_GROUP_ID = "groupId";
     public static final String PROPERTY_SPECIFICATION_VERSION = "specificationVersion";
     public static final String PROPERTY_MAVEN_IDENTIFIER = "mavenIdentifier";
+
+    @Adjacency(label = "mavenPom", direction = Direction.OUT)
+    public Iterable<XmlResourceModel> getMavenPom();
+
+    @Adjacency(label = "mavenPom", direction = Direction.OUT)
+    public void addMavenPom(XmlResourceModel pom);
 
     /**
      * The full maven id (groupid, artifactid, and version)

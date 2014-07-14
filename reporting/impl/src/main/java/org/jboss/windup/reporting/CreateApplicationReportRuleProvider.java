@@ -7,8 +7,10 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ApplicationModel;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.meta.ApplicationReportModel;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -17,8 +19,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateApplicationReportRuleProvider extends WindupRuleProvider
 {
 
-    private static final String VAR_APPLICATION_MODEL = "applicationModel";
-    private static final String VAR_APPLICATION_MODELS = "applicationModels";
+    private static final String VAR_CONFIGURATION_MODEL = "windupCfg";
+    private static final String VAR_CONFIGURATION_MODELS = "windupCfgs";
 
     @Override
     public RulePhase getPhase()
@@ -29,32 +31,51 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder findApplicationModels = Query
-                    .find(ApplicationModel.class)
-                    .as(VAR_APPLICATION_MODELS);
+        ConditionBuilder findProjectModels = Query
+                    .find(WindupConfigurationModel.class)
+                    .as(VAR_CONFIGURATION_MODELS);
 
-        AbstractIterationOperation<ApplicationModel> addApplicationReport = new AbstractIterationOperation<ApplicationModel>(
-                    ApplicationModel.class, VAR_APPLICATION_MODEL)
+        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>(
+                    WindupConfigurationModel.class, VAR_CONFIGURATION_MODEL)
         {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, ApplicationModel payload)
+            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
             {
-                ApplicationReportModel applicationReportModel = event.getGraphContext()
-                            .getFramed()
-                            .addVertex(null, ApplicationReportModel.class);
-                applicationReportModel.setApplicationName(payload.getApplicationName());
-                applicationReportModel.setReportName(payload.getApplicationName());
+                ProjectModel projectModel = payload.getInputPath().getProjectModel();
+                if (projectModel == null)
+                {
+                    if (payload.isSourceMode())
+                    {
+                        throw new WindupException("Error, no project found in source-based input directory: "
+                                    + payload.getInputPath().getFilePath());
+                    }
+                    else
+                    {
+                        throw new WindupException("Error, no project found in archive: "
+                                    + payload.getInputPath().getFilePath());
+                    }
+                }
+                createApplicationReport(event.getGraphContext(), projectModel);
             }
         };
 
         return ConfigurationBuilder
                     .begin()
                     .addRule()
-                    .when(findApplicationModels)
+                    .when(findProjectModels)
                     .perform(
-                                Iteration.over(VAR_APPLICATION_MODELS).as(VAR_APPLICATION_MODEL)
+                                Iteration.over(VAR_CONFIGURATION_MODELS).as(VAR_CONFIGURATION_MODEL)
                                             .perform(addApplicationReport).endIteration()
                     );
 
+    }
+
+    private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel model)
+    {
+        ApplicationReportModel applicationReportModel = context.getFramed().addVertex(null,
+                    ApplicationReportModel.class);
+        applicationReportModel.setApplicationName(model.getName());
+        applicationReportModel.setReportName(model.getName());
+        return applicationReportModel;
     }
 }

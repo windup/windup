@@ -46,11 +46,5 @@
             <artifactId>furnace-proxy</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>joox</artifactId>
-            <version>1.2.0</version>
-        </dependency>
     </dependencies>
 </project>

@@ -7,9 +7,11 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("NamespaceMeta")
+@TypeValue(NamespaceMetaModel.TYPE)
 public interface NamespaceMetaModel extends WindupVertexFrame
 {
+
+    public static final String TYPE = "NamespaceMeta";
 
     @Adjacency(label = "namespace", direction = Direction.IN)
     public void addXmlResource(XmlResourceModel facet);

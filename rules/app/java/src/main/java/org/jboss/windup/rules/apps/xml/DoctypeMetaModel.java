@@ -11,33 +11,38 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface DoctypeMetaModel extends WindupVertexFrame
 {
 
+    public static final String PROPERTY_BASE_URI = "baseURI";
+    public static final String PROPERTY_SYSTEM_ID = "systemId";
+    public static final String PROPERTY_PUBLIC_ID = "publicId";
+    public static final String PROPERTY_NAME = "name";
+
     @Adjacency(label = "doctype", direction = Direction.IN)
     public void addXmlResource(XmlResourceModel facet);
 
     @Adjacency(label = "doctype", direction = Direction.IN)
     public Iterable<XmlResourceModel> getXmlResources();
 
-    @Property("name")
+    @Property(PROPERTY_NAME)
     public String getName();
 
-    @Property("name")
+    @Property(PROPERTY_NAME)
     public void setName(String name);
 
-    @Property("publicId")
+    @Property(PROPERTY_PUBLIC_ID)
     public String getPublicId();
 
-    @Property("publicId")
+    @Property(PROPERTY_PUBLIC_ID)
     public void setPublicId(String publicId);
 
-    @Property("systemId")
+    @Property(PROPERTY_SYSTEM_ID)
     public String getSystemId();
 
-    @Property("systemId")
+    @Property(PROPERTY_SYSTEM_ID)
     public void setSystemId(String systemId);
 
-    @Property("baseURI")
+    @Property(PROPERTY_BASE_URI)
     public String getBaseURI();
 
-    @Property("baseURI")
+    @Property(PROPERTY_BASE_URI)
     public void setBaseURI(String baseURI);
 }
