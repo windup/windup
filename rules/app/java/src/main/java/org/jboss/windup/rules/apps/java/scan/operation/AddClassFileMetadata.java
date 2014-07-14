@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -45,22 +46,27 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
 
                 classFileModel.setPackageName(packageName);
 
-                GraphService<JavaClassModel> javaClassModelService = new GraphService<>(event.getGraphContext(),
-                            JavaClassModel.class);
-                JavaClassModel javaClassModel = javaClassModelService.create();
+                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+                JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
+
                 javaClassModel.setSimpleName(simpleName);
                 javaClassModel.setPackageName(packageName);
                 javaClassModel.setQualifiedName(qualifiedName);
                 javaClassModel.setClassFile(classFileModel);
 
-                for (JavaClass iface : javaClass.getAllInterfaces())
+                String[] interfaceNames = javaClass.getInterfaceNames();
+                if (interfaceNames != null)
                 {
-                    JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-                    JavaClassModel interfaceModel = javaClassService.getOrCreate(iface.getClassName());
-                    javaClassModel.addImplements(interfaceModel);
+                    for (String iface : interfaceNames)
+                    {
+                        JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
+                        javaClassModel.addImplements(interfaceModel);
+                    }
                 }
 
-                // TODO add more metadata about supertypes, etc.
+                String superclassName = javaClass.getSuperclassName();
+                if (Strings.isNullOrEmpty(superclassName))
+                    javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
 
                 classFileModel.addJavaClass(javaClassModel);
             }

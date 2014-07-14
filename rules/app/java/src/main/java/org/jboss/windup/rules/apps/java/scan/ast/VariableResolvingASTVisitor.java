@@ -76,7 +76,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private GraphContext graphContext;
 
     @Inject
-    private JavaClassService javaClassDao;
+    private JavaClassService javaClassService;
 
     private CompilationUnit cu;
 
@@ -398,7 +398,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             wildcardImports.add(name);
 
-            Iterable<JavaClassModel> classModels = javaClassDao.findByJavaPackage(name);
+            Iterable<JavaClassModel> classModels = javaClassService.findByJavaPackage(name);
             for (JavaClassModel classModel : classModels)
             {
                 processInterest(classModel.getQualifiedName(), cu.getLineNumber(node.getName().getStartPosition()),
@@ -740,17 +740,13 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                 {
                     String candidateQualifiedName = wildcardImport + "." + sourceClassname;
 
-                    Iterable<JavaClassModel> models = javaClassDao.findAllByProperty(
+                    Iterable<JavaClassModel> models = javaClassService.findAllByProperty(
                                 JavaClassModel.PROPERTY_QUALIFIED_NAME, candidateQualifiedName);
                     if (models.iterator().hasNext())
                     {
                         // we found it... put it in the map and return the result
                         classNameToFQCN.put(sourceClassname, candidateQualifiedName);
                         return candidateQualifiedName;
-                    }
-                    else
-                    {
-                        javaClassDao.getOrCreate(candidateQualifiedName);
                     }
                 }
                 // nothing was found, so just return the original value
