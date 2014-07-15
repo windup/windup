@@ -19,8 +19,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateApplicationReportRuleProvider extends WindupRuleProvider
 {
 
-    private static final String VAR_CONFIGURATION_MODEL = "windupCfg";
-    private static final String VAR_CONFIGURATION_MODELS = "windupCfgs";
+    private static final String CONFIGURATION_MODEL = "windupCfg";
+    private static final String CONFIGURATION_MODELS = "windupCfgs";
 
     @Override
     public RulePhase getPhase()
@@ -33,10 +33,10 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
     {
         ConditionBuilder findProjectModels = Query
                     .find(WindupConfigurationModel.class)
-                    .as(VAR_CONFIGURATION_MODELS);
+                    .as(CONFIGURATION_MODELS);
 
         AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>(
-                    WindupConfigurationModel.class, VAR_CONFIGURATION_MODEL)
+                    WindupConfigurationModel.class, CONFIGURATION_MODEL)
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
@@ -64,7 +64,7 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
                     .addRule()
                     .when(findProjectModels)
                     .perform(
-                                Iteration.over(VAR_CONFIGURATION_MODELS).as(VAR_CONFIGURATION_MODEL)
+                                Iteration.over(CONFIGURATION_MODELS).as(CONFIGURATION_MODEL)
                                             .perform(addApplicationReport).endIteration()
                     );
 
