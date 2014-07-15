@@ -93,6 +93,8 @@ public class GraphContextImpl implements GraphContext
         // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
+        final FrameMapHandler frameMapHandler = new FrameMapHandler();
+
         final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver()
         {
             public ClassLoader resolveClassLoader(Class<?> frameType)
@@ -101,19 +103,20 @@ public class GraphContextImpl implements GraphContext
             }
         };
 
-        final Module fclrModule = new Module()
+        final Module addModules = new Module()
         {
             @Override
             public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
             {
                 config.setFrameClassLoaderResolver(fclr);
+                config.addMethodHandler(frameMapHandler);
                 return baseGraph;
             }
         };
 
         // Frames with all the features.
         FramedGraphFactory factory = new FramedGraphFactory(
-                    fclrModule, // Composite classloader
+                    addModules, // Composite classloader
                     new JavaHandlerModule(), // @JavaHandler
                     graphTypeRegistry.build(), // Model classes
                     new GremlinGroovyModule() // @Gremlin
