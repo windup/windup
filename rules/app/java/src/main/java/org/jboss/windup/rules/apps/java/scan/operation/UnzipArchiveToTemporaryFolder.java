@@ -14,7 +14,7 @@ import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.ApplicationArchiveModel;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.util.GraphUtil;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -138,7 +138,7 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
                     if (ZipUtil.endsWithZipExtension(file.toAbsolutePath().toString()))
                     {
                         File newZipFile = file.toFile();
-                        ArchiveModel newArchiveModel = GraphUtil.addTypeToModel(event.getGraphContext(), childFile,
+                        ArchiveModel newArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), childFile,
                                     ArchiveModel.class);
                         newArchiveModel.setParentArchive(archiveModel);
                         newArchiveModel.setArchiveName(newZipFile.getName());

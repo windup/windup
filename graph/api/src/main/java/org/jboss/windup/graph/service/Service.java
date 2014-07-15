@@ -1,0 +1,33 @@
+package org.jboss.windup.graph.service;
+
+import org.jboss.windup.graph.service.exception.NonUniqueResultException;
+
+import com.thinkaurelius.titan.core.TitanTransaction;
+import com.tinkerpop.frames.VertexFrame;
+
+public interface Service<T extends VertexFrame>
+{
+    void commit();
+
+    long count(Iterable<?> obj);
+
+    T create();
+
+    T create(Object id);
+
+    Iterable<T> findAll();
+
+    Iterable<T> findAllByProperties(String[] keys, String[] vals);
+
+    Iterable<T> findAllByProperty(String key, Object value);
+
+    Iterable<T> findAllByPropertyMatchingRegex(String key, String... regex);
+
+    T getById(Object id);
+
+    T getUnique() throws NonUniqueResultException;
+
+    T getUniqueByProperty(String property, Object value) throws NonUniqueResultException;
+
+    TitanTransaction newTransaction();
+}

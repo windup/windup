@@ -10,11 +10,11 @@ import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ArchiveType;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.typedgraph.GraphTypeManager;
-import org.jboss.windup.graph.util.GraphUtil;
+import org.jboss.windup.graph.service.GraphService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveModel>
@@ -47,7 +47,7 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
         {
             if (StringUtils.endsWith(filename, entry.getKey()))
             {
-                newFrame = GraphUtil.addTypeToModel(graphContext, archiveModel, entry.getValue());
+                newFrame = GraphService.addTypeToModel(graphContext, archiveModel, entry.getValue());
             }
         }
 

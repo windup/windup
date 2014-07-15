@@ -1,6 +1,9 @@
 package org.jboss.windup.graph.test.polymorf;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraph;
@@ -8,8 +11,6 @@ import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
-import org.junit.After;
-import org.junit.Before;
 
 /**
  * 
@@ -18,22 +19,22 @@ import org.junit.Before;
 public class NodeTypeChangeTest
 {
     private Graph g;
-    
+
     @Before
-    public void setUpEnv() {
+    public void setUpEnv()
+    {
         this.g = GraphCreator.createFamilyGraph();
     }
-    
+
     @After
-    public void tearDown() {
+    public void tearDown()
+    {
         this.g.shutdown();
     }
-    
 
     @Test
     public void testNodeTypeChange()
     {
-        
         Module tgmp = new TypedGraphModuleBuilder()
                     .withClass(SpecialPerson.class).build();
 
@@ -60,7 +61,6 @@ public class NodeTypeChangeTest
         System.out.println("Not SpecialPerson: " + foo + " " + asString(foo));
     }
 
-    
     private static String asString(Person p)
     {
         if (p == null)

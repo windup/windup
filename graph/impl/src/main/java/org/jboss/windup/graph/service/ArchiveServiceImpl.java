@@ -1,11 +1,9 @@
-package org.jboss.windup.graph.dao.impl;
+package org.jboss.windup.graph.service;
 
 import java.util.Iterator;
 
-import javax.inject.Singleton;
-
-import org.jboss.windup.graph.dao.ArchiveDao;
-import org.jboss.windup.graph.dao.BaseDaoImpl;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.dao.ArchiveService;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
@@ -16,18 +14,17 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
-@Singleton
-public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveModel> implements ArchiveDao
+public class ArchiveServiceImpl extends GraphService<ArchiveModel> implements ArchiveService
 {
-    public ArchiveDaoImpl()
+    public ArchiveServiceImpl(GraphContext context)
     {
-        super(ArchiveModel.class);
+        super(context, ArchiveModel.class);
     }
 
     public Iterable<ArchiveModel> findAllRootArchives()
     {
         // iterate through all vertices
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getContext()
+        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getGraphContext()
                     .getGraph().query().has("type", Text.CONTAINS, getTypeValueForSearch()).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
@@ -45,7 +42,7 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveModel> implements Archive
                             return false;
                         }
                     });
-        return getContext().getFramed().frameVertices(pipeline, ArchiveModel.class);
+        return getGraphContext().getFramed().frameVertices(pipeline, ArchiveModel.class);
     }
 
     public boolean isArchiveResource(ResourceModel resource)
@@ -60,7 +57,7 @@ public class ArchiveDaoImpl extends BaseDaoImpl<ArchiveModel> implements Archive
                     .iterator();
         if (v.hasNext())
         {
-            return getContext().getFramed().frame(v.next(), ArchiveModel.class);
+            return getGraphContext().getFramed().frame(v.next(), ArchiveModel.class);
         }
 
         return null;

@@ -1,9 +1,16 @@
 package org.jboss.windup.rules.apps.java.service;
 
-import org.jboss.windup.graph.dao.BaseDao;
+import javax.inject.Inject;
+
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaParameterModel;
 
-public interface JavaParameterService extends BaseDao<JavaParameterModel>
+public class JavaParameterService extends GraphService<JavaParameterModel>
 {
-
+    @Inject
+    public JavaParameterService(GraphContext context)
+    {
+        super(context, JavaParameterModel.class);
+    }
 }

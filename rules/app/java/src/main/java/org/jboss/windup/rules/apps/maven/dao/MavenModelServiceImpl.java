@@ -2,27 +2,26 @@ package org.jboss.windup.rules.apps.maven.dao;
 
 import java.util.Iterator;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.windup.graph.dao.BaseDaoImpl;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.xml.XmlResourceModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 @Singleton
-public class MavenModelServiceImpl extends BaseDaoImpl<MavenProjectModel> implements MavenModelService
+public class MavenModelServiceImpl extends GraphService<MavenProjectModel> implements MavenModelService
 {
 
-    private static Logger LOG = LoggerFactory.getLogger(MavenModelServiceImpl.class);
-
-    public MavenModelServiceImpl()
+    @Inject
+    public MavenModelServiceImpl(GraphContext context)
     {
-        super(MavenProjectModel.class);
+        super(context, MavenProjectModel.class);
     }
 
     public MavenProjectModel createMaven(String groupId, String artifactId, String version)
@@ -43,8 +42,7 @@ public class MavenModelServiceImpl extends BaseDaoImpl<MavenProjectModel> implem
     public MavenProjectModel findByGroupArtifactVersion(String groupId, String artifactId, String version)
     {
         String key = generateMavenKey(groupId, artifactId, version);
-        MavenProjectModel facet = this.getByUniqueProperty("mavenIdentifier", key);
-
+        MavenProjectModel facet = this.getUniqueByProperty("mavenIdentifier", key);
         return facet;
     }
 
@@ -62,14 +60,16 @@ public class MavenModelServiceImpl extends BaseDaoImpl<MavenProjectModel> implem
     public MavenProjectModel getMavenConfigurationFromResource(XmlResourceModel resource)
     {
         @SuppressWarnings("unchecked")
-        Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
+        Iterator<Vertex> vertices = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
                     .in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet")
                     .iterator();
-        if (v.hasNext())
+        if (vertices.hasNext())
         {
-            return getContext().getFramed().frame(v.next(), this.getType());
+            Vertex vertex = vertices.next();
+            return frame(vertex);
         }
 
         return null;
     }
+
 }
