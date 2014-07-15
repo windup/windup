@@ -109,39 +109,45 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 subContext.put(Rule.class, rule);
 
                 event.selectionPush();
-                if (!rule.evaluate(event, subContext))
-                    continue;
-
-                if (!handleBindings(event, subContext, values))
-                    continue;
-
-                subContext.setState(RewriteState.PERFORMING);
-                log.debug("Rule [" + rule + "] matched and will be performed.");
-                // cacheable.add(rule);
-
-                List<Operation> preOperations = subContext.getPreOperations();
-                for (Operation preOperation : preOperations)
+                try
                 {
-                    preOperation.perform(event, subContext);
+                    if (!rule.evaluate(event, subContext))
+                        continue;
+
+                    if (!handleBindings(event, subContext, values))
+                        continue;
+
+                    subContext.setState(RewriteState.PERFORMING);
+                    log.debug("Rule [" + rule + "] matched and will be performed.");
+                    // cacheable.add(rule);
+
+                    List<Operation> preOperations = subContext.getPreOperations();
+                    for (Operation preOperation : preOperations)
+                    {
+                        preOperation.perform(event, subContext);
+                    }
+
+                    if (event.getFlow().isHandled())
+                        break;
+
+                    rule.perform(event, subContext);
+
+                    if (event.getFlow().isHandled())
+                        break;
+
+                    List<Operation> postOperations = subContext.getPostOperations();
+                    for (Operation postOperation : postOperations)
+                    {
+                        postOperation.perform(event, subContext);
+                    }
+
+                    if (event.getFlow().isHandled())
+                        break;
                 }
-
-                if (event.getFlow().isHandled())
-                    break;
-
-                rule.perform(event, subContext);
-
-                event.selectionPop();
-                if (event.getFlow().isHandled())
-                    break;
-
-                List<Operation> postOperations = subContext.getPostOperations();
-                for (Operation postOperation : postOperations)
+                finally
                 {
-                    postOperation.perform(event, subContext);
+                    event.selectionPop();
                 }
-
-                if (event.getFlow().isHandled())
-                    break;
             }
             catch (RuntimeException e)
             {

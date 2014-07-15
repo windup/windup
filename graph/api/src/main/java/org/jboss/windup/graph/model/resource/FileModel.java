@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.ProjectModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
@@ -18,11 +19,22 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface FileModel extends ResourceModel
 {
 
+    public static final String PROPERTY_FILE_NAME = "fileName";
     public static final String PROPERTY_FILE_PATH = "filePath";
     public static final String PROPERTY_IS_DIRECTORY = "isDirectory";
 
+    @Property(PROPERTY_FILE_NAME)
+    public String getFileName();
+
+    @Property(PROPERTY_FILE_NAME)
+    public void setFileName(String filename);
+
     @Property(PROPERTY_FILE_PATH)
     public String getFilePath();
+
+    // implemented via a handler that makes sure the isDirectory property is set as well
+    @JavaHandler
+    public void setFilePath(String filePath);
 
     @Property(PROPERTY_IS_DIRECTORY)
     public boolean isDirectory();
@@ -50,9 +62,11 @@ public interface FileModel extends ResourceModel
     @Adjacency(label = "archiveFiles", direction = Direction.IN)
     public void setParentArchive(ArchiveModel parentArchive);
 
-    // implemented via a handler that makes sure the isDirectory property is set as well
-    @JavaHandler
-    public void setFilePath(String filePath);
+    @Adjacency(label = "projectModel", direction = Direction.OUT)
+    public ProjectModel getProjectModel();
+
+    @Adjacency(label = "projectModel", direction = Direction.OUT)
+    public void setProjectModel(ProjectModel projectModel);
 
     @JavaHandler
     public File asFile() throws RuntimeException;
@@ -69,6 +83,7 @@ public interface FileModel extends ResourceModel
             // set the isDirectory attribute
             it().setProperty(PROPERTY_IS_DIRECTORY, file.isDirectory());
             it().setProperty(PROPERTY_FILE_PATH, filePath);
+            it().setProperty(PROPERTY_FILE_NAME, file.getName());
         }
 
         @Override

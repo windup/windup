@@ -16,6 +16,12 @@ public interface ArchiveModel extends WindupVertexFrame
     @Adjacency(label = "parentArchive", direction = Direction.IN)
     public void setParentArchive(ArchiveModel resource);
 
+    @Adjacency(label = "projectModel", direction = Direction.OUT)
+    public ProjectModel getProjectModel();
+
+    @Adjacency(label = "projectModel", direction = Direction.OUT)
+    public void setProjectModel(ProjectModel projectModel);
+
     @Property("archiveName")
     public String getArchiveName();
 

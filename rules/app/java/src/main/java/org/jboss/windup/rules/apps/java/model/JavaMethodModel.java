@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -10,9 +10,8 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("JavaMethod")
-public interface JavaMethodModel extends ResourceModel
+public interface JavaMethodModel extends WindupVertexFrame
 {
-
     @Adjacency(label = "javaMethod", direction = Direction.IN)
     public JavaClassModel getJavaClass();
 

@@ -1,5 +1,7 @@
 package org.jboss.windup.graph.service;
 
+import javax.inject.Inject;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -9,6 +11,7 @@ import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
 public class FileModelServiceImpl extends GraphService<FileModel> implements FileModelService
 {
+    @Inject
     public FileModelServiceImpl(GraphContext context)
     {
         super(context, FileModel.class);
@@ -16,7 +19,7 @@ public class FileModelServiceImpl extends GraphService<FileModel> implements Fil
 
     public FileModel createByFilePath(String filePath)
     {
-        FileModel entry = getUniqueByProperty("filePath", filePath);
+        FileModel entry = findByPath(filePath);
 
         if (entry == null)
         {
@@ -26,6 +29,12 @@ public class FileModelServiceImpl extends GraphService<FileModel> implements Fil
         }
 
         return entry;
+    }
+
+    @Override
+    public FileModel findByPath(String filePath)
+    {
+        return getUniqueByProperty(FileModel.PROPERTY_FILE_PATH, filePath);
     }
 
     public Iterable<FileModel> findArchiveEntryWithExtension(String... values)

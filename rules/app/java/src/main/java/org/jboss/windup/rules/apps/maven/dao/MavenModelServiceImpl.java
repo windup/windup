@@ -17,24 +17,19 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 @Singleton
 public class MavenModelServiceImpl extends GraphService<MavenProjectModel> implements MavenModelService
 {
-
     @Inject
     public MavenModelServiceImpl(GraphContext context)
     {
         super(context, MavenProjectModel.class);
     }
 
-    public MavenProjectModel createMaven(String groupId, String artifactId, String version)
+    public MavenProjectModel createMavenStub(String groupId, String artifactId, String version)
     {
-        MavenProjectModel facet = findByGroupArtifactVersion(groupId, artifactId, version);
-        if (facet == null)
-        {
-            facet = create();
-            facet.setMavenIdentifier(generateMavenKey(groupId, artifactId, version));
-            facet.setGroupId(groupId);
-            facet.setArtifactId(artifactId);
-            facet.setVersion(version);
-        }
+        MavenProjectModel facet = create();
+        facet.setMavenIdentifier(generateMavenKey(groupId, artifactId, version));
+        facet.setGroupId(groupId);
+        facet.setArtifactId(artifactId);
+        facet.setVersion(version);
 
         return facet;
     }
@@ -42,7 +37,8 @@ public class MavenModelServiceImpl extends GraphService<MavenProjectModel> imple
     public MavenProjectModel findByGroupArtifactVersion(String groupId, String artifactId, String version)
     {
         String key = generateMavenKey(groupId, artifactId, version);
-        MavenProjectModel facet = this.getUniqueByProperty("mavenIdentifier", key);
+        MavenProjectModel facet = this.getUniqueByProperty(MavenProjectModel.PROPERTY_MAVEN_IDENTIFIER, key);
+
         return facet;
     }
 
@@ -60,13 +56,12 @@ public class MavenModelServiceImpl extends GraphService<MavenProjectModel> imple
     public MavenProjectModel getMavenConfigurationFromResource(XmlResourceModel resource)
     {
         @SuppressWarnings("unchecked")
-        Iterator<Vertex> vertices = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
+        Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
                     .in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet")
                     .iterator();
-        if (vertices.hasNext())
+        if (v.hasNext())
         {
-            Vertex vertex = vertices.next();
-            return frame(vertex);
+            return getGraphContext().getFramed().frame(v.next(), this.getType());
         }
 
         return null;

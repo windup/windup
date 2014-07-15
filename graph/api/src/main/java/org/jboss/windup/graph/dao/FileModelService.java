@@ -7,5 +7,7 @@ public interface FileModelService extends Service<FileModel>
 {
     public FileModel createByFilePath(String filePath);
 
+    public FileModel findByPath(String filePath);
+
     public Iterable<FileModel> findArchiveEntryWithExtension(String... values);
 }

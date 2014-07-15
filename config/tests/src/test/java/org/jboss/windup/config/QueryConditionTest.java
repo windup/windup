@@ -14,12 +14,12 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.model.SomeModel;
+import org.jboss.windup.config.model.XmlMetaFacetModel;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
-import org.jboss.windup.rules.apps.xml.XmlMetaFacetModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +46,7 @@ public class QueryConditionTest
                                 XmlExampleRuleProvider1.class,
                                 XmlExampleRuleProvider2.class,
                                 XmlExampleRuleProvider3.class,
+                                XmlMetaFacetModel.class,
                                 SomeModel.class,
                                 WindupConfigurationExampleRuleProvider.class)
                     .addAsAddonDependencies(
