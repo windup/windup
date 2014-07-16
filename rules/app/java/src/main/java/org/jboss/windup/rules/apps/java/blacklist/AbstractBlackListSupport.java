@@ -58,7 +58,6 @@ public abstract class AbstractBlackListSupport implements ASTEventEvaluator
         blackListModel.setFileModel(event.getFileModel());
         blackListModel.setHint(getHint());
         blackListModel.setEffort(effort);
-        blackListModel.setQualifiedName(event.getClassCandidate().getQualifiedName());
         blackListModel.setRuleID(getRuleID());
         blackListModel.setLineNumber(classCandidate.getLineNumber());
         blackListModel.setStartPosition(classCandidate.getStartPosition());

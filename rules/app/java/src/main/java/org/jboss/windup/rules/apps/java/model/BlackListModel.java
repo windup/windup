@@ -24,11 +24,11 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @TypeValue("BlackListModel")
 public interface BlackListModel extends WindupVertexFrame
 {
+    public static final String LABEL_FILE_MODEL = "fileModel";
     public static final String PROPERTY_HINT = "hint";
     public static final String PROPERTY_LINE_NUMBER = "lineNumber";
     public static final String PROPERTY_LENGTH = "length";
     public static final String PROPERTY_START_POSITION = "startPosition";
-    public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
     public static final String PROPERTY_RULE_ID = "ruleID";
     public static final String PROPERTY_CLASS_CANDIDATE_TYPE = "candidateType";
     public static final String PROPERTY_EFFORT = "effort";
@@ -39,10 +39,10 @@ public interface BlackListModel extends WindupVertexFrame
      * 
      * @param fileModel
      */
-    @Adjacency(label = "fileModel", direction = Direction.OUT)
+    @Adjacency(label = LABEL_FILE_MODEL, direction = Direction.OUT)
     public void setFileModel(FileModel fileModel);
 
-    @Adjacency(label = "fileModel", direction = Direction.OUT)
+    @Adjacency(label = LABEL_FILE_MODEL, direction = Direction.OUT)
     public FileModel getFileModel();
 
     /**
@@ -77,29 +77,6 @@ public interface BlackListModel extends WindupVertexFrame
 
     @Property(PROPERTY_RULE_ID)
     public String getRuleID();
-
-    /**
-     * Sets the Qualified name of the entity being referenced (fully qualified classname in the case of a Java blacklist
-     * entry)
-     * 
-     * @param qualifiedName
-     */
-    @Property(PROPERTY_QUALIFIED_NAME)
-    public void setQualifiedName(String qualifiedName);
-
-    @Property(PROPERTY_QUALIFIED_NAME)
-    public String getQualifiedName();
-
-    /**
-     * Sets the JavaClassModel referenced by this blacklist entry. This could be null if none were found.
-     * 
-     * @param javaClassModel
-     */
-    @Adjacency(label = "referencedJavaClassModel", direction = Direction.OUT)
-    public void setReferencedJavaClassModel(JavaClassModel javaClassModel);
-
-    @Adjacency(label = "referencedJavaClassModel", direction = Direction.OUT)
-    public JavaClassModel getReferencedJavaClassModel();
 
     /**
      * Sets the Line number position for this entry within the file
