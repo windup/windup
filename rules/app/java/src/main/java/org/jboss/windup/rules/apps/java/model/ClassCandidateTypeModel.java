@@ -5,6 +5,10 @@ import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 
 import com.tinkerpop.frames.Property;
 
+/**
+ * Class used to define multiple {@link ClassCandidateType}'s for one vertex (since List<CandidateType> cannot be put into properties)
+ * 
+ */
 public interface ClassCandidateTypeModel extends WindupVertexFrame
 {
 

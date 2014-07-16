@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.config;
+package org.jboss.windup.rules.apps.legacy.java;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -7,7 +7,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
 import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
 import org.jboss.windup.rules.apps.java.blacklist.Link;
-import org.jboss.windup.rules.apps.java.blacklist.ModelCreatorGraphOperation;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 import org.ocpsoft.rewrite.config.Configuration;

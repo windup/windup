@@ -26,6 +26,11 @@ public class WhiteListItem implements ASTEventEvaluator
         this.regexPattern = Pattern.compile(regex);
         this.classCandidateTypes=types;
     }
+    
+    public WhiteListItem(String ruleID,String regex) {
+        this(ruleID,regex,null);
+    }
+    
     @Override
     public void evaluateASTEvent(JavaScannerASTEvent event)
     {
