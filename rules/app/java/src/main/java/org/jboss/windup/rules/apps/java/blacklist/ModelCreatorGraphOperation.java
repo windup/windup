@@ -27,6 +27,11 @@ public class ModelCreatorGraphOperation extends GraphOperation
         return this;
     }
     
+    public ModelCreatorGraphOperation add(List<? extends ASTEventEvaluator> interests) {
+        this.interests.addAll(interests);
+        return this;
+    }
+    
     @Override
     public void perform(GraphRewrite event, EvaluationContext context)
     {

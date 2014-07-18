@@ -41,8 +41,7 @@ public class JavaClassification implements ASTEventEvaluator
         this.links=links;
         this.effort=effort;
     }
-
-
+    
     String getRuleID()
     {
         return ruleID;

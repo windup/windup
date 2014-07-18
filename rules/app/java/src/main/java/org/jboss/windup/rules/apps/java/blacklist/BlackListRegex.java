@@ -24,6 +24,11 @@ public class BlackListRegex extends AbstractBlackListSupport
         super(hint, ruleID, effort, types);
         this.regexPattern = Pattern.compile(regex);
     }
+    
+    public BlackListRegex(String ruleID, String hint, String regex, int effort)
+    {
+        this(ruleID,hint,regex,effort,null);
+    }
 
     @Override
     public void evaluateASTEvent(JavaScannerASTEvent event)
