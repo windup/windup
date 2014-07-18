@@ -1,8 +1,8 @@
 package org.jboss.windup.rules.apps.java.blacklist;
 
-import javax.inject.Inject;
-
 import groovy.lang.Closure;
+
+import javax.inject.Inject;
 
 import org.jboss.windup.ext.groovy.GroovyConfigMethod;
 import org.jboss.windup.ext.java.events.JavaASTEventService;
@@ -32,7 +32,7 @@ public class GroovyBlackListMethod implements GroovyConfigMethod
                 String ruleID = (String) args[0];
                 String regexPattern = (String) args[1];
                 String hint = (String) args[2];
-                BlackListRegex blackListSupportRegex = new BlackListRegex(ruleID, regexPattern, hint,0,null);
+                BlackListRegex blackListSupportRegex = new BlackListRegex(ruleID, hint, regexPattern, 0, null);
                 dslSupport.registerInterest(blackListSupportRegex);
                 return null;
             }

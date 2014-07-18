@@ -9,8 +9,8 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.model.JavaFileModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.OperationBuilder;
@@ -41,8 +41,8 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
                     simpleName = simpleName.substring(packageName.length() + 1);
                 }
 
-                JavaFileModel classFileModel = GraphService.addTypeToModel(event.getGraphContext(),
-                            payload, JavaFileModel.class);
+                JavaClassFileModel classFileModel = GraphService.addTypeToModel(event.getGraphContext(),
+                            payload, JavaClassFileModel.class);
 
                 classFileModel.setPackageName(packageName);
 
@@ -68,7 +68,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
                 if (Strings.isNullOrEmpty(superclassName))
                     javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
 
-                classFileModel.addJavaClass(javaClassModel);
+                classFileModel.setJavaClass(javaClassModel);
             }
         }
         catch (Exception e)

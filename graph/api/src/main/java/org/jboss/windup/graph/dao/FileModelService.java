@@ -1,5 +1,7 @@
 package org.jboss.windup.graph.dao;
 
+import java.nio.file.Paths;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -21,12 +23,20 @@ public class FileModelService extends GraphService<FileModel>
 
     public FileModel createByFilePath(String filePath)
     {
-        FileModel entry = findByPath(filePath);
+        return createByFilePath(null, filePath);
+    }
+
+    public FileModel createByFilePath(FileModel parentFile, String filePath)
+    {
+        // always search by absolute path
+        String absolutePath = Paths.get(filePath).toAbsolutePath().toString();
+        FileModel entry = findByPath(absolutePath);
 
         if (entry == null)
         {
             entry = this.create();
-            entry.setFilePath(filePath);
+            entry.setFilePath(absolutePath);
+            entry.setParentFile(parentFile);
             getGraphContext().getGraph().commit();
         }
 
@@ -35,6 +45,8 @@ public class FileModelService extends GraphService<FileModel>
 
     public FileModel findByPath(String filePath)
     {
+        // make the path absolute (as we only store absolute paths)
+        filePath = Paths.get(filePath).toAbsolutePath().toString();
         return getUniqueByProperty(FileModel.PROPERTY_FILE_PATH, filePath);
     }
 

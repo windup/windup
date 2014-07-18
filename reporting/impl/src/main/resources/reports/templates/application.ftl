@@ -5,17 +5,17 @@
 	<span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
 </#macro>
 
-<#macro resourceRenderer resource>
-	<tr><td>${resource.resourceName}</td>
+<#macro fileModelRenderer fileModel>
+	<tr><td>${fileModel.prettyPathWithinProject}</td>
 		<td>
-			<#list resource.technologyTags as tag>
+			<#-- <#list resource.technologyTags as tag>
 		    <@tagRenderer tag>${tag.title}</@tagRenderer>
-		    </#list>
+		    </#list> -->
 		</td>
 		<td>
-			<#list resource.issueTags as tag>
+			<#-- <#list resource.issueTags as tag>
 		    <@tagRenderer tag>${tag.title}</@tagRenderer>
-		    </#list>
+		    </#list> -->
 		</td>
 	</tr>
 </#macro>
@@ -69,18 +69,18 @@
 
     <div class="container theme-showcase" role="main">
 
-	<#list applicationReport.childReports.iterator() as childReport>
+	<#list applicationReport.projectModels.iterator() as projectModel>
 	<div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">${childReport.reportName}</h3>
+            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
         </div>
         <table class="table table-striped table-bordered">
           <tr>
             <th>Name</th><th>Technology</th><th>Issues</th>
           </tr>
-<#--          <#list archive.resources as resource>
-			<@resourceRenderer resource/>
-          </#list> -->
+          <#list projectModel.fileModelsNoDirectories.iterator() as fileModel>
+			       <@fileModelRenderer fileModel/>
+          </#list>
         </table>
     </div>
     </#list>

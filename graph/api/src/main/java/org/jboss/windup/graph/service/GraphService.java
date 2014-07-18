@@ -80,7 +80,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     public Iterable<T> findAll()
     {
         FramedGraphQuery query = context.getFramed().query();
-        query.has(WindupVertexFrame.PROPERTY_TYPE_FIELD, Text.CONTAINS, type.getAnnotation(TypeValue.class).value());
+        query.has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, type.getAnnotation(TypeValue.class).value());
         return (Iterable<T>) query.vertices(type);
     }
 

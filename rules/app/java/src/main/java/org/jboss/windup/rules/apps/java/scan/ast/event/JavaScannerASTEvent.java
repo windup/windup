@@ -12,7 +12,6 @@ public class JavaScannerASTEvent
 
     public JavaScannerASTEvent(GraphContext context, FileModel fileModel, ClassCandidate classCandidate)
     {
-        super();
         this.context = context;
         this.fileModel = fileModel;
         this.classCandidate = classCandidate;

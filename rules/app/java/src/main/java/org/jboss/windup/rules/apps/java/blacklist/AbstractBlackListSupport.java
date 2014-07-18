@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.blacklist;
 
-import org.jboss.windup.rules.apps.java.model.BlackListModel;
+import org.jboss.windup.rules.apps.java.model.JavaBlackListModel;
 import org.jboss.windup.rules.apps.java.model.ClassCandidateTypeModel;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidate;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
@@ -25,8 +25,9 @@ public abstract class AbstractBlackListSupport implements ASTEventEvaluator
         this.effort = effort;
         this.candidateTypes = types;
     }
-    
-    public Types getCandidateTypes() {
+
+    public Types getCandidateTypes()
+    {
         return candidateTypes;
     }
 
@@ -45,15 +46,19 @@ public abstract class AbstractBlackListSupport implements ASTEventEvaluator
         return effort;
     }
 
-    protected BlackListModel createBlackListModel(JavaScannerASTEvent event)
+    protected JavaBlackListModel createBlackListModel(JavaScannerASTEvent event)
     {
         ClassCandidate classCandidate = event.getClassCandidate();
-        BlackListModel blackListModel = event.getContext().getFramed().addVertex(null, BlackListModel.class);
-        for(ClassCandidateType type: candidateTypes) {
-            ClassCandidateTypeModel classCandidateModel = event.getContext().getFramed().addVertex(null,
-                        ClassCandidateTypeModel.class);
-            classCandidateModel.setClassCandidateType(type);
-            blackListModel.addClassCandidateType(classCandidateModel);
+        JavaBlackListModel blackListModel = event.getContext().getFramed().addVertex(null, JavaBlackListModel.class);
+        if (candidateTypes != null)
+        {
+            for (ClassCandidateType type : candidateTypes)
+            {
+                ClassCandidateTypeModel classCandidateModel = event.getContext().getFramed().addVertex(null,
+                            ClassCandidateTypeModel.class);
+                classCandidateModel.setClassCandidateType(type);
+                blackListModel.addClassCandidateType(classCandidateModel);
+            }
         }
         blackListModel.setFileModel(event.getFileModel());
         blackListModel.setHint(getHint());

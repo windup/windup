@@ -66,6 +66,7 @@ public class WindupArchitectureSourceModeTest
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windupreport");
+        FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
         windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());

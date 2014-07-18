@@ -23,6 +23,15 @@ public interface MavenProjectModel extends ProjectModel
     public static final String PROPERTY_SPECIFICATION_VERSION = "specificationVersion";
     public static final String PROPERTY_MAVEN_IDENTIFIER = "mavenIdentifier";
 
+    @Adjacency(label = "parentMavenPOM", direction = Direction.OUT)
+    public MavenProjectModel getParentMavenPOM();
+
+    @Adjacency(label = "parentMavenPOM", direction = Direction.OUT)
+    public void setParentMavenPOM(MavenProjectModel parentMavenProject);
+
+    @Adjacency(label = "parentMavenPOM", direction = Direction.IN)
+    public Iterable<MavenProjectModel> getMavenChildProjects();
+
     @Adjacency(label = "mavenPom", direction = Direction.OUT)
     public Iterable<XmlResourceModel> getMavenPom();
 

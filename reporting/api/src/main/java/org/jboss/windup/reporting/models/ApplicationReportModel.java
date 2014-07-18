@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.models;
 
+import org.jboss.windup.graph.model.ProjectModel;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
@@ -31,10 +33,16 @@ public interface ApplicationReportModel extends ReportModel
      * 
      * @return
      */
-    @Adjacency(label = "applicationNote", direction = Direction.OUT)
+    @Adjacency(label = "reportToApplicationNote", direction = Direction.OUT)
     public Iterable<String> getApplicationNotes();
 
-    @Adjacency(label = "applicationNote", direction = Direction.OUT)
+    @Adjacency(label = "reportToApplicationNote", direction = Direction.OUT)
     public void addApplicationNote(String applicationNote);
+
+    @Adjacency(label = "reportToProjectModel", direction = Direction.OUT)
+    public Iterable<ProjectModel> getProjectModels();
+
+    @Adjacency(label = "reportToProjectModel", direction = Direction.OUT)
+    public void addProjectModel(ProjectModel projectModel);
 
 }

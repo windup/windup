@@ -76,21 +76,43 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             public void perform(GraphRewrite event, EvaluationContext context, XmlResourceModel payload)
             {
                 GraphContext graphContext = event.getGraphContext();
-                MavenProjectModel mavenProjectModel = addMavenInformation(graphContext, payload);
+                MavenProjectModel mavenProjectModel = extractMavenProjectModel(graphContext, payload);
                 if (mavenProjectModel != null)
                 {
                     ArchiveModel archiveModel = payload.getParentArchive();
                     if (archiveModel != null)
                     {
                         archiveModel.setProjectModel(mavenProjectModel);
+
+                        mavenProjectModel.setRootFileModel(archiveModel);
+
+                        // Attach the project to all files within the archive
+                        for (FileModel f : archiveModel.getContainedFileModels())
+                        {
+                            if (f.getProjectModel() == null)
+                            {
+                                // only set it if it has not already been set
+                                f.setProjectModel(mavenProjectModel);
+                                mavenProjectModel.addFileModel(f);
+                            }
+                        }
                     }
                     else
                     {
+                        // add the parent file
                         File parentFile = payload.asFile().getParentFile();
-                        FileModel parentModel = fileModelService.findByPath(parentFile.getAbsolutePath());
-                        if (parentModel != null)
+                        FileModel parentFileModel = fileModelService.findByPath(parentFile.getAbsolutePath());
+                        if (parentFileModel != null)
                         {
-                            parentModel.setProjectModel(mavenProjectModel);
+                            parentFileModel.setProjectModel(mavenProjectModel);
+                            mavenProjectModel.addFileModel(parentFileModel);
+                            mavenProjectModel.setRootFileModel(parentFileModel);
+
+                            // now add all child folders that do not contain pom files
+                            for (FileModel childFile : parentFileModel.getContainedFiles())
+                            {
+                                addFilesToModel(mavenProjectModel, childFile);
+                            }
                         }
                     }
                 }
@@ -106,8 +128,34 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                     );
     }
 
-    public MavenProjectModel addMavenInformation(GraphContext context, XmlResourceModel xmlResourceModel)
+    private void addFilesToModel(MavenProjectModel mavenProjectModel, FileModel fileModel)
     {
+        String filePath = fileModel.getFilePath();
+        // First, make sure we aren't looking at a separate module (we assume that if a pom.xml is in the folder,
+        // it is a separate module)
+        for (FileModel childFile : fileModel.getContainedFiles())
+        {
+            String filename = childFile.getFileName();
+            if (filename.equals("pom.xml"))
+            {
+                // this is a new project (submodule) -- break;
+                return;
+            }
+        }
+
+        fileModel.setProjectModel(mavenProjectModel);
+        mavenProjectModel.addFileModel(fileModel);
+
+        // now recursively all files to the project
+        for (FileModel childFile : fileModel.getContainedFiles())
+        {
+            addFilesToModel(mavenProjectModel, childFile);
+        }
+    }
+
+    public MavenProjectModel extractMavenProjectModel(GraphContext context, XmlResourceModel xmlResourceModel)
+    {
+        File myFile = xmlResourceModel.asFile();
         Document document = xmlResourceModel.asDocument();
 
         // modelVersion
@@ -144,7 +192,6 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
         else
         {
             // make sure we are associated as a file that provides this maven project information
-            File myFile = xmlResourceModel.asFile();
             boolean found = false;
             for (XmlResourceModel foundPom : mavenProjectModel.getMavenPom())
             {
@@ -164,14 +211,8 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             }
         }
 
-        if (StringUtils.isNotBlank(name))
-        {
-            mavenProjectModel.setName(StringUtils.trim(name));
-        }
-        else
-        {
-            mavenProjectModel.setName(StringUtils.trim(artifactId));
-        }
+        mavenProjectModel.setName(getReadableNameForProject(name, groupId, artifactId, version));
+
         if (StringUtils.isNotBlank(description))
         {
             mavenProjectModel.setDescription(StringUtils.trim(description));
@@ -197,10 +238,11 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             if (parent == null)
             {
                 parent = mavenModelService.createMavenStub(parentGroupId, parentArtifactId, parentVersion);
-                parent.setName(parentArtifactId);
+                parent.setName(getReadableNameForProject(null, parentGroupId, parentArtifactId,
+                            parentVersion));
             }
 
-            mavenProjectModel.setParent(parent);
+            mavenProjectModel.setParentMavenPOM(parent);
         }
 
         NodeList nodes = XmlUtil
@@ -210,7 +252,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             Node node = nodes.item(i);
             String dependencyGroupId = XmlUtil.xpathExtract(node, "./pom:groupId", namespaces);
             String dependencyArtifactId = XmlUtil.xpathExtract(node, "./pom:artifactId", namespaces);
-            String dependencyVersionId = XmlUtil.xpathExtract(node, "./pom:version", namespaces);
+            String dependencyVersion = XmlUtil.xpathExtract(node, "./pom:version", namespaces);
 
             String dependencyClassifier = XmlUtil.xpathExtract(node, "./pom:classifier", namespaces);
             String dependencyScope = XmlUtil.xpathExtract(node, "./pom:scope", namespaces);
@@ -218,17 +260,18 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
 
             dependencyGroupId = resolveProperty(document, namespaces, dependencyGroupId, version);
             dependencyArtifactId = resolveProperty(document, namespaces, dependencyArtifactId, version);
-            dependencyVersionId = resolveProperty(document, namespaces, dependencyVersionId, version);
+            dependencyVersion = resolveProperty(document, namespaces, dependencyVersion, version);
 
             if (StringUtils.isNotBlank(dependencyGroupId))
             {
                 MavenProjectModel dependency = mavenModelService.findByGroupArtifactVersion(dependencyGroupId,
-                            dependencyArtifactId, dependencyVersionId);
+                            dependencyArtifactId, dependencyVersion);
                 if (dependency == null)
                 {
                     dependency = mavenModelService.createMavenStub(dependencyGroupId, dependencyArtifactId,
-                                dependencyVersionId);
-                    dependency.setName(dependencyArtifactId);
+                                dependencyVersion);
+                    dependency.setName(getReadableNameForProject(null, dependencyGroupId, dependencyArtifactId,
+                                dependencyVersion));
                 }
                 ProjectDependency projectDep = context.getFramed().addVertex(null, ProjectDependency.class);
                 projectDep.setClassifier(dependencyClassifier);
@@ -239,6 +282,25 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             }
         }
         return mavenProjectModel;
+    }
+
+    private String getReadableNameForProject(String mavenName, String groupId, String artifactId, String version)
+    {
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotBlank(mavenName))
+        {
+            sb.append(mavenName);
+            sb.append(" (");
+        }
+
+        sb.append(groupId).append(":").append(artifactId).append(":").append(version);
+
+        if (StringUtils.isNotBlank(mavenName))
+        {
+            sb.append(")");
+        }
+
+        return sb.toString();
     }
 
     private String resolveProperty(Document document, Map<String, String> namespaces, String property,

@@ -5,6 +5,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -22,18 +23,18 @@ public interface ProjectModel extends WindupVertexFrame
     public static final String PROPERTY_DESCRIPTION = "description";
     public static final String PROPERTY_NAME = "name";
     public static final String PROPERTY_VERSION = "version";
-    public static final String PROPERTY_PROJECT_LOCATION = "projectLocation";
     public static final String PROPERTY_PROJECT_TYPE = "projectType";
 
     /**
-     * The file (or folder) reference of this project on disk
+     * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis)
+     * containing this particular project.
      * 
      */
-    @Property(PROPERTY_PROJECT_LOCATION)
-    void setFileModel(FileModel fm);
+    @Adjacency(label = "rootFileModel", direction = Direction.OUT)
+    public void setRootFileModel(FileModel fileModel);
 
-    @Property(PROPERTY_PROJECT_LOCATION)
-    FileModel getFileModel();
+    @Adjacency(label = "rootFileModel", direction = Direction.OUT)
+    public FileModel getRootFileModel();
 
     /**
      * Indicates whether or not this is a source-based project (eg, the project provided by the user for analysis), or a
@@ -78,22 +79,20 @@ public interface ProjectModel extends WindupVertexFrame
      * The parent ProjectModel, or null if no parent is present
      * 
      */
-    @Adjacency(label = "module", direction = Direction.IN)
-    public void setParent(ProjectModel maven);
+    @Adjacency(label = "parentProject", direction = Direction.OUT)
+    public void setParentProject(ProjectModel maven);
 
-    @Adjacency(label = "module", direction = Direction.IN)
-    public ProjectModel getParent();
+    @Adjacency(label = "parentProject", direction = Direction.OUT)
+    public ProjectModel getParentProject();
 
     /**
      * A list of child projects
-     * 
-     * @param maven
      */
-    @Adjacency(label = "module", direction = Direction.OUT)
-    public void addChildModule(ProjectModel maven);
+    @Adjacency(label = "parentProject", direction = Direction.IN)
+    public void addChildProject(ProjectModel maven);
 
-    @Adjacency(label = "module", direction = Direction.OUT)
-    public Iterable<ProjectModel> getChildModules();
+    @Adjacency(label = "parentProject", direction = Direction.IN)
+    public Iterable<ProjectModel> getChildProjects();
 
     /**
      * Project dependencies, as well as metadata about those deps.
@@ -103,4 +102,16 @@ public interface ProjectModel extends WindupVertexFrame
 
     @Adjacency(label = "dependency", direction = Direction.OUT)
     public Iterable<ProjectDependency> getDependencies();
+
+    @Adjacency(label = "projectModelToFile", direction = Direction.OUT)
+    public Iterable<FileModel> getFileModels();
+
+    @Adjacency(label = "projectModelToFile", direction = Direction.OUT)
+    public void addFileModel(FileModel fileModel);
+
+    /**
+     * Gets all contained files that are not directories
+     */
+    @GremlinGroovy("it.out('projectModelToFile').has('isDirectory', false)")
+    public Iterable<FileModel> getFileModelsNoDirectories();
 }
