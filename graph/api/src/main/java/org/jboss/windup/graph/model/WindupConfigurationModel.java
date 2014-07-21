@@ -1,6 +1,5 @@
 package org.jboss.windup.graph.model;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -80,14 +79,14 @@ public interface WindupConfigurationModel extends WindupVertexFrame
         public void setInputPath(String inputPath)
         {
             FileModel fileModel = this.g().addVertex(null, FileModel.class);
-            fileModel.setFilePath(new File(inputPath).getAbsolutePath());
+            fileModel.setFilePath(inputPath);
             setInputPath(fileModel);
         }
 
-        public void setOutputPath(String inputPath)
+        public void setOutputPath(String outputPath)
         {
             FileModel fileModel = this.g().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputPath);
+            fileModel.setFilePath(outputPath);
             setOutputPath(fileModel);
         }
 

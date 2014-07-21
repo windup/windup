@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.model;
+package org.jboss.windup.graph.model;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -7,8 +7,9 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * Model saves an additional links for the {@link BlackListModel}.
  */
 @TypeValue("LinkDecoratorModel")
-public interface LinkDecoratorModel {
-    
+public interface LinkDecoratorModel extends WindupVertexFrame
+{
+
     public static final String PROPERTY_LINK = "link";
     public static final String PROPERTY_DESCRIPTION = "description";
 
@@ -17,11 +18,13 @@ public interface LinkDecoratorModel {
      */
     @Property(PROPERTY_DESCRIPTION)
     public void setDescription(String description);
+
     @Property(PROPERTY_DESCRIPTION)
     public String getDescription();
-    
+
     @Property(PROPERTY_LINK)
     public void setLink(String link);
+
     @Property(PROPERTY_LINK)
     public String getLink();
 

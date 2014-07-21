@@ -7,11 +7,8 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-/**
- * This is good for searches for Java files, which will be frequent.
- */
-@TypeValue("JavaFile")
-public interface JavaFileModel extends FileModel
+@TypeValue("JavaSourceFileModel")
+public interface JavaSourceFileModel extends FileModel
 {
     public static final String PROPERTY_PACKAGE_NAME = "packageName";
 
@@ -26,5 +23,4 @@ public interface JavaFileModel extends FileModel
 
     @Adjacency(label = "javaClass", direction = Direction.OUT)
     public void addJavaClass(JavaClassModel javaClassModel);
-
 }

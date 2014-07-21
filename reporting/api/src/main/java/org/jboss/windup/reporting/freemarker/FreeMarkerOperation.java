@@ -14,9 +14,11 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.meta.WindupVertexListModel;
 import org.jboss.windup.reporting.models.ReportModel;
 import org.jboss.windup.reporting.models.TemplateType;
 import org.jboss.windup.util.exception.WindupException;
@@ -101,7 +103,7 @@ public class FreeMarkerOperation extends GraphOperation
                 reportModel.setReportName(reportName);
             }
 
-            addAssociatedReportData(reportModel, objects);
+            addAssociatedReportData(event.getGraphContext(), reportModel, objects);
         }
         catch (IOException e)
         {
@@ -114,21 +116,24 @@ public class FreeMarkerOperation extends GraphOperation
     }
 
     @SuppressWarnings("unchecked")
-    private void addAssociatedReportData(ReportModel reportModel, Map<String, Object> reportData)
+    private void addAssociatedReportData(GraphContext context, ReportModel reportModel, Map<String, Object> reportData)
     {
+        Map<String, WindupVertexFrame> relatedResources = new HashMap<>();
         for (Map.Entry<String, Object> varEntry : reportData.entrySet())
         {
             Object value = varEntry.getValue();
             if (value instanceof WindupVertexFrame)
             {
-                reportModel.addRelatedResource((WindupVertexFrame) value);
+                relatedResources.put(varEntry.getKey(), (WindupVertexFrame) varEntry.getValue());
             }
             else if (value instanceof Iterable)
             {
+                WindupVertexListModel list = context.getFramed().addVertex(null, WindupVertexListModel.class);
                 for (WindupVertexFrame frame : (Iterable<? extends WindupVertexFrame>) value)
                 {
-                    reportModel.addRelatedResource(frame);
+                    list.addItem(frame);
                 }
+                relatedResources.put(varEntry.getKey(), list);
             }
             else
             {

@@ -75,16 +75,16 @@ public interface JavaClassModel extends WindupVertexFrame
     public Iterable<JarArchiveModel> providedBy();
 
     @Adjacency(label = "decompiledSource", direction = Direction.OUT)
-    public void setDecompiledSource(FileModel source);
+    public void setDecompiledSource(JavaSourceFileModel source);
 
     @Adjacency(label = "decompiledSource", direction = Direction.OUT)
-    public FileModel getDecompiledSource();
+    public JavaSourceFileModel getDecompiledSource();
 
     @Adjacency(label = "javaClass", direction = Direction.OUT)
-    public void setOriginalSource(JavaFileModel source);
+    public void setOriginalSource(JavaSourceFileModel source);
 
     @Adjacency(label = "javaClass", direction = Direction.OUT)
-    public JavaFileModel getOriginalSource();
+    public JavaSourceFileModel getOriginalSource();
 
     @Adjacency(label = "classFile", direction = Direction.OUT)
     public FileModel getClassFile();

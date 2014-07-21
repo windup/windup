@@ -48,7 +48,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
 
     private File getRunDirectory()
     {
-        return new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
+        return new File(FileUtils.getTempDirectory(), "windupgraph_" + UUID.randomUUID().toString());
     }
 
 }

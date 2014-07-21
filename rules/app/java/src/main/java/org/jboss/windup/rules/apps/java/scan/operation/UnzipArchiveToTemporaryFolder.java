@@ -2,15 +2,14 @@ package org.jboss.windup.rules.apps.java.scan.operation;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.ApplicationArchiveModel;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -40,42 +39,34 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
-        if (payload instanceof FileModel)
+        File zipFile = payload.asFile();
+
+        if (!zipFile.isFile())
         {
-            FileModel fileResourceModel = (FileModel) payload;
-            File zipFile = fileResourceModel.asFile();
-
-            if (!zipFile.isFile())
-            {
-                throw new WindupException("Input file \"" + zipFile.getAbsolutePath() + "\" does not exist.");
-            }
-
-            // create a temp folder for all archive contents
-            Path windupTempFolder = event.getWindupTemporaryFolder();
-            Path windupTempUnzippedArchiveFolder = Paths.get(windupTempFolder.toString(), "archives");
-            if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
-            {
-                try
-                {
-                    Files.createDirectories(windupTempUnzippedArchiveFolder);
-                }
-                catch (IOException e)
-                {
-                    throw new WindupException("Failed to create temporary folder: " + windupTempUnzippedArchiveFolder
-                                + " due to: " + e.getMessage(), e);
-                }
-            }
-
-            unzipToTempDirectory(event, windupTempUnzippedArchiveFolder, zipFile, payload);
+            throw new WindupException("Input file \"" + zipFile.getAbsolutePath() + "\" does not exist.");
         }
+
+        // create a temp folder for all archive contents
+        Path windupTempFolder = event.getWindupTemporaryFolder();
+        Path windupTempUnzippedArchiveFolder = Paths.get(windupTempFolder.toString(), "archives");
+        if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
+        {
+            try
+            {
+                Files.createDirectories(windupTempUnzippedArchiveFolder);
+            }
+            catch (IOException e)
+            {
+                throw new WindupException("Failed to create temporary folder: " + windupTempUnzippedArchiveFolder
+                            + " due to: " + e.getMessage(), e);
+            }
+        }
+
+        unzipToTempDirectory(event.getGraphContext(), windupTempUnzippedArchiveFolder, zipFile, payload);
     }
 
-    private void unzipToTempDirectory(final GraphRewrite event, final Path tempFolder,
-                final File inputZipFile,
-                final ArchiveModel archiveModel)
+    private Path getAppArchiveFolder(Path tempFolder, String appArchiveName)
     {
-        // Setup a temp folder for the archive
-        String appArchiveName = archiveModel.getArchiveName();
         Path appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName);
 
         int fileIdx = 1;
@@ -85,6 +76,19 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
             appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName + "." + fileIdx);
             fileIdx++;
         }
+        return appArchiveFolder;
+    }
+
+    private void unzipToTempDirectory(final GraphContext context, final Path tempFolder,
+                final File inputZipFile,
+                final ArchiveModel archiveModel)
+    {
+        final FileModelService fileService = new FileModelService(context);
+
+        // Setup a temp folder for the archive
+        String appArchiveName = archiveModel.getArchiveName();
+
+        final Path appArchiveFolder = getAppArchiveFolder(tempFolder, appArchiveName);
 
         try
         {
@@ -111,48 +115,68 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
         // add a folder reference for this application
         ApplicationArchiveModel appRefModel = archiveModel.getApplicationReferenceModel();
 
-        FileModel newFileModel = event.getGraphContext().getFramed()
-                    .addVertex(null, FileModel.class);
-        newFileModel.setFilePath(appArchiveFolder.toAbsolutePath().toString());
+        FileModel newFileModel = fileService.createByFilePath(appArchiveFolder.toString());
         // mark the path to the archive
         archiveModel.setUnzippedDirectory(newFileModel);
+        newFileModel.setParentArchive(archiveModel);
 
         if (appRefModel != null)
         {
             appRefModel.setUnzippedLocation(newFileModel);
         }
 
-        try
-        {
-            // scan for subarchives, unzip those, and set their parent objects
-            Files.walkFileTree(appArchiveFolder, new SimpleFileVisitor<Path>()
-            {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-                {
-                    FileModel childFile = event.getGraphContext().getFramed()
-                                .addVertex(null, FileModel.class);
-                    childFile.setFilePath(file.toAbsolutePath().toString());
-                    archiveModel.addContainedFileModel(childFile);
+        // add all unzipped files, and make sure their parent archive is set
+        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, newFileModel, false);
+    }
 
-                    if (ZipUtil.endsWithZipExtension(file.toAbsolutePath().toString()))
+    /**
+     * Recurses the given folder and adds references to these files to the graph as FileModels.
+     * 
+     * We don't set the parent file model in the case of the inital children, as the direct parent is really the archive
+     * itself. For example for file "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary
+     * directory that happens to hold it.
+     */
+    private void recurseAndAddFiles(GraphContext context, Path tempFolder, FileModelService fileService,
+                ArchiveModel archiveModel,
+                FileModel parentFileModel, boolean setParentFile)
+    {
+        File fileReference = parentFileModel.asFile();
+
+        if (fileReference.isDirectory())
+        {
+            File[] subFiles = fileReference.listFiles();
+            if (subFiles != null)
+            {
+                for (File subFile : subFiles)
+                {
+                    FileModel subFileModel;
+                    if (setParentFile)
                     {
-                        File newZipFile = file.toFile();
-                        ArchiveModel newArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), childFile,
+                        subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
+                    }
+                    else
+                    {
+                        subFileModel = fileService.createByFilePath(subFile.getAbsolutePath());
+                    }
+                    subFileModel.setParentArchive(archiveModel);
+
+                    if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
+                    {
+                        File newZipFile = subFileModel.asFile();
+                        ArchiveModel newArchiveModel = GraphService.addTypeToModel(context, subFileModel,
                                     ArchiveModel.class);
                         newArchiveModel.setParentArchive(archiveModel);
                         newArchiveModel.setArchiveName(newZipFile.getName());
                         archiveModel.addChildArchive(newArchiveModel);
-                        unzipToTempDirectory(event, tempFolder, newZipFile, newArchiveModel);
+                        unzipToTempDirectory(context, tempFolder, newZipFile, newArchiveModel);
                     }
-                    return FileVisitResult.CONTINUE;
+
+                    if (subFile.isDirectory())
+                    {
+                        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, subFileModel, true);
+                    }
                 }
-            });
-        }
-        catch (IOException e)
-        {
-            throw new WindupException("Failed to walk directory tree: " + appArchiveFolder.toString()
-                        + " due to: " + e.getMessage(), e);
+            }
         }
     }
 }

@@ -1,5 +1,8 @@
 package org.jboss.windup.reporting.models;
 
+import java.util.Map;
+
+import org.jboss.windup.graph.AdjacentMap;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
@@ -78,11 +81,11 @@ public interface ReportModel extends WindupVertexFrame
      * 
      * @param wvf
      */
-    @Adjacency(label = "relatedResource", direction = Direction.OUT)
-    public void addRelatedResource(WindupVertexFrame wvf);
+    @AdjacentMap(label = "relatedResources")
+    public void addRelatedResource(Map<String, WindupVertexFrame> wvf);
 
-    @Adjacency(label = "relatedResource", direction = Direction.OUT)
-    public Iterable<WindupVertexFrame> getRelatedResources();
+    @AdjacentMap(label = "relatedResources")
+    public Map<String, WindupVertexFrame> getRelatedResources();
 
     /**
      * Provides a list of child reports referenced by this report

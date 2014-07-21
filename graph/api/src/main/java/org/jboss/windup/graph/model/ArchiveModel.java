@@ -8,19 +8,13 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("ArchiveModel")
-public interface ArchiveModel extends WindupVertexFrame
+public interface ArchiveModel extends FileModel
 {
     @Adjacency(label = "parentArchive", direction = Direction.IN)
     public ArchiveModel getParentArchive();
 
     @Adjacency(label = "parentArchive", direction = Direction.IN)
     public void setParentArchive(ArchiveModel resource);
-
-    @Adjacency(label = "projectModel", direction = Direction.OUT)
-    public ProjectModel getProjectModel();
-
-    @Adjacency(label = "projectModel", direction = Direction.OUT)
-    public void setProjectModel(ProjectModel projectModel);
 
     @Property("archiveName")
     public String getArchiveName();
