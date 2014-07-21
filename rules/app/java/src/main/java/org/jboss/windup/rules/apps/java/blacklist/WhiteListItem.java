@@ -68,9 +68,9 @@ public class WhiteListItem implements ASTEventEvaluator
         return whiteListModel;
     }
     
-    public static ModelCreatorGraphOperation add(String ruleID,String regex, Types types) {
+    public static ASTEventEvaluatorsBufferOperation add(String ruleID,String regex, Types types) {
         WhiteListItem whiteList = new WhiteListItem(ruleID,regex,types);
-        return new ModelCreatorGraphOperation().add(whiteList);
+        return new ASTEventEvaluatorsBufferOperation().add(whiteList);
     }
 
 }

@@ -2,13 +2,12 @@ package org.jboss.windup.rules.apps.legacy.java;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
 import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
-import org.jboss.windup.rules.apps.java.blacklist.ModelCreatorGraphOperation;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
 import org.jboss.windup.rules.apps.java.blacklist.WhiteListItem;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
@@ -263,7 +262,7 @@ public class Config extends WindupRuleProvider
         
         
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new ModelCreatorGraphOperation().add(items).add(hints));
+            .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(items).add(hints));
         
         return configuration;
     }

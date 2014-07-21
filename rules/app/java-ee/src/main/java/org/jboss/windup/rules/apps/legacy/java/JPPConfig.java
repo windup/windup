@@ -8,7 +8,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
-import org.jboss.windup.rules.apps.java.blacklist.ModelCreatorGraphOperation;
+import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -43,7 +43,7 @@ public class JPPConfig extends WindupRuleProvider
         
         Configuration configuration = ConfigurationBuilder
                     .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(hints));
+                    .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(hints));
         return configuration;
         
     }

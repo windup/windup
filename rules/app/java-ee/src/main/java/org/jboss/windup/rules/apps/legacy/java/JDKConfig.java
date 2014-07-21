@@ -9,7 +9,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
 import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
-import org.jboss.windup.rules.apps.java.blacklist.ModelCreatorGraphOperation;
+import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -527,7 +527,7 @@ public class JDKConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "javax.jws.HandlerChain.name", "Deprecated By JDK 6. As of JSR-181 2.0 with no replacement.", 0, Types.add(ClassCandidateType.TYPE))); 
         
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
+            .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications).add(hints));
         return configuration;
         
     }

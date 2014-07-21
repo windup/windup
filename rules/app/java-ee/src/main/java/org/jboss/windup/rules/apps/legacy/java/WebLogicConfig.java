@@ -9,7 +9,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
 import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
-import org.jboss.windup.rules.apps.java.blacklist.ModelCreatorGraphOperation;
+import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -90,7 +90,7 @@ public class WebLogicConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "oracle.jms.AQjmsSession", "Migrate to: javax.jms.Session", 1)); 
         
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
+            .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications).add(hints));
         return configuration;
         
     }

@@ -130,10 +130,10 @@ public class JavaClassification implements ASTEventEvaluator
         
     }
     
-    public static ModelCreatorGraphOperation add(String ruleID, String description, String regex, int effort,
+    public static ASTEventEvaluatorsBufferOperation add(String ruleID, String description, String regex, int effort,
                 Types types, Link... links) {
         JavaClassification classification = new JavaClassification(ruleID,description,regex,effort,types,links);
-        return new ModelCreatorGraphOperation().add(classification);
+        return new ASTEventEvaluatorsBufferOperation().add(classification);
     }
     
 

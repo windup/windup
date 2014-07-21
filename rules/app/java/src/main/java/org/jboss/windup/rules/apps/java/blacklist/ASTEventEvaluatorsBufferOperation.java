@@ -14,7 +14,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author mbriskar
  *
  */
-public class ModelCreatorGraphOperation extends GraphOperation
+public class ASTEventEvaluatorsBufferOperation extends GraphOperation
 {
 
     @Inject
@@ -22,12 +22,12 @@ public class ModelCreatorGraphOperation extends GraphOperation
     
     private List<ASTEventEvaluator> interests;
     
-    public ModelCreatorGraphOperation add(ASTEventEvaluator interest) {
+    public ASTEventEvaluatorsBufferOperation add(ASTEventEvaluator interest) {
         interests.add(interest);
         return this;
     }
     
-    public ModelCreatorGraphOperation add(List<? extends ASTEventEvaluator> interests) {
+    public ASTEventEvaluatorsBufferOperation add(List<? extends ASTEventEvaluator> interests) {
         this.interests.addAll(interests);
         return this;
     }
@@ -40,8 +40,8 @@ public class ModelCreatorGraphOperation extends GraphOperation
         }
     }
     
-    public static ModelCreatorGraphOperation create() {
-        return new ModelCreatorGraphOperation();
+    public static ASTEventEvaluatorsBufferOperation create() {
+        return new ASTEventEvaluatorsBufferOperation();
     }
 
 }

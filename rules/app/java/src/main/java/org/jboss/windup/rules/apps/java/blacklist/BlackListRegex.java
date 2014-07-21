@@ -46,9 +46,9 @@ public class BlackListRegex extends AbstractBlackListSupport
         }
     }
     
-    public static ModelCreatorGraphOperation add(String ruleID, String hint, String regex, int effort,
+    public static ASTEventEvaluatorsBufferOperation add(String ruleID, String hint, String regex, int effort,
                 Types types) {
         BlackListRegex blackList = new BlackListRegex(ruleID,hint,regex,effort,types);
-        return new ModelCreatorGraphOperation().add(blackList);
+        return new ASTEventEvaluatorsBufferOperation().add(blackList);
     }
 }

@@ -8,7 +8,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
-import org.jboss.windup.rules.apps.java.blacklist.ModelCreatorGraphOperation;
+import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -37,7 +37,7 @@ public class JBossEsbConfig extends WindupRuleProvider
         
         classifications.add(new JavaClassification(getID(), "JBoss ESB 5 Action Handler", "org.jboss.soa.esb.helpers.ConfigTree", 0, Types.add(ClassCandidateType.METHOD))); 
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new ModelCreatorGraphOperation().add(classifications));
+            .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications));
         return configuration;
         
     }
