@@ -7,7 +7,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
-import org.jboss.windup.reporting.meta.ApplicationReportModel;
+import org.jboss.windup.reporting.models.ApplicationReportModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 

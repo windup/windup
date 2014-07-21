@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.meta;
+package org.jboss.windup.reporting.models;
 
 public enum TemplateType
 {

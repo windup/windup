@@ -17,7 +17,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.reporting.meta.ApplicationReportModel;
+import org.jboss.windup.reporting.models.ApplicationReportModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

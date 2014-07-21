@@ -2,7 +2,7 @@ package org.jboss.windup.reporting;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.reporting.meta.ApplicationReportModel;
+import org.jboss.windup.reporting.models.ApplicationReportModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class ApplicationReport extends GraphOperation

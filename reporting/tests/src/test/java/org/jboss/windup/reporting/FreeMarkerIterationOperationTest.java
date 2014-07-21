@@ -21,7 +21,7 @@ import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.reporting.meta.ApplicationReportModel;
+import org.jboss.windup.reporting.models.ApplicationReportModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
