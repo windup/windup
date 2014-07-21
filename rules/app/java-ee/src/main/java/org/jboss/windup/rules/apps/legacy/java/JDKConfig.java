@@ -517,18 +517,17 @@ public class JDKConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "java.sql.Time\\(int, int, int\\)", "Deprecated By JDK 6. Use the constructor that takes a milliseconds value in place of this constructor", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
         hints.add(new BlackListRegex(getID(), "java.sql.Timestamp\\(int, int, int, int, int, int, int\\)", "Deprecated By JDK 6. instead use the constructor Timestamp(long millis)", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
         hints.add(new BlackListRegex(getID(), "java.io.StreamTokenizer\\(java.io.InputStream\\)", "<![CDATA[\n" + 
-                    "                 Deprecated By JDK 6 - As of JDK version 1.1, the preferred way to tokenize an input stream is to convert it into a character stream, for example:\n" + 
-                    "    \n" + 
-                    "                ```java\n" + 
-                    "                    Reader r = new BufferedReader(new InputStreamReader(is));\n" + 
-                    "                    StreamTokenizer st = new StreamTokenizer(r);\n" + 
-                    "                ```\n" + 
-                    "            ]]>", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
+            "                 Deprecated By JDK 6 - As of JDK version 1.1, the preferred way to tokenize an input stream is to convert it into a character stream, for example:\n" + 
+            "    \n" + 
+            "                ```java\n" + 
+            "                    Reader r = new BufferedReader(new InputStreamReader(is));\n" + 
+            "                    StreamTokenizer st = new StreamTokenizer(r);\n" + 
+            "                ```\n" + 
+            "            ]]>", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
         hints.add(new BlackListRegex(getID(), "javax.jws.HandlerChain.name", "Deprecated By JDK 6. As of JSR-181 2.0 with no replacement.", 0, Types.add(ClassCandidateType.TYPE))); 
         
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
+        Configuration configuration = ConfigurationBuilder.begin()
+            .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
         return configuration;
         
     }

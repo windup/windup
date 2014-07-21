@@ -36,9 +36,8 @@ public class JBossEsbConfig extends WindupRuleProvider
         List<JavaClassification> classifications = new ArrayList<JavaClassification>();
         
         classifications.add(new JavaClassification(getID(), "JBoss ESB 5 Action Handler", "org.jboss.soa.esb.helpers.ConfigTree", 0, Types.add(ClassCandidateType.METHOD))); 
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(classifications));
+        Configuration configuration = ConfigurationBuilder.begin()
+            .addRule().perform(new ModelCreatorGraphOperation().add(classifications));
         return configuration;
         
     }

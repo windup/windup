@@ -60,8 +60,8 @@ public class EjbConfig
             classifications.add(new JavaClassification(getID(), "EJB 3.x - Stateless Session Bean", "javax.ejb.Stateless$", 0, Types.add(ClassCandidateType.TYPE)));
             classifications.add(new JavaClassification(getID(), "EJB 3.x - Stateful Session Bean", "javax.ejb.Stateful$", 0, Types.add(ClassCandidateType.TYPE))); 
             Configuration configuration = ConfigurationBuilder
-                        .begin()
-                        .addRule().perform(new ModelCreatorGraphOperation().add(classifications));
+                .begin()
+                .addRule().perform(new ModelCreatorGraphOperation().add(classifications));
             return configuration;
         }
     }

@@ -65,9 +65,8 @@ public class SeamToCDI extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "org.jboss.seam.annotations.Begin", "Rework with javax.enterprise.context.Conversation.begin()", 0));
         hints.add(new BlackListRegex(getID(), "org.jboss.seam.annotations.End", "Rework with javax.enterprise.context.Conversation.end()", 0)); 
         
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
+        Configuration configuration = ConfigurationBuilder.begin()
+            .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
         return configuration;
         
     }

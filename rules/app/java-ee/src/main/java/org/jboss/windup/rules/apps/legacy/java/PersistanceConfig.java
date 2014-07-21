@@ -58,9 +58,8 @@ public class PersistanceConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "net.sf.hibernate.persister", "Has undergone significant refactoring, be careful during migration", 0, Types.add(ClassCandidateType.IMPORT)));
         hints.add(new BlackListRegex(getID(), "net.sf.hibernate.collection", "Has undergone significant refactoring, be careful during migration", 0, Types.add(ClassCandidateType.IMPORT))); 
         
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(hints));
+        Configuration configuration = ConfigurationBuilder.begin()
+            .addRule().perform(new ModelCreatorGraphOperation().add(hints));
         return configuration;
         
     }

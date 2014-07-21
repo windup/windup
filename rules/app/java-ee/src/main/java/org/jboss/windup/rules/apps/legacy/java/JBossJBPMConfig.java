@@ -54,14 +54,14 @@ public class JBossJBPMConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getDescription\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getDescription or org.jbpm.task.Task.getDescriptions", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getStart\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getActivationTime", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.end\\(", "<![CDATA["
-                    + "Migrate to jBPM 5:\n" + 
-                    "            org.jbpm.task.service.TaskClient\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            TaskClient client = new TaskClient(new MinaTaskClientConnector(...);\n" + 
-                    "            client.complete( taskId, ...);\n" + 
-                    "            ```"
-                    + "]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            + "Migrate to jBPM 5:\n" + 
+            "            org.jbpm.task.service.TaskClient\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            TaskClient client = new TaskClient(new MinaTaskClientConnector(...);\n" + 
+            "            client.complete( taskId, ...);\n" + 
+            "            ```"
+            + "]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.addComment\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.addComment", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getComments\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.addComment", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getProcessInstance\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getProcessInstanceId", 0, Types.add(ClassCandidateType.METHOD)));
@@ -84,132 +84,131 @@ public class JBossJBPMConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.def.Task.getDueDate\\(", "Migrate to jBPM 5: org.jbpm.task.Task.getDeadlines", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.graph.exe.ProcessInstance$", "Migrate to jBPM 5: org.drools.runtime.process.ProcessInstance", 0));
         hints.add(new BlackListRegex(getID(), "org.jbpm.graph.exe.ExecutionContext.getVariable", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.getVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.getVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.graph.exe.ExecutionContext.setVariable", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.setVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.setVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.JbpmContext.getProcessInstance", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.getVariables", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.getVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.getVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.setVariable", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.setVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.setVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.getVariable", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.getVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.getVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableContainer.setVariable", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.setVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.setVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableContainer.getVariable", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.getVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.getVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableContainer.getContextInstance ", "Migrate to jBPM 5: org.jbpm.process.instance.context.variable.VariableScopeInstance.getVariableScope", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableContainer.setVariables", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.setVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.setVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableInstance.getName", "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getName", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableInstance.getValue", "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getValue", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableInstance.setValue", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.setVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.setVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableInstance.toString", "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.toString", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.getVariable", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.getVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.getVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.setVariable", "<![CDATA[\n" + 
-                    "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-                    "\n" + 
-                    "            ```java\n" + 
-                    "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-                    "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-                    "            kcontext.setProcessInstance(processInstance);\n" + 
-                    "            kcontext.setVariable(...);\n" + 
-                    "            ```\n" + 
-                    "        ]]>", 0, Types.add(ClassCandidateType.METHOD))); 
+            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+            "\n" + 
+            "            ```java\n" + 
+            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+            "            kcontext.setProcessInstance(processInstance);\n" + 
+            "            kcontext.setVariable(...);\n" + 
+            "            ```\n" + 
+            "        ]]>", 0, Types.add(ClassCandidateType.METHOD))); 
         
         
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(hints));
+        Configuration configuration = ConfigurationBuilder.begin()
+            .addRule().perform(new ModelCreatorGraphOperation().add(hints));
         return configuration;
         
     }

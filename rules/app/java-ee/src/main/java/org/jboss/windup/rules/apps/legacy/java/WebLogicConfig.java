@@ -48,31 +48,31 @@ public class WebLogicConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "weblogic.application.ApplicationLifecycleListener$", "Use a javax.servlet.ServletContextListener with @javax.annotation.servlet.WebListener, or EJB 3.1 @javax.ejb.Startup @javax.ejb.Singleton service bean.", 2, Types.add(ClassCandidateType.INHERITANCE)));
         hints.add(new BlackListRegex(getID(), "weblogic.application.ApplicationLifecycleEvent$", "This class is proprietary to Weblogic, remove.", 2, Types.add(ClassCandidateType.IMPORT)));
         hints.add(new BlackListRegex(getID(), "weblogic.application.ApplicationLifecycleEvent$", "<![CDATA[\n" + 
-                    "            Using a ServletContextListener, you can use an ServletContextEvent to access the properties of the web application container.  Or, use an EJB 3.1 with annotated methods with javax.annotation.PostContruct and javax.annotation.PreDestory\n" + 
-                    "                    \n" + 
-                    "            *Example leveraging WebListener annotations:*\n" + 
-                    "            \n" + 
-                    "            ```java\n" + 
-                    "            @WebListener\n" + 
-                    "            public class ContextListener implements ServletContextListener { ... }\n" + 
-                    "            ```\n" + 
-                    "            \n" + 
-                    "            *Example leveraging Startup and Singleton annotations:*\n" + 
-                    "            \n" + 
-                    "            ```java\n" + 
-                    "            @Startup\n" + 
-                    "            @Singleton\n" + 
-                    "            public class StartupBean { ... }\n" + 
-                    "            ```\n" + 
-                    "            ]]>", 0, Types.add(ClassCandidateType.TYPE)));
+            "            Using a ServletContextListener, you can use an ServletContextEvent to access the properties of the web application container.  Or, use an EJB 3.1 with annotated methods with javax.annotation.PostContruct and javax.annotation.PreDestory\n" + 
+            "                    \n" + 
+            "            *Example leveraging WebListener annotations:*\n" + 
+            "            \n" + 
+            "            ```java\n" + 
+            "            @WebListener\n" + 
+            "            public class ContextListener implements ServletContextListener { ... }\n" + 
+            "            ```\n" + 
+            "            \n" + 
+            "            *Example leveraging Startup and Singleton annotations:*\n" + 
+            "            \n" + 
+            "            ```java\n" + 
+            "            @Startup\n" + 
+            "            @Singleton\n" + 
+            "            public class StartupBean { ... }\n" + 
+            "            ```\n" + 
+            "            ]]>", 0, Types.add(ClassCandidateType.TYPE)));
         hints.add(new BlackListRegex(getID(), "weblogic.i18n.logging.NonCatalogLogger\\(.+\\)", "<![CDATA[\n" + 
-                    "            Migrate the NonCatalogLogger to Apache Log4j.\n" + 
-                    "    \n" + 
-                    "            ```java\n" + 
-                    "            Logger LOG = Logger.getLog(\"Example\");\n" + 
-                    "            ```\n" + 
-                    "    \n" + 
-                    "            ]]>", 1, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
+            "            Migrate the NonCatalogLogger to Apache Log4j.\n" + 
+            "    \n" + 
+            "            ```java\n" + 
+            "            Logger LOG = Logger.getLog(\"Example\");\n" + 
+            "            ```\n" + 
+            "    \n" + 
+            "            ]]>", 1, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
         hints.add(new BlackListRegex(getID(), "oracle.jms.AQjmsConnectionFactory", "Migrate to: javax.jms.ConnectionFactory", 1));
         hints.add(new BlackListRegex(getID(), "oracle.jms.AQjmsQueueConnectionFactory", "Migrate to: javax.jms.QueueConnectionFactory", 1));
         hints.add(new BlackListRegex(getID(), "oracle.jms.AQjmsTopicConnectionFactory", "Migrate to: javax.jms.TopicConnectionFactory", 1));
@@ -89,9 +89,8 @@ public class WebLogicConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "oracle.jms.AQjmsQueueBrowser", "Migrate to: javax.jms.QueueBrowser", 1));
         hints.add(new BlackListRegex(getID(), "oracle.jms.AQjmsSession", "Migrate to: javax.jms.Session", 1)); 
         
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
+        Configuration configuration = ConfigurationBuilder.begin()
+            .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
         return configuration;
         
     }

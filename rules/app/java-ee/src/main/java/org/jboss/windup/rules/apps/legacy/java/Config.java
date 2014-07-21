@@ -229,22 +229,22 @@ public class Config extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Destroy", "SCA Destroy Hook; Use the property: destroy-method='example' on the Spring Bean, where example is the destroy method", 0, Types.add(ClassCandidateType.TYPE)));
         hints.add(new BlackListRegex(getID(), "com.ibm.ctg.client.JavaGateway", "IBM CICS Adapter", 0, Types.add(ClassCandidateType.TYPE)));
         hints.add(new BlackListRegex(getID(), "((javax.naming.InitialContext)|(javax.naming.Context)).lookup", "\"<![CDATA[\"\n" + 
-                    "                    + \"Ensure that the JNDI Name does not need to change for JBoss\" +\n" + 
-                    "                \n" + 
-                    "                \"\"*For Example:*\n" + 
-                    "                \n" + 
-                    "                ```java\n" + 
-                    "                (ConnectionFactory)initialContext.lookup(\"weblogic.jms.ConnectionFactory\");\n" + 
-                    "                ```\n" + 
-                    "                \n" + 
-                    "                *should become:*\n" + 
-                    "                \n" + 
-                    "                ```java\n" + 
-                    "                (ConnectionFactory)initialContext.lookup(\"/ConnectionFactory\");\n" + 
-                    "                ```\n" + 
-                    "                \n" + 
-                    "                \n" + 
-                    "                ]]>\"", 1, Types.add(ClassCandidateType.METHOD)));
+            "                    + \"Ensure that the JNDI Name does not need to change for JBoss\" +\n" + 
+            "                \n" + 
+            "                \"\"*For Example:*\n" + 
+            "                \n" + 
+            "                ```java\n" + 
+            "                (ConnectionFactory)initialContext.lookup(\"weblogic.jms.ConnectionFactory\");\n" + 
+            "                ```\n" + 
+            "                \n" + 
+            "                *should become:*\n" + 
+            "                \n" + 
+            "                ```java\n" + 
+            "                (ConnectionFactory)initialContext.lookup(\"/ConnectionFactory\");\n" + 
+            "                ```\n" + 
+            "                \n" + 
+            "                \n" + 
+            "                ]]>\"", 1, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "javax.naming.InitialContext\\(.+\\)", "Ensure that the InitialContext connection properties do not need to change for JBoss", 1, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
         hints.add(new BlackListRegex(getID(), "javax.management.remote.JMXServiceURL\\(.+\\)", "Ensure that the connection properties do not need to change for JBoss", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
         hints.add(new BlackListRegex(getID(), "javax.management.ObjectName\\(.+\\)", "Ensure that the ObjectName exists in JBoss", 1, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
@@ -262,9 +262,8 @@ public class Config extends WindupRuleProvider
         
         
         
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(items).add(hints));
+        Configuration configuration = ConfigurationBuilder.begin()
+            .addRule().perform(new ModelCreatorGraphOperation().add(items).add(hints));
         
         return configuration;
     }

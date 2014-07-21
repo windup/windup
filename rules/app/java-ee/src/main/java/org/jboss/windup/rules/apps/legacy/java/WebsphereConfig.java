@@ -140,9 +140,8 @@ public class WebsphereConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "com.ibm.jms.JMSStreamMessage$", "Migrate to: javax.jms.StreamMessage", 0));
         hints.add(new BlackListRegex(getID(), "com.ibm.jms.JMSTextMessage$", "Migrate to: javax.jms.TextMessage", 0)); 
         
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
+        Configuration configuration = ConfigurationBuilder.begin()
+            .addRule().perform(new ModelCreatorGraphOperation().add(classifications).add(hints));
         return configuration;
         
     }
