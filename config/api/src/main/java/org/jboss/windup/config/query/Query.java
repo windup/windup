@@ -107,7 +107,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         {
             for (QueryGremlinCriterion criterion : pipelineCriteria)
             {
-                criterion.query(pipeline);
+                criterion.query(event, pipeline);
             }
         }
 

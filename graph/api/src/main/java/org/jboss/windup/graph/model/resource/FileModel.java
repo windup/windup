@@ -12,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.BlackListModel;
+import org.jboss.windup.graph.model.ClassificationModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -23,9 +25,10 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("FileResource")
+@TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
 {
+    public static final String TYPE = "FileResource";
 
     public static final String PROPERTY_FILE_NAME = "fileName";
     public static final String PROPERTY_FILE_PATH = "filePath";
@@ -81,6 +84,12 @@ public interface FileModel extends ResourceModel
      */
     @Adjacency(label = "parentFile", direction = Direction.IN)
     public void addContainedFiles(FileModel fileModel);
+
+    @Adjacency(label = BlackListModel.FILE_MODEL, direction = Direction.IN)
+    public Iterable<BlackListModel> getBlackListModels();
+
+    @Adjacency(label = ClassificationModel.FILE_MODEL, direction = Direction.IN)
+    public Iterable<ClassificationModel> getClassificationModels();
 
     /**
      * Indicates the archive that contained this file

@@ -18,16 +18,18 @@ public interface BlackListModel extends WindupVertexFrame
     public static final String PROPERTY_RULE_ID = "ruleID";
     public static final String PROPERTY_EFFORT = "effort";
 
+    public static final String FILE_MODEL = "blackListModelToFileModel";
+
     /**
      * Sets the file model associated with this blacklist entry. Black List entries may be associated with any type of
      * file (Java, XML, etc)
      * 
      * @param fileModel
      */
-    @Adjacency(label = "fileModel", direction = Direction.OUT)
+    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
     public void setFileModel(FileModel fileModel);
 
-    @Adjacency(label = "fileModel", direction = Direction.OUT)
+    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
     public FileModel getFileModel();
 
     /**

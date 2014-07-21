@@ -1,6 +1,4 @@
-package org.jboss.windup.reporting;
-
-import javax.inject.Inject;
+package org.jboss.windup.reporting.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -9,7 +7,6 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.ProjectModelService;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -24,9 +21,6 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
 
     private static final String CONFIGURATION_MODEL = "windupCfg";
     private static final String CONFIGURATION_MODELS = "windupCfgs";
-
-    @Inject
-    private ProjectModelService projectModelService;
 
     @Override
     public RulePhase getPhase()

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.jboss.windup.graph.AdjacentMap;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -52,18 +51,6 @@ public interface ReportModel extends WindupVertexFrame
 
     @Property("templateType")
     public TemplateType getTemplateType();
-
-    /**
-     * Refers to the original source file (eg, the original .java file or original .xml file) represented by this report
-     * entry.
-     * 
-     * @param resourceModel
-     */
-    @Property("sourceFileResource")
-    public void setSourceFileResource(ResourceModel resourceModel);
-
-    @Property("sourceFileResource")
-    public ResourceModel getSourceFileResource();
 
     /**
      * The parent report... this could be the root (index) or another level of summary report.

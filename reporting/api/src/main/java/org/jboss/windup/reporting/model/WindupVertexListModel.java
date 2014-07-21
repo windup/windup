@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.meta;
+package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 

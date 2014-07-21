@@ -56,7 +56,7 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
         QueryGremlinCriterion methodNameCriterion = new QueryGremlinCriterion()
         {
             @Override
-            public void query(GremlinPipeline<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
             {
                 pipeline.out("javaMethod").has("methodName", "toString");
             }

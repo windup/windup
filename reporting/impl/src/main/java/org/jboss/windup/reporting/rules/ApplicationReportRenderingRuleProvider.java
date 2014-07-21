@@ -1,8 +1,6 @@
-package org.jboss.windup.reporting;
+package org.jboss.windup.reporting.rules;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javax.inject.Inject;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -11,11 +9,10 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.freemarker.FreeMarkerIterationOperation;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
-import org.jboss.windup.util.FilenameUtil;
+import org.jboss.windup.reporting.service.ReportModelService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -25,6 +22,9 @@ public class ApplicationReportRenderingRuleProvider extends WindupRuleProvider
     private static final String APP_REPORTS_VAR = "applicationReportsIterable";
     private static final String APP_REPORT_VAR = "applicationReport";
     private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/application.ftl";
+
+    @Inject
+    private ReportModelService reportModelService;
 
     @Override
     public RulePhase getPhase()
@@ -44,18 +44,8 @@ public class ApplicationReportRenderingRuleProvider extends WindupRuleProvider
                 payload.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
                 payload.setTemplateType(TemplateType.FREEMARKER);
                 String applicationname = payload.getApplicationName();
-                String filename = FilenameUtil.cleanFileName(applicationname) + ".html";
 
-                String outputDir = GraphService.getConfigurationModel(event.getGraphContext()).getOutputPath()
-                            .getFilePath();
-                Path outputPath = Paths.get(outputDir, filename);
-                for (int i = 1; Files.exists(outputPath); i++)
-                {
-                    filename = FilenameUtil.cleanFileName(applicationname) + "." + i + ".html";
-                    outputPath = Paths.get(outputDir, filename);
-                }
-
-                payload.setReportFilename(filename);
+                reportModelService.setUniqueFilename(payload, applicationname, "html");
             }
         };
 

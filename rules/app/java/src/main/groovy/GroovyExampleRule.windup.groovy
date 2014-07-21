@@ -19,6 +19,7 @@ blacklistType("sampleRegexBlackListRule-009", "org.apache.wicket.Application", "
 blacklistType("sampleRegexBlackListRule-010", "org.apache.wicket.model.IComponentAssignedModel", "Component Assigned Model")
 blacklistType("sampleRegexBlackListRule-011", "org.apache.wicket.model.IModelComparator", "Model Comparator")
 blacklistType("sampleRegexBlackListRule-012", "javax.servlet.annotation.WebServlet", "Web Servlet")
+blacklistType("sampleRegexBlackListRule-013", ".*WebServlet.*", "Web Servlet again")
 
 
 
