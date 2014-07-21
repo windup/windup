@@ -15,7 +15,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
-public class PersistanceConfig extends WindupRuleProvider
+public class PersistenceConfig extends WindupRuleProvider
 {
 
     @Override
