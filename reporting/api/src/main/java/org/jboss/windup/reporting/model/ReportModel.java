@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.models;
+package org.jboss.windup.reporting.model;
 
 import java.util.Map;
 

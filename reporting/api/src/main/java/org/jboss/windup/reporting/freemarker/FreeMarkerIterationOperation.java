@@ -13,7 +13,7 @@ import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.models.ReportModel;
+import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;

@@ -12,7 +12,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.ProjectModelService;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.reporting.models.ApplicationReportModel;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
