@@ -4,7 +4,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("WindupServiceConfigurationPackageModel")
-public interface WindupConfigurationPackageModel extends WindupVertexFrame
+public interface PackageModel extends WindupVertexFrame
 {
     @Property("packageName")
     public String getPackageName();
