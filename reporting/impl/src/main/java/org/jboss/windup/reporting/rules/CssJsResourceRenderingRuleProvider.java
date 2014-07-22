@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting;
+package org.jboss.windup.reporting.rules;
 
 import java.io.File;
 import java.io.IOException;

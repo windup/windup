@@ -14,7 +14,7 @@ public interface ClassificationModel extends WindupVertexFrame
     public static final String PROPERTY_EFFORT = "effort";
     public static final String PROPERTY_LINK_DECORATOR = "linkDecorator";
 
-    public static final String FILE_MODEL = "fileModel";
+    public static final String FILE_MODEL = "classificationModelToFileModel";
 
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
     public void setFileModel(FileModel fileModel);
