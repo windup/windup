@@ -45,6 +45,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         return RulePhase.REPORT_GENERATION;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -57,8 +58,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
 
         GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>(FileModel.class, "fileModel")
         {
-            public void perform(GraphRewrite event, EvaluationContext context,
-                        FileModel payload)
+            public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {
                 SourceReportModel sm = sourceReportService.create();
                 ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
@@ -69,15 +69,16 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
             }
         };
 
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(finder)
-                    .perform(
-                                Iteration.over("fileModels")
-                                            .as("fileModel")
-                                            .perform(addSourceReport).endIteration());
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(finder)
+            .perform(
+                Iteration.over("fileModels").as("fileModel")
+                .perform(addSourceReport).endIteration()
+            );
     }
+    // @formatter:on
+
 
     private String resolveSourceType(FileModel f)
     {

@@ -50,6 +50,7 @@ public class JavaExampleRuleProvider extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

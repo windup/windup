@@ -29,6 +29,7 @@ public class JBossJBPMConfig extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -210,6 +211,6 @@ public class JBossJBPMConfig extends WindupRuleProvider
         Configuration configuration = ConfigurationBuilder.begin()
             .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(hints));
         return configuration;
-        
     }
+    // @formatter:on
 }

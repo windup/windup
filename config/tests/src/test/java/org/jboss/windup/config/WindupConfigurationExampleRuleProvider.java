@@ -46,6 +46,7 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
         return RulePhase.DISCOVERY;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

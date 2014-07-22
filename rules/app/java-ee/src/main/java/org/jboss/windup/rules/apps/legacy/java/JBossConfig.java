@@ -31,6 +31,7 @@ public class JBossConfig extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -51,4 +52,5 @@ public class JBossConfig extends WindupRuleProvider
                     .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications).add(hints));
         return configuration;
     }
+    // @formatter:on
 }

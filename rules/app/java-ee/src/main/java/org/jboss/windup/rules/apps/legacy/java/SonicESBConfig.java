@@ -31,6 +31,7 @@ public class SonicESBConfig extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -131,6 +132,6 @@ public class SonicESBConfig extends WindupRuleProvider
         Configuration configuration = ConfigurationBuilder.begin()
             .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications).add(hints));
         return configuration;
-        
     }
+    // @formatter:on
 }

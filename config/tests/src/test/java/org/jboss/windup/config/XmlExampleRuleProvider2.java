@@ -33,6 +33,7 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
         return RulePhase.DISCOVERY;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -59,6 +60,7 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
             );
         return configuration;
     }
+    // @formatter:on
 
     public List<XmlMetaFacetModel> getTypeSearchResults()
     {

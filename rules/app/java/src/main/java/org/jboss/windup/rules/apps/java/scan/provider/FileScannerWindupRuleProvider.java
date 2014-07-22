@@ -21,33 +21,32 @@ public class FileScannerWindupRuleProvider extends WindupRuleProvider
         return RulePhase.DISCOVERY;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder
-                    .begin()
+        return ConfigurationBuilder.begin()
 
-                    .addRule()
-                    .when(Query.find(FileModel.class)
-                                .withProperty(FileModel.PROPERTY_IS_DIRECTORY, true)
-                                .as("inputDirectories")
-                    )
-                    .perform(Iteration.over("inputDirectories").as(FileModel.class, "directory")
-                                .perform(RecurseDirectoryAndAddFiles.startingAt("directory")).endIteration()
-                    )
+        .addRule()
+        .when(Query.find(FileModel.class)
+            .withProperty(FileModel.PROPERTY_IS_DIRECTORY, true)
+            .as("inputDirectories")
+        )
+        .perform(Iteration.over("inputDirectories").as(FileModel.class, "directory")
+            .perform(RecurseDirectoryAndAddFiles.startingAt("directory")).endIteration()
+        )
 
-                    .addRule()
-                    .when(Query.find(FileModel.class)
-                                .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-                                .withProperty(FileModel.PROPERTY_FILE_PATH,
-                                            QueryPropertyComparisonType.REGEX,
-                                            ZipUtil.getEndsWithZipRegularExpression())
-                                .as("inputFiles")
-
-                    )
-                    .perform(Iteration.over("inputFiles").as(FileModel.class, "file")
-                                .perform(AddArchiveReferenceInformation.to("file")).endIteration()
-                    );
-
+        .addRule()
+        .when(Query.find(FileModel.class)
+            .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+            .withProperty(FileModel.PROPERTY_FILE_PATH,
+                QueryPropertyComparisonType.REGEX,
+                ZipUtil.getEndsWithZipRegularExpression())
+            .as("inputFiles")
+        )
+        .perform(Iteration.over("inputFiles").as(FileModel.class, "file")
+            .perform(AddArchiveReferenceInformation.to("file")).endIteration()
+        );
     }
+    // @formatter:on
 }

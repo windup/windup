@@ -31,10 +31,10 @@ public class WebsphereConfig extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-     
         List<JavaClassification> classifications = new ArrayList<JavaClassification>();
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         
@@ -143,6 +143,6 @@ public class WebsphereConfig extends WindupRuleProvider
         Configuration configuration = ConfigurationBuilder.begin()
             .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications).add(hints));
         return configuration;
-        
-    }
+   }
+    // @formatter:on
 }
