@@ -30,10 +30,10 @@ public class JPPConfig extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-     
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         
         hints.add(new BlackListRegex(getID(), "org.exoplatform.web.login.InitiateLoginServlet", "This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version.", 0, Types.add(ClassCandidateType.IMPORT)));
@@ -45,6 +45,6 @@ public class JPPConfig extends WindupRuleProvider
                     .begin()
                     .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(hints));
         return configuration;
-        
     }
+    // @formatter:on
 }

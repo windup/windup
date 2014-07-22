@@ -31,10 +31,10 @@ public class JDKConfig extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-     
         List<JavaClassification> classifications = new ArrayList<JavaClassification>();
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         
@@ -483,20 +483,20 @@ public class JDKConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "java.rmi.server.LogStream.write\\(int\\)", "Deprecated By JDK 6. no replacement", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "java.io.ObjectOutputStream.PutField.write\\(ObjectOutput\\)", "Deprecated By JDK 6. This method does not write the values contained by this PutField object in a proper format, and may result in corruption of the serialization stream. The correct way to write PutField data is by calling the ObjectOutputStream.writeFields() method.", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "java.io.DataInputStream.readLine\\(\\)", "<![CDATA[\n" + 
-                    "            Deprecated By JDK 6. \n" + 
-                    "            This method does not properly convert bytes to characters. As of JDK 1.1, the preferred way to read lines of text is via the BufferedReader.readLine() method. Programs that use the DataInputStream class to read lines can be converted to use the BufferedReader class by replacing code of the form:\n" + 
-                    "            ```java\n" + 
-                    "               DataInputStream d = new DataInputStream(in);\n" + 
-                    "            with:\n" + 
-                    "             BufferedReader d\n" + 
-                    "                  = new BufferedReader(new InputStreamReader(in));\n" + 
-                    "            ```\n" + 
-                    "            ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Deprecated By JDK 6. \n" + 
+            "            This method does not properly convert bytes to characters. As of JDK 1.1, the preferred way to read lines of text is via the BufferedReader.readLine() method. Programs that use the DataInputStream class to read lines can be converted to use the BufferedReader class by replacing code of the form:\n" + 
+            "            ```java\n" + 
+            "               DataInputStream d = new DataInputStream(in);\n" + 
+            "            with:\n" + 
+            "             BufferedReader d\n" + 
+            "                  = new BufferedReader(new InputStreamReader(in));\n" + 
+            "            ```\n" + 
+            "            ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "javax.swing.JComponent.reshape\\(int, int, int, int\\)", "<![CDATA[\n" + 
-                    "            Deprecated By JDK 6. \n" + 
-                    "            As of JDK 5, replaced by Component.setBounds(int, int, int, int).\n" + 
-                    "            Moves and resizes this component.\n" + 
-                    "            ]]>", 0, Types.add(ClassCandidateType.METHOD)));
+            "            Deprecated By JDK 6. \n" + 
+            "            As of JDK 5, replaced by Component.setBounds(int, int, int, int).\n" + 
+            "            Moves and resizes this component.\n" + 
+            "            ]]>", 0, Types.add(ClassCandidateType.METHOD)));
         hints.add(new BlackListRegex(getID(), "javax.management.AttributeValueExp\\(\\)", "Deprecated By JDK 6. An instance created with this constructor cannot be used in a query.", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
         hints.add(new BlackListRegex(getID(), "java.sql.Date\\(int, int, int\\)", "Deprecated By JDK 6. instead use the constructor Date(long date)", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
         hints.add(new BlackListRegex(getID(), "java.util.Date\\(int, int, int\\)", "Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date) or GregorianCalendar(year + 1900, month, date).", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
@@ -529,6 +529,6 @@ public class JDKConfig extends WindupRuleProvider
         Configuration configuration = ConfigurationBuilder.begin()
             .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications).add(hints));
         return configuration;
-        
     }
+    // @formatter:on
 }

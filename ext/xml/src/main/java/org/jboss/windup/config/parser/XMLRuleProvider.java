@@ -35,6 +35,7 @@ public class XMLRuleProvider extends WindupRuleProvider
         return payload instanceof GraphContext;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

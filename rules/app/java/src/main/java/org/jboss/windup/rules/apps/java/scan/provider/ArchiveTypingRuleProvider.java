@@ -32,20 +32,20 @@ public class ArchiveTypingRuleProvider extends WindupRuleProvider
         return generateDependencies(FileScannerWindupRuleProvider.class);
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(
-                                Query.find(ArchiveModel.class).as("archives")
-                    )
-                    .perform(
-                                Iteration.over("archives")
-                                            .as("archive")
-                                            .perform(ConfigureArchiveTypes.forVar("archive", graphTypeManager))
-                                            .endIteration()
-                    );
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(
+                Query.find(ArchiveModel.class).as("archives")
+            )
+            .perform(
+                Iteration.over("archives").as("archive")
+                .perform(ConfigureArchiveTypes.forVar("archive", graphTypeManager))
+                .endIteration()
+            );
     }
+    // @formatter:on
 }

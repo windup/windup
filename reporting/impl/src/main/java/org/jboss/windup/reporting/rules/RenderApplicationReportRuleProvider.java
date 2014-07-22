@@ -44,6 +44,7 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
         return RulePhase.REPORT_RENDERING;
     }
 
+    // @formatter:off
     @Override
     public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
@@ -53,8 +54,9 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        AbstractIterationOperation<ApplicationReportModel> setupTemplateOperation = new AbstractIterationOperation<ApplicationReportModel>(
-                    ApplicationReportModel.class, APP_REPORT_VAR)
+        AbstractIterationOperation<ApplicationReportModel> setupTemplateOperation =
+            new AbstractIterationOperation<ApplicationReportModel>(
+                ApplicationReportModel.class, APP_REPORT_VAR)
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, ApplicationReportModel payload)
@@ -70,11 +72,13 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
         FreeMarkerIterationOperation reportOperation = FreeMarkerIterationOperation.create(furnace, APP_REPORT_VAR);
 
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(Query.find(ApplicationReportModel.class).as(APP_REPORTS_VAR))
-                    .perform(Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
-                                .perform(setupTemplateOperation.and(reportOperation))
-                                .endIteration());
+            .begin()
+            .addRule()
+            .when(Query.find(ApplicationReportModel.class).as(APP_REPORTS_VAR))
+            .perform(
+                Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
+                .perform(setupTemplateOperation.and(reportOperation))
+                .endIteration());
     }
+    // @formatter:on
 }

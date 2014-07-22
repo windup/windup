@@ -42,17 +42,17 @@ public class RenderOverviewPageRuleProvider extends WindupRuleProvider
         return generateDependencies(RenderApplicationReportRuleProvider.class);
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        FreeMarkerOperation generateReportOperation = FreeMarkerOperation.create(furnace, TEMPLATE_PATH,
-                    OUTPUT_FILENAME,
-                    VAR_APPLICATION_REPORTS);
+        FreeMarkerOperation generateReportOperation = 
+            FreeMarkerOperation.create(TEMPLATE_PATH, OUTPUT_FILENAME, VAR_APPLICATION_REPORTS);
 
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(Query.find(ApplicationReportModel.class).as(VAR_APPLICATION_REPORTS))
-                    .perform(generateReportOperation);
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(Query.find(ApplicationReportModel.class).as(VAR_APPLICATION_REPORTS))
+            .perform(generateReportOperation);
     }
+    // @formatter:on
 }

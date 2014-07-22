@@ -28,6 +28,7 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
         return RulePhase.REPORT_GENERATION;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -35,8 +36,9 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
                     .find(WindupConfigurationModel.class)
                     .as(CONFIGURATION_MODELS);
 
-        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>(
-                    WindupConfigurationModel.class, CONFIGURATION_MODEL)
+        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = 
+            new AbstractIterationOperation<WindupConfigurationModel>(
+                WindupConfigurationModel.class, CONFIGURATION_MODEL)
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
@@ -56,12 +58,13 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
             .addRule()
             .when(findProjectModels)
             .perform(
-                        Iteration.over(CONFIGURATION_MODELS).as(CONFIGURATION_MODEL)
-                                    .perform(addApplicationReport).endIteration()
+                Iteration.over(CONFIGURATION_MODELS).as(CONFIGURATION_MODEL)
+                    .perform(addApplicationReport).endIteration()
             );
-
     }
+    // @formatter:on
 
+    
     private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
         ApplicationReportModel applicationReportModel = context.getFramed().addVertex(null,

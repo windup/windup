@@ -30,10 +30,10 @@ public class PersistenceConfig extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-     
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         
         hints.add(new BlackListRegex(getID(), "net.sf.hibernate.Session.find", "Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()", 2, Types.add(ClassCandidateType.METHOD)));
@@ -61,6 +61,6 @@ public class PersistenceConfig extends WindupRuleProvider
         Configuration configuration = ConfigurationBuilder.begin()
             .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(hints));
         return configuration;
-        
     }
+    // @formatter:on
 }

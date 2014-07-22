@@ -28,20 +28,22 @@ public class UnzipArchivesToTempRuleProvider extends WindupRuleProvider
         return generateDependencies(FileScannerWindupRuleProvider.class);
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder binaryModeOnly = Query.find(WindupConfigurationModel.class)
-                    .withProperty(WindupConfigurationModel.PROPERTY_SOURCE_MODE, false)
-                    .as("cfg");
+            .withProperty(WindupConfigurationModel.PROPERTY_SOURCE_MODE, false)
+            .as("cfg");
 
         return ConfigurationBuilder.begin().addRule()
-                    .when(
-                                binaryModeOnly.and(Query.find(ArchiveModel.class).as("inputArchives"))
-                    )
-                    .perform(Iteration.over("inputArchives").as(ArchiveModel.class, "archive")
-                                .perform(UnzipArchiveToTemporaryFolder.unzip("archive"))
-                                .endIteration()
-                    );
+            .when(
+                binaryModeOnly.and(Query.find(ArchiveModel.class).as("inputArchives"))
+            )
+            .perform(Iteration.over("inputArchives").as(ArchiveModel.class, "archive")
+                .perform(UnzipArchiveToTemporaryFolder.unzip("archive"))
+                .endIteration()
+            );
     }
+    // @formatter:on
 }

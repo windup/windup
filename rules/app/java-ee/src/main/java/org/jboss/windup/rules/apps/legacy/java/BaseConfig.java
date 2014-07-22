@@ -32,6 +32,7 @@ public class BaseConfig extends WindupRuleProvider
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -107,4 +108,5 @@ public class BaseConfig extends WindupRuleProvider
 
         return configuration;
     }
+    // @formatter:on
 }

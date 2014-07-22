@@ -33,11 +33,11 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
         return RulePhase.DISCOVERY;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        Configuration configuration = ConfigurationBuilder
-            .begin()
+        Configuration configuration = ConfigurationBuilder.begin()
             .addRule()
             .when(Query.find(XmlMetaFacetModel.class)
                 .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
@@ -59,6 +59,7 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
             );
         return configuration;
     }
+    // @formatter:on
 
     public List<XmlMetaFacetModel> getTypeSearchResults()
     {
