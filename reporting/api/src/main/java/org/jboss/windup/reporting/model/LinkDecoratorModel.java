@@ -1,4 +1,6 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.reporting.model;
+
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

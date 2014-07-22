@@ -1,6 +1,5 @@
 package org.jboss.windup.reporting.model;
 
-import org.jboss.windup.graph.model.BlackListModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 
 import com.tinkerpop.blueprints.Vertex;

@@ -4,10 +4,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -27,11 +29,13 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 {
     private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerIterationOperation.class);
 
+    private final Furnace furnace;
     private final Set<String> variableNames = new HashSet<>();
 
-    public FreeMarkerIterationOperation(String iterationVarName, String... varNames)
+    public FreeMarkerIterationOperation(Furnace furnace, String iterationVarName, String... varNames)
     {
         super(ReportModel.class, iterationVarName);
+        this.furnace = furnace;
         variableNames.add(iterationVarName);
         if (varNames != null)
         {
@@ -42,9 +46,9 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         }
     }
 
-    public static FreeMarkerIterationOperation create(String iterationVarName, String... varNames)
+    public static FreeMarkerIterationOperation create(Furnace furnace, String iterationVarName, String... varNames)
     {
-        return new FreeMarkerIterationOperation(iterationVarName, varNames);
+        return new FreeMarkerIterationOperation(furnace, iterationVarName, varNames);
     }
 
     @Override
@@ -65,17 +69,28 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             Configuration freemarkerConfig = new Configuration();
             freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
             freemarkerConfig.setTemplateUpdateDelay(500);
+
             Template template = freemarkerConfig.getTemplate(templatePath);
 
             Variables varStack = Variables.instance(event);
-            Map<String, Object> objects = FreeMarkerOperation.findAllVariablesAsMap(varStack,
+
+            // just the variables
+            Map<String, Object> vars = FreeMarkerUtil.findFreeMarkerContextVariables(varStack,
                         variableNames.toArray(new String[variableNames
                                     .size()]));
+
+            // also, extension functions
+            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace);
+
+            Map<String, Object> objects = new HashMap<>(vars);
+            objects.putAll(freeMarkerExtensions);
 
             try (FileWriter fw = new FileWriter(outputPath.toFile()))
             {
                 template.process(objects, fw);
             }
+
+            FreeMarkerUtil.addAssociatedReportData(event.getGraphContext(), payload, vars);
         }
         catch (IOException e)
         {
