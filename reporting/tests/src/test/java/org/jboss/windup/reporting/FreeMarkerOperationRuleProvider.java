@@ -1,5 +1,8 @@
 package org.jboss.windup.reporting;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.graph.GraphContext;
@@ -9,6 +12,9 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 public class FreeMarkerOperationRuleProvider extends WindupRuleProvider
 {
+
+    @Inject
+    private Furnace furnace;
 
     @Override
     public RulePhase getPhase()
@@ -22,7 +28,7 @@ public class FreeMarkerOperationRuleProvider extends WindupRuleProvider
                     .begin()
                     .addRule()
                     .perform(
-                                FreeMarkerOperation.create("/reports/templates/FreeMarkerOperationTest.ftl",
+                                FreeMarkerOperation.create(furnace, "/reports/templates/FreeMarkerOperationTest.ftl",
                                             getOutputFilename())
                     );
     }

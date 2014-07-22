@@ -1,5 +1,6 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.reporting.model;
 
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;

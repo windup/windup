@@ -4,8 +4,8 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.graph.model.LinkDecoratorModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.LinkDecoratorModel;
 import org.jboss.windup.rules.apps.java.model.ClassCandidateTypeModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassificationModel;
 import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidate;

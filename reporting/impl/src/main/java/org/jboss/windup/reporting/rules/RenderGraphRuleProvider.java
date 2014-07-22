@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.renderer;
+package org.jboss.windup.reporting.rules;
 
 import javax.inject.Inject;
 
@@ -8,6 +8,7 @@ import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.renderer.GraphRenderer;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;

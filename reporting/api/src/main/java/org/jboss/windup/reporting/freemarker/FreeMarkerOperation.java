@@ -10,17 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
-import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
@@ -33,22 +30,25 @@ public class FreeMarkerOperation extends GraphOperation
 {
     private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerOperation.class);
 
+    private Furnace furnace;
     private String templatePath;
     private String outputFilename;
     private String reportName;
     private ReportModel parentReportModel;
     private List<String> variableNames = new ArrayList<>();
 
-    public FreeMarkerOperation(String templatePath, String outputFilename, String... varNames)
+    public FreeMarkerOperation(Furnace furnace, String templatePath, String outputFilename, String... varNames)
     {
+        this.furnace = furnace;
         this.templatePath = templatePath;
         this.outputFilename = outputFilename;
         this.variableNames = Arrays.asList(varNames);
     }
 
-    public static FreeMarkerOperation create(String templatePath, String outputFilename, String... varNames)
+    public static FreeMarkerOperation create(Furnace furnace, String templatePath, String outputFilename,
+                String... varNames)
     {
-        return new FreeMarkerOperation(templatePath, outputFilename, varNames);
+        return new FreeMarkerOperation(furnace, templatePath, outputFilename, varNames);
     }
 
     public FreeMarkerOperation reportName(String reportName)
@@ -81,9 +81,17 @@ public class FreeMarkerOperation extends GraphOperation
             Template template = cfg.getTemplate(templatePath);
 
             Variables varStack = Variables.instance(event);
-            Map<String, Object> objects = findAllVariablesAsMap(varStack,
+
+            // just the variables
+            Map<String, Object> vars = FreeMarkerUtil.findFreeMarkerContextVariables(varStack,
                         variableNames.toArray(new String[variableNames
                                     .size()]));
+
+            // also, extension functions
+            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace);
+
+            Map<String, Object> objects = new HashMap<>(vars);
+            objects.putAll(freeMarkerExtensions);
 
             try (FileWriter fw = new FileWriter(outputPath.toFile()))
             {
@@ -103,7 +111,7 @@ public class FreeMarkerOperation extends GraphOperation
                 reportModel.setReportName(reportName);
             }
 
-            addAssociatedReportData(event.getGraphContext(), reportModel, objects);
+            FreeMarkerUtil.addAssociatedReportData(event.getGraphContext(), reportModel, vars);
         }
         catch (IOException e)
         {
@@ -115,66 +123,4 @@ public class FreeMarkerOperation extends GraphOperation
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void addAssociatedReportData(GraphContext context, ReportModel reportModel, Map<String, Object> reportData)
-    {
-        Map<String, WindupVertexFrame> relatedResources = new HashMap<>();
-        for (Map.Entry<String, Object> varEntry : reportData.entrySet())
-        {
-            Object value = varEntry.getValue();
-            if (value instanceof WindupVertexFrame)
-            {
-                relatedResources.put(varEntry.getKey(), (WindupVertexFrame) varEntry.getValue());
-            }
-            else if (value instanceof Iterable)
-            {
-                WindupVertexListModel list = context.getFramed().addVertex(null, WindupVertexListModel.class);
-                for (WindupVertexFrame frame : (Iterable<? extends WindupVertexFrame>) value)
-                {
-                    list.addItem(frame);
-                }
-                relatedResources.put(varEntry.getKey(), list);
-            }
-            else
-            {
-                throw new WindupException("Unrecognized variable type: " + value.getClass().getCanonicalName()
-                            + " encountered!");
-            }
-        }
-    }
-
-    /**
-     * Searches the variables layers, top to bottom, for the given variable names and returns them in a map of "name" ->
-     * {@link Iterable}<?> pairs.
-     */
-    static Map<String, Object> findAllVariablesAsMap(Variables varStack, String... varNames)
-    {
-        Map<String, Object> results = new HashMap<String, Object>();
-        for (String varName : varNames)
-        {
-            WindupVertexFrame payload = null;
-            try
-            {
-                payload = Iteration.getCurrentPayload(varStack, null, varName);
-            }
-            catch (IllegalStateException | IllegalArgumentException e)
-            {
-                // oh well
-            }
-
-            if (payload != null)
-            {
-                results.put(varName, payload);
-            }
-            else
-            {
-                Iterable<WindupVertexFrame> var = varStack.findVariable(varName);
-                if (var != null)
-                {
-                    results.put(varName, var);
-                }
-            }
-        }
-        return results;
-    }
 }

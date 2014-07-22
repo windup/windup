@@ -13,11 +13,14 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.BlackListModel;
-import org.jboss.windup.graph.model.ClassificationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.model.BlackListModel;
+import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -98,25 +101,45 @@ public class BlackListQueryTest extends AbstractTestCase
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getFramed().query()
                     .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource").vertices());
 
-        GremlinPipeline<Vertex, Vertex> blacklistPipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getFramed().query()
-                    .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource").vertices());
-        blacklistPipeline.as("fileModel1").in(BlackListModel.FILE_MODEL).back("fileModel1");
+        GraphRewrite event = new GraphRewrite(context);
 
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(context
-                    .getFramed().query()
-                    .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource").vertices());
-        classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL).back("fileModel2");
-        pipeline.or(blacklistPipeline, classificationPipeline);
+        // manually execute this criterion (this just adds things to the pipeline)
+        new FindClassifiedFilesGremlinCriterion().query(event, pipeline);
 
-        // pipeline.V();
-
-        System.out.println("--------------------------------------------------");
+        List<FileModel> fileModels = new ArrayList<>();
         for (Vertex v : pipeline)
         {
-            FileModel fm = context.getFramed().frame(v, FileModel.class);
-            System.out.println("FM: " + fm.getFilePath());
+            // Explicit cast here insures that the frame returned was actually a FileModel. If it is not, a
+            // ClassCastException will
+            // occur and the test will fail.
+            //
+            // If we called frame(v, FileModel.class) directly, frames would happily force it to be a FileModel
+            // even if the underlying query were returning invalid results.
+            FileModel fm = (FileModel) context.getFramed().frame(v, WindupVertexFrame.class);
+            fileModels.add(fm);
         }
-        System.out.println("--------------------------------------------------");
+
+        boolean foundF1 = false;
+        boolean foundF2 = false;
+        boolean foundF3 = false;
+        Assert.assertEquals(3, fileModels.size());
+        for (FileModel fm : fileModels)
+        {
+            if (fm.getFilePath().equals(f1.getFilePath()))
+            {
+                foundF1 = true;
+            }
+            else if (fm.getFilePath().equals(f2.getFilePath()))
+            {
+                foundF2 = true;
+            }
+            else if (fm.getFilePath().equals(f3.getFilePath()))
+            {
+                foundF3 = true;
+            }
+        }
+        Assert.assertTrue(foundF1);
+        Assert.assertTrue(foundF2);
+        Assert.assertTrue(foundF3);
     }
 }
