@@ -27,18 +27,17 @@ public class RenderGraphRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext arg0)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(new GraphOperation()
+            .addRule()
+            .perform(new GraphOperation()
+            {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context)
+                {
+                    for (GraphRenderer renderer : renderers)
                     {
-
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            for (GraphRenderer renderer : renderers)
-                            {
-                                renderer.renderGraph();
-                            }
-                        }
-                    });
+                        renderer.renderGraph();
+                    }
+                }
+            });
     }
 }

@@ -52,11 +52,11 @@ public class ApplicationReportRenderingRuleProvider extends WindupRuleProvider
         FreeMarkerIterationOperation reportOperation = FreeMarkerIterationOperation.create(APP_REPORT_VAR);
 
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(Query.find(ApplicationReportModel.class).as(APP_REPORTS_VAR))
-                    .perform(Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
-                                .perform(setupTemplateOperation.and(reportOperation))
-                                .endIteration());
+            .begin()
+            .addRule()
+            .when(Query.find(ApplicationReportModel.class).as(APP_REPORTS_VAR))
+            .perform(Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
+                .perform(setupTemplateOperation.and(reportOperation))
+                .endIteration());
     }
 }

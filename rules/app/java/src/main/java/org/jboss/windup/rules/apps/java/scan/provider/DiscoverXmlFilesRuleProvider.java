@@ -57,10 +57,10 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext arg0)
     {
         ConditionBuilder fileWhen = Query
-                    .find(FileModel.class)
-                    .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-                    .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$")
-                    .as("fileModels");
+            .find(FileModel.class)
+            .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$")
+            .as("fileModels");
 
         AbstractIterationOperation<FileModel> evaluatePomFiles = new AbstractIterationOperation<FileModel>(
                     FileModel.class, "fileModel")
@@ -72,13 +72,12 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
             }
         };
 
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(fileWhen)
-                    .perform(
-                                Iteration.over("fileModels").as("fileModel").perform(evaluatePomFiles).endIteration()
-                    );
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(fileWhen)
+            .perform(
+                        Iteration.over("fileModels").as("fileModel").perform(evaluatePomFiles).endIteration()
+            );
     }
 
     private void addXmlMetaInformation(GraphContext context, FileModel file)

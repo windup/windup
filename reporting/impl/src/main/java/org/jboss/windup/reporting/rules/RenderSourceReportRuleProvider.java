@@ -55,15 +55,14 @@ public class RenderSourceReportRuleProvider extends WindupRuleProvider
             }
         };
 
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(Query.find(SourceReportModel.class).as("sourceReports"))
-                    .perform(
-                                Iteration.over("sourceReports")
-                                            .as("sourceReport")
-                                            .perform(renderReport.and(FreeMarkerIterationOperation
-                                                        .create("sourceReport"))).endIteration()
-                    );
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(Query.find(SourceReportModel.class).as("sourceReports"))
+            .perform(
+                Iteration.over("sourceReports")
+                    .as("sourceReport")
+                    .perform(renderReport.and(
+                        FreeMarkerIterationOperation.create("sourceReport"))).endIteration()
+            );
     }
 }

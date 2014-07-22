@@ -52,14 +52,13 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
             }
         };
 
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(findProjectModels)
-                    .perform(
-                                Iteration.over(CONFIGURATION_MODELS).as(CONFIGURATION_MODEL)
-                                            .perform(addApplicationReport).endIteration()
-                    );
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(findProjectModels)
+            .perform(
+                        Iteration.over(CONFIGURATION_MODELS).as(CONFIGURATION_MODEL)
+                                    .perform(addApplicationReport).endIteration()
+            );
 
     }
 

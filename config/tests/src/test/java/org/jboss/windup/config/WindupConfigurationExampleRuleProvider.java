@@ -58,52 +58,48 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
             }
         };
 
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule()
+        Configuration configuration = ConfigurationBuilder.begin()
+        .addRule()
 
-                    /*
-                     * Specify a set of conditions that must be met in order for the .perform() clause of this rule to
-                     * be evaluated.
-                     */
-                    .when(
-                                /*
-                                 * Select all java classes with the FQCN matching "com.example.(.*)", store the
-                                 * resultant list in a parameter named "javaClasses"
-                                 */
-                                Query.find(JavaClassModel.class).withProperty("qualifiedName",
-                                            QueryPropertyComparisonType.REGEX, "com\\.example\\..*")
-                                            .as("javaClasses")
+        /*
+         * Specify a set of conditions that must be met in order for the .perform() clause of this rule to
+         * be evaluated.
+         */
+        .when(
+            /*
+             * Select all java classes with the FQCN matching "com.example.(.*)", store the
+             * resultant list in a parameter named "javaClasses"
+             */
+            Query.find(JavaClassModel.class)
+                .withProperty("qualifiedName", QueryPropertyComparisonType.REGEX, "com\\.example\\..*")
+                .as("javaClasses")
 
-                                            .and(Query.from("javaClasses")
-                                                        .piped(methodNameCriterion)
-                                                        .as("javaMethods")
-                                            )
+                .and(Query.from("javaClasses")
+                    .piped(methodNameCriterion)
+                    .as("javaMethods")
+                )
+        )
 
-                    )
+        /*
+         * If all conditions of the .when() clause were satisfied, the following conditions will be
+         * evaluated
+         */
+        .perform(Iteration.over("javaMethods").as(JavaMethodModel.class, "javaMethod")
+            .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class, "javaMethod")
+            {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, JavaMethodModel methodModel)
+                {
+                    WindupConfigurationExampleRuleProvider.this.config = GraphService
+                                .getConfigurationModel(event.getGraphContext());
 
-                    /*
-                     * If all conditions of the .when() clause were satisfied, the following conditions will be
-                     * evaluated
-                     */
-                    .perform(Iteration.over("javaMethods").as(JavaMethodModel.class, "javaMethod")
-                                .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class,
-                                            "javaMethod")
-                                {
-                                    @Override
-                                    public void perform(GraphRewrite event, EvaluationContext context,
-                                                JavaMethodModel methodModel)
-                                    {
-                                        WindupConfigurationExampleRuleProvider.this.config = GraphService
-                                                    .getConfigurationModel(event.getGraphContext());
-
-                                        results.add(methodModel);
-                                        LOG.info("Overridden " + methodModel.getMethodName() + " Method in type: "
-                                                    + methodModel.getJavaClass().getQualifiedName());
-                                    }
-                                })
-                                .endIteration()
-                    );
+                    results.add(methodModel);
+                    LOG.info("Overridden " + methodModel.getMethodName() + " Method in type: "
+                        + methodModel.getJavaClass().getQualifiedName());
+                }
+            })
+            .endIteration()
+        );
         return configuration;
     }
 

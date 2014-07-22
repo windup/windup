@@ -209,7 +209,7 @@ public abstract class Iteration extends DefaultOperationBuilder
         if (!(existingValue == null || existingValue instanceof IterationPayload))
         {
             throw new IllegalArgumentException("Variable \"" + name
-                        + "\" is not an " + Iteration.class.getSimpleName() + " variable.");
+                + "\" is not an " + Iteration.class.getSimpleName() + " variable.");
         }
 
         Object object = stack.findSingletonVariable(type, name);

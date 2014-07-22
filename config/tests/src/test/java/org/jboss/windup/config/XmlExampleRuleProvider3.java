@@ -37,27 +37,26 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(Query.find(XmlMetaFacetModel.class)
-                                .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
-                                            QueryPropertyComparisonType.EQUALS,
-                                            "xmlTag2")
-                                .as("xmlModels"))
-                    .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
-                                .perform(new GraphOperation()
-                                {
-                                    @Override
-                                    public void perform(GraphRewrite event, EvaluationContext context)
-                                    {
-                                        Variables varStack = Variables.instance(event);
-                                        XmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
-                                                    XmlMetaFacetModel.class, "xml");
-                                        typeSearchResults.add(xmlFacetModel);
-                                    }
-                                })
-                                .endIteration()
-                    );
+            .begin()
+            .addRule()
+            .when(Query.find(XmlMetaFacetModel.class)
+                .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
+                    QueryPropertyComparisonType.EQUALS, "xmlTag2")
+                .as("xmlModels"))
+            .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
+                .perform(new GraphOperation()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context)
+                    {
+                        Variables varStack = Variables.instance(event);
+                        XmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
+                                    XmlMetaFacetModel.class, "xml");
+                        typeSearchResults.add(xmlFacetModel);
+                    }
+                })
+                .endIteration()
+            );
         return configuration;
     }
 

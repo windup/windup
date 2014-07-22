@@ -119,13 +119,12 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             }
         };
 
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(fileWhen)
-                    .perform(
-                                Iteration.over("fileModels").as("fileModel").perform(evaluatePomFiles).endIteration()
-                    );
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(fileWhen)
+            .perform(
+                Iteration.over("fileModels").as("fileModel").perform(evaluatePomFiles).endIteration()
+            );
     }
 
     private void addFilesToModel(MavenProjectModel mavenProjectModel, FileModel fileModel)

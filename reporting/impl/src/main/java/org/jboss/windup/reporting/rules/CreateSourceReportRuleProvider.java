@@ -50,37 +50,37 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         /*
          * Find all files for which there is at least one classification or blacklist
          */
-        Condition finder = Query.find(FileModel.class)
-                    .piped(new QueryGremlinCriterion()
-                    {
-                        @SuppressWarnings("unchecked")
-                        @Override
-                        public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
-                        {
-                            FramedGraph<TitanGraph> framed = event.getGraphContext().getFramed();
+        Condition finder = Query.find(FileModel.class).piped(
+            new QueryGremlinCriterion()
+            {
+                @SuppressWarnings("unchecked")
+                @Override
+                public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                {
+                    FramedGraph<TitanGraph> framed = event.getGraphContext().getFramed();
 
-                            // create a pipeline to get all blacklisted items
-                            GremlinPipeline<Vertex, Vertex> blacklistPipeline = new GremlinPipeline<Vertex, Vertex>(
-                                        framed
-                                                    .query()
-                                                    .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource")
-                                                    .vertices());
-                            blacklistPipeline.as("fileModel1").in(BlackListModel.FILE_MODEL).back("fileModel1");
+                    // create a pipeline to get all blacklisted items
+                    GremlinPipeline<Vertex, Vertex> blacklistPipeline = 
+                        new GremlinPipeline<Vertex, Vertex>(
+                        framed.query()
+                            .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource")
+                            .vertices());
+                    blacklistPipeline.as("fileModel1").in(BlackListModel.FILE_MODEL).back("fileModel1");
 
-                            // create a pipeline to get all items with attached classifications
-                            GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
-                                        framed
-                                                    .query()
-                                                    .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource")
-                                                    .vertices());
-                            classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
-                                        .back("fileModel2");
+                    // create a pipeline to get all items with attached classifications
+                    GremlinPipeline<Vertex, Vertex> classificationPipeline = 
+                        new GremlinPipeline<Vertex, Vertex>(
+                        framed.query()
+                            .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource")
+                            .vertices());
+                    classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
+                        .back("fileModel2");
 
-                            // combine these to get all file models that have either classifications or blacklists
-                            pipeline.or(blacklistPipeline, classificationPipeline);
-                        }
-                    })
-                    .as("fileModels");
+                    // combine these to get all file models that have either classifications or blacklists
+                    pipeline.or(blacklistPipeline, classificationPipeline);
+                }
+            })
+            .as("fileModels");
 
         GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>(FileModel.class, "fileModel")
         {

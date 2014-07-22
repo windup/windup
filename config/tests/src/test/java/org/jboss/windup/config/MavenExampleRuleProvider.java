@@ -39,40 +39,39 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
     {
         Configuration configuration = ConfigurationBuilder.begin()
 
-                    // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
-                    .addRule()
-                    .when(
-                                Query.find(XmlMetaFacetModel.class).as("xmlModels")
-                    )
-                    .perform(
-                                Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
-                                            .perform(
-                                                        TypeOperation.addType("xml", MavenProjectModel.class)
-                                            )
-                                            .endIteration()
-                    )
+        // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
+        .addRule()
+        .when(
+            Query.find(XmlMetaFacetModel.class).as("xmlModels")
+        )
+        .perform(
+            Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
+            .perform(
+                TypeOperation.addType("xml", MavenProjectModel.class)
+            )
+            .endIteration()
+        )
 
-                    // Add all MavenFacetModel vertices to this.results.
-                    .addRule()
-                    .when(
-                                Query.find(MavenProjectModel.class).as("mavenModels")
-                    )
-                    .perform(
-                                Iteration.over(MavenProjectModel.class, "mavenModels").as("maven")
-                                            .perform(new GraphOperation()
-                                            {
-                                                @Override
-                                                public void perform(GraphRewrite event, EvaluationContext context)
-                                                {
-                                                    Variables varStack = Variables.instance(event);
-                                                    MavenProjectModel mavenFacetModel = Iteration.getCurrentPayload(
-                                                                varStack,
-                                                                MavenProjectModel.class, "maven");
-                                                    results.add(mavenFacetModel);
-                                                }
-                                            })
-                                            .endIteration()
-                    );
+        // Add all MavenFacetModel vertices to this.results.
+        .addRule()
+        .when(
+            Query.find(MavenProjectModel.class).as("mavenModels")
+        )
+        .perform(
+            Iteration.over(MavenProjectModel.class, "mavenModels").as("maven")
+                .perform( new GraphOperation()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context)
+                    {
+                        Variables varStack = Variables.instance(event);
+                        MavenProjectModel mavenFacetModel = 
+                            Iteration.getCurrentPayload(varStack, MavenProjectModel.class, "maven");
+                        results.add(mavenFacetModel);
+                    }
+                })
+                .endIteration()
+        );
         return configuration;
     }
 

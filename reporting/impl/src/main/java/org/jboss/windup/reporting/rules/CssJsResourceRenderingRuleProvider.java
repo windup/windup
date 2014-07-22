@@ -43,28 +43,24 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
     {
         ConditionBuilder configSearch = Query.find(WindupConfigurationModel.class).as("configuration");
 
-        Configuration configuration = ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(configSearch)
-                    .perform(
-                                Iteration.over("configuration")
-                                            .as("cfg")
-                                            .perform(
-                                                        new AbstractIterationOperation<WindupConfigurationModel>(
-                                                                    WindupConfigurationModel.class, "cfg")
-                                                        {
-                                                            public void perform(GraphRewrite event,
-                                                                        EvaluationContext context,
-                                                                        WindupConfigurationModel payload)
-                                                            {
-                                                                String outputPath = payload.getOutputPath()
-                                                                            .getFilePath();
-                                                                copyCssResourcesToOutput(outputPath);
-                                                            }
-                                                        }
-                                            ).endIteration()
-                    );
+        Configuration configuration = ConfigurationBuilder.begin()
+        .addRule()
+        .when(configSearch)
+        .perform(
+            Iteration.over("configuration").as("cfg")
+            .perform(
+                new AbstractIterationOperation<WindupConfigurationModel>(
+                            WindupConfigurationModel.class, "cfg")
+                {
+                    public void perform(GraphRewrite event,
+                        EvaluationContext context, WindupConfigurationModel payload)
+                    {
+                        String outputPath = payload.getOutputPath().getFilePath();
+                        copyCssResourcesToOutput(outputPath);
+                    }
+                }
+            ).endIteration()
+        );
         return configuration;
     }
 
