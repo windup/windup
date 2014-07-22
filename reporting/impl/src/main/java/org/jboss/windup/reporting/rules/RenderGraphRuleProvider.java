@@ -13,6 +13,13 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * 
+ * This renders the graph itself to the output directory for debug purposes.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class RenderGraphRuleProvider extends WindupRuleProvider
 {
     @Inject
@@ -28,17 +35,17 @@ public class RenderGraphRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext arg0)
     {
         return ConfigurationBuilder.begin()
-            .addRule()
-            .perform(new GraphOperation()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context)
-                {
-                    for (GraphRenderer renderer : renderers)
+                    .addRule()
+                    .perform(new GraphOperation()
                     {
-                        renderer.renderGraph();
-                    }
-                }
-            });
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context)
+                        {
+                            for (GraphRenderer renderer : renderers)
+                            {
+                                renderer.renderGraph();
+                            }
+                        }
+                    });
     }
 }

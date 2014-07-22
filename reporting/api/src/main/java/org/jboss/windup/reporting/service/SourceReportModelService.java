@@ -8,6 +8,13 @@ import org.jboss.windup.reporting.model.source.SourceReportModel;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
+/**
+ * 
+ * This provides helper queries and functions for finding and creating SourceReportModel instances.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class SourceReportModelService extends GraphService<SourceReportModel>
 {
 
@@ -21,6 +28,9 @@ public class SourceReportModelService extends GraphService<SourceReportModel>
         super(context, SourceReportModel.class);
     }
 
+    /**
+     * Find the SourceReportModel instance for this fileModel (this is a 1:1 relationship).
+     */
     public SourceReportModel getSourceReportForFileModel(FileModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());

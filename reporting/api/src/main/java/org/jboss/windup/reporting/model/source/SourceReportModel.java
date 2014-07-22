@@ -15,6 +15,10 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * Represents a report on a application source code file (eg, .java file, or .xml file).
+ * 
+ */
 @TypeValue(SourceReportModel.TYPE)
 public interface SourceReportModel extends ReportModel
 {

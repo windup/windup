@@ -11,6 +11,12 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
+/**
+ * This provides helper functions for finding and creating BlackListModels within the graph.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class BlackListModelService extends GraphService<BlackListModel>
 {
 
@@ -24,6 +30,9 @@ public class BlackListModelService extends GraphService<BlackListModel>
         super(context, BlackListModel.class);
     }
 
+    /**
+     * This method finds all BlackListModels for the given ProjectModel.
+     */
     public Iterable<BlackListModel> findBlackListsForProject(ProjectModel projectModel)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel);

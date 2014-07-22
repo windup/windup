@@ -23,6 +23,14 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * This creates SourceReportModel entries for every relevant item within the graph.
+ * 
+ * Relevancy is based on whether the item has classifications or blacklists attached to it.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class CreateSourceReportRuleProvider extends WindupRuleProvider
 {
     @Inject

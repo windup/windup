@@ -22,6 +22,13 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * 
+ * This renders all SourceReports to the output directory.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class RenderSourceReportRuleProvider extends WindupRuleProvider
 {
     @Inject
