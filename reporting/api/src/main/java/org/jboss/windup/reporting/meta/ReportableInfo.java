@@ -5,7 +5,8 @@ import java.util.List;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
- *
+ *  Common reportable information about an item to appear in the report.
+ * 
  *  @author Ondrej Zizka, ozizka at redhat.com
  */
 public class ReportableInfo {
@@ -98,7 +99,7 @@ public class ReportableInfo {
     }
 
 
-    public void setReferences( Reference reference ) {
+    public void addReference( Reference reference ) {
         this.references.add(reference);
     }
 
