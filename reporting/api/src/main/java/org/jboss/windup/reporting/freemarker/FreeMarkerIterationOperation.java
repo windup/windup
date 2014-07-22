@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
@@ -18,21 +19,25 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+/**
+ * This class is used to produce a freemarker report from inside of a Windup Iteration.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com)
+ * 
+ */
 public class FreeMarkerIterationOperation extends AbstractIterationOperation<ReportModel>
 {
-    private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerIterationOperation.class);
+    private static final Logger LOG = Logger.getLogger(FreeMarkerIterationOperation.class.getName());
 
     private final Furnace furnace;
     private final Set<String> variableNames = new HashSet<>();
 
-    public FreeMarkerIterationOperation(Furnace furnace, String iterationVarName, String... varNames)
+    protected FreeMarkerIterationOperation(Furnace furnace, String iterationVarName, String... varNames)
     {
         super(ReportModel.class, iterationVarName);
         this.furnace = furnace;
@@ -46,6 +51,13 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         }
     }
 
+    /**
+     * Create a FreeMarkerIterationOperation with the provided furnace instance, the provided iteration var, as well as
+     * any other associated variables (based upon variables in the Variables object).
+     * 
+     * iterationVarName should be a reference to an object of type "ReportModel"
+     * 
+     */
     public static FreeMarkerIterationOperation create(Furnace furnace, String iterationVarName, String... varNames)
     {
         return new FreeMarkerIterationOperation(furnace, iterationVarName, varNames);
@@ -63,8 +75,8 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             String outputDir = windupCfg.getOutputPath().getFilePath();
             Path outputPath = Paths.get(outputDir, outputFilename);
 
-            LOG.info("Reporting: Writing template \"{}\" to output file \"{}\"", templatePath, outputPath
-                        .toAbsolutePath().toString());
+            LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \""
+                        + outputPath.toAbsolutePath().toString() + "\"");
 
             Configuration freemarkerConfig = new Configuration();
             freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
@@ -79,7 +91,8 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
                         variableNames.toArray(new String[variableNames
                                     .size()]));
 
-            // also, extension functions
+            // also, extension functions (these are kept separate from vars in order to prevent them
+            // from being stored in the associated data with the reportmodel)
             Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace);
 
             Map<String, Object> objects = new HashMap<>(vars);

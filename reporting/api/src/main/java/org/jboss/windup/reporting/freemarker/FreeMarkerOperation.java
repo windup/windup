@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
@@ -20,15 +21,20 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+/**
+ * This class is used to produce a freemarker report (and the associated ReportModel) from outside of an Iteration
+ * context.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com)
+ * 
+ */
 public class FreeMarkerOperation extends GraphOperation
 {
-    private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerOperation.class);
+    private static final Logger LOG = Logger.getLogger(FreeMarkerOperation.class.getName());
 
     private Furnace furnace;
     private String templatePath;
@@ -37,7 +43,7 @@ public class FreeMarkerOperation extends GraphOperation
     private ReportModel parentReportModel;
     private List<String> variableNames = new ArrayList<>();
 
-    public FreeMarkerOperation(Furnace furnace, String templatePath, String outputFilename, String... varNames)
+    protected FreeMarkerOperation(Furnace furnace, String templatePath, String outputFilename, String... varNames)
     {
         this.furnace = furnace;
         this.templatePath = templatePath;
@@ -45,6 +51,14 @@ public class FreeMarkerOperation extends GraphOperation
         this.variableNames = Arrays.asList(varNames);
     }
 
+    /**
+     * Create a FreeMarkerOperation with the provided furnace instance template path, and varNames.
+     * 
+     * The variables in varNames will be provided to the template, and a new ReportModel will be created with these
+     * variables attached.
+     * 
+     * 
+     */
     public static FreeMarkerOperation create(Furnace furnace, String templatePath, String outputFilename,
                 String... varNames)
     {
@@ -72,8 +86,8 @@ public class FreeMarkerOperation extends GraphOperation
             String outputDir = windupCfg.getOutputPath().getFilePath();
             Path outputPath = Paths.get(outputDir, outputFilename);
 
-            LOG.info("Reporting: Writing template \"{}\" to output file \"{}\"", templatePath, outputPath
-                        .toAbsolutePath().toString());
+            LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \""
+                        + outputPath.toAbsolutePath().toString() + "\"");
 
             freemarker.template.Configuration cfg = new freemarker.template.Configuration();
             cfg.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
@@ -122,5 +136,4 @@ public class FreeMarkerOperation extends GraphOperation
             throw new WindupException("FreeMarkerOperation TemplateException: " + e.getMessage(), e);
         }
     }
-
 }

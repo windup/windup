@@ -12,6 +12,20 @@ import org.jboss.windup.reporting.service.SourceReportModelService;
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
+/**
+ * 
+ * This FreeMarker method simply finds the SourceReport that is associated with the provided FileModel, if there is a
+ * SourceReport available.
+ * 
+ * If none is available, it will return null.
+ * 
+ * The function takes one parameter, and can be called from a freemarker template as follows:
+ * 
+ * fileModelToSourceReport(fileModel)
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMethod
 {
     public static final String METHOD_NAME = "fileModelToSourceReport";

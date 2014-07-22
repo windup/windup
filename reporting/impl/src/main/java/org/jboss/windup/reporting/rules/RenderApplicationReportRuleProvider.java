@@ -20,6 +20,12 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * This renders the ApplicationReport, along with all of its subapplications via freemarker.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class RenderApplicationReportRuleProvider extends WindupRuleProvider
 {
     private static final String APP_REPORTS_VAR = "applicationReportsIterable";
@@ -64,11 +70,11 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
         FreeMarkerIterationOperation reportOperation = FreeMarkerIterationOperation.create(furnace, APP_REPORT_VAR);
 
         return ConfigurationBuilder
-            .begin()
-            .addRule()
-            .when(Query.find(ApplicationReportModel.class).as(APP_REPORTS_VAR))
-            .perform(Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
-                .perform(setupTemplateOperation.and(reportOperation))
-                .endIteration());
+                    .begin()
+                    .addRule()
+                    .when(Query.find(ApplicationReportModel.class).as(APP_REPORTS_VAR))
+                    .perform(Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
+                                .perform(setupTemplateOperation.and(reportOperation))
+                                .endIteration());
     }
 }

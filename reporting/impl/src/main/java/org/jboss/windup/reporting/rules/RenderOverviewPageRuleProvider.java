@@ -14,6 +14,13 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
+/**
+ * 
+ * This renders an overview page listing all applications analyzed by the current execution of windup.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class RenderOverviewPageRuleProvider extends WindupRuleProvider
 {
     private static final String VAR_APPLICATION_REPORTS = "applicationReports";

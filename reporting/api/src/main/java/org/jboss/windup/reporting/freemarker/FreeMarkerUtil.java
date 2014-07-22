@@ -13,6 +13,11 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.util.exception.WindupException;
 
+/**
+ * This class contains several useful utility functions that can be used for rendering a freemarker template within
+ * Windup.
+ * 
+ */
 public class FreeMarkerUtil
 {
 
