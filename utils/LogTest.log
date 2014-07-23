@@ -1,0 +1,8 @@
+Jul 24, 2014 12:29:11 AM Main ZpracujArchiv
+FINER: ENTRY
+Jul 24, 2014 12:29:11 AM org.jboss.windup.log.LoggerTest testLogging
+SEVERE: Test SEVERE
+Jul 24, 2014 12:29:11 AM org.jboss.windup.log.LoggerTest testLogging
+INFO: Test INFO
+Jul 24, 2014 12:29:11 AM org.jboss.windup.log.LoggerTest testLogging
+FINE: Test FINE
