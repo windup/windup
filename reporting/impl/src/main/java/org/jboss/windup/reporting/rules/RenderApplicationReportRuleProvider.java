@@ -15,7 +15,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerIterationOperation;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
-import org.jboss.windup.reporting.service.ReportModelService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -34,9 +33,6 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
 
     @Inject
     private Furnace furnace;
-
-    @Inject
-    private ReportModelService reportModelService;
 
     @Override
     public RulePhase getPhase()
@@ -63,9 +59,6 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
             {
                 payload.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
                 payload.setTemplateType(TemplateType.FREEMARKER);
-                String applicationname = payload.getApplicationName();
-
-                reportModelService.setUniqueFilename(payload, applicationname, "html");
             }
         };
 
