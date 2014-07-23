@@ -148,7 +148,8 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return getGraphContext().getFramed().frame(vertex, this.getType());
     }
 
-    protected Class<T> getType()
+    @Override
+    public Class<T> getType()
     {
         return type;
     }

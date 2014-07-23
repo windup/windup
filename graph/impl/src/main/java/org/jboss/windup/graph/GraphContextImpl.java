@@ -5,6 +5,9 @@ import java.io.File;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
+import org.jboss.forge.furnace.services.Imported;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.Service;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -14,6 +17,7 @@ import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
+import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
@@ -21,13 +25,17 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 
 public class GraphContextImpl implements GraphContext
 {
-    private GraphApiCompositeClassLoaderProvider classLoaderProvider;
+    private final GraphApiCompositeClassLoaderProvider classLoaderProvider;
 
-    private TitanGraph graph;
-    private BatchGraph<TitanGraph> batch;
-    private FramedGraph<TitanGraph> framed;
-    private GraphTypeRegistry graphTypeRegistry;
-    private File diskCacheDir;
+    /**
+     * Used to get access to all implemented {@link Service} classes.
+     */
+    private final Imported<Service<? extends VertexFrame>> graphServices;
+    private final TitanGraph graph;
+    private final BatchGraph<TitanGraph> batch;
+    private final FramedGraph<TitanGraph> framed;
+    private final GraphTypeRegistry graphTypeRegistry;
+    private final File diskCacheDir;
 
     public TitanGraph getGraph()
     {
@@ -50,9 +58,11 @@ public class GraphContextImpl implements GraphContext
         return framed;
     }
 
-    public GraphContextImpl(File diskCache, GraphTypeRegistry graphTypeRegistry,
+    public GraphContextImpl(Imported<Service<? extends VertexFrame>> graphServices, File diskCache,
+                GraphTypeRegistry graphTypeRegistry,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider)
     {
+        this.graphServices = graphServices;
         this.graphTypeRegistry = graphTypeRegistry;
         this.classLoaderProvider = classLoaderProvider;
 
@@ -123,6 +133,29 @@ public class GraphContextImpl implements GraphContext
         );
 
         framed = factory.create(graph);
+    }
+
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <T extends VertexFrame, S extends Service<T>> S getService(Class<T> type)
+    {
+        S closestMatch = null;
+        for (Service<? extends VertexFrame> service : graphServices)
+        {
+            if (service.getType() == type)
+            {
+                closestMatch = (S) service;
+            }
+            else if (closestMatch == null && service.getType().isAssignableFrom(type))
+            {
+                closestMatch = (S) service;
+            }
+        }
+        if (closestMatch == null)
+        {
+            closestMatch = (S) new GraphService(this, type);
+        }
+        return closestMatch;
     }
 
     @Override
