@@ -43,6 +43,7 @@ public class RenderSourceReportRuleProvider extends WindupRuleProvider
         return RulePhase.REPORT_RENDERING;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -76,4 +77,5 @@ public class RenderSourceReportRuleProvider extends WindupRuleProvider
                                                         .create(furnace, "sourceReport"))).endIteration()
                     );
     }
+    // @formatter:on
 }

@@ -36,27 +36,25 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
         return RulePhase.MIGRATION_RULES;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder javaSourceCanBeLocated = Query
-                    .find(JavaSourceFileModel.class)
-                    .as("javaSourceFiles");
+        ConditionBuilder javaSourceCanBeLocated = Query.find(JavaSourceFileModel.class)
+        .as("javaSourceFiles");
 
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(javaSourceCanBeLocated)
-                    .perform(
-                                Iteration.over("javaSourceFiles")
-                                            .as(JavaSourceFileModel.class, "javaSourceFile")
-                                            .perform(
-                                                        new FireASTTypeNameEventsIterationOperator(
-                                                                    JavaSourceFileModel.class, "javaSourceFile")
-                                            )
-                                            .endIteration()
-                    );
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(javaSourceCanBeLocated)
+            .perform(
+                Iteration.over("javaSourceFiles").as(JavaSourceFileModel.class, "javaSourceFile")
+                .perform(
+                    new FireASTTypeNameEventsIterationOperator(JavaSourceFileModel.class, "javaSourceFile")
+                )
+                .endIteration()
+            );
     }
+    // @formatter:on
 
     private final class FireASTTypeNameEventsIterationOperator extends AbstractIterationOperation<JavaSourceFileModel>
     {

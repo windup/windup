@@ -38,6 +38,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
         return RulePhase.DISCOVERY;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

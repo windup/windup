@@ -34,6 +34,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
         return RulePhase.DISCOVERY;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -74,6 +75,8 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
         );
         return configuration;
     }
+    // @formatter:on
+    
 
     public List<MavenProjectModel> getSearchResults()
     {

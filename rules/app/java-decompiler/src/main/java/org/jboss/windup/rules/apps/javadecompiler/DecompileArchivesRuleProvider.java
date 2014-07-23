@@ -17,19 +17,19 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
         return RulePhase.INITIAL_ANALYSIS;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(
-                                Query.find(ArchiveModel.class).as("allUnzippedArchives")
-                    ).perform(
-                                Iteration.over("allUnzippedArchives").as(ArchiveModel.class, "archive")
-                                            .perform(new ProcyonDecompilerOperation("archive"))
-                                            .endIteration()
-                    );
-
+        .addRule()
+        .when(
+            Query.find(ArchiveModel.class).as("allUnzippedArchives")
+        ).perform(
+            Iteration.over("allUnzippedArchives").as(ArchiveModel.class, "archive")
+                .perform(new ProcyonDecompilerOperation("archive"))
+                .endIteration()
+        );
     }
-
+    // @formatter:on
 }

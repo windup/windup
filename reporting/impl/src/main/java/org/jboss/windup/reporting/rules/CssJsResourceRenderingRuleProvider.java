@@ -38,6 +38,7 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
         return RulePhase.REPORT_RENDERING;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -63,6 +64,7 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
         );
         return configuration;
     }
+    // @formatter:on
 
     private void copyCssResourcesToOutput(String outputDir)
     {

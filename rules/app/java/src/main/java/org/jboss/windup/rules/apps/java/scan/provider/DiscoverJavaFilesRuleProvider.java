@@ -31,28 +31,27 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         return RulePhase.POST_DISCOVERY;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder javaSourceQuery = Query
-                    .find(FileModel.class)
-                    .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-                    .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$")
-                    .as("javaSourceFiles");
+            .find(FileModel.class)
+            .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$")
+            .as("javaSourceFiles");
 
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(javaSourceQuery)
-                    .perform(Iteration
-                                .over("javaSourceFiles")
-                                .as(FileModel.class, "javaSourceFile")
-
-                                .perform(
-                                            new IndexJavaFileIterationOperator(FileModel.class, "javaSourceFile")
-                                )
-                                .endIteration()
-                    );
+        return ConfigurationBuilder.begin()
+            .addRule()
+            .when(javaSourceQuery)
+            .perform(
+                Iteration.over("javaSourceFiles").as(FileModel.class, "javaSourceFile")
+                .perform(
+                    new IndexJavaFileIterationOperator(FileModel.class, "javaSourceFile")
+                )
+                .endIteration()
+            );
+        // @formatter:on
     }
 
     private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<FileModel>
