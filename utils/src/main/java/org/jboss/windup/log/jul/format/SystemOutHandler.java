@@ -1,4 +1,4 @@
-package org.jboss.windup.log;
+package org.jboss.windup.log.jul.format;
 
 import java.util.logging.ConsoleHandler;
 
