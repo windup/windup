@@ -30,4 +30,6 @@ public interface Service<T extends VertexFrame>
     T getUniqueByProperty(String property, Object value) throws NonUniqueResultException;
 
     TitanTransaction newTransaction();
+
+    Class<T> getType();
 }
