@@ -32,6 +32,13 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- For ModelModel. -->
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
@@ -48,6 +55,11 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>${version.freemarker}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.tinkerpop</groupId>
+            <artifactId>frames</artifactId>
         </dependency>
     </dependencies>
 </project>
