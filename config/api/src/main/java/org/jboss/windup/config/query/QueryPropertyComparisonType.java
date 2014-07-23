@@ -4,5 +4,6 @@ public enum QueryPropertyComparisonType
 {
     EQUALS,
     CONTAINS_TOKEN,
-    REGEX
+    CONTAINS_ANY_TOKEN,
+    REGEX,
 }

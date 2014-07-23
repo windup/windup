@@ -6,11 +6,11 @@ import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
+import org.jboss.windup.rules.apps.java.blacklist.JavaScanner;
 import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
 import org.jboss.windup.rules.apps.java.blacklist.WhiteListItem;
-import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
@@ -37,19 +37,19 @@ public class Config extends WindupRuleProvider
         List<WhiteListItem> items = new ArrayList<WhiteListItem>();
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         
-        items.add(new WhiteListItem(getID(), "amx_", Types.add(ClassCandidateType.TYPE)));
-        items.add(new WhiteListItem(getID(), "amx_", Types.add(ClassCandidateType.METHOD)));
-        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context))$", Types.add(ClassCandidateType.IMPORT)));
-        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context)).close", Types.add(ClassCandidateType.METHOD)));
-        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context))$", Types.add(ClassCandidateType.TYPE)));
-        items.add(new WhiteListItem(getID(), "javax.naming.InitialContext\\(\\)", Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
-        items.add(new WhiteListItem(getID(), "javax.ejb.+$", Types.add(ClassCandidateType.IMPORT)));
+        items.add(new WhiteListItem(getID(), "amx_", Types.add(TypeReferenceLocation.TYPE)));
+        items.add(new WhiteListItem(getID(), "amx_", Types.add(TypeReferenceLocation.METHOD)));
+        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context))$", Types.add(TypeReferenceLocation.IMPORT)));
+        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context)).close", Types.add(TypeReferenceLocation.METHOD)));
+        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context))$", Types.add(TypeReferenceLocation.TYPE)));
+        items.add(new WhiteListItem(getID(), "javax.naming.InitialContext\\(\\)", Types.add(TypeReferenceLocation.CONSTRUCTOR_CALL)));
+        items.add(new WhiteListItem(getID(), "javax.ejb.+$", Types.add(TypeReferenceLocation.IMPORT)));
         items.add(new WhiteListItem(getID(), "(javax.ejb.EntityContext.*)|(javax.ejb.RemoveException.*)|(javax.ejb.SessionContext.*)|(javax.ejb.EJBException.*)|(javax.ejb.CreateException$)|(javax.ejb.FinderException$)"));
-        items.add(new WhiteListItem(getID(), "javax.sql.+$", Types.add(ClassCandidateType.IMPORT)));
-        items.add(new WhiteListItem(getID(), "javax.management.+$", Types.add(ClassCandidateType.IMPORT)));
-        items.add(new WhiteListItem(getID(), "javax.management.+$", Types.add(ClassCandidateType.TYPE)));
-        items.add(new WhiteListItem(getID(), "javax.management.remote.JMXConnector.close.+$", Types.add(ClassCandidateType.METHOD)));
-        items.add(new WhiteListItem(getID(), "javax.management.remote.JMXConnector.getMBeanServerConnection\\(\\)", Types.add(ClassCandidateType.METHOD)));
+        items.add(new WhiteListItem(getID(), "javax.sql.+$", Types.add(TypeReferenceLocation.IMPORT)));
+        items.add(new WhiteListItem(getID(), "javax.management.+$", Types.add(TypeReferenceLocation.IMPORT)));
+        items.add(new WhiteListItem(getID(), "javax.management.+$", Types.add(TypeReferenceLocation.TYPE)));
+        items.add(new WhiteListItem(getID(), "javax.management.remote.JMXConnector.close.+$", Types.add(TypeReferenceLocation.METHOD)));
+        items.add(new WhiteListItem(getID(), "javax.management.remote.JMXConnector.getMBeanServerConnection\\(\\)", Types.add(TypeReferenceLocation.METHOD)));
         items.add(new WhiteListItem(getID(), "java.io.LineNumberInputStream$"));
         items.add(new WhiteListItem(getID(), "java.io.ObjectInputStream$"));
         items.add(new WhiteListItem(getID(), "java.io.ObjectOutputStream.PutField$"));
@@ -220,14 +220,14 @@ public class Config extends WindupRuleProvider
         items.add(new WhiteListItem(getID(), "org.xml.sax.Parser$"));
         hints.add(new BlackListRegex(getID(), "edu.oswego.cs.dl.util.concurrent", "Upgrade to javax.util.concurrent in Java 5+", 0));
         hints.add(new BlackListRegex(getID(), "edu.emory.mathcs.backport.java.util", "Upgrade to javax.util.concurrent in Java 5+", 0));
-        hints.add(new BlackListRegex(getID(), "java.lang.Class.classForName", "Ensure class is available to JBoss", 1, Types.add(ClassCandidateType.METHOD)));
-        hints.add(new BlackListRegex(getID(), "oracle.sql.*", "Oracle-specific SQL code", 1, Types.add(ClassCandidateType.TYPE)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.+", "Remove import", 0, Types.add(ClassCandidateType.IMPORT)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Property", "SCA Property Injection; replace with Spring Property Injection", 0, Types.add(ClassCandidateType.TYPE)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Reference", "SCA Bean Injection; replace with Spring Bean Injection", 0, Types.add(ClassCandidateType.TYPE)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Init", "SCA Initialization Hook; Use the property: init-method='example' on the Spring Bean, where example is the initialization method", 0, Types.add(ClassCandidateType.TYPE)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Destroy", "SCA Destroy Hook; Use the property: destroy-method='example' on the Spring Bean, where example is the destroy method", 0, Types.add(ClassCandidateType.TYPE)));
-        hints.add(new BlackListRegex(getID(), "com.ibm.ctg.client.JavaGateway", "IBM CICS Adapter", 0, Types.add(ClassCandidateType.TYPE)));
+        hints.add(new BlackListRegex(getID(), "java.lang.Class.classForName", "Ensure class is available to JBoss", 1, Types.add(TypeReferenceLocation.METHOD)));
+        hints.add(new BlackListRegex(getID(), "oracle.sql.*", "Oracle-specific SQL code", 1, Types.add(TypeReferenceLocation.TYPE)));
+        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.+", "Remove import", 0, Types.add(TypeReferenceLocation.IMPORT)));
+        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Property", "SCA Property Injection; replace with Spring Property Injection", 0, Types.add(TypeReferenceLocation.TYPE)));
+        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Reference", "SCA Bean Injection; replace with Spring Bean Injection", 0, Types.add(TypeReferenceLocation.TYPE)));
+        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Init", "SCA Initialization Hook; Use the property: init-method='example' on the Spring Bean, where example is the initialization method", 0, Types.add(TypeReferenceLocation.TYPE)));
+        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Destroy", "SCA Destroy Hook; Use the property: destroy-method='example' on the Spring Bean, where example is the destroy method", 0, Types.add(TypeReferenceLocation.TYPE)));
+        hints.add(new BlackListRegex(getID(), "com.ibm.ctg.client.JavaGateway", "IBM CICS Adapter", 0, Types.add(TypeReferenceLocation.TYPE)));
         hints.add(new BlackListRegex(getID(), "((javax.naming.InitialContext)|(javax.naming.Context)).lookup", "\"<![CDATA[\"\n" + 
             "                    + \"Ensure that the JNDI Name does not need to change for JBoss\" +\n" + 
             "                \n" + 
@@ -244,26 +244,26 @@ public class Config extends WindupRuleProvider
             "                ```\n" + 
             "                \n" + 
             "                \n" + 
-            "                ]]>\"", 1, Types.add(ClassCandidateType.METHOD)));
-        hints.add(new BlackListRegex(getID(), "javax.naming.InitialContext\\(.+\\)", "Ensure that the InitialContext connection properties do not need to change for JBoss", 1, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
-        hints.add(new BlackListRegex(getID(), "javax.management.remote.JMXServiceURL\\(.+\\)", "Ensure that the connection properties do not need to change for JBoss", 0, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
-        hints.add(new BlackListRegex(getID(), "javax.management.ObjectName\\(.+\\)", "Ensure that the ObjectName exists in JBoss", 1, Types.add(ClassCandidateType.CONSTRUCTOR_CALL)));
-        hints.add(new BlackListRegex(getID(), "javax.management.remote.JMXConnectorFactory.connect\\(.+\\)", "Ensure that the connection properties do not need to change for JBoss", 0, Types.add(ClassCandidateType.METHOD)));
-        hints.add(new BlackListRegex(getID(), "java.sql.DriverManager", "Move to a JCA Connector unless this class is used for batch processes, then refactor as necessary", 0, Types.add(ClassCandidateType.METHOD)));
-        hints.add(new BlackListRegex(getID(), "java.sql.DriverManager$", "Migrate to JCA Connector", 0, Types.add(ClassCandidateType.IMPORT)));
-        hints.add(new BlackListRegex(getID(), "amx_.+", "Tibco ActiveMatrix Stub; regenerate the SOAP Client for the class", 0, Types.add(ClassCandidateType.IMPORT)));
+            "                ]]>\"", 1, Types.add(TypeReferenceLocation.METHOD)));
+        hints.add(new BlackListRegex(getID(), "javax.naming.InitialContext\\(.+\\)", "Ensure that the InitialContext connection properties do not need to change for JBoss", 1, Types.add(TypeReferenceLocation.CONSTRUCTOR_CALL)));
+        hints.add(new BlackListRegex(getID(), "javax.management.remote.JMXServiceURL\\(.+\\)", "Ensure that the connection properties do not need to change for JBoss", 0, Types.add(TypeReferenceLocation.CONSTRUCTOR_CALL)));
+        hints.add(new BlackListRegex(getID(), "javax.management.ObjectName\\(.+\\)", "Ensure that the ObjectName exists in JBoss", 1, Types.add(TypeReferenceLocation.CONSTRUCTOR_CALL)));
+        hints.add(new BlackListRegex(getID(), "javax.management.remote.JMXConnectorFactory.connect\\(.+\\)", "Ensure that the connection properties do not need to change for JBoss", 0, Types.add(TypeReferenceLocation.METHOD)));
+        hints.add(new BlackListRegex(getID(), "java.sql.DriverManager", "Move to a JCA Connector unless this class is used for batch processes, then refactor as necessary", 0, Types.add(TypeReferenceLocation.METHOD)));
+        hints.add(new BlackListRegex(getID(), "java.sql.DriverManager$", "Migrate to JCA Connector", 0, Types.add(TypeReferenceLocation.IMPORT)));
+        hints.add(new BlackListRegex(getID(), "amx_.+", "Tibco ActiveMatrix Stub; regenerate the SOAP Client for the class", 0, Types.add(TypeReferenceLocation.IMPORT)));
         hints.add(new BlackListRegex(getID(), "com.tibco.matrix.java.annotations.WebParam$", "Tibco specific annotation; replace with javax.jws.WebParam", 0));
         hints.add(new BlackListRegex(getID(), "com.tibco.amf.platform.runtime.extension.exception.SOAPCode$", "Tibco specific annotation", 0));
         hints.add(new BlackListRegex(getID(), "com.tibco.matrix.java.annotations.WebServiceInterface$", "Tibco specific annotation; replace with javax.jws.WebService", 0));
         hints.add(new BlackListRegex(getID(), "com.tibco.matrix.java.annotations.WebMethod$", "Tibco specific annotation; replace with javax.jws.WebMethod", 0));
         hints.add(new BlackListRegex(getID(), "com.tibco.matrix.java.annotations.WebFault$", "Tibco specific annotation; replace with javax.xml.ws.WebFault", 0));
         hints.add(new BlackListRegex(getID(), "org.mule.transformers.AbstractTransformer$", "Mule specific; replace with org.apache.camel.Converter annotation", 0)); 
-        hints.add(new BlackListRegex(getID(), "org.mule.umo.UMOMessage.getPayload.+", "Mule specific; replace with org.apache.camel.Message.getBody()", 0, Types.add(ClassCandidateType.METHOD))); 
+        hints.add(new BlackListRegex(getID(), "org.mule.umo.UMOMessage.getPayload.+", "Mule specific; replace with org.apache.camel.Message.getBody()", 0, Types.add(TypeReferenceLocation.METHOD))); 
         
         
         
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(items).add(hints));
+            .addRule().perform(new JavaScanner().add(items).add(hints));
         
         return configuration;
     }

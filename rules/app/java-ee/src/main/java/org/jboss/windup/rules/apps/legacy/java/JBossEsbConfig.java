@@ -8,9 +8,9 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
-import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
+import org.jboss.windup.rules.apps.java.blacklist.JavaScanner;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
-import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
@@ -36,9 +36,9 @@ public class JBossEsbConfig extends WindupRuleProvider
      
         List<JavaClassification> classifications = new ArrayList<JavaClassification>();
         
-        classifications.add(new JavaClassification(getID(), "JBoss ESB 5 Action Handler", "org.jboss.soa.esb.helpers.ConfigTree", 0, Types.add(ClassCandidateType.METHOD))); 
+        classifications.add(new JavaClassification(getID(), "JBoss ESB 5 Action Handler", "org.jboss.soa.esb.helpers.ConfigTree", 0, Types.add(TypeReferenceLocation.METHOD))); 
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications));
+            .addRule().perform(new JavaScanner().add(classifications));
         return configuration;
     }
     // @formatter:on

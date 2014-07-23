@@ -9,9 +9,9 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
 import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
-import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
+import org.jboss.windup.rules.apps.java.blacklist.JavaScanner;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
-import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
@@ -40,12 +40,12 @@ public class SeamToCDI extends WindupRuleProvider
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         
         classifications.add(new JavaClassification(getID(), "SEAM Component", "org.jboss.seam", 1,null));
-        classifications.add(new JavaClassification(getID(), "Uses Outjection", "org.jboss.seam.annotations.Out", 1, Types.add(ClassCandidateType.IMPORT)));
-        classifications.add(new JavaClassification(getID(), "Uses Seam's Conversation object", "org.jboss.seam.core.Conversation", 1, Types.add(ClassCandidateType.IMPORT)));
-        classifications.add(new JavaClassification(getID(), "Uses Seam's Context object", "org.jboss.seam.core.Context", 1, Types.add(ClassCandidateType.IMPORT)));
-        classifications.add(new JavaClassification(getID(), "Uses Seam's Seam object", "org.jboss.seam.Seam", 1, Types.add(ClassCandidateType.IMPORT)));
-        classifications.add(new JavaClassification(getID(), "Uses Seam's ConversationEntries object", "org.jboss.seam.core.ConversationEntries", 1, Types.add(ClassCandidateType.IMPORT)));
-        classifications.add(new JavaClassification(getID(), "Uses Seam's Switcher object", "org.jboss.seam.faces.Switcher", 1, Types.add(ClassCandidateType.IMPORT)));
+        classifications.add(new JavaClassification(getID(), "Uses Outjection", "org.jboss.seam.annotations.Out", 1, Types.add(TypeReferenceLocation.IMPORT)));
+        classifications.add(new JavaClassification(getID(), "Uses Seam's Conversation object", "org.jboss.seam.core.Conversation", 1, Types.add(TypeReferenceLocation.IMPORT)));
+        classifications.add(new JavaClassification(getID(), "Uses Seam's Context object", "org.jboss.seam.core.Context", 1, Types.add(TypeReferenceLocation.IMPORT)));
+        classifications.add(new JavaClassification(getID(), "Uses Seam's Seam object", "org.jboss.seam.Seam", 1, Types.add(TypeReferenceLocation.IMPORT)));
+        classifications.add(new JavaClassification(getID(), "Uses Seam's ConversationEntries object", "org.jboss.seam.core.ConversationEntries", 1, Types.add(TypeReferenceLocation.IMPORT)));
+        classifications.add(new JavaClassification(getID(), "Uses Seam's Switcher object", "org.jboss.seam.faces.Switcher", 1, Types.add(TypeReferenceLocation.IMPORT)));
         hints.add(new BlackListRegex(getID(), "org.jboss.seam.annotations.Name", "Rework injection, note that CDI is static injection. @Named only if accessed in EL", 0));
         hints.add(new BlackListRegex(getID(), "org.jboss.seam.annotations.Scope", "Convert to a valid CDI scope. For example, @Scope(ScopeType.SESSION) should be @javax.enterprise.context.SessionScoped. See the 'Seam 2 to Seam 3 Migration Notes' link.", 0));
         hints.add(new BlackListRegex(getID(), "org.jboss.seam.annotations.In$", "Convert Seam @In to CDI @javax.inject.Inject", 0));
@@ -67,7 +67,7 @@ public class SeamToCDI extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "org.jboss.seam.annotations.End", "Rework with javax.enterprise.context.Conversation.end()", 0)); 
         
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications).add(hints));
+            .addRule().perform(new JavaScanner().add(classifications).add(hints));
         return configuration;
     }
     // @formatter:on

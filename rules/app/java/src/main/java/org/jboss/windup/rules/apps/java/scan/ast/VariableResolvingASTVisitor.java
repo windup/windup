@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,11 +50,10 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,13 +68,10 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private static final Logger LOG = LoggerFactory.getLogger(VariableResolvingASTVisitor.class);
 
     @Inject
-    private Event<JavaScannerASTEvent> javaScannerASTEvent;
-
-    @Inject
-    private GraphContext graphContext;
-
-    @Inject
     private JavaClassService javaClassService;
+
+    @Inject
+    private TypeReferenceService typeRefService;
 
     private CompilationUnit cu;
 
@@ -132,72 +127,65 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         }
     }
 
-    private void fireJavaScannerEvent(ClassCandidate classCandidate)
-    {
-        JavaScannerASTEvent event = new JavaScannerASTEvent(graphContext, fileModel, classCandidate);
-        javaScannerASTEvent.fire(event);
-    }
-
-    private void processConstructor(ConstructorType interest, int lineStart, int startPosition, int length,
+    private void processConstructor(ConstructorType interest, int lineNumber, int columnNumber, int length,
                 JavaSourceType sourceType)
     {
-        ClassCandidate dr = new ClassCandidate(ClassCandidateType.CONSTRUCTOR_CALL, lineStart, startPosition, length,
-                    interest.toString());
-        fireJavaScannerEvent(dr);
+        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
+                    TypeReferenceLocation.CONSTRUCTOR_CALL,
+                    lineNumber, columnNumber, length, interest.toString());
 
-        LOG.trace("Candidate: " + dr);
+        LOG.trace("Candidate: " + typeRef);
     }
 
-    private void processMethod(MethodType interest, int lineStart, int startPosition, int length,
+    private void processMethod(MethodType interest, int lineNumber, int columnNumber, int length,
                 JavaSourceType sourceType)
     {
-        ClassCandidate dr = new ClassCandidate(ClassCandidateType.METHOD_CALL, lineStart, startPosition, length,
-                    interest.toString());
-        fireJavaScannerEvent(dr);
+        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, TypeReferenceLocation.METHOD_CALL,
+                    lineNumber, columnNumber, length, interest.toString());
 
-        LOG.trace("Candidate: " + dr);
+        LOG.trace("Candidate: " + typeRef);
     }
 
-    private void processInterest(String interest, int lineStart, int startPosition, int length,
+    private void processInterest(String interest, int lineNumber, int columnNumber, int length,
                 JavaSourceType sourceType)
     {
 
         String sourceString = interest;
         sourceString = resolveClassname(sourceString);
 
-        ClassCandidate dr = new ClassCandidate(ClassCandidateType.IMPORT, lineStart, startPosition, length,
-                    sourceString);
-        fireJavaScannerEvent(dr);
+        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, TypeReferenceLocation.IMPORT,
+                    lineNumber, columnNumber, length, interest.toString());
 
-        LOG.trace("Candidate: " + dr);
+        LOG.trace("Candidate: " + typeRef);
     }
 
-    private void processType(Type type, ClassCandidateType classCandidateType)
+    private void processType(Type type, TypeReferenceLocation referenceLocation)
     {
         if (type == null)
             return;
 
-        int sourcePosition = cu.getLineNumber(type.getStartPosition());
-        int startPosition = cu.getColumnNumber(type.getStartPosition());
+        int lineNumber = cu.getLineNumber(type.getStartPosition());
+        int columnNumber = cu.getColumnNumber(type.getStartPosition());
         int length = type.getLength();
 
         String sourceString = type.toString();
         sourceString = resolveClassname(sourceString);
 
-        ClassCandidate dr = new ClassCandidate(classCandidateType, sourcePosition, startPosition, length, sourceString);
-        fireJavaScannerEvent(dr);
+        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
+                    lineNumber, columnNumber, length, sourceString);
 
-        LOG.trace("Prefix: " + classCandidateType);
+        LOG.trace("Prefix: " + referenceLocation);
         if (type instanceof SimpleType)
         {
             SimpleType sType = (SimpleType) type;
             LOG.trace("The type name is: " + sType.getName().getFullyQualifiedName() + " and " + sourceString);
 
         }
-        LOG.trace("Candidate: " + dr);
+        LOG.trace("Candidate: " + typeRef);
     }
 
-    private void processName(Name name, ClassCandidateType type, int lineNumber, int startPosition, int length)
+    private void processName(Name name, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
+                int length)
     {
         if (name == null)
             return;
@@ -205,11 +193,11 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         String sourceString = name.toString();
         sourceString = resolveClassname(sourceString);
 
-        ClassCandidate dr = new ClassCandidate(type, lineNumber, startPosition, length, sourceString);
-        fireJavaScannerEvent(dr);
+        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
+                    lineNumber, columnNumber, length, sourceString);
 
-        LOG.trace("Prefix: " + type);
-        LOG.trace("Candidate: " + dr);
+        LOG.trace("Prefix: " + referenceLocation);
+        LOG.trace("Candidate: " + typeRef);
     }
 
     @Override
@@ -219,7 +207,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         Type returnType = node.getReturnType2();
         if (returnType != null)
         {
-            processType(returnType, ClassCandidateType.RETURN_TYPE);
+            processType(returnType, TypeReferenceLocation.RETURN_TYPE);
         }
 
         @SuppressWarnings("unchecked")
@@ -235,7 +223,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                 this.names.add(type.getName().toString());
                 this.nameInstance.put(type.getName().toString(), typeName);
 
-                processType(type.getType(), ClassCandidateType.METHOD_PARAMETER);
+                processType(type.getType(), TypeReferenceLocation.METHOD_PARAMETER);
             }
         }
 
@@ -245,7 +233,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             for (Name name : throwsTypes)
             {
-                processName(name, ClassCandidateType.THROWS_METHOD_DECLARATION,
+                processName(name, TypeReferenceLocation.THROWS_METHOD_DECLARATION,
                             cu.getLineNumber(node.getStartPosition()),
                             cu.getColumnNumber(name.getStartPosition()), name.getLength());
             }
@@ -258,7 +246,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     public boolean visit(InstanceofExpression node)
     {
         Type type = node.getRightOperand();
-        processType(type, ClassCandidateType.INSTANCE_OF);
+        processType(type, TypeReferenceLocation.INSTANCE_OF);
 
         return super.visit(node);
     }
@@ -268,7 +256,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         if (node.getExpression() instanceof ClassInstanceCreation)
         {
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
-            processType(cic.getType(), ClassCandidateType.THROW_STATEMENT);
+            processType(cic.getType(), TypeReferenceLocation.THROW_STATEMENT);
         }
 
         return super.visit(node);
@@ -277,7 +265,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     public boolean visit(org.eclipse.jdt.core.dom.CatchClause node)
     {
         Type catchType = node.getException().getType();
-        processType(catchType, ClassCandidateType.CATCH_EXCEPTION_STATEMENT);
+        processType(catchType, TypeReferenceLocation.CATCH_EXCEPTION_STATEMENT);
 
         return super.visit(node);
     }
@@ -288,7 +276,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         if (node.getExpression() instanceof ClassInstanceCreation)
         {
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
-            processType(cic.getType(), ClassCandidateType.CONSTRUCTOR_CALL);
+            processType(cic.getType(), TypeReferenceLocation.CONSTRUCTOR_CALL);
         }
         return super.visit(node);
     }
@@ -306,7 +294,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             this.names.add(frag.getName().getIdentifier());
             this.nameInstance.put(frag.getName().toString(), nodeType.toString());
 
-            processType(node.getType(), ClassCandidateType.FIELD_DECLARATION);
+            processType(node.getType(), TypeReferenceLocation.FIELD_DECLARATION);
         }
         return true;
     }
@@ -314,7 +302,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(MarkerAnnotation node)
     {
-        processName(node.getTypeName(), ClassCandidateType.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
+        processName(node.getTypeName(), TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
                     cu.getColumnNumber(cu.getStartPosition()), cu.getLength());
         return super.visit(node);
     }
@@ -322,7 +310,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(NormalAnnotation node)
     {
-        processName(node.getTypeName(), ClassCandidateType.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
+        processName(node.getTypeName(), TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
                     cu.getColumnNumber(node.getStartPosition()), node.getLength());
         return super.visit(node);
     }
@@ -330,7 +318,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(SingleMemberAnnotation node)
     {
-        processName(node.getTypeName(), ClassCandidateType.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
+        processName(node.getTypeName(), TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
                     cu.getColumnNumber(node.getStartPosition()), node.getLength());
         return super.visit(node);
     }
@@ -349,7 +337,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                 {
                     if (clzInterface instanceof SimpleType)
                     {
-                        processType((SimpleType) clzInterface, ClassCandidateType.IMPLEMENTS_TYPE);
+                        processType((SimpleType) clzInterface, TypeReferenceLocation.IMPLEMENTS_TYPE);
                     }
                     else
                     {
@@ -362,7 +350,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             if (clzSuperClasses instanceof SimpleType)
             {
-                processType((SimpleType) clzSuperClasses, ClassCandidateType.EXTENDS_TYPE);
+                processType((SimpleType) clzSuperClasses, TypeReferenceLocation.EXTENDS_TYPE);
             }
             else
             {
@@ -385,7 +373,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             this.names.add(frag.getName().getIdentifier());
             this.nameInstance.put(frag.getName().toString(), nodeType.toString());
         }
-        processType(node.getType(), ClassCandidateType.VARIABLE_DECLARATION);
+        processType(node.getType(), TypeReferenceLocation.VARIABLE_DECLARATION);
 
         return super.visit(node);
     }

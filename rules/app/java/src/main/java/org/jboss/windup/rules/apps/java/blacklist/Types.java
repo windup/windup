@@ -4,29 +4,29 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 
-public class Types implements Iterable<ClassCandidateType>
+public class Types implements Iterable<TypeReferenceLocation>
 {
-    Set<ClassCandidateType> types = new HashSet<ClassCandidateType>();
+    Set<TypeReferenceLocation> types = new HashSet<TypeReferenceLocation>();
     
-    public static Types add(ClassCandidateType type) {
+    public static Types add(TypeReferenceLocation type) {
         Types instance=new Types();
         instance.and(type); // not sure if this looks good (add cannot be called here)
         return instance;
     }
     
-    public Types and(ClassCandidateType type){
+    public Types and(TypeReferenceLocation type){
         types.add(type);
         return this;
     }
     
-    public boolean contains(ClassCandidateType type) {
+    public boolean contains(TypeReferenceLocation type) {
         return types.contains(type);
     }
 
     @Override
-    public Iterator<ClassCandidateType> iterator()
+    public Iterator<TypeReferenceLocation> iterator()
     {
         return types.iterator();
     }

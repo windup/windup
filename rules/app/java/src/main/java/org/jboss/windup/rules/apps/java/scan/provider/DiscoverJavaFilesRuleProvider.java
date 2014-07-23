@@ -90,7 +90,9 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
                         classFilePath.length() - JAVA_SUFFIX_LEN);
             String typeName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1, qualifiedName.length());
 
-            String packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
+            String packageName = "";
+            if (typeName.contains("."))
+                packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
 
             // make sure we mark this as a Java file
             JavaSourceFileModel javaFileModel = GraphService.addTypeToModel(graphContext, payload,

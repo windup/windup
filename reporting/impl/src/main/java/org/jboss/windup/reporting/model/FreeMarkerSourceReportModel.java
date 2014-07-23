@@ -30,7 +30,7 @@ public interface FreeMarkerSourceReportModel extends SourceReportModel
             StringBuilder builder = new StringBuilder();
 
             boolean first = true;
-            for (BlackListModel line : getSourceFileModel().getBlackListModels())
+            for (InlineHintModel line : getSourceFileModel().getInlineHints())
             {
                 if (!first)
                 {
