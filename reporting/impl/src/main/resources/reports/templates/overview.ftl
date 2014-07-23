@@ -6,7 +6,7 @@
 </#macro>
  
 <#macro applicationReportRenderer applicationReport>
-	<tr><td><a href="${applicationReport.reportFilename}">${applicationReport.reportName}</a></td>
+	<tr><td><a href="${applicationReport.reportFilename}">${applicationReport.projectModel.name}</a></td>
 		<td>
 			<#-- <#list application.technologyTags as tag>
 		    <@tagRenderer tag>${tag.title}</@tagRenderer>

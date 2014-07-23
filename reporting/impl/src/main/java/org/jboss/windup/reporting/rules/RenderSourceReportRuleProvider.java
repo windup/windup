@@ -56,7 +56,6 @@ public class RenderSourceReportRuleProvider extends WindupRuleProvider
                 payload.setReportName(payload.getSourceFileModel().getFileName());
                 payload.setTemplatePath("/reports/templates/source.ftl");
                 payload.setTemplateType(TemplateType.FREEMARKER);
-                reportModelService.setUniqueFilename(payload, payload.getSourceFileModel().getFileName(), "html");
 
                 FreeMarkerSourceReportModel freemarkerSourceReport = GraphService.addTypeToModel(
                             event.getGraphContext(), payload,
