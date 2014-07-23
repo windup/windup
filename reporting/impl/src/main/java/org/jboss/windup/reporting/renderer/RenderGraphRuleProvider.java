@@ -12,6 +12,9 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * Renders the graph using each existing GraphRenderer.
+ */
 public class RenderGraphRuleProvider extends WindupRuleProvider
 {
     @Inject
