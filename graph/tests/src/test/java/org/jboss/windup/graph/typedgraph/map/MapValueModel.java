@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.typedgraph;
+package org.jboss.windup.graph.typedgraph.map;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
