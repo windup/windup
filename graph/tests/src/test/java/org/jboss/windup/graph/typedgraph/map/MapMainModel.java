@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.typedgraph;
+package org.jboss.windup.graph.typedgraph.map;
 
 import java.util.Map;
 
