@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.log.jul.config.Logging;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.ocpsoft.rewrite.context.Context;
 
@@ -97,5 +98,9 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
                 String... deps)
     {
         return Arrays.asList(deps);
+    }
+    
+    static {
+        Logging.init();
     }
 }
