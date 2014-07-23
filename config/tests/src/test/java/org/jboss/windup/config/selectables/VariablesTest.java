@@ -86,6 +86,28 @@ public class VariablesTest
     }
 
     @Test
+    public void testUnTypedGet()
+    {
+        final File folder = OperatingSystemUtils.createTempDir();
+        final GraphContext context = factory.create(folder);
+        GraphRewrite event = new GraphRewrite(context);
+        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+        final DefaultParameterValueStore values = new DefaultParameterValueStore();
+        evaluationContext.put(ParameterValueStore.class, values);
+
+        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+        classModel1.setQualifiedName("com.example.Class1NoToString");
+        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+        classModel2.setQualifiedName("com.example.Class2HasToString");
+
+        Variables vars = Variables.instance(event);
+        vars.push();
+        vars.setSingletonVariable("classModel1", classModel1);
+        WindupVertexFrame frame = vars.findSingletonVariable("classModel1");
+        Assert.assertNotNull(frame);
+    }
+
+    @Test
     public void testInvalidCountGet()
     {
         final File folder = OperatingSystemUtils.createTempDir();

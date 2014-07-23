@@ -38,9 +38,12 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         this.context = context;
     }
 
-    public static WindupConfigurationModel getConfigurationModel(GraphContext context)
+    public static synchronized WindupConfigurationModel getConfigurationModel(GraphContext context)
     {
-        return new GraphService<>(context, WindupConfigurationModel.class).getUnique();
+        WindupConfigurationModel config = new GraphService<>(context, WindupConfigurationModel.class).getUnique();
+        if (config == null)
+            config = new GraphService<>(context, WindupConfigurationModel.class).create();
+        return config;
     }
 
     @Override
@@ -242,7 +245,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         Vertex vertex = frame.asVertex();
         graphContext.getGraphTypeRegistry().addTypeToElement(type, vertex);
-        graphContext.getGraph().commit();
         return graphContext.getFramed().frame(vertex, type);
     }
 

@@ -36,7 +36,7 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     /**
      * Begin creating a new dynamic {@link WindupRuleProvider}.
      */
-    public static WindupRuleProviderBuilderSetPhase begin(String id)
+    public static WindupRuleProviderBuilder begin(String id)
     {
         return new WindupRuleProviderBuilder(id);
     }

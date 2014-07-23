@@ -1,7 +1,9 @@
 package org.jboss.windup.config.query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -131,6 +133,23 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     public QueryBuilderWith withProperty(String property, Object searchValue)
     {
         return withProperty(property, QueryPropertyComparisonType.EQUALS, searchValue);
+    }
+
+    @Override
+    public QueryBuilderWith withProperty(String property, Iterable<?> values)
+    {
+        criteria.add(new QueryPropertyCriterion(property, QueryPropertyComparisonType.CONTAINS_ANY_TOKEN, values));
+        return this;
+    }
+
+    @Override
+    public QueryBuilderWith withProperty(String property, Object searchValue, Object... searchValues)
+    {
+        List<Object> values = new LinkedList<>();
+        values.add(searchValue);
+        values.addAll(Arrays.asList(searchValues));
+
+        return withProperty(property, values);
     }
 
     @Override

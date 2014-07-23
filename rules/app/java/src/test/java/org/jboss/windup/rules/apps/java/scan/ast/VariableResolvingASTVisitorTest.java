@@ -2,8 +2,8 @@ package org.jboss.windup.rules.apps.java.scan.ast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
@@ -16,10 +16,13 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.Import;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.rules.apps.java.scan.ast.event.JavaScannerASTEvent;
+import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,25 +57,14 @@ public class VariableResolvingASTVisitorTest
     @Inject
     private VariableResolvingASTVisitor visitor;
 
-    public void observeEvents(@Observes JavaScannerASTEvent event)
-    {
-        System.out.println("UnitTest Event: " + event);
-    }
-
     @Test
     public void testVisitorBasic()
     {
         Assert.assertNotNull(context);
         Assert.assertNotNull(visitor);
 
-        CompilationUnit cu = initVisitor("src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
-        cu.accept(visitor);
-    }
-
-    private CompilationUnit initVisitor(String filepath)
-    {
         FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-        fileModel.setFilePath(filepath);
+        fileModel.setFilePath("src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
 
         ASTParser parser = ASTParser.newParser(AST.JLS3);
         parser.setBindingsRecovery(true);
@@ -88,8 +80,29 @@ public class VariableResolvingASTVisitorTest
                         + e.getMessage(), e);
         }
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-        visitor.init(cu, fileModel);
-        return cu;
+        CompilationUnit cu1 = (CompilationUnit) parser.createAST(null);
+        visitor.init(cu1, fileModel);
+
+        CompilationUnit cu = cu1;
+        cu.accept(visitor);
+
+        TypeReferenceService typeRefService = new TypeReferenceService(context);
+        Iterable<TypeReferenceModel> references = typeRefService.findAll();
+
+        Assert.assertTrue(references.iterator().hasNext());
+
+        JavaClassSource testSource = Roaster.parse(JavaClassSource.class, fileModel.asInputStream());
+        List<Import> imports = testSource.getImports();
+
+        for (Import imprt : imports)
+        {
+            boolean found = false;
+            for (TypeReferenceModel reference : references)
+            {
+                if (reference.getSourceSnippit().contains(imprt.getQualifiedName()))
+                    found = true;
+            }
+            Assert.assertTrue(found);
+        }
     }
 }

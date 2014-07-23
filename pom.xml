@@ -18,7 +18,7 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.furnace>2.7.0.Final</version.furnace>
+        <version.furnace>2.7.2.Final</version.furnace>
         <version.titangraph>0.4.4</version.titangraph>
         <version.titangraph.lucene>0.4.4-winduppatch</version.titangraph.lucene>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>

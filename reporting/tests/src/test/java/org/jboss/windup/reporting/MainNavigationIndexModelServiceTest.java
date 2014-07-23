@@ -11,7 +11,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.ProjectModelService;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -23,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class MainNavigationIndexModelServiceTest extends AbstractTestCase
+public class MainNavigationIndexModelServiceTest
 {
 
     @Deployment
@@ -37,7 +36,6 @@ public class MainNavigationIndexModelServiceTest extends AbstractTestCase
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(AbstractTestCase.class)
                     .addAsResource(new File("src/test/resources/reports"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -48,8 +46,6 @@ public class MainNavigationIndexModelServiceTest extends AbstractTestCase
         return archive;
     }
 
-    @Inject
-    private GraphContext context;
     @Inject
     private ProjectModelService projectModelService;
     @Inject
@@ -81,6 +77,8 @@ public class MainNavigationIndexModelServiceTest extends AbstractTestCase
 
         MainNavigationIndexModel idx1 = mainNavigationIndexModelService.create();
         idx1.addProjectModel(projectModel);
+
+        @SuppressWarnings("unused")
         MainNavigationIndexModel idx2 = mainNavigationIndexModelService.create();
 
         m1.setProjectModel(projectModel);

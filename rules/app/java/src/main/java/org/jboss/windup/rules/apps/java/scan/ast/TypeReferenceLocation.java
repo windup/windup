@@ -1,6 +1,11 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
-public enum ClassCandidateType
+/**
+ * Designates a location where a given {@link TypeReferenceModel} was found in a Java source file.
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
+public enum TypeReferenceLocation
 {
     IMPORT,
     TYPE,

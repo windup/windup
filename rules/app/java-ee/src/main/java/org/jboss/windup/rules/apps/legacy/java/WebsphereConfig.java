@@ -9,9 +9,9 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
 import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
-import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
+import org.jboss.windup.rules.apps.java.blacklist.JavaScanner;
 import org.jboss.windup.rules.apps.java.blacklist.Types;
-import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
@@ -38,8 +38,8 @@ public class WebsphereConfig extends WindupRuleProvider
         List<JavaClassification> classifications = new ArrayList<JavaClassification>();
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         
-        classifications.add(new JavaClassification(getID(), "Websphere Asyncronous Work", "com.ibm.websphere.asynchbeans.Work", 2, Types.add(ClassCandidateType.INHERITANCE)));
-        classifications.add(new JavaClassification(getID(), "Websphere Startup Service", "((com.ibm.websphere.startupservice.AppStartUpHome)|(com.ibm.websphere.startupservice.AppStartUp)|(com.ibm.websphere.startupservice.ModStartUpHome)|(com.ibm.websphere.startupservice.ModStartUp))$", 4, Types.add(ClassCandidateType.INHERITANCE)));
+        classifications.add(new JavaClassification(getID(), "Websphere Asyncronous Work", "com.ibm.websphere.asynchbeans.Work", 2, Types.add(TypeReferenceLocation.INHERITANCE)));
+        classifications.add(new JavaClassification(getID(), "Websphere Startup Service", "((com.ibm.websphere.startupservice.AppStartUpHome)|(com.ibm.websphere.startupservice.AppStartUp)|(com.ibm.websphere.startupservice.ModStartUpHome)|(com.ibm.websphere.startupservice.ModStartUp))$", 4, Types.add(TypeReferenceLocation.INHERITANCE)));
         hints.add(new BlackListRegex(getID(), "com.ibm.websphere.asynchbeans.WorkManager", "Migrate to JBoss JCA Work Manager", 1));
         hints.add(new BlackListRegex(getID(), "com.ibm.mqe.jms.MQeConnection$", "Migrate to: javax.jms.Connection", 1));
         hints.add(new BlackListRegex(getID(), "com.ibm.mqe.jms.MQeQueueConnection$", "Migrate to: javax.jms.QueueConnection", 1));
@@ -141,7 +141,7 @@ public class WebsphereConfig extends WindupRuleProvider
         hints.add(new BlackListRegex(getID(), "com.ibm.jms.JMSTextMessage$", "Migrate to: javax.jms.TextMessage", 0)); 
         
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications).add(hints));
+            .addRule().perform(new JavaScanner().add(classifications).add(hints));
         return configuration;
    }
     // @formatter:on

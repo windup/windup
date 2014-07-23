@@ -1,7 +1,6 @@
 package org.jboss.windup.ext.groovy;
 
 import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 
 import java.io.InputStream;
@@ -16,7 +15,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonFilter;
@@ -45,14 +43,32 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
     @SuppressWarnings("unchecked")
     public List<WindupRuleProvider> getProviders()
     {
+        final List<WindupRuleProvider> ruleProviders = new ArrayList<WindupRuleProvider>();
+
         Binding binding = new Binding();
-        binding.setVariable("windupRuleProviderBuilders", new ArrayList<WindupRuleProvider>());
+        binding.setVariable("windupRuleProviderBuilders", ruleProviders);
         binding.setVariable("supportFunctions", new HashMap<>());
         binding.setVariable("graphContext", graphContext);
 
+        GroovyConfigContext configContext = new GroovyConfigContext()
+        {
+
+            @Override
+            public void addRuleProvider(WindupRuleProvider provider)
+            {
+                ruleProviders.add(provider);
+            }
+
+            @Override
+            public GraphContext getGraphContext()
+            {
+                return graphContext;
+            }
+        };
+
         for (GroovyConfigMethod method : methods)
         {
-            binding.setVariable(method.getName(graphContext), method.getClosure(graphContext));
+            binding.setVariable(method.getName(configContext), method.getClosure(configContext));
         }
 
         CompilerConfiguration config = new CompilerConfiguration();

@@ -37,9 +37,10 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     @Override
     public GraphContext create(File runDirectory)
     {
-        return new GraphContextImpl(graphServices, runDirectory,
+        GraphContextImpl context = new GraphContextImpl(graphServices, runDirectory,
                     this.graphTypeRegistry,
                     this.graphApiCompositeClassLoaderProvider);
+        return context;
     }
 
     @Produces

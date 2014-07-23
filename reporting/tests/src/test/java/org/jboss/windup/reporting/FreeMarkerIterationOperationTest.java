@@ -30,7 +30,7 @@ import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
-public class FreeMarkerIterationOperationTest extends AbstractTestCase
+public class FreeMarkerIterationOperationTest
 {
 
     @Deployment
@@ -44,7 +44,6 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(AbstractTestCase.class)
                     .addClass(FreeMarkerOperationRuleProvider.class)
                     .addAsResource(new File("src/test/resources/reports"))
                     .addAsAddonDependencies(

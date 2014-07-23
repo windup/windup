@@ -101,11 +101,10 @@ public class Variables
     }
 
     /**
-     * Type-safe wrapper around findVariable which gives only one framed vertex, and checks if there is 0 or 1; throws
-     * otherwise.
+     * Wrapper around {@link #findVariable(String)} which gives only one framed vertex, and checks if there is 0 or 1;
+     * throws otherwise.
      */
-    @SuppressWarnings("unchecked")
-    public <T extends WindupVertexFrame> T findSingletonVariable(Class<T> type, String name)
+    public WindupVertexFrame findSingletonVariable(String name)
     {
         Iterable<WindupVertexFrame> frames = findVariable(name);
         if (null == frames)
@@ -119,7 +118,7 @@ public class Variables
             return null;
         }
 
-        Object obj = iterator.next();
+        WindupVertexFrame obj = iterator.next();
 
         if (iterator.hasNext())
         {
@@ -127,12 +126,25 @@ public class Variables
                         + "under presumed singleton variable: " + name);
         }
 
-        if (type != null && !type.isAssignableFrom(obj.getClass()))
+        return obj;
+    }
+
+    /**
+     * Type-safe wrapper around {@link #findVariable(String)} returns a unique {@link WindupVertexFrame}.
+     * 
+     * @throws IllegalStateException If more than one frame was found.
+     */
+    @SuppressWarnings("unchecked")
+    public <FRAMETYPE extends WindupVertexFrame> FRAMETYPE findSingletonVariable(Class<FRAMETYPE> type, String name)
+    {
+        WindupVertexFrame frame = findSingletonVariable(name);
+
+        if (type != null && !type.isAssignableFrom(frame.getClass()))
         {
-            throw new IllegalTypeArgumentException(name, type, obj.getClass());
+            throw new IllegalTypeArgumentException(name, type, frame.getClass());
         }
 
-        return (T) obj;
+        return (FRAMETYPE) frame;
     }
 
     /**
