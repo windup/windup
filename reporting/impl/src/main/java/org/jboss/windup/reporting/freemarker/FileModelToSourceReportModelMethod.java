@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportModelService;
@@ -31,7 +30,7 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
     public static final String METHOD_NAME = "fileModelToSourceReport";
 
     @Inject
-    private GraphContext graphContext;
+    private SourceReportModelService sourceReportModelService;
 
     @Override
     public String getMethodName()
@@ -48,7 +47,7 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
-        SourceReportModel result = new SourceReportModelService(graphContext).getSourceReportForFileModel(fileModel);
+        SourceReportModel result = sourceReportModelService.getSourceReportForFileModel(fileModel);
         return result;
     }
 

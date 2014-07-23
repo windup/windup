@@ -4,45 +4,42 @@ import org.jboss.windup.graph.model.ProjectModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * 
+ * These reports are directly associated with an application, and that application's project model.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ */
 @TypeValue("ApplicationReport")
 public interface ApplicationReportModel extends ReportModel
 {
-    @Property("applicationName")
-    public String getApplicationName();
-
-    @Property("applicationName")
-    public void setApplicationName(String applicationName);
-
-    @Property("applicationVersion")
-    public String getApplicationVersion();
-
-    @Property("applicationVersion")
-    public String setApplicationVersion(String applicationVersion);
-
-    @Property("applicationCreator")
-    public String getApplicationCreator();
-
-    @Property("applicationCreator")
-    public String setApplicationCreator(String applicationCreator);
+    public static final String REPORT_TO_APPLICATION_NOTE = "reportToApplicationNote";
+    public static final String REPORT_TO_PROJECT_MODEL = "reportToProjectModel";
 
     /**
      * Application notes allow custom text to be added
-     * 
-     * @return
      */
-    @Adjacency(label = "reportToApplicationNote", direction = Direction.OUT)
+    @Adjacency(label = REPORT_TO_APPLICATION_NOTE, direction = Direction.OUT)
     public Iterable<String> getApplicationNotes();
 
-    @Adjacency(label = "reportToApplicationNote", direction = Direction.OUT)
+    /**
+     * Application notes allow custom text to be added
+     */
+    @Adjacency(label = REPORT_TO_APPLICATION_NOTE, direction = Direction.OUT)
     public void addApplicationNote(String applicationNote);
 
-    @Adjacency(label = "reportToProjectModel", direction = Direction.OUT)
-    public Iterable<ProjectModel> getProjectModels();
+    /**
+     * The ProjectModel associated with this Application Report.
+     */
+    @Adjacency(label = REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
+    public ProjectModel getProjectModel();
 
-    @Adjacency(label = "reportToProjectModel", direction = Direction.OUT)
-    public void addProjectModel(ProjectModel projectModel);
+    /**
+     * The ProjectModel associated with this Application Report.
+     */
+    @Adjacency(label = REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
+    public void setProjectModel(ProjectModel projectModel);
 
 }

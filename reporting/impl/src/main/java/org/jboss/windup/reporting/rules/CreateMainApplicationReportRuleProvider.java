@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.rules;
 
+import javax.inject.Inject;
+
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -10,17 +12,26 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
+import org.jboss.windup.reporting.model.MainNavigationIndexModel;
+import org.jboss.windup.reporting.service.MainNavigationIndexModelService;
+import org.jboss.windup.reporting.service.ReportModelService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CreateApplicationReportRuleProvider extends WindupRuleProvider
+public class CreateMainApplicationReportRuleProvider extends WindupRuleProvider
 {
 
     private static final String CONFIGURATION_MODEL = "windupCfg";
     private static final String CONFIGURATION_MODELS = "windupCfgs";
+
+    @Inject
+    private ReportModelService reportModelService;
+
+    @Inject
+    private MainNavigationIndexModelService mainNavigationIndexService;
 
     @Override
     public RulePhase getPhase()
@@ -36,9 +47,8 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
                     .find(WindupConfigurationModel.class)
                     .as(CONFIGURATION_MODELS);
 
-        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = 
-            new AbstractIterationOperation<WindupConfigurationModel>(
-                WindupConfigurationModel.class, CONFIGURATION_MODEL)
+        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>(
+                    WindupConfigurationModel.class, CONFIGURATION_MODEL)
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
@@ -47,43 +57,50 @@ public class CreateApplicationReportRuleProvider extends WindupRuleProvider
                 if (projectModel == null)
                 {
                     String msg = payload.isSourceMode() ? "source-based input directory" : "archive";
-                    throw new WindupException("Error, no project found in "+ msg + ": "
-                        + payload.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in " + msg + ": "
+                                + payload.getInputPath().getFilePath());
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
         };
 
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when(findProjectModels)
-            .perform(
-                Iteration.over(CONFIGURATION_MODELS).as(CONFIGURATION_MODEL)
-                    .perform(addApplicationReport).endIteration()
-            );
+                    .addRule()
+                    .when(findProjectModels)
+                    .perform(
+                                Iteration.over(CONFIGURATION_MODELS).as(CONFIGURATION_MODEL)
+                                            .perform(addApplicationReport).endIteration()
+                    );
+
     }
     // @formatter:on
 
-    
     private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
         ApplicationReportModel applicationReportModel = context.getFramed().addVertex(null,
                     ApplicationReportModel.class);
-        applicationReportModel.setApplicationName(projectModel.getRootFileModel().getPrettyPath());
-        applicationReportModel.setReportName(projectModel.getName());
-        applicationReportModel.addProjectModel(projectModel);
+        applicationReportModel.setReportPriority(100);
+        applicationReportModel.setReportName("Application");
+        applicationReportModel.setProjectModel(projectModel);
 
-        addSubModels(applicationReportModel, projectModel);
+        // Create the index, and add this report to it
+        MainNavigationIndexModel navIndex = mainNavigationIndexService.create();
+        applicationReportModel.setMainNavigationIndexModel(navIndex);
+        navIndex.addReportModel(applicationReportModel);
+        addAllProjectModels(navIndex, projectModel);
+
+        // Set the filename for the report
+        reportModelService.setUniqueFilename(applicationReportModel, projectModel.getName(), "html");
 
         return applicationReportModel;
     }
 
-    private void addSubModels(ApplicationReportModel reportModel, ProjectModel projectModel)
+    private void addAllProjectModels(MainNavigationIndexModel navIdx, ProjectModel projectModel)
     {
-        for (ProjectModel subModel : projectModel.getChildProjects())
+        navIdx.addProjectModel(projectModel);
+        for (ProjectModel childProject : projectModel.getChildProjects())
         {
-            reportModel.addProjectModel(subModel);
-            addSubModels(reportModel, subModel);
+            addAllProjectModels(navIdx, childProject);
         }
     }
 }

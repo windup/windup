@@ -10,35 +10,82 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * Provides the base object for all reports.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ */
 @TypeValue("Report")
 public interface ReportModel extends WindupVertexFrame
 {
+    public static final String CHILD_REPORT = "childReport";
+    public static final String RELATED_RESOURCES = "relatedResources";
+    public static final String PARENT_REPORT = "parentReport";
+    public static final String TEMPLATE_TYPE = "templateType";
+    public static final String TEMPLATE_PATH = "templatePath";
+    public static final String REPORT_FILENAME = "reportFilename";
+    public static final String REPORT_NAME = "reportName";
+    public static final String REPORT_MODEL_TO_MAIN_NAVIGATION_INDEX = "reportModelToMainNavigationIndex";
+    public static final String REPORT_PRIORITY = "reportPriority";
+
     /**
-     * The name of the report (for example, 'Black List report for Foo.class')
-     * 
-     * @param reportName
+     * Provides a link to the Navigation Index that is used for this particular report
      */
-    @Property("reportName")
+    @Adjacency(label = REPORT_MODEL_TO_MAIN_NAVIGATION_INDEX, direction = Direction.OUT)
+    public void setMainNavigationIndexModel(MainNavigationIndexModel navIndex);
+
+    /**
+     * Provides a link to the Navigation Index that is used for this particular report
+     */
+    @Adjacency(label = REPORT_MODEL_TO_MAIN_NAVIGATION_INDEX, direction = Direction.OUT)
+    public MainNavigationIndexModel getMainNavigationIndexModel();
+
+    /**
+     * This can be used to determine a reports location in a navigation bar. The primary purpose is sorting.
+     */
+    @Property(REPORT_PRIORITY)
+    public int getReportPriority();
+
+    /**
+     * This can be used to determine a reports location in a navigation bar. The primary purpose is sorting.
+     */
+    @Property(REPORT_PRIORITY)
+    public void setReportPriority(int priority);
+
+    /**
+     * The name of the report (for example, 'ClassLoader Report' or 'EJB Report')
+     */
+    @Property(REPORT_NAME)
     public void setReportName(String reportName);
 
-    @Property("reportName")
+    /**
+     * The name of the report (for example, 'ClassLoader Report' or 'EJB Report')
+     */
+    @Property(REPORT_NAME)
     public String getReportName();
 
-    @Property("reportFilename")
+    /**
+     * The filename of the report on disk (useful for other reports that need to link to this one)
+     */
+    @Property(REPORT_FILENAME)
     public void setReportFilename(String reportFilename);
 
-    @Property("reportFilename")
+    /**
+     * The filename of the report on disk (useful for other reports that need to link to this one)
+     */
+    @Property(REPORT_FILENAME)
     public String getReportFilename();
 
     /**
      * The path to the template that produced this report (for example, /reports/blacklist.ftl)
-     * 
-     * @param templatePath
      */
-    @Property("templatePath")
+    @Property(TEMPLATE_PATH)
     public void setTemplatePath(String templatePath);
 
-    @Property("templatePath")
+    /**
+     * The path to the template that produced this report (for example, /reports/blacklist.ftl)
+     */
+    @Property(TEMPLATE_PATH)
     public String getTemplatePath();
 
     /**
@@ -46,10 +93,10 @@ public interface ReportModel extends WindupVertexFrame
      * 
      * @param templateType
      */
-    @Property("templateType")
+    @Property(TEMPLATE_TYPE)
     public void setTemplateType(TemplateType templateType);
 
-    @Property("templateType")
+    @Property(TEMPLATE_TYPE)
     public TemplateType getTemplateType();
 
     /**
@@ -57,10 +104,10 @@ public interface ReportModel extends WindupVertexFrame
      * 
      * @return
      */
-    @Adjacency(label = "parentReport", direction = Direction.IN)
+    @Adjacency(label = PARENT_REPORT, direction = Direction.IN)
     public ReportModel getParentReport();
 
-    @Adjacency(label = "parentReport", direction = Direction.IN)
+    @Adjacency(label = PARENT_REPORT, direction = Direction.IN)
     public void setParentReport(ReportModel parent);
 
     /**
@@ -68,10 +115,10 @@ public interface ReportModel extends WindupVertexFrame
      * 
      * @param wvf
      */
-    @AdjacentMap(label = "relatedResources")
+    @AdjacentMap(label = RELATED_RESOURCES)
     public void addRelatedResource(Map<String, WindupVertexFrame> wvf);
 
-    @AdjacentMap(label = "relatedResources")
+    @AdjacentMap(label = RELATED_RESOURCES)
     public Map<String, WindupVertexFrame> getRelatedResources();
 
     /**
@@ -79,9 +126,9 @@ public interface ReportModel extends WindupVertexFrame
      * 
      * @return
      */
-    @Adjacency(label = "childReport", direction = Direction.OUT)
+    @Adjacency(label = CHILD_REPORT, direction = Direction.OUT)
     public Iterable<ReportModel> getChildReports();
 
-    @Adjacency(label = "childReport", direction = Direction.OUT)
+    @Adjacency(label = CHILD_REPORT, direction = Direction.OUT)
     public void addChildReport(final ReportModel reportResource);
 }

@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<#assign mainNavigationIndexModel = sourceReport.mainNavigationIndexModel>
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,14 +41,7 @@
             </div>
             <div class="navbar-collapse collapse navbar-responsive-collapse">
               <ul class="nav navbar-nav">
-                <li><a href="../index.html">Application</a></li>
-                <li><a href="../ejbs.html">EJBs</a></li>
-                <li><a href="../hibernate.html">Hibernate</a></li>
-                <li><a href="../spring.html">Spring</a></li>
-                <li><a href="../server-resources.html">Server Resources</a></li>
-                <li><a href="classloader-blacklists.html">Blacklists</a></li>
-                <li><a href="classloader-duplicate.html">Duplicates</a></li>
-                <li><a href="classloader-notfound.html">Not Found</a></li>
+                <#include "include/navbar.ftl">
               </ul>
             </div><!-- /.nav-collapse -->
             </div>
