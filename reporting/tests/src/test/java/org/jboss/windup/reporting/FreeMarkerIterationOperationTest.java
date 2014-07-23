@@ -58,13 +58,14 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
 
     @Inject
     private GraphContext context;
+    @Inject
+    private FreeMarkerOperationRuleProvider provider;
+
     private Path tempFolder;
 
     @Test
     public void testApplicationReportFreemarker() throws Exception
     {
-        FreeMarkerOperationRuleProvider provider = new FreeMarkerOperationRuleProvider();
-
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
         fillData(context);

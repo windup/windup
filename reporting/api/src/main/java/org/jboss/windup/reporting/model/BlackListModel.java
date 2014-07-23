@@ -1,5 +1,6 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.reporting.model;
 
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -7,6 +8,10 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * This is used to classify lines within application source code, and to provide hints and related data regarding those
+ * lines.
+ */
 @TypeValue(BlackListModel.TYPE)
 public interface BlackListModel extends WindupVertexFrame
 {

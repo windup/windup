@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import org.jboss.windup.graph.model.ClassificationModel;
+import org.jboss.windup.reporting.model.ClassificationModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;

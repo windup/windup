@@ -6,7 +6,14 @@
 </#macro>
 
 <#macro fileModelRenderer fileModel>
-	<tr><td>${fileModel.prettyPathWithinProject}</td>
+  <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
+  <#if sourceReportModel.reportFilename??>
+	<tr>
+	  <td>
+	     <a href="${sourceReportModel.reportFilename}">
+	       ${fileModel.prettyPathWithinProject}
+	     </a>
+	  </td>
 		<td>
 			<#-- <#list resource.technologyTags as tag>
 		    <@tagRenderer tag>${tag.title}</@tagRenderer>
@@ -18,6 +25,7 @@
 		    </#list> -->
 		</td>
 	</tr>
+	</#if>
 </#macro>
 
   <head>

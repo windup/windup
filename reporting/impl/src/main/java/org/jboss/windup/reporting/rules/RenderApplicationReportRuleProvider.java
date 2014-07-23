@@ -1,7 +1,10 @@
 package org.jboss.windup.reporting.rules;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -17,11 +20,20 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class ApplicationReportRenderingRuleProvider extends WindupRuleProvider
+/**
+ * This renders the ApplicationReport, along with all of its subapplications via freemarker.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
+public class RenderApplicationReportRuleProvider extends WindupRuleProvider
 {
     private static final String APP_REPORTS_VAR = "applicationReportsIterable";
     private static final String APP_REPORT_VAR = "applicationReport";
     private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/application.ftl";
+
+    @Inject
+    private Furnace furnace;
 
     @Inject
     private ReportModelService reportModelService;
@@ -30,6 +42,12 @@ public class ApplicationReportRenderingRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.REPORT_RENDERING;
+    }
+
+    @Override
+    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+    {
+        return generateDependencies(RenderSourceReportRuleProvider.class);
     }
 
     @Override
@@ -49,14 +67,14 @@ public class ApplicationReportRenderingRuleProvider extends WindupRuleProvider
             }
         };
 
-        FreeMarkerIterationOperation reportOperation = FreeMarkerIterationOperation.create(APP_REPORT_VAR);
+        FreeMarkerIterationOperation reportOperation = FreeMarkerIterationOperation.create(furnace, APP_REPORT_VAR);
 
         return ConfigurationBuilder
-            .begin()
-            .addRule()
-            .when(Query.find(ApplicationReportModel.class).as(APP_REPORTS_VAR))
-            .perform(Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
-                .perform(setupTemplateOperation.and(reportOperation))
-                .endIteration());
+                    .begin()
+                    .addRule()
+                    .when(Query.find(ApplicationReportModel.class).as(APP_REPORTS_VAR))
+                    .perform(Iteration.over(APP_REPORTS_VAR).as(APP_REPORT_VAR)
+                                .perform(setupTemplateOperation.and(reportOperation))
+                                .endIteration());
     }
 }

@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.rules;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.Variables;
@@ -21,8 +22,18 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * 
+ * This renders all SourceReports to the output directory.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class RenderSourceReportRuleProvider extends WindupRuleProvider
 {
+    @Inject
+    private Furnace furnace;
+
     @Inject
     private ReportModelService reportModelService;
 
@@ -42,27 +53,27 @@ public class RenderSourceReportRuleProvider extends WindupRuleProvider
             public void perform(GraphRewrite event, EvaluationContext context, final SourceReportModel payload)
             {
                 payload.setReportName(payload.getSourceFileModel().getFileName());
-                payload.setReportFilename(payload.getSourceFileModel().getFileName() + ".html");
                 payload.setTemplatePath("/reports/templates/source.ftl");
                 payload.setTemplateType(TemplateType.FREEMARKER);
+                reportModelService.setUniqueFilename(payload, payload.getSourceFileModel().getFileName(), "html");
+
                 FreeMarkerSourceReportModel freemarkerSourceReport = GraphService.addTypeToModel(
                             event.getGraphContext(), payload,
                             FreeMarkerSourceReportModel.class);
                 // update the variable with the current type information
                 Iteration.setCurrentPayload(Variables.instance(event), getVariableName(), freemarkerSourceReport);
-
-                reportModelService.setUniqueFilename(payload, payload.getSourceFileModel().getFileName(), "html");
             }
         };
 
-        return ConfigurationBuilder.begin()
-            .addRule()
-            .when(Query.find(SourceReportModel.class).as("sourceReports"))
-            .perform(
-                Iteration.over("sourceReports")
-                    .as("sourceReport")
-                    .perform(renderReport.and(
-                        FreeMarkerIterationOperation.create("sourceReport"))).endIteration()
-            );
+        return ConfigurationBuilder
+                    .begin()
+                    .addRule()
+                    .when(Query.find(SourceReportModel.class).as("sourceReports"))
+                    .perform(
+                                Iteration.over("sourceReports")
+                                            .as("sourceReport")
+                                            .perform(renderReport.and(FreeMarkerIterationOperation
+                                                        .create(furnace, "sourceReport"))).endIteration()
+                    );
     }
 }

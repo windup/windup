@@ -1,5 +1,6 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.reporting.model;
 
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -7,6 +8,12 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * This classifies files and provides general background information. For example, this may be used to identify
+ * application server specific deployment descriptors (WebLogic EJB descriptor) as well as provide links to additional
+ * information, or auto-translated versions of these files.
+ * 
+ */
 @TypeValue("ClassificationModel")
 public interface ClassificationModel extends WindupVertexFrame
 {
