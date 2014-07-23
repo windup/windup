@@ -47,7 +47,7 @@ public class RenderOverviewPageRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         FreeMarkerOperation generateReportOperation = 
-            FreeMarkerOperation.create(TEMPLATE_PATH, OUTPUT_FILENAME, VAR_APPLICATION_REPORTS);
+            FreeMarkerOperation.create(furnace, TEMPLATE_PATH, OUTPUT_FILENAME, VAR_APPLICATION_REPORTS);
 
         return ConfigurationBuilder.begin()
             .addRule()
