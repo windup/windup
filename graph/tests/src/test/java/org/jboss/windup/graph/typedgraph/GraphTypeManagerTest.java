@@ -50,20 +50,65 @@ public class GraphTypeManagerTest
 
         TestFooModel initialModelType = context.getFramed().addVertex(null, TestFooModel.class);
 
-        GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
-
-        Iterable<Vertex> vertices = context.getFramed().query().has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS,
-                    TestFooModel.class.getAnnotation(TypeValue.class).value()).vertices();
-
-        int numberFound = 0;
-        for (Vertex v : vertices)
+        try
         {
-            numberFound++;
-            WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
+            GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
 
-            Assert.assertTrue(framed instanceof TestFooModel);
-            Assert.assertTrue(framed instanceof TestFooSubModel);
+            Iterable<Vertex> vertices = context.getFramed().query().has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS,
+                        TestFooModel.class.getAnnotation(TypeValue.class).value()).vertices();
+
+            int numberFound = 0;
+            for (Vertex v : vertices)
+            {
+                numberFound++;
+                WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
+
+                Assert.assertTrue(framed instanceof TestFooModel);
+                Assert.assertTrue(framed instanceof TestFooSubModel);
+            }
+            Assert.assertEquals(1, numberFound);
         }
-        Assert.assertEquals(1, numberFound);
+        finally
+        {
+            context.getGraph().removeVertex(initialModelType.asVertex());
+        }
+    }
+
+    @Test
+    public void testGraphSearchWithoutCommit() throws Exception
+    {
+        Assert.assertNotNull(context);
+
+        TestFooModel foo1 = context.getFramed().addVertex(null, TestFooModel.class);
+        TestFooModel foo2 = context.getFramed().addVertex(null, TestFooModel.class);
+        TestFooModel foo3 = context.getFramed().addVertex(null, TestFooModel.class);
+        TestFooModel foo4 = context.getFramed().addVertex(null, TestFooModel.class);
+
+        try
+        {
+            GraphService.addTypeToModel(context, foo1, TestFooSubModel.class);
+            GraphService.addTypeToModel(context, foo2, TestFooSubModel.class);
+
+            Iterable<Vertex> vertices = context.getFramed().query()
+                        .has("type", Text.CONTAINS, TestFooSubModel.class.getAnnotation(TypeValue.class).value())
+                        .vertices();
+
+            int numberFound = 0;
+            for (Vertex v : vertices)
+            {
+                numberFound++;
+                WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
+
+                Assert.assertTrue(framed instanceof TestFooModel);
+            }
+            Assert.assertEquals(2, numberFound);
+        }
+        finally
+        {
+            context.getGraph().removeVertex(foo1.asVertex());
+            context.getGraph().removeVertex(foo2.asVertex());
+            context.getGraph().removeVertex(foo3.asVertex());
+            context.getGraph().removeVertex(foo4.asVertex());
+        }
     }
 }

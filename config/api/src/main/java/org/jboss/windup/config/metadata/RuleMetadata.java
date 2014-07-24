@@ -15,6 +15,12 @@ public enum RuleMetadata
     /**
      * The {@link Rule} origin.
      */
-    ORIGIN
+    ORIGIN,
 
+    /**
+     * Whether or not to call commit after each {@link Rule} execution.
+     * 
+     * The default behavior (if this is not set) is to autocommit after each rule execution.
+     */
+    AUTO_COMMIT,
 }
