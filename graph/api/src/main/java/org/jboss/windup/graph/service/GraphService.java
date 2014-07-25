@@ -1,19 +1,5 @@
 package org.jboss.windup.graph.service;
 
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.jboss.windup.graph.FramedElementInMemory;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.InMemoryVertexFrame;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.service.exception.NonUniqueResultException;
-
 import com.thinkaurelius.titan.core.TitanGraphQuery;
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Cmp;
@@ -25,6 +11,19 @@ import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.inject.Inject;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.service.exception.NonUniqueResultException;
+import org.jboss.windup.util.exception.WindupException;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
@@ -295,6 +294,24 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         Vertex vertex = frame.asVertex();
         graphContext.getGraphTypeRegistry().addTypeToElement(type, vertex);
         return graphContext.getFramed().frame(vertex, type);
+    }
+    
+    /**
+     * Takes an object implementing a model interface, 
+     * creates a vertex and copies the properties into the returned proxy.
+     * Something like JPA's persist().
+     */
+    public T persist( T source )
+    {
+        T frame = this.context.getFramed().addVertex(null, this.type);
+        try 
+        {
+            PropertyUtils.copyProperties( source, frame );
+        } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException ex ) {
+            throw new WindupException("Failed copying properties into frame from: " + frame.getClass().getName() );
+        }
+        this.context.getGraph().commit();
+        return frame;
     }
 
     @Override
