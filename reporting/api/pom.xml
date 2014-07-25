@@ -40,6 +40,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Forge, Furnace -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi-api</artifactId>
@@ -92,5 +93,25 @@
             <groupId>com.tinkerpop</groupId>
             <artifactId>frames</artifactId>
         </dependency>
+        
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>furnace-test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-furnace-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>        
     </dependencies>
 </project>
