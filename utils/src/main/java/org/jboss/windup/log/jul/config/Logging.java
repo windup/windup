@@ -52,4 +52,9 @@ public class Logging {
         }
         Logger.getLogger(Logging.class.getName()).info("Logging configured.");
     }
+
+
+    public static Logger of( Class cls ) {
+        return Logger.getLogger(cls.getName());
+    }
 }// class
