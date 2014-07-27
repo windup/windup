@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Denotes a format of a description of a model class to be reported.
+ * When on a Frames @Property method, empty string results in the method's return value.
+ * When on a class, value must be an EL.
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
@@ -14,7 +16,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Description
 {
-    
-    String value();
-    
+    String value() default "";
 }

@@ -9,7 +9,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * 
  *  @author Ondrej Zizka, ozizka at redhat.com
  */
-public class ReportableInfo {
+public class ReportCommons {
 
     private String title;
     private String desc;

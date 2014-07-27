@@ -1,12 +1,18 @@
 package org.jboss.windup.reporting.model;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import java.util.Map;
 import org.jboss.windup.config.model.ModelModel;
+import org.jboss.windup.graph.AdjacentMap;
+import org.jboss.windup.reporting.meta.ann.ReportElement;
 
 
 /**
- *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * Model for information extracted from the frames models.
+ * 
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 public interface ReportCommonsModelModel extends ModelModel
 {
@@ -14,6 +20,12 @@ public interface ReportCommonsModelModel extends ModelModel
     public static final String TITLE = "title";
     public static final String DESC = "desc";
     public static final String ICON = "icon";
+    
+    @Property("elementType") void setElement( ReportElement.Type type );
+    @Property("elementType") ReportElement.Type getElement();
+    
+    @Property("cssClass") String getCssClass();
+    @Property("cssClass") void setCssClass( String cls );
     
     
     @Property(TITLE)
@@ -35,4 +47,7 @@ public interface ReportCommonsModelModel extends ModelModel
 
     @Property(ICON)
     public String getIcon();
+    
+    @InProperties(label = "traits", direction = Direction.OUT)
+    Map<String,String> getTraits();
 }

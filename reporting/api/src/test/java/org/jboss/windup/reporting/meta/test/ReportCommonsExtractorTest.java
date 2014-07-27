@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.meta.test;
 
+import org.jboss.windup.reporting.meta.test.model.ReportCommonsTestElementSubModel;
+import org.jboss.windup.reporting.meta.test.model.ReportCommonsTestElementModel;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -20,7 +22,7 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.reporting.util.ReportCommonsExtractor;
-import org.jboss.windup.reporting.meta.ReportableInfo;
+import org.jboss.windup.reporting.meta.ReportCommons;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -37,7 +39,7 @@ public class ReportCommonsExtractorTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
             .addBeansXML()
-            .addClasses(ReportCommonsTestModel.class, ReportCommonsTestSubModel.class)
+            .addClasses(ReportCommonsTestElementModel.class, ReportCommonsTestElementSubModel.class)
             .addAsAddonDependencies(
                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -51,51 +53,34 @@ public class ReportCommonsExtractorTest
 
     @Test
     public void testExtract_Class() {
-        System.out.println( "extract" );
-        Class<? extends WindupVertexFrame> modelClass = ReportCommonsTestModel.class;
-        ReportCommonsExtractor instance = null;
-        ReportableInfo expResult = null;
-        ReportableInfo result = instance.extract( modelClass );
-        assertEquals( expResult, result );
-        fail( "The test case is a prototype." );
+        Class<? extends WindupVertexFrame> modelClass = ReportCommonsTestElementModel.class;
+        ReportCommons rc = ReportCommonsExtractor.extract( modelClass );
+        assertEquals("Report Commons Test ${this.name}", rc.getTitle() );
     }
 
 
     @Test
     public void testExtract_WindupVertexFrame() {
         System.out.println( "extract" );
-        WindupVertexFrame frame = null;
-        ReportCommonsExtractor instance = null;
-        ReportableInfo expResult = null;
-        ReportableInfo result = instance.extract( frame );
-        assertEquals( expResult, result );
-        fail( "The test case is a prototype." );
+        ReportCommonsTestElementModel frame = new GraphService<ReportCommonsTestElementModel>(context, ReportCommonsTestElementModel.class).create();
+        frame.setName("Hanka");
+                
+        ReportCommonsExtractor instance = new ReportCommonsExtractor(null);
+        ReportCommons rc = instance.extract( frame );
+        assertEquals("Report Commons Test Hanka", rc.getTitle() );
     }
 
-
-    @Test
-    public void testExtract_WindupVertexFrame_ReportableInfo() {
-        System.out.println( "extract" );
-        WindupVertexFrame frame = null;
-        ReportableInfo ri = null;
-        ReportCommonsExtractor instance = null;
-        ReportableInfo expResult = null;
-        ReportableInfo result = instance.extract( frame, ri );
-        assertEquals( expResult, result );
-        fail( "The test case is a prototype." );
-    }
     
-
     @Test
     public void testGraphTypeHandling() throws Exception
     {
 
-        ReportCommonsTestModel initialModelType = context.getFramed().addVertex(null, ReportCommonsTestModel.class);
+        ReportCommonsTestElementModel initialModelType = context.getFramed().addVertex(null, ReportCommonsTestElementModel.class);
 
-        GraphService.addTypeToModel(context, initialModelType, ReportCommonsTestSubModel.class);
+        GraphService.addTypeToModel(context, initialModelType, ReportCommonsTestElementSubModel.class);
 
         Iterable<Vertex> vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, ReportCommonsTestModel.class.getAnnotation(TypeValue.class).value())
+                    .has("type", Text.CONTAINS, ReportCommonsTestElementModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 
         int numberFound = 0;
@@ -104,8 +89,8 @@ public class ReportCommonsExtractorTest
             numberFound++;
             WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
 
-            Assert.assertTrue(framed instanceof ReportCommonsTestModel);
-            Assert.assertTrue(framed instanceof ReportCommonsTestSubModel);
+            Assert.assertTrue(framed instanceof ReportCommonsTestElementModel);
+            Assert.assertTrue(framed instanceof ReportCommonsTestElementSubModel);
         }
         Assert.assertEquals(1, numberFound);
     }

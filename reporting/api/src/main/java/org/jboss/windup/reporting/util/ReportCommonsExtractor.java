@@ -4,7 +4,7 @@ package org.jboss.windup.reporting.util;
 import javax.inject.Singleton;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.reporting.meta.ReportableInfo;
+import org.jboss.windup.reporting.meta.ReportCommons;
 import org.jboss.windup.reporting.meta.ann.Description;
 import org.jboss.windup.reporting.meta.ann.Title;
 import org.jboss.windup.utils.el.IExprLangEvaluator;
@@ -32,12 +32,12 @@ public class ReportCommonsExtractor {
     /**
      * Extracts the static metadata from the model class - no EL evaluation.
      */
-    public static ReportableInfo extract( Class<? extends WindupVertexFrame> modelClass ){
-        ReportableInfo ri = new ReportableInfo();
+    public static ReportCommons extract( Class<? extends WindupVertexFrame> modelClass ){
+        ReportCommons ri = new ReportCommons();
         return extract( modelClass, ri );
     }
         
-    private static ReportableInfo extract( Class<? extends WindupVertexFrame> modelClass, ReportableInfo ri ){
+    private static ReportCommons extract( Class<? extends WindupVertexFrame> modelClass, ReportCommons ri ){
 
         // Title
         if( ri.getTitle() == null ){
@@ -60,6 +60,8 @@ public class ReportCommonsExtractor {
                 ri.setIcon( annIcon.value() );
         }
         
+        // Traits
+        
         if( modelClass.getSuperclass().isAssignableFrom( WindupVertexFrame.class ) )
             extract( (Class<? extends WindupVertexFrame>) modelClass.getSuperclass(), ri );
             
@@ -71,14 +73,14 @@ public class ReportCommonsExtractor {
      * Extracts the metadata from the model class and evaluates them as EL,
      * with a resolver looking in VarStack, and "this" pointing to the frame.
      */
-    public ReportableInfo extract( WindupVertexFrame frame )
+    public ReportCommons extract( WindupVertexFrame frame )
     {
-        ReportableInfo ri = this.extract( frame.getClass() );
+        ReportCommons ri = this.extract( frame.getClass() );
         return this.extract( frame, ri );
     }
         
-    public ReportableInfo extract( WindupVertexFrame frame, ReportableInfo ri ){
-        ReportableInfo ri2 = new ReportableInfo();
+    public ReportCommons extract( WindupVertexFrame frame, ReportCommons ri ){
+        ReportCommons ri2 = new ReportCommons();
         
         // Title
         if( ri.getTitle() != null ){
