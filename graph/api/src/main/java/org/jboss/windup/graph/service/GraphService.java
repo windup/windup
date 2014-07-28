@@ -1,12 +1,16 @@
 package org.jboss.windup.graph.service;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphTypeManager;
+import org.jboss.windup.graph.model.InMemoryVertexFrame;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
@@ -17,6 +21,7 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
+import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -24,6 +29,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
     @Inject
     private GraphContext context;
+
+    @Inject
+    private GraphTypeManager graphTypeManager;
 
     private Class<T> type;
 
@@ -54,6 +62,15 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<Iterable<?>, Object>();
         return pipe.start(obj).count();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public T createInMemory()
+    {
+        Class<?>[] resolvedTypes = new Class<?>[] { VertexFrame.class, InMemoryVertexFrame.class, type };
+        return (T) Proxy.newProxyInstance(this.type.getClassLoader(),
+                    resolvedTypes, new FramedElementInMemory<>(this.type));
     }
 
     /**
