@@ -9,6 +9,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -23,7 +24,7 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
     @Override
     public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
     {
-        FramedGraph<TitanGraph> framed = event.getGraphContext().getFramed();
+        FramedGraph<EventGraph<TitanGraph>> framed = event.getGraphContext().getFramed();
 
         // create a pipeline to get all blacklisted items
         GremlinPipeline<Vertex, Vertex> blacklistPipeline = new GremlinPipeline<Vertex, Vertex>(

@@ -5,6 +5,7 @@ import java.io.File;
 import org.jboss.windup.graph.service.Service;
 
 import com.thinkaurelius.titan.core.TitanGraph;
+import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 
@@ -16,14 +17,14 @@ import com.tinkerpop.frames.VertexFrame;
 public interface GraphContext
 {
     /**
-     * Get the underlying {@link TitanGraph}.
+     * Get the underlying {@link EventGraph}, which is itself a wrapper for a {@link TitanGraph}.
      */
-    public TitanGraph getGraph();
+    public EventGraph<TitanGraph> getGraph();
 
     /**
-     * Get the {@link FramedGraph} view of the underlying {@link TitanGraph}.
+     * Get the {@link FramedGraph} view of the underlying {@link EventGraph}.
      */
-    public FramedGraph<TitanGraph> getFramed();
+    public FramedGraph<EventGraph<TitanGraph>> getFramed();
 
     /**
      * Get the {@link GraphTypeRegistry}.
