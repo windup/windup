@@ -14,7 +14,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.modules.MethodHandler;
 
-public class FrameMapHandler implements MethodHandler<AdjacentMap>
+public class AdjacentMapHandler implements MethodHandler<AdjacentMap>
 {
     @Override
     public Class<AdjacentMap> getAnnotationType()
