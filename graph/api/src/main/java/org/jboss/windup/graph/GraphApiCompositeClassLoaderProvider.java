@@ -12,7 +12,7 @@ import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 
 /**
- * Provides a composite classloader of all addons that depend on this addon.
+ * Provides a composite classloader of all addons that depend on the graph addon.
  * 
  */
 public class GraphApiCompositeClassLoaderProvider
