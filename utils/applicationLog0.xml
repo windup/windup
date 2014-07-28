@@ -1,5 +1,0 @@
-2014-07-24 00:29:11 SEVERE java.util.logging.LogManager$RootLogger log: Root SEVERE
-2014-07-24 00:29:11 WARNING java.util.logging.LogManager$RootLogger log:  Root WARN
-2014-07-24 00:29:11 WARNING org.jboss.windup.log.LoggerTest testLoggingProperties:  Foo WARN
-2014-07-24 00:29:11 INFO org.jboss.windup.log.LoggerTest testLoggingProperties:   Foo.Aj INFO
-2014-07-24 00:29:11 WARNING org.jboss.windup.log.LoggerTest testLoggingProperties:  Foo.Aj WARN
