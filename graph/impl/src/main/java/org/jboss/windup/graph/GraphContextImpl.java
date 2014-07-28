@@ -14,6 +14,7 @@ import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
+import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
@@ -31,15 +32,16 @@ public class GraphContextImpl implements GraphContext
      * Used to get access to all implemented {@link Service} classes.
      */
     private final Imported<Service<? extends VertexFrame>> graphServices;
-    private final TitanGraph graph;
+    private final EventGraph<TitanGraph> eventGraph;
+    private final TitanGraph titanGraph;
     private final BatchGraph<TitanGraph> batch;
-    private final FramedGraph<TitanGraph> framed;
+    private final FramedGraph<EventGraph<TitanGraph>> framed;
     private final GraphTypeRegistry graphTypeRegistry;
     private final File diskCacheDir;
 
-    public TitanGraph getGraph()
+    public EventGraph<TitanGraph> getGraph()
     {
-        return graph;
+        return eventGraph;
     }
 
     @Override
@@ -48,12 +50,17 @@ public class GraphContextImpl implements GraphContext
         return graphTypeRegistry;
     }
 
+    /**
+     * Returns a graph suitable for batch processing.
+     * 
+     * Note: This bypasses the event graph (thus no events will be fired for modifications to this graph)
+     */
     public BatchGraph<TitanGraph> getBatch()
     {
         return batch;
     }
 
-    public FramedGraph<TitanGraph> getFramed()
+    public FramedGraph<EventGraph<TitanGraph>> getFramed()
     {
         return framed;
     }
@@ -82,7 +89,8 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("storage.index.search.client-only", "false");
         conf.setProperty("storage.index.search.local-mode", "true");
 
-        graph = TitanFactory.open(conf);
+        this.titanGraph = TitanFactory.open(conf);
+        this.eventGraph = new EventGraph<TitanGraph>(this.titanGraph);
 
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
@@ -90,15 +98,15 @@ public class GraphContextImpl implements GraphContext
                     "systemId", "qualifiedName", "filePath", "mavenIdentifier" };
         for (String key : keys)
         {
-            graph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
+            this.titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
 
         for (String key : new String[] { "archiveEntry", "type" })
         {
-            graph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
+            this.titanGraph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
         }
 
-        batch = new BatchGraph<TitanGraph>(graph, 1000L);
+        batch = new BatchGraph<TitanGraph>(this.titanGraph, 1000L);
 
         // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
@@ -132,7 +140,7 @@ public class GraphContextImpl implements GraphContext
                     new GremlinGroovyModule() // @Gremlin
         );
 
-        framed = factory.create(graph);
+        framed = factory.create(eventGraph);
     }
 
     @Override

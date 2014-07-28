@@ -49,7 +49,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public void commit()
     {
-        this.context.getGraph().commit();
+        this.context.getGraph().getBaseGraph().commit();
     }
 
     @Override
@@ -160,7 +160,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     protected TitanGraphQuery getTypedQuery()
     {
         return getGraphContext()
-                    .getGraph().query().has("type", Text.CONTAINS, getTypeValueForSearch());
+                    .getGraph().getBaseGraph().query().has("type", Text.CONTAINS, getTypeValueForSearch());
     }
 
     protected String getTypeValueForSearch()
@@ -221,7 +221,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public TitanTransaction newTransaction()
     {
-        return context.getGraph().newTransaction();
+        return context.getGraph().getBaseGraph().newTransaction();
     }
 
     public static List<WindupVertexFrame> toVertexFrames(GraphContext graphContext, Iterable<Vertex> vertices)
