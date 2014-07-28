@@ -1,12 +1,9 @@
 package org.jboss.windup.tests.application;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -16,15 +13,11 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.tinkerpop.blueprints.Vertex;
-
 @RunWith(Arquillian.class)
-public class WindupArchitectureBinaryModeTest
+public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTest
 {
 
     @Deployment
@@ -41,6 +34,8 @@ public class WindupArchitectureBinaryModeTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
+                    .addClass(WindupArchitectureTest.class)
+                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
@@ -60,33 +55,8 @@ public class WindupArchitectureBinaryModeTest
     private GraphContext graphContext;
 
     @Test
-    public void testRunWindup() throws Exception
+    public void testRunWindupMedium() throws Exception
     {
-        Assert.assertNotNull(processor);
-        Assert.assertNotNull(processor.toString());
-
-        String inputPath = "../../test-files/Windup1x-javaee-example.war";
-        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(inputPath);
-
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windupreport");
-        FileUtils.deleteDirectory(outputPath.toFile());
-        Files.createDirectories(outputPath);
-
-        windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
-        windupCfg.setSourceMode(false);
-
-        try
-        {
-            processor.execute();
-        }
-        finally
-        {
-            for (Vertex v : graphContext.getGraph().getVertices())
-            {
-                v.remove();
-            }
-            graphContext.getGraph().shutdown();
-        }
+        runTest(processor, graphContext, "../../test-files/Windup1x-javaee-example.war", false);
     }
 }

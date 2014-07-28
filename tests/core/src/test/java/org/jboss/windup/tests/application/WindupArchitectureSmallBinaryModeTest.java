@@ -17,15 +17,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
+public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTest
 {
+
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-                @AddonDependency(name = "org.jboss.windup.utils:utils"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:java-decompiler"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
@@ -37,10 +38,10 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
@@ -54,8 +55,8 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     private GraphContext graphContext;
 
     @Test
-    public void testRunWindupSourceMode() throws Exception
+    public void testRunWindupTiny() throws Exception
     {
-        super.runTest(processor, graphContext, "../../test-files/src_example", true);
+        runTest(processor, graphContext, "../../test-files/Windup1x-javaee-example-tiny.war", false);
     }
 }
