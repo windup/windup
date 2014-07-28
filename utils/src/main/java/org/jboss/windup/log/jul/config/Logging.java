@@ -18,10 +18,16 @@ public class Logging {
                 "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s %6$s%n");
         System.out.println( "java.util.logging.SimpleFormatter.format was set." );
     }
+    
+    private static boolean initDone = false;
 
     /** init() helper. */
     public static void init()
-    {        
+    {
+        if( initDone )
+            return;
+        initDone = true;
+        
         Logger.getLogger("").getHandlers()[0].setFormatter( new SingleLineFormatter() );
 
         String logConfigFile = System.getProperty("java.util.logging.config.file", "logging.properties");
@@ -36,11 +42,12 @@ public class Logging {
             else {
                 System.out.println("Reading logging config from resource /logging.properties");
                 is = Logging.class.getResourceAsStream("/logging.properties");
-                if( null == is)
+                if( null == is )
                     //throw new Exception("logging.properties resource not found!");
                     System.err.println("logging.properties resource not found!");
-                    
             }
+            
+            LogManager.getLogManager().reset();
             LogManager.getLogManager().readConfiguration(is);
         }
         catch(IOException ex)
@@ -48,7 +55,7 @@ public class Logging {
             System.err.println("Can't read logging config from ["+logConfigFile+"]. Using default.");
             final SystemOutHandler soutHandler = new SystemOutHandler();
             soutHandler.setFormatter( new SingleLineFormatter() );
-            Logger.getLogger("").addHandler( soutHandler );
+            //Logger.getLogger("").addHandler( soutHandler );
         }
         Logger.getLogger(Logging.class.getName()).info("Logging configured.");
     }
