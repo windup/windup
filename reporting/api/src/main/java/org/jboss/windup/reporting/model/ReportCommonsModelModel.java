@@ -1,11 +1,9 @@
 package org.jboss.windup.reporting.model;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import java.util.Map;
 import org.jboss.windup.config.model.ModelModel;
-import org.jboss.windup.graph.AdjacentMap;
 import org.jboss.windup.reporting.meta.ann.ReportElement;
 
 

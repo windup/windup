@@ -8,16 +8,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.jboss.loom.actions.IMigrationAction;
-import org.jboss.loom.conf.Configuration;
-import org.jboss.loom.ctx.DeploymentInfo;
-import org.jboss.loom.ctx.MigratorData;
-import org.jboss.loom.ex.WindupException;
-import org.jboss.loom.recog.ServerInfo;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.xslt.adapters.MigratorDataSubtypesAdapter;
 import org.jboss.windup.reporting.xslt.adapters.ToActionBeanAdapter;
 import org.jboss.windup.reporting.xslt.adapters.ToStringAdapter;
-import org.jboss.loom.utils.compar.ComparisonResult;
 
 /**
  *  Root JAXB bean for the XML report.
@@ -28,7 +22,7 @@ import org.jboss.loom.utils.compar.ComparisonResult;
 public class MigrationReportJaxbBean {
 
     @XmlElement
-    public Configuration config;
+    public WindupConfigurationModel config;
     
     @XmlElement(name = "sourceServer", required = true)
     public ServerInfo sourceServer;

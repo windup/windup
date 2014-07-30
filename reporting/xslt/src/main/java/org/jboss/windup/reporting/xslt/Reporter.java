@@ -8,10 +8,11 @@ import java.util.Date;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.FileUtils;
-import org.jboss.loom.ctx.MigrationContext;
-import org.jboss.windup.reporting.xslt.model.MigrationReportJaxbBean;
 import org.jboss.loom.utils.XmlUtils;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.xslt.model.DeploymentInfo;
+import org.jboss.windup.reporting.xslt.model.MigrationReportJaxbBean;
 import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +32,12 @@ public class Reporter {
     private static final String JQUERY_FILE = "jquery-1.10.1.min.js";
 
     
-    public static void createReport( MigrationContext ctx, File reportDir ) throws WindupException {
+    public static void createReport( GraphContext ctx, File reportDir ) throws WindupException {
         try {
             // Create the reporting content.
             MigrationReportJaxbBean report = new MigrationReportJaxbBean();
-            report.config = ctx.getConf();
-            report.finalException = ctx.getFinalException();
+            report.config = GraphService.getConfigurationModel(ctx);
+            //report.finalException = ctx.getFinalException();
             
             // Copy deployments reports to the $reportDir.
             for( DeploymentInfo depl : report.deployments ) {
