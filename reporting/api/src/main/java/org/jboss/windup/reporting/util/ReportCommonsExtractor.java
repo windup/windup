@@ -1,11 +1,17 @@
 package org.jboss.windup.reporting.util;
 
 
+import com.tinkerpop.frames.Property;
+import java.lang.reflect.Method;
 import javax.inject.Singleton;
+import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.reflect.MethodUtils;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.reporting.meta.ReportCommons;
 import org.jboss.windup.reporting.meta.ann.Description;
+import org.jboss.windup.reporting.meta.ann.ReportElement;
 import org.jboss.windup.reporting.meta.ann.Title;
 import org.jboss.windup.utils.el.IExprLangEvaluator;
 import org.jboss.windup.utils.el.JuelCustomResolverEvaluator;
@@ -37,35 +43,68 @@ public class ReportCommonsExtractor {
         return extract( modelClass, ri );
     }
         
-    private static ReportCommons extract( Class<? extends WindupVertexFrame> modelClass, ReportCommons ri ){
+    private static ReportCommons extract( Class<? extends WindupVertexFrame> modelClass, ReportCommons rc ){
 
         // Title
-        if( ri.getTitle() == null ){
+        if( rc.getTitle() == null ){
             Title annTitle = modelClass.getAnnotation( Title.class );
             if( annTitle != null )
-                ri.setTitle( annTitle.value() );
+                rc.setTitle( annTitle.value() );
         }
         
         // Description
-        if( ri.getDesc() == null ){
+        if( rc.getDesc() == null ){
             Description annDesc = modelClass.getAnnotation( Description.class );
             if( annDesc != null )
-                ri.setDesc( annDesc.value() );
+                rc.setDesc( annDesc.value() );
         }
         
         // Icon
         Description annIcon = modelClass.getAnnotation( Description.class );
-        if( ri.getIcon() == null ){
+        if( rc.getIcon() == null ){
             if( annIcon != null )
-                ri.setIcon( annIcon.value() );
+                rc.setIcon( annIcon.value() );
         }
         
         // Traits
-        
-        if( modelClass.getSuperclass().isAssignableFrom( WindupVertexFrame.class ) )
-            extract( (Class<? extends WindupVertexFrame>) modelClass.getSuperclass(), ri );
+        Method[] methods = modelClass.getMethods();
+        for( Method method : methods ) {
             
-        return ri;
+            // formatter:off Only consider getters with @Property returning String, Number, or primitive.
+            if( method.getAnnotation( Property.class ) == null )
+                continue;
+            if( ! method.getName().startsWith("get") )
+                continue;
+            final Class<?> retType = method.getReturnType();
+            if( ! (  String.class.isAssignableFrom(retType)
+                  || Number.class.isAssignableFrom(retType)
+                  || retType.isPrimitive()
+                //ClassUtils.isPrimitiveOrWrapper()
+                //BeanUtils.isSimpleValueType()
+            ))
+                continue;
+            
+            String propName = StringUtils.uncapitalize( method.getName().substring(3) );
+            
+            // Only consider those with either @ReportElement or @Title.
+            Title annTitle = method.getAnnotation( Title.class );
+            ReportElement annRE = method.getAnnotation( ReportElement.class );
+            if( annRE == null && annTitle == null )
+                continue;
+            
+            if( annTitle != null ){
+                rc.putTrait( propName, new ReportCommons( annTitle.value() ) );
+            }
+            
+            ReportElement.Type type = annRE.type();
+            // formatter:on
+        }
+        
+        // Superclass
+        if( modelClass.getSuperclass().isAssignableFrom( WindupVertexFrame.class ) )
+            extract( (Class<? extends WindupVertexFrame>) modelClass.getSuperclass(), rc );
+            
+        return rc;
     }
 
 

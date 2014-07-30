@@ -1,8 +1,12 @@
 package org.jboss.windup.reporting.meta;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.ocpsoft.rewrite.config.Rule;
+
 
 /**
  *  Common reportable information about an item to appear in the report.
@@ -18,8 +22,17 @@ public class ReportCommons {
     private final List<Rule> foundBy = new LinkedList<>();
     private final List<Solution> solutions = new LinkedList<>();
     private final List<Reference> references = new LinkedList<>();
+    private final Map<String, ReportCommons> traits = new HashMap();
 
-    
+
+    public ReportCommons() {
+    }
+
+    public ReportCommons( String title ) {
+        this.title = title;
+    }
+
+   
     /**
      * One-line title of the reportable item.
      */
@@ -103,4 +116,19 @@ public class ReportCommons {
         this.references.add(reference);
     }
 
+    
+    // Traits
+    
+    /**
+     * Returns the traits as an unmodifiable map.
+     */
+    public Map<String, ReportCommons> getTraits() {
+        return Collections.unmodifiableMap( this.traits );
+    }
+    
+    public void putTrait( String propName, ReportCommons rc ) {
+        this.traits.put( propName, rc );
+    }
+
+    
 }// class
