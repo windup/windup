@@ -94,12 +94,15 @@ public interface FileModel extends ResourceModel
     @Adjacency(label = "archiveFiles", direction = Direction.IN)
     public void setParentArchive(ArchiveModel parentArchive);
 
+    // TODO: This shouldn't be here.
     @Adjacency(label = "fileToProjectModel", direction = Direction.OUT)
     public ProjectModel getProjectModel();
 
+    // TODO: This shouldn't be here.
     @Adjacency(label = "fileToProjectModel", direction = Direction.OUT)
     public void setProjectModel(ProjectModel projectModel);
 
+    
     @JavaHandler
     public File asFile() throws RuntimeException;
 
@@ -109,9 +112,12 @@ public interface FileModel extends ResourceModel
     @JavaHandler
     public String getPrettyPath();
 
+    
+    // TODO: This shouldn't be here.
     @JavaHandler
     public String getPrettyPathWithinProject();
 
+    
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>
     {
         public String getPrettyPathWithinProject()
@@ -144,9 +150,7 @@ public interface FileModel extends ResourceModel
             for (String path : paths)
             {
                 if (sb.length() != 0)
-                {
                     sb.append("/");
-                }
                 sb.append(path);
             }
 
@@ -158,7 +162,7 @@ public interface FileModel extends ResourceModel
          */
         private List<String> generatePathList(Path stopPath)
         {
-            List<String> paths = new ArrayList<String>();
+            List<String> paths = new ArrayList<>(16); // Average dir depth.
 
             // create list of paths from bottom to top
             appendPath(paths, stopPath, this);
@@ -171,17 +175,12 @@ public interface FileModel extends ResourceModel
             try
             {
                 if (stopPath != null && Files.isSameFile(stopPath, Paths.get(fileModel.getFilePath())))
-                {
                     return;
-                }
-                else
-                {
-                    paths.add(fileModel.getFileName());
-                }
+
+                paths.add(fileModel.getFileName());
 
                 if (fileModel.getParentFile() != null)
                 {
-
                     FileModel parent = fileModel.getParentFile();
                     appendPath(paths, stopPath, parent);
                 }
@@ -211,12 +210,11 @@ public interface FileModel extends ResourceModel
         {
             try
             {
-                if (this.getFilePath() != null)
-                {
-                    File file = new File(getFilePath());
-                    return new FileInputStream(file);
-                }
-                return null;
+                if (this.getFilePath() == null)
+                    return null;
+                
+                File file = new File(getFilePath());
+                return new FileInputStream(file);
             }
             catch (Exception e)
             {
@@ -227,12 +225,10 @@ public interface FileModel extends ResourceModel
         @Override
         public File asFile() throws RuntimeException
         {
-            if (this.getFilePath() != null)
-            {
-                File file = new File(getFilePath());
-                return file;
-            }
-            return null;
+            if (this.getFilePath() == null)
+                return null;
+            
+            return new File(getFilePath());
         }
     }
 }

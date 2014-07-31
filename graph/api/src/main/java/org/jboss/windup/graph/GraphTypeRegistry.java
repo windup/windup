@@ -46,22 +46,24 @@ public class GraphTypeRegistry
             }
         };
 
-        Iterable<Class<?>> classes = scanner.scanClasses(modelClassFilter);
 
+        LOG.info("Looking for *Model classes...");
+        Iterable<Class<?>> classes = scanner.scanClasses(modelClassFilter);
+        
         for (Class<?> clazz : classes)
         {
             // Add those extending WindupVertexFrame.
-            LOG.info("Found class: " + clazz);
+            //LOG.debug("Candidate: " + clazz);
             if (WindupVertexFrame.class.isAssignableFrom(clazz))
             {
+                LOG.debug("    Found: " + clazz);
                 @SuppressWarnings("unchecked")
                 Class<? extends WindupVertexFrame> wvf = (Class<? extends WindupVertexFrame>) clazz;
                 graphTypeManager.addTypeToRegistry(wvf);
             }
             else
             {
-                LOG.debug("Not adding to GraphTypeRegistry, not a subclass of WindupVertexFrame: "
-                            + clazz.getCanonicalName());
+                LOG.debug("Skipping - not a WindupVertexFrame: " + clazz.getCanonicalName());
             }
         }
     }

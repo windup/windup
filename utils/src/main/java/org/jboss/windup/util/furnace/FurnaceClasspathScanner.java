@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author jsightler
+ * 
+ * TODO: Refactor so scan() and scanForClasses() reuse shared code.
  */
 public class FurnaceClasspathScanner
 {
@@ -29,6 +31,7 @@ public class FurnaceClasspathScanner
     @Inject
     private Furnace furnace;
 
+    
     public Iterable<URL> scan(String fileExtension)
     {
         return scan(new FurnaceScannerFileExtensionFilenameFilter(fileExtension));
@@ -36,11 +39,11 @@ public class FurnaceClasspathScanner
 
     public Iterable<URL> scan(FurnaceScannerFilenameFilter filter)
     {
-        List<URL> discoveredURLs = new ArrayList<>();
+        List<URL> discoveredURLs = new ArrayList<>(128);
 
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
-            List<String> discoveredFileNames = new ArrayList<>();
+            List<String> discoveredFileNames = new ArrayList<>(32);
             List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
             for (File addonFile : addonResources)
             {
@@ -64,13 +67,17 @@ public class FurnaceClasspathScanner
         return discoveredURLs;
     }
 
+    
+    /**
+     *  The same as scan(), only loads the classes.
+     */
     public Iterable<Class<?>> scanClasses(FurnaceScannerFilenameFilter filter)
     {
-        List<Class<?>> discoveredClasses = new ArrayList<>();
+        List<Class<?>> discoveredClasses = new ArrayList<>(128);
 
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
-            List<String> discoveredFileNames = new ArrayList<>();
+            List<String> discoveredFileNames = new ArrayList<>(32);
             List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
             for (File addonFile : addonResources)
             {
