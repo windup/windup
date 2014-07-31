@@ -13,6 +13,7 @@ import org.jboss.windup.rules.apps.xml.XmlResourceModel;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
 
 @Singleton
 public class MavenModelService extends GraphService<MavenProjectModel>
@@ -50,14 +51,14 @@ public class MavenModelService extends GraphService<MavenProjectModel>
     public boolean isMavenConfiguration(XmlResourceModel resource)
     {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet")
-                    .has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator().hasNext();
+                    .has(TYPE_PROP, Text.CONTAINS, this.getTypeValueForSearch()).back("facet").iterator().hasNext();
     }
 
     public MavenProjectModel getMavenConfigurationFromResource(XmlResourceModel resource)
     {
         @SuppressWarnings("unchecked")
         Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
-                    .in("xmlFacet").as("facet").has("type", Text.CONTAINS, this.getTypeValueForSearch()).back("facet")
+                    .in("xmlFacet").as("facet").has(TYPE_PROP, Text.CONTAINS, this.getTypeValueForSearch()).back("facet")
                     .iterator();
         if (v.hasNext())
         {

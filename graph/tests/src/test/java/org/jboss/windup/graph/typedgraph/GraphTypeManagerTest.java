@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
 
 @RunWith(Arquillian.class)
 public class GraphTypeManagerTest
@@ -53,7 +54,7 @@ public class GraphTypeManagerTest
         GraphService.addTypeToModel(context, initialModelType, FooSubModel.class);
 
         Iterable<Vertex> vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, FooModel.class.getAnnotation(TypeValue.class).value())
+                    .has(TYPE_PROP, Text.CONTAINS, FooModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 
         int numberFound = 0;

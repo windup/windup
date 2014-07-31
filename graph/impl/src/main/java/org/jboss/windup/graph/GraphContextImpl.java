@@ -22,6 +22,7 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -82,7 +83,7 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("storage.index.search.client-only", "false");
         conf.setProperty("storage.index.search.local-mode", "true");
 
-        graph = TitanFactory.open(conf);
+        this.graph = TitanFactory.open(conf);
 
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
@@ -90,15 +91,15 @@ public class GraphContextImpl implements GraphContext
                     "systemId", "qualifiedName", "filePath", "mavenIdentifier" };
         for (String key : keys)
         {
-            graph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
+            this.graph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
 
-        for (String key : new String[] { "archiveEntry", "type" })
+        for (String key : new String[] { "archiveEntry", TYPE_PROP })
         {
-            graph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
+            this.graph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
         }
 
-        batch = new BatchGraph<TitanGraph>(graph, 1000L);
+        this.batch = new BatchGraph<>(this.graph, 1000L);
 
         // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
@@ -132,7 +133,7 @@ public class GraphContextImpl implements GraphContext
                     new GremlinGroovyModule() // @Gremlin
         );
 
-        framed = factory.create(graph);
+        this.framed = factory.create(this.graph);
     }
 
     @Override
@@ -140,7 +141,7 @@ public class GraphContextImpl implements GraphContext
     public <T extends VertexFrame, S extends Service<T>> S getService(Class<T> type)
     {
         S closestMatch = null;
-        for (Service<? extends VertexFrame> service : graphServices)
+        for (Service<? extends VertexFrame> service : this.graphServices)
         {
             if (service.getType() == type)
             {
@@ -161,7 +162,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public File getDiskCacheDirectory()
     {
-        return diskCacheDir;
+        return this.diskCacheDir;
     }
 
     @Override

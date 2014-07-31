@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
  * Runs through the source code and checks "type" uses against the blacklisted class entries.
  * 
  * @author bradsdavis
- * 
  */
 public class VariableResolvingASTVisitor extends ASTVisitor
 {
