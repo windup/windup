@@ -21,13 +21,13 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
 {
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-                @AddonDependency(name = "org.jboss.windup.utils:utils"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+        @AddonDependency(name = "org.jboss.windup.utils:utils"),
+        @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+        @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
     public static ForgeArchive getDeployment()
     {
