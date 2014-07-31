@@ -5,6 +5,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.xml.NamespaceMetaModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
+import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
 
 public class NamespaceService extends GraphService<NamespaceMetaModel>
 {
@@ -17,7 +18,7 @@ public class NamespaceService extends GraphService<NamespaceMetaModel>
     public NamespaceMetaModel createNamespaceSchemaLocation(String namespaceURI, String schemaLocation)
     {
         Iterable<NamespaceMetaModel> results = getGraphContext().getFramed().query()
-                    .has("type", Text.CONTAINS, NamespaceMetaModel.TYPE)
+                    .has(TYPE_PROP, Text.CONTAINS, NamespaceMetaModel.TYPE)
                     .has("namespaceURI", namespaceURI).has("schemaLocation", schemaLocation)
                     .vertices(NamespaceMetaModel.class);
 
