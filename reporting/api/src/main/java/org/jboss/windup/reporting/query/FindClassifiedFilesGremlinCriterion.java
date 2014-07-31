@@ -30,7 +30,7 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
         GremlinPipeline<Vertex, Vertex> blacklistPipeline = new GremlinPipeline<Vertex, Vertex>(
                     framed
                                 .query()
-                                .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource")
+                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource")
                                 .vertices());
         blacklistPipeline.as("fileModel1").in(BlackListModel.FILE_MODEL).back("fileModel1");
 
@@ -38,7 +38,7 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
                     framed
                                 .query()
-                                .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource")
+                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource")
                                 .vertices());
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .back("fileModel2");

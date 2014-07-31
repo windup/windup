@@ -1,19 +1,5 @@
 package org.jboss.windup.graph.service;
 
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.jboss.windup.graph.FramedElementInMemory;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.InMemoryVertexFrame;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.service.exception.NonUniqueResultException;
-
 import com.thinkaurelius.titan.core.TitanGraphQuery;
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -23,6 +9,15 @@ import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.inject.Inject;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
+import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
@@ -100,14 +95,14 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     public Iterable<T> findAll()
     {
         FramedGraphQuery query = context.getFramed().query();
-        query.has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, this.type.getAnnotation(TypeValue.class).value());
+        query.has(TYPE_PROP, Text.CONTAINS, this.type.getAnnotation(TypeValue.class).value());
         return (Iterable<T>) query.vertices(this.type);
     }
 
     @Override
     public Iterable<T> findAllByProperties(String[] keys, String[] vals)
     {
-        FramedGraphQuery fgq = context.getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch());
+        FramedGraphQuery fgq = context.getFramed().query().has(TYPE_PROP, Text.CONTAINS, getTypeValueForSearch());
 
         for (int i = 0, j = keys.length; i < j; i++)
         {
@@ -153,7 +148,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             regexFinal = builder.toString();
         }
 
-        return context.getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+        return context.getFramed().query().has(TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
                     .has(key, Text.REGEX, regexFinal).vertices(this.type);
     }
 

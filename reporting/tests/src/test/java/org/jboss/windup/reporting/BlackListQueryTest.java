@@ -93,13 +93,13 @@ public class BlackListQueryTest extends AbstractTestCase
 
         List<Vertex> vertexList = new ArrayList<>();
         for (Vertex v : context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource").vertices())
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource").vertices())
         {
             vertexList.add(v);
         }
 
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "FileResource").vertices());
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource").vertices());
 
         GraphRewrite event = new GraphRewrite(context);
 
