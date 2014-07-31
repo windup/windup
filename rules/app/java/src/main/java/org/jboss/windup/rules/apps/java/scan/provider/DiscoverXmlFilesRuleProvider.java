@@ -138,11 +138,13 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
         }
         catch (SAXException e)
         {
-            LOG.warn("Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(), e);
+            LOG.warn("Failed to parse XML file: " + file.getFilePath() + ", due to: " + e.getMessage());
+            LOG.debug("    Stacktrace:", e );
         }
         catch (IOException e)
         {
-            LOG.warn("Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(), e);
+            LOG.warn("Failed to load XML file: " + file.getFilePath() + ", due to: " + e.getMessage());
+            LOG.debug("    Stacktrace:", e );
         }
         catch (Exception e)
         {
