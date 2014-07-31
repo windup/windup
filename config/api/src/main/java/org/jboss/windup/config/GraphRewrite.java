@@ -32,6 +32,7 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
         this.graphContext = context;
     }
 
+    // TODO: This should not be here, move to some configuration class.
     public Path getWindupTemporaryFolder()
     {
         if (this.tempDirectory == null)
@@ -42,7 +43,7 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
             }
             catch (IOException e)
             {
-                throw new WindupException("Error creating temporary directory for windup due to: " + e.getMessage(), e);
+                throw new WindupException("Error creating temporary directory for Windup: " + e.getMessage(), e);
             }
         }
         return this.tempDirectory;

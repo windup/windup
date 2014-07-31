@@ -1,3 +1,4 @@
+
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.GraphRewrite;
@@ -5,7 +6,9 @@ import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.metadata.RuleMetadata
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.log.jul.config.Logging;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.ocpsoft.rewrite.config.True
 
 blacklistType("sampleRegexBlackListRule-001", "org.apache.wicket.request.handler.logger.NoLogData", "No Log Data")
 blacklistType("sampleRegexBlackListRule-002", "org.apache.wicket.request.IRequestHandler", "IRequestHandler Blacklisted")
@@ -33,7 +36,7 @@ ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
         Iteration.over("javaClasses").as("javaClass").perform(
             new GraphOperation  () {
                 public void perform(GraphRewrite event, EvaluationContext context) {
-                    System.out.println("Performing rewrite operation")
+                    Logging.of(this.getClass()).info("Performing unknown rewrite operation in ExampleBlacklistRule");
                 }
             }
         )
