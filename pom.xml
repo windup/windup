@@ -70,9 +70,7 @@
                 <executions>
                     <execution>
                         <id>deleteLocalRepoProjectArtifacts</id>
-                        <goals>
-                            <goal>remove-project-artifact</goal>
-                        </goals>
+                        <goals> <goal>remove-project-artifact</goal> </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -83,9 +81,7 @@
                 <executions>
                     <execution>
                         <id>deleteLocalRepoProjectDeps</id>
-                        <goals>
-                            <goal>purge-local-repository</goal>
-                        </goals>
+                        <goals> <goal>purge-local-repository</goal> </goals>
                         <configuration>
                             <skip>${skipDeleteDeps}</skip>
                         </configuration>
@@ -103,9 +99,7 @@
                     <execution>
                         <id>generate-dot</id>
                         <phase>none</phase>
-                        <goals>
-                            <goal>generate-dot</goal>
-                        </goals>
+                        <goals> <goal>generate-dot</goal> </goals>
                         <configuration>
                             <attach>true</attach>
                         </configuration>
@@ -118,16 +112,14 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>none</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
+                        <goals> <goal>jar</goal> </goals>
                         <configuration>
                             <classifier>forge-addon</classifier>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -135,12 +127,10 @@
                     <excludes>
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
-                    <argLine>
-                        -Xms512m -Xmx2048m -XX:MaxPermSize=512m
-                    </argLine>
+                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=512m</argLine>
                 </configuration>
             </plugin>
-
+            
         </plugins>
 
         <pluginManagement>
