@@ -7,6 +7,7 @@
 package org.jboss.windup.config;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,9 +80,7 @@ public class Variables
      */
     public void setSingletonVariable(String string, WindupVertexFrame frame)
     {
-        List<WindupVertexFrame> singleton = new ArrayList<>();
-        singleton.add(frame);
-        setVariable(string, singleton);
+        setVariable(string, Collections.singletonList(frame));
     }
 
     /**
