@@ -30,7 +30,7 @@ ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
         Query.find(JavaClassModel.class).as("javaClasses")
     )
     .perform(
-        Iteration.over("javaClasses").as("javaClass").perform(
+        Iteration.over("javaClasses").perform(
             new GraphOperation  () {
                 public void perform(GraphRewrite event, EvaluationContext context) {
                     System.out.println("Performing rewrite operation")

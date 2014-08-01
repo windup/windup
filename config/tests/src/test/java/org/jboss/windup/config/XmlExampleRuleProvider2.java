@@ -44,7 +44,7 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
                             QueryPropertyComparisonType.EQUALS, "xmlTag3")
                 .as("xmlModels"))
             .perform(
-                Iteration.over(TestXmlMetaFacetModel.class, "xmlModels").as("xml")
+                Iteration.over(TestXmlMetaFacetModel.class, "xmlModels")
                     .perform(new GraphOperation()
                     {
                         @Override
@@ -52,7 +52,7 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
                         {
                             Variables varStack = org.jboss.windup.config.Variables.instance(event);
                             TestXmlMetaFacetModel xmlFacetModel =
-                                Iteration.getCurrentPayload(varStack, TestXmlMetaFacetModel.class, "xml");
+                                Iteration.getCurrentPayload(varStack, TestXmlMetaFacetModel.class, Iteration.singleVariableIterationName("xmlModels"));
                             typeSearchResults.add(xmlFacetModel);
                         }
                     })

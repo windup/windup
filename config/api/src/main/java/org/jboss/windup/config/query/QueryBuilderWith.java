@@ -6,7 +6,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface QueryBuilderWith
+public interface QueryBuilderWith extends ConditionBuilder
 {
     /**
      * Narrow the query to {@link WindupVertexFrame} instances that contain the given property value.

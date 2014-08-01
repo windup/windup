@@ -30,10 +30,20 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
     {
         super(ArchiveModel.class, variableName);
     }
+    
+    public UnzipArchiveToTemporaryFolder()
+    {
+        super(ArchiveModel.class);
+    }
 
     public static UnzipArchiveToTemporaryFolder unzip(String variableName)
     {
         return new UnzipArchiveToTemporaryFolder(variableName);
+    }
+    
+    public static UnzipArchiveToTemporaryFolder unzip()
+    {
+        return new UnzipArchiveToTemporaryFolder();
     }
 
     @Override

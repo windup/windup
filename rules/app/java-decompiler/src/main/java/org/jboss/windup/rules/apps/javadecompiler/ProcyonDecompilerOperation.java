@@ -29,6 +29,11 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
     {
         super(ArchiveModel.class, variableName);
     }
+    
+    public ProcyonDecompilerOperation()
+    {
+        super(ArchiveModel.class);
+    }
 
     @Override
     public void perform(final GraphRewrite event, final EvaluationContext context, final ArchiveModel payload)

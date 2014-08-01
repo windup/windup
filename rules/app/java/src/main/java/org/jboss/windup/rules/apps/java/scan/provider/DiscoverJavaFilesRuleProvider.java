@@ -38,16 +38,15 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         ConditionBuilder javaSourceQuery = Query
             .find(FileModel.class)
             .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$")
-            .as("javaSourceFiles");
+            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$");
 
         return ConfigurationBuilder.begin()
             .addRule()
             .when(javaSourceQuery)
             .perform(
-                Iteration.over("javaSourceFiles").as(FileModel.class, "javaSourceFile")
+                Iteration.over()
                 .perform(
-                    new IndexJavaFileIterationOperator(FileModel.class, "javaSourceFile")
+                    new IndexJavaFileIterationOperator(FileModel.class)
                 )
                 .endIteration()
             );
@@ -61,6 +60,11 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         private IndexJavaFileIterationOperator(Class<FileModel> clazz, String variableName)
         {
             super(clazz, variableName);
+        }
+        
+        private IndexJavaFileIterationOperator(Class<FileModel> clazz)
+        {
+            super(clazz);
         }
 
         @Override

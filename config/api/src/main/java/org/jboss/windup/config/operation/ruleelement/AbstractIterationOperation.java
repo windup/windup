@@ -14,8 +14,18 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
 
     public AbstractIterationOperation(Class<T> clazz, String variableName)
     {
-        this.clazz = clazz;
+        this(clazz);
         this.variableName = variableName;
+    }
+    
+    /**
+     * If the variable name is not specified, the default name is taken
+     * @param clazz
+     */
+    public AbstractIterationOperation(Class<T> clazz)
+    {
+        this.clazz = clazz;
+        this.variableName = Iteration.DEFAULT_SINGLE_VARIABLE_STRING;
     }
 
     protected String getVariableName()

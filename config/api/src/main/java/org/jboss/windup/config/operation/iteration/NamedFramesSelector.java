@@ -25,6 +25,11 @@ public class NamedFramesSelector implements FramesSelector
         this.varName = varName;
     }
 
+    public String getVarName()
+    {
+        return varName;
+    }
+
     @Override
     public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
     {

@@ -47,8 +47,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
         .when(Query.find(TestXmlMetaFacetModel.class).as("xmlModels"))
         .perform(Iteration
             .over(TestXmlMetaFacetModel.class, "xmlModels")
-            .as("xml")
-            .when(new AbstractIterationFilter<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class, "xml")
+            .when(new AbstractIterationFilter<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class, Iteration.singleVariableIterationName("xmlModels"))
             {
                 @Override
                 public boolean evaluate(GraphRewrite event, EvaluationContext context,
@@ -60,7 +59,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                 }
             })
             .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class,
-                        "xml")
+                        Iteration.singleVariableIterationName("xmlModels"))
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context,
@@ -75,7 +74,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                 }
             })
             .otherwise(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class,
-                        "xml")
+                        Iteration.singleVariableIterationName("xmlModels"))
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context,

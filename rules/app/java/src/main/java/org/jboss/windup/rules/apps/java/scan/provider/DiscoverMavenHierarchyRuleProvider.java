@@ -48,11 +48,10 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext arg0)
     {
         ConditionBuilder allProjects = Query
-            .find(MavenProjectModel.class)
-            .as("projectModels");
+            .find(MavenProjectModel.class);
 
         AbstractIterationOperation<MavenProjectModel> setupParentModule = new AbstractIterationOperation<MavenProjectModel>(
-                    MavenProjectModel.class, "projectModel")
+                    MavenProjectModel.class)
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, MavenProjectModel payload)
@@ -65,7 +64,7 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
             .addRule()
             .when(allProjects)
             .perform(
-                Iteration.over("projectModels").as("projectModel").perform(setupParentModule)
+                Iteration.over().perform(setupParentModule)
                         .endIteration()
             );
     }

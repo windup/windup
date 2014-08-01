@@ -16,11 +16,17 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
     {
         super(FileModel.class, variableName);
     }
+    
+    public AddArchiveReferenceInformation()
+    {
+        super(FileModel.class);
+    }
 
     public static AddArchiveReferenceInformation to(String variableName)
     {
         return new AddArchiveReferenceInformation(variableName);
     }
+   
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel fileResourceModel)

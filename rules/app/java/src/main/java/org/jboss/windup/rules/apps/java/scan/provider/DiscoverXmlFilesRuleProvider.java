@@ -59,11 +59,10 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
         ConditionBuilder fileWhen = Query
             .find(FileModel.class)
             .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$")
-            .as("fileModels");
+            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$");
 
         AbstractIterationOperation<FileModel> evaluatePomFiles = new AbstractIterationOperation<FileModel>(
-                    FileModel.class, "fileModel")
+                    FileModel.class)
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
@@ -76,7 +75,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
             .addRule()
             .when(fileWhen)
             .perform(
-                        Iteration.over("fileModels").as("fileModel").perform(evaluatePomFiles).endIteration()
+                        Iteration.over().perform(evaluatePomFiles).endIteration()
             );
     }
 

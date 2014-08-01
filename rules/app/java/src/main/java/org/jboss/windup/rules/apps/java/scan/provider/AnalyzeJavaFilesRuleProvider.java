@@ -40,16 +40,15 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder javaSourceCanBeLocated = Query.find(JavaSourceFileModel.class)
-        .as("javaSourceFiles");
+        ConditionBuilder javaSourceCanBeLocated = Query.find(JavaSourceFileModel.class);
 
         return ConfigurationBuilder.begin()
             .addRule()
             .when(javaSourceCanBeLocated)
             .perform(
-                Iteration.over("javaSourceFiles").as(JavaSourceFileModel.class, "javaSourceFile")
+                Iteration.over()
                 .perform(
-                    new FireASTTypeNameEventsIterationOperator(JavaSourceFileModel.class, "javaSourceFile")
+                    new FireASTTypeNameEventsIterationOperator(JavaSourceFileModel.class)
                 )
                 .endIteration()
             );
@@ -61,6 +60,11 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
         private FireASTTypeNameEventsIterationOperator(Class<JavaSourceFileModel> clazz, String variableName)
         {
             super(clazz, variableName);
+        }
+        
+        private FireASTTypeNameEventsIterationOperator(Class<JavaSourceFileModel> clazz)
+        {
+            super(clazz);
         }
 
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)

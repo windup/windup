@@ -8,6 +8,7 @@ import java.util.Set;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -20,7 +21,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 public class Query extends GraphCondition implements QueryBuilderFind, QueryBuilderFrom, QueryBuilderWith,
             QueryBuilderPiped
 {
-    private String outputVar;
+    private String outputVar = Iteration.DEFAULT_VARIABLE_LIST_STRING;
 
     private final List<QueryFramesCriterion> criteria = new ArrayList<>();
     private final List<QueryGremlinCriterion> pipelineCriteria = new ArrayList<>();

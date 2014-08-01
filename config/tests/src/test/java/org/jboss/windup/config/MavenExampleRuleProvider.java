@@ -43,12 +43,12 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
         // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
         .addRule()
         .when(
-            Query.find(TestXmlMetaFacetModel.class).as("xmlModels")
+            Query.find(TestXmlMetaFacetModel.class)
         )
         .perform(
-            Iteration.over(TestXmlMetaFacetModel.class, "xmlModels").as("xml")
+            Iteration.over(TestXmlMetaFacetModel.class)
             .perform(
-                TypeOperation.addType("xml", MavenProjectModel.class)
+                TypeOperation.addType(MavenProjectModel.class)
             )
             .endIteration()
         )
@@ -59,7 +59,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
             Query.find(MavenProjectModel.class).as("mavenModels")
         )
         .perform(
-            Iteration.over(MavenProjectModel.class, "mavenModels").as("maven")
+            Iteration.over(MavenProjectModel.class, "mavenModels")
                 .perform( new GraphOperation()
                 {
                     @Override
@@ -67,7 +67,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
                     {
                         Variables varStack = Variables.instance(event);
                         MavenProjectModel mavenFacetModel = 
-                            Iteration.getCurrentPayload(varStack, MavenProjectModel.class, "maven");
+                            Iteration.getCurrentPayload(varStack, MavenProjectModel.class, Iteration.singleVariableIterationName("mavenModels"));
                         results.add(mavenFacetModel);
                     }
                 })

@@ -42,36 +42,75 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * 
  */
 public abstract class Iteration extends DefaultOperationBuilder
-            implements IterationBuilderOver, IterationBuilderVar,
+            implements IterationBuilderVar, IterationBuilderOver,
             IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise,
             IterationBuilderComplete, CompositeOperation
 {
+    public static final String VAR_INSTANCE_STRING = "_instance";
+    public static final String DEFAULT_VARIABLE_LIST_STRING="default";
+    public static final String DEFAULT_SINGLE_VARIABLE_STRING=singleVariableIterationName(DEFAULT_VARIABLE_LIST_STRING);
+    
     private Condition condition;
     private Operation operationPerform;
     private Operation operationOtherwise;
+    
+    public static String singleVariableIterationName(String selectionName){
+        return selectionName+VAR_INSTANCE_STRING;
+    }
 
     public abstract FramesSelector getSelectionManager();
 
     public abstract IterationPayloadManager getPayloadManager();
 
     public abstract void setPayloadManager(IterationPayloadManager payloadManager);
-
+    
     /**
-     * Begin an {@link Iteration} over the named selection of the given type.
+     * Begin an {@link Iteration} over the named selection of the given type. 
+     * Also sets the name and type of the variable for this iteration's "current element". The type server for automatic type
+     * check.
      */
-    public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
+    public static IterationBuilderVar over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
-        return new IterationImpl(new TypedNamedFramesSelector(sourceType, source));
+        IterationImpl iterationImpl = new IterationImpl(new TypedNamedFramesSelector(sourceType, source));
+        iterationImpl.setPayloadManager(new TypedNamedIterationPayloadManager(sourceType, singleVariableIterationName(source)));
+        return iterationImpl;
     }
 
     /**
-     * Begin an {@link Iteration} over the named selection.
+     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's "current element".
      */
     public static IterationBuilderOver over(String source)
     {
-        return new IterationImpl(new NamedFramesSelector(source));
+        IterationImpl iterationImpl = new IterationImpl(new NamedFramesSelector(source));
+        iterationImpl.setPayloadManager(new NamedIterationPayloadManager(singleVariableIterationName(source)));
+        return iterationImpl;
     }
-
+    
+    /**
+     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name of the variable for this iteration's "current element"
+     * to have the default value.
+     */
+    public static IterationBuilderVar over(Class<? extends WindupVertexFrame> sourceType)
+    {
+        IterationImpl iterationImpl = new IterationImpl(new TypedNamedFramesSelector(sourceType, DEFAULT_VARIABLE_LIST_STRING));
+        iterationImpl.setPayloadManager(new TypedNamedIterationPayloadManager(sourceType, DEFAULT_SINGLE_VARIABLE_STRING));
+        return iterationImpl;
+    }
+    
+    /**
+     * Begin an {@link Iteration} over the selection named with the default name. Also sets the name of the variable for this iteration's "current element"
+     * to have the default value.
+     */
+    public static IterationBuilderOver over()
+    {
+        IterationImpl iterationImpl = new IterationImpl(new NamedFramesSelector(DEFAULT_VARIABLE_LIST_STRING));
+        iterationImpl.setPayloadManager(new NamedIterationPayloadManager(DEFAULT_SINGLE_VARIABLE_STRING));
+        return iterationImpl;
+    }
+    
+    /**
+     * Change the name of the single variable of the given type. If this method is not called, the name is calculated using the {@link Iteration.singleVariableIterationName()} method.
+     */
     @Override
     public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var)
     {
@@ -79,6 +118,9 @@ public abstract class Iteration extends DefaultOperationBuilder
         return this;
     }
 
+    /**
+     * Change the name of the single variable. If this method is not called, the name is calculated using the {@link Iteration.singleVariableIterationName()} method.
+     */
     @Override
     public IterationBuilderVar as(String var)
     {

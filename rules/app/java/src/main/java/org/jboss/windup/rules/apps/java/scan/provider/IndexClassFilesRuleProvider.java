@@ -38,11 +38,10 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
         .when(Query.find(FileModel.class)
             .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
             .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.class")
-            .as("classFiles")
         )
         .perform(
-            Iteration.over("classFiles").as("classFile")
-            .perform(AddClassFileMetadata.to("classFile")).endIteration()
+            Iteration.over()
+            .perform(new AddClassFileMetadata()).endIteration()
         );
     }
     // @formatter:on
