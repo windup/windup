@@ -28,7 +28,7 @@ public class LoggerTest {
         log.addHandler( h );/**/
 
         try{
-            h = new java.util.logging.FileHandler("LogTest.log", 50000, 1);
+            h = new java.util.logging.FileHandler("target/LogTest.log", 50000, 1);
             h.setLevel(Level.ALL);
             h.setFormatter( new SimpleFormatter() );
             log.addHandler( h );
@@ -36,7 +36,7 @@ public class LoggerTest {
         catch(Exception ex){ ex.printStackTrace(); }
 
         log.setLevel(Level.ALL);
-        log.entering("Main", "ZpracujArchiv");
+        log.entering("EnteredClass", "enteredMethod");
         log.severe("Test SEVERE");
         log.info("Test INFO");
         log.log(Level.FINE, "Test FINE");
@@ -46,24 +46,6 @@ public class LoggerTest {
     
     @Test
     public void testLoggingProperties() throws Exception {
-/*
-# Handlers    // java.util.logging.ConsoleHandler
-handlers=cz.dynawest.iriswsklient.SystemOutHandler java.util.logging.FileHandler
-
-# Console
-java.util.logging.ConsoleHandler.formatter = cz.dynawest.iriswsklient.SimplestFormatter
-
-# File
-java.util.logging.FileHandler.pattern = applicationLog%u.xml
-java.util.logging.FileHandler.formatter = cz.dynawest.iriswsklient.SimplestFormatter
-
-
-# Default global logging level.
-.level = FINEST
-Foo.level = WARNING
-Foo.Aj.level = ALL
-*/
-    
         System.setProperty("java.util.logging.config.file", "logging.properties");
         try {
             final InputStream is = this.getClass().getResourceAsStream("/logging.properties");

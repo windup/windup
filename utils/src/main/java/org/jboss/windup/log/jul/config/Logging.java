@@ -1,8 +1,9 @@
 package org.jboss.windup.log.jul.config;
 
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import org.jboss.windup.log.jul.format.SingleLineFormatter;
@@ -29,35 +30,50 @@ public class Logging {
         initDone = true;
         
         Logger.getLogger("").getHandlers()[0].setFormatter( new SingleLineFormatter() );
+        Logger.getLogger("org.jboss.forge").setLevel(Level.WARNING);
+        Logger.getLogger("org.jboss.weld").setLevel(Level.WARNING);
 
-        String logConfigFile = System.getProperty("java.util.logging.config.file", "logging.properties");
-        try
-        {
-            final InputStream is;
-            if( logConfigFile != null ){
-                System.out.println("Reading logging config from: " + logConfigFile);
-                System.out.println("(Set in sys prop java.util.logging.config.file)");
-                is = new FileInputStream(logConfigFile);
+        String logConfigFile = System.getProperty("java.util.logging.config.file");
+        if( logConfigFile != null ){
+            System.out.println("Reading logging config from: " + logConfigFile);
+            System.out.println("(Set in sys prop java.util.logging.config.file)");
+        }
+        else {
+            logConfigFile = "logging.properties";
+            System.out.println("Reading logging config from default location: " + logConfigFile);
+            System.out.println("(Can be set in sys prop java.util.logging.config.file)");
+        }
+        
+        InputStream is = null;
+        try{
+            is = new FileInputStream(logConfigFile);
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println("Not found, trying resource /logging.properties");
+            is = Logging.class.getResourceAsStream("/logging.properties");
+            if( null == is ){
+                useDefault("Resource /logging.properties not found.");
+                return;
             }
-            else {
-                System.out.println("Reading logging config from resource /logging.properties");
-                is = Logging.class.getResourceAsStream("/logging.properties");
-                if( null == is )
-                    //throw new Exception("logging.properties resource not found!");
-                    System.err.println("logging.properties resource not found!");
-            }
-            
-            LogManager.getLogManager().reset();
+        }
+        LogManager.getLogManager().reset();
+        try {
             LogManager.getLogManager().readConfiguration(is);
+            System.out.println("Read successfully.");
+        } catch( Exception ex ) {
+            useDefault( ex.getMessage() );
+            return;
         }
-        catch(IOException ex)
-        {
-            System.err.println("Can't read logging config from ["+logConfigFile+"]. Using default.");
-            final SystemOutHandler soutHandler = new SystemOutHandler();
-            soutHandler.setFormatter( new SingleLineFormatter() );
-            //Logger.getLogger("").addHandler( soutHandler );
-        }
+
         Logger.getLogger(Logging.class.getName()).info("Logging configured.");
+    }
+    
+    private static void useDefault( String reason ){
+        System.err.println( reason + " Using hard-coded default logging config.");
+        final SystemOutHandler soutHandler = new SystemOutHandler();
+        soutHandler.setFormatter( new SingleLineFormatter() );
+        //Logger.getLogger("").addHandler( soutHandler );
+        Logger.getLogger("org.jboss.forge").setLevel(Level.WARNING);
     }
 
 
