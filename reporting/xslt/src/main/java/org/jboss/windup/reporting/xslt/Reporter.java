@@ -8,11 +8,11 @@ import java.util.Date;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.FileUtils;
-import org.jboss.loom.utils.XmlUtils;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ApplicationModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.xslt.model.DeploymentInfo;
 import org.jboss.windup.reporting.xslt.model.MigrationReportJaxbBean;
+import org.jboss.windup.reporting.xslt.util.XmlUtils;
 import org.jboss.windup.util.exception.WindupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,12 +40,8 @@ public class Reporter {
             //report.finalException = ctx.getFinalException();
             
             // Copy deployments reports to the $reportDir.
-            for( DeploymentInfo depl : report.deployments ) {
-                if( depl.getReportDir() == null )  continue;
-                // TODO: The /WindUp/ should not be here - rather somehow included in the incoming data.
-                //       This should deal with reports in a generic way.
-                FileUtils.copyDirectoryToDirectory( depl.getReportDir(), new File( reportDir, "WindUp") );
-                depl.setReportDir( new File( depl.getReportDir().getName()) );
+            for( ApplicationModel depl : report.deployments ) {
+                // TODO, or remove - should be generic.
             }
             
             Marshaller mar = XmlUtils.createMarshaller( MigrationReportJaxbBean.class );

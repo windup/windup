@@ -46,6 +46,7 @@ public interface ReportCommonsModelModel extends ModelModel
     @Property(ICON)
     public String getIcon();
     
-    @InProperties(label = "traits", direction = Direction.OUT)
-    Map<String,String> getTraits();
+    //@InProperties(label = "traits", direction = Direction.OUT)
+    //@XmlJavaTypeAdapter(value = MapPropertiesAdapter.class)
+    //Map<String,String> getTraits();
 }

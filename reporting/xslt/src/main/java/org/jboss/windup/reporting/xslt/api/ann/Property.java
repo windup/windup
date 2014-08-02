@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.loom.ex.WindupException;
 
 /**
  *  Metadata for JAXB classes; to be used for reporting and ModelNode creation.
@@ -47,13 +46,17 @@ public @interface Property {
     
     public static class Utils {
         
-        public static Map<String, Object> describeBean( Object bean ) throws WindupException{
+        public static Map<String, Object> describeBean( Object bean ) {
             Map<String, Object> map = new LinkedHashMap();
             describeBean( bean, bean.getClass(), map );
             return map;
         }
         
-        public static void describeBean( Object bean, Class cls, Map<String, Object> map ) throws WindupException{
+        
+        /**
+         * Inspects the given object and stores it's properties to a map.
+         */
+        public static void describeBean( Object bean, Class cls, Map<String, Object> map ) {
             
             List<Exception> problems = new LinkedList();
             
@@ -80,7 +83,7 @@ public @interface Property {
                 try {
                     map.put( propName, field.get( bean ) );
                 } catch( IllegalArgumentException | IllegalAccessException ex ){
-                    Exception ex2 = new WindupException("Failed describing bean " + bean.getClass() + 
+                    Exception ex2 = new IllegalStateException("Failed describing bean " + bean.getClass() + 
                             ", field "+field.getName()+":\n    " + ex.getMessage(), ex);
                     problems.add( ex2 );
                 }
@@ -116,7 +119,7 @@ public @interface Property {
                 try {
                     map.put( propName, method.invoke(bean));
                 } catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException ex ) {
-                    Exception ex2 = new WindupException("Failed describing bean " + bean.getClass() + 
+                    Exception ex2 = new IllegalStateException("Failed describing bean " + bean.getClass() + 
                             ", method "+method.getName()+":\n    " + ex.getMessage(), ex);
                     problems.add( ex2 );
                 }

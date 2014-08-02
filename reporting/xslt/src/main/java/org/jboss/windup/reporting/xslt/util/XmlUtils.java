@@ -196,36 +196,10 @@ public class XmlUtils {
         }
     }
 
-    public static <T> List<T> readXmlConfigFiles( File baseDir, String filesPattern, String xpath, Class<? extends T> cls, String confAreaDesc ) throws WindupException{
-        if( ! baseDir.exists() )
-            return Collections.EMPTY_LIST;
-            
-        List<File> files;
-        try {
-            //files = new PatternDirWalker( filesPattern ).list( baseDir );
-            files = new DirScanner( filesPattern ).listAsFiles( baseDir );
-        } catch( IOException ex ) {
-            throw new WindupException("Failed finding files matching '"+filesPattern+"' in " + baseDir + ":\n  " + ex.getMessage(), ex);
-        }
-        
-        List<T> res = new LinkedList();
-        for( File file : files ) {
-            try {
-                //res.addAll( XmlUtils.unmarshallBeans( new File(baseDir, file.getPath()), xpath, cls ) );
-                res.addAll( XmlUtils.unmarshallBeans( file, xpath, cls ) );
-            } catch( Exception ex ) {
-                throw new WindupException("Failed loading "+confAreaDesc+" config from "+file.getPath()+":\n    " + ex.getMessage(), ex);
-            }
-        }
-        return res;
-    }
-
     
 
     /**
      * Creates a new default document builder.
-     *
-     *
      */
     public static DocumentBuilder createXmlDocumentBuilder() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
