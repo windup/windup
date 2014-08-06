@@ -9,7 +9,7 @@ package org.jboss.windup.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.windup.config.model.XmlMetaFacetModel;
+import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
@@ -25,7 +25,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class XmlExampleRuleProvider3 extends WindupRuleProvider
 {
-    final List<XmlMetaFacetModel> typeSearchResults = new ArrayList<>();
+    final List<TestXmlMetaFacetModel> typeSearchResults = new ArrayList<>();
 
     @Override
     public RulePhase getPhase()
@@ -39,19 +39,19 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
     {
         Configuration configuration = ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.find(XmlMetaFacetModel.class)
-                .withProperty(XmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
+            .when(Query.find(TestXmlMetaFacetModel.class)
+                .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                     QueryPropertyComparisonType.EQUALS, "xmlTag2")
                 .as("xmlModels"))
-            .perform(Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
+            .perform(Iteration.over(TestXmlMetaFacetModel.class, "xmlModels").as("xml")
                 .perform(new GraphOperation()
                 {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context)
                     {
                         Variables varStack = Variables.instance(event);
-                        XmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
-                                    XmlMetaFacetModel.class, "xml");
+                        TestXmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
+                                    TestXmlMetaFacetModel.class, "xml");
                         typeSearchResults.add(xmlFacetModel);
                     }
                 })
@@ -61,7 +61,7 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
     }
     // @formatter:on
 
-    public List<XmlMetaFacetModel> getTypeSearchResults()
+    public List<TestXmlMetaFacetModel> getTypeSearchResults()
     {
         return typeSearchResults;
     }
