@@ -20,6 +20,7 @@
         <module>api</module>
         <module>impl</module>
         <module>tests</module>
+        <module>xslt</module>
     </modules>
     
 </project>
