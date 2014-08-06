@@ -17,6 +17,16 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
         this.clazz = clazz;
         this.variableName = variableName;
     }
+    
+    /**
+     * If the variable name is not specified, the default name is taken
+     * @param clazz
+     */
+    public AbstractIterationFilter(Class<T> clazz)
+    {
+        this.clazz = clazz;
+        this.variableName = Iteration.DEFAULT_SINGLE_VARIABLE_STRING;
+    }
 
     protected String getVariableName()
     {

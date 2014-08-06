@@ -14,7 +14,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
 
     public AbstractIterationOperation(Class<T> clazz, String variableName)
     {
-        this(clazz);
+        this.clazz = clazz;
         this.variableName = variableName;
     }
     

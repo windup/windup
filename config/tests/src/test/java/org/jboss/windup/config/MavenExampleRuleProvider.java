@@ -48,7 +48,7 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
         .perform(
             Iteration.over(TestXmlMetaFacetModel.class)
             .perform(
-                TypeOperation.addType(MavenProjectModel.class)
+                TypeOperation.addType(Iteration.DEFAULT_SINGLE_VARIABLE_STRING, MavenProjectModel.class)
             )
             .endIteration()
         )

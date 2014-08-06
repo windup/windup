@@ -152,4 +152,30 @@ public class Variables
         }
         return result;
     }
+
+    /**
+     * Searches the  variables layers, top to bottom, for the iterable having all of it's items of the given type. Return
+     * null if not found.
+     */
+    public Iterable<WindupVertexFrame> findVariableOfType(Class<?> type)
+    {
+        Iterator<Map<String, Iterable<WindupVertexFrame>>> descIter = deque.descendingIterator();
+        while (descIter.hasNext())
+        {
+            Map<String, Iterable<WindupVertexFrame>> topOfStack = descIter.next();
+            for (Iterable<WindupVertexFrame> frames : topOfStack.values())
+            {
+                for (WindupVertexFrame frame : frames)
+                {
+                    if (!type.isAssignableFrom(frame.getClass()))
+                    {
+                        continue;
+                    }
+                }
+                // now we know all the frames are of the chosen type
+                return frames;
+            }
+        }
+        return null;
+    }
 }

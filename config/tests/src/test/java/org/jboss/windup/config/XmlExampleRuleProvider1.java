@@ -44,10 +44,10 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
     {
         Configuration configuration = ConfigurationBuilder.begin()
         .addRule()
-        .when(Query.find(TestXmlMetaFacetModel.class).as("xmlModels"))
+        .when(Query.find(TestXmlMetaFacetModel.class))
         .perform(Iteration
-            .over(TestXmlMetaFacetModel.class, "xmlModels")
-            .when(new AbstractIterationFilter<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class, Iteration.singleVariableIterationName("xmlModels"))
+            .over()
+            .when(new AbstractIterationFilter<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING)
             {
                 @Override
                 public boolean evaluate(GraphRewrite event, EvaluationContext context,
@@ -58,8 +58,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                     return result;
                 }
             })
-            .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class,
-                        Iteration.singleVariableIterationName("xmlModels"))
+            .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING)
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context,
@@ -73,8 +72,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                     xmlRootNames.add(xmlFacetModel.getRootTagName());
                 }
             })
-            .otherwise(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class,
-                        Iteration.singleVariableIterationName("xmlModels"))
+            .otherwise(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class,Iteration.DEFAULT_SINGLE_VARIABLE_STRING)
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context,

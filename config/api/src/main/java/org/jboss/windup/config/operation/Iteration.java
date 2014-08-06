@@ -25,6 +25,7 @@ import org.jboss.windup.config.operation.iteration.IterationImpl;
 import org.jboss.windup.config.operation.iteration.IterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.NamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
+import org.jboss.windup.config.operation.iteration.TypedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
 import org.jboss.windup.config.selectors.FramesSelector;
@@ -46,7 +47,7 @@ public abstract class Iteration extends DefaultOperationBuilder
             IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise,
             IterationBuilderComplete, CompositeOperation
 {
-    public static final String VAR_INSTANCE_STRING = "_instance";
+    private static final String VAR_INSTANCE_STRING = "_instance";
     public static final String DEFAULT_VARIABLE_LIST_STRING="default";
     public static final String DEFAULT_SINGLE_VARIABLE_STRING=singleVariableIterationName(DEFAULT_VARIABLE_LIST_STRING);
     
@@ -54,6 +55,9 @@ public abstract class Iteration extends DefaultOperationBuilder
     private Operation operationPerform;
     private Operation operationOtherwise;
     
+    /**
+     * Calculates the default name for the single variable in the selection with the given name.
+     */
     public static String singleVariableIterationName(String selectionName){
         return selectionName+VAR_INSTANCE_STRING;
     }
@@ -69,7 +73,7 @@ public abstract class Iteration extends DefaultOperationBuilder
      * Also sets the name and type of the variable for this iteration's "current element". The type server for automatic type
      * check.
      */
-    public static IterationBuilderVar over(Class<? extends WindupVertexFrame> sourceType, String source)
+    public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
         IterationImpl iterationImpl = new IterationImpl(new TypedNamedFramesSelector(sourceType, source));
         iterationImpl.setPayloadManager(new TypedNamedIterationPayloadManager(sourceType, singleVariableIterationName(source)));
@@ -90,9 +94,9 @@ public abstract class Iteration extends DefaultOperationBuilder
      * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name of the variable for this iteration's "current element"
      * to have the default value.
      */
-    public static IterationBuilderVar over(Class<? extends WindupVertexFrame> sourceType)
+    public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType)
     {
-        IterationImpl iterationImpl = new IterationImpl(new TypedNamedFramesSelector(sourceType, DEFAULT_VARIABLE_LIST_STRING));
+        IterationImpl iterationImpl = new IterationImpl(new TypedFramesSelector(sourceType));
         iterationImpl.setPayloadManager(new TypedNamedIterationPayloadManager(sourceType, DEFAULT_SINGLE_VARIABLE_STRING));
         return iterationImpl;
     }
@@ -189,8 +193,8 @@ public abstract class Iteration extends DefaultOperationBuilder
     public void perform(GraphRewrite event, EvaluationContext context)
     {
         Variables variables = Variables.instance(event);
-        variables.push();
         Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, context);
+        variables.push();
         for (WindupVertexFrame frame : frames)
         {
             getPayloadManager().setCurrentPayload(variables, frame);

@@ -41,8 +41,7 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
             .addRule()
             .when(Query.find(TestXmlMetaFacetModel.class)
                 .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
-                    QueryPropertyComparisonType.EQUALS, "xmlTag2")
-                .as("xmlModels"))
+                    QueryPropertyComparisonType.EQUALS, "xmlTag2"))
             .perform(Iteration.over(TestXmlMetaFacetModel.class, "xmlModels")
                 .perform(new GraphOperation()
                 {
@@ -51,7 +50,7 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
                     {
                         Variables varStack = Variables.instance(event);
                         TestXmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
-                                    TestXmlMetaFacetModel.class, Iteration.singleVariableIterationName("xmlModels"));
+                                    TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING);
                         typeSearchResults.add(xmlFacetModel);
                     }
                 })
