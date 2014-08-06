@@ -13,8 +13,8 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.model.SomeModel;
-import org.jboss.windup.config.model.XmlMetaFacetModel;
+import org.jboss.windup.config.model.TestSomeModel;
+import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -46,8 +46,8 @@ public class QueryConditionTest
                                 XmlExampleRuleProvider1.class,
                                 XmlExampleRuleProvider2.class,
                                 XmlExampleRuleProvider3.class,
-                                XmlMetaFacetModel.class,
-                                SomeModel.class,
+                                TestXmlMetaFacetModel.class,
+                                TestSomeModel.class,
                                 WindupConfigurationExampleRuleProvider.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -71,18 +71,18 @@ public class QueryConditionTest
 
     private void fillData(final GraphContext context)
     {
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
-        context.getFramed().addVertex(null, SomeModel.class);
+        context.getFramed().addVertex(null, TestSomeModel.class);
+        context.getFramed().addVertex(null, TestSomeModel.class);
+        context.getFramed().addVertex(null, TestSomeModel.class);
+        context.getFramed().addVertex(null, TestSomeModel.class);
 
-        XmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
+        TestXmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, TestXmlMetaFacetModel.class);
         xmlFacet1.setRootTagName("xmlTag1");
-        XmlMetaFacetModel xmlFacet2 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
+        TestXmlMetaFacetModel xmlFacet2 = context.getFramed().addVertex(null, TestXmlMetaFacetModel.class);
         xmlFacet2.setRootTagName("xmlTag2");
-        XmlMetaFacetModel xmlFacet3 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
+        TestXmlMetaFacetModel xmlFacet3 = context.getFramed().addVertex(null, TestXmlMetaFacetModel.class);
         xmlFacet3.setRootTagName("xmlTag3");
-        XmlMetaFacetModel xmlFacet4 = context.getFramed().addVertex(null, XmlMetaFacetModel.class);
+        TestXmlMetaFacetModel xmlFacet4 = context.getFramed().addVertex(null, TestXmlMetaFacetModel.class);
         xmlFacet4.setRootTagName("xmlTag4");
     }
 
@@ -258,7 +258,7 @@ public class QueryConditionTest
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
         Assert.assertEquals(1, provider.getTypeSearchResults().size());
-        XmlMetaFacetModel result1 = provider.getTypeSearchResults().get(0);
+        TestXmlMetaFacetModel result1 = provider.getTypeSearchResults().get(0);
         Assert.assertEquals("xmlTag2", result1.getRootTagName());
     }
 }

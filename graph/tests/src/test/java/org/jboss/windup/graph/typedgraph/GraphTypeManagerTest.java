@@ -32,7 +32,7 @@ public class GraphTypeManagerTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClasses(FooModel.class, FooSubModel.class)
+                    .addClasses(TestFooModel.class, TestFooSubModel.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -48,13 +48,12 @@ public class GraphTypeManagerTest
     {
         Assert.assertNotNull(context);
 
-        FooModel initialModelType = context.getFramed().addVertex(null, FooModel.class);
+        TestFooModel initialModelType = context.getFramed().addVertex(null, TestFooModel.class);
 
-        GraphService.addTypeToModel(context, initialModelType, FooSubModel.class);
+        GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
 
-        Iterable<Vertex> vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, FooModel.class.getAnnotation(TypeValue.class).value())
-                    .vertices();
+        Iterable<Vertex> vertices = context.getFramed().query().has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS,
+                    TestFooModel.class.getAnnotation(TypeValue.class).value()).vertices();
 
         int numberFound = 0;
         for (Vertex v : vertices)
@@ -62,8 +61,8 @@ public class GraphTypeManagerTest
             numberFound++;
             WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
 
-            Assert.assertTrue(framed instanceof FooModel);
-            Assert.assertTrue(framed instanceof FooSubModel);
+            Assert.assertTrue(framed instanceof TestFooModel);
+            Assert.assertTrue(framed instanceof TestFooSubModel);
         }
         Assert.assertEquals(1, numberFound);
     }

@@ -13,7 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.Service;
-import org.jboss.windup.tests.application.model.SampleModel;
+import org.jboss.windup.tests.application.model.TestSampleModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ public class GraphServiceLookupTest
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addClass(SampleModel.class)
+                    .addClass(TestSampleModel.class)
                     .addBeansXML()
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
@@ -63,10 +63,10 @@ public class GraphServiceLookupTest
         Assert.assertNotNull(fileModel);
         Assert.assertTrue(fileModel instanceof FileModel);
 
-        Service<SampleModel> sampleModelService = graphContext.getService(SampleModel.class);
+        Service<TestSampleModel> sampleModelService = graphContext.getService(TestSampleModel.class);
         Assert.assertNotNull(sampleModelService);
-        SampleModel sampleModel = sampleModelService.create();
+        TestSampleModel sampleModel = sampleModelService.create();
         Assert.assertNotNull(sampleModel);
-        Assert.assertTrue(sampleModel instanceof SampleModel);
+        Assert.assertTrue(sampleModel instanceof TestSampleModel);
     }
 }

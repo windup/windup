@@ -8,7 +8,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  *  @author Ondrej Zizka, ozizka at redhat.com
  */
 @TypeValue("SomeModel")
-public interface SomeModel extends WindupVertexFrame
+public interface TestSomeModel extends WindupVertexFrame
 {
 
     

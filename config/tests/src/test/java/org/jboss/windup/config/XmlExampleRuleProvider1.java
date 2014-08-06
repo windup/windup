@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.windup.config.model.XmlMetaFacetModel;
+import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -28,7 +28,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class XmlExampleRuleProvider1 extends WindupRuleProvider
 {
-    final List<XmlMetaFacetModel> typeSearchResults = new ArrayList<>();
+    final List<TestXmlMetaFacetModel> typeSearchResults = new ArrayList<>();
     final Set<String> xmlRootNames = new HashSet<>();
     private final Set<String> excludedXmlRootNames = new HashSet<>();
 
@@ -44,27 +44,27 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
     {
         Configuration configuration = ConfigurationBuilder.begin()
         .addRule()
-        .when(Query.find(XmlMetaFacetModel.class).as("xmlModels"))
+        .when(Query.find(TestXmlMetaFacetModel.class).as("xmlModels"))
         .perform(Iteration
-            .over(XmlMetaFacetModel.class, "xmlModels")
+            .over(TestXmlMetaFacetModel.class, "xmlModels")
             .as("xml")
-            .when(new AbstractIterationFilter<XmlMetaFacetModel>(XmlMetaFacetModel.class, "xml")
+            .when(new AbstractIterationFilter<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class, "xml")
             {
                 @Override
                 public boolean evaluate(GraphRewrite event, EvaluationContext context,
-                            XmlMetaFacetModel payload)
+                            TestXmlMetaFacetModel payload)
                 {
                     String rootTagName = payload.getRootTagName();
                     boolean result = !"xmlTag3".equals(rootTagName);
                     return result;
                 }
             })
-            .perform(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
+            .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class,
                         "xml")
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context,
-                            XmlMetaFacetModel xmlFacetModel)
+                            TestXmlMetaFacetModel xmlFacetModel)
                 {
                     typeSearchResults.add(xmlFacetModel);
                     if (xmlRootNames.contains(xmlFacetModel.getRootTagName()))
@@ -74,12 +74,12 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                     xmlRootNames.add(xmlFacetModel.getRootTagName());
                 }
             })
-            .otherwise(new AbstractIterationOperation<XmlMetaFacetModel>(XmlMetaFacetModel.class,
+            .otherwise(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class,
                         "xml")
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context,
-                            XmlMetaFacetModel payload)
+                            TestXmlMetaFacetModel payload)
                 {
                     typeSearchResults.add(payload);
                     if (excludedXmlRootNames.contains(payload.getRootTagName()))
@@ -94,7 +94,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
         return configuration;
     }
 
-    public List<XmlMetaFacetModel> getTypeSearchResults()
+    public List<TestXmlMetaFacetModel> getTypeSearchResults()
     {
         return typeSearchResults;
     }

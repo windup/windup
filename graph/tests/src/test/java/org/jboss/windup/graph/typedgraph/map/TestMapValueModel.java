@@ -6,7 +6,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("MapModelValue")
-public interface MapValueModel extends WindupVertexFrame
+public interface TestMapValueModel extends WindupVertexFrame
 {
     @Property("property")
     String getProperty();

@@ -8,12 +8,12 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("MapModelMain")
-public interface MapMainModel extends WindupVertexFrame
+public interface TestMapMainModel extends WindupVertexFrame
 {
 
     @AdjacentMap(label = "map")
-    void setMap(Map<String, MapValueModel> map);
+    void setMap(Map<String, TestMapValueModel> map);
 
     @AdjacentMap(label = "map")
-    Map<String, MapValueModel> getMap();
+    Map<String, TestMapValueModel> getMap();
 }
