@@ -34,7 +34,7 @@ public class FrameMapHandlerTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClasses(MapMainModel.class, MapValueModel.class)
+                    .addClasses(TestMapMainModel.class, TestMapValueModel.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -50,15 +50,15 @@ public class FrameMapHandlerTest
     {
         Assert.assertNotNull(context);
 
-        MapMainModel mainModel = context.getFramed().addVertex(null, MapMainModel.class);
-        MapValueModel value1 = context.getFramed().addVertex(null, MapValueModel.class);
+        TestMapMainModel mainModel = context.getFramed().addVertex(null, TestMapMainModel.class);
+        TestMapValueModel value1 = context.getFramed().addVertex(null, TestMapValueModel.class);
         value1.setProperty("value1");
-        MapValueModel value2 = context.getFramed().addVertex(null, MapValueModel.class);
+        TestMapValueModel value2 = context.getFramed().addVertex(null, TestMapValueModel.class);
         value2.setProperty("value2");
-        MapValueModel value3 = context.getFramed().addVertex(null, MapValueModel.class);
+        TestMapValueModel value3 = context.getFramed().addVertex(null, TestMapValueModel.class);
         value3.setProperty("value3");
 
-        Map<String, MapValueModel> map = new HashMap<>();
+        Map<String, TestMapValueModel> map = new HashMap<>();
         map.put("key1", value1);
         map.put("key2", value2);
         map.put("key3", value3);
@@ -66,18 +66,19 @@ public class FrameMapHandlerTest
         mainModel.setMap(map);
 
         Iterable<Vertex> vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, MapMainModel.class.getAnnotation(TypeValue.class).value())
+                    .has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS,
+                                TestMapMainModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 
         int numberFound = 0;
         for (Vertex v : vertices)
         {
             numberFound++;
-            MapMainModel framed = (MapMainModel) context.getFramed().frame(v, WindupVertexFrame.class);
+            TestMapMainModel framed = (TestMapMainModel) context.getFramed().frame(v, WindupVertexFrame.class);
 
-            Assert.assertTrue(framed instanceof MapMainModel);
+            Assert.assertTrue(framed instanceof TestMapMainModel);
 
-            Map<String, MapValueModel> foundMap = framed.getMap();
+            Map<String, TestMapValueModel> foundMap = framed.getMap();
             Assert.assertEquals(3, foundMap.size());
 
             Assert.assertEquals("value1", foundMap.get("key1").getProperty());

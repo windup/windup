@@ -8,8 +8,8 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue(XmlMetaFacetModel.TYPE)
-public interface XmlMetaFacetModel extends WindupVertexFrame
+@TypeValue(TestXmlMetaFacetModel.TYPE)
+public interface TestXmlMetaFacetModel extends WindupVertexFrame
 {
     public static final String TYPE = "XmlMetaFacetModel";
     public static final String PROPERTY_ROOT_TAG_NAME = "rootTagName";

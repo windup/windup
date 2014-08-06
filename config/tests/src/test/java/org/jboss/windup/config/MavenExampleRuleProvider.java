@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jboss.windup.config.graph.TypeOperation;
-import org.jboss.windup.config.model.XmlMetaFacetModel;
+import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
@@ -43,10 +43,10 @@ public class MavenExampleRuleProvider extends WindupRuleProvider
         // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
         .addRule()
         .when(
-            Query.find(XmlMetaFacetModel.class).as("xmlModels")
+            Query.find(TestXmlMetaFacetModel.class).as("xmlModels")
         )
         .perform(
-            Iteration.over(XmlMetaFacetModel.class, "xmlModels").as("xml")
+            Iteration.over(TestXmlMetaFacetModel.class, "xmlModels").as("xml")
             .perform(
                 TypeOperation.addType("xml", MavenProjectModel.class)
             )
