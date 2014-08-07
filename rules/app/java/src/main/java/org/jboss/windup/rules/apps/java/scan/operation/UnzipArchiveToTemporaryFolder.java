@@ -11,6 +11,7 @@ import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.ZipUtil;
@@ -46,8 +47,10 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
         }
 
         // create a temp folder for all archive contents
-        Path windupTempFolder = event.getWindupTemporaryFolder();
-        Path windupTempUnzippedArchiveFolder = Paths.get(windupTempFolder.toString(), "archives");
+        WindupConfigurationModel cfg = GraphService.getConfigurationModel(event.getGraphContext());
+        String windupOutputFolder = cfg.getOutputPath().getFilePath();
+
+        Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, "archives");
         if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
         {
             try
