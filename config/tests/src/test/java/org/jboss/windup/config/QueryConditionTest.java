@@ -171,7 +171,7 @@ public class QueryConditionTest
         final GraphContext context = factory.create(folder);
 
         fillData(context);
-        context.getGraph().commit();
+        context.getGraph().getBaseGraph().commit();
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
@@ -193,7 +193,7 @@ public class QueryConditionTest
         final GraphContext context = factory.create(folder);
 
         fillData(context);
-        context.getGraph().commit();
+        context.getGraph().getBaseGraph().commit();
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
@@ -223,7 +223,7 @@ public class QueryConditionTest
         final GraphContext context = factory.create(folder);
 
         fillData(context);
-        context.getGraph().commit();
+        context.getGraph().getBaseGraph().commit();
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
@@ -246,7 +246,7 @@ public class QueryConditionTest
         final GraphContext context = factory.create(folder);
 
         fillData(context);
-        context.getGraph().commit();
+        context.getGraph().getBaseGraph().commit();
 
         // setup the context for the rules
         GraphRewrite event = new GraphRewrite(context);
