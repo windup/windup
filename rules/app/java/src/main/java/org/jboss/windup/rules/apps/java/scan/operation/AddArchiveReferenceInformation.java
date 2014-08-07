@@ -31,9 +31,8 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
 
         archiveResourceModel.setArchiveName(file.getName());
 
-        ApplicationArchiveModel appArchiveModel = event.getGraphContext().getFramed()
-                    .addVertex(null, ApplicationArchiveModel.class);
-        appArchiveModel.setOriginalArchive(archiveResourceModel);
+        ApplicationArchiveModel appArchiveModel = GraphService.addTypeToModel(event.getGraphContext(),
+                    fileResourceModel, ApplicationArchiveModel.class);
         appArchiveModel.setApplicationName(file.getName());
     }
 }
