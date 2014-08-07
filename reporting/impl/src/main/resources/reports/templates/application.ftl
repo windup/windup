@@ -39,12 +39,12 @@
           <tr>
             <th>Name</th><th>Technology</th><th>Issues</th>
           </tr>
-          <#list projectModel.fileModelsNoDirectories.iterator() as fileModel>
+          <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
              <@fileModelRenderer fileModel/>
           </#list>
         </table>
     </div>
-  <#list projectModel.childProjects.iterator() as childProject>
+  <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
     <@projectModelRenderer childProject/>
   </#list>
 </#macro>

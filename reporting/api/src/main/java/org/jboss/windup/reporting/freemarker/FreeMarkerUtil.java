@@ -32,6 +32,11 @@ public class FreeMarkerUtil
 
         for (WindupFreeMarkerMethod freeMarkerMethod : freeMarkerMethods)
         {
+            if (results.containsKey(freeMarkerMethod.getMethodName()))
+            {
+                throw new WindupException("Windup contains two freemarker extension providing the same method name: "
+                            + freeMarkerMethod.getMethodName());
+            }
             results.put(freeMarkerMethod.getMethodName(), freeMarkerMethod);
         }
         return results;
