@@ -146,6 +146,19 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 }
                 finally
                 {
+                    boolean autocommit = true;
+                    if (rule instanceof Context)
+                    {
+                        Context ruleContext = (Context) rule;
+                        if (ruleContext.containsKey(RuleMetadata.AUTO_COMMIT))
+                        {
+                            autocommit = (Boolean) ruleContext.get(RuleMetadata.AUTO_COMMIT);
+                        }
+                    }
+                    if (autocommit)
+                    {
+                        event.getGraphContext().getGraph().commit();
+                    }
                     event.selectionPop();
                 }
             }

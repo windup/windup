@@ -37,7 +37,6 @@ public class FileModelService extends GraphService<FileModel>
             entry = this.create();
             entry.setFilePath(absolutePath);
             entry.setParentFile(parentFile);
-            getGraphContext().getGraph().commit();
         }
 
         return entry;
