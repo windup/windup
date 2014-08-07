@@ -32,8 +32,9 @@
 
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph-api</artifactId>
+            <artifactId>windup-graph</artifactId>
             <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
 
@@ -59,7 +60,8 @@
 
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi-api</artifactId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -46,6 +46,8 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        
+        
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

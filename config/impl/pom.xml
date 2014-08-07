@@ -2,11 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <parent>
         <groupId>org.jboss.windup.config</groupId>
         <artifactId>windup-config-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
+    
     <artifactId>windup-config-impl</artifactId>
 
     <name>Windup Engine - Config Impl</name>
@@ -14,8 +16,9 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph-api</artifactId>
+            <artifactId>windup-graph</artifactId>
             <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -27,24 +30,23 @@
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
-            <scope>provided</scope>
             <classifier>forge-addon</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-proxy</artifactId>
+            <version>2.7.2.Final</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        
     </dependencies>
 </project>
