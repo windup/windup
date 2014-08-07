@@ -33,7 +33,7 @@ public class WindupPropertyMethodHandlerTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClasses(FooModel.class, FooSubModel.class)
+                    .addClasses(TestFooModel.class, TestFooSubModel.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -49,22 +49,22 @@ public class WindupPropertyMethodHandlerTest
     {
         Assert.assertNotNull(context);
 
-        GraphService<FooModel> fooModelService = context.getService(FooModel.class);
+        GraphService<TestFooModel> fooModelService = context.getService(TestFooModel.class);
 
-        FooModel inMemoryModel = fooModelService.create();
+        TestFooModel inMemoryModel = fooModelService.create();
         inMemoryModel.setProp1("prop1").setProp2("prop2").setProp3("prop3");
 
         Iterable<Vertex> vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, FooModel.class.getAnnotation(TypeValue.class).value())
+                    .has("type", Text.CONTAINS, TestFooModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 
         int numberFound = 0;
         for (Vertex v : vertices)
         {
             numberFound++;
-            FooModel framed = (FooModel) context.getFramed().frame(v, WindupVertexFrame.class);
+            TestFooModel framed = (TestFooModel) context.getFramed().frame(v, WindupVertexFrame.class);
 
-            Assert.assertTrue(framed instanceof FooModel);
+            Assert.assertTrue(framed instanceof TestFooModel);
             Assert.assertEquals("prop1", framed.getProp1());
             Assert.assertEquals("prop2", framed.getProp2());
             Assert.assertEquals("prop3", framed.getProp3());

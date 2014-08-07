@@ -13,19 +13,19 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface TestFooModel extends ResourceModel
 {
     @Property("prop1")
-    public FooModel setProp1(String prop);
+    public TestFooModel setProp1(String prop);
 
     @Property("prop1")
     public String getProp1();
 
     @Property("prop2")
-    public FooModel setProp2(String prop);
+    public TestFooModel setProp2(String prop);
 
     @Property("prop2")
     public String getProp2();
 
     @Property("prop3")
-    public FooModel setProp3(String prop);
+    public TestFooModel setProp3(String prop);
 
     @Property("prop3")
     public String getProp3();
