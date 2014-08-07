@@ -11,8 +11,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.graph.typedgraph.FooModel;
-import org.jboss.windup.graph.typedgraph.FooSubModel;
+import org.jboss.windup.graph.typedgraph.TestFooModel;
+import org.jboss.windup.graph.typedgraph.TestFooSubModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public class EventGraphTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClasses(FooModel.class, FooSubModel.class)
+                    .addClasses(TestFooModel.class, TestFooSubModel.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -50,7 +50,7 @@ public class EventGraphTest
         StubGraphChangedListener stubGraphListener = new StubGraphChangedListener();
         context.getGraph().addListener(stubGraphListener);
 
-        FooModel initialModelType = context.getFramed().addVertex(null, FooModel.class);
+        TestFooModel initialModelType = context.getFramed().addVertex(null, TestFooModel.class);
 
         // There should be one added vertex
         Assert.assertEquals(1, stubGraphListener.addVertexEventRecorded());
@@ -59,7 +59,7 @@ public class EventGraphTest
         stubGraphListener.reset();
 
         // this should trigger one property change
-        GraphService.addTypeToModel(context, initialModelType, FooSubModel.class);
+        GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
 
         Assert.assertEquals(1, stubGraphListener.vertexPropertyChangedEventRecorded());
     }
