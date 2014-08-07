@@ -10,7 +10,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.FileModelService;
-import org.jboss.windup.graph.model.ApplicationArchiveModel;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -112,18 +111,10 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
                         + e.getMessage(), e);
         }
 
-        // add a folder reference for this application
-        ApplicationArchiveModel appRefModel = archiveModel.getApplicationReferenceModel();
-
         FileModel newFileModel = fileService.createByFilePath(appArchiveFolder.toString());
         // mark the path to the archive
         archiveModel.setUnzippedDirectory(newFileModel);
         newFileModel.setParentArchive(archiveModel);
-
-        if (appRefModel != null)
-        {
-            appRefModel.setUnzippedLocation(newFileModel);
-        }
 
         // add all unzipped files, and make sure their parent archive is set
         recurseAndAddFiles(context, tempFolder, fileService, archiveModel, newFileModel, false);

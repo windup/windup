@@ -31,9 +31,6 @@ public interface ArchiveModel extends FileModel
     @Adjacency(label = "childArchive", direction = Direction.IN)
     public ArchiveModel getChildArchive();
 
-    @Adjacency(label = "archive", direction = Direction.IN)
-    public ApplicationArchiveModel getApplicationReferenceModel();
-
     @Adjacency(label = "unzippedDirectory", direction = Direction.OUT)
     public void setUnzippedDirectory(FileModel fileResourceModel);
 
