@@ -11,6 +11,13 @@ public interface Service<T extends VertexFrame>
 
     long count(Iterable<?> obj);
 
+    /**
+     * Create a new VertexFrame of the Service's type, but don't attach it to the graph.
+     * 
+     * Note that only @Property annotated methods are supported by the returned object.
+     */
+    T createInMemory();
+
     T create();
 
     T create(Object id);

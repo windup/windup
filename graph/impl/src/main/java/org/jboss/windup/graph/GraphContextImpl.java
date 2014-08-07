@@ -111,7 +111,7 @@ public class GraphContextImpl implements GraphContext
         // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
-        final FrameMapHandler frameMapHandler = new FrameMapHandler();
+        final AdjacentMapHandler frameMapHandler = new AdjacentMapHandler();
 
         final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver()
         {
@@ -128,6 +128,7 @@ public class GraphContextImpl implements GraphContext
             {
                 config.setFrameClassLoaderResolver(fclr);
                 config.addMethodHandler(frameMapHandler);
+                config.addMethodHandler(new WindupPropertyMethodHandler());
                 return baseGraph;
             }
         };
