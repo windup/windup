@@ -258,4 +258,10 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return graphContext.getFramed().frame(vertex, type);
     }
 
+    @Override
+    public void remove(T model)
+    {
+        model.asVertex().remove();
+    }
+
 }

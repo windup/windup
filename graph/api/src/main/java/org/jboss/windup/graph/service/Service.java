@@ -19,6 +19,8 @@ public interface Service<T extends VertexFrame>
     T createInMemory();
 
     T create();
+    
+    void remove(T model);
 
     T create(Object id);
 
