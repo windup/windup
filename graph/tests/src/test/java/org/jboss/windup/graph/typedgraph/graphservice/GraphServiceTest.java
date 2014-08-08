@@ -27,7 +27,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-
 @RunWith(Arquillian.class)
 public class GraphServiceTest
 {
@@ -52,10 +51,11 @@ public class GraphServiceTest
     private GraphContext context;
 
     @After
-    public void tearDown() { 
-        
+    public void tearDown()
+    {
+
     }
-    
+
     @Test
     public void testGraphTypeHandling() throws Exception
     {
@@ -102,8 +102,11 @@ public class GraphServiceTest
             GraphService.addTypeToModel(context, foo1, TestFooSubModel.class);
             GraphService.addTypeToModel(context, foo2, TestFooSubModel.class);
 
-            Iterable<Vertex> vertices = context.getFramed().query()
-                        .has("type", Text.CONTAINS, TestFooSubModel.class.getAnnotation(TypeValue.class).value())
+            Iterable<Vertex> vertices = context
+                        .getFramed()
+                        .query()
+                        .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
+                                    TestFooSubModel.class.getAnnotation(TypeValue.class).value())
                         .vertices();
 
             int numberFound = 0;
@@ -124,40 +127,39 @@ public class GraphServiceTest
             context.getGraph().removeVertex(foo4.asVertex());
         }
     }
-    
+
     @Test
     public void testModelCreation()
     {
         Service<TestFooSubModel> graphService = context.getService(TestFooSubModel.class);
-        
+
         // test there is no vertex of such type
         Iterable<TestFooSubModel> foundAll = graphService.findAll();
         Assert.assertFalse(foundAll.iterator().hasNext());
-        
-        
+
         TestFooSubModel model = graphService.create();
         model.setFoo("myFoo");
-        
-        //test findAll
+
+        // test findAll
         FramedGraphQuery query = context.getFramed().query();
         query.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "Foo");
         Iterable<TestFooSubModel> verticesFoundByContext = query.vertices(TestFooSubModel.class);
         Iterator<TestFooSubModel> iterator = verticesFoundByContext.iterator();
         Assert.assertTrue(iterator.hasNext());
         TestFooSubModel model2 = iterator.next();
-        Assert.assertEquals("myFoo",model2.getFoo());
+        Assert.assertEquals("myFoo", model2.getFoo());
         Assert.assertFalse(iterator.hasNext());
-        
+
         Iterable<TestFooSubModel> verticesFoundByGraphService = graphService.findAll();
         iterator = verticesFoundByGraphService.iterator();
         Assert.assertTrue(iterator.hasNext());
         model2 = iterator.next();
-        Assert.assertEquals("myFoo",model2.getFoo());
+        Assert.assertEquals("myFoo", model2.getFoo());
         Assert.assertFalse(iterator.hasNext());
-        
+
         model2 = graphService.getUnique();
-        Assert.assertEquals("myFoo",model2.getFoo());
-        
+        Assert.assertEquals("myFoo", model2.getFoo());
+
         model2 = graphService.getUniqueByProperty("fooProperty", "myFoo");
         Assert.assertNotNull(model2);
         context.getFramed().removeVertex(model.asVertex());

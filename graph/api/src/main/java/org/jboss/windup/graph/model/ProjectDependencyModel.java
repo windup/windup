@@ -9,12 +9,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * Project dependency information. This has all of the information that would be required for a Maven dependency, but
  * can also be used for non-maven dependencies. Additional interfaces may extend this to provide further functionality.
  */
-@TypeValue("ProjectDependency")
-public interface ProjectDependency extends WindupVertexFrame
+@TypeValue(ProjectDependencyModel.TYPE)
+public interface ProjectDependencyModel extends WindupVertexFrame
 {
-    public static final String PROPERTY_SCOPE = "scope";
-    public static final String PROPERTY_CLASSIFIER = "classifier";
-    public static final String PROPERTY_TYPE = "type";
+    public static final String TYPE = "ProjectDependency";
+    public static final String PROPERTY_SCOPE = "dependencyScope";
+    public static final String PROPERTY_CLASSIFIER = "dependencyClassifier";
+    public static final String PROPERTY_TYPE = "dependencyType";
 
     @Property(PROPERTY_SCOPE)
     void setScope(String scope);

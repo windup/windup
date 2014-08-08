@@ -56,8 +56,11 @@ public class InMemoryFrameTest
         inMemoryModel.setProp2("prop2");
         inMemoryModel.setProp3("prop3");
 
-        Iterable<Vertex> vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, TestFooModel.class.getAnnotation(TypeValue.class).value())
+        Iterable<Vertex> vertices = context
+                    .getFramed()
+                    .query()
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
+                                TestFooModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 
         // we should have zero results, as this was only created in memory
@@ -66,8 +69,11 @@ public class InMemoryFrameTest
         InMemoryVertexFrame inMemoryFrame = (InMemoryVertexFrame) inMemoryModel;
         inMemoryFrame.attachToGraph();
 
-        vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, TestFooModel.class.getAnnotation(TypeValue.class).value())
+        vertices = context
+                    .getFramed()
+                    .query()
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
+                                TestFooModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 
         int numberFound = 0;

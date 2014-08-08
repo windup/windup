@@ -17,7 +17,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.ProjectDependency;
+import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.maven.dao.MavenModelService;
@@ -272,7 +272,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                     dependency.setName(getReadableNameForProject(null, dependencyGroupId, dependencyArtifactId,
                                 dependencyVersion));
                 }
-                ProjectDependency projectDep = context.getFramed().addVertex(null, ProjectDependency.class);
+                ProjectDependencyModel projectDep = context.getFramed().addVertex(null, ProjectDependencyModel.class);
                 projectDep.setClassifier(dependencyClassifier);
                 projectDep.setScope(dependencyScope);
                 projectDep.setType(dependencyType);

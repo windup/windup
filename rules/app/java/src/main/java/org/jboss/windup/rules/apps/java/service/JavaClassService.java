@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
@@ -56,13 +57,15 @@ public class JavaClassService extends GraphService<JavaClassModel>
 
     public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
-        return getGraphContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+        return getGraphContext().getFramed().query()
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
                     .has("packageName", packageName).vertices(getType());
     }
 
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
-        return getGraphContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+        return getGraphContext().getFramed().query()
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
                     .has("majorVersion", version.getMajor())
                     .has("minorVersion", version.getMinor()).vertices(getType());
     }

@@ -14,16 +14,17 @@ class QueryTypeCriterion implements QueryFramesCriterion
 
     public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {
-        this.typeValue = getTypeValue( clazz );
+        this.typeValue = getTypeValue(clazz);
     }
-    
+
     @Override
     public void query(FramedGraphQuery q)
     {
-        q.has("type", Text.CONTAINS, typeValue);
+        q.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, typeValue);
     }
-    
-    private static String getTypeValue( Class<? extends WindupVertexFrame> clazz ) {
+
+    private static String getTypeValue(Class<? extends WindupVertexFrame> clazz)
+    {
         TypeValue typeValueAnnotation = clazz.getAnnotation(TypeValue.class);
         if (typeValueAnnotation == null)
         {
@@ -36,10 +37,12 @@ class QueryTypeCriterion implements QueryFramesCriterion
     }
 
     /**
-     *  Adds a criterion to given pipeline which filters out vertices representing given WindupVertexFrame.
+     * Adds a criterion to given pipeline which filters out vertices representing given WindupVertexFrame.
      */
-    public static GremlinPipeline<Vertex, Vertex> addPipeFor( GremlinPipeline<Vertex, Vertex> pipeline, Class<? extends WindupVertexFrame> clazz ){
-        pipeline.has("type", Text.CONTAINS, getTypeValue( clazz ));
+    public static GremlinPipeline<Vertex, Vertex> addPipeFor(GremlinPipeline<Vertex, Vertex> pipeline,
+                Class<? extends WindupVertexFrame> clazz)
+    {
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValue(clazz));
         return pipeline;
     }
 }
