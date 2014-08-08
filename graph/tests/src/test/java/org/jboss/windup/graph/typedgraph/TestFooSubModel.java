@@ -1,5 +1,6 @@
 package org.jboss.windup.graph.typedgraph;
 
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -10,4 +11,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface TestFooSubModel extends TestFooModel
 {
 
+    @Property("fooProperty")
+    public String getFoo();
+
+    @Property("fooProperty")
+    public void setFoo(String foo);
+    
 }// class
