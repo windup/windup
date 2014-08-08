@@ -9,9 +9,11 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("JavaMethod")
+@TypeValue(JavaMethodModel.TYPE)
 public interface JavaMethodModel extends WindupVertexFrame
 {
+    public static final String TYPE = "JavaMethod";
+
     @Adjacency(label = "javaMethod", direction = Direction.IN)
     public JavaClassModel getJavaClass();
 

@@ -15,6 +15,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 public class Query extends GraphCondition implements QueryBuilderFind, QueryBuilderFrom, QueryBuilderWith,
@@ -29,6 +30,27 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
 
     private Query()
     {
+    }
+
+    /**
+     * Begin this {@link Query} with all Frame instances that are the result of the provided GremlinQueryCriterion.
+     */
+    public static QueryBuilderPiped gremlin(final QueryGremlinCriterion criterion)
+    {
+        final Query query = new Query();
+        query.setInitialFramesSelector(new FramesSelector()
+        {
+            @Override
+            public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
+            {
+                GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(event.getGraphContext()
+                            .getGraph());
+                criterion.query(event, pipeline);
+                return new FramedVertexIterable<WindupVertexFrame>(event.getGraphContext().getFramed(), pipeline,
+                            WindupVertexFrame.class);
+            }
+        });
+        return query;
     }
 
     /**

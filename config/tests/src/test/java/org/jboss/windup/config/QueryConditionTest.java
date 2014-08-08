@@ -46,6 +46,7 @@ public class QueryConditionTest
                                 XmlExampleRuleProvider1.class,
                                 XmlExampleRuleProvider2.class,
                                 XmlExampleRuleProvider3.class,
+                                TestGremlinQueryOnlyRuleProvider.class,
                                 TestXmlMetaFacetModel.class,
                                 TestSomeModel.class,
                                 WindupConfigurationExampleRuleProvider.class)
@@ -86,6 +87,42 @@ public class QueryConditionTest
         xmlFacet4.setRootTagName("xmlTag4");
     }
 
+    @Test
+    public void testInitialQueryAsGremlin()
+    {
+        final File folder = OperatingSystemUtils.createTempDir();
+        final GraphContext context = factory.create(folder);
+
+        GraphRewrite event = new GraphRewrite(context);
+        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+
+        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+        windupCfg.setInputPath(folder.getAbsolutePath());
+        windupCfg.setSourceMode(true);
+
+        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+        classModel1.setQualifiedName("com.example.Class1NoToString");
+        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+        classModel2.setQualifiedName("com.example.Class2HasToString");
+
+        JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
+        methodModelSomeMethod.setJavaClass(classModel2);
+        methodModelSomeMethod.setMethodName("foo");
+        JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
+        methodModelToString.setJavaClass(classModel2);
+        methodModelToString.setMethodName("toString");
+
+        TestGremlinQueryOnlyRuleProvider provider = new TestGremlinQueryOnlyRuleProvider();
+        Configuration configuration = provider.getConfiguration(context);
+
+        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
+
+        List<JavaMethodModel> methodModelList = provider.getResults();
+        Assert.assertTrue(methodModelList.size() == 2);
+        Assert.assertTrue(methodModelList.get(0) instanceof JavaMethodModel);
+        Assert.assertTrue(methodModelList.get(1) instanceof JavaMethodModel);
+    }
+
     // TODO: Create shared method to set up the graph.
     @Test
     public void testSingletonSelection()
@@ -97,7 +134,7 @@ public class QueryConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath("/tmp/testpath");
+        windupCfg.setInputPath(folder.getAbsolutePath());
         windupCfg.setSourceMode(true);
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
