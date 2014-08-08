@@ -3,6 +3,7 @@ package org.jboss.windup.reporting.query;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 
@@ -26,11 +27,11 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
     {
         FramedGraph<EventGraph<TitanGraph>> framed = event.getGraphContext().getFramed();
 
-        // create a pipeline to get all blacklisted items
+        // create a pipeline to get all items with inline hints
         GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
                     framed
                                 .query()
-                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource")
+                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE)
                                 .vertices());
         hintPipeline.as("fileModel1").in(InlineHintModel.FILE_MODEL).back("fileModel1");
 
@@ -38,12 +39,12 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
                     framed
                                 .query()
-                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource")
+                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE)
                                 .vertices());
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .back("fileModel2");
 
-        // combine these to get all file models that have either classifications or blacklists
+        // combine these to get all file models that have either classifications or hints
         pipeline.or(hintPipeline, classificationPipeline);
     }
 }

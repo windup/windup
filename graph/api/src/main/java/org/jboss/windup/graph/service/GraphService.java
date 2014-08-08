@@ -250,6 +250,23 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return results;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T extends WindupVertexFrame> List<T> toVertexFrames(GraphContext graphContext,
+                Iterable<Vertex> vertices, Class<T> frameType)
+    {
+        List<T> results = new ArrayList<>();
+        for (Vertex v : vertices)
+        {
+            WindupVertexFrame frame = graphContext.getFramed().frame(v, WindupVertexFrame.class);
+            if (frameType.isAssignableFrom(frame.getClass()))
+                results.add((T) frame);
+            else
+                throw new IllegalStateException("Expected frame type [" + frameType.getName() + "] but was "
+                            + frame.getClass().getInterfaces() + ".");
+        }
+        return results;
+    }
+
     /**
      * Adds the specified type to this frame, and returns a new object that implements this type.
      * 

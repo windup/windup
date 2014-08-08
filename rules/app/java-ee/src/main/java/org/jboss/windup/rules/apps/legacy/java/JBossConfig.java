@@ -1,19 +1,10 @@
 package org.jboss.windup.rules.apps.legacy.java;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
-import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
-import org.jboss.windup.rules.apps.java.blacklist.JavaScanner;
-import org.jboss.windup.rules.apps.java.blacklist.Types;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
 public class JBossConfig extends WindupRuleProvider
@@ -35,6 +26,9 @@ public class JBossConfig extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
+        // @formatter:off
+        /* TODO Change to use new Hints/classifications API
+        
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         List<JavaClassification> classifications = new ArrayList<JavaClassification>();
 
@@ -51,6 +45,9 @@ public class JBossConfig extends WindupRuleProvider
                     .begin()
                     .addRule().perform(new JavaScanner().add(classifications).add(hints));
         return configuration;
+         */
+        // @formatter:on
+        return null;
     }
     // @formatter:on
 }

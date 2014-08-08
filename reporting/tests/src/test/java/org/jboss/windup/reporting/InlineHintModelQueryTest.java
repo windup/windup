@@ -84,21 +84,21 @@ public class InlineHintModelQueryTest
 
         ClassificationModel c1 = context.getFramed().addVertex(null, ClassificationModel.class);
         ClassificationModel c1b = context.getFramed().addVertex(null, ClassificationModel.class);
-        c1.setFileModel(f1);
-        c1b.setFileModel(f1);
+        c1.addFileModel(f1);
+        c1b.addFileModel(f1);
 
         ClassificationModel c2 = context.getFramed().addVertex(null, ClassificationModel.class);
-        c2.setFileModel(f3);
+        c2.addFileModel(f3);
 
         List<Vertex> vertexList = new ArrayList<>();
         for (Vertex v : context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource").vertices())
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE).vertices())
         {
             vertexList.add(v);
         }
 
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource").vertices());
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE).vertices());
 
         GraphRewrite event = new GraphRewrite(context);
 

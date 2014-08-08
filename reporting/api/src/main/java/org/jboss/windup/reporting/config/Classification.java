@@ -6,6 +6,7 @@ import java.util.List;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -63,26 +64,37 @@ public class Classification extends AbstractIterationOperation<FileModel> implem
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
-
-        GraphService<ClassificationModel> classificationService = new GraphService<>(event.getGraphContext(),
+        /*
+         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't
+         * want to add another.
+         */
+        GraphContext graphContext = event.getGraphContext();
+        GraphService<ClassificationModel> classificationService = new GraphService<>(graphContext,
                     ClassificationModel.class);
-        ClassificationModel classification = classificationService.create();
-        classification.setFileModel(payload);
-        classification.setEffort(effort);
-        classification.setDescription(details);
-        classification.setClassifiation(classificationText);
+        ClassificationModel classification = classificationService.getUniqueByProperty(
+                    ClassificationModel.PROPERTY_CLASSIFICATION, classificationText);
 
-        // TODO replace this with a link to a RuleModel, once that is implemented.
-        classification.setRuleID(((Rule) event.getRewriteContext().get(Rule.class)).getId());
-
-        GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
-        for (Link link : links)
+        if (classification == null)
         {
-            LinkModel linkModel = linkService.create();
-            linkModel.setDescription(link.getDescription());
-            linkModel.setLink(link.getLink());
-            classification.addLink(linkModel);
-        }
-    }
+            classification = classificationService.create();
+            classification.addFileModel(payload);
+            classification.setEffort(effort);
+            classification.setDescription(details);
+            classification.setClassifiation(classificationText);
 
+            // TODO replace this with a link to a RuleModel, once that is implemented.
+            classification.setRuleID(((Rule) context.get(Rule.class)).getId());
+
+            GraphService<LinkModel> linkService = new GraphService<>(graphContext, LinkModel.class);
+            for (Link link : links)
+            {
+                LinkModel linkModel = linkService.create();
+                linkModel.setDescription(link.getDescription());
+                linkModel.setLink(link.getLink());
+                classification.addLink(linkModel);
+            }
+        }
+
+        classification.addFileModel(payload);
+    }
 }

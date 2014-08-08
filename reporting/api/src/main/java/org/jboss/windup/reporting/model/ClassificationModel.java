@@ -18,36 +18,36 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("ClassificationModel")
 public interface ClassificationModel extends WindupVertexFrame
 {
-    public static final String PROPERTY_RULE_ID = "ruleID";
-    public static final String PROPERTY_CLASSIFICATION = "classification";
-    public static final String PROPERTY_DESCRIPTION = "description";
-    public static final String PROPERTY_EFFORT = "effort";
-    public static final String PROPERTY_LINK_DECORATOR = "linkDecorator";
+    public static final String PROPERTY_RULE_ID = "PROP_RULE_ID";
+    public static final String PROPERTY_CLASSIFICATION = "PROP_CLASSIFICATION";
+    public static final String PROPERTY_DESCRIPTION = "PROP_DESCRIPTION";
+    public static final String PROPERTY_EFFORT = "PROP_EFFORT";
+    public static final String PROPERTY_LINKS = "PROP_LINKS";
 
     public static final String FILE_MODEL = "classificationModelToFileModel";
 
     /**
-     * Set the {@link FileModel} associated with this {@link ClassificationModel}.
+     * Add a {@link FileModel} associated with this {@link ClassificationModel}.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    public void setFileModel(FileModel fileModel);
+    public void addFileModel(FileModel fileModel);
 
     /**
      * Get the {@link FileModel} associated with this {@link ClassificationModel}.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    public FileModel getFileModel();
+    public Iterable<FileModel> getFileModels();
 
     /**
      * Add a related {@link Link} to this {@link ClassificationModel}
      */
-    @Adjacency(label = PROPERTY_LINK_DECORATOR, direction = Direction.OUT)
+    @Adjacency(label = PROPERTY_LINKS, direction = Direction.OUT)
     public void addLink(LinkModel linkDecorator);
 
     /**
      * Get the related {@link Link} instances associated with this {@link ClassificationModel}
      */
-    @Adjacency(label = PROPERTY_LINK_DECORATOR, direction = Direction.OUT)
+    @Adjacency(label = PROPERTY_LINKS, direction = Direction.OUT)
     public Iterable<LinkModel> getLinks();
 
     /**

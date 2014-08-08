@@ -81,6 +81,8 @@ public class VariableResolvingASTVisitorTest
         }
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         CompilationUnit cu1 = (CompilationUnit) parser.createAST(null);
+
+        TypeInterestFactory.registerInterest(".*"); // for this test, we care about all references
         visitor.init(cu1, fileModel);
 
         CompilationUnit cu = cu1;

@@ -1,19 +1,10 @@
 package org.jboss.windup.rules.apps.legacy.java;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.blacklist.JavaClassification;
-import org.jboss.windup.rules.apps.java.blacklist.ASTEventEvaluatorsBufferOperation;
-import org.jboss.windup.rules.apps.java.blacklist.Types;
-import org.jboss.windup.rules.apps.java.blacklist.WhiteListItem;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
 /**
@@ -38,6 +29,9 @@ public class EjbBaseConfig extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
+        // @formatter:off
+        /* TODO Change to use new Hints/classifications API
+
         List<WhiteListItem> items = new ArrayList<WhiteListItem>();
         List<JavaClassification> classifications = new ArrayList<JavaClassification>();
 
@@ -60,5 +54,9 @@ public class EjbBaseConfig extends WindupRuleProvider
             .begin()
             .addRule().perform(new ASTEventEvaluatorsBufferOperation().add(classifications));
         return configuration;
+        
+       */
+       // @formatter:on
+        return null;
     }
 }

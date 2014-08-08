@@ -93,7 +93,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
             catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                         | NoSuchMethodException | SecurityException e)
             {
-                throw new IllegalArgumentException("Invalid variable expression: " + variableName);
+                throw new IllegalArgumentException("Invalid variable expression: " + variableName, e);
             }
         }
         return payload;

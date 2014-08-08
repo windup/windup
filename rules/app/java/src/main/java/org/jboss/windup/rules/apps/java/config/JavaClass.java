@@ -10,6 +10,7 @@ import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryBuilderFind;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
 import org.ocpsoft.rewrite.config.Condition;
@@ -25,6 +26,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder
     private JavaClass(String regex)
     {
         this.regex = regex;
+        TypeInterestFactory.registerInterest(regex);
     }
 
     /**

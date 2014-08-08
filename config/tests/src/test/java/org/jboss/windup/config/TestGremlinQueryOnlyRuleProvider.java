@@ -15,8 +15,6 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
@@ -24,8 +22,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 public class TestGremlinQueryOnlyRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(JavaExampleRuleProvider.class);
-
     private final List<JavaMethodModel> results = new ArrayList<>();
 
     @Override

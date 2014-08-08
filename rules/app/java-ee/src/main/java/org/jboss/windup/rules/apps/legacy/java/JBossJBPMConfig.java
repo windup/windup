@@ -1,18 +1,10 @@
 package org.jboss.windup.rules.apps.legacy.java;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.blacklist.BlackListRegex;
-import org.jboss.windup.rules.apps.java.blacklist.JavaScanner;
-import org.jboss.windup.rules.apps.java.blacklist.Types;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
 public class JBossJBPMConfig extends WindupRuleProvider
@@ -33,7 +25,9 @@ public class JBossJBPMConfig extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-     
+
+        /* TODO Change to use new Hints/classifications API
+        
         List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
         hints.add(new BlackListRegex(getID(), "org.jbpm.graph.def.ActionHandler$", "Migrate to jBPM 5 org.drools.runtime.process.WorkItemHandler.", 2, Types.add(TypeReferenceLocation.INHERITANCE)));
         hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession$", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession", 4));
@@ -211,6 +205,9 @@ public class JBossJBPMConfig extends WindupRuleProvider
         Configuration configuration = ConfigurationBuilder.begin()
             .addRule().perform(new JavaScanner().add(hints));
         return configuration;
+        
+        */
+        return null;
     }
     // @formatter:on
 }

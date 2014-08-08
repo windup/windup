@@ -127,36 +127,44 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         }
     }
 
-    private void processConstructor(ConstructorType interest, int lineNumber, int columnNumber, int length,
-                JavaSourceType sourceType)
+    private void processConstructor(ConstructorType interest, int lineNumber, int columnNumber, int length)
     {
-        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
-                    TypeReferenceLocation.CONSTRUCTOR_CALL,
-                    lineNumber, columnNumber, length, interest.toString());
+        String text = interest.toString();
+        if (TypeInterestFactory.matchesAny(text))
+        {
+            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
+                        TypeReferenceLocation.CONSTRUCTOR_CALL,
+                        lineNumber, columnNumber, length, text);
 
-        LOG.trace("Candidate: " + typeRef);
+            LOG.trace("Candidate: " + typeRef);
+        }
     }
 
-    private void processMethod(MethodType interest, int lineNumber, int columnNumber, int length,
-                JavaSourceType sourceType)
+    private void processMethod(MethodType interest, int lineNumber, int columnNumber, int length)
     {
-        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, TypeReferenceLocation.METHOD_CALL,
-                    lineNumber, columnNumber, length, interest.toString());
+        String text = interest.toString();
+        if (TypeInterestFactory.matchesAny(text))
+        {
+            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
+                        TypeReferenceLocation.METHOD_CALL,
+                        lineNumber, columnNumber, length, text);
 
-        LOG.trace("Candidate: " + typeRef);
+            LOG.trace("Candidate: " + typeRef);
+        }
     }
 
-    private void processInterest(String interest, int lineNumber, int columnNumber, int length,
-                JavaSourceType sourceType)
+    private void processImport(String interest, int lineNumber, int columnNumber, int length)
     {
-
         String sourceString = interest;
-        sourceString = resolveClassname(sourceString);
+        if (TypeInterestFactory.matchesAny(sourceString))
+        {
+            sourceString = resolveClassname(sourceString);
 
-        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, TypeReferenceLocation.IMPORT,
-                    lineNumber, columnNumber, length, interest.toString());
+            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, TypeReferenceLocation.IMPORT,
+                        lineNumber, columnNumber, length, interest.toString());
 
-        LOG.trace("Candidate: " + typeRef);
+            LOG.trace("Candidate: " + typeRef);
+        }
     }
 
     private void processType(Type type, TypeReferenceLocation referenceLocation)
@@ -164,24 +172,27 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         if (type == null)
             return;
 
-        int lineNumber = cu.getLineNumber(type.getStartPosition());
-        int columnNumber = cu.getColumnNumber(type.getStartPosition());
-        int length = type.getLength();
-
-        String sourceString = type.toString();
-        sourceString = resolveClassname(sourceString);
-
-        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
-                    lineNumber, columnNumber, length, sourceString);
-
-        LOG.trace("Prefix: " + referenceLocation);
-        if (type instanceof SimpleType)
+        if (TypeInterestFactory.matchesAny(type.toString()))
         {
-            SimpleType sType = (SimpleType) type;
-            LOG.trace("The type name is: " + sType.getName().getFullyQualifiedName() + " and " + sourceString);
+            int lineNumber = cu.getLineNumber(type.getStartPosition());
+            int columnNumber = cu.getColumnNumber(type.getStartPosition());
+            int length = type.getLength();
 
+            String sourceString = type.toString();
+            sourceString = resolveClassname(sourceString);
+
+            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
+                        lineNumber, columnNumber, length, sourceString);
+
+            LOG.trace("Prefix: " + referenceLocation);
+            if (type instanceof SimpleType)
+            {
+                SimpleType sType = (SimpleType) type;
+                LOG.trace("The type name is: " + sType.getName().getFullyQualifiedName() + " and " + sourceString);
+
+            }
+            LOG.trace("Candidate: " + typeRef);
         }
-        LOG.trace("Candidate: " + typeRef);
     }
 
     private void processName(Name name, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
@@ -191,13 +202,16 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             return;
 
         String sourceString = name.toString();
-        sourceString = resolveClassname(sourceString);
+        if (TypeInterestFactory.matchesAny(sourceString))
+        {
+            sourceString = resolveClassname(sourceString);
 
-        TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
-                    lineNumber, columnNumber, length, sourceString);
+            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
+                        lineNumber, columnNumber, length, sourceString);
 
-        LOG.trace("Prefix: " + referenceLocation);
-        LOG.trace("Candidate: " + typeRef);
+            LOG.trace("Prefix: " + referenceLocation);
+            LOG.trace("Candidate: " + typeRef);
+        }
     }
 
     @Override
@@ -389,9 +403,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             Iterable<JavaClassModel> classModels = javaClassService.findByJavaPackage(name);
             for (JavaClassModel classModel : classModels)
             {
-                processInterest(classModel.getQualifiedName(), cu.getLineNumber(node.getName().getStartPosition()),
-                            cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
-                            JavaSourceType.IMPORT);
+                processImport(classModel.getQualifiedName(), cu.getLineNumber(node.getName().getStartPosition()),
+                            cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength());
             }
         }
         else
@@ -399,9 +412,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             String clzName = StringUtils.substringAfterLast(name, ".");
             classNameLookedUp.add(clzName);
             classNameToFQCN.put(clzName, name);
-            processInterest(node.getName().toString(), cu.getLineNumber(node.getName().getStartPosition()),
-                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
-                        JavaSourceType.IMPORT);
+            processImport(node.getName().toString(), cu.getLineNumber(node.getName().getStartPosition()),
+                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength());
         }
 
         return super.visit(node);
@@ -434,8 +446,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
         MethodType methodCall = new MethodType(objRef, node.getName().toString(), resolvedParams);
         processMethod(methodCall, cu.getLineNumber(node.getName().getStartPosition()),
-                    cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
-                    JavaSourceType.METHOD);
+                    cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength());
 
         return super.visit(node);
     }
@@ -457,8 +468,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
         ConstructorType resolvedConstructor = new ConstructorType(nodeType, resolvedParams);
         processConstructor(resolvedConstructor, cu.getLineNumber(node.getType().getStartPosition()),
-                    cu.getColumnNumber(node.getType().getStartPosition()), node.getType().getLength(),
-                    JavaSourceType.CONSTRUCT);
+                    cu.getColumnNumber(node.getType().getStartPosition()), node.getType().getLength());
 
         return super.visit(node);
     }

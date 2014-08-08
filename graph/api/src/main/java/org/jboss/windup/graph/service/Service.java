@@ -1,14 +1,30 @@
 package org.jboss.windup.graph.service;
 
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.tinkerpop.frames.VertexFrame;
 
-public interface Service<T extends VertexFrame>
+/**
+ * Base service interface for interacting with {@link WindupVertexFrame} instances.
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ *
+ * @param <FRAMETYPE>
+ */
+public interface Service<FRAMETYPE extends VertexFrame>
 {
+    /**
+     * Commit any started transaction.
+     * 
+     * @see #newTransaction()
+     */
     void commit();
 
+    /**
+     * Count the number of {@link WindupVertexFrame} instances of the type for which this {@link Service} operates.
+     */
     long count(Iterable<?> obj);
 
     /**
@@ -16,29 +32,73 @@ public interface Service<T extends VertexFrame>
      * 
      * Note that only @Property annotated methods are supported by the returned object.
      */
-    T createInMemory();
+    FRAMETYPE createInMemory();
 
-    T create();
-    
-    void remove(T model);
+    /**
+     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned
+     * instance will already be persisted in the graph.
+     */
+    FRAMETYPE create();
 
-    T create(Object id);
+    /**
+     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
+     * id. The returned instance will already be persisted in the graph.
+     */
+    FRAMETYPE create(Object id);
 
-    Iterable<T> findAll();
+    /**
+     * Remove the given {@link WindupVertexFrame} instance from the graph.
+     */
+    void remove(FRAMETYPE model);
 
-    Iterable<T> findAllByProperties(String[] keys, String[] vals);
+    /**
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates.
+     */
+    Iterable<FRAMETYPE> findAll();
 
-    Iterable<T> findAllByProperty(String key, Object value);
+    /**
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
+     * properties.
+     */
+    Iterable<FRAMETYPE> findAllByProperties(String[] keys, String[] vals);
 
-    Iterable<T> findAllByPropertyMatchingRegex(String key, String... regex);
+    /**
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
+     * property.
+     */
+    Iterable<FRAMETYPE> findAllByProperty(String key, Object value);
 
-    T getById(Object id);
+    /**
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the
+     * specified property matching the given regexes.
+     */
+    Iterable<FRAMETYPE> findAllByPropertyMatchingRegex(String key, String... regex);
 
-    T getUnique() throws NonUniqueResultException;
+    /**
+     * Get the instance of the type on which this {@link Service} operates that has the given id value.
+     */
+    FRAMETYPE getById(Object id);
 
-    T getUniqueByProperty(String property, Object value) throws NonUniqueResultException;
+    /**
+     * Get a unique instance of the type on which this {@link Service} operates.
+     */
+    FRAMETYPE getUnique() throws NonUniqueResultException;
 
+    /**
+     * Search the graph for a model of the appropriate type with the given property name and value. Return
+     * <code>null</code> if not found.
+     */
+    FRAMETYPE getUniqueByProperty(String property, Object value) throws NonUniqueResultException;
+
+    /**
+     * Begin a transaction.
+     * 
+     * @see #commit()
+     */
     TitanTransaction newTransaction();
 
-    Class<T> getType();
+    /**
+     * Get the {@link WindupVertexFrame} type for which this {@link Service} operates.
+     */
+    Class<FRAMETYPE> getType();
 }
