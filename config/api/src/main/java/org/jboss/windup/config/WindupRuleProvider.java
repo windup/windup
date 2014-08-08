@@ -29,7 +29,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
 
     public String getID()
     {
-        return addon.getId().getName() + "." + getClass().getName();
+        return addon.getId().getName() + "." + getClass().getSimpleName();
     }
 
     /**
@@ -46,6 +46,8 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
             context.put(RuleMetadata.CATEGORY, "none");
         if (!context.containsKey(RuleMetadata.ORIGIN))
             context.put(RuleMetadata.ORIGIN, this.getClass().getName());
+        if (!context.containsKey(RuleMetadata.RULE_PROVIDER))
+            context.put(RuleMetadata.RULE_PROVIDER, this);
     }
 
     /**
