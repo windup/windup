@@ -11,13 +11,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 /**
  * The base {@link VertexFrame} type implemented by all model types.
  */
-@TypeField(WindupVertexFrame.TYPE_FIELD)
+@TypeField(WindupVertexFrame.TYPE_PROP)
 public interface WindupVertexFrame extends VertexFrame
 {
     /**
      * Stores the vertex types for graph lookup via {@link GraphService} and other query mechanisms.
      */
-    public static final String TYPE_FIELD = "type";
+    public static final String TYPE_PROP = "type";
 
     @JavaHandler
     public String toPrettyString();
