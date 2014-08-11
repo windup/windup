@@ -44,7 +44,7 @@ public class BlackListQueryTest extends AbstractTestCase
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addClass(AbstractTestCase.class)
-                    .addAsResource(new File("src/test/resources/reports"))
+                    .addAsResource(new File("../src/test/resources/reports"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),

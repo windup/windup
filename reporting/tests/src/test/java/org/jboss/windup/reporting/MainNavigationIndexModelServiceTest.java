@@ -28,23 +28,23 @@ public class MainNavigationIndexModelServiceTest extends AbstractTestCase
 
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addClass(AbstractTestCase.class)
-                    .addAsResource(new File("src/test/resources/reports"))
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addClass(AbstractTestCase.class)
+            .addAsResource(new File("../src/test/resources/reports"))
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
         return archive;
     }
 

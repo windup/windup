@@ -65,7 +65,7 @@ public class VariableResolvingASTVisitorTest
         Assert.assertNotNull(context);
         Assert.assertNotNull(visitor);
 
-        CompilationUnit cu = initVisitor("src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
+        CompilationUnit cu = initVisitor("../src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
         cu.accept(visitor);
     }
 
