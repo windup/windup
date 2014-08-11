@@ -23,7 +23,7 @@ public abstract class WindupArchitectureTest
         windupCfg.setInputPath(inputPath);
         windupCfg.setSourceMode(sourceMode);
 
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windupreport");
+        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupReport");
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 

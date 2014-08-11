@@ -57,6 +57,8 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     @Test
     public void testRunWindupMedium() throws Exception
     {
-        runTest(processor, graphContext, "../../test-files/Windup1x-javaee-example.war", false);
+        final String path = "../../../test-files/Windup1x-javaee-example.war";
+        System.out.println("Running binary mode test with: " + path);
+        runTest(processor, graphContext, path, false);
     }
 }
