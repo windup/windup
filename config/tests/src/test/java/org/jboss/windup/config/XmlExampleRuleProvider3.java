@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
-import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
@@ -42,12 +42,10 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
             .when(Query.find(TestXmlMetaFacetModel.class)
                 .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                     QueryPropertyComparisonType.EQUALS, "xmlTag2"))
-            .perform(Iteration.over(TestXmlMetaFacetModel.class, "xmlModels")
-                .perform(new GraphOperation()
+            .perform(Iteration.over(TestXmlMetaFacetModel.class)
+                .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class)
                 {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, TestXmlMetaFacetModel payload) {
                         Variables varStack = Variables.instance(event);
                         TestXmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
                                     TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING);
