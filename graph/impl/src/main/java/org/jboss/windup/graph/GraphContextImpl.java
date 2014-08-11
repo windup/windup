@@ -6,6 +6,7 @@ import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 
@@ -101,7 +102,7 @@ public class GraphContextImpl implements GraphContext
             this.titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
 
-        for (String key : new String[] { "archiveEntry", "type" })
+        for (String key : new String[] { "archiveEntry", WindupVertexFrame.TYPE_PROP })
         {
             this.titanGraph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
         }

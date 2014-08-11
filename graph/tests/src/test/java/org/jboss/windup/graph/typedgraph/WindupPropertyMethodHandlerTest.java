@@ -54,8 +54,11 @@ public class WindupPropertyMethodHandlerTest
         TestFooModel inMemoryModel = fooModelService.create();
         inMemoryModel.setProp1("prop1").setProp2("prop2").setProp3("prop3");
 
-        Iterable<Vertex> vertices = context.getFramed().query()
-                    .has("type", Text.CONTAINS, TestFooModel.class.getAnnotation(TypeValue.class).value())
+        Iterable<Vertex> vertices = context
+                    .getFramed()
+                    .query()
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
+                                TestFooModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 
         int numberFound = 0;

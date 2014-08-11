@@ -100,7 +100,8 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public Iterable<T> findAllByProperties(String[] keys, String[] vals)
     {
-        FramedGraphQuery fgq = context.getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch());
+        FramedGraphQuery fgq = context.getFramed().query()
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch());
 
         for (int i = 0, j = keys.length; i < j; i++)
         {
@@ -146,7 +147,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             regexFinal = builder.toString();
         }
 
-        return context.getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+        return context.getFramed().query().has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
                     .has(key, Text.REGEX, regexFinal).vertices(type);
     }
 
@@ -170,7 +171,8 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     protected TitanGraphQuery getTypedQuery()
     {
         return getGraphContext()
-                    .getGraph().getBaseGraph().query().has("type", Text.CONTAINS, getTypeValueForSearch());
+                    .getGraph().getBaseGraph().query()
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch());
     }
 
     protected String getTypeValueForSearch()

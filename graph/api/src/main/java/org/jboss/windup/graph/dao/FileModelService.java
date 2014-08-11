@@ -3,6 +3,7 @@ package org.jboss.windup.graph.dao;
 import java.nio.file.Paths;
 
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 
@@ -75,7 +76,8 @@ public class FileModelService extends GraphService<FileModel>
             regex = ".+\\." + builder.toString() + "$";
         }
 
-        return getGraphContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+        return getGraphContext().getFramed().query()
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
                     .has("filePath", Text.REGEX, regex).vertices(getType());
     }
 }

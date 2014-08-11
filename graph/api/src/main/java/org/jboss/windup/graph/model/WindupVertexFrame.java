@@ -17,7 +17,7 @@ public interface WindupVertexFrame extends VertexFrame
     /**
      * Stores the vertex types for graph lookup via {@link GraphService} and other query mechanisms.
      */
-    public static final String TYPE_PROP = "type";
+    public static final String TYPE_PROP = "w:vertextype";
 
     @JavaHandler
     public String toPrettyString();

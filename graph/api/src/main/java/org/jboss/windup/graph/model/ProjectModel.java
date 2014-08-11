@@ -98,10 +98,10 @@ public interface ProjectModel extends WindupVertexFrame
      * Project dependencies, as well as metadata about those deps.
      */
     @Adjacency(label = "dependency", direction = Direction.OUT)
-    public void addDependency(ProjectDependency maven);
+    public void addDependency(ProjectDependencyModel maven);
 
     @Adjacency(label = "dependency", direction = Direction.OUT)
-    public Iterable<ProjectDependency> getDependencies();
+    public Iterable<ProjectDependencyModel> getDependencies();
 
     @Adjacency(label = "projectModelToFile", direction = Direction.OUT)
     public Iterable<FileModel> getFileModels();

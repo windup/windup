@@ -1,5 +1,6 @@
 package org.jboss.windup.graph.test.polymorf;
 
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,14 +49,14 @@ public class NodeTypeChangeTest
         System.out.println("Person: " + foo + " " + asString(foo));
 
         // Try to retype
-        v.setProperty("type", "special");
+        v.setProperty(WindupVertexFrame.TYPE_PROP, "special");
 
         // Should be SpecialPerson.
         SpecialPerson foo2 = (SpecialPerson) framed.frame(v, Person.class);
         System.out.println("SpecialPerson: " + foo2 + " " + asString(foo2));
 
         // Unknown type - should be Person.
-        v.setProperty("type", "aaaaaa");
+        v.setProperty(WindupVertexFrame.TYPE_PROP, "aaaaaa");
 
         foo = framed.frame(v, Person.class);
         System.out.println("Not SpecialPerson: " + foo + " " + asString(foo));
