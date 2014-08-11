@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.java;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +48,7 @@ public class HintsClassificationsTest
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:java-decompiler", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
@@ -61,6 +61,7 @@ public class HintsClassificationsTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -122,13 +123,13 @@ public class HintsClassificationsTest
         @Override
         public RulePhase getPhase()
         {
-            return RulePhase.MIGRATION_RULES;
+            return RulePhase.INITIAL_ANALYSIS;
         }
 
         @Override
         public List<Class<? extends WindupRuleProvider>> getClassDependencies()
         {
-            return Arrays.<Class<? extends WindupRuleProvider>> asList(AnalyzeJavaFilesRuleProvider.class);
+            return generateDependencies(AnalyzeJavaFilesRuleProvider.class);
         }
 
         // @formatter:off

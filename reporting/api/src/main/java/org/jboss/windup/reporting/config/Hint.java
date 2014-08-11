@@ -32,6 +32,8 @@ public class Hint extends AbstractIterationOperation<FileModel>
         hintModel.setColumnNumber(locationModel.getColumnNumber());
         hintModel.setLength(locationModel.getLength());
 
+        hintModel.setFileModel(payload);
+
         hintModel.setEffort(effort);
         hintModel.setHint(hintText);
     }

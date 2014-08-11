@@ -1,7 +1,9 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
+
 import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -14,35 +16,36 @@ import org.jboss.windup.graph.GraphContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 @RunWith(Arquillian.class)
 public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
 {
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-        @AddonDependency(name = "org.jboss.windup.utils:utils"),
-        @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-        @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:java-decompiler"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.utils:utils"),
+                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+                @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-            .addBeansXML()
-            .addClass(WindupArchitectureTest.class)
-            .addAsResource(new File("../src/test/groovy/GroovyExampleRule.windup.groovy"))
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
-                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                    .addBeansXML()
+                    .addClass(WindupArchitectureTest.class)
+                    .addAsResource(new File("../src/test/groovy/GroovyExampleRule.windup.groovy"))
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                                AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
         return archive;
     }
 
