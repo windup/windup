@@ -44,7 +44,6 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
         if (!zipFile.isFile())
         {
             final String msg = "Input path doesn't point to a file: " + zipFile.getAbsolutePath();
-            System.out.println(msg); // Remove when 
             throw new WindupException(msg);
         }
 
