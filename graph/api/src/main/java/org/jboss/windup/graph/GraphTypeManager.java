@@ -2,8 +2,10 @@ package org.jboss.windup.graph;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -27,23 +29,29 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
     private static final String DELIMITER = "|";
 
-    private Set<Class<? extends WindupVertexFrame>> registeredTypes = new HashSet<Class<? extends WindupVertexFrame>>();
+    private Map<String,Class<? extends WindupVertexFrame>> registeredTypes= new HashMap<>();
     private TypeRegistry typeRegistry = new TypeRegistry();
 
     public Set<Class<? extends WindupVertexFrame>> getRegisteredTypes()
     {
-        return Collections.unmodifiableSet(registeredTypes);
+        return Collections.unmodifiableSet(new HashSet<Class<? extends WindupVertexFrame>>(registeredTypes.values()));
     }
 
     public void addTypeToRegistry(Class<? extends WindupVertexFrame> wvf)
     {
-        if (wvf.getAnnotation(TypeValue.class) != null)
+        TypeValue typeValueAnnotation = wvf.getAnnotation(TypeValue.class);
+        
+        // Do not attempt to add items where this is null... we use
+        // *Model types with no TypeValue to function as essentially
+        // "abstract" models that would never exist on their own (only as subclasses).
+        if (typeValueAnnotation != null)
         {
-            // Do not attempt to add items where this is null... we use
-            // *Model types with no TypeValue to function as essentially
-            // "abstract" models that would never exist on their own (only as subclasses).
+            if(registeredTypes.containsKey(typeValueAnnotation.value())) {
+                throw new IllegalArgumentException("Type value for model '" + wvf.getCanonicalName()
+                            + "' is already registered with model " + registeredTypes.get(typeValueAnnotation.value()).getName());
+            }
+            registeredTypes.put(typeValueAnnotation.value(),wvf);
             typeRegistry.add(wvf);
-            registeredTypes.add(wvf);
         }
     }
 
