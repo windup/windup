@@ -43,7 +43,8 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
 
         if (!zipFile.isFile())
         {
-            throw new WindupException("Input file \"" + zipFile.getAbsolutePath() + "\" does not exist.");
+            final String msg = "Input path doesn't point to a file: " + zipFile.getAbsolutePath();
+            throw new WindupException(msg);
         }
 
         // create a temp folder for all archive contents
