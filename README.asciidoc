@@ -9,6 +9,9 @@ Get involved at: http://windup.jboss.org
 * Commits Mailing List: windup-commits@lists.jboss.org
 
 
+=== Looking for stable Windup 0.68 source code?
+
+Visit https://github.com/windup/windup-legacy 
 
 === Project Source Code Format
 
