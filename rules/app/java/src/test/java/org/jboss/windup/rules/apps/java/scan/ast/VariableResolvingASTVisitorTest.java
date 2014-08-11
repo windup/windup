@@ -64,7 +64,7 @@ public class VariableResolvingASTVisitorTest
         Assert.assertNotNull(visitor);
 
         FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-        fileModel.setFilePath("src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
+        fileModel.setFilePath("../src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
 
         ASTParser parser = ASTParser.newParser(AST.JLS3);
         parser.setBindingsRecovery(true);

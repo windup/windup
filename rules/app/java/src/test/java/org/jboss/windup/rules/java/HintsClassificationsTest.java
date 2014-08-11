@@ -82,9 +82,9 @@ public class HintsClassificationsTest
     public void testIterationVariableResolving()
     {
         FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-        inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java/");
+        inputPath.setFilePath("../src/test/java/org/jboss/windup/rules/java/");
         FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-        fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/HintsClassificationsTest.java");
+        fileModel.setFilePath("../src/test/java/org/jboss/windup/rules/java/HintsClassificationsTest.java");
 
         WindupConfigurationModel config = GraphService.getConfigurationModel(context);
         config.setInputPath(inputPath);
