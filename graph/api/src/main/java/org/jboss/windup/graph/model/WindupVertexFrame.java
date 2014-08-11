@@ -19,6 +19,8 @@ public interface WindupVertexFrame extends VertexFrame
      */
     public static final String TYPE_PROP = "w:vertextype";
 
+
+
     @JavaHandler
     public String toPrettyString();
 
@@ -26,7 +28,11 @@ public interface WindupVertexFrame extends VertexFrame
     {
         public String toPrettyString()
         {
-            Vertex v = it();
+            return WindupVertexFrame.Impl.toPrettyString(it());
+        }
+        
+        public static String toPrettyString( Vertex v )
+        {
             StringBuilder result = new StringBuilder();
             result.append("[").append(v.toString()).append("=");
             result.append("{");

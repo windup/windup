@@ -12,12 +12,15 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Inject;
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
@@ -310,9 +313,10 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         T frame = this.context.getFramed().addVertex(null, this.type);
         try 
         {
-            PropertyUtils.copyProperties( source, frame );
-        } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException ex ) {
-            throw new WindupException("Failed copying properties into frame from: " + frame.getClass().getName() );
+            copyProperties( source, frame );
+        } catch( Exception ex ) {
+            throw new WindupException("Failed copying properties into frame from: " 
+                + frame.getClass().getName() + "\n    " + ex.getMessage(), ex );
         }
         return frame;
     }
@@ -321,6 +325,60 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     public void remove(T model)
     {
         model.asVertex().remove();
+    }
+
+
+    /**
+     * Finds the "writable properties" in the frame and copies values for those from the source, if available.
+     */
+    private void copyProperties( T source, T frame  ) {
+        if( source == null ) throw new IllegalArgumentException("source is null.");
+        List<Method> setters = PropertyUtils.findSetters( frame.getClass() );
+        for( Method setter : setters ) {
+            Method getter = PropertyUtils.findGetter( source.getClass(), deriveGetterName(setter.getName()), setter.getReturnType() );
+            if( getter == null )
+                continue;
+            copyFromGetterToSetter( source, frame, getter,  setter);
+        }
+    }
+
+
+    /**
+     * Helper method to encapsulate the exceptions.
+     */
+    private void copyFromGetterToSetter( T source, T dest, Method getter, Method setter ) {
+        Object val;
+        
+        // Get.
+        try {
+            val = getter.invoke( source );
+        } catch( IllegalArgumentException | IllegalAccessException | InvocationTargetException ex ) {
+            throw new RuntimeException("Unable to call getter "+getter.getDeclaringClass().getSimpleName() +"#"+ getter.getName()+": " + ex.getMessage(), ex);
+        }
+        
+        // Set.
+        try {
+            setter.invoke( dest, val );
+        } catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException ex ) {
+            throw new RuntimeException("Unable to call setter "+getter.getDeclaringClass().getSimpleName() +"#"+ getter.getName()+": " + ex.getMessage(), ex);
+        }
+    }
+
+
+    /**
+     * Removes "set" and uncapitalizes.
+     */
+    private String stripSetterPropName( String name ) {
+        return StringUtils.uncapitalize( StringUtils.removeStart(name, "set") );
+    }
+
+    
+    /**
+     * Calls stripSetterPropName(), capitalizes and adds get.
+     */
+    private String deriveGetterName( String name ) {
+        return "get" + StringUtils.removeStart(name, "set");
+        // Not bullet-proof.
     }
 
 }

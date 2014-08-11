@@ -15,7 +15,7 @@ import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.AbstractModule;
 import com.tinkerpop.frames.modules.Module;
-import org.jboss.windup.log.jul.config.Logging;
+
 
 @Singleton
 public class GraphTypeRegistry
@@ -61,7 +61,7 @@ public class GraphTypeRegistry
             else
             {
                 LOG.debug("Not adding to GraphTypeRegistry, not a subclass of WindupVertexFrame: "
-                            + clazz.getCanonicalName());
+                    + clazz.getCanonicalName());
             }
         }
     }
@@ -82,7 +82,4 @@ public class GraphTypeRegistry
         };
     }
     
-    static {
-        Logging.init();
-    }
 }

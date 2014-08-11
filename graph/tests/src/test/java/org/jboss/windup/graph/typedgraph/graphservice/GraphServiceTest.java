@@ -1,9 +1,11 @@
 package org.jboss.windup.graph.typedgraph.graphservice;
 
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.FramedGraphQuery;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.Iterator;
-
 import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -17,45 +19,40 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.graph.typedgraph.TestFooModel;
 import org.jboss.windup.graph.typedgraph.TestFooSubModel;
-import org.junit.After;
+import org.jboss.windup.graph.test.graphservice.model.TestMergeModel;
+import org.jboss.windup.graph.test.graphservice.model.TestMergeBean;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.attribute.Cmp;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @RunWith(Arquillian.class)
 public class GraphServiceTest
 {
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestFooModel.class, TestFooSubModel.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addClasses(TestFooModel.class, TestFooSubModel.class)
+            //.addClasses(TestMergeModel.class)
+            .addPackage("org.jboss.windup.graph.test.graphservice.model")
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
         return archive;
     }
 
     @Inject
     private GraphContext context;
 
-    @After
-    public void tearDown()
-    {
 
-    }
-
+    
     @Test
     public void testGraphTypeHandling() throws Exception
     {
@@ -158,4 +155,29 @@ public class GraphServiceTest
         Assert.assertNotNull(model2);
         context.getFramed().removeVertex(model.asVertex());
     }
+    
+
+    
+    // TODO: Move to Graph API's tests.
+    @Test
+    public void testMerge() throws Exception
+    {
+        try {
+            GraphService<TestMergeModel> gsMerge = new GraphService<>( context, TestMergeModel.class );
+            
+            final TestMergeBean bean = new TestMergeBean();
+            bean.setProp1("val1");
+            bean.setProp2("val2");
+            TestMergeModel merged = gsMerge.merge( bean );
+            
+            Assert.assertNotNull("Merged vertex is not null", merged.asVertex());
+            Assert.assertEquals("val1", merged.asVertex().getProperty("prop1") );
+            Assert.assertEquals("val2", merged.asVertex().getProperty("prop2") );
+        }
+        catch( Exception ex )
+        {
+            throw new Exception(ex);
+        }
+    }
+    
 }
