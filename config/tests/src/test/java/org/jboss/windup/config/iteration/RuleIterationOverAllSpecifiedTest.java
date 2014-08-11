@@ -18,7 +18,6 @@ import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.iteration.RuleIterationOverDefaultSingleVariableTest.IterationOverTypesRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
@@ -107,8 +106,8 @@ public class RuleIterationOverAllSpecifiedTest
         Assert.assertEquals(TestSimple2ModelCounter, 4);
 
     }
-    
-    @Test(expected=Exception.class)
+
+    @Test(expected = Exception.class)
     public void testTypeSelectionWithException()
     {
         final File folder = OperatingSystemUtils.createTempDir();

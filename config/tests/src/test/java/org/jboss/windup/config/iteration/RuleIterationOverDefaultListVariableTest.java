@@ -17,7 +17,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.iteration.RuleIterationOverTypesTest.IterationOverTypesRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
@@ -35,15 +34,16 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 /**
  * Testing the Iteration.over() approach.
+ * 
  * @author mbriskar
- *
+ * 
  */
 @RunWith(Arquillian.class)
 public class RuleIterationOverDefaultListVariableTest
 {
     public static int TestSimple2ModelCounter = 0;
     public static int TestSimple1ModelCounter = 0;
-    
+
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -84,7 +84,7 @@ public class RuleIterationOverDefaultListVariableTest
     {
         final File folder = OperatingSystemUtils.createTempDir();
         final GraphContext context = factory.create(folder);
-        
+
         TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
         context.getFramed().addVertex(null, TestSimple2Model.class);
         context.getFramed().addVertex(null, TestSimple2Model.class);
@@ -99,22 +99,21 @@ public class RuleIterationOverDefaultListVariableTest
         TestRuleIterationOverDefaultListVariableProvider provider = new TestRuleIterationOverDefaultListVariableProvider();
         Configuration configuration = provider.getConfiguration(context);
 
-        //this should call perform()
+        // this should call perform()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
         Assert.assertEquals(TestSimple1ModelCounter, 1);
         Assert.assertEquals(TestSimple2ModelCounter, 2);
         vertex.asVertex().remove();
-        //this should call otherwise()
+        // this should call otherwise()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
         Assert.assertEquals(TestSimple1ModelCounter, 1);
         Assert.assertEquals(TestSimple2ModelCounter, 4);
-        
-        
+
     }
-    
+
     public class TestRuleIterationOverDefaultListVariableProvider extends WindupRuleProvider
     {
-        
+
         @Override
         public RulePhase getPhase()
         {
