@@ -41,10 +41,9 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
         .addRule()
             .when(Query.find(TestXmlMetaFacetModel.class)
                 .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
-                            QueryPropertyComparisonType.EQUALS, "xmlTag3")
-                .as("xmlModels"))
+                            QueryPropertyComparisonType.EQUALS, "xmlTag3"))
             .perform(
-                Iteration.over(TestXmlMetaFacetModel.class, "xmlModels").as("xml")
+                Iteration.over(TestXmlMetaFacetModel.class)
                     .perform(new GraphOperation()
                     {
                         @Override
@@ -52,7 +51,7 @@ public class XmlExampleRuleProvider2 extends WindupRuleProvider
                         {
                             Variables varStack = org.jboss.windup.config.Variables.instance(event);
                             TestXmlMetaFacetModel xmlFacetModel =
-                                Iteration.getCurrentPayload(varStack, TestXmlMetaFacetModel.class, "xml");
+                                Iteration.getCurrentPayload(varStack, TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING);
                             typeSearchResults.add(xmlFacetModel);
                         }
                     })

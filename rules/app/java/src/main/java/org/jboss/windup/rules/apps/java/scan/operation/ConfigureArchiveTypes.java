@@ -30,10 +30,22 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
         this.graphTypeManager = graphTypeManager;
         initTypes();
     }
+    
+    public ConfigureArchiveTypes(GraphTypeManager graphTypeManager)
+    {
+        super(ArchiveModel.class);
+        this.graphTypeManager = graphTypeManager;
+        initTypes();
+    }
 
     public static ConfigureArchiveTypes forVar(String variableName, GraphTypeManager graphTypeManager)
     {
         return new ConfigureArchiveTypes(variableName, graphTypeManager);
+    }
+    
+    public static ConfigureArchiveTypes withTypeManager(GraphTypeManager graphTypeManager)
+    {
+        return new ConfigureArchiveTypes(graphTypeManager);
     }
 
     @Override

@@ -24,10 +24,10 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
         .addRule()
         .when(
-            Query.find(ArchiveModel.class).as("allUnzippedArchives")
+            Query.find(ArchiveModel.class)
         ).perform(
-            Iteration.over("allUnzippedArchives").as(ArchiveModel.class, "archive")
-                .perform(new ProcyonDecompilerOperation("archive"))
+            Iteration.over()
+                .perform(new ProcyonDecompilerOperation())
                 .endIteration()
         );
     }

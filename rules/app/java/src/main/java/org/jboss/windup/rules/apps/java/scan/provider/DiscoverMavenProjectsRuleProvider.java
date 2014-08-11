@@ -66,11 +66,10 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
     {
         ConditionBuilder fileWhen = Query
                     .find(XmlResourceModel.class)
-                    .withProperty(FileModel.PROPERTY_FILE_NAME, "pom.xml")
-                    .as("fileModels");
+                    .withProperty(FileModel.PROPERTY_FILE_NAME, "pom.xml");
 
         AbstractIterationOperation<XmlResourceModel> evaluatePomFiles = new AbstractIterationOperation<XmlResourceModel>(
-                    XmlResourceModel.class, "fileModel")
+                    XmlResourceModel.class)
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, XmlResourceModel payload)
@@ -123,7 +122,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             .addRule()
             .when(fileWhen)
             .perform(
-                Iteration.over("fileModels").as("fileModel").perform(evaluatePomFiles).endIteration()
+                Iteration.over().perform(evaluatePomFiles).endIteration()
             );
     }
 

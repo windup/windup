@@ -42,16 +42,16 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder configSearch = Query.find(WindupConfigurationModel.class).as("configuration");
+        ConditionBuilder configSearch = Query.find(WindupConfigurationModel.class);
 
         Configuration configuration = ConfigurationBuilder.begin()
         .addRule()
         .when(configSearch)
         .perform(
-            Iteration.over("configuration").as("cfg")
+            Iteration.over()
             .perform(
                 new AbstractIterationOperation<WindupConfigurationModel>(
-                            WindupConfigurationModel.class, "cfg")
+                            WindupConfigurationModel.class)
                 {
                     public void perform(GraphRewrite event,
                         EvaluationContext context, WindupConfigurationModel payload)

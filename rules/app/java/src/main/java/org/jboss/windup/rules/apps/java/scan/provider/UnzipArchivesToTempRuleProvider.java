@@ -38,10 +38,10 @@ public class UnzipArchivesToTempRuleProvider extends WindupRuleProvider
 
         return ConfigurationBuilder.begin().addRule()
             .when(
-                binaryModeOnly.and(Query.find(ArchiveModel.class).as("inputArchives"))
+                binaryModeOnly.and(Query.find(ArchiveModel.class))
             )
-            .perform(Iteration.over("inputArchives").as(ArchiveModel.class, "archive")
-                .perform(UnzipArchiveToTemporaryFolder.unzip("archive"))
+            .perform(Iteration.over(ArchiveModel.class)
+                .perform(UnzipArchiveToTemporaryFolder.unzip())
                 .endIteration()
             );
     }

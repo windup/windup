@@ -71,10 +71,9 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
          * Find all files for which there is at least one classification or blacklist
          */
         Condition finder = Query.find(FileModel.class)
-                    .piped(new FindClassifiedFilesGremlinCriterion())
-                    .as("fileModels");
+                    .piped(new FindClassifiedFilesGremlinCriterion());
 
-        GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>(FileModel.class, "fileModel")
+        GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>(FileModel.class)
         {
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {
@@ -96,7 +95,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
             .addRule()
             .when(finder)
             .perform(
-                Iteration.over("fileModels").as("fileModel")
+                Iteration.over()
                 .perform(addSourceReport).endIteration()
             );
     }

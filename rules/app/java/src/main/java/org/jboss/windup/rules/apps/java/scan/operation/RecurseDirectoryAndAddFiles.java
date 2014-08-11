@@ -14,11 +14,17 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     {
         super(FileModel.class, variableName);
     }
+    
+    public RecurseDirectoryAndAddFiles()
+    {
+        super(FileModel.class);
+    }
 
     public static RecurseDirectoryAndAddFiles startingAt(String variableName)
     {
         return new RecurseDirectoryAndAddFiles(variableName);
     }
+    
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)

@@ -85,8 +85,8 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
          * If all conditions of the .when() clause were satisfied, the following conditions will be
          * evaluated
          */
-        .perform(Iteration.over("javaMethods").as(JavaMethodModel.class, "javaMethod")
-            .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class, "javaMethod")
+        .perform(Iteration.over(JavaMethodModel.class,"javaMethods")
+            .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class, Iteration.singleVariableIterationName("javaMethods"))
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, JavaMethodModel methodModel)

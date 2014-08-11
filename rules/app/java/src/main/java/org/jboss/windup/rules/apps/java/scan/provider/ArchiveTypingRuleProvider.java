@@ -39,11 +39,11 @@ public class ArchiveTypingRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
             .addRule()
             .when(
-                Query.find(ArchiveModel.class).as("archives")
+                Query.find(ArchiveModel.class)
             )
             .perform(
-                Iteration.over("archives").as("archive")
-                .perform(ConfigureArchiveTypes.forVar("archive", graphTypeManager))
+                Iteration.over()
+                .perform(ConfigureArchiveTypes.withTypeManager(graphTypeManager))
                 .endIteration()
             );
     }
