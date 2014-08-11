@@ -20,6 +20,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
+import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
 
 public class JavaClassService extends GraphService<JavaClassModel>
 {
@@ -56,13 +57,13 @@ public class JavaClassService extends GraphService<JavaClassModel>
 
     public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
-        return getGraphContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+        return getGraphContext().getFramed().query().has(TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
                     .has("packageName", packageName).vertices(getType());
     }
 
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
-        return getGraphContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+        return getGraphContext().getFramed().query().has(TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
                     .has("majorVersion", version.getMajor())
                     .has("minorVersion", version.getMinor()).vertices(getType());
     }

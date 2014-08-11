@@ -1,28 +1,10 @@
-package org.jboss.windup.log;
+package org.jboss.windup.log.jul.format;
 
 import java.util.logging.*;
 
 /**
- * This <tt>Handler</tt> publishes log records to <tt>System.err</tt>. By
- * default the <tt>SimpleFormatter</tt> is used to generate brief summaries.
- * <p>
- * <b>Configuration:</b>
- * By default each <tt>ConsoleHandler</tt> is initialized using the following
- * <tt>LogManager</tt> configuration properties. If properties are not defined
- * (or have invalid values) then the specified default values are used.
- * <ul>
- * <li> java.util.logging.ConsoleHandler.level specifies the default level for
- * the <tt>Handler</tt>
- * (defaults to <tt>Level.INFO</tt>).
- * <li> java.util.logging.ConsoleHandler.filter specifies the name of a
- * <tt>Filter</tt> class to use (defaults to no <tt>Filter</tt>).
- * <li> java.util.logging.ConsoleHandler.formatter specifies the name of a
- * <tt>Formatter</tt> class to use (defaults to
- * <tt>java.util.logging.SimpleFormatter</tt>).
- * <li> java.util.logging.ConsoleHandler.encoding the name of the character set
- * encoding to use (defaults to the default platform encoding).
- * </ul>
- * <p>
+ * This <tt>Handler</tt> publishes log records to <tt>System.out</tt>.
+ * Similar to java.util.logging.ConsoleHandler.
  */
 public class SystemOutHandler2 extends StreamHandler {
     // Private method to configure a ConsoleHandler from LogManager
@@ -48,8 +30,6 @@ public class SystemOutHandler2 extends StreamHandler {
             try {
                 setEncoding( null );
             } catch( Exception ex2 ) {
-      // doing a setEncoding with null should always work.
-                // assert false;
             }
         }
     }
@@ -64,8 +44,7 @@ public class SystemOutHandler2 extends StreamHandler {
                 return (Formatter) clz.newInstance();
             }
         } catch( Exception ex ) {
-            // We got one of a variety of exceptions in creating the
-            // class or creating an instance. Drop through.
+            // Drop through.
         }
         // We got an exception.  Return the defaultValue.
         return defaultValue;
@@ -77,12 +56,11 @@ public class SystemOutHandler2 extends StreamHandler {
      * <p>
      * The <tt>ConsoleHandler</tt> is configured based on
      * <tt>LogManager</tt> properties (or their default values).
+     *
      */
     public SystemOutHandler2() {
-        //  sealed = false;
         configure();
-        setOutputStream( System.err );
-        //sealed = true;
+        setOutputStream( System.out );
     }
 
 
