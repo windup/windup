@@ -1,13 +1,13 @@
 package org.jboss.windup.graph.dao;
 
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import java.nio.file.Paths;
-
 import org.jboss.windup.graph.GraphContext;
+import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
 public class FileModelService extends GraphService<FileModel>
 {
@@ -75,7 +75,7 @@ public class FileModelService extends GraphService<FileModel>
             regex = ".+\\." + builder.toString() + "$";
         }
 
-        return getGraphContext().getFramed().query().has("type", Text.CONTAINS, getTypeValueForSearch())
+        return getGraphContext().getFramed().query().has(TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
                     .has("filePath", Text.REGEX, regex).vertices(getType());
     }
 }

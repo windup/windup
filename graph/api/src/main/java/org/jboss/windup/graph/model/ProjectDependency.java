@@ -12,9 +12,9 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("ProjectDependency")
 public interface ProjectDependency extends WindupVertexFrame
 {
-    public static final String PROPERTY_SCOPE = "scope";
-    public static final String PROPERTY_CLASSIFIER = "classifier";
-    public static final String PROPERTY_TYPE = "type";
+    public static final String PROPERTY_SCOPE = "mvn:scope";
+    public static final String PROPERTY_CLASSIFIER = "mvn:classifier";
+    public static final String PROPERTY_TYPE = "mvn:type";
 
     @Property(PROPERTY_SCOPE)
     void setScope(String scope);

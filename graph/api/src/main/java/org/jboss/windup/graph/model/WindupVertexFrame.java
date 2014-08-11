@@ -8,20 +8,24 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
+
 /**
  * The base {@link VertexFrame} type implemented by all model types.
  */
-@TypeField(WindupVertexFrame.TYPE_FIELD)
+@TypeField(WindupVertexFrame.TYPE_PROP)
 public interface WindupVertexFrame extends VertexFrame
 {
     /**
-     * Stores the vertex types for graph lookup via {@link GraphService} and other query mechanisms.
+     * Name of the property where vertex/frame types are stored.
+     * @see org.jboss.windup.graph.GraphTypeManager
      */
-    public static final String TYPE_FIELD = "type";
+    public static final String TYPE_PROP = "type";
 
+    
     @JavaHandler
     public String toPrettyString();
 
+    
     abstract class Impl implements WindupVertexFrame, JavaHandlerContext<Vertex>
     {
         public String toPrettyString()
@@ -30,22 +34,14 @@ public interface WindupVertexFrame extends VertexFrame
             StringBuilder result = new StringBuilder();
             result.append("[").append(v.toString()).append("=");
             result.append("{");
-            boolean first = true;
             for (String propKey : v.getPropertyKeys())
             {
-                if (first)
-                {
-                    first = false;
-                }
-                else
-                {
-                    result.append(", ");
-                }
                 Object propVal = v.getProperty(propKey);
                 result.append(propKey).append(": ").append(propVal);
+                result.append(", ");
             }
-            result.append("}");
-            result.append("]");
+            result.deleteCharAt(result.length()-1);
+            result.append("}]");
             return result.toString();
         }
     }

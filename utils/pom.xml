@@ -15,6 +15,13 @@
     <name>Windup Engine - Utils</name>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/java</directory>
+                <excludes><exclude>*.java</exclude></excludes>
+            </testResource>
+        </testResources>
+        
         <plugins>
             <!-- Forge addon creation -->
             <plugin>
@@ -58,6 +65,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
 
     </dependencies>

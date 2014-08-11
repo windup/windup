@@ -13,6 +13,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
+import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
 
 public class ArchiveService extends GraphService<ArchiveModel>
 {
@@ -30,7 +31,7 @@ public class ArchiveService extends GraphService<ArchiveModel>
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getGraphContext()
-                    .getGraph().query().has("type", Text.CONTAINS, getTypeValueForSearch()).vertices())
+                    .getGraph().query().has(TYPE_PROP, Text.CONTAINS, getTypeValueForSearch()).vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java
                     // class model.
