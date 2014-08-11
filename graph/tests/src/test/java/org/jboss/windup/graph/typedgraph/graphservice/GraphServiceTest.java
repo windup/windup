@@ -67,7 +67,7 @@ public class GraphServiceTest
         {
             GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
 
-            Iterable<Vertex> vertices = context.getFramed().query().has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS,
+            Iterable<Vertex> vertices = context.getFramed().query().has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
                         TestFooModel.class.getAnnotation(TypeValue.class).value()).vertices();
 
             int numberFound = 0;
@@ -140,7 +140,7 @@ public class GraphServiceTest
         
         //test findAll
         FramedGraphQuery query = context.getFramed().query();
-        query.has(WindupVertexFrame.TYPE_FIELD, Text.CONTAINS, "Foo");
+        query.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "Foo");
         Iterable<TestFooSubModel> verticesFoundByContext = query.vertices(TestFooSubModel.class);
         Iterator<TestFooSubModel> iterator = verticesFoundByContext.iterator();
         Assert.assertTrue(iterator.hasNext());
