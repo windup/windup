@@ -44,7 +44,7 @@ public class FreeMarkerIterationOperationTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(FreeMarkerOperationRuleProvider.class)
+                    .addClass(TestFreeMarkerOperationRuleProvider.class)
                     .addAsResource(new File("src/test/resources/reports"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -57,8 +57,9 @@ public class FreeMarkerIterationOperationTest
 
     @Inject
     private GraphContext context;
+    
     @Inject
-    private FreeMarkerOperationRuleProvider provider;
+    private TestFreeMarkerOperationRuleProvider provider;
 
     private Path tempFolder;
 

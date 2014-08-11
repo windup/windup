@@ -10,7 +10,7 @@ import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class FreeMarkerOperationRuleProvider extends WindupRuleProvider
+public class TestFreeMarkerOperationRuleProvider extends WindupRuleProvider
 {
 
     @Inject

@@ -32,9 +32,9 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class JavaExampleRuleProvider extends WindupRuleProvider
+public class TestJavaExampleRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(JavaExampleRuleProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestJavaExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
 

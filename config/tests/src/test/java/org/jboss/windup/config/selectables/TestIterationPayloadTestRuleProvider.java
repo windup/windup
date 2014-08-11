@@ -16,7 +16,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class IterationPayloadTestRuleProvider extends WindupRuleProvider
+public class TestIterationPayloadTestRuleProvider extends WindupRuleProvider
 {
     private Set<TestParentModel> parents = new HashSet<>();
     private Set<TestChildModel> children = new HashSet<>();

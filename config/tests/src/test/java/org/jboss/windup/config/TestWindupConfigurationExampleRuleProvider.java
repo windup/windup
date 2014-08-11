@@ -32,9 +32,9 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
+public class TestWindupConfigurationExampleRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(WindupConfigurationExampleRuleProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestWindupConfigurationExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, JavaMethodModel methodModel)
                 {
-                    WindupConfigurationExampleRuleProvider.this.config = GraphService
+                    TestWindupConfigurationExampleRuleProvider.this.config = GraphService
                                 .getConfigurationModel(event.getGraphContext());
 
                     results.add(methodModel);

@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
@@ -23,7 +23,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class XmlExampleRuleProvider3 extends WindupRuleProvider
+public class TestXmlExampleRuleProvider2 extends WindupRuleProvider
 {
     final List<TestXmlMetaFacetModel> typeSearchResults = new ArrayList<>();
 
@@ -38,21 +38,24 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule()
+        .addRule()
             .when(Query.find(TestXmlMetaFacetModel.class)
                 .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
-                    QueryPropertyComparisonType.EQUALS, "xmlTag2"))
-            .perform(Iteration.over(TestXmlMetaFacetModel.class)
-                .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>()
-                {
-                    public void perform(GraphRewrite event, EvaluationContext context, TestXmlMetaFacetModel payload) {
-                        Variables varStack = Variables.instance(event);
-                        TestXmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
-                                    TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING);
-                        typeSearchResults.add(xmlFacetModel);
-                    }
-                })
-                .endIteration()
+                            QueryPropertyComparisonType.EQUALS, "xmlTag3"))
+            .perform(
+                Iteration.over(TestXmlMetaFacetModel.class)
+                    .perform(new GraphOperation()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context)
+                        {
+                            Variables varStack = org.jboss.windup.config.Variables.instance(event);
+                            TestXmlMetaFacetModel xmlFacetModel =
+                                Iteration.getCurrentPayload(varStack, TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING);
+                            typeSearchResults.add(xmlFacetModel);
+                        }
+                    })
+                    .endIteration()
             );
         return configuration;
     }
@@ -62,4 +65,5 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
     {
         return typeSearchResults;
     }
+
 }
