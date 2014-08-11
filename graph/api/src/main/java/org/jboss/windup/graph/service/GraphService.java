@@ -12,18 +12,20 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.InMemoryVertexFrame;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.util.exception.WindupException;
+
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
@@ -299,9 +301,11 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     /**
      * Takes an object implementing a model interface, 
      * creates a vertex and copies the properties into the returned proxy.
-     * Something like JPA's persist().
+     * Something like JPA's merge().
+     * This method doesn't deal with any ID's; maybe in the future.
+     * So, the vertex is always created and returned.
      */
-    public T persist( T source )
+    public T merge( T source )
     {
         T frame = this.context.getFramed().addVertex(null, this.type);
         try 
@@ -310,7 +314,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException ex ) {
             throw new WindupException("Failed copying properties into frame from: " + frame.getClass().getName() );
         }
-        this.context.getGraph().commit();
         return frame;
     }
 
