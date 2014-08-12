@@ -57,7 +57,7 @@ public class WindupPropertyMethodHandlerTest
         Iterable<Vertex> vertices = context
                     .getFramed()
                     .query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
+                    .has(WindupVertexFrame.TYPE_PROP, 
                                 TestFooModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 

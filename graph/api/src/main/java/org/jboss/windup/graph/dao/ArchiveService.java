@@ -8,6 +8,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 
+import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -31,7 +32,7 @@ public class ArchiveService extends GraphService<ArchiveModel>
     {
         // iterate through all vertices
         Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getGraphContext()
-                    .getGraph().query().has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
+                    .getGraph().query().has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, getTypeValueForSearch())
                     .vertices())
 
                     // check to see whether there is an edge coming in that links to the resource providing the java

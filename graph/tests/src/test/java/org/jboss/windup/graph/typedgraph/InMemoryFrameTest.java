@@ -59,7 +59,7 @@ public class InMemoryFrameTest
         Iterable<Vertex> vertices = context
                     .getFramed()
                     .query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
+                    .has(WindupVertexFrame.TYPE_PROP, 
                                 TestFooModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 
@@ -72,7 +72,7 @@ public class InMemoryFrameTest
         vertices = context
                     .getFramed()
                     .query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
+                    .has(WindupVertexFrame.TYPE_PROP, 
                                 TestFooModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 

@@ -16,6 +16,7 @@ import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
 import com.thinkaurelius.titan.core.TitanGraphQuery;
 import com.thinkaurelius.titan.core.TitanTransaction;
+import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import com.tinkerpop.blueprints.Vertex;
@@ -93,7 +94,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     public Iterable<T> findAll()
     {
         FramedGraphQuery query = context.getFramed().query();
-        query.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, type.getAnnotation(TypeValue.class).value());
+        query.has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, type.getAnnotation(TypeValue.class).value());
         return (Iterable<T>) query.vertices(type);
     }
 
@@ -101,7 +102,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     public Iterable<T> findAllByProperties(String[] keys, String[] vals)
     {
         FramedGraphQuery fgq = context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch());
+                    .has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, getTypeValueForSearch());
 
         for (int i = 0, j = keys.length; i < j; i++)
         {
@@ -147,7 +148,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             regexFinal = builder.toString();
         }
 
-        return context.getFramed().query().has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
+        return context.getFramed().query().has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, getTypeValueForSearch())
                     .has(key, Text.REGEX, regexFinal).vertices(type);
     }
 
@@ -172,7 +173,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         return getGraphContext()
                     .getGraph().getBaseGraph().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch());
+                    .has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, getTypeValueForSearch());
     }
 
     protected String getTypeValueForSearch()
