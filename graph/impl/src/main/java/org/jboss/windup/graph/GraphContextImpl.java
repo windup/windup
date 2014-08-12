@@ -12,6 +12,7 @@ import org.jboss.windup.graph.service.Service;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanKey;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
@@ -91,7 +92,6 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("storage.index.search.local-mode", "true");
 
         this.titanGraph = TitanFactory.open(conf);
-        this.eventGraph = new EventGraph<TitanGraph>(this.titanGraph);
 
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
@@ -109,9 +109,10 @@ public class GraphContextImpl implements GraphContext
         
         for (String key : new String[] { WindupVertexFrame.TYPE_PROP })
         {
-            this.titanGraph.makeKey(key).list().dataType(String.class).indexed("search", Vertex.class).make();
+            this.titanGraph.makeKey(key).list().dataType(String.class).indexed(Vertex.class).make();
         }
 
+        this.eventGraph = new EventGraph<TitanGraph>(this.titanGraph);
         batch = new BatchGraph<TitanGraph>(this.titanGraph, 1000L);
 
         // Composite classloader
