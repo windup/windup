@@ -10,7 +10,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.typedgraph.TestFooModel;
 import org.jboss.windup.graph.typedgraph.TestFooSubModel;
 import org.junit.Assert;
@@ -58,9 +57,9 @@ public class EventGraphTest
         // reset all stats to zero
         stubGraphListener.reset();
 
-        // this should trigger one property change
-        GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
-
+        //records as a property change.
+        initialModelType.setProp1("ex");
+        
         Assert.assertEquals(1, stubGraphListener.vertexPropertyChangedEventRecorded());
     }
 }

@@ -16,8 +16,10 @@ import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
 import com.thinkaurelius.titan.core.TitanGraphQuery;
 import com.thinkaurelius.titan.core.TitanTransaction;
+import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
+import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.VertexFrame;
@@ -92,19 +94,20 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         context.getFramed().removeVertex(frame.asVertex());
     }
 
+    protected FramedGraphQuery findAllQuery() {
+    	return context.getQuery().type(type);
+    }
+    
     @Override
     public Iterable<T> findAll()
     {
-        FramedGraphQuery query = context.getFramed().query();
-        query.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, type.getAnnotation(TypeValue.class).value());
-        return (Iterable<T>) query.vertices(type);
+        return (Iterable<T>) findAllQuery().vertices(type);
     }
 
     @Override
     public Iterable<T> findAllByProperties(String[] keys, String[] vals)
     {
-        FramedGraphQuery fgq = context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch());
+        FramedGraphQuery fgq = findAllQuery();
 
         for (int i = 0, j = keys.length; i < j; i++)
         {
@@ -149,9 +152,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             builder.append(")\\b");
             regexFinal = builder.toString();
         }
-
-        return context.getFramed().query().has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
-                    .has(key, Text.REGEX, regexFinal).vertices(type);
+        return findAllQuery().has(key, Text.REGEX, regexFinal).vertices(type);
     }
 
     @Override
@@ -171,11 +172,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return type;
     }
 
-    protected TitanGraphQuery getTypedQuery()
+    protected GraphQuery getTypedQuery()
     {
-        return getGraphContext()
-                    .getGraph().getBaseGraph().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch());
+        return getGraphContext().getQuery().type(type);
     }
 
     protected String getTypeValueForSearch()

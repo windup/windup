@@ -2,7 +2,6 @@ package org.jboss.windup.config.query;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -20,7 +19,7 @@ class QueryTypeCriterion implements QueryFramesCriterion
     @Override
     public void query(FramedGraphQuery q)
     {
-        q.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, typeValue);
+        q.has(WindupVertexFrame.TYPE_PROP, typeValue);
     }
 
     private static String getTypeValue(Class<? extends WindupVertexFrame> clazz)
@@ -42,7 +41,7 @@ class QueryTypeCriterion implements QueryFramesCriterion
     public static GremlinPipeline<Vertex, Vertex> addPipeFor(GremlinPipeline<Vertex, Vertex> pipeline,
                 Class<? extends WindupVertexFrame> clazz)
     {
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValue(clazz));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, getTypeValue(clazz));
         return pipeline;
     }
 }

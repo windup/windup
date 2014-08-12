@@ -13,9 +13,12 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import com.thinkaurelius.titan.core.TitanProperty;
+import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
@@ -27,8 +30,6 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @Singleton
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
-    private static final String DELIMITER = "|";
-
     private Map<String,Class<? extends WindupVertexFrame>> registeredTypes= new HashMap<>();
     private TypeRegistry typeRegistry = new TypeRegistry();
 
@@ -60,6 +61,8 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
+    	EventVertex ev = (EventVertex)element;
+    	StandardVertex v = (StandardVertex)ev.getBaseVertex();
         Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
@@ -70,30 +73,9 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
 
         String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
-        if (typeValue.contains(DELIMITER))
-        {
-            throw new IllegalArgumentException("Type value for class '" + kind.getCanonicalName()
-                        + "' is '" + typeValue + "' but must not contain the \"" + DELIMITER + "\" character.");
-        }
-        if (!StringUtils.isAlphanumeric(typeValue))
-        {
-            throw new IllegalArgumentException("Type value for class '" + kind.getCanonicalName()
-                        + "' is '" + typeValue + "' but must be alphanumeric.");
-        }
 
         // Store the type value in a delimited list.
-        String currentPropertyValue = element.getProperty(typeFieldName);
-        if (currentPropertyValue == null)
-        {
-            // If there is no current value, initialize with "|typeValue".
-            element.setProperty(typeFieldName, DELIMITER + typeValue + DELIMITER);
-        }
-        else if (!currentPropertyValue.contains(DELIMITER + typeValue + DELIMITER))
-        {
-            // Otherwise, append to the end, making sure that the list is terminated with the delimiter.
-            element.setProperty(typeFieldName, currentPropertyValue + typeValue + DELIMITER);
-        }
-
+        v.addProperty(typeFieldName, typeValue);
         addSuperclassType(kind, element);
     }
 
@@ -139,14 +121,17 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             // Name of the graph element property holding the type list.
             String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-            String valuesAll = e.getProperty(propName);
+            EventVertex ev = (EventVertex)e;
+        	StandardVertex v = (StandardVertex)ev.getBaseVertex();
+            
+            Iterable<TitanProperty> valuesAll = v.getProperties(propName);
             if (valuesAll != null)
             {
-                String[] valuesArray = StringUtils.split(valuesAll, DELIMITER);
+                
                 List<Class<?>> resultClasses = new ArrayList<>();
-                for (String value : valuesArray)
+                for (TitanProperty value : valuesAll)
                 {
-                    Class<?> type = typeRegistry.getType(typeHoldingTypeField, value);
+                    Class<?> type = typeRegistry.getType(typeHoldingTypeField, value.getValue().toString());
                     if (type == null)
                         continue;
                     resultClasses.add(type);

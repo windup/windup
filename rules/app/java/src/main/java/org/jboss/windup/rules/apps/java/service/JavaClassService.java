@@ -8,14 +8,12 @@ import javax.inject.Inject;
 
 import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -57,15 +55,13 @@ public class JavaClassService extends GraphService<JavaClassModel>
 
     public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
-        return getGraphContext().getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
+        return getGraphContext().getQuery().type(JavaClassModel.class)
                     .has("packageName", packageName).vertices(getType());
-    }
+    } 
 
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
-        return getGraphContext().getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
+    	return getGraphContext().getQuery().type(JavaClassModel.class)
                     .has("majorVersion", version.getMajor())
                     .has("minorVersion", version.getMinor()).vertices(getType());
     }
