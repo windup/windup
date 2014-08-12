@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.attribute.Text;
+import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -67,8 +67,7 @@ public class GraphServiceTest
         {
             GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
 
-            Iterable<Vertex> vertices = context.getFramed().query().has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
-                        TestFooModel.class.getAnnotation(TypeValue.class).value()).vertices();
+            Iterable<Vertex> vertices = context.getQuery().type(TestFooModel.class).vertices();
 
             int numberFound = 0;
             for (Vertex v : vertices)
@@ -102,12 +101,7 @@ public class GraphServiceTest
             GraphService.addTypeToModel(context, foo1, TestFooSubModel.class);
             GraphService.addTypeToModel(context, foo2, TestFooSubModel.class);
 
-            Iterable<Vertex> vertices = context
-                        .getFramed()
-                        .query()
-                        .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
-                                    TestFooSubModel.class.getAnnotation(TypeValue.class).value())
-                        .vertices();
+            Iterable<Vertex> vertices = context.getQuery().type(TestFooSubModel.class).vertices();
 
             int numberFound = 0;
             for (Vertex v : vertices)
@@ -142,7 +136,7 @@ public class GraphServiceTest
 
         // test findAll
         FramedGraphQuery query = context.getFramed().query();
-        query.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "Foo");
+        query.has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, "Foo");
         Iterable<TestFooSubModel> verticesFoundByContext = query.vertices(TestFooSubModel.class);
         Iterator<TestFooSubModel> iterator = verticesFoundByContext.iterator();
         Assert.assertTrue(iterator.hasNext());

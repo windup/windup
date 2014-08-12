@@ -51,7 +51,7 @@ public class MavenModelService extends GraphService<MavenProjectModel>
     public boolean isMavenConfiguration(XmlResourceModel resource)
     {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet")
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, this.getTypeValueForSearch()).back("facet")
+                    .has(WindupVertexFrame.TYPE_PROP, this.getTypeValueForSearch()).back("facet")
                     .iterator().hasNext();
     }
 
@@ -60,7 +60,7 @@ public class MavenModelService extends GraphService<MavenProjectModel>
         @SuppressWarnings("unchecked")
         Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
                     .in("xmlFacet").as("facet")
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, this.getTypeValueForSearch()).back("facet")
+                    .has(WindupVertexFrame.TYPE_PROP, this.getTypeValueForSearch()).back("facet")
                     .iterator();
         if (v.hasNext())
         {

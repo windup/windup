@@ -37,7 +37,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel);
         pipeline.in("fileToProjectModel").in("fileModel")
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE).V();
+                    .has(WindupVertexFrame.TYPE_PROP, BlackListModel.TYPE).V();
 
         return new FramedVertexIterable<InlineHintModel>(getGraphContext().getFramed(), pipeline, InlineHintModel.class);
     }

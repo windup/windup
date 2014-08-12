@@ -97,13 +97,13 @@ public class RuleIterationOverAllSpecifiedTest
 
         // this should call perform()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(TestSimple1ModelCounter, 1);
-        Assert.assertEquals(TestSimple2ModelCounter, 2);
+        Assert.assertEquals(1, TestSimple1ModelCounter);
+        Assert.assertEquals(2, TestSimple2ModelCounter);
         vertex.asVertex().remove();
         // this should call otherwise()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(TestSimple1ModelCounter, 1);
-        Assert.assertEquals(TestSimple2ModelCounter, 4);
+        Assert.assertEquals(1, TestSimple1ModelCounter);
+        Assert.assertEquals(4, TestSimple2ModelCounter);
 
     }
 
