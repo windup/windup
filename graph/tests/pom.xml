@@ -11,6 +11,11 @@
     
     <name>Windup Engine - Graph Tests</name>
     
+    <properties>
+        <!-- Needs to be redefined for each submodule. -->
+        <rootProject.dir>../..</rootProject.dir>
+    </properties>
+    
     <build>
         <testResources>
             <testResource>
