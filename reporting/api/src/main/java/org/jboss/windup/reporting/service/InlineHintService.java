@@ -6,7 +6,6 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
@@ -37,7 +36,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel);
         pipeline.in("fileToProjectModel").in("fileModel")
-                    .has(WindupVertexFrame.TYPE_PROP, BlackListModel.TYPE).V();
+                    .has(WindupVertexFrame.TYPE_PROP, InlineHintModel.TYPE).V();
 
         return new FramedVertexIterable<InlineHintModel>(getGraphContext().getFramed(), pipeline, InlineHintModel.class);
     }

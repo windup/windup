@@ -2,16 +2,12 @@ package org.jboss.windup.reporting.query;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
-import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
@@ -30,11 +26,11 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
         // create a pipeline to get all blacklisted items
         GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
                     context.getQuery().type(FileModel.class).vertices());
-        blacklistPipeline.as("fileModel1").in(InlineHintModel.FILE_MODEL).back("fileModel1");
+        hintPipeline.as("fileModel1").in(InlineHintModel.FILE_MODEL).back("fileModel1");
 
         // create a pipeline to get all items with attached classifications
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
-        		context.getQuery().type(FileModel.class).vertices());
+                    context.getQuery().type(FileModel.class).vertices());
 
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .back("fileModel2");
