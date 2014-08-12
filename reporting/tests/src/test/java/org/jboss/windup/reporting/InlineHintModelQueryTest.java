@@ -91,14 +91,12 @@ public class InlineHintModelQueryTest
         c2.addFileModel(f3);
 
         List<Vertex> vertexList = new ArrayList<>();
-        for (Vertex v : context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE).vertices())
+        for (Vertex v : context.getQuery().type(FileModel.class).vertices())
         {
             vertexList.add(v);
         }
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE).vertices());
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getQuery().type(FileModel.class).vertices());
 
         GraphRewrite event = new GraphRewrite(context);
 

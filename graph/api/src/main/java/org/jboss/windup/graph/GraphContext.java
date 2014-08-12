@@ -2,6 +2,7 @@ package org.jboss.windup.graph;
 
 import java.io.File;
 
+import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.service.Service;
 
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -31,6 +32,12 @@ public interface GraphContext
      */
     public GraphTypeRegistry getGraphTypeRegistry();
 
+    /**
+     * Get the {@link GraphTypeRegistry}.
+     */
+    public TypeAwareFramedGraphQuery getQuery();
+
+    
     /**
      * Get the location on disk where the underlying {@link TitanGraph} is stored.
      */

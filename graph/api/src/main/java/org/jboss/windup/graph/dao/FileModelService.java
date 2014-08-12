@@ -77,8 +77,7 @@ public class FileModelService extends GraphService<FileModel>
             regex = ".+\\." + builder.toString() + "$";
         }
 
-        return getGraphContext().getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, getTypeValueForSearch())
-                    .has("filePath", Text.REGEX, regex).vertices(getType());
+        return getGraphContext().getQuery().type(FileModel.class)
+        		.has("filePath", Text.REGEX, regex).vertices(FileModel.class);
     }
 }

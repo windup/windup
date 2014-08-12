@@ -31,10 +31,7 @@ public class ArchiveService extends GraphService<ArchiveModel>
     public Iterable<ArchiveModel> findAllRootArchives()
     {
         // iterate through all vertices
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getGraphContext()
-                    .getGraph().query().has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, getTypeValueForSearch())
-                    .vertices())
-
+        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getTypedQuery())
                     // check to see whether there is an edge coming in that links to the resource providing the java
                     // class model.
                     .filter(new PipeFunction<Vertex, Boolean>()

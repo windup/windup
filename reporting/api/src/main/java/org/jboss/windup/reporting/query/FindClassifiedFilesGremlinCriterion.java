@@ -25,26 +25,21 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
     @Override
     public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
     {
-        FramedGraph<EventGraph<TitanGraph>> framed = event.getGraphContext().getFramed();
+        GraphContext context = event.getGraphContext();
 
-        // create a pipeline to get all items with inline hints
+        // create a pipeline to get all blacklisted items
         GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
-                    framed
-                                .query()
-                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE)
-                                .vertices());
-        hintPipeline.as("fileModel1").in(InlineHintModel.FILE_MODEL).back("fileModel1");
+                    context.getQuery().type(FileModel.class).vertices());
+        blacklistPipeline.as("fileModel1").in(InlineHintModel.FILE_MODEL).back("fileModel1");
 
         // create a pipeline to get all items with attached classifications
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
-                    framed
-                                .query()
-                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE)
-                                .vertices());
+        		context.getQuery().type(FileModel.class).vertices());
+
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .back("fileModel2");
 
-        // combine these to get all file models that have either classifications or hints
+        // combine these to get all file models that have either classifications or blacklists
         pipeline.or(hintPipeline, classificationPipeline);
     }
 }
