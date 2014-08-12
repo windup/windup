@@ -30,7 +30,7 @@ import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
-public class FreeMarkerIterationOperationTest extends AbstractTestCase
+public class FreeMarkerIterationOperationTest
 {
 
     @Deployment
@@ -43,16 +43,15 @@ public class FreeMarkerIterationOperationTest extends AbstractTestCase
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-            .addBeansXML()
-            .addClass(AbstractTestCase.class)
-            .addClass(FreeMarkerOperationRuleProvider.class)
-            .addAsResource(new File("../src/test/resources/reports"))
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                    .addBeansXML()
+                    .addClass(FreeMarkerOperationRuleProvider.class)
+                    .addAsResource(new File("../src/test/resources/reports"))
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
         return archive;
     }
 

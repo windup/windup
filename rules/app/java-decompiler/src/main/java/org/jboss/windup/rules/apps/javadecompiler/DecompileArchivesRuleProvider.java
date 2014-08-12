@@ -17,6 +17,12 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
         return RulePhase.INITIAL_ANALYSIS;
     }
 
+    @Override
+    public String getID()
+    {
+        return "Windup:DecompileArchivesRuleProvider";
+    }
+
     // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)

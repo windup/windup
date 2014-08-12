@@ -91,7 +91,6 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
          */
         GraphRewrite event = (GraphRewrite) rewrite;
 
-        // List<Rule> cacheable = new ArrayList<>();
         List<Rule> rules = config.getRules();
 
         final EvaluationContextImpl subContext = new EvaluationContextImpl();
@@ -119,7 +118,6 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
                     subContext.setState(RewriteState.PERFORMING);
                     log.debug("Rule [" + rule + "] matched and will be performed.");
-                    // cacheable.add(rule);
 
                     List<Operation> preOperations = subContext.getPreOperations();
                     for (Operation preOperation : preOperations)
@@ -385,5 +383,5 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         + rule + "] ");
         }
 
-    }// ParameterizedCallbackImpl
+    }
 }

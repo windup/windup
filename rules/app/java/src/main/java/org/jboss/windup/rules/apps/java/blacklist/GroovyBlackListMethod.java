@@ -2,25 +2,24 @@ package org.jboss.windup.rules.apps.java.blacklist;
 
 import groovy.lang.Closure;
 
-import javax.inject.Inject;
-
+import org.jboss.windup.config.RulePhase;
+import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.ext.groovy.GroovyConfigContext;
 import org.jboss.windup.ext.groovy.GroovyConfigMethod;
-import org.jboss.windup.ext.java.events.JavaASTEventService;
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.rules.apps.java.config.JavaClass;
 
 public class GroovyBlackListMethod implements GroovyConfigMethod
 {
-    @Inject
-    private JavaASTEventService dslSupport;
-
     @Override
-    public String getName(GraphContext context)
+    public String getName(GroovyConfigContext context)
     {
         return "blacklistType";
     }
 
     @Override
-    public Closure<?> getClosure(final GraphContext context)
+    public Closure<?> getClosure(final GroovyConfigContext context)
     {
         return new Closure<Void>(this)
         {
@@ -32,8 +31,22 @@ public class GroovyBlackListMethod implements GroovyConfigMethod
                 String ruleID = (String) args[0];
                 String regexPattern = (String) args[1];
                 String hint = (String) args[2];
-                BlackListRegex blackListSupportRegex = new BlackListRegex(ruleID, hint, regexPattern, 0, null);
-                dslSupport.registerInterest(blackListSupportRegex);
+
+                WindupRuleProviderBuilder ruleProvider = WindupRuleProviderBuilder.begin(ruleID);
+
+                ruleProvider.setPhase(RulePhase.MIGRATION_RULES)
+                            .addRule()
+                            .when(JavaClass.references(regexPattern).as("refs"))
+                            .perform(Iteration.over("refs")
+                                        .as("ref")
+                                        .perform(Hint.in("#{ref.file}").at("ref")
+                                                    .withText(hint)
+                                                    .withEffort(8)
+                                        )
+                                        .endIteration()
+                            );
+
+                context.addRuleProvider(ruleProvider);
                 return null;
             }
         };

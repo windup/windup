@@ -243,10 +243,12 @@ public abstract class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Get the current {@link Iteration} payload.
+     * Get the {@link Iteration} payload with the given name.
+     * 
+     * @throws IllegalArgumentException if the given variable refers to a non-payload.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends WindupVertexFrame> T getCurrentPayload(Variables stack, Class<T> type, String name)
+    public static <FRAMETYPE extends WindupVertexFrame> FRAMETYPE getCurrentPayload(Variables stack, String name)
                 throws IllegalStateException, IllegalArgumentException
     {
         Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
@@ -255,20 +257,57 @@ public abstract class Iteration extends DefaultOperationBuilder
         if (!(existingValue == null || existingValue instanceof IterationPayload))
         {
             throw new IllegalArgumentException("Variable \"" + name
-                + "\" is not an " + Iteration.class.getSimpleName() + " variable.");
+                        + "\" is not an " + Iteration.class.getSimpleName() + " variable.");
+        }
+
+        Object object = stack.findSingletonVariable(name);
+        return (FRAMETYPE) object;
+    }
+
+    /**
+     * Get the {@link Iteration} payload with the given name and type.
+     * 
+     * @throws IllegalArgumentException if the given variable refers to a non-payload.
+     */
+    @SuppressWarnings("unchecked")
+    public static <FRAMETYPE extends WindupVertexFrame> FRAMETYPE getCurrentPayload(Variables stack,
+                Class<FRAMETYPE> type, String name) throws IllegalStateException, IllegalArgumentException
+    {
+        Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
+
+        Iterable<WindupVertexFrame> existingValue = vars.get(name);
+        if (!(existingValue == null || existingValue instanceof IterationPayload))
+        {
+            throw new IllegalArgumentException("Variable \"" + name
+                        + "\" is not an " + Iteration.class.getSimpleName() + " variable.");
         }
 
         Object object = stack.findSingletonVariable(type, name);
-        return (T) object;
+        return (FRAMETYPE) object;
     }
 
     /**
      * Remove the current {@link Iteration} payload.
      */
-    public static <T extends WindupVertexFrame> T removeCurrentPayload(Variables stack, Class<T> type, String name)
+    public static <FRAMETYPE extends WindupVertexFrame> FRAMETYPE removeCurrentPayload(Variables stack,
+                Class<FRAMETYPE> type, String name)
                 throws IllegalStateException, IllegalTypeArgumentException
     {
-        T payload = getCurrentPayload(stack, type, name);
+        FRAMETYPE payload = getCurrentPayload(stack, type, name);
+
+        Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
+        vars.remove(name);
+
+        return payload;
+    }
+
+    /**
+     * Remove the current {@link Iteration} payload.
+     */
+    public static <FRAMETYPE extends WindupVertexFrame> FRAMETYPE removeCurrentPayload(Variables stack, String name)
+                throws IllegalStateException, IllegalTypeArgumentException
+    {
+        FRAMETYPE payload = getCurrentPayload(stack, name);
 
         Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
         vars.remove(name);

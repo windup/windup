@@ -42,9 +42,12 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         this.context = context;
     }
 
-    public static WindupConfigurationModel getConfigurationModel(GraphContext context)
+    public static synchronized WindupConfigurationModel getConfigurationModel(GraphContext context)
     {
-        return new GraphService<>(context, WindupConfigurationModel.class).getUnique();
+        WindupConfigurationModel config = new GraphService<>(context, WindupConfigurationModel.class).getUnique();
+        if (config == null)
+            config = new GraphService<>(context, WindupConfigurationModel.class).create();
+        return config;
     }
 
     @Override
@@ -243,6 +246,23 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         {
             WindupVertexFrame frame = graphContext.getFramed().frame(v, WindupVertexFrame.class);
             results.add(frame);
+        }
+        return results;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends WindupVertexFrame> List<T> toVertexFrames(GraphContext graphContext,
+                Iterable<Vertex> vertices, Class<T> frameType)
+    {
+        List<T> results = new ArrayList<>();
+        for (Vertex v : vertices)
+        {
+            WindupVertexFrame frame = graphContext.getFramed().frame(v, WindupVertexFrame.class);
+            if (frameType.isAssignableFrom(frame.getClass()))
+                results.add((T) frame);
+            else
+                throw new IllegalStateException("Expected frame type [" + frameType.getName() + "] but was "
+                            + frame.getClass().getInterfaces() + ".");
         }
         return results;
     }

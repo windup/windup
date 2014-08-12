@@ -17,7 +17,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.model.BlackListModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
 import org.junit.Assert;
@@ -29,7 +29,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 @RunWith(Arquillian.class)
-public class BlackListQueryTest extends AbstractTestCase
+public class InlineHintModelQueryTest
 {
 
     @Deployment
@@ -43,7 +43,6 @@ public class BlackListQueryTest extends AbstractTestCase
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(AbstractTestCase.class)
                     .addAsResource(new File("../src/test/resources/reports"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -75,31 +74,31 @@ public class BlackListQueryTest extends AbstractTestCase
         FileModel f7 = context.getFramed().addVertex(null, FileModel.class);
         f7.setFilePath("/f7");
 
-        BlackListModel b1 = context.getFramed().addVertex(null, BlackListModel.class);
-        BlackListModel b1b = context.getFramed().addVertex(null, BlackListModel.class);
+        InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
+        InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
         b1.setFileModel(f1);
         b1b.setFileModel(f1);
 
-        BlackListModel b2 = context.getFramed().addVertex(null, BlackListModel.class);
+        InlineHintModel b2 = context.getFramed().addVertex(null, InlineHintModel.class);
         b2.setFileModel(f2);
 
         ClassificationModel c1 = context.getFramed().addVertex(null, ClassificationModel.class);
         ClassificationModel c1b = context.getFramed().addVertex(null, ClassificationModel.class);
-        c1.setFileModel(f1);
-        c1b.setFileModel(f1);
+        c1.addFileModel(f1);
+        c1b.addFileModel(f1);
 
         ClassificationModel c2 = context.getFramed().addVertex(null, ClassificationModel.class);
-        c2.setFileModel(f3);
+        c2.addFileModel(f3);
 
         List<Vertex> vertexList = new ArrayList<>();
         for (Vertex v : context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource").vertices())
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE).vertices())
         {
             vertexList.add(v);
         }
 
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource").vertices());
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileModel.TYPE).vertices());
 
         GraphRewrite event = new GraphRewrite(context);
 

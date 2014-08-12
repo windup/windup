@@ -6,10 +6,10 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * Model saves an additional links for the {@link BlackListModel} or {@link ClassificationModel}.
+ * Model saves an additional links for the {@link InlineHintModel} or {@link ClassificationModel}.
  */
 @TypeValue("LinkDecoratorModel")
-public interface LinkDecoratorModel extends WindupVertexFrame
+public interface LinkModel extends WindupVertexFrame
 {
 
     public static final String PROPERTY_LINK = "link";

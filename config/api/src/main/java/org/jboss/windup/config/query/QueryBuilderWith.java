@@ -11,21 +11,32 @@ public interface QueryBuilderWith extends ConditionBuilder
     /**
      * Narrow the query to {@link WindupVertexFrame} instances that contain the given property value.
      */
-    public QueryBuilderWith withProperty(String property, Object searchValue);
+    QueryBuilderWith withProperty(String property, Object searchValue);
+
+    /**
+     * Narrow the query to {@link WindupVertexFrame} instances that contain any of the given property values.
+     */
+    QueryBuilderWith withProperty(String property, Iterable<?> values);
+
+    /**
+     * Narrow the query to {@link WindupVertexFrame} instances that contain any given property value.
+     */
+    QueryBuilderWith withProperty(String property, Object searchValue, Object... searchValues);
 
     /**
      * Narrow the query to {@link WindupVertexFrame} instances that satisfy the given property comparison.
      */
-    public QueryBuilderWith withProperty(String property, QueryPropertyComparisonType searchType,
+    QueryBuilderWith withProperty(String property, QueryPropertyComparisonType searchType,
                 Object searchValue);
 
     /**
      * Narrow the query with the given {@link QueryFramesCriterion}.
      */
-    public QueryBuilderWith with(QueryFramesCriterion criterion);
+    QueryBuilderWith with(QueryFramesCriterion criterion);
 
     /**
      * Set the name of the output variable into which results of the {@link Query} will be stored.
      */
     ConditionBuilder as(String name);
+
 }
