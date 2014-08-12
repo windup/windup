@@ -95,19 +95,19 @@
 			$('pre').snippet('${sourceReport.sourceType}',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '${sourceReport.sourceBlock}' });
 	
 	
-		<#list sourceReport.sourceFileModel.blackListModels.iterator() as blackListLine>
-			<#assign lineNumber = blackListLine.lineNumber>
+		<#list sourceReport.sourceFileModel.inlineHints.iterator() as hintLine>
+			<#assign lineNumber = hintLine.lineNumber>
 			$("<div id='${lineNumber?c}-inlines' class='inline-source-hint-group'/>").appendTo('ol.snippet-num li:nth-child(${lineNumber?c})');
 		</#list>
 		
-		<#list sourceReport.sourceFileModel.blackListModels.iterator() as blackListLine>
-			<#assign lineNumber = blackListLine.lineNumber>
+		<#list sourceReport.sourceFileModel.inlineHints.iterator() as hintLine >
+			<#assign lineNumber = hintLine.lineNumber>
 			
 			<#compress>
-			$("<a name='${blackListLine.hashCode()?c}'></a><#t>
+			$("<a name='${hintLine.hashCode()?c}'></a><#t>
 				<div class='inline-source-comment green'><#t>
-					<#if blackListLine.hint?has_content>
-						<div class='inline-comment'><div class='inline-comment-heading'><strong class='notification ${blackListLine.effort}'>${blackListLine.hint?js_string}</strong></div><#t>
+					<#if hintLine.hint?has_content>
+						<div class='inline-comment'><div class='inline-comment-heading'><strong class='notification ${hintLine.effort}'>${hintLine.hint?js_string}</strong></div><#t>
 						</div><#t>
 					</#if>
 				</div><#t>

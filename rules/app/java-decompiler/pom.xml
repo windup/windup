@@ -18,13 +18,6 @@
     <dependencies>
         <!-- Other Windup rules -->
         <dependency>
-            <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-java</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.windup.tools</groupId>
             <artifactId>decompiler-procyon</artifactId>
             <version>${project.version}</version>
@@ -36,6 +29,13 @@
             <artifactId>utils</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>rules-java</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
 

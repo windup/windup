@@ -9,7 +9,6 @@ import org.jboss.windup.ext.groovy.GroovyConfigContext;
 import org.jboss.windup.ext.groovy.GroovyConfigMethod;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.rules.apps.java.config.JavaClass;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 
 public class GroovyBlackListMethod implements GroovyConfigMethod
 {
@@ -37,10 +36,10 @@ public class GroovyBlackListMethod implements GroovyConfigMethod
 
                 ruleProvider.setPhase(RulePhase.MIGRATION_RULES)
                             .addRule()
-                            .when(JavaClass.references(regexPattern).at(TypeReferenceLocation.EXTENDS_TYPE).as("refs"))
+                            .when(JavaClass.references(regexPattern).as("refs"))
                             .perform(Iteration.over("refs")
                                         .as("ref")
-                                        .perform(Hint.in("#{ref.fileModel}").at("ref")
+                                        .perform(Hint.in("#{ref.file}").at("ref")
                                                     .withText(hint)
                                                     .withEffort(8)
                                         )

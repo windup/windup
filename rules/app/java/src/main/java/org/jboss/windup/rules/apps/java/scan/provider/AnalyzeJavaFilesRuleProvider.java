@@ -2,6 +2,8 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -33,7 +35,13 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.MIGRATION_RULES;
+        return RulePhase.INITIAL_ANALYSIS;
+    }
+
+    @Override
+    public List<String> getIDDependencies()
+    {
+        return Collections.singletonList("Windup:DecompileArchivesRuleProvider");
     }
 
     // @formatter:off
@@ -61,7 +69,7 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
         {
             super(clazz, variableName);
         }
-        
+
         private FireASTTypeNameEventsIterationOperator(Class<JavaSourceFileModel> clazz)
         {
             super(clazz);
