@@ -1,6 +1,5 @@
 package org.jboss.windup.graph.duplicate.typevalue;
 
-import static org.junit.Assert.fail;
 
 import javax.inject.Inject;
 
@@ -13,7 +12,6 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,7 +27,7 @@ public class DuplicateTypeValueTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClasses(TestSimpleModel.class, TestSimpleModel2.class)
+                    .addClasses(TestSimpleModel.class, TestSimple2Model.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -40,16 +38,12 @@ public class DuplicateTypeValueTest
     @Inject
     private GraphContext context;
 
-    @Ignore("Until WINDUP-167 is done.")
-    @Test
+    @Test(expected=Exception.class)
     public void testDuplicateTypeValue() throws Exception
     {
         Assert.assertNotNull(context);
 
+        //this line needed to invoke GraphTypeRegistry.init()
         TestSimpleModel simpleModel = context.getFramed().addVertex(null, TestSimpleModel.class);
-        TestSimpleModel2 simpleModel2 = context.getFramed().addVertex(null, TestSimpleModel2.class);
-        
-        // test should fail till now
-        fail();
     }
 }
