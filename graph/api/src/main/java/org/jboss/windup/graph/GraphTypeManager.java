@@ -52,15 +52,16 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
-        Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
-        if (typeHoldingTypeField == null)
+        // Which class has @TypeField. This is currently always WindupVertexFrame.
+        Class<?> classWithTypeField = typeRegistry.getTypeHoldingTypeField(kind);
+        if (classWithTypeField == null)
             return;
 
+        // @TypeValue.
         TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
         if (typeValueAnnotation == null)
             return;
 
-        String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
         if (typeValue.contains(DELIMITER))
         {
@@ -72,8 +73,12 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
             throw new IllegalArgumentException("Type value for class '" + kind.getCanonicalName()
                         + "' is '" + typeValue + "' but must be alphanumeric.");
         }
+        
+        // TODO: typeRegistry.containsTypeValue(typeValue)
+                
 
         // Store the type value in a delimited list.
+        String typeFieldName = classWithTypeField.getAnnotation(TypeField.class).value();
         String currentPropertyValue = element.getProperty(typeFieldName);
         if (currentPropertyValue == null)
         {

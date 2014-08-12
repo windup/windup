@@ -3,18 +3,17 @@ package org.jboss.windup.graph;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 import org.jboss.windup.util.furnace.FurnaceScannerFilenameFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.AbstractModule;
 import com.tinkerpop.frames.modules.Module;
+
 
 @Singleton
 public class GraphTypeRegistry
@@ -60,7 +59,7 @@ public class GraphTypeRegistry
             else
             {
                 LOG.debug("Not adding to GraphTypeRegistry, not a subclass of WindupVertexFrame: "
-                            + clazz.getCanonicalName());
+                    + clazz.getCanonicalName());
             }
         }
     }
