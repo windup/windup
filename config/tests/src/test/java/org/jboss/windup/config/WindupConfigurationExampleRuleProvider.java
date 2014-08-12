@@ -86,7 +86,7 @@ public class WindupConfigurationExampleRuleProvider extends WindupRuleProvider
          * evaluated
          */
         .perform(Iteration.over(JavaMethodModel.class,"javaMethods")
-            .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class, Iteration.singleVariableIterationName("javaMethods"))
+            .perform(new AbstractIterationOperation<JavaMethodModel>()
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, JavaMethodModel methodModel)

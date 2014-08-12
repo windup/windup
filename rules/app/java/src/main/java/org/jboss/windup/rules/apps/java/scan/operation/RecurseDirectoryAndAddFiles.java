@@ -12,12 +12,15 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
 {
     private RecurseDirectoryAndAddFiles(String variableName)
     {
-        super(FileModel.class, variableName);
+        super(variableName);
     }
     
+    /**
+     * Let the variable name to be set by the current Iteration.
+     */
     public RecurseDirectoryAndAddFiles()
     {
-        super(FileModel.class);
+        super();
     }
 
     public static RecurseDirectoryAndAddFiles startingAt(String variableName)

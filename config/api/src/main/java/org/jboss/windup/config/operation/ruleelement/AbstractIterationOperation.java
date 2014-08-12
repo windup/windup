@@ -12,51 +12,48 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.PayLoadVariableNameHolder;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.tinkerpop.frames.Property;
-
-public abstract class AbstractIterationOperation<T extends WindupVertexFrame> extends GraphOperation
+/**
+ * Simplified operation having method that already accepts the found payload.
+ */
+public abstract class AbstractIterationOperation<T extends WindupVertexFrame> extends GraphOperation implements PayLoadVariableNameHolder
 {
-
-    Class<T> clazz;
-    private String variableName;
-
-    public AbstractIterationOperation(Class<T> clazz, String variableName)
-    {
-        this.clazz = clazz;
-        this.variableName = variableName;
-    }
     
     /**
-     * If the variable name is not specified, the default name is taken
-     * @param clazz
+     * When the variable name is not specified, let the Iteration to set the current payload variable name.
+     * @param variableName
      */
-    public AbstractIterationOperation(Class<T> clazz)
-    {
-        this.clazz = clazz;
-        this.variableName = Iteration.DEFAULT_SINGLE_VARIABLE_STRING;
+    public AbstractIterationOperation() {
+        
     }
-
-    protected String getVariableName()
+    
+    public AbstractIterationOperation(String variableName) {
+        this.variableName=variableName;
+    }
+    
+    private String variableName;
+    
+    public String getVariableName()
     {
+        if(variableName == null) {
+            return null;
+        }
         return new VariableNameIterator(variableName).next();
     }
+
+    public void setVariableName(String variableName)
+    {
+        this.variableName = variableName;
+    };
 
     @Override
     @SuppressWarnings("unchecked")
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-
         WindupVertexFrame payload = resolveVariable(event, variableName);
-
-        if (!clazz.isAssignableFrom(payload.getClass()))
-        {
-            throw new IllegalArgumentException("Resolved variable expression [" + variableName
-                        + "] does not reference a value of the required type [" + clazz.getName() + "]");
-        }
-
         perform(event, context, (T) payload);
     }
 
@@ -98,7 +95,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
         }
         return payload;
     }
-
+    
     public abstract void perform(GraphRewrite event, EvaluationContext context, T payload);
 
     // TODO Replace all this lame hacky junk with a real Variables resolving EL implementation.

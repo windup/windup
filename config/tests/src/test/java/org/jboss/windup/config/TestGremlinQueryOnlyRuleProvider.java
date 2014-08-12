@@ -64,7 +64,7 @@ public class TestGremlinQueryOnlyRuleProvider extends WindupRuleProvider
          */
         .perform(
             Iteration.over("javaMethods").as("javaMethod")
-            .perform(new AbstractIterationOperation<JavaMethodModel>(JavaMethodModel.class,"javaMethod")
+            .perform(new AbstractIterationOperation<JavaMethodModel>()
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, JavaMethodModel methodModel)

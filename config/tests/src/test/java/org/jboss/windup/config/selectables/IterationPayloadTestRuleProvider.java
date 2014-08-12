@@ -59,8 +59,7 @@ public class IterationPayloadTestRuleProvider extends WindupRuleProvider
                     .perform(Iteration
                                 .over("children")
                                 .as("child")
-                                .perform(new AbstractIterationOperation<TestParentModel>(TestParentModel.class,
-                                            "#{child.parent}")
+                                .perform(new AbstractIterationOperation<TestParentModel>("#{child.parent}")
                                 {
                                     @Override
                                     public void perform(GraphRewrite event, EvaluationContext context,

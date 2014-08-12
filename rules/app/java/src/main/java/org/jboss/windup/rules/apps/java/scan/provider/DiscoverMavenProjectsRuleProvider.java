@@ -68,8 +68,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                     .find(XmlResourceModel.class)
                     .withProperty(FileModel.PROPERTY_FILE_NAME, "pom.xml");
 
-        AbstractIterationOperation<XmlResourceModel> evaluatePomFiles = new AbstractIterationOperation<XmlResourceModel>(
-                    XmlResourceModel.class)
+        AbstractIterationOperation<XmlResourceModel> evaluatePomFiles = new AbstractIterationOperation<XmlResourceModel>()
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, XmlResourceModel payload)

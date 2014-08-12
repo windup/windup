@@ -73,7 +73,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         Condition finder = Query.find(FileModel.class)
                     .piped(new FindClassifiedFilesGremlinCriterion());
 
-        GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>(FileModel.class)
+        GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>()
         {
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {

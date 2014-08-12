@@ -103,7 +103,8 @@ public class Variables
      * Wrapper around {@link #findVariable(String)} which gives only one framed vertex, and checks if there is 0 or 1;
      * throws otherwise.
      */
-    public WindupVertexFrame findSingletonVariable(String name)
+    @SuppressWarnings("unchecked")
+    public <T extends WindupVertexFrame> T findSingletonVariable(String name)
     {
         Iterable<WindupVertexFrame> frames = findVariable(name);
         if (null == frames)
@@ -124,8 +125,7 @@ public class Variables
             throw new IllegalStateException("More than one frame present "
                         + "under presumed singleton variable: " + name);
         }
-
-        return obj;
+        return (T) obj;
     }
 
     /**

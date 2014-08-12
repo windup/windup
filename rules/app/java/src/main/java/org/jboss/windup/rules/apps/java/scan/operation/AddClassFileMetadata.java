@@ -20,14 +20,14 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
 {
     private AddClassFileMetadata(String variableName)
     {
-        super(FileModel.class, variableName);
+        super(variableName);
     }
     
     public AddClassFileMetadata()
     {
-        super(FileModel.class);
+        super();
     }
-
+    
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {

@@ -47,7 +47,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
         .when(Query.find(TestXmlMetaFacetModel.class))
         .perform(Iteration
             .over()
-            .when(new AbstractIterationFilter<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING)
+            .when(new AbstractIterationFilter<TestXmlMetaFacetModel>()
             {
                 @Override
                 public boolean evaluate(GraphRewrite event, EvaluationContext context,
@@ -58,7 +58,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                     return result;
                 }
             })
-            .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING)
+            .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>()
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context,
@@ -72,7 +72,7 @@ public class XmlExampleRuleProvider1 extends WindupRuleProvider
                     xmlRootNames.add(xmlFacetModel.getRootTagName());
                 }
             })
-            .otherwise(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class,Iteration.DEFAULT_SINGLE_VARIABLE_STRING)
+            .otherwise(new AbstractIterationOperation<TestXmlMetaFacetModel>()
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context,

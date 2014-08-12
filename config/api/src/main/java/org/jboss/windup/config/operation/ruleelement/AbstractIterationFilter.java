@@ -4,31 +4,34 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.PayLoadVariableNameHolder;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public abstract class AbstractIterationFilter<T extends WindupVertexFrame> extends GraphCondition
+public abstract class AbstractIterationFilter<T extends WindupVertexFrame> extends GraphCondition implements PayLoadVariableNameHolder
 {
     Class<T> clazz;
-    private final String variableName;
+    private String variableName;
 
-    public AbstractIterationFilter(Class<T> clazz, String variableName)
+    public AbstractIterationFilter(String variableName)
     {
-        this.clazz = clazz;
         this.variableName = variableName;
     }
     
     /**
-     * If the variable name is not specified, the default name is taken
+     * If the variable name is not specified, the iteration will set it.
      * @param clazz
      */
-    public AbstractIterationFilter(Class<T> clazz)
+    public AbstractIterationFilter()
     {
-        this.clazz = clazz;
-        this.variableName = Iteration.DEFAULT_SINGLE_VARIABLE_STRING;
     }
 
-    protected String getVariableName()
+    public void setVariableName(String variableName)
+    {
+        this.variableName = variableName;
+    }
+
+    public String getVariableName()
     {
         return variableName;
     }
