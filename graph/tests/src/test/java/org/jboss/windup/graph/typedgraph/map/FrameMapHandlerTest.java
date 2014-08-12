@@ -18,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -66,7 +67,7 @@ public class FrameMapHandlerTest
         mainModel.setMap(map);
 
         Iterable<Vertex> vertices = context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
+                    .has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL,
                                 TestMapMainModel.class.getAnnotation(TypeValue.class).value())
                     .vertices();
 

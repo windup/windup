@@ -7,6 +7,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 
+import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
@@ -77,7 +78,7 @@ public class FileModelService extends GraphService<FileModel>
         }
 
         return getGraphContext().getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
+                    .has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, getTypeValueForSearch())
                     .has("filePath", Text.REGEX, regex).vertices(getType());
     }
 }

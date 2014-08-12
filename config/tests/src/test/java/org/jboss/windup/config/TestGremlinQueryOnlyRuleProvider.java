@@ -54,7 +54,7 @@ public class TestGremlinQueryOnlyRuleProvider extends WindupRuleProvider
                 @Override
                 public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
                 {
-                    pipeline.V().has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, JavaMethodModel.TYPE);
+                    pipeline.V().has(WindupVertexFrame.TYPE_PROP, JavaMethodModel.TYPE);
                 }
             }).as("javaMethods")
         )

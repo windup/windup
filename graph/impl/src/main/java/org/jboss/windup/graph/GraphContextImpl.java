@@ -96,7 +96,7 @@ public class GraphContextImpl implements GraphContext
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
         String[] keys = new String[] { "namespaceURI", "schemaLocation", "publicId", "rootTagName",
-                    "systemId", "qualifiedName", "filePath", "mavenIdentifier" };
+                    "systemId", "qualifiedName", "filePath", "mavenIdentifier", "packageName" };
         for (String key : keys)
         {
             this.titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();

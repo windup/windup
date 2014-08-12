@@ -14,6 +14,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.typedgraph.TestFooModel;
 import org.jboss.windup.graph.typedgraph.TestFooSubModel;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,6 +43,7 @@ public class EventGraphTest
     @Inject
     private GraphContext context;
 
+    @Ignore
     @Test
     public void testEventGraph() throws Exception
     {

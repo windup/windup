@@ -58,14 +58,14 @@ public class JavaClassService extends GraphService<JavaClassModel>
     public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
         return getGraphContext().getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
+                    .has(WindupVertexFrame.TYPE_PROP, getTypeValueForSearch())
                     .has("packageName", packageName).vertices(getType());
     }
 
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
         return getGraphContext().getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, getTypeValueForSearch())
+                    .has(WindupVertexFrame.TYPE_PROP, getTypeValueForSearch())
                     .has("majorVersion", version.getMajor())
                     .has("minorVersion", version.getMinor()).vertices(getType());
     }
