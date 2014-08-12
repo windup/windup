@@ -102,9 +102,14 @@ public class GraphContextImpl implements GraphContext
             this.titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
 
-        for (String key : new String[] { "archiveEntry", WindupVertexFrame.TYPE_PROP })
+        for (String key : new String[] { "archiveEntry"})
         {
             this.titanGraph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
+        }
+        
+        for (String key : new String[] { WindupVertexFrame.TYPE_PROP })
+        {
+            this.titanGraph.makeKey(key).list().dataType(String.class).indexed("search", Vertex.class).make();
         }
 
         batch = new BatchGraph<TitanGraph>(this.titanGraph, 1000L);
