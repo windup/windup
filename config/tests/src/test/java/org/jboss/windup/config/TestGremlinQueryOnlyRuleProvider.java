@@ -18,7 +18,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -58,7 +57,7 @@ public class TestGremlinQueryOnlyRuleProvider extends WindupRuleProvider
                 @Override
                 public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
                 {
-                    pipeline.V().has(WindupVertexFrame.TYPE_PROP, JavaMethodModel.TYPE);
+                    pipeline.V(WindupVertexFrame.TYPE_PROP, JavaMethodModel.TYPE);
                 }
             }).as("javaMethods")
         )

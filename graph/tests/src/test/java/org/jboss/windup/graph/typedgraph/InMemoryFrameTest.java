@@ -17,9 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @RunWith(Arquillian.class)
 public class InMemoryFrameTest
@@ -56,12 +54,7 @@ public class InMemoryFrameTest
         inMemoryModel.setProp2("prop2");
         inMemoryModel.setProp3("prop3");
 
-        Iterable<Vertex> vertices = context
-                    .getFramed()
-                    .query()
-                    .has(WindupVertexFrame.TYPE_PROP, 
-                                TestFooModel.class.getAnnotation(TypeValue.class).value())
-                    .vertices();
+        Iterable<Vertex> vertices = context.getQuery().type(TestFooModel.class).vertices();
 
         // we should have zero results, as this was only created in memory
         Assert.assertFalse(vertices.iterator().hasNext());
@@ -69,12 +62,7 @@ public class InMemoryFrameTest
         InMemoryVertexFrame inMemoryFrame = (InMemoryVertexFrame) inMemoryModel;
         inMemoryFrame.attachToGraph();
 
-        vertices = context
-                    .getFramed()
-                    .query()
-                    .has(WindupVertexFrame.TYPE_PROP, 
-                                TestFooModel.class.getAnnotation(TypeValue.class).value())
-                    .vertices();
+        vertices = context.getQuery().type(TestFooModel.class).vertices();
 
         int numberFound = 0;
         for (Vertex v : vertices)

@@ -37,7 +37,7 @@ public class BlackListModelService extends GraphService<BlackListModel>
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel);
         pipeline.in("fileToProjectModel").in("fileModel")
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, BlackListModel.TYPE).V();
+                    .has(WindupVertexFrame.TYPE_PROP, BlackListModel.TYPE).V();
 
         return new FramedVertexIterable<BlackListModel>(getGraphContext().getFramed(), pipeline, BlackListModel.class);
     }

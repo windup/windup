@@ -24,7 +24,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -92,14 +91,12 @@ public class BlackListQueryTest extends AbstractTestCase
         c2.setFileModel(f3);
 
         List<Vertex> vertexList = new ArrayList<>();
-        for (Vertex v : context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource").vertices())
+        for (Vertex v : context.getQuery().type(FileModel.class).vertices())
         {
             vertexList.add(v);
         }
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource").vertices());
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getQuery().type(FileModel.class).vertices());
 
         GraphRewrite event = new GraphRewrite(context);
 

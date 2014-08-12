@@ -66,10 +66,7 @@ public class FrameMapHandlerTest
 
         mainModel.setMap(map);
 
-        Iterable<Vertex> vertices = context.getFramed().query()
-                    .has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL,
-                                TestMapMainModel.class.getAnnotation(TypeValue.class).value())
-                    .vertices();
+        Iterable<Vertex> vertices = context.getQuery().type(TestMapMainModel.class).vertices();
 
         int numberFound = 0;
         for (Vertex v : vertices)

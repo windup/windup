@@ -2,7 +2,9 @@ package org.jboss.windup.reporting.query;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.BlackListModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 
@@ -24,22 +26,17 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
     @Override
     public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
     {
-        FramedGraph<EventGraph<TitanGraph>> framed = event.getGraphContext().getFramed();
+        GraphContext context = event.getGraphContext();
 
         // create a pipeline to get all blacklisted items
         GremlinPipeline<Vertex, Vertex> blacklistPipeline = new GremlinPipeline<Vertex, Vertex>(
-                    framed
-                                .query()
-                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource")
-                                .vertices());
+                    context.getQuery().type(FileModel.class).vertices());
         blacklistPipeline.as("fileModel1").in(BlackListModel.FILE_MODEL).back("fileModel1");
 
         // create a pipeline to get all items with attached classifications
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
-                    framed
-                                .query()
-                                .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, "FileResource")
-                                .vertices());
+        		context.getQuery().type(FileModel.class).vertices());
+
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .back("fileModel2");
 

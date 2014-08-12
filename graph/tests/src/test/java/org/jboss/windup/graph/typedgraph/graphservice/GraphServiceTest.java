@@ -67,8 +67,7 @@ public class GraphServiceTest
         {
             GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
 
-            Iterable<Vertex> vertices = context.getFramed().query().has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL,
-                        TestFooModel.class.getAnnotation(TypeValue.class).value()).vertices();
+            Iterable<Vertex> vertices = context.getQuery().type(TestFooModel.class).vertices();
 
             int numberFound = 0;
             for (Vertex v : vertices)
@@ -102,10 +101,7 @@ public class GraphServiceTest
             GraphService.addTypeToModel(context, foo1, TestFooSubModel.class);
             GraphService.addTypeToModel(context, foo2, TestFooSubModel.class);
 
-            String val = TestFooSubModel.class.getAnnotation(TypeValue.class).value();
-            
-            Iterable<Vertex> vertices = context
-                        .getGraph().query().has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, val).vertices();
+            Iterable<Vertex> vertices = context.getQuery().type(TestFooSubModel.class).vertices();
 
             int numberFound = 0;
             for (Vertex v : vertices)

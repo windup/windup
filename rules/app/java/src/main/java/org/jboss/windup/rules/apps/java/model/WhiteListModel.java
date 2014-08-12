@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.java.model;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.LinkDecoratorModel;
-import org.jboss.windup.rules.apps.java.scan.ast.ClassCandidateType;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
