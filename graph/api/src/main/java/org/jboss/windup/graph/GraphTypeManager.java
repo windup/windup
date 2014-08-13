@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.thinkaurelius.titan.core.TitanProperty;
@@ -30,7 +30,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @Singleton
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
-    private Map<String,Class<? extends WindupVertexFrame>> registeredTypes= new HashMap<>();
+    private Map<String, Class<? extends WindupVertexFrame>> registeredTypes = new HashMap<>();
     private TypeRegistry typeRegistry = new TypeRegistry();
 
     public Set<Class<? extends WindupVertexFrame>> getRegisteredTypes()
@@ -63,8 +63,8 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
-    	EventVertex ev = (EventVertex)element;
-    	StandardVertex v = (StandardVertex)ev.getBaseVertex();
+        EventVertex ev = (EventVertex) element;
+        StandardVertex v = (StandardVertex) ev.getBaseVertex();
         Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
@@ -113,7 +113,9 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     }
 
     /**
-     * Returns the classes which this vertex/edge represents, typically subclasses. Always appends
+     * Returns the classes which this vertex/edge represents, typically subclasses. This will only return the lowest
+     * level subclasses (no superclasses of types in the type list will be returned). This prevents Annotation
+     * resolution issues between superclasses and subclasses (see also: WINDUP-168).
      */
     private Class<?>[] resolve(Element e, Class<?> defaultType)
     {
@@ -123,20 +125,42 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             // Name of the graph element property holding the type list.
             String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-            EventVertex ev = (EventVertex)e;
-        	StandardVertex v = (StandardVertex)ev.getBaseVertex();
-            
+            EventVertex ev = (EventVertex) e;
+            StandardVertex v = (StandardVertex) ev.getBaseVertex();
+
             Iterable<TitanProperty> valuesAll = v.getProperties(propName);
             if (valuesAll != null)
             {
-                
+
                 List<Class<?>> resultClasses = new ArrayList<>();
                 for (TitanProperty value : valuesAll)
                 {
                     Class<?> type = typeRegistry.getType(typeHoldingTypeField, value.getValue().toString());
-                    if (type == null)
-                        continue;
-                    resultClasses.add(type);
+                    if (type != null)
+                    {
+                        // first check that no subclasses have already been added
+                        ListIterator<Class<?>> previouslyAddedIterator = resultClasses.listIterator();
+                        boolean shouldAdd = true;
+                        while (previouslyAddedIterator.hasNext())
+                        {
+                            Class<?> previouslyAdded = previouslyAddedIterator.next();
+                            if (previouslyAdded.isAssignableFrom(type))
+                            {
+                                // Remove the previously added superclass
+                                previouslyAddedIterator.remove();
+                            }
+                            else if (type.isAssignableFrom(previouslyAdded))
+                            {
+                                // The current type is a superclass of a previously added type, don't add it
+                                shouldAdd = false;
+                            }
+                        }
+
+                        if (shouldAdd)
+                        {
+                            resultClasses.add(type);
+                        }
+                    }
                 }
                 if (!resultClasses.isEmpty())
                 {
