@@ -49,6 +49,15 @@ public class GraphContextImpl implements GraphContext
         return graphTypeRegistry;
     }
 
+    @Override
+    public void disconnectFromGraph()
+    {
+        this.eventGraph.getBaseGraph().shutdown();
+        this.eventGraph = null;
+        this.batch = null;
+        this.framed = null;
+    }
+
     public EventGraph<TitanGraph> getGraph()
     {
         initGraphIfNeeded();
@@ -88,7 +97,8 @@ public class GraphContextImpl implements GraphContext
         {
             throw new WindupException("Error, attempting to set graph directory to: \"" + graphDirectory.toString()
                         + "\", but the graph has already been initialized (with graph folder: \""
-                        + this.graphDirectory.toString() + "\"!");
+                        + this.graphDirectory.toString()
+                        + "\"! To change this, you must first disconnect from the graph!");
         }
         this.graphDirectory = graphDirectory;
     }

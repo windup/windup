@@ -21,9 +21,8 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     public static final String PROPERTY_SCAN_JAVA_PACKAGES = "scanJavaPackages";
 
     /**
-     * The application to scan.
-     * TODO: WINDUP-134  Should be an iterable - to support multiple apps. 
-     *       Also, should be named like "setAppPath" or so. There will be more input paths types.
+     * The application to scan. TODO: WINDUP-134 Should be an iterable - to support multiple apps. Also, should be named
+     * like "setAppPath" or so. There will be more input paths types.
      */
     @JavaHandler
     void setInputPath(String inputPath);
@@ -46,10 +45,8 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     @Adjacency(label = "outputPath", direction = Direction.OUT)
     void setOutputPath(FileModel outputPath);
 
-
     /**
-     * A whitelist of packages to be scanned / decompiled etc.
-     * TODO: WINDUP-135 Move this to Java Basic addon.
+     * A whitelist of packages to be scanned / decompiled etc. TODO: WINDUP-135 Move this to Java Basic addon.
      */
     @Adjacency(label = PROPERTY_SCAN_JAVA_PACKAGES, direction = Direction.OUT)
     Iterable<PackageModel> getScanJavaPackages();
@@ -60,10 +57,9 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     @Adjacency(label = PROPERTY_SCAN_JAVA_PACKAGES, direction = Direction.OUT)
     void setScanJavaPackages(Iterable<PackageModel> scanJavaPackage);
 
-
     /**
-     * What Java packages to exclude during scanning of archives (blacklist).
-     * TODO: WINDUP-135 Move this to Java Basic addon.
+     * What Java packages to exclude during scanning of archives (blacklist). TODO: WINDUP-135 Move this to Java Basic
+     * addon.
      */
     @Adjacency(label = PROPERTY_EXCLUDE_JAVA_PACKAGES, direction = Direction.OUT)
     Iterable<PackageModel> getExcludeJavaPackages();
@@ -75,8 +71,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     void setExcludeJavaPackages(Iterable<PackageModel> scanJavaPackage);
 
     /**
-     * Wrappers which converts strings to PackageModel's.
-     * TODO: WINDUP-135 Move this to Java Basic addon.
+     * Wrappers which converts strings to PackageModel's. TODO: WINDUP-135 Move this to Java Basic addon.
      */
     @JavaHandler
     void setScanJavaPackageList(Iterable<String> pkgs);
@@ -84,7 +79,6 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     @JavaHandler
     void setExcludeJavaPackageList(Iterable<String> pkgs);
 
-    
     /**
      * Not used.
      */
@@ -94,7 +88,6 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     @Property(PROPERTY_FETCH_REMOTE_RESOURCES)
     void setFetchRemoteResources(boolean fetchRemoteResources);
 
-    
     /**
      * jsightler: There are a number of rules that use it to determine how to scan the input code properly.
      */
@@ -104,8 +97,6 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     @Property(PROPERTY_SOURCE_MODE)
     void setSourceMode(boolean sourceMode);
 
-    
-    
     // Implementation to be used by Frames.
     abstract class Impl implements WindupConfigurationModel, JavaHandlerContext<Vertex>
     {
@@ -129,17 +120,15 @@ public interface WindupConfigurationModel extends WindupVertexFrame
             setOutputPath(fileModel);
         }
 
-        
         /**
-         * Converts the String's into a PackageModel's.
-         * TODO: WINDUP-135 Move this to Java Basic addon.
+         * Converts the String's into a PackageModel's. TODO: WINDUP-135 Move this to Java Basic addon.
          */
         public void setScanJavaPackageList(Iterable<String> pkgs)
         {
             setScanJavaPackages(new ArrayList<PackageModel>());
             if (pkgs == null)
                 return;
-                
+
             for (String pkg : pkgs)
             {
                 PackageModel m = g().addVertex(null, PackageModel.class);
@@ -149,15 +138,14 @@ public interface WindupConfigurationModel extends WindupVertexFrame
         }
 
         /**
-         *  Converts the String's into a PackageModel's.
-         * TODO: WINDUP-135 Move this to Java Basic addon.
+         * Converts the String's into a PackageModel's. TODO: WINDUP-135 Move this to Java Basic addon.
          */
         public void setExcludeJavaPackageList(Iterable<String> pkgs)
         {
             setExcludeJavaPackages(new ArrayList<PackageModel>());
             if (pkgs == null)
                 return;
-            
+
             for (String pkg : pkgs)
             {
                 PackageModel m = g().addVertex(null, PackageModel.class);

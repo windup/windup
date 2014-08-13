@@ -18,6 +18,11 @@ import com.tinkerpop.frames.VertexFrame;
 public interface GraphContext
 {
     /**
+     * Disconnect completely from the graph. The next call to "getGraph" will reinitialize
+     */
+    public void disconnectFromGraph();
+
+    /**
      * Species the directory in which to place the graph.
      * 
      * If one is not specified. This should be called before any attempts to get the graph (via getGraph or other

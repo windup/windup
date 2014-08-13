@@ -15,8 +15,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config</artifactId>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
             <version>${project.version}</version>

@@ -20,35 +20,35 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<ArchiveModel>
+public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<ArchiveModel>
 {
-    private static final Logger LOG = LoggerFactory.getLogger(UnzipArchiveToTemporaryFolder.class);
+    private static final String ARCHIVES = "archives";
+    private static final Logger LOG = LoggerFactory.getLogger(UnzipArchiveToOutputFolder.class);
 
-    public static final String WINDUP_TEMP_ARCHIVE_FOLDER_NAME = "windup_temp_archive";
-
-    public UnzipArchiveToTemporaryFolder(String variableName)
+    public UnzipArchiveToOutputFolder(String variableName)
     {
         super(variableName);
     }
-    
-    public UnzipArchiveToTemporaryFolder()
+
+    public UnzipArchiveToOutputFolder()
     {
         super();
     }
 
-    public static UnzipArchiveToTemporaryFolder unzip(String variableName)
+    public static UnzipArchiveToOutputFolder unzip(String variableName)
     {
-        return new UnzipArchiveToTemporaryFolder(variableName);
+        return new UnzipArchiveToOutputFolder(variableName);
     }
-    
-    public static UnzipArchiveToTemporaryFolder unzip()
+
+    public static UnzipArchiveToOutputFolder unzip()
     {
-        return new UnzipArchiveToTemporaryFolder();
+        return new UnzipArchiveToOutputFolder();
     }
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
+        LOG.info("Unzipping archive: " + payload.toPrettyString());
         File zipFile = payload.asFile();
 
         if (!zipFile.isFile())
@@ -61,7 +61,7 @@ public class UnzipArchiveToTemporaryFolder extends AbstractIterationOperation<Ar
         WindupConfigurationModel cfg = GraphService.getConfigurationModel(event.getGraphContext());
         String windupOutputFolder = cfg.getOutputPath().getFilePath();
 
-        Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, "archives");
+        Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, ARCHIVES);
         if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
         {
             try
