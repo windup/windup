@@ -41,17 +41,19 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     public void addTypeToRegistry(Class<? extends WindupVertexFrame> wvf)
     {
         TypeValue typeValueAnnotation = wvf.getAnnotation(TypeValue.class);
-        
+
         // Do not attempt to add items where this is null... we use
         // *Model types with no TypeValue to function as essentially
         // "abstract" models that would never exist on their own (only as subclasses).
         if (typeValueAnnotation != null)
         {
-            if(registeredTypes.containsKey(typeValueAnnotation.value())) {
+            if (registeredTypes.containsKey(typeValueAnnotation.value()))
+            {
                 throw new IllegalArgumentException("Type value for model '" + wvf.getCanonicalName()
-                            + "' is already registered with model " + registeredTypes.get(typeValueAnnotation.value()).getName());
+                            + "' is already registered with model "
+                            + registeredTypes.get(typeValueAnnotation.value()).getName());
             }
-            registeredTypes.put(typeValueAnnotation.value(),wvf);
+            registeredTypes.put(typeValueAnnotation.value(), wvf);
             typeRegistry.add(wvf);
         }
     }
