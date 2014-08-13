@@ -20,3 +20,4 @@ bin
 /graph/tests/src/test/java/org/jboss/windup/graph/test/polymorf/SubtypeQueryTest.java
 *.orig
 /localRepo/
+/utils/nb-configuration.xml
