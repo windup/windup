@@ -1,12 +1,12 @@
 package org.jboss.windup.log;
 
+import java.io.InputStream;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import org.junit.After;
-import org.junit.Before;
+import org.jboss.windup.log.jul.format.SimplestFormatter;
 import org.junit.Test;
 
 /**
@@ -14,16 +14,6 @@ import org.junit.Test;
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 public class LoggerTest {
-    
-    @Before
-    public void setUp() {
-    }
-    
-
-    @After
-    public void tearDown() {
-    }
-
 
     @Test
     public void testLogging() {
@@ -38,10 +28,10 @@ public class LoggerTest {
         log.addHandler( h );/**/
 
         try{
-          h = new java.util.logging.FileHandler("LogTest.log", 50000, 1);
-          h.setLevel(Level.ALL);
-          h.setFormatter( new SimpleFormatter() );
-          log.addHandler( h );
+            h = new java.util.logging.FileHandler("LogTest.log", 50000, 1);
+            h.setLevel(Level.ALL);
+            h.setFormatter( new SimpleFormatter() );
+            log.addHandler( h );
         }
         catch(Exception ex){ ex.printStackTrace(); }
 
@@ -55,7 +45,7 @@ public class LoggerTest {
     
     
     @Test
-    public void testLoggingProperties() {
+    public void testLoggingProperties() throws Exception {
 /*
 # Handlers    // java.util.logging.ConsoleHandler
 handlers=cz.dynawest.iriswsklient.SystemOutHandler java.util.logging.FileHandler
@@ -75,8 +65,16 @@ Foo.Aj.level = ALL
 */
     
         System.setProperty("java.util.logging.config.file", "logging.properties");
-        try { LogManager.getLogManager().readConfiguration(); }
-        catch( Exception ex ){ ex.printStackTrace(); }
+        try {
+            final InputStream is = this.getClass().getResourceAsStream("/logging.properties");
+            if( null == is)
+                throw new Exception("logging.properties resource not found!");
+            LogManager.getLogManager().readConfiguration(is);
+        }
+        catch( Exception ex ){
+            //ex.printStackTrace();
+            throw ex;
+        }
 
         Logger.getLogger("").severe("Root SEVERE");
         Logger.getLogger("").warning("Root WARN");
