@@ -43,7 +43,7 @@ public abstract class DecompilerTestBase
     @Before
     public void setUp() throws IOException
     {
-        this.testTempDir = new File("decompiler-tests-output-dir");
+        this.testTempDir = new File("target/decompiler-tests-output-dir");
         FileUtils.deleteQuietly(testTempDir);
         Files.createDirectory(this.testTempDir.toPath());
         this.testTempDir.deleteOnExit();
@@ -58,7 +58,7 @@ public abstract class DecompilerTestBase
     @Test
     public void testDecompileWicketJar() throws DecompilationException
     {
-        File archive = new File("TestJars/wicket-core-6.11.0.jar");
+        File archive = new File("target/TestJars/wicket-core-6.11.0.jar");
         File outputFolder = new File(testTempDir, "archive");
 
         final Decompiler dec = this.getDecompiler();
@@ -92,7 +92,7 @@ public abstract class DecompilerTestBase
     {
         final Decompiler dec = this.getDecompiler();
 
-        File archive = new File("TestJars/wicket-core-6.11.0.jar");
+        File archive = new File("target/TestJars/wicket-core-6.11.0.jar");
         File outputFolder = new File(testTempDir, "directory");
         File unzippedDir = new File(outputFolder, "unzipped");
         ZipUtil.unzip(archive, unzippedDir);

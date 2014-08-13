@@ -18,7 +18,7 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.furnace>2.7.2.Final</version.furnace>
+        <version.furnace>2.7.3-SNAPSHOT</version.furnace>
         <version.titangraph>0.4.4</version.titangraph>
         <version.titangraph.lucene>0.4.4-winduppatch</version.titangraph.lucene>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
@@ -138,8 +138,6 @@
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
                     <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=512m</argLine>
-                    <!-- Set work dir to target/ -->
-                    <workingDirectory>target</workingDirectory>
                 </configuration>
             </plugin>
 
