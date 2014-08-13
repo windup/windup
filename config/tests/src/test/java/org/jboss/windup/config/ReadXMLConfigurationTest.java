@@ -1,6 +1,7 @@
 package org.jboss.windup.config;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -47,7 +48,7 @@ public class ReadXMLConfigurationTest
     @Test
     public void testRunWindup() throws Exception
     {
-        final File folder = File.createTempFile("windupGraph", "");
+        final Path folder = File.createTempFile("windupGraph", "").toPath();
         final GraphContext context = factory.create(folder);
         final ConfigurationLoader loader = ConfigurationLoader.create(context);
         final Configuration configuration = loader.loadConfiguration(context);

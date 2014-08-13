@@ -1,6 +1,6 @@
 package org.jboss.windup.config.iteration;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -82,7 +82,7 @@ public class RuleIterationOverDefaultListVariableTest
     @Test
     public void testTypeSelection()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
@@ -93,7 +93,7 @@ public class RuleIterationOverDefaultListVariableTest
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath("/tmp/testpath");
+        windupCfg.setInputPath(OperatingSystemUtils.createTempDir().toString());
         windupCfg.setSourceMode(true);
 
         TestRuleIterationOverDefaultListVariableProvider provider = new TestRuleIterationOverDefaultListVariableProvider();

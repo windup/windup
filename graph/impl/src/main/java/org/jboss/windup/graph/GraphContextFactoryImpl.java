@@ -1,14 +1,12 @@
 package org.jboss.windup.graph;
 
-import java.io.File;
-import java.util.UUID;
+import java.nio.file.Path;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.service.Service;
 
@@ -35,11 +33,12 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     }
 
     @Override
-    public GraphContext create(File runDirectory)
+    public GraphContext create(Path runDirectory)
     {
-        GraphContextImpl context = new GraphContextImpl(graphServices, runDirectory,
+        GraphContextImpl context = new GraphContextImpl(graphServices,
                     this.graphTypeRegistry,
                     this.graphApiCompositeClassLoaderProvider);
+        context.setGraphDirectory(runDirectory);
         return context;
     }
 
@@ -49,14 +48,10 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     {
         if (this.graphContext == null)
         {
-            this.graphContext = create(new File(this.getRunDirectory(), "windup-graph"));
+            this.graphContext = new GraphContextImpl(graphServices,
+                        this.graphTypeRegistry,
+                        this.graphApiCompositeClassLoaderProvider);
         }
         return graphContext;
     }
-
-    private File getRunDirectory()
-    {
-        return new File(FileUtils.getTempDirectory(), "windupgraph_" + UUID.randomUUID().toString());
-    }
-
 }

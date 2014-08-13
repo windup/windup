@@ -1,6 +1,6 @@
 package org.jboss.windup.config.iteration;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -32,19 +32,18 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
-import com.tinkerpop.blueprints.Vertex;
-
 /**
  * Testing the Iteration.over(SomeType.class) approach.
+ * 
  * @author mbriskar
- *
+ * 
  */
 @RunWith(Arquillian.class)
 public class RuleIterationOverTypesTest
 {
     public static int TestSimple2ModelCounter = 0;
     public static int TestSimple1ModelCounter = 0;
-    
+
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -84,9 +83,9 @@ public class RuleIterationOverTypesTest
     @Test
     public void testTypeSelection()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
-        
+
         TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
         context.getFramed().addVertex(null, TestSimple2Model.class);
         context.getFramed().addVertex(null, TestSimple2Model.class);
@@ -101,25 +100,24 @@ public class RuleIterationOverTypesTest
         TestRuleIterationOverTypesProvider provider = new TestRuleIterationOverTypesProvider();
         Configuration configuration = provider.getConfiguration(context);
 
-        //this should call perform()
+        // this should call perform()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
         Assert.assertEquals(TestSimple1ModelCounter, 1);
         Assert.assertEquals(TestSimple2ModelCounter, 2);
         vertex.asVertex().remove();
-        //this should call otherwise()
+        // this should call otherwise()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
         Assert.assertEquals(TestSimple1ModelCounter, 1);
         Assert.assertEquals(TestSimple2ModelCounter, 4);
-        
-        
+
     }
-    
-    @Test(expected=Exception.class) 
+
+    @Test(expected = Exception.class)
     public void testTypeSelectionWithException()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
-        
+
         TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
         context.getFramed().addVertex(null, TestSimple2Model.class);
         context.getFramed().addVertex(null, TestSimple2Model.class);
@@ -134,23 +132,21 @@ public class RuleIterationOverTypesTest
         TestRuleIterationOverTypesWithExceptionProvider provider = new TestRuleIterationOverTypesWithExceptionProvider();
         Configuration configuration = provider.getConfiguration(context);
 
-        //this should call perform()
+        // this should call perform()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
         Assert.assertEquals(TestSimple1ModelCounter, 1);
         Assert.assertEquals(TestSimple2ModelCounter, 2);
         vertex.asVertex().remove();
-        //this should call otherwise()
+        // this should call otherwise()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
         Assert.assertEquals(TestSimple1ModelCounter, 1);
         Assert.assertEquals(TestSimple2ModelCounter, 4);
-        
-        
+
     }
-    
-    
+
     public class TestRuleIterationOverTypesProvider extends WindupRuleProvider
     {
-        
+
         @Override
         public RulePhase getPhase()
         {

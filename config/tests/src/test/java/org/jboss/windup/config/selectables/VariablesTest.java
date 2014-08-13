@@ -1,6 +1,6 @@
 package org.jboss.windup.config.selectables;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -55,7 +55,7 @@ public class VariablesTest
     @Test
     public void testInvalidTypeGet()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
         GraphRewrite event = new GraphRewrite(context);
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -88,7 +88,7 @@ public class VariablesTest
     @Test
     public void testUnTypedGet()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
         GraphRewrite event = new GraphRewrite(context);
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -110,7 +110,7 @@ public class VariablesTest
     @Test
     public void testInvalidCountGet()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
         GraphRewrite event = new GraphRewrite(context);
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();

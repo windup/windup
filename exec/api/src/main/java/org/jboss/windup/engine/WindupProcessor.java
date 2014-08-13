@@ -6,10 +6,17 @@
  */
 package org.jboss.windup.engine;
 
+import java.nio.file.Path;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface WindupProcessor
 {
-   void execute();
+    /**
+     * Sets the output directory (directory containing the graph, reporting files, and other data)
+     */
+    void setOutputDirectory(Path outputDirectory);
+
+    void execute();
 }

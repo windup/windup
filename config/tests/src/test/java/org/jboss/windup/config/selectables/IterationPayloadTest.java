@@ -1,6 +1,6 @@
 package org.jboss.windup.config.selectables;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -53,7 +53,7 @@ public class IterationPayloadTest
     @Test
     public void testIterationVariableResolving()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
         GraphRewrite event = new GraphRewrite(context);
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();

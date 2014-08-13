@@ -1,5 +1,7 @@
 package org.jboss.windup.exec;
 
+import java.nio.file.Path;
+
 import javax.inject.Inject;
 
 import org.jboss.windup.config.ConfigurationProcessor;
@@ -20,6 +22,17 @@ public class WindupProcessorImpl implements WindupProcessor
 
     @Inject
     private ConfigurationProcessor configProcessor;
+
+    private Path outputDirectory;
+
+    @Override
+    public void setOutputDirectory(Path outputDirectory)
+    {
+        this.outputDirectory = outputDirectory;
+
+        Path graphDirectory = outputDirectory.resolve("graph");
+        graphContext.setGraphDirectory(graphDirectory);
+    }
 
     /**
      * The entry point of the engine.

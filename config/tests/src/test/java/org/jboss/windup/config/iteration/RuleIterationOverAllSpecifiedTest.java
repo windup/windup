@@ -1,6 +1,6 @@
 package org.jboss.windup.config.iteration;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -78,7 +78,7 @@ public class RuleIterationOverAllSpecifiedTest
     @Test
     public void testTypeSelection()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
@@ -89,7 +89,7 @@ public class RuleIterationOverAllSpecifiedTest
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath("/tmp/testpath");
+        windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
         windupCfg.setSourceMode(true);
 
         TestRuleIterationOverAllSpecifiedProvider provider = new TestRuleIterationOverAllSpecifiedProvider();
@@ -110,7 +110,7 @@ public class RuleIterationOverAllSpecifiedTest
     @Test(expected = Exception.class)
     public void testTypeSelectionWithException()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
@@ -121,7 +121,7 @@ public class RuleIterationOverAllSpecifiedTest
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath("/tmp/testpath");
+        windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
         windupCfg.setSourceMode(true);
 
         TestRuleIterationOverAllSpecifiedWithExceptionProvider provider = new TestRuleIterationOverAllSpecifiedWithExceptionProvider();

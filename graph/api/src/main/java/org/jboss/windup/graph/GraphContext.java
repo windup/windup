@@ -1,6 +1,6 @@
 package org.jboss.windup.graph;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.service.Service;
@@ -18,33 +18,42 @@ import com.tinkerpop.frames.VertexFrame;
 public interface GraphContext
 {
     /**
+     * Species the directory in which to place the graph.
+     * 
+     * If one is not specified. This should be called before any attempts to get the graph (via getGraph or other
+     * accessors). If the graph has already been initialized, this call will fail.
+     * 
+     * NOTE: All files in this directory will be deleted!
+     */
+    void setGraphDirectory(Path graphDirectory);
+
+    /**
+     * Get the location on disk where the underlying {@link TitanGraph} is stored.
+     */
+    Path getGraphDirectory();
+
+    /**
      * Get the underlying {@link EventGraph}, which is itself a wrapper for a {@link TitanGraph}.
      */
-    public EventGraph<TitanGraph> getGraph();
+    EventGraph<TitanGraph> getGraph();
 
     /**
      * Get the {@link FramedGraph} view of the underlying {@link EventGraph}.
      */
-    public FramedGraph<EventGraph<TitanGraph>> getFramed();
+    FramedGraph<EventGraph<TitanGraph>> getFramed();
 
     /**
      * Get the {@link GraphTypeRegistry}.
      */
-    public GraphTypeRegistry getGraphTypeRegistry();
+    GraphTypeRegistry getGraphTypeRegistry();
 
     /**
      * Get the {@link GraphTypeRegistry}.
      */
-    public TypeAwareFramedGraphQuery getQuery();
-
-    
-    /**
-     * Get the location on disk where the underlying {@link TitanGraph} is stored.
-     */
-    public File getDiskCacheDirectory();
+    TypeAwareFramedGraphQuery getQuery();
 
     /**
      * Returns a {@link Service} object that is specialized for the provided type.
      */
-    public <T extends VertexFrame, S extends Service<T>> S getService(Class<T> type);
+    <T extends VertexFrame, S extends Service<T>> S getService(Class<T> type);
 }

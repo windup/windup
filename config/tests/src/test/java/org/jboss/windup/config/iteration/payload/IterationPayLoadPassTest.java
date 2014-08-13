@@ -1,6 +1,6 @@
 package org.jboss.windup.config.iteration.payload;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -79,7 +79,7 @@ public class IterationPayLoadPassTest
     @Test
     public void testPayloadPass()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         TestPayloadModel vertex = context.getFramed().addVertex(null, TestPayloadModel.class);
@@ -99,14 +99,14 @@ public class IterationPayLoadPassTest
         // this should call perform()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
         Assert.assertEquals(3, modelCounter);
-        modelCounter=0;
+        modelCounter = 0;
 
     }
 
     @Test(expected = Exception.class)
     public void testPayloadNotPass()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
@@ -126,7 +126,7 @@ public class IterationPayLoadPassTest
         // this should call perform()
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
         Assert.assertEquals(3, modelCounter);
-        modelCounter=0;
+        modelCounter = 0;
 
     }
 
