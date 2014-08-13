@@ -35,7 +35,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
             .addBeansXML()
             .addClass(WindupArchitectureTest.class)
-            .addAsResource(new File("../src/test/groovy/GroovyExampleRule.windup.groovy"))
+            .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
             .addAsAddonDependencies(
                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
@@ -57,6 +57,6 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
     @Test
     public void testRunWindupTiny() throws Exception
     {
-        runTest(processor, graphContext, "../../../test-files/Windup1x-javaee-example-tiny.war", false);
+        runTest(processor, graphContext, "../../test-files/Windup1x-javaee-example-tiny.war", false);
     }
 }

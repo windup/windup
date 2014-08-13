@@ -35,7 +35,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("../src/test/groovy/GroovyExampleRule.windup.groovy"))
+                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -59,6 +59,6 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     public void testRunWindupSourceMode() throws Exception
     {
         // The test-files folder in the project root dir.
-        super.runTest(processor, graphContext, "../../../test-files/src_example", true);
+        super.runTest(processor, graphContext, "../../test-files/src_example", true);
     }
 }

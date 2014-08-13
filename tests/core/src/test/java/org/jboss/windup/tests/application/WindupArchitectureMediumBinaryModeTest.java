@@ -35,7 +35,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
             .addBeansXML()
             .addClass(WindupArchitectureTest.class)
-            .addAsResource(new File("../src/test/groovy/GroovyExampleRule.windup.groovy"))
+            .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
             .addAsAddonDependencies(
                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
@@ -57,7 +57,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     @Test
     public void testRunWindupMedium() throws Exception
     {
-        final String path = "../../../test-files/Windup1x-javaee-example.war";
+        final String path = "../../test-files/Windup1x-javaee-example.war";
         System.out.println("Running binary mode test with: " + path);
         runTest(processor, graphContext, path, false);
     }

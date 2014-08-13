@@ -17,14 +17,13 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -43,7 +42,7 @@ public class InlineHintModelQueryTest
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addAsResource(new File("../src/test/resources/reports"))
+                    .addAsResource(new File("src/test/resources/reports"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
