@@ -43,7 +43,7 @@ public class XmlExampleRuleProvider3 extends WindupRuleProvider
                 .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                     QueryPropertyComparisonType.EQUALS, "xmlTag2"))
             .perform(Iteration.over(TestXmlMetaFacetModel.class)
-                .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>(TestXmlMetaFacetModel.class)
+                .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>()
                 {
                     public void perform(GraphRewrite event, EvaluationContext context, TestXmlMetaFacetModel payload) {
                         Variables varStack = Variables.instance(event);

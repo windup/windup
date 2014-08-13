@@ -61,8 +61,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
             .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
             .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$");
 
-        AbstractIterationOperation<FileModel> evaluatePomFiles = new AbstractIterationOperation<FileModel>(
-                    FileModel.class)
+        AbstractIterationOperation<FileModel> evaluatePomFiles = new AbstractIterationOperation<FileModel>()
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)

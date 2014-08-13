@@ -46,7 +46,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             .perform(
                 Iteration.over()
                 .perform(
-                    new IndexJavaFileIterationOperator(FileModel.class)
+                    new IndexJavaFileIterationOperator()
                 )
                 .endIteration()
             );
@@ -57,14 +57,9 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
     {
         private static final int JAVA_SUFFIX_LEN = 5;
 
-        private IndexJavaFileIterationOperator(Class<FileModel> clazz, String variableName)
+        private IndexJavaFileIterationOperator()
         {
-            super(clazz, variableName);
-        }
-        
-        private IndexJavaFileIterationOperator(Class<FileModel> clazz)
-        {
-            super(clazz);
+            super();
         }
 
         @Override

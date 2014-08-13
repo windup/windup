@@ -46,4 +46,10 @@ public class TypedNamedIterationPayloadManager implements IterationPayloadManage
         Iteration.removeCurrentPayload(varStack, varType, var);
     }
 
+    @Override
+    public String getPayLoadName()
+    {
+        return var;
+    }
+
 }

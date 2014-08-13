@@ -51,8 +51,7 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         AbstractIterationOperation<ApplicationReportModel> setupTemplateOperation =
-            new AbstractIterationOperation<ApplicationReportModel>(
-                ApplicationReportModel.class, APP_REPORT_VAR)
+            new AbstractIterationOperation<ApplicationReportModel>()
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, ApplicationReportModel payload)

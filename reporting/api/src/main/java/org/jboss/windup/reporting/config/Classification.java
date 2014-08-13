@@ -28,7 +28,7 @@ public class Classification extends AbstractIterationOperation<FileModel> implem
 
     private Classification(String variable)
     {
-        super(FileModel.class, variable);
+        super(variable);
     }
 
     public static ClassificationBuilder of(String variable)

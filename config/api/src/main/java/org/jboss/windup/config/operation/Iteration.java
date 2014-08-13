@@ -28,6 +28,8 @@ import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.TypedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
+import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.And;
@@ -144,8 +146,21 @@ public abstract class Iteration extends DefaultOperationBuilder
     @Override
     public IterationBuilderWhen when(Condition condition)
     {
+        if(condition instanceof PayLoadVariableNameHolder) {
+            setPayLoadVariableName((PayLoadVariableNameHolder)condition);
+        }
         this.condition = condition;
         return this;
+    }
+    
+    /**
+     * Sets the payload variable name used in this Iteration to the holder.
+     * @param holder
+     */
+    private void setPayLoadVariableName(PayLoadVariableNameHolder holder) {
+        if(holder.getVariableName()==null) {
+            holder.setVariableName(getPayloadManager().getPayLoadName());
+        }
     }
 
     /**
@@ -154,16 +169,23 @@ public abstract class Iteration extends DefaultOperationBuilder
     @Override
     public IterationBuilderPerform perform(Operation operation)
     {
+        if(operation instanceof PayLoadVariableNameHolder) {
+            setPayLoadVariableName((PayLoadVariableNameHolder)operation);
+        }
         this.operationPerform = operation;
+        //if the operation is iteration specific, set the payload variable name if it is not set
         return this;
     }
-
+    
     /**
      * Will be processed for frames which DO NOT comply to the condition in when().
      */
     @Override
     public IterationBuilderOtherwise otherwise(Operation operation)
     {
+        if(operation instanceof PayLoadVariableNameHolder) {
+            setPayLoadVariableName((PayLoadVariableNameHolder)operation);
+        }
         this.operationOtherwise = operation;
         return this;
     }
@@ -300,7 +322,7 @@ public abstract class Iteration extends DefaultOperationBuilder
 
         return payload;
     }
-
+    
     /**
      * Remove the current {@link Iteration} payload.
      */

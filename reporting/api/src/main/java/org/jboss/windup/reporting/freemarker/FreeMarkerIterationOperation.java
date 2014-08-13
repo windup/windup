@@ -39,7 +39,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
     protected FreeMarkerIterationOperation(Furnace furnace, String iterationVarName, String... varNames)
     {
-        super(ReportModel.class, iterationVarName);
+        super(iterationVarName);
         this.furnace = furnace;
         variableNames.add(iterationVarName);
         if (varNames != null)

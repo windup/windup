@@ -17,7 +17,7 @@ public class Hint extends AbstractIterationOperation<FileModel>
 
     private Hint(String variable)
     {
-        super(FileModel.class, variable);
+        super(variable);
     }
 
     @Override

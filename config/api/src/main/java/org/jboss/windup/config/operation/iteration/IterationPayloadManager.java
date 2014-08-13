@@ -17,6 +17,12 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  */
 public interface IterationPayloadManager
 {
+    
+    /**
+     * Get the name of the {@link Iteration} payload.
+     */
+    String getPayLoadName();
+    
     /**
      * Set the current {@link Iteration} payload.
      */

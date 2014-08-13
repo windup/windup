@@ -50,8 +50,7 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
         .perform(
             Iteration.over()
             .perform(
-                new AbstractIterationOperation<WindupConfigurationModel>(
-                            WindupConfigurationModel.class)
+                new AbstractIterationOperation<WindupConfigurationModel>()
                 {
                     public void perform(GraphRewrite event,
                         EvaluationContext context, WindupConfigurationModel payload)

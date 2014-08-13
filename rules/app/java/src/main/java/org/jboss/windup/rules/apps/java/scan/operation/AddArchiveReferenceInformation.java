@@ -14,14 +14,14 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
 {
     private AddArchiveReferenceInformation(String variableName)
     {
-        super(FileModel.class, variableName);
+        super(variableName);
     }
     
     public AddArchiveReferenceInformation()
     {
-        super(FileModel.class);
+        super();
     }
-
+    
     public static AddArchiveReferenceInformation to(String variableName)
     {
         return new AddArchiveReferenceInformation(variableName);

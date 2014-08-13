@@ -136,8 +136,7 @@ public class HintsClassificationsTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            AbstractIterationOperation<TypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<TypeReferenceModel>(
-                        TypeReferenceModel.class, "ref")
+            AbstractIterationOperation<TypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<TypeReferenceModel>("ref")
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)

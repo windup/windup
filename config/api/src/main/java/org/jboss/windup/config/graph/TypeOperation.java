@@ -21,13 +21,13 @@ public class TypeOperation extends AbstractIterationOperation<WindupVertexFrame>
 
     private TypeOperation(String variableName, Class<? extends WindupVertexFrame> newType)
     {
-        super(WindupVertexFrame.class, variableName);
+        super(variableName);
         this.newType = newType;
     }
     
     private TypeOperation(Class<? extends WindupVertexFrame> newType)
     {
-        super(WindupVertexFrame.class);
+        super();
         this.newType = newType;
     }
 

@@ -56,7 +56,7 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
             .perform(
                 Iteration.over()
                 .perform(
-                    new FireASTTypeNameEventsIterationOperator(JavaSourceFileModel.class)
+                    new FireASTTypeNameEventsIterationOperator()
                 )
                 .endIteration()
             );
@@ -65,14 +65,9 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
 
     private final class FireASTTypeNameEventsIterationOperator extends AbstractIterationOperation<JavaSourceFileModel>
     {
-        private FireASTTypeNameEventsIterationOperator(Class<JavaSourceFileModel> clazz, String variableName)
+        private FireASTTypeNameEventsIterationOperator()
         {
-            super(clazz, variableName);
-        }
-
-        private FireASTTypeNameEventsIterationOperator(Class<JavaSourceFileModel> clazz)
-        {
-            super(clazz);
+            super();
         }
 
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)

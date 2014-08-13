@@ -50,8 +50,7 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
         ConditionBuilder allProjects = Query
             .find(MavenProjectModel.class);
 
-        AbstractIterationOperation<MavenProjectModel> setupParentModule = new AbstractIterationOperation<MavenProjectModel>(
-                    MavenProjectModel.class)
+        AbstractIterationOperation<MavenProjectModel> setupParentModule = new AbstractIterationOperation<MavenProjectModel>()
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, MavenProjectModel payload)

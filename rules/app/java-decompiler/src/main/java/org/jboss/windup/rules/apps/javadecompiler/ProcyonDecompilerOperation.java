@@ -27,14 +27,17 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
 
     public ProcyonDecompilerOperation(String variableName)
     {
-        super(ArchiveModel.class, variableName);
+        super(variableName);
     }
     
+    /**
+     * Let the variable name to be set by the current Iteration.
+     */
     public ProcyonDecompilerOperation()
     {
-        super(ArchiveModel.class);
+        super();
     }
-
+    
     @Override
     public void perform(final GraphRewrite event, final EvaluationContext context, final ArchiveModel payload)
     {

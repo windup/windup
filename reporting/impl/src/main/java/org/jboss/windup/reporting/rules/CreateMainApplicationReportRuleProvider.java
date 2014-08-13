@@ -43,8 +43,7 @@ public class CreateMainApplicationReportRuleProvider extends WindupRuleProvider
         ConditionBuilder findProjectModels = Query
                     .find(WindupConfigurationModel.class);
 
-        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>(
-                    WindupConfigurationModel.class)
+        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)

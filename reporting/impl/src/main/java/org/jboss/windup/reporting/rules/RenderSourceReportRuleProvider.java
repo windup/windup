@@ -47,8 +47,7 @@ public class RenderSourceReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        GraphOperation renderReport = new AbstractIterationOperation<SourceReportModel>(SourceReportModel.class,
-                    "sourceReport")
+        GraphOperation renderReport = new AbstractIterationOperation<SourceReportModel>()
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, final SourceReportModel payload)
@@ -63,6 +62,7 @@ public class RenderSourceReportRuleProvider extends WindupRuleProvider
                 // update the variable with the current type information
                 Iteration.setCurrentPayload(Variables.instance(event), getVariableName(), freemarkerSourceReport);
             }
+
         };
 
         return ConfigurationBuilder
