@@ -19,13 +19,15 @@ public abstract class WindupArchitectureTest
         Assert.assertNotNull(processor);
         Assert.assertNotNull(processor.toString());
 
-        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(inputPath);
-        windupCfg.setSourceMode(sourceMode);
-
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupReport");
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
+
+        processor.setOutputDirectory(outputPath);
+
+        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
+        windupCfg.setInputPath(inputPath);
+        windupCfg.setSourceMode(sourceMode);
 
         windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
         windupCfg.setSourceMode(false);

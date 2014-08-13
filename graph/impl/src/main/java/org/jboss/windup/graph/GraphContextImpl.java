@@ -1,6 +1,8 @@
 package org.jboss.windup.graph;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.UUID;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -10,12 +12,12 @@ import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
+import org.jboss.windup.util.exception.WindupException;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.util.GraphHelper;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
@@ -35,22 +37,22 @@ public class GraphContextImpl implements GraphContext
      * Used to get access to all implemented {@link Service} classes.
      */
     private final Imported<Service<? extends VertexFrame>> graphServices;
-    private final EventGraph<TitanGraph> eventGraph;
-    private final TitanGraph titanGraph;
-    private final BatchGraph<TitanGraph> batch;
-    private final FramedGraph<EventGraph<TitanGraph>> framed;
     private final GraphTypeRegistry graphTypeRegistry;
-    private final File diskCacheDir;
-
-    public EventGraph<TitanGraph> getGraph()
-    {
-        return eventGraph;
-    }
+    private EventGraph<TitanGraph> eventGraph;
+    private BatchGraph<TitanGraph> batch;
+    private FramedGraph<EventGraph<TitanGraph>> framed;
+    private Path graphDirectory;
 
     @Override
     public GraphTypeRegistry getGraphTypeRegistry()
     {
         return graphTypeRegistry;
+    }
+
+    public EventGraph<TitanGraph> getGraph()
+    {
+        initGraphIfNeeded();
+        return eventGraph;
     }
 
     /**
@@ -60,39 +62,73 @@ public class GraphContextImpl implements GraphContext
      */
     public BatchGraph<TitanGraph> getBatch()
     {
+        initGraphIfNeeded();
         return batch;
     }
 
     public FramedGraph<EventGraph<TitanGraph>> getFramed()
     {
+        initGraphIfNeeded();
         return framed;
     }
 
-    public GraphContextImpl(Imported<Service<? extends VertexFrame>> graphServices, File diskCache,
+    public GraphContextImpl(Imported<Service<? extends VertexFrame>> graphServices,
                 GraphTypeRegistry graphTypeRegistry,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider)
     {
         this.graphServices = graphServices;
         this.graphTypeRegistry = graphTypeRegistry;
         this.classLoaderProvider = classLoaderProvider;
+    }
 
-        FileUtils.deleteQuietly(diskCache);
-        this.diskCacheDir = diskCache;
+    @Override
+    public void setGraphDirectory(Path graphDirectory)
+    {
+        if (this.eventGraph != null)
+        {
+            throw new WindupException("Error, attempting to set graph directory to: \"" + graphDirectory.toString()
+                        + "\", but the graph has already been initialized (with graph folder: \""
+                        + this.graphDirectory.toString() + "\"!");
+        }
+        this.graphDirectory = graphDirectory;
+    }
 
-        File lucene = new File(diskCache, "graphsearch");
-        File berkeley = new File(diskCache, "graph");
+    @Override
+    public Path getGraphDirectory()
+    {
+        return graphDirectory;
+    }
+
+    private void initGraphIfNeeded()
+    {
+        if (eventGraph != null)
+        {
+            // graph is already initialized, just return
+            return;
+        }
+
+        if (graphDirectory == null)
+        {
+            // just give it a default value
+            setGraphDirectory(getDefaultGraphDirectory());
+        }
+
+        FileUtils.deleteQuietly(graphDirectory.toFile());
+
+        Path lucene = graphDirectory.resolve("graphsearch");
+        Path berkeley = graphDirectory.resolve("titangraph");
 
         // TODO: Externalize this.
         Configuration conf = new BaseConfiguration();
-        conf.setProperty("storage.directory", berkeley.getAbsolutePath());
+        conf.setProperty("storage.directory", berkeley.toAbsolutePath().toString());
         conf.setProperty("storage.backend", "berkeleyje");
 
         conf.setProperty("storage.index.search.backend", "lucene");
-        conf.setProperty("storage.index.search.directory", lucene.getAbsolutePath());
+        conf.setProperty("storage.index.search.directory", lucene.toAbsolutePath().toString());
         conf.setProperty("storage.index.search.client-only", "false");
         conf.setProperty("storage.index.search.local-mode", "true");
 
-        this.titanGraph = TitanFactory.open(conf);
+        TitanGraph titanGraph = TitanFactory.open(conf);
 
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
@@ -100,21 +136,21 @@ public class GraphContextImpl implements GraphContext
                     "systemId", "qualifiedName", "filePath", "mavenIdentifier", "packageName" };
         for (String key : keys)
         {
-            this.titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
+            titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
 
-        for (String key : new String[] { "archiveEntry"})
+        for (String key : new String[] { "archiveEntry" })
         {
-            this.titanGraph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
+            titanGraph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
         }
-        
+
         for (String key : new String[] { WindupVertexFrame.TYPE_PROP })
         {
-            this.titanGraph.makeKey(key).list().dataType(String.class).indexed(Vertex.class).make();
+            titanGraph.makeKey(key).list().dataType(String.class).indexed(Vertex.class).make();
         }
 
-        this.eventGraph = new EventGraph<TitanGraph>(this.titanGraph);
-        batch = new BatchGraph<TitanGraph>(this.titanGraph, 1000L);
+        this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
+        batch = new BatchGraph<TitanGraph>(titanGraph, 1000L);
 
         // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
@@ -150,6 +186,7 @@ public class GraphContextImpl implements GraphContext
         );
 
         framed = factory.create(eventGraph);
+
     }
 
     @Override
@@ -176,19 +213,22 @@ public class GraphContextImpl implements GraphContext
     }
 
     @Override
-    public File getDiskCacheDirectory()
+    public String toString()
     {
-        return diskCacheDir;
+        return "GraphContext: " + getGraphDirectory().toString();
     }
 
     @Override
-    public String toString()
+    public TypeAwareFramedGraphQuery getQuery()
     {
-        return "GraphContext: " + getDiskCacheDirectory();
+        return new TypeAwareFramedGraphQuery(getFramed());
     }
 
-	@Override
-	public TypeAwareFramedGraphQuery getQuery() {
-		return new TypeAwareFramedGraphQuery(getFramed());
-	}
+    /**
+     * This is called if the user does not explicitly specify a graph directory
+     */
+    private Path getDefaultGraphDirectory()
+    {
+        return new File(FileUtils.getTempDirectory(), "windupgraph_" + UUID.randomUUID().toString()).toPath();
+    }
 }

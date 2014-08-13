@@ -1,10 +1,10 @@
 package org.jboss.windup.graph;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public interface GraphContextFactory
 {
-    GraphContext create(File runDirectory);
+    GraphContext create(Path runDirectory);
 
     GraphContext create();
 }

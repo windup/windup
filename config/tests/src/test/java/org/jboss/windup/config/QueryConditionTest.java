@@ -1,6 +1,6 @@
 package org.jboss.windup.config;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -90,14 +90,14 @@ public class QueryConditionTest
     @Test
     public void testInitialQueryAsGremlin()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(folder.getAbsolutePath());
+        windupCfg.setInputPath(folder.toAbsolutePath().toString());
         windupCfg.setSourceMode(true);
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
@@ -127,14 +127,14 @@ public class QueryConditionTest
     @Test
     public void testSingletonSelection()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(folder.getAbsolutePath());
+        windupCfg.setInputPath(folder.toAbsolutePath().toString());
         windupCfg.setSourceMode(true);
 
         JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
@@ -169,7 +169,7 @@ public class QueryConditionTest
     @Test
     public void testJavaMethodModel()
     {
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         GraphRewrite event = new GraphRewrite(context);
@@ -204,7 +204,7 @@ public class QueryConditionTest
     public void testTypeTransition()
     {
         // build the initial graph
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         fillData(context);
@@ -226,7 +226,7 @@ public class QueryConditionTest
     public void testTypeFilter()
     {
         // build the initial graph
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         fillData(context);
@@ -256,7 +256,7 @@ public class QueryConditionTest
     public void testPropertyFilter()
     {
         // build the initial graph
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         fillData(context);
@@ -279,7 +279,7 @@ public class QueryConditionTest
     public void testTypeAndPropertyFilter()
     {
         // build the initial graph
-        final File folder = OperatingSystemUtils.createTempDir();
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         final GraphContext context = factory.create(folder);
 
         fillData(context);
