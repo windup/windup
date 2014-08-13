@@ -17,11 +17,17 @@ package org.jboss.windup.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
+import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.logging.Logger;
@@ -64,6 +70,16 @@ import org.ocpsoft.rewrite.util.Visitor;
 public class RuleSubset extends DefaultOperationBuilder implements CompositeOperation, Parameterized
 {
     private static Logger log = Logger.getLogger(RuleSubset.class);
+
+    /**
+     * Used for tracking the time taken by the rules within each RuleProvider
+     */
+    private final IdentityHashMap<WindupRuleProvider, RuleProviderExecutionStatisticsModel> timeTakenByProvider = new IdentityHashMap<>();
+    /**
+     * Used for tracking the time taken by each phase of execution
+     */
+    private final Map<RulePhase, RulePhaseExecutionStatisticsModel> timeTakenByPhase = new HashMap<>();
+
     private final Configuration config;
 
     private RuleSubset(Configuration config)
@@ -75,6 +91,55 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     public static RuleSubset evaluate(Configuration config)
     {
         return new RuleSubset(config);
+    }
+
+    /**
+     * Logs the time taken by this rule, and attaches this to the total for the RuleProvider
+     */
+    private void logTimeTakenByRuleProvider(GraphContext graphContext, Context context, int ruleIndex, int timeTaken)
+    {
+        WindupRuleProvider ruleProvider = (WindupRuleProvider) context.get(RuleMetadata.RULE_PROVIDER);
+        if (ruleProvider == null)
+            return;
+
+        if (!timeTakenByProvider.containsKey(ruleProvider))
+        {
+            RuleProviderExecutionStatisticsModel model = graphContext
+                        .getService(RuleProviderExecutionStatisticsModel.class).create();
+            model.setRuleIndex(ruleIndex);
+            model.setRuleProviderID(ruleProvider.getID());
+            model.setTimeTaken(timeTaken);
+
+            timeTakenByProvider.put(ruleProvider, model);
+        }
+        else
+        {
+            RuleProviderExecutionStatisticsModel model = timeTakenByProvider.get(ruleProvider);
+            int prevTimeTaken = model.getTimeTaken();
+            model.setTimeTaken(prevTimeTaken + timeTaken);
+        }
+        logTimeTakenByPhase(graphContext, ruleProvider.getPhase(), timeTaken);
+    }
+
+    /**
+     * Logs the time taken by this rule and adds this to the total time taken for this phase
+     */
+    private void logTimeTakenByPhase(GraphContext graphContext, RulePhase phase, int timeTaken)
+    {
+        if (!timeTakenByPhase.containsKey(phase))
+        {
+            RulePhaseExecutionStatisticsModel model = graphContext.getService(RulePhaseExecutionStatisticsModel.class)
+                        .create();
+            model.setRulePhase(phase.toString());
+            model.setTimeTaken(timeTaken);
+            timeTakenByPhase.put(phase, model);
+        }
+        else
+        {
+            RulePhaseExecutionStatisticsModel model = timeTakenByPhase.get(phase);
+            int prevTimeTaken = model.getTimeTaken();
+            model.setTimeTaken(prevTimeTaken + timeTaken);
+        }
     }
 
     /*
@@ -97,6 +162,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         for (int i = 0; i < rules.size(); i++)
         {
             Rule rule = rules.get(i);
+            Context ruleContext = rule instanceof Context ? (Context) rule : null;
+            long ruleTimeStarted = System.currentTimeMillis();
             try
             {
 
@@ -145,33 +212,35 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 finally
                 {
                     boolean autocommit = true;
-                    if (rule instanceof Context)
+                    if (ruleContext != null && ruleContext.containsKey(RuleMetadata.AUTO_COMMIT))
                     {
-                        Context ruleContext = (Context) rule;
-                        if (ruleContext.containsKey(RuleMetadata.AUTO_COMMIT))
-                        {
-                            autocommit = (Boolean) ruleContext.get(RuleMetadata.AUTO_COMMIT);
-                        }
+                        autocommit = (Boolean) ruleContext.get(RuleMetadata.AUTO_COMMIT);
                     }
                     if (autocommit)
                     {
                         event.getGraphContext().getGraph().getBaseGraph().commit();
                     }
                     event.selectionPop();
+
+                    long ruleTimeCompleted = System.currentTimeMillis();
+                    if (ruleContext != null)
+                    {
+                        int timeTaken = (int) (ruleTimeCompleted - ruleTimeStarted);
+                        logTimeTakenByRuleProvider(event.getGraphContext(), ruleContext, i, timeTaken);
+                    }
                 }
             }
             catch (RuntimeException e)
             {
                 String message = "Error encountered while evaluating rule: " + rule;
-                if (rule instanceof Context)
+                if (ruleContext != null)
                 {
-                    Object origin = ((Context) rule).get(RuleMetadata.ORIGIN);
+                    Object origin = ruleContext.get(RuleMetadata.ORIGIN);
 
                     if (origin != null)
                         message += " from: " + origin;
 
-                    Object location = ((Context) rule)
-                                .get(org.ocpsoft.rewrite.config.RuleMetadata.PROVIDER_LOCATION);
+                    Object location = ruleContext.get(org.ocpsoft.rewrite.config.RuleMetadata.PROVIDER_LOCATION);
 
                     if (location != null)
                         message += " defined in: " + location;

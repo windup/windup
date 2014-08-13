@@ -13,6 +13,11 @@ public enum RuleMetadata
     CATEGORY,
 
     /**
+     * The {@link WinupRuleProvider} that originated this rule
+     */
+    RULE_PROVIDER,
+
+    /**
      * The {@link Rule} origin.
      */
     ORIGIN,
