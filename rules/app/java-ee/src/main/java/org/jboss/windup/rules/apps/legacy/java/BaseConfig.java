@@ -62,7 +62,8 @@ public class BaseConfig extends WindupRuleProvider
                        )
                        .endIteration()
                     )
-
+                    
+                   
                     /*
                      * <windup:java-classification source-type="INHERITANCE" regex="commonj.work.Work"
                      * description="Commonj Work" effort="2"> <windup:hints> <windup:java-hint regex="commonj.work.Work"
@@ -82,6 +83,8 @@ public class BaseConfig extends WindupRuleProvider
                         )
                         .endIteration()
                      )
+                     
+                     
                      
                     /*
                      * <windup:java-classification source-type="INHERITANCE" regex="org.mule.umo.UMOFilter$"

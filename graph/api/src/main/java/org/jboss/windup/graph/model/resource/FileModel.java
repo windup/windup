@@ -63,6 +63,12 @@ public interface FileModel extends ResourceModel
 
     @Property(MD5_HASH)
     public void setMD5Hash(String md5Hash);
+    
+    @Property("whiteList")
+    public boolean isWhiteList();
+
+    @Property("whiteList")
+    public void setWhiteList(boolean whiteList);
 
     @Property(SHA1_HASH)
     public String getSHA1Hash();

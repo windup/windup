@@ -3,8 +3,13 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.rules.apps.java.config.JavaClass;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
 public class JBossJBPMConfig extends WindupRuleProvider
@@ -25,189 +30,513 @@ public class JBossJBPMConfig extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-
-        /* TODO Change to use new Hints/classifications API
-        
-        List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
-        hints.add(new BlackListRegex(getID(), "org.jbpm.graph.def.ActionHandler$", "Migrate to jBPM 5 org.drools.runtime.process.WorkItemHandler.", 2, Types.add(TypeReferenceLocation.INHERITANCE)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession$", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession", 4));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.JbpmContext.getTaskInstance\\(.+\\)", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession.getTaskInstance\\( ", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession.loadTaskInstance\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession.findTaskInstances\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksOwned(String userId, String language)", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession.findTaskInstances\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksOwned(String userId, List<Status> status, String language)", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession.findTaskInstancesByProcessInstance\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksByStatusByProcessId(long processInstanceId, List<Status> status, String language)", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession.findTaskInstancesByProcessInstance\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksByStatusByProcessIdByTaskName(long processInstanceId, List<Status> status, String taskName, String language)", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.db.TaskMgmtSession.findTaskInstancesByToken\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTaskByWorkItemId(long workItemId)", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.JbpmConfiguration$", "Migrate to jBPM 5: Replace with creation of org.drools.KnowledgeBase.", 1));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.JbpmConfiguration.createJbpmContext\\(\\)", "Migrate to jBPM 5: Replace with instantiation of org.drools.runtime.StatefulKnowledgeSession.", 1));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.JbpmContext.newProcessInstance", "Migrate to jBPM 5: org.drools.runtime.StatefulKnowledgeSession.startProcess(String processId)", 1));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getPriority\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getPriority or org.jbpm.task.Task.getPriority", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getName\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getName or org.jbpm.task.Task.getNames", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getId\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getId or org.jbpm.task.Task.getId", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getCreate\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getCreatedOn", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getDescription\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getDescription or org.jbpm.task.Task.getDescriptions", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getStart\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getActivationTime", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.end\\(", "<![CDATA["
-            + "Migrate to jBPM 5:\n" + 
-            "            org.jbpm.task.service.TaskClient\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            TaskClient client = new TaskClient(new MinaTaskClientConnector(...);\n" + 
-            "            client.complete( taskId, ...);\n" + 
-            "            ```"
-            + "]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.addComment\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.addComment", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getComments\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.addComment", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getProcessInstance\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getProcessInstanceId", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getActorId\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getActualOwner", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getDueDate\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getExpirationTime", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.isBlocking\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.isSkipable", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.getDueDate\\(", "Migrate to jBPM 5: org.jbpm.task.Task.getDeadlines", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.start\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Activate", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.setActorId\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Claim", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.resume\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Resume", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.cancel\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Skip", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.start\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Start", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.exe.TaskInstance.suspend\\(", "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Suspend", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.def.Task.getPriority\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getPriority or org.jbpm.task.Task.getPriority", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.def.Task.getName\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getName or org.jbpm.task.Task.getNames", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.def.Task.getId\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getId or org.jbpm.task.Task.getId", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.def.Task.getDescription\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getDescription or org.jbpm.task.Task.getDescriptions", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.def.Task.isBlocking\\(", "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.isSkipable", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.def.Task.getAssignmentDelegation\\(", "Migrate to jBPM 5: org.jbpm.task.Task.getDelegation", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.taskmgmt.def.Task.getDueDate\\(", "Migrate to jBPM 5: org.jbpm.task.Task.getDeadlines", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.graph.exe.ProcessInstance$", "Migrate to jBPM 5: org.drools.runtime.process.ProcessInstance", 0));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.graph.exe.ExecutionContext.getVariable", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.getVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.graph.exe.ExecutionContext.setVariable", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.setVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.JbpmContext.getProcessInstance", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.getVariables", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.getVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.setVariable", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.setVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.getVariable", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.getVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableContainer.setVariable", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.setVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableContainer.getVariable", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.getVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableContainer.getContextInstance ", "Migrate to jBPM 5: org.jbpm.process.instance.context.variable.VariableScopeInstance.getVariableScope", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableContainer.setVariables", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.setVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableInstance.getName", "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getName", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableInstance.getValue", "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getValue", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableInstance.setValue", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.setVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.VariableInstance.toString", "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.toString", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.getVariable", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.getVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "org.jbpm.context.exe.ContextInstance.setVariable", "<![CDATA[\n" + 
-            "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
-            "\n" + 
-            "            ```java\n" + 
-            "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
-            "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
-            "            kcontext.setProcessInstance(processInstance);\n" + 
-            "            kcontext.setVariable(...);\n" + 
-            "            ```\n" + 
-            "        ]]>", 0, Types.add(TypeReferenceLocation.METHOD))); 
-        
-        
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new JavaScanner().add(hints));
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.graph.def.ActionHandler$") .at(TypeReferenceLocation.INHERITANCE) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5 org.drools.runtime.process.WorkItemHandler." ).withEffort( 2 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.db.TaskMgmtSession$") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession" ).withEffort( 4 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.JbpmContext.getTaskInstance\\(.+\\)") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.db.TaskMgmtSession.getTaskInstance\\( ") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.db.TaskMgmtSession.loadTaskInstance\\(") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTask(long taskId)" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.db.TaskMgmtSession.findTaskInstances\\(") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksOwned(String userId, String language)" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.db.TaskMgmtSession.findTaskInstances\\(") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksOwned(String userId, List<Status> status, String language)" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.db.TaskMgmtSession.findTaskInstancesByProcessInstance\\(") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksByStatusByProcessId(long processInstanceId, List<Status> status, String language)" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.db.TaskMgmtSession.findTaskInstancesByProcessInstance\\(") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTasksByStatusByProcessIdByTaskName(long processInstanceId, List<Status> status, String taskName, String language)" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.db.TaskMgmtSession.findTaskInstancesByToken\\(") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.getTaskByWorkItemId(long workItemId)" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.JbpmConfiguration$") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: Replace with creation of org.drools.KnowledgeBase." ).withEffort( 1 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.JbpmConfiguration.createJbpmContext\\(\\)") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: Replace with instantiation of org.drools.runtime.StatefulKnowledgeSession." ).withEffort( 1 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.JbpmContext.newProcessInstance") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.drools.runtime.StatefulKnowledgeSession.startProcess(String processId)" ).withEffort( 1 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getPriority\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getPriority or org.jbpm.task.Task.getPriority" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getName\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getName or org.jbpm.task.Task.getNames" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getId\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getId or org.jbpm.task.Task.getId" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getCreate\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getCreatedOn" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getDescription\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getDescription or org.jbpm.task.Task.getDescriptions" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getStart\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getActivationTime" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.end\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( null ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.addComment\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.addComment" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getComments\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.addComment" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getProcessInstance\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getProcessInstanceId" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getActorId\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getActualOwner" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getDueDate\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getExpirationTime" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.isBlocking\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.isSkipable" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.getDueDate\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.Task.getDeadlines" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.start\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Activate" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.setActorId\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Claim" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.resume\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Resume" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.cancel\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Skip" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.start\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Start" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.exe.TaskInstance.suspend\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.service.TaskServiceSession.taskOperation(...) with the parameter: org.jbpm.task.service.Operation.Suspend" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.def.Task.getPriority\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getPriority or org.jbpm.task.Task.getPriority" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.def.Task.getName\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getName or org.jbpm.task.Task.getNames" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.def.Task.getId\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getId or org.jbpm.task.Task.getId" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.def.Task.getDescription\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.getDescription or org.jbpm.task.Task.getDescriptions" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.def.Task.isBlocking\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.query.TaskSummary.isSkipable" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.def.Task.getAssignmentDelegation\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.Task.getDelegation" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.taskmgmt.def.Task.getDueDate\\(") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.task.Task.getDeadlines" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.graph.exe.ProcessInstance$") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.drools.runtime.process.ProcessInstance" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.graph.exe.ExecutionContext.getVariable") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.getVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.graph.exe.ExecutionContext.setVariable") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.setVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.JbpmContext.getProcessInstance") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.ContextInstance.getVariables") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.getVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.ContextInstance.setVariable") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.setVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.ContextInstance.getVariable") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.getVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.VariableContainer.setVariable") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.setVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.VariableContainer.getVariable") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.getVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.VariableContainer.getContextInstance ") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.process.instance.context.variable.VariableScopeInstance.getVariableScope" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.VariableContainer.setVariables") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.setVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.VariableInstance.getName") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getName" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.VariableInstance.getValue") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.getValue" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.VariableInstance.setValue") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.setVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.VariableInstance.toString") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "Migrate to jBPM 5: org.jbpm.process.core.context.variable.Variable.toString" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.ContextInstance.getVariable") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.getVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                    JavaClass.references("org.jbpm.context.exe.ContextInstance.setVariable") .at(TypeReferenceLocation.METHOD) ) .perform( Iteration.over().perform( Hint.withText( "<![CDATA[\n" + 
+                                "            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext\n" + 
+                                "\n" + 
+                                "            ```java\n" + 
+                                "            ProcessContext kcontext = new ProcessContext(ksession);\n" + 
+                                "            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());\n" + 
+                                "            kcontext.setProcessInstance(processInstance);\n" + 
+                                "            kcontext.setVariable(...);\n" + 
+                                "            ```\n" + 
+                                "        ]]>" ).withEffort( 0 )
+                    )
+                    .endIteration()
+                    );
+
         return configuration;
-        
-        */
-        return null;
     }
     // @formatter:on
 }

@@ -10,8 +10,9 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaClassBuilder
+public interface JavaClassBuilderInFile
 {
+
     /**
      * Specify one or more {@link TypeReferenceLocation} where the specified regex is of interest.
      */
@@ -22,10 +23,4 @@ public interface JavaClassBuilder
      * returning a fully configured {@link Condition} object.
      */
     ConditionBuilder as(String variable);
-    
-    /**
-     * File name/path in which the java class is located.
-     * @param regex
-     */
-    JavaClassBuilderInFile inFile(String regex);
 }

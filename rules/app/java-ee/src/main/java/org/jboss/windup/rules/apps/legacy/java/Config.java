@@ -3,8 +3,14 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.reporting.config.WhiteList;
+import org.jboss.windup.rules.apps.java.config.JavaClass;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
 public class Config extends WindupRuleProvider
@@ -26,243 +32,2068 @@ public class Config extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        /* TODO Implement type filters for AST scanner
 
-        List<WhiteListItem> items = new ArrayList<WhiteListItem>();
-        List<BlackListRegex> hints = new ArrayList<BlackListRegex>();
-        
-        items.add(new WhiteListItem(getID(), "amx_", Types.add(TypeReferenceLocation.TYPE)));
-        items.add(new WhiteListItem(getID(), "amx_", Types.add(TypeReferenceLocation.METHOD)));
-        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context))$", Types.add(TypeReferenceLocation.IMPORT)));
-        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context)).close", Types.add(TypeReferenceLocation.METHOD)));
-        items.add(new WhiteListItem(getID(), "((javax.naming.InitialContext)|(javax.naming.Context))$", Types.add(TypeReferenceLocation.TYPE)));
-        items.add(new WhiteListItem(getID(), "javax.naming.InitialContext\\(\\)", Types.add(TypeReferenceLocation.CONSTRUCTOR_CALL)));
-        items.add(new WhiteListItem(getID(), "javax.ejb.+$", Types.add(TypeReferenceLocation.IMPORT)));
-        items.add(new WhiteListItem(getID(), "(javax.ejb.EntityContext.*)|(javax.ejb.RemoveException.*)|(javax.ejb.SessionContext.*)|(javax.ejb.EJBException.*)|(javax.ejb.CreateException$)|(javax.ejb.FinderException$)"));
-        items.add(new WhiteListItem(getID(), "javax.sql.+$", Types.add(TypeReferenceLocation.IMPORT)));
-        items.add(new WhiteListItem(getID(), "javax.management.+$", Types.add(TypeReferenceLocation.IMPORT)));
-        items.add(new WhiteListItem(getID(), "javax.management.+$", Types.add(TypeReferenceLocation.TYPE)));
-        items.add(new WhiteListItem(getID(), "javax.management.remote.JMXConnector.close.+$", Types.add(TypeReferenceLocation.METHOD)));
-        items.add(new WhiteListItem(getID(), "javax.management.remote.JMXConnector.getMBeanServerConnection\\(\\)", Types.add(TypeReferenceLocation.METHOD)));
-        items.add(new WhiteListItem(getID(), "java.io.LineNumberInputStream$"));
-        items.add(new WhiteListItem(getID(), "java.io.ObjectInputStream$"));
-        items.add(new WhiteListItem(getID(), "java.io.ObjectOutputStream.PutField$"));
-        items.add(new WhiteListItem(getID(), "java.io.StreamTokenizer$"));
-        items.add(new WhiteListItem(getID(), "java.io.StringBufferInputStream$"));
-        items.add(new WhiteListItem(getID(), "java.lang.Character.UnicodeBlock.SURROGATES_AREA$"));
-        items.add(new WhiteListItem(getID(), "java.lang.ClassLoader$"));
-        items.add(new WhiteListItem(getID(), "java.lang.Runtime$"));
-        items.add(new WhiteListItem(getID(), "java.lang.SecurityManager$"));
-        items.add(new WhiteListItem(getID(), "java.lang.SecurityManager.inCheck$"));
-        items.add(new WhiteListItem(getID(), "java.lang.System$"));
-        items.add(new WhiteListItem(getID(), "java.lang.Thread$"));
-        items.add(new WhiteListItem(getID(), "java.lang.ThreadGroup$"));
-        items.add(new WhiteListItem(getID(), "java.net.DatagramSocketImpl$"));
-        items.add(new WhiteListItem(getID(), "java.net.HttpURLConnection.HTTP_SERVER_ERROR$"));
-        items.add(new WhiteListItem(getID(), "java.net.MulticastSocket$"));
-        items.add(new WhiteListItem(getID(), "java.net.Socket$"));
-        items.add(new WhiteListItem(getID(), "java.net.URLConnection$"));
-        items.add(new WhiteListItem(getID(), "java.net.URLDecoder$"));
-        items.add(new WhiteListItem(getID(), "java.net.URLEncoder$"));
-        items.add(new WhiteListItem(getID(), "java.net.URLStreamHandler$"));
-        items.add(new WhiteListItem(getID(), "com.ibm.ac.commonbaseevent101"));
-        items.add(new WhiteListItem(getID(), "java.rmi.dgc.VMID$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.registry.RegistryHandler$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.RMISecurityException$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.LoaderHandler$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.LogStream$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.Operation$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.RemoteCall$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.RemoteRef$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.RemoteStub$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.RMIClassLoader$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.Skeleton$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.SkeletonMismatchException$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.server.SkeletonNotFoundException$"));
-        items.add(new WhiteListItem(getID(), "java.rmi.ServerRuntimeException$"));
-        items.add(new WhiteListItem(getID(), "java.security.Certificate$"));
-        items.add(new WhiteListItem(getID(), "java.security.Identity$"));
-        items.add(new WhiteListItem(getID(), "java.security.IdentityScope$"));
-        items.add(new WhiteListItem(getID(), "java.security.Security$"));
-        items.add(new WhiteListItem(getID(), "java.security.Signature$"));
-        items.add(new WhiteListItem(getID(), "java.security.SignatureSpi$"));
-        items.add(new WhiteListItem(getID(), "java.security.Signer$"));
-        items.add(new WhiteListItem(getID(), "java.sql.CallableStatement$"));
-        items.add(new WhiteListItem(getID(), "java.sql.Date$"));
-        items.add(new WhiteListItem(getID(), "java.sql.DriverManager$"));
-        items.add(new WhiteListItem(getID(), "java.sql.PreparedStatement$"));
-        items.add(new WhiteListItem(getID(), "java.sql.ResultSet$"));
-        items.add(new WhiteListItem(getID(), "java.sql.Time$"));
-        items.add(new WhiteListItem(getID(), "java.sql.Timestamp$"));
-        items.add(new WhiteListItem(getID(), "java.util.logging.Logger.global$"));
-        items.add(new WhiteListItem(getID(), "java.util.Properties$"));
-        items.add(new WhiteListItem(getID(), "javax.accessibility.AccessibleResourceBundle$"));
-        items.add(new WhiteListItem(getID(), "javax.activation.ActivationDataFlavor$"));
-        items.add(new WhiteListItem(getID(), "javax.imageio.spi.ImageReaderSpi.STANDARD_INPUT_TYPE$"));
-        items.add(new WhiteListItem(getID(), "javax.imageio.spi.ImageWriterSpi.STANDARD_OUTPUT_TYPE$"));
-        items.add(new WhiteListItem(getID(), "javax.jws.HandlerChain.name$"));
-        items.add(new WhiteListItem(getID(), "javax.jws.soap.InitParam$"));
-        items.add(new WhiteListItem(getID(), "javax.jws.soap.SOAPMessageHandler$"));
-        items.add(new WhiteListItem(getID(), "javax.jws.soap.SOAPMessageHandlers$"));
-        items.add(new WhiteListItem(getID(), "javax.management.AttributeValueExp$"));
-        items.add(new WhiteListItem(getID(), "javax.management.DefaultLoaderRepository$"));
-        items.add(new WhiteListItem(getID(), "javax.management.loading.DefaultLoaderRepository$"));
-        items.add(new WhiteListItem(getID(), "javax.management.MBeanServer$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.CounterMonitor$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.CounterMonitorMBean$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.GaugeMonitor$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.GaugeMonitorMBean$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.Monitor$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.Monitor.alreadyNotified$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.Monitor.dbgTag$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.MonitorMBean$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.StringMonitor$"));
-        items.add(new WhiteListItem(getID(), "javax.management.monitor.StringMonitorMBean$"));
-        items.add(new WhiteListItem(getID(), "javax.management.openmbean.OpenType.ALLOWED_CLASSNAMES$"));
-        items.add(new WhiteListItem(getID(), "javax.management.StringValueExp$"));
-        items.add(new WhiteListItem(getID(), "javax.management.ValueExp$"));
-        items.add(new WhiteListItem(getID(), "javax.security.auth.Policy$"));
-        items.add(new WhiteListItem(getID(), "javax.sql.rowset.BaseRowSet$"));
-        items.add(new WhiteListItem(getID(), "javax.sql.rowset.CachedRowSet.COMMIT_ON_ACCEPT_CHANGES$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.AbstractButton$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.FocusManager$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JComponent$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JInternalFrame$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JList$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JMenuBar$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JPasswordField$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JPopupMenu$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JRootPane$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JRootPane.defaultPressAction$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JRootPane.defaultReleaseAction$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JTable$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JViewport$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.JViewport.backingStore$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.KeyStroke$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicDesktopPaneUI.closeKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicDesktopPaneUI.maximizeKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicDesktopPaneUI.minimizeKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey2$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicInternalFrameUI.openMenuKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.dividerResizeToggleKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.downKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.endKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.homeKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.keyboardDownRightListener$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.keyboardEndListener$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.keyboardHomeListener$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.keyboardResizeToggleListener$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.keyboardUpLeftListener$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.leftKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.rightKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicSplitPaneUI.upKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicTabbedPaneUI.downKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicTabbedPaneUI.leftKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicTabbedPaneUI.rightKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicTabbedPaneUI.upKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicToolBarUI.downKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicToolBarUI.leftKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicToolBarUI.rightKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.basic.BasicToolBarUI.upKey$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.metal.MetalComboBoxUI$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.metal.MetalComboBoxUI.MetalComboPopup$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.plaf.metal.MetalScrollPaneUI$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.ScrollPaneLayout$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.SwingUtilities$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.table.TableColumn$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.table.TableColumn.resizedPostingDisableCount$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.text.DefaultTextUI$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.text.html.FormView.RESET$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.text.html.FormView.SUBMIT$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.text.LabelView$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.text.TableView$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.text.TableView.TableCell$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.text.View$"));
-        items.add(new WhiteListItem(getID(), "javax.swing.tree.DefaultTreeSelectionModel$"));
-        items.add(new WhiteListItem(getID(), "javax.xml.bind.JAXBContext$"));
-        items.add(new WhiteListItem(getID(), "javax.xml.bind.Unmarshaller$"));
-        items.add(new WhiteListItem(getID(), "javax.xml.bind.Validator$"));
-        items.add(new WhiteListItem(getID(), "javax.xml.soap.SOAPElementFactory$"));
-        items.add(new WhiteListItem(getID(), "javax.xml.stream.XMLEventFactory$"));
-        items.add(new WhiteListItem(getID(), "javax.xml.stream.XMLInputFactory$"));
-        items.add(new WhiteListItem(getID(), "javax.xml.stream.XMLOutputFactory$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.Any$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynamicImplementation$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynAny$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynArray$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynEnum$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynFixed$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynSequence$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynStruct$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynUnion$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.DynValue$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.ORB$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.portable.InputStream$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.portable.OutputStream$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.Principal$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.PrincipalHolder$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.ServerRequest$"));
-        items.add(new WhiteListItem(getID(), "org.omg.CORBA.TCKind$"));
-        items.add(new WhiteListItem(getID(), "org.xml.sax.AttributeList$"));
-        items.add(new WhiteListItem(getID(), "org.xml.sax.DocumentHandler$"));
-        items.add(new WhiteListItem(getID(), "org.xml.sax.HandlerBase$"));
-        items.add(new WhiteListItem(getID(), "org.xml.sax.helpers.AttributeListImpl$"));
-        items.add(new WhiteListItem(getID(), "org.xml.sax.helpers.ParserFactory$"));
-        items.add(new WhiteListItem(getID(), "org.xml.sax.Parser$"));
-        hints.add(new BlackListRegex(getID(), "edu.oswego.cs.dl.util.concurrent", "Upgrade to javax.util.concurrent in Java 5+", 0));
-        hints.add(new BlackListRegex(getID(), "edu.emory.mathcs.backport.java.util", "Upgrade to javax.util.concurrent in Java 5+", 0));
-        hints.add(new BlackListRegex(getID(), "java.lang.Class.classForName", "Ensure class is available to JBoss", 1, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "oracle.sql.*", "Oracle-specific SQL code", 1, Types.add(TypeReferenceLocation.TYPE)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.+", "Remove import", 0, Types.add(TypeReferenceLocation.IMPORT)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Property", "SCA Property Injection; replace with Spring Property Injection", 0, Types.add(TypeReferenceLocation.TYPE)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Reference", "SCA Bean Injection; replace with Spring Bean Injection", 0, Types.add(TypeReferenceLocation.TYPE)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Init", "SCA Initialization Hook; Use the property: init-method='example' on the Spring Bean, where example is the initialization method", 0, Types.add(TypeReferenceLocation.TYPE)));
-        hints.add(new BlackListRegex(getID(), "org.osoa.sca.annotations.Destroy", "SCA Destroy Hook; Use the property: destroy-method='example' on the Spring Bean, where example is the destroy method", 0, Types.add(TypeReferenceLocation.TYPE)));
-        hints.add(new BlackListRegex(getID(), "com.ibm.ctg.client.JavaGateway", "IBM CICS Adapter", 0, Types.add(TypeReferenceLocation.TYPE)));
-        hints.add(new BlackListRegex(getID(), "((javax.naming.InitialContext)|(javax.naming.Context)).lookup", "\"<![CDATA[\"\n" + 
-            "                    + \"Ensure that the JNDI Name does not need to change for JBoss\" +\n" + 
-            "                \n" + 
-            "                \"\"*For Example:*\n" + 
-            "                \n" + 
-            "                ```java\n" + 
-            "                (ConnectionFactory)initialContext.lookup(\"weblogic.jms.ConnectionFactory\");\n" + 
-            "                ```\n" + 
-            "                \n" + 
-            "                *should become:*\n" + 
-            "                \n" + 
-            "                ```java\n" + 
-            "                (ConnectionFactory)initialContext.lookup(\"/ConnectionFactory\");\n" + 
-            "                ```\n" + 
-            "                \n" + 
-            "                \n" + 
-            "                ]]>\"", 1, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "javax.naming.InitialContext\\(.+\\)", "Ensure that the InitialContext connection properties do not need to change for JBoss", 1, Types.add(TypeReferenceLocation.CONSTRUCTOR_CALL)));
-        hints.add(new BlackListRegex(getID(), "javax.management.remote.JMXServiceURL\\(.+\\)", "Ensure that the connection properties do not need to change for JBoss", 0, Types.add(TypeReferenceLocation.CONSTRUCTOR_CALL)));
-        hints.add(new BlackListRegex(getID(), "javax.management.ObjectName\\(.+\\)", "Ensure that the ObjectName exists in JBoss", 1, Types.add(TypeReferenceLocation.CONSTRUCTOR_CALL)));
-        hints.add(new BlackListRegex(getID(), "javax.management.remote.JMXConnectorFactory.connect\\(.+\\)", "Ensure that the connection properties do not need to change for JBoss", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "java.sql.DriverManager", "Move to a JCA Connector unless this class is used for batch processes, then refactor as necessary", 0, Types.add(TypeReferenceLocation.METHOD)));
-        hints.add(new BlackListRegex(getID(), "java.sql.DriverManager$", "Migrate to JCA Connector", 0, Types.add(TypeReferenceLocation.IMPORT)));
-        hints.add(new BlackListRegex(getID(), "amx_.+", "Tibco ActiveMatrix Stub; regenerate the SOAP Client for the class", 0, Types.add(TypeReferenceLocation.IMPORT)));
-        hints.add(new BlackListRegex(getID(), "com.tibco.matrix.java.annotations.WebParam$", "Tibco specific annotation; replace with javax.jws.WebParam", 0));
-        hints.add(new BlackListRegex(getID(), "com.tibco.amf.platform.runtime.extension.exception.SOAPCode$", "Tibco specific annotation", 0));
-        hints.add(new BlackListRegex(getID(), "com.tibco.matrix.java.annotations.WebServiceInterface$", "Tibco specific annotation; replace with javax.jws.WebService", 0));
-        hints.add(new BlackListRegex(getID(), "com.tibco.matrix.java.annotations.WebMethod$", "Tibco specific annotation; replace with javax.jws.WebMethod", 0));
-        hints.add(new BlackListRegex(getID(), "com.tibco.matrix.java.annotations.WebFault$", "Tibco specific annotation; replace with javax.xml.ws.WebFault", 0));
-        hints.add(new BlackListRegex(getID(), "org.mule.transformers.AbstractTransformer$", "Mule specific; replace with org.apache.camel.Converter annotation", 0)); 
-        hints.add(new BlackListRegex(getID(), "org.mule.umo.UMOMessage.getPayload.+", "Mule specific; replace with org.apache.camel.Message.getBody()", 0, Types.add(TypeReferenceLocation.METHOD))); 
-        
-        
-        
-        Configuration configuration = ConfigurationBuilder.begin()
-            .addRule().perform(new JavaScanner().add(items).add(hints));
+        Configuration configuration = ConfigurationBuilder
+                    .begin()
+                    .addRule()
+                    .when(
+                                JavaClass.references("amx_").at(TypeReferenceLocation.TYPE))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("amx_").at(TypeReferenceLocation.METHOD))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("((javax.naming.InitialContext)|(javax.naming.Context))$").at(
+                                            TypeReferenceLocation.IMPORT))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("((javax.naming.InitialContext)|(javax.naming.Context)).close")
+                                            .at(TypeReferenceLocation.METHOD))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("((javax.naming.InitialContext)|(javax.naming.Context))$").at(
+                                            TypeReferenceLocation.TYPE))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.naming.InitialContext\\(\\)").at(
+                                            TypeReferenceLocation.CONSTRUCTOR_CALL))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.ejb.+$").at(TypeReferenceLocation.IMPORT))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references(
+                                            "(javax.ejb.EntityContext.*)|(javax.ejb.RemoveException.*)|(javax.ejb.SessionContext.*)|(javax.ejb.EJBException.*)|(javax.ejb.CreateException$)|(javax.ejb.FinderException$)")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.sql.+$").at(TypeReferenceLocation.IMPORT))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.+$").at(TypeReferenceLocation.IMPORT))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.+$").at(TypeReferenceLocation.TYPE))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.remote.JMXConnector.close.+$").at(
+                                            TypeReferenceLocation.METHOD))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references(
+                                            "javax.management.remote.JMXConnector.getMBeanServerConnection\\(\\)").at(
+                                            TypeReferenceLocation.METHOD))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.io.LineNumberInputStream$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.io.ObjectInputStream$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.io.ObjectOutputStream.PutField$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.io.StreamTokenizer$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.io.StringBufferInputStream$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.Character.UnicodeBlock.SURROGATES_AREA$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.ClassLoader$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.Runtime$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.SecurityManager$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.SecurityManager.inCheck$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.System$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.Thread$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.ThreadGroup$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.net.DatagramSocketImpl$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.net.HttpURLConnection.HTTP_SERVER_ERROR$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.net.MulticastSocket$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.net.Socket$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.net.URLConnection$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.net.URLDecoder$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.net.URLEncoder$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.net.URLStreamHandler$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("com.ibm.ac.commonbaseevent101").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.dgc.VMID$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.registry.RegistryHandler$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.RMISecurityException$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.LoaderHandler$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.LogStream$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.Operation$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.RemoteCall$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.RemoteRef$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.RemoteStub$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.RMIClassLoader$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.Skeleton$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.SkeletonMismatchException$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.server.SkeletonNotFoundException$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.rmi.ServerRuntimeException$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.security.Certificate$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.security.Identity$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.security.IdentityScope$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.security.Security$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.security.Signature$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.security.SignatureSpi$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.security.Signer$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.CallableStatement$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.Date$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.DriverManager$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.PreparedStatement$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.ResultSet$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.Time$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.Timestamp$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.util.logging.Logger.global$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.util.Properties$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.accessibility.AccessibleResourceBundle$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.activation.ActivationDataFlavor$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.imageio.spi.ImageReaderSpi.STANDARD_INPUT_TYPE$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.imageio.spi.ImageWriterSpi.STANDARD_OUTPUT_TYPE$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.jws.HandlerChain.name$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.jws.soap.InitParam$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.jws.soap.SOAPMessageHandler$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.jws.soap.SOAPMessageHandlers$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.AttributeValueExp$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.DefaultLoaderRepository$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.loading.DefaultLoaderRepository$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.MBeanServer$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.CounterMonitor$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.CounterMonitorMBean$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.GaugeMonitor$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.GaugeMonitorMBean$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.Monitor$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.Monitor.alreadyNotified$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.Monitor.dbgTag$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.MonitorMBean$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.StringMonitor$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.monitor.StringMonitorMBean$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.openmbean.OpenType.ALLOWED_CLASSNAMES$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.StringValueExp$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.ValueExp$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.security.auth.Policy$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.sql.rowset.BaseRowSet$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.sql.rowset.CachedRowSet.COMMIT_ON_ACCEPT_CHANGES$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.AbstractButton$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.FocusManager$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JComponent$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JInternalFrame$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JList$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JMenuBar$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JPasswordField$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JPopupMenu$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JRootPane$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JRootPane.defaultPressAction$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JRootPane.defaultReleaseAction$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JTable$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JViewport$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.JViewport.backingStore$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.KeyStroke$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicDesktopPaneUI.closeKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicDesktopPaneUI.maximizeKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicDesktopPaneUI.minimizeKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicDesktopPaneUI.navigateKey2$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicInternalFrameUI.openMenuKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.dividerResizeToggleKey$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.downKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.endKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.homeKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references(
+                                            "javax.swing.plaf.basic.BasicSplitPaneUI.keyboardDownRightListener$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.keyboardEndListener$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.keyboardHomeListener$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references(
+                                            "javax.swing.plaf.basic.BasicSplitPaneUI.keyboardResizeToggleListener$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.keyboardUpLeftListener$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.leftKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.rightKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicSplitPaneUI.upKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicTabbedPaneUI.downKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicTabbedPaneUI.leftKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicTabbedPaneUI.rightKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicTabbedPaneUI.upKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicToolBarUI.downKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicToolBarUI.leftKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicToolBarUI.rightKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.basic.BasicToolBarUI.upKey$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.metal.MetalComboBoxUI$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.metal.MetalComboBoxUI.MetalComboPopup$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.plaf.metal.MetalScrollPaneUI$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.ScrollPaneLayout$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.SwingUtilities$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.table.TableColumn$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.table.TableColumn.resizedPostingDisableCount$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.text.DefaultTextUI$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.text.html.FormView.RESET$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.text.html.FormView.SUBMIT$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.text.LabelView$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.text.TableView$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.text.TableView.TableCell$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.text.View$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.swing.tree.DefaultTreeSelectionModel$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.xml.bind.JAXBContext$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.xml.bind.Unmarshaller$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.xml.bind.Validator$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.xml.soap.SOAPElementFactory$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.xml.stream.XMLEventFactory$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.xml.stream.XMLInputFactory$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.xml.stream.XMLOutputFactory$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.Any$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynamicImplementation$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynAny$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynArray$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynEnum$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynFixed$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynSequence$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynStruct$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynUnion$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.DynValue$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.ORB$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.portable.InputStream$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.portable.OutputStream$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.Principal$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.PrincipalHolder$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.ServerRequest$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.omg.CORBA.TCKind$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.xml.sax.AttributeList$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.xml.sax.DocumentHandler$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.xml.sax.HandlerBase$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.xml.sax.helpers.AttributeListImpl$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.xml.sax.helpers.ParserFactory$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.xml.sax.Parser$").at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(
+                                Iteration.over().perform(
+                                            WhiteList.add()
+                                            )
+                                            .endIteration()
+                    )
+                    .addRule()
+                    .when(
+                                JavaClass.references("edu.oswego.cs.dl.util.concurrent").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(Iteration.over()
+                                .perform(Hint.withText("Upgrade to javax.util.concurrent in Java 5+").withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("edu.emory.mathcs.backport.java.util").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(Iteration.over()
+                                .perform(Hint.withText("Upgrade to javax.util.concurrent in Java 5+").withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.lang.Class.classForName").at(TypeReferenceLocation.METHOD))
+                    .perform(Iteration.over()
+                                .perform(Hint.withText("Ensure class is available to JBoss").withEffort(1)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("oracle.sql.*").at(TypeReferenceLocation.TYPE))
+                    .perform(Iteration.over().perform(Hint.withText("Oracle-specific SQL code").withEffort(1)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.osoa.sca.annotations.+").at(TypeReferenceLocation.IMPORT))
+                    .perform(Iteration.over().perform(Hint.withText("Remove import").withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.osoa.sca.annotations.Property")
+                                            .at(TypeReferenceLocation.TYPE))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText(
+                                            "SCA Property Injection; replace with Spring Property Injection")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.osoa.sca.annotations.Reference").at(
+                                            TypeReferenceLocation.TYPE))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText("SCA Bean Injection; replace with Spring Bean Injection")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.osoa.sca.annotations.Init").at(TypeReferenceLocation.TYPE))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint
+                                            .withText("SCA Initialization Hook; Use the property: init-method='example' on the Spring Bean, where example is the initialization method")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.osoa.sca.annotations.Destroy").at(TypeReferenceLocation.TYPE))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint
+                                            .withText("SCA Destroy Hook; Use the property: destroy-method='example' on the Spring Bean, where example is the destroy method")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("com.ibm.ctg.client.JavaGateway").at(TypeReferenceLocation.TYPE))
+                    .perform(Iteration.over().perform(Hint.withText("IBM CICS Adapter").withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("((javax.naming.InitialContext)|(javax.naming.Context)).lookup")
+                                            .at(TypeReferenceLocation.METHOD))
+                    .perform(Iteration.over().perform(Hint.withText("<![CDATA[\n" + 
+                                "                Ensure that the JNDI Name does not need to change for JBoss\n" + 
+                                "                \n" + 
+                                "                *For Example:*\n" + 
+                                "                \n" + 
+                                "                ```java\n" + 
+                                "                (ConnectionFactory)initialContext.lookup(\"weblogic.jms.ConnectionFactory\");\n" + 
+                                "                ```\n" + 
+                                "                \n" + 
+                                "                *should become:*\n" + 
+                                "                \n" + 
+                                "                ```java\n" + 
+                                "                (ConnectionFactory)initialContext.lookup(\"/ConnectionFactory\");\n" + 
+                                "                ```\n" + 
+                                "                \n" + 
+                                "                \n" + 
+                                "                ]]>").withEffort(1)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.naming.InitialContext\\(.+\\)").at(
+                                            TypeReferenceLocation.CONSTRUCTOR_CALL))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint
+                                            .withText("Ensure that the InitialContext connection properties do not need to change for JBoss")
+                                            .withEffort(1)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.remote.JMXServiceURL\\(.+\\)").at(
+                                            TypeReferenceLocation.CONSTRUCTOR_CALL))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText(
+                                            "Ensure that the connection properties do not need to change for JBoss")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.ObjectName\\(.+\\)").at(
+                                            TypeReferenceLocation.CONSTRUCTOR_CALL))
+                    .perform(Iteration.over()
+                                .perform(Hint.withText("Ensure that the ObjectName exists in JBoss").withEffort(1)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("javax.management.remote.JMXConnectorFactory.connect\\(.+\\)").at(
+                                            TypeReferenceLocation.METHOD))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText(
+                                            "Ensure that the connection properties do not need to change for JBoss")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.DriverManager").at(TypeReferenceLocation.METHOD))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint
+                                            .withText("Move to a JCA Connector unless this class is used for batch processes, then refactor as necessary")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("java.sql.DriverManager$").at(TypeReferenceLocation.IMPORT))
+                    .perform(Iteration.over().perform(Hint.withText("Migrate to JCA Connector").withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("amx_.+").at(TypeReferenceLocation.IMPORT))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText(
+                                            "Tibco ActiveMatrix Stub; regenerate the SOAP Client for the class")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("com.tibco.matrix.java.annotations.WebParam$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText("Tibco specific annotation; replace with javax.jws.WebParam")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("com.tibco.amf.platform.runtime.extension.exception.SOAPCode$")
+                                            .at(TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(Iteration.over().perform(Hint.withText("Tibco specific annotation").withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("com.tibco.matrix.java.annotations.WebServiceInterface$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint
+                                            .withText("Tibco specific annotation; replace with javax.jws.WebService")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("com.tibco.matrix.java.annotations.WebMethod$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText("Tibco specific annotation; replace with javax.jws.WebMethod")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("com.tibco.matrix.java.annotations.WebFault$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText(
+                                            "Tibco specific annotation; replace with javax.xml.ws.WebFault")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.mule.transformers.AbstractTransformer$").at(
+                                            TypeReferenceLocation.NOTSPECIFIED))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText(
+                                            "Mule specific; replace with org.apache.camel.Converter annotation")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    )
+
+                    .addRule()
+                    .when(
+                                JavaClass.references("org.mule.umo.UMOMessage.getPayload.+").at(
+                                            TypeReferenceLocation.METHOD))
+                    .perform(Iteration
+                                .over()
+                                .perform(Hint.withText(
+                                            "Mule specific; replace with org.apache.camel.Message.getBody()")
+                                            .withEffort(0)
+                                )
+                                .endIteration()
+                    );
         
         return configuration;
-        
-        */
-        return null;
     }
     // @formatter:on
 }

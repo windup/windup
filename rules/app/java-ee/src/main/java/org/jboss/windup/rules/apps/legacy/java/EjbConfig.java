@@ -3,8 +3,14 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.config.Classification;
+import org.jboss.windup.reporting.config.WhiteList;
+import org.jboss.windup.rules.apps.java.config.JavaClass;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
 public class EjbConfig
@@ -32,35 +38,142 @@ public class EjbConfig
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            // @formatter:off
-            /* TODO Change to use new Hints/classifications API
-
-            List<WhiteListItem> items = new ArrayList<WhiteListItem>();
-            List<JavaClassification> classifications = new ArrayList<JavaClassification>();
-            
-            items.add(new WhiteListItem(getID(), "javax.ejb.*"));
-            items.add(new WhiteListItem(getID(), "javax.persistence.*"));
-            classifications.add(new JavaClassification(getID(), "JPA Entity", "javax.persistence.Entity$", 0, Types.add(TypeReferenceLocation.TYPE)));
-            classifications.add(new JavaClassification(getID(), "EJB 1.x/2.x - Home Interface", "javax.ejb.EJBHome$", 0, Types.add(TypeReferenceLocation.INHERITANCE)));
-            classifications.add(new JavaClassification(getID(), "EJB 1.x/2.x - Remote Interface", "javax.ejb.EJBObject$", 0, Types.add(TypeReferenceLocation.INHERITANCE)));
-            classifications.add(new JavaClassification(getID(), "EJB 1.x/2.x - Entity Bean", "javax.ejb.EntityBean$", 0, Types.add(TypeReferenceLocation.INHERITANCE)));
-            classifications.add(new JavaClassification(getID(), "EJB 1.x/2.x - Session Bean", "javax.ejb.SessionBean$", 0, Types.add(TypeReferenceLocation.INHERITANCE)));
-            classifications.add(new JavaClassification(getID(), "EJB 2.x - Local Home", "javax.ejb.EJBLocalHome$", 0, Types.add(TypeReferenceLocation.INHERITANCE)));
-            classifications.add(new JavaClassification(getID(), "EJB 2.x - Local Object", "javax.ejb.EJBLocalObject$", 0, Types.add(TypeReferenceLocation.INHERITANCE)));
-            classifications.add(new JavaClassification(getID(), "EJB 2.x - Message Driven Bean", "javax.ejb.MessageDrivenBean$", 0, Types.add(TypeReferenceLocation.INHERITANCE)));
-            classifications.add(new JavaClassification(getID(), "EJB 3.x - Message Driven Bean", "javax.ejb.MessageDriven$", 2, Types.add(TypeReferenceLocation.TYPE)));
-            classifications.add(new JavaClassification(getID(), "EJB 3.x - Local Session Bean Interface", "javax.ejb.Local$", 0, Types.add(TypeReferenceLocation.TYPE)));
-            classifications.add(new JavaClassification(getID(), "EJB 3.x - Remote Session Bean Interface", "javax.ejb.Remote$", 2, Types.add(TypeReferenceLocation.TYPE)));
-            classifications.add(new JavaClassification(getID(), "EJB 3.x - Stateless Session Bean", "javax.ejb.Stateless$", 0, Types.add(TypeReferenceLocation.TYPE)));
-            classifications.add(new JavaClassification(getID(), "EJB 3.x - Stateful Session Bean", "javax.ejb.Stateful$", 0, Types.add(TypeReferenceLocation.TYPE))); 
-            Configuration configuration = ConfigurationBuilder
-                .begin()
-                .addRule().perform(new JavaScanner().add(classifications));
+            Configuration configuration = ConfigurationBuilder.begin()
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.*") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform(
+                        Iteration.over().perform(
+                        WhiteList.add()
+                        )
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.persistence.*") .at(TypeReferenceLocation.NOTSPECIFIED) ) .perform(
+                        Iteration.over().perform(
+                        WhiteList.add()
+                        )
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.persistence.Entity$") .at(TypeReferenceLocation.TYPE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "JPA Entity" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.EJBHome$") .at(TypeReferenceLocation.INHERITANCE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 1.x/2.x - Home Interface" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.EJBObject$") .at(TypeReferenceLocation.INHERITANCE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 1.x/2.x - Remote Interface" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.EntityBean$") .at(TypeReferenceLocation.INHERITANCE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 1.x/2.x - Entity Bean" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.SessionBean$") .at(TypeReferenceLocation.INHERITANCE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 1.x/2.x - Session Bean" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.EJBLocalHome$") .at(TypeReferenceLocation.INHERITANCE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 2.x - Local Home" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.EJBLocalObject$") .at(TypeReferenceLocation.INHERITANCE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 2.x - Local Object" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.MessageDrivenBean$") .at(TypeReferenceLocation.INHERITANCE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 2.x - Message Driven Bean" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.MessageDriven$") .at(TypeReferenceLocation.TYPE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 3.x - Message Driven Bean" ).withEffort( 2
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.Local$") .at(TypeReferenceLocation.TYPE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 3.x - Local Session Bean Interface" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.Remote$") .at(TypeReferenceLocation.TYPE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 3.x - Remote Session Bean Interface" ).withEffort( 2
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.Stateless$") .at(TypeReferenceLocation.TYPE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 3.x - Stateless Session Bean" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        )
+                        .addRule()
+                        .when(
+                        JavaClass.references("javax.ejb.Stateful$") .at(TypeReferenceLocation.TYPE) ) .perform(
+                        Iteration.over().perform(
+                        Classification.as(
+                        "EJB 3.x - Stateful Session Bean" ).withEffort( 0
+                        ))
+                        .endIteration()
+                        );
+           // @formatter:on
             return configuration;
-            
-            */
-            // @formatter:on
-            return null;
         }
     }
 
