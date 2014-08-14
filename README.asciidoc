@@ -7,6 +7,7 @@ Get involved at: http://windup.jboss.org
 * Users Mailing List: windup-users@lists.jboss.org
 * Dev Mailing List: windup-dev@lists.jboss.org
 * Commits Mailing List: windup-commits@lists.jboss.org
+* Windup Wiki: https://github.com/windup/windup/wiki
 
 
 === Looking for stable Windup 0.68 source code?
