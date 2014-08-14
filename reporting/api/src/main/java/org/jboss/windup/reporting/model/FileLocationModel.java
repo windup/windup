@@ -9,9 +9,9 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(FileLocationModel.TYPE)
-public interface FileLocationModel extends WindupVertexFrame
+public interface FileLocationModel extends FileReferenceModel
 {
-    public static final String FILE_MODEL = "file";
+    
     String TYPE = "fileLocationModel";
     String PROPERTY_LINE_NUMBER = "lineNumber";
     String PROPERTY_LENGTH = "length";
@@ -55,9 +55,4 @@ public interface FileLocationModel extends WindupVertexFrame
     @Property(PROPERTY_LENGTH)
     public int getLength();
     
-    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    FileModel getFile();
-
-    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    FileModel setFile(FileModel file);
 }

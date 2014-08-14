@@ -148,9 +148,9 @@ public class HintsClassificationsTest
             return ConfigurationBuilder.begin()
                         
                         .addRule()
-                        .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT).as("refs"))
-                        .perform(Iteration.over("refs").as("ref")
-                                    .perform(Classification.of("#{ref.file}").as("Furnace Service")
+                        .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT))
+                        .perform(Iteration.over()
+                                    .perform(Classification.classifyAs("Furnace Service")
                                                 .with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
                                             .and(Hint.havingText("Furnace type references imply that the client code must be run within a Furnace container.")
                                                      .withEffort(8)
