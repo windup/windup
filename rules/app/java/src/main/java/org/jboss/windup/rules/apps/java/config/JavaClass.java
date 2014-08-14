@@ -7,6 +7,7 @@ import java.util.List;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.GraphCondition;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryBuilderFind;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -17,11 +18,11 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class JavaClass extends GraphCondition implements JavaClassBuilder
+public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaClassBuilderAt
 {
     private final String regex;
     private List<TypeReferenceLocation> locations = Collections.emptyList();
-    private String variable;
+    private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;;
 
     private JavaClass(String regex)
     {
@@ -38,7 +39,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder
     }
 
     @Override
-    public JavaClassBuilder at(TypeReferenceLocation... locations)
+    public JavaClassBuilderAt at(TypeReferenceLocation... locations)
     {
         if (locations != null)
             this.locations = Arrays.asList(locations);
