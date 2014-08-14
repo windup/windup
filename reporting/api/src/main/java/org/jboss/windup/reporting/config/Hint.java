@@ -2,57 +2,57 @@ package org.jboss.windup.reporting.config;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class Hint extends AbstractIterationOperation<FileModel>
+public class Hint extends AbstractIterationOperation<FileLocationModel>
 {
     private String hintText;
     private int effort;
-    private String locationVar;
 
     private Hint(String variable)
     {
         super(variable);
     }
+    
+    private Hint()
+    {
+        super();
+    }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel locationModel)
     {
         GraphService<InlineHintModel> service = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
 
         InlineHintModel hintModel = service.create();
-        FileLocationModel locationModel = (FileLocationModel) resolveVariable(event, locationVar);
 
         hintModel.setLineNumber(locationModel.getLineNumber());
         hintModel.setColumnNumber(locationModel.getColumnNumber());
         hintModel.setLength(locationModel.getLength());
 
-        hintModel.setFileModel(payload);
+        hintModel.setFile(locationModel.getFile());
 
         hintModel.setEffort(effort);
         hintModel.setHint(hintText);
     }
 
     /**
-     * Create a new {@link Hint} in the {@link FileModel} resolved by the given variable.
+     * Create a new {@link Hint} in the {@link FileLocationModel} resolved by the given variable.
      */
     public static Hint in(String fileVariable)
     {
         return new Hint(fileVariable);
     }
-
-    /**
-     * Display the {@link Hint} at the location resolved by the given variable.
-     */
-    public Hint at(String locationVariable)
+    
+    public static Hint havingText(String text)
     {
-        this.locationVar = locationVariable;
-        return this;
+        Hint hint = new Hint();
+        hint.hintText = text;
+        return hint;
     }
 
     public Hint withText(String text)

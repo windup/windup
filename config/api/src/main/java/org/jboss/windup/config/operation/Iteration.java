@@ -158,7 +158,7 @@ public abstract class Iteration extends DefaultOperationBuilder
      * @param holder
      */
     private void setPayLoadVariableName(PayLoadVariableNameHolder holder) {
-        if(holder.getVariableName()==null) {
+        if(!holder.hasVariableNameSet()) {
             holder.setVariableName(getPayloadManager().getPayLoadName());
         }
     }

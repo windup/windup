@@ -136,7 +136,7 @@ public class HintsClassificationsTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            AbstractIterationOperation<TypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<TypeReferenceModel>("ref")
+            AbstractIterationOperation<TypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<TypeReferenceModel>()
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
@@ -152,8 +152,7 @@ public class HintsClassificationsTest
                         .perform(Iteration.over("refs").as("ref")
                                     .perform(Classification.of("#{ref.file}").as("Furnace Service")
                                                 .with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
-                                            .and(Hint.in("#{ref.file}").at("ref")
-                                                     .withText("Furnace type references imply that the client code must be run within a Furnace container.")
+                                            .and(Hint.havingText("Furnace type references imply that the client code must be run within a Furnace container.")
                                                      .withEffort(8)
                                             .and(addTypeRefToList))
                                     ).endIteration()
