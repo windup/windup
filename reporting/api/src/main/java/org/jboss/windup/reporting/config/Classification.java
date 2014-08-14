@@ -7,9 +7,12 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.FileLocationModel;
+import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.reporting.model.LinkModel;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -29,6 +32,30 @@ public class Classification extends AbstractIterationOperation<FileModel> implem
     private Classification(String variable)
     {
         super(variable);
+    }
+    
+    private Classification()
+    {
+        super();
+    }
+    
+    /**
+     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it.
+     * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a model
+     * referencing it.
+     * 
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public void perform(GraphRewrite event, EvaluationContext context)
+    {
+        WindupVertexFrame payload = resolveVariable(event, getVariableName());
+        if(payload instanceof FileReferenceModel) {
+            perform(event, context,((FileReferenceModel)payload).getFile());
+        } else {
+            perform(event, context);
+        }
+        
     }
 
     public static ClassificationBuilder of(String variable)
@@ -61,6 +88,13 @@ public class Classification extends AbstractIterationOperation<FileModel> implem
         return this;
     }
 
+    public static Classification classifyAs(String classification)
+    {
+        Classification classif = new Classification();
+        classif.classificationText = classification;
+        return classif;
+    }
+    
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {

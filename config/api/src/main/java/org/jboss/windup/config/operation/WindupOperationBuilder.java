@@ -56,26 +56,38 @@ public class WindupOperationBuilder implements PayLoadVariableNameHolder,Operati
     }
 
     @Override
-    public String getVariableName()
-    {
-        if(left instanceof PayLoadVariableNameHolder) {
-            return ((PayLoadVariableNameHolder) left).getVariableName();
-        }
-        if(right instanceof PayLoadVariableNameHolder) {
-            return ((PayLoadVariableNameHolder) right).getVariableName();
-        }
-        return null;
-    }
-
-    @Override
     public void setVariableName(String variable)
     {
         if(left instanceof PayLoadVariableNameHolder) {
-             ((PayLoadVariableNameHolder) left).setVariableName(variable);
+            PayLoadVariableNameHolder leftHolder=(PayLoadVariableNameHolder) left;
+            if(!leftHolder.hasVariableNameSet()) {
+                leftHolder.setVariableName(variable);
+            }
         }
         if(right instanceof PayLoadVariableNameHolder) {
-             ((PayLoadVariableNameHolder) right).setVariableName(variable);
+            PayLoadVariableNameHolder rightHolder=(PayLoadVariableNameHolder) right;
+            if(!rightHolder.hasVariableNameSet())  {
+                rightHolder.setVariableName(variable);
+            }
         }
+    }
+
+    /**
+     * Returns if all of the child's that are {@PayLoadVariableNameHolder}
+     */
+    @Override
+    public boolean hasVariableNameSet()
+    {
+        boolean result =true;
+        if(left instanceof PayLoadVariableNameHolder) {
+            PayLoadVariableNameHolder leftHolder=(PayLoadVariableNameHolder) left;
+            result= result && leftHolder.hasVariableNameSet();
+        }
+        if(right instanceof PayLoadVariableNameHolder) {
+            PayLoadVariableNameHolder rightHolder=(PayLoadVariableNameHolder) right;
+            result= result && rightHolder.hasVariableNameSet();
+        }
+        return result;
     }
 
 }

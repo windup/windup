@@ -3,12 +3,15 @@ package org.jboss.windup.reporting.model;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(FileLocationModel.TYPE)
-public interface FileLocationModel extends WindupVertexFrame
+public interface FileLocationModel extends FileReferenceModel
 {
+    
     String TYPE = "fileLocationModel";
     String PROPERTY_LINE_NUMBER = "lineNumber";
     String PROPERTY_LENGTH = "length";
@@ -51,4 +54,5 @@ public interface FileLocationModel extends WindupVertexFrame
      */
     @Property(PROPERTY_LENGTH)
     public int getLength();
+    
 }
