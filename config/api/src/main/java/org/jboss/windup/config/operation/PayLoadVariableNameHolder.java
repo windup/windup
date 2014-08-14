@@ -6,6 +6,6 @@ package org.jboss.windup.config.operation;
 public interface PayLoadVariableNameHolder
 {
 
-    public String getVariableName();
+    public boolean hasVariableNameSet();
     public void setVariableName(String variable);
 }

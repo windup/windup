@@ -5,6 +5,7 @@ import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -26,7 +27,7 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
         // create a pipeline to get all blacklisted items
         GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
                     context.getQuery().type(FileModel.class).vertices());
-        hintPipeline.as("fileModel1").in(InlineHintModel.FILE_MODEL).back("fileModel1");
+        hintPipeline.as("fileModel1").in(FileLocationModel.FILE_MODEL).back("fileModel1");
 
         // create a pipeline to get all items with attached classifications
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(

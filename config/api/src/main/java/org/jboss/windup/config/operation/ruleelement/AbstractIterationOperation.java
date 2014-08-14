@@ -48,6 +48,10 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
     {
         this.variableName = variableName;
     };
+    
+    public boolean hasVariableNameSet() {
+        return getVariableName() !=null;
+    }
 
     @Override
     @SuppressWarnings("unchecked")

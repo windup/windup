@@ -35,6 +35,10 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
     {
         return variableName;
     }
+    
+    public boolean hasVariableNameSet() {
+        return getVariableName() !=null;
+    }
 
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
