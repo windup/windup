@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.config;
 
 /**
- * Represents a link to an external resource, such as a URL.
+ * Represents a link to an external resource, such as an URL.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
