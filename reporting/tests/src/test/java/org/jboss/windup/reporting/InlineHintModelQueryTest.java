@@ -75,11 +75,11 @@ public class InlineHintModelQueryTest
 
         InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
         InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
-        b1.setFileModel(f1);
-        b1b.setFileModel(f1);
+        b1.setFile(f1);
+        b1b.setFile(f1);
 
         InlineHintModel b2 = context.getFramed().addVertex(null, InlineHintModel.class);
-        b2.setFileModel(f2);
+        b2.setFile(f2);
 
         ClassificationModel c1 = context.getFramed().addVertex(null, ClassificationModel.class);
         ClassificationModel c1b = context.getFramed().addVertex(null, ClassificationModel.class);

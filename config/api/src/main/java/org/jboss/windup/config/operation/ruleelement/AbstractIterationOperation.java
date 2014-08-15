@@ -12,14 +12,13 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.PayLoadVariableNameHolder;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Simplified operation having method that already accepts the found payload.
  */
-public abstract class AbstractIterationOperation<T extends WindupVertexFrame> extends GraphOperation implements PayLoadVariableNameHolder
+public abstract class AbstractIterationOperation<T extends WindupVertexFrame> extends GraphOperation
 {
     
     /**
@@ -48,13 +47,27 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
     {
         this.variableName = variableName;
     };
+    
+    public boolean hasVariableNameSet() {
+        return getVariableName() !=null;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
     public void perform(GraphRewrite event, EvaluationContext context)
     {
+        checkVariableName(event,context);
         WindupVertexFrame payload = resolveVariable(event, variableName);
         perform(event, context, (T) payload);
+    }
+    
+    /**
+     * Check the variable name and if not set, set it with the singleton variable name being on the top of the stack.
+     */
+    protected void checkVariableName(GraphRewrite event, EvaluationContext context) {
+        if(variableName == null ) {
+            setVariableName(Iteration.getPayloadVariableName(event, context));
+        }
     }
 
     /**

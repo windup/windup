@@ -2,8 +2,6 @@ package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
@@ -18,20 +16,6 @@ public interface InlineHintModel extends FileLocationModel
     public static final String PROPERTY_HINT = "hint";
     public static final String PROPERTY_RULE_ID = "ruleID";
     public static final String PROPERTY_EFFORT = "effort";
-
-    public static final String FILE_MODEL = "blackListModelToFileModel";
-
-    /**
-     * Set the {@link FileModel} associated with this {@link InlineHintModel}.
-     */
-    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    public void setFileModel(FileModel fileModel);
-
-    /**
-     * Get the {@link FileModel} associated with this {@link InlineHintModel}.
-     */
-    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    public FileModel getFileModel();
 
     /**
      * Set the effort weight (E.g. How difficult is it to fix the issue?)
