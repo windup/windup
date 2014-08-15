@@ -1,17 +1,14 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.FileLocationModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("JavaTypeReference")
 public interface TypeReferenceModel extends FileLocationModel
 {
-    
+
     public static final String PROPERTY_REFERENCE_TYPE = "referenceType";
     public static final String PROPERTY_LINE_NUMBER = "referenceLineNumber";
     public static final String PROPERTY_START_COLUMN = "referenceStartColumn";

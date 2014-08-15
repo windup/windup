@@ -55,10 +55,10 @@ public class BaseConfig extends WindupRuleProvider
                     )
                     .perform(
                        Iteration.over().perform(   
-                          Classification.classifyAs("Commonj Timer")
+                          Classification.as("Commonj Timer")
                              .with(Link.to("JBoss JCA WorkManager", "https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Operations_Network/3.1/html/Dev_Complete_Resource_Reference/JBossAS7-JBossAS7_Standalone_Server-JCA-Workmanager.html"))
                              .withEffort(0)
-                          .and(Hint.havingText("Migrate to JBoss JCA WorkManager").withEffort(8))
+                          .and(Hint.text("Migrate to JBoss JCA WorkManager").withEffort(8))
                        )
                        .endIteration()
                     )
@@ -75,10 +75,10 @@ public class BaseConfig extends WindupRuleProvider
                      )
                      .perform(
                         Iteration.over().perform(   
-                           Classification.classifyAs("Commonj Work")
+                           Classification.as("Commonj Work")
                               .with(Link.to("JBoss JCA WorkManager", "https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Operations_Network/3.1/html/Dev_Complete_Resource_Reference/JBossAS7-JBossAS7_Standalone_Server-JCA-Workmanager.html"))
                               .withEffort(0)
-                           .and(Hint.havingText("Migrate to JBoss JCA WorkManager").withEffort(8))
+                           .and(Hint.text("Migrate to JBoss JCA WorkManager").withEffort(8))
                         )
                         .endIteration()
                      )
@@ -118,7 +118,7 @@ public class BaseConfig extends WindupRuleProvider
                      )
                      .perform(
                         Iteration.over().perform(   
-                           Classification.classifyAs("JBoss Web Services Specific")
+                           Classification.as("JBoss Web Services Specific")
                               .with(Link.to("JBoss Web Service (EAP4) Migration Guide", "https://community.jboss.org/wiki/JBossWS4MigrationGuide"))
                               .withEffort(0)
                         )
@@ -138,7 +138,7 @@ public class BaseConfig extends WindupRuleProvider
                      )
                      .perform(
                         Iteration.over().perform(   
-                           Classification.classifyAs("Mule ESB Transformer")
+                           Classification.as("Mule ESB Transformer")
                               .with(Link.to("Camel Converter", "http://camel.apache.org/type-converter.html"))
                               .withEffort(0)
                         )
