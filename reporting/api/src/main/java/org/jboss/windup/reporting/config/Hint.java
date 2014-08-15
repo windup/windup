@@ -13,12 +13,12 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     private String hintText;
     private int effort;
 
-    Hint(String variable)
+    protected Hint(String variable)
     {
         super(variable);
     }
 
-    Hint()
+    protected Hint()
     {
         super();
     }
@@ -76,4 +76,13 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
         this.hintText = text;
     }
 
+    protected String getText()
+    {
+        return this.hintText;
+    }
+
+    protected int getEffort()
+    {
+        return effort;
+    }
 }

@@ -1,12 +1,17 @@
 package org.jboss.windup.rules.java;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -22,6 +27,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -80,39 +86,62 @@ public class HintsClassificationsTest
     private GraphContext context;
 
     @Test
-    public void testIterationVariableResolving()
+    public void testIterationVariableResolving() throws Exception
     {
+        ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+        pm.setName("Main Proejct");
+
         FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
         inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java/");
+        inputPath.setProjectModel(pm);
+        pm.setRootFileModel(inputPath);
+
         FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
         fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/HintsClassificationsTest.java");
+        fileModel.setProjectModel(pm);
 
-        WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-        config.setInputPath(inputPath);
-        config.setSourceMode(true);
+        pm.addFileModel(inputPath);
+        pm.addFileModel(fileModel);
+
+        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + UUID.randomUUID().toString());
+        FileUtils.deleteDirectory(outputPath.toFile());
+        Files.createDirectories(outputPath);
 
         try
         {
-            processor.execute();
+            WindupConfigurationModel config = GraphService.getConfigurationModel(context);
+            config.setInputPath(inputPath);
+            config.setSourceMode(true);
+            config.setOutputPath(outputPath.toString());
+
+            try
+            {
+                processor.execute();
+            }
+            catch (Exception e)
+            {
+                if (!e.getMessage().contains("CreateMainApplicationReport"))
+                    throw e;
+            }
+
+            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
+            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
+                        ClassificationModel.class);
+
+            GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
+            Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
+            Assert.assertTrue(typeReferences.iterator().hasNext());
+
+            Assert.assertEquals(2, provider.getTypeReferences().size());
+            List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
+            Assert.assertEquals(2, hints.size());
+            List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
+            Assert.assertEquals(1, classifications.size());
         }
-        catch (Exception e)
+        finally
         {
-            if (!e.getMessage().contains("CreateMainApplicationReport"))
-                throw e;
+            FileUtils.deleteDirectory(outputPath.toFile());
         }
-
-        GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
-        GraphService<ClassificationModel> classificationService = new GraphService<>(context, ClassificationModel.class);
-
-        GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
-        Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
-        Assert.assertTrue(typeReferences.iterator().hasNext());
-
-        Assert.assertEquals(2, provider.getTypeReferences().size());
-        List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-        Assert.assertEquals(2, hints.size());
-        List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-        Assert.assertEquals(1, classifications.size());
     }
 
     @Singleton

@@ -62,11 +62,13 @@
           ${classificationLineItem.ruleID}
           <h3>Links</h3>
           <ul>
+            <#if classificationLineItem.linkDecorators??>
             <#list classificationLineItem.linkDecorators.iterator() as linkDecorator>
               <li>
                 <a href='${linkDecorator.link}'>${linkDecorator.description}</a>
               </li>
-          </#list>
+            </#list>
+            </#if>
           </ul>
         </li>
       </#list>

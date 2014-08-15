@@ -34,6 +34,11 @@
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
+            
+            <div class='col-md-6 pull-right windupPieGraph archiveGraphContainer'>
+                <div id="project_${projectModel.asVertex().getId()?string("0")}_pie" class='windupPieGraph'></div>
+            </div>
+            
         </div>
         <table class="table table-striped table-bordered">
           <tr>
@@ -55,6 +60,7 @@
     <title>${applicationReport.projectModel.name} - Application Report</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
+    <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
   </head>
   <body role="document">
     
@@ -86,15 +92,46 @@
     </div>
 </div>
 
+  <div class='container mainGraphContainer'>
+    <div class='col-md-3 text-right totalSummary'>
+      <div class='totalLoe'>
+        sp
+      </div>
+      <div class='totalDesc'>Story Points</div>
+    </div>
+    <div class='col-md-6 pull-right windupPieGraph'>
+      <div id='application_pie' class='windupPieGraph'>
+      </div>
+    </div>
+  </div>
+
     <div class="container theme-showcase" role="main">
 
 
 
-	 <@projectModelRenderer applicationReport.projectModel />
+	     <@projectModelRenderer applicationReport.projectModel />
     </div> <!-- /container -->
 
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
+    
+    <script src="resources/libraries/flot/jquery.flot.min.js"></script>
+    <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
+    
     <script src="resources/js/bootstrap.min.js"></script>
+
+    <@render_pie project=applicationReport.projectModel recursive=true elementID="application_pie"/>
+    
+    
+    <#macro projectPieRenderer projectModel>
+      <@render_pie project=applicationReport.projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie"/>
+    
+      <#list projectModel.childProjects.iterator() as childProject>
+        <@render_pie project=childProject recursive=false elementID="project_${childProject.asVertex().getId()?string(\"0\")}_pie"/>
+      </#list>
+    </#macro>
+    
+    <@projectPieRenderer applicationReport.projectModel />
+
   </body>
 </html>

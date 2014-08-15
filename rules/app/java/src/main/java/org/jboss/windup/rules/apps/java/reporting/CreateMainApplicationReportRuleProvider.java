@@ -1,4 +1,6 @@
-package org.jboss.windup.reporting.rules;
+package org.jboss.windup.rules.apps.java.reporting;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -13,8 +15,10 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.MainNavigationIndexModel;
+import org.jboss.windup.reporting.rules.generation.CreateMainNavigationIndexRuleProvider;
 import org.jboss.windup.reporting.service.MainNavigationIndexModelService;
 import org.jboss.windup.reporting.service.ReportModelService;
+import org.jboss.windup.rules.apps.java.service.JavaInlineHintService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -30,10 +34,19 @@ public class CreateMainApplicationReportRuleProvider extends WindupRuleProvider
     @Inject
     private MainNavigationIndexModelService mainNavigationIndexService;
 
+    @Inject
+    private JavaInlineHintService javaInlineHintService;
+
     @Override
     public RulePhase getPhase()
     {
         return RulePhase.REPORT_GENERATION;
+    }
+
+    @Override
+    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+    {
+        return generateDependencies(CreateMainNavigationIndexRuleProvider.class);
     }
 
     // @formatter:off
@@ -79,13 +92,15 @@ public class CreateMainApplicationReportRuleProvider extends WindupRuleProvider
         applicationReportModel.setProjectModel(projectModel);
 
         // Create the index, and add this report to it
-        MainNavigationIndexModel navIndex = mainNavigationIndexService.create();
+        MainNavigationIndexModel navIndex = mainNavigationIndexService.getNavigationIndexForProjectModel(projectModel);
         applicationReportModel.setMainNavigationIndexModel(navIndex);
         navIndex.addReportModel(applicationReportModel);
         addAllProjectModels(navIndex, projectModel);
 
         // Set the filename for the report
         reportModelService.setUniqueFilename(applicationReportModel, projectModel.getName(), "html");
+
+        javaInlineHintService.getPackageUseFrequencies(projectModel, 3, true);
 
         return applicationReportModel;
     }

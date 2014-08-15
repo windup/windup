@@ -7,8 +7,8 @@ import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.ext.groovy.GroovyConfigContext;
 import org.jboss.windup.ext.groovy.GroovyConfigMethod;
-import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.rules.apps.java.config.JavaClass;
+import org.jboss.windup.rules.apps.java.reporting.JavaHint;
 
 public class GroovyBlackListMethod implements GroovyConfigMethod
 {
@@ -39,7 +39,7 @@ public class GroovyBlackListMethod implements GroovyConfigMethod
                             .when(JavaClass.references(regexPattern).as("refs"))
                             .perform(Iteration.over("refs")
                                         .as("ref")
-                                        .perform(Hint
+                                        .perform(JavaHint
                                                     .withText(hint)
                                                     .withEffort(8)
                                         )
