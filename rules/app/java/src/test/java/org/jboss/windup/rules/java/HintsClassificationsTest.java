@@ -152,7 +152,7 @@ public class HintsClassificationsTest
                         .perform(Iteration.over()
                                     .perform(Classification.as("Furnace Service")
                                                 .with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
-                                            .and(Hint.text("Furnace type references imply that the client code must be run within a Furnace container.")
+                                            .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
                                                      .withEffort(8)
                                             .and(addTypeRefToList))
                                     ).endIteration()

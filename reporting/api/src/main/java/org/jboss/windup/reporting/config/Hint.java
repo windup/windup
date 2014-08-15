@@ -13,12 +13,12 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     private String hintText;
     private int effort;
 
-    private Hint(String variable)
+    Hint(String variable)
     {
         super(variable);
     }
 
-    private Hint()
+    Hint()
     {
         super();
     }
@@ -26,9 +26,20 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     /**
      * Create a new {@link Hint} in the {@link FileLocationModel} resolved by the given variable.
      */
-    public static Hint in(String fileVariable)
+    public static HintBuilderIn in(String fileVariable)
     {
-        return new Hint(fileVariable);
+        return new HintBuilderIn(fileVariable);
+    }
+
+    /**
+     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be
+     * displayed in the report.
+     */
+    public static Hint withText(String text)
+    {
+        Hint hint = new Hint();
+        hint.hintText = text;
+        return hint;
     }
 
     @Override
@@ -49,32 +60,20 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     }
 
     /**
-     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be
-     * displayed in the report.
-     */
-    public static Hint text(String text)
-    {
-        Hint hint = new Hint();
-        hint.hintText = text;
-        return hint;
-    }
-
-    /**
-     * Specify the text or content to be displayed in the report.
-     */
-    public Hint withText(String text)
-    {
-        this.hintText = text;
-        return this;
-    }
-
-    /**
      * Specify the effort or content to be displayed in the report.
      */
     public OperationBuilder withEffort(int effort)
     {
         this.effort = effort;
         return this;
+    }
+
+    /**
+     * Set the inner hint text on this instance.
+     */
+    protected void setText(String text)
+    {
+        this.hintText = text;
     }
 
 }

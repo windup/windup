@@ -40,7 +40,7 @@ public class GroovyBlackListMethod implements GroovyConfigMethod
                             .perform(Iteration.over("refs")
                                         .as("ref")
                                         .perform(Hint
-                                                    .text(hint)
+                                                    .withText(hint)
                                                     .withEffort(8)
                                         )
                                         .endIteration()
