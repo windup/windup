@@ -11,7 +11,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("JavaTypeReference")
 public interface TypeReferenceModel extends FileLocationModel
 {
-    public static final String FILE_MODEL = "originFile";
+    
     public static final String PROPERTY_REFERENCE_TYPE = "referenceType";
     public static final String PROPERTY_LINE_NUMBER = "referenceLineNumber";
     public static final String PROPERTY_START_COLUMN = "referenceStartColumn";
@@ -23,12 +23,6 @@ public interface TypeReferenceModel extends FileLocationModel
 
     @Property(PROPERTY_REFERENCE_TYPE)
     public void setReferenceLocation(TypeReferenceLocation type);
-
-    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    FileModel getFile();
-
-    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    FileModel setFile(FileModel file);
 
     @Property(PROPERTY_SOURCE_SNIPPIT)
     public void setSourceSnippit(String source);
