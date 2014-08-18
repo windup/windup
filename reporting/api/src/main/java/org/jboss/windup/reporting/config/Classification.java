@@ -13,6 +13,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.reporting.model.LinkModel;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -110,15 +111,15 @@ public class Classification extends AbstractIterationOperation<FileModel>
          * want to add another.
          */
         GraphContext graphContext = event.getGraphContext();
-        GraphService<ClassificationModel> classificationService = new GraphService<>(graphContext,
+        ClassificationService classificationService = (ClassificationService) new GraphService<>(graphContext,
                     ClassificationModel.class);
+
         ClassificationModel classification = classificationService.getUniqueByProperty(
                     ClassificationModel.PROPERTY_CLASSIFICATION, classificationText);
 
         if (classification == null)
         {
             classification = classificationService.create();
-            classification.addFileModel(payload);
             classification.setEffort(effort);
             classification.setDescription(details);
             classification.setClassifiation(classificationText);

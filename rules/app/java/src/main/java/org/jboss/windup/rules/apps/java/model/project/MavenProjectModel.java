@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.model.project;
 
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
