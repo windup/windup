@@ -15,6 +15,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.reporting.model.LinkModel;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -117,6 +118,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
         GraphContext graphContext = event.getGraphContext();
         GraphService<ClassificationModel> classificationService = new GraphService<ClassificationModel>(graphContext,
                     ClassificationModel.class);
+
         ClassificationModel classification = classificationService.getUniqueByProperty(
                     ClassificationModel.PROPERTY_CLASSIFICATION, classificationText);
 
