@@ -42,17 +42,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>windup-reporting-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>windup-reporting-impl</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
     </dependencies>
 
 

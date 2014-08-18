@@ -35,11 +35,13 @@
             <artifactId>windup-config</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph-api</artifactId>
+            <artifactId>windup-graph</artifactId>
             <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -61,7 +63,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.3.1</version>
+            <version>2.3.5</version>
         </dependency>
 
 
@@ -74,13 +76,6 @@
         <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>arquillian-furnace-classpath</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
 

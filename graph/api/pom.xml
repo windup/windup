@@ -17,16 +17,16 @@
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-logging</artifactId>
-            <classifier>forge-addon</classifier>
             <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
-            <classifier>forge-addon</classifier>
             <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
 
@@ -57,7 +57,8 @@
 
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi-api</artifactId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
     </dependencies>

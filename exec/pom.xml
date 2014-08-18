@@ -32,7 +32,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.forge.furnace.container</groupId>
-                <artifactId>cdi-api</artifactId>
+                <artifactId>cdi</artifactId>
                 <version>${version.furnace}</version>
                 <scope>provided</scope>
             </dependency>
@@ -54,6 +54,7 @@
                 <artifactId>windup-exec</artifactId>
                 <version>${project.version}</version>
                 <classifier>forge-addon</classifier>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.exec</groupId>
@@ -71,6 +72,7 @@
                 <artifactId>cdi</artifactId>
                 <version>${version.furnace}</version>
                 <classifier>forge-addon</classifier>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
