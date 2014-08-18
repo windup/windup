@@ -18,7 +18,7 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.service.HibernateConfigurationFileService;
 import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
 import org.jboss.windup.rules.apps.xml.DoctypeMetaModel;
-import org.jboss.windup.rules.apps.xml.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
