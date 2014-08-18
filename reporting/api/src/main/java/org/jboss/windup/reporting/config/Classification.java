@@ -55,7 +55,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
         }
         else
         {
-            perform(event, context);
+            super.perform(event, context);
         }
 
     }
