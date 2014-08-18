@@ -8,8 +8,6 @@ package org.jboss.windup.config.operation;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
-import org.ocpsoft.rewrite.config.Operation;
-import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
@@ -19,15 +17,6 @@ import org.ocpsoft.rewrite.event.Rewrite;
  */
 public abstract class GraphOperation extends DefaultOperationBuilder
 {
-    
-    @Override
-    public OperationBuilder and(final Operation other)
-    {
-       if (other == null)
-          return this;
-       return new WindupOperationBuilder(this, other);
-    }
-    
     @Override
     public void perform(Rewrite event, EvaluationContext context)
     {

@@ -39,7 +39,7 @@ public class GroovyBlackListMethod implements GroovyConfigMethod
                             .when(JavaClass.references(regexPattern).as("refs"))
                             .perform(Iteration.over("refs")
                                         .as("ref")
-                                        .perform(Hint.in("#{ref.file}").at("ref")
+                                        .perform(Hint
                                                     .withText(hint)
                                                     .withEffort(8)
                                         )

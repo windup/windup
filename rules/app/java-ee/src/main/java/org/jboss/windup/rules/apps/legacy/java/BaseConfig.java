@@ -51,14 +51,14 @@ public class BaseConfig extends WindupRuleProvider
                      
                     .addRule()
                     .when(
-                       JavaClass.references("commonj.timers.Timer.*").at(TypeReferenceLocation.EXTENDS_TYPE).as("refs")
+                       JavaClass.references("commonj.timers.Timer.*").at(TypeReferenceLocation.EXTENDS_TYPE)
                     )
                     .perform(
-                       Iteration.over("refs").as("ref").perform(   
-                          Classification.of("#{ref.file}").as("Commonj Timer")
+                       Iteration.over().perform(   
+                          Classification.as("Commonj Timer")
                              .with(Link.to("JBoss JCA WorkManager", "https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Operations_Network/3.1/html/Dev_Complete_Resource_Reference/JBossAS7-JBossAS7_Standalone_Server-JCA-Workmanager.html"))
                              .withEffort(0)
-                          .and(Hint.in("#{ref.file}").at("ref").withText("Migrate to JBoss JCA WorkManager").withEffort(8))
+                          .and(Hint.withText("Migrate to JBoss JCA WorkManager").withEffort(8))
                        )
                        .endIteration()
                     )
@@ -71,14 +71,14 @@ public class BaseConfig extends WindupRuleProvider
                      */
                      .addRule()
                      .when(
-                        JavaClass.references("commonj.work.Work").at(TypeReferenceLocation.EXTENDS_TYPE).as("refs")
+                        JavaClass.references("commonj.work.Work").at(TypeReferenceLocation.EXTENDS_TYPE)
                      )
                      .perform(
-                        Iteration.over("refs").as("ref").perform(   
-                           Classification.of("#{ref.file}").as("Commonj Work")
+                        Iteration.over().perform(   
+                           Classification.as("Commonj Work")
                               .with(Link.to("JBoss JCA WorkManager", "https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Operations_Network/3.1/html/Dev_Complete_Resource_Reference/JBossAS7-JBossAS7_Standalone_Server-JCA-Workmanager.html"))
                               .withEffort(0)
-                           .and(Hint.in("#{ref.file}").at("ref").withText("Migrate to JBoss JCA WorkManager").withEffort(8))
+                           .and(Hint.withText("Migrate to JBoss JCA WorkManager").withEffort(8))
                         )
                         .endIteration()
                      )
@@ -92,10 +92,10 @@ public class BaseConfig extends WindupRuleProvider
                      */
                      .addRule()
                      .when(
-                        JavaClass.references("org.mule.umo.UMOFilter$").at(TypeReferenceLocation.EXTENDS_TYPE).as("refs")
+                        JavaClass.references("org.mule.umo.UMOFilter$").at(TypeReferenceLocation.EXTENDS_TYPE)
                      )
                      .perform(
-                        Iteration.over("refs").as("ref").perform(   
+                        Iteration.over().perform(   
                            Classification.of("#{ref.file}").as("Mule ESB Message Filter")
                               .with(Link.to("Camel Message Filter", "http://camel.apache.org/message-filter.html"))
                               .with(Link.to("Camel Message Bean Filter", "http://camel.apache.org/bean-language.html"))
@@ -114,11 +114,11 @@ public class BaseConfig extends WindupRuleProvider
                      
                      .addRule()
                      .when(
-                        JavaClass.references("org.jboss.wsf.*").at(TypeReferenceLocation.EXTENDS_TYPE).as("refs")
+                        JavaClass.references("org.jboss.wsf.*").at(TypeReferenceLocation.EXTENDS_TYPE)
                      )
                      .perform(
-                        Iteration.over("refs").as("ref").perform(   
-                           Classification.of("#{ref.file}").as("JBoss Web Services Specific")
+                        Iteration.over().perform(   
+                           Classification.as("JBoss Web Services Specific")
                               .with(Link.to("JBoss Web Service (EAP4) Migration Guide", "https://community.jboss.org/wiki/JBossWS4MigrationGuide"))
                               .withEffort(0)
                         )
@@ -134,11 +134,11 @@ public class BaseConfig extends WindupRuleProvider
                      
                      .addRule()
                      .when(
-                        JavaClass.references("org.mule.transformers.AbstractTransformer$").at(TypeReferenceLocation.EXTENDS_TYPE).as("refs")
+                        JavaClass.references("org.mule.transformers.AbstractTransformer$").at(TypeReferenceLocation.EXTENDS_TYPE)
                      )
                      .perform(
-                        Iteration.over("refs").as("ref").perform(   
-                           Classification.of("#{ref.file}").as("Mule ESB Transformer")
+                        Iteration.over().perform(   
+                           Classification.as("Mule ESB Transformer")
                               .with(Link.to("Camel Converter", "http://camel.apache.org/type-converter.html"))
                               .withEffort(0)
                         )

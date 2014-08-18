@@ -146,32 +146,16 @@ public abstract class Iteration extends DefaultOperationBuilder
     @Override
     public IterationBuilderWhen when(Condition condition)
     {
-        if(condition instanceof PayLoadVariableNameHolder) {
-            setPayLoadVariableName((PayLoadVariableNameHolder)condition);
-        }
         this.condition = condition;
         return this;
     }
     
-    /**
-     * Sets the payload variable name used in this Iteration to the holder.
-     * @param holder
-     */
-    private void setPayLoadVariableName(PayLoadVariableNameHolder holder) {
-        if(holder.getVariableName()==null) {
-            holder.setVariableName(getPayloadManager().getPayLoadName());
-        }
-    }
-
     /**
      * Will be processed for frames which comply to the condition in when().
      */
     @Override
     public IterationBuilderPerform perform(Operation operation)
     {
-        if(operation instanceof PayLoadVariableNameHolder) {
-            setPayLoadVariableName((PayLoadVariableNameHolder)operation);
-        }
         this.operationPerform = operation;
         //if the operation is iteration specific, set the payload variable name if it is not set
         return this;
@@ -183,9 +167,6 @@ public abstract class Iteration extends DefaultOperationBuilder
     @Override
     public IterationBuilderOtherwise otherwise(Operation operation)
     {
-        if(operation instanceof PayLoadVariableNameHolder) {
-            setPayLoadVariableName((PayLoadVariableNameHolder)operation);
-        }
         this.operationOtherwise = operation;
         return this;
     }
@@ -243,6 +224,16 @@ public abstract class Iteration extends DefaultOperationBuilder
     public List<Operation> getOperations()
     {
         return Arrays.asList(operationPerform, operationOtherwise);
+    }
+    
+    public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx) {
+        Variables varStack = Variables.instance(event);
+        Map<String, Iterable<WindupVertexFrame>> topLayer = varStack.peek();
+        if(!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size()>1) {
+            throw new IllegalArgumentException("Cannot return the payload name because the top layer of varstack is not a singleton.");
+        }
+        String name = topLayer.keySet().iterator().next();
+        return name;
     }
 
     /**
