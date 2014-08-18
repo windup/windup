@@ -75,14 +75,4 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     {
         this.hintText = text;
     }
-
-    protected String getText()
-    {
-        return this.hintText;
-    }
-
-    protected int getEffort()
-    {
-        return effort;
-    }
 }
