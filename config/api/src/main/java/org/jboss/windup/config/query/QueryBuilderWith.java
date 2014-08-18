@@ -1,12 +1,13 @@
 package org.jboss.windup.config.query;
 
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface QueryBuilderWith extends ConditionBuilder
+public interface QueryBuilderWith extends ConditionBuilder, QueryBuilderAs
 {
     /**
      * Narrow the query via a {@link QueryGremlinCriterion} in order to execute Gremlin queries.
@@ -40,8 +41,7 @@ public interface QueryBuilderWith extends ConditionBuilder
     QueryBuilderWith with(QueryFramesCriterion criterion);
 
     /**
-     * Set the name of the output variable into which results of the {@link Query} will be stored.
+     * Narrow the query with the given {@link Predicate}
      */
-    ConditionBuilder as(String name);
-
+    <FRAMETYPE extends WindupVertexFrame> QueryBuilderAs filteredBy(Predicate<FRAMETYPE> predicate);
 }

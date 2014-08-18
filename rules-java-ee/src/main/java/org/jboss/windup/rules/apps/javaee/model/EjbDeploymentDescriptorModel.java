@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.jboss.windup.rules.apps.xml.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;

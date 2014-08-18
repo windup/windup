@@ -45,7 +45,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return RulePhase.POST_DISCOVERY;
     }
 
     @Override

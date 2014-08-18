@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <artifactId>tynamo-parent</artifactId>
+        <groupId>org.tynamo</groupId>
+        <version>0.0.9</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.tynamo.examples</groupId>
+    <artifactId>tynamo-example-federatedaccounts</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>Tynamo Example - Federated Accounts</name>
+
+    <properties>
+        <tapestry-release-version>5.3.1</tapestry-release-version>
+        <gae.version>1.3.0</gae.version>
+        <gae.home>${settings.localRepository}/com/google/appengine/appengine-api-1.0-sdk/${gae.version}/appengine-java-sdk-${gae.version}</gae.home>
+        <!-- Upload to http://0.latest.<applicationName>.appspot.com by default -->
+        <gae.application.version>0</gae.application.version>
+    </properties>
+
+    <build>
+        <finalName>federatedaccounts</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <optimize>true</optimize>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.kindleit</groupId>
+                <artifactId>maven-gae-plugin</artifactId>
+                <version>0.8.0</version>
+                <configuration>
+                    <!-- -->
+                    <serverId>tynamo-example-federatedaccounts</serverId>
+                </configuration>
+            </plugin>
+            <!-- Run the application using "mvn jetty:run" -->
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <configuration>
+                    <contextPath>/</contextPath>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>tapestry.compress-whitespace</name>
+                            <value>false</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>tapestry.production-mode</name>
+                            <value>false</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>**/appengine-web.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+
+        <!-- Adds a report detailing the components, mixins and base classes defined by this module. -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.tapestry</groupId>
+                <artifactId>tapestry-component-report</artifactId>
+                <version>${tapestry-release-version}</version>
+                <configuration>
+                    <rootPackage>org.tynamo</rootPackage>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>${gae.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tapestry</groupId>
+            <artifactId>tapestry-core</artifactId>
+            <version>${tapestry-release-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tynamo</groupId>
+            <artifactId>tapestry-security</artifactId>
+            <version>0.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tynamo.security</groupId>
+            <artifactId>tynamo-federatedaccounts-facebook</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tynamo.security</groupId>
+            <artifactId>tynamo-federatedaccounts-twitter</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tynamo.security</groupId>
+            <artifactId>tynamo-federatedaccounts-core</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tynamo.security</groupId>
+            <artifactId>tynamo-federatedaccounts-openid</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tynamo.security</groupId>
+            <artifactId>tynamo-federatedaccounts-rollingtokens</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tynamo.gae</groupId>
+            <artifactId>esxx-httpclient-gae</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>repositories</id>
+            <repositories>
+                <repository>
+                    <id>maven-gae-plugin-repo</id>
+                    <name>maven-gae-plugin repository</name>
+                    <url>http://maven-gae-plugin.googlecode.com/svn/repository</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>maven-gae-plugin-repo</id>
+                    <name>maven-gae-plugin repository</name>
+                    <url>http://maven-gae-plugin.googlecode.com/svn/repository</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+</project>
