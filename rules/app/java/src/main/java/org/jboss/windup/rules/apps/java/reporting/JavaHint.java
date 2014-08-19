@@ -10,6 +10,11 @@ import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * Used as an intermediate to support the addition of {@link JavaInlineHintModel} objects to the graph via an Operation.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ */
 public class JavaHint extends AbstractIterationOperation<FileLocationModel>
 {
     private String hintText;
@@ -33,6 +38,10 @@ public class JavaHint extends AbstractIterationOperation<FileLocationModel>
         return new JavaHintBuilderIn(fileVariable);
     }
 
+    /**
+     * Create a new {@link JavaHint} in the current {@link FileLocationModel}, and specify the text or content to be
+     * displayed in the report.
+     */
     public static JavaHint withText(String text)
     {
         JavaHint javaHint = new JavaHint();

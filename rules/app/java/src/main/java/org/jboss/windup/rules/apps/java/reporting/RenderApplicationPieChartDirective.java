@@ -21,6 +21,15 @@ import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
 
+/**
+ * Renders a JavaScript block that calls <a href="http://www.flotcharts.org/">Flot</a>. This depends upon the template
+ * already loading the JQuery and Flot Charting Javascript files.
+ * 
+ * The chart will present a distribution of packages that have been hinted by Windup.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class RenderApplicationPieChartDirective implements WindupFreeMarkerTemplateDirective
 {
 

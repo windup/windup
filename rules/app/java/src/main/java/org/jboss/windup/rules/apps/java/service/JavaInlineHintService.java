@@ -16,6 +16,12 @@ import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
+/**
+ * Provides helper methods for accessing JavaInlineHintModels as well as associated data.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class JavaInlineHintService extends GraphService<JavaInlineHintModel>
 {
 
