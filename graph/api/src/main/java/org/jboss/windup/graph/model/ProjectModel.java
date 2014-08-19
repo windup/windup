@@ -19,21 +19,25 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("ProjectModel")
 public interface ProjectModel extends WindupVertexFrame
 {
-    public static final String PROPERTY_SOURCE_BASED = "sourceBased";
-    public static final String PROPERTY_DESCRIPTION = "description";
-    public static final String PROPERTY_NAME = "name";
-    public static final String PROPERTY_VERSION = "version";
-    public static final String PROPERTY_PROJECT_TYPE = "projectType";
+    public static final String DEPENDENCY = "dependency";
+    public static final String PARENT_PROJECT = "parentProject";
+    public static final String ROOT_FILE_MODEL = "rootFileModel";
+    public static final String PROJECT_MODEL_TO_FILE = "projectModelToFile";
+    public static final String SOURCE_BASED = "sourceBased";
+    public static final String DESCRIPTION = "description";
+    public static final String NAME = "name";
+    public static final String VERSION = "version";
+    public static final String PROJECT_TYPE = "projectType";
 
     /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis)
      * containing this particular project.
      * 
      */
-    @Adjacency(label = "rootFileModel", direction = Direction.OUT)
+    @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
     public void setRootFileModel(FileModel fileModel);
 
-    @Adjacency(label = "rootFileModel", direction = Direction.OUT)
+    @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
     public FileModel getRootFileModel();
 
     /**
@@ -42,76 +46,76 @@ public interface ProjectModel extends WindupVertexFrame
      * analysis).
      * 
      */
-    @Property(PROPERTY_SOURCE_BASED)
+    @Property(SOURCE_BASED)
     void setSourceBased(boolean sourceBased);
 
-    @Property(PROPERTY_SOURCE_BASED)
+    @Property(SOURCE_BASED)
     boolean isSourceBased();
 
     /**
      * Indicates the project's artifact type (jar, war, ear, etc)
      */
-    @Property(PROPERTY_PROJECT_TYPE)
+    @Property(PROJECT_TYPE)
     void setProjectType(String projectType);
 
-    @Property(PROPERTY_PROJECT_TYPE)
+    @Property(PROJECT_TYPE)
     String getProjectType();
 
-    @Property(PROPERTY_VERSION)
+    @Property(VERSION)
     public String getVersion();
 
-    @Property(PROPERTY_VERSION)
+    @Property(VERSION)
     public void setVersion(String version);
 
-    @Property(PROPERTY_NAME)
+    @Property(NAME)
     public String getName();
 
-    @Property(PROPERTY_NAME)
+    @Property(NAME)
     public void setName(String name);
 
-    @Property(PROPERTY_DESCRIPTION)
+    @Property(DESCRIPTION)
     public String getDescription();
 
-    @Property(PROPERTY_DESCRIPTION)
+    @Property(DESCRIPTION)
     public void setDescription(String description);
 
     /**
      * The parent ProjectModel, or null if no parent is present
      * 
      */
-    @Adjacency(label = "parentProject", direction = Direction.OUT)
+    @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
     public void setParentProject(ProjectModel maven);
 
-    @Adjacency(label = "parentProject", direction = Direction.OUT)
+    @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
     public ProjectModel getParentProject();
 
     /**
      * A list of child projects
      */
-    @Adjacency(label = "parentProject", direction = Direction.IN)
+    @Adjacency(label = PARENT_PROJECT, direction = Direction.IN)
     public void addChildProject(ProjectModel maven);
 
-    @Adjacency(label = "parentProject", direction = Direction.IN)
+    @Adjacency(label = PARENT_PROJECT, direction = Direction.IN)
     public Iterable<ProjectModel> getChildProjects();
 
     /**
      * Project dependencies, as well as metadata about those deps.
      */
-    @Adjacency(label = "dependency", direction = Direction.OUT)
+    @Adjacency(label = DEPENDENCY, direction = Direction.OUT)
     public void addDependency(ProjectDependencyModel maven);
 
-    @Adjacency(label = "dependency", direction = Direction.OUT)
+    @Adjacency(label = DEPENDENCY, direction = Direction.OUT)
     public Iterable<ProjectDependencyModel> getDependencies();
 
-    @Adjacency(label = "projectModelToFile", direction = Direction.OUT)
+    @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
     public Iterable<FileModel> getFileModels();
 
-    @Adjacency(label = "projectModelToFile", direction = Direction.OUT)
+    @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
     public void addFileModel(FileModel fileModel);
 
     /**
      * Gets all contained files that are not directories
      */
-    @GremlinGroovy("it.out('projectModelToFile').has('isDirectory', false)")
+    @GremlinGroovy("it.out('" + PROJECT_MODEL_TO_FILE + "').has('" + FileModel.IS_DIRECTORY + "', false)")
     public Iterable<FileModel> getFileModelsNoDirectories();
 }

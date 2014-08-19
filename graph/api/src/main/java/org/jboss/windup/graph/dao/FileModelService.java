@@ -3,11 +3,9 @@ package org.jboss.windup.graph.dao;
 import java.nio.file.Paths;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 
-import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
@@ -48,7 +46,7 @@ public class FileModelService extends GraphService<FileModel>
     {
         // make the path absolute (as we only store absolute paths)
         filePath = Paths.get(filePath).toAbsolutePath().toString();
-        return getUniqueByProperty(FileModel.PROPERTY_FILE_PATH, filePath);
+        return getUniqueByProperty(FileModel.FILE_PATH, filePath);
     }
 
     public Iterable<FileModel> findArchiveEntryWithExtension(String... values)
@@ -78,6 +76,6 @@ public class FileModelService extends GraphService<FileModel>
         }
 
         return getGraphContext().getQuery().type(FileModel.class)
-        		.has("filePath", Text.REGEX, regex).vertices(FileModel.class);
+                    .has("filePath", Text.REGEX, regex).vertices(FileModel.class);
     }
 }

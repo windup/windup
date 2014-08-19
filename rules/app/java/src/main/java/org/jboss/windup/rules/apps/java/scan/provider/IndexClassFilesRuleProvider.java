@@ -36,8 +36,8 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
 
         .addRule()
         .when(Query.find(FileModel.class)
-            .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.class")
+            .withProperty(FileModel.IS_DIRECTORY, false)
+            .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.class")
         )
         .perform(
             Iteration.over()

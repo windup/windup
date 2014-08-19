@@ -66,7 +66,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
     {
         ConditionBuilder fileWhen = Query
                     .find(XmlResourceModel.class)
-                    .withProperty(FileModel.PROPERTY_FILE_NAME, "pom.xml");
+                    .withProperty(FileModel.FILE_NAME, "pom.xml");
 
         AbstractIterationOperation<XmlResourceModel> evaluatePomFiles = new AbstractIterationOperation<XmlResourceModel>()
         {

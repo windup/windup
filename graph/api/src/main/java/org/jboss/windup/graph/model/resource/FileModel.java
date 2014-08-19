@@ -26,49 +26,57 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
 {
+    public static final String ARCHIVE_FILES = "archiveFiles";
+
+    public static final String PARENT_FILE = "parentFile";
+
+    public static final String SHA1_HASH = "sha1Hash";
+
+    public static final String MD5_HASH = "md5Hash";
+
     public static final String FILE_TO_PROJECT_MODEL = "fileToProjectModel";
 
     public static final String TYPE = "FileResource";
 
-    public static final String PROPERTY_FILE_NAME = "fileName";
-    public static final String PROPERTY_FILE_PATH = "filePath";
-    public static final String PROPERTY_IS_DIRECTORY = "isDirectory";
+    public static final String FILE_NAME = "fileName";
+    public static final String FILE_PATH = "filePath";
+    public static final String IS_DIRECTORY = "isDirectory";
 
-    @Property(PROPERTY_FILE_NAME)
+    @Property(FILE_NAME)
     public String getFileName();
 
-    @Property(PROPERTY_FILE_NAME)
+    @Property(FILE_NAME)
     public void setFileName(String filename);
 
-    @Property(PROPERTY_FILE_PATH)
+    @Property(FILE_PATH)
     public String getFilePath();
 
     // implemented via a handler that makes sure the isDirectory property is set as well
     @JavaHandler
     public void setFilePath(String filePath);
 
-    @Property(PROPERTY_IS_DIRECTORY)
+    @Property(IS_DIRECTORY)
     public boolean isDirectory();
 
-    @Property("md5Hash")
+    @Property(MD5_HASH)
     public String getMD5Hash();
 
-    @Property("md5Hash")
+    @Property(MD5_HASH)
     public void setMD5Hash(String md5Hash);
 
-    @Property("sha1Hash")
+    @Property(SHA1_HASH)
     public String getSHA1Hash();
 
-    @Property("sha1Hash")
+    @Property(SHA1_HASH)
     public void setSHA1Hash(String sha1Hash);
 
     /**
      * Parent directory
      */
-    @Adjacency(label = "parentFile", direction = Direction.OUT)
+    @Adjacency(label = PARENT_FILE, direction = Direction.OUT)
     public FileModel getParentFile();
 
-    @Adjacency(label = "parentFile", direction = Direction.OUT)
+    @Adjacency(label = PARENT_FILE, direction = Direction.OUT)
     public void setParentFile(FileModel parentFile);
 
     /**
@@ -76,13 +84,13 @@ public interface FileModel extends ResourceModel
      * 
      * @return
      */
-    @Adjacency(label = "parentFile", direction = Direction.IN)
+    @Adjacency(label = PARENT_FILE, direction = Direction.IN)
     public Iterable<FileModel> getContainedFiles();
 
     /**
      * Add a file to this directory
      */
-    @Adjacency(label = "parentFile", direction = Direction.IN)
+    @Adjacency(label = PARENT_FILE, direction = Direction.IN)
     public void addContainedFiles(FileModel fileModel);
 
     /**
@@ -90,10 +98,10 @@ public interface FileModel extends ResourceModel
      * 
      * @return
      */
-    @Adjacency(label = "archiveFiles", direction = Direction.IN)
+    @Adjacency(label = ARCHIVE_FILES, direction = Direction.IN)
     public ArchiveModel getParentArchive();
 
-    @Adjacency(label = "archiveFiles", direction = Direction.IN)
+    @Adjacency(label = ARCHIVE_FILES, direction = Direction.IN)
     public void setParentArchive(ArchiveModel parentArchive);
 
     @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
@@ -203,9 +211,9 @@ public interface FileModel extends ResourceModel
         {
             File file = new File(filePath);
             // set the isDirectory attribute
-            it().setProperty(PROPERTY_IS_DIRECTORY, file.isDirectory());
-            it().setProperty(PROPERTY_FILE_PATH, file.getAbsolutePath());
-            it().setProperty(PROPERTY_FILE_NAME, file.getName());
+            it().setProperty(IS_DIRECTORY, file.isDirectory());
+            it().setProperty(FILE_PATH, file.getAbsolutePath());
+            it().setProperty(FILE_NAME, file.getName());
         }
 
         @Override
