@@ -1,11 +1,11 @@
-package org.jboss.windup.rules.apps.java.service;
+package org.jboss.windup.rules.apps.xml.service;
 
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.xml.DoctypeMetaModel;
+import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 
 import com.tinkerpop.frames.FramedGraphQuery;
 

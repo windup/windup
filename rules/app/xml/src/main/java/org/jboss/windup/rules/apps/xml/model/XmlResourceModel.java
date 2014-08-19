@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.xml;
+package org.jboss.windup.rules.apps.xml.model;
 
 import java.io.InputStream;
 

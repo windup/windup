@@ -11,22 +11,20 @@
     </parent>
 
     <groupId>org.jboss.windup.rules.apps</groupId>
-    <artifactId>rules-java</artifactId>
+    <artifactId>rules-xml</artifactId>
 
-    <name>Java Basic Ruleset</name>
-    <description>Java files related module. TBD.</description>
+    <name>XML Basic Ruleset</name>
+    <description>XML files related module.</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>joox</artifactId>
+            <version>1.2.0</version>
+        </dependency>
 
 
         <!-- Project deps -->
-        <dependency>
-            <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-xml</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph</artifactId>
@@ -63,13 +61,6 @@
             <scope>provided</scope>
         </dependency>
 
-
-
-        <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
@@ -77,30 +68,6 @@
             <scope>provided</scope>
         </dependency>
 
-
-        <!-- Eclipse JDT for source analysis -->
-        <dependency>
-            <groupId>org.sonatype.tycho</groupId>
-            <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.5.1.v_972_R35x</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.core</groupId>
-            <artifactId>org.eclipse.core.runtime</artifactId>
-            <version>3.6.0.v20100505</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.core</groupId>
-            <artifactId>org.eclipse.core.resources</artifactId>
-            <version>3.6.0.v20100526-0737</version>
-        </dependency>
-
-        <!-- Roaster for sane parsing and utilities, eventually favor this over Eclipse JDT -->
-        <dependency>
-            <groupId>org.jboss.forge.roaster</groupId>
-            <artifactId>roaster-jdt</artifactId>
-            <version>2.6.0.Final</version>
-        </dependency>
 
         <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
@@ -123,14 +90,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/groovy</directory>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
         <plugins>
             <!-- Forge addon -->
             <plugin>

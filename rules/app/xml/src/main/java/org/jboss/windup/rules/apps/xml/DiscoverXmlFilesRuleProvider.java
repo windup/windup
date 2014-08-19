@@ -1,12 +1,11 @@
-package org.jboss.windup.rules.apps.java.scan.provider;
-
-import static org.joox.JOOX.$;
+package org.jboss.windup.rules.apps.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -18,11 +17,11 @@ import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.service.DoctypeMetaService;
-import org.jboss.windup.rules.apps.java.service.NamespaceService;
-import org.jboss.windup.rules.apps.xml.DoctypeMetaModel;
-import org.jboss.windup.rules.apps.xml.NamespaceMetaModel;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
+import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
+import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.service.DoctypeMetaService;
+import org.jboss.windup.rules.apps.xml.service.NamespaceService;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.LocationAwareContentHandler.Doctype;
@@ -32,34 +31,28 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import static org.joox.JOOX.$;
+
 public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(DiscoverMavenProjectsRuleProvider.class);
+    private static Logger log = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getName());
 
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.DISCOVERY;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
-    {
-        return generateDependencies(UnzipArchivesToTempRuleProvider.class, ArchiveTypingRuleProvider.class);
+        return RulePhase.POST_DISCOVERY;
     }
 
     @Override
     public Configuration getConfiguration(GraphContext arg0)
     {
         ConditionBuilder fileWhen = Query
-            .find(FileModel.class)
-            .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$");
+                    .find(FileModel.class)
+                    .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
+                    .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$");
 
         AbstractIterationOperation<FileModel> evaluatePomFiles = new AbstractIterationOperation<FileModel>()
         {
@@ -71,11 +64,11 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
         };
 
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when(fileWhen)
-            .perform(
-                        Iteration.over().perform(evaluatePomFiles).endIteration()
-            );
+                    .addRule()
+                    .when(fileWhen)
+                    .perform(
+                                Iteration.over().perform(evaluatePomFiles).endIteration()
+                    );
     }
 
     private void addXmlMetaInformation(GraphContext context, FileModel file)
@@ -136,16 +129,15 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
         }
         catch (SAXException e)
         {
-            LOG.warn("Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(), e);
+            log.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath(), e);
         }
         catch (IOException e)
         {
-            LOG.warn("Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(), e);
+            log.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath(), e);
         }
         catch (Exception e)
         {
-            throw new WindupException("Failed to load and parse XML for entity: " + file.getFilePath() + ", due to: "
-                        + e.getMessage(), e);
+            throw new WindupException("Failed to load and parse XML for entity: " + file.getFilePath(), e);
         }
     }
 }
