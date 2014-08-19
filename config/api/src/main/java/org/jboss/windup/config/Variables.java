@@ -6,13 +6,11 @@
  */
 package org.jboss.windup.config;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
@@ -109,7 +107,7 @@ public class Variables
         Iterable<WindupVertexFrame> frames = findVariable(name);
         if (null == frames)
         {
-            throw new IllegalStateException("Variable not found: " + name);
+            throw new IllegalStateException("Variable not found: \"" + name + "\"");
         }
 
         Iterator<WindupVertexFrame> iterator = frames.iterator();
@@ -166,7 +164,7 @@ public class Variables
     }
 
     /**
-     * Searches the  variables layers, top to bottom, for the iterable having all of it's items of the given type. Return
+     * Searches the variables layers, top to bottom, for the iterable having all of it's items of the given type. Return
      * null if not found.
      */
     public Iterable<WindupVertexFrame> findVariableOfType(Class<?> type)

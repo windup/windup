@@ -26,6 +26,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
 {
+    public static final String FILE_TO_PROJECT_MODEL = "fileToProjectModel";
+
     public static final String TYPE = "FileResource";
 
     public static final String PROPERTY_FILE_NAME = "fileName";
@@ -94,10 +96,10 @@ public interface FileModel extends ResourceModel
     @Adjacency(label = "archiveFiles", direction = Direction.IN)
     public void setParentArchive(ArchiveModel parentArchive);
 
-    @Adjacency(label = "fileToProjectModel", direction = Direction.OUT)
+    @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
     public ProjectModel getProjectModel();
 
-    @Adjacency(label = "fileToProjectModel", direction = Direction.OUT)
+    @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
     public void setProjectModel(ProjectModel projectModel);
 
     @JavaHandler

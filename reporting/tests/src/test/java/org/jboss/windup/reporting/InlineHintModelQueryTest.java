@@ -95,7 +95,8 @@ public class InlineHintModelQueryTest
             vertexList.add(v);
         }
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getQuery().type(FileModel.class).vertices());
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getQuery().type(FileModel.class)
+                    .vertices());
 
         GraphRewrite event = new GraphRewrite(context);
 

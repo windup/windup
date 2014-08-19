@@ -34,11 +34,24 @@ public class FreeMarkerUtil
         {
             if (results.containsKey(freeMarkerMethod.getMethodName()))
             {
-                throw new WindupException("Windup contains two freemarker extension providing the same method name: "
+                throw new WindupException("Windup contains two freemarker extension providing the same name: "
                             + freeMarkerMethod.getMethodName());
             }
             results.put(freeMarkerMethod.getMethodName(), freeMarkerMethod);
         }
+
+        Imported<WindupFreeMarkerTemplateDirective> freeMarkerDirectives = furnace.getAddonRegistry().getServices(
+                    WindupFreeMarkerTemplateDirective.class);
+        for (WindupFreeMarkerTemplateDirective freeMarkerDirective : freeMarkerDirectives)
+        {
+            if (results.containsKey(freeMarkerDirective.getDirectiveName()))
+            {
+                throw new WindupException("Windup contains two freemarker extension providing the same name: "
+                            + freeMarkerDirective.getDirectiveName());
+            }
+            results.put(freeMarkerDirective.getDirectiveName(), freeMarkerDirective);
+        }
+
         return results;
     }
 

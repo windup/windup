@@ -8,17 +8,20 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
+ */
 public class Hint extends AbstractIterationOperation<FileLocationModel>
 {
     private String hintText;
     private int effort;
 
-    Hint(String variable)
+    protected Hint(String variable)
     {
         super(variable);
     }
 
-    Hint()
+    protected Hint()
     {
         super();
     }
@@ -75,5 +78,4 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     {
         this.hintText = text;
     }
-
 }

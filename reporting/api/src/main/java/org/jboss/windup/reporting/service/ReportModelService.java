@@ -1,9 +1,8 @@
 package org.jboss.windup.reporting.service;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -17,6 +16,11 @@ import org.jboss.windup.util.FilenameUtil;
 public class ReportModelService extends GraphService<ReportModel>
 {
     private static Set<String> usedFilenames = new HashSet<>();
+
+    /**
+     * Used to insure uniqueness in report names
+     */
+    private AtomicInteger index = new AtomicInteger(1);
 
     public ReportModelService()
     {
@@ -34,14 +38,11 @@ public class ReportModelService extends GraphService<ReportModel>
      */
     public void setUniqueFilename(ReportModel model, String baseFilename, String extension)
     {
-        String filename = FilenameUtil.cleanFileName(baseFilename) + "." + extension;
+        String filename = FilenameUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
 
-        String outputDir = GraphService.getConfigurationModel(getGraphContext()).getOutputPath().getFilePath();
-        Path outputPath = Paths.get(outputDir, filename);
-        for (int i = 1; usedFilenames.contains(outputPath.toAbsolutePath().toString()); i++)
+        for (int i = 1; usedFilenames.contains(filename.toString()); i++)
         {
-            filename = FilenameUtil.cleanFileName(baseFilename) + "." + i + "." + extension;
-            outputPath = Paths.get(outputDir, filename);
+            filename = FilenameUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
         }
 
         model.setReportFilename(filename);

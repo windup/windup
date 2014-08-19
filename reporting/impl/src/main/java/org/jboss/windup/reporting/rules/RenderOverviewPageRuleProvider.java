@@ -1,7 +1,5 @@
 package org.jboss.windup.reporting.rules;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
@@ -34,12 +32,6 @@ public class RenderOverviewPageRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.REPORT_RENDERING;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
-    {
-        return generateDependencies(RenderApplicationReportRuleProvider.class);
     }
 
     // @formatter:off

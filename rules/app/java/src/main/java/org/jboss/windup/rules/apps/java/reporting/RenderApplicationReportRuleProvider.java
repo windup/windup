@@ -1,6 +1,4 @@
-package org.jboss.windup.reporting.rules;
-
-import java.util.List;
+package org.jboss.windup.rules.apps.java.reporting;
 
 import javax.inject.Inject;
 
@@ -29,7 +27,7 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
 {
     private static final String APP_REPORTS_VAR = "applicationReportsIterable";
     private static final String APP_REPORT_VAR = "applicationReport";
-    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/application.ftl";
+    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
 
     @Inject
     private Furnace furnace;
@@ -41,12 +39,6 @@ public class RenderApplicationReportRuleProvider extends WindupRuleProvider
     }
 
     // @formatter:off
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
-    {
-        return generateDependencies(RenderSourceReportRuleProvider.class);
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

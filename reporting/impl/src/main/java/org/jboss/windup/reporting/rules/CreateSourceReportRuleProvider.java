@@ -21,6 +21,7 @@ import org.jboss.windup.reporting.model.MainNavigationIndexModel;
 import org.jboss.windup.reporting.model.ReportFileModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
+import org.jboss.windup.reporting.rules.generation.CreateMainNavigationIndexRuleProvider;
 import org.jboss.windup.reporting.service.MainNavigationIndexModelService;
 import org.jboss.windup.reporting.service.ReportModelService;
 import org.jboss.windup.reporting.service.SourceReportModelService;
@@ -57,13 +58,13 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         return RulePhase.REPORT_GENERATION;
     }
 
-    // @formatter:off
     @Override
     public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
-        return generateDependencies(CreateMainApplicationReportRuleProvider.class);
+        return generateDependencies(CreateMainNavigationIndexRuleProvider.class);
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -100,7 +101,6 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
             );
     }
     // @formatter:on
-
 
     private String resolveSourceType(FileModel f)
     {
