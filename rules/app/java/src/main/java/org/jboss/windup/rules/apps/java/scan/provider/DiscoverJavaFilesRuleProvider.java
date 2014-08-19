@@ -37,8 +37,8 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
     {
         ConditionBuilder javaSourceQuery = Query
             .find(FileModel.class)
-            .withProperty(FileModel.PROPERTY_IS_DIRECTORY, false)
-            .withProperty(FileModel.PROPERTY_FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$");
+            .withProperty(FileModel.IS_DIRECTORY, false)
+            .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$");
 
         return ConfigurationBuilder.begin()
             .addRule()

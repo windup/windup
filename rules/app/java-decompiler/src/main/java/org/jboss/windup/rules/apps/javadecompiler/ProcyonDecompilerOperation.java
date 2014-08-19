@@ -29,7 +29,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
     {
         super(variableName);
     }
-    
+
     /**
      * Let the variable name to be set by the current Iteration.
      */
@@ -37,7 +37,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
     {
         super();
     }
-    
+
     @Override
     public void perform(final GraphRewrite event, final EvaluationContext context, final ArchiveModel payload)
     {
@@ -56,7 +56,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                 FileModelService fileService = new FileModelService(event.getGraphContext());
                 for (String decompiledOutputFile : decompiledOutputFileSet)
                 {
-                    FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.PROPERTY_FILE_PATH,
+                    FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
                                 decompiledOutputFile);
 
                     if (decompiledFileModel == null)
@@ -86,7 +86,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                                     decompiledOutputFile.length() - 5)
                                     + ".class");
                         FileModel classFileModel = fileService.getUniqueByProperty(
-                                    FileModel.PROPERTY_FILE_PATH, classFilepath);
+                                    FileModel.FILE_PATH, classFilepath);
                         if (classFileModel != null && classFileModel instanceof JavaClassModel)
                         {
                             JavaClassModel classModel = (JavaClassModel) classFileModel;

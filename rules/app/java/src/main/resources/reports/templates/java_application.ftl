@@ -95,7 +95,7 @@
   <div class='container mainGraphContainer'>
     <div class='col-md-3 text-right totalSummary'>
       <div class='totalLoe'>
-        sp
+        ${getMigrationEffortPoints(applicationReport.projectModel, true)}
       </div>
       <div class='totalDesc'>Story Points</div>
     </div>

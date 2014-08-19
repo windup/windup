@@ -15,14 +15,15 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * an XML file may be classified as a "XYZ Configuration File".) A {@link ClassificationModel} may also contain links to
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
-@TypeValue("ClassificationModel")
+@TypeValue(ClassificationModel.TYPE)
 public interface ClassificationModel extends WindupVertexFrame
 {
-    public static final String PROPERTY_RULE_ID = "PROP_RULE_ID";
-    public static final String PROPERTY_CLASSIFICATION = "PROP_CLASSIFICATION";
-    public static final String PROPERTY_DESCRIPTION = "PROP_DESCRIPTION";
-    public static final String PROPERTY_EFFORT = "PROP_EFFORT";
-    public static final String PROPERTY_LINKS = "PROP_LINKS";
+    public static final String TYPE = "ClassificationModel";
+    public static final String PROPERTY_RULE_ID = "ruleID";
+    public static final String PROPERTY_CLASSIFICATION = "classification";
+    public static final String PROPERTY_DESCRIPTION = "description";
+    public static final String PROPERTY_EFFORT = "effort";
+    public static final String PROPERTY_LINKS = "links";
 
     public static final String FILE_MODEL = "classificationModelToFileModel";
 
