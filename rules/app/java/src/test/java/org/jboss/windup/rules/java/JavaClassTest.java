@@ -1,12 +1,10 @@
 package org.jboss.windup.rules.java;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -19,11 +17,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
@@ -31,11 +29,6 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.config.Classification;
-import org.jboss.windup.reporting.config.Hint;
-import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.config.JavaClass;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
@@ -48,7 +41,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class HintsClassificationsTest
+public class JavaClassTest
 {
     @Deployment
     @Dependencies({
@@ -63,7 +56,7 @@ public class HintsClassificationsTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(TestHintsClassificationsTestRuleProvider.class)
+                    .addClass(TestJavaClassTestRuleProvider.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -75,9 +68,10 @@ public class HintsClassificationsTest
 
         return archive;
     }
-
+    
+    
     @Inject
-    private TestHintsClassificationsTestRuleProvider provider;
+    TestJavaClassTestRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -85,16 +79,14 @@ public class HintsClassificationsTest
     @Inject
     private GraphContext context;
 
-    private String filePath;
-
     @Test
-    public void testIterationVariableResolving() throws Exception
+    public void testIterationVariableResolving() throws IOException
     {
         ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-        pm.setName("Main Project");
+        pm.setName("Main Proejct");
 
         FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-        inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java/");
+        inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java");
         inputPath.setProjectModel(pm);
         pm.setRootFileModel(inputPath);
 
@@ -112,101 +104,104 @@ public class HintsClassificationsTest
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + UUID.randomUUID().toString());
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
+       
+
+        WindupConfigurationModel config = GraphService.getConfigurationModel(context);
+        config.setInputPath(inputPath);
+        config.setSourceMode(true);
+        config.setOutputPath(outputPath.toString());
 
         try
         {
-            WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-            config.setScanJavaPackageList(Collections.singletonList(""));
-            config.setInputPath(inputPath);
-            config.setSourceMode(true);
-            config.setOutputPath(outputPath.toString());
-
-            try
-            {
-                processor.execute();
-            }
-            catch (Exception e)
-            {
-                if (!e.getMessage().contains("CreateMainApplicationReport"))
-                    throw e;
-            }
-
-            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
-            GraphService<ClassificationModel> classificationService = new GraphService<>(context, ClassificationModel.class);
-
-            GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
-            Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
-            Assert.assertTrue(typeReferences.iterator().hasNext());
-
-            Assert.assertEquals(3, provider.getTypeReferences().size());
-            List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-            Assert.assertEquals(3, hints.size());
-            List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-            Assert.assertEquals(1, classifications.size());
-            Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
-            int fileModelsCounter=0;
-            for(FileModel f : fileModels) {
-                filePath = f.getFilePath();
-                fileModelsCounter++;
-            }
-           // this falls right now, because there is a file multiple times: Assert.assertEquals(2, fileModelsCounter);
+            processor.execute();
         }
-        finally
+        catch (Exception e)
         {
-            FileUtils.deleteDirectory(outputPath.toFile());
+            if (!e.getMessage().contains("CreateMainApplicationReport"))
+                throw e;
         }
 
-        
+        GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
+        Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
+        Assert.assertTrue(typeReferences.iterator().hasNext());
+
+        Assert.assertEquals(3, provider.getFirstRuleMatchCount());
+        Assert.assertEquals(1, provider.getSecondRuleMatchCount());
     }
 
     @Singleton
-    public static class TestHintsClassificationsTestRuleProvider extends WindupRuleProvider
+    public static class TestJavaClassTestRuleProvider extends WindupRuleProvider
     {
-        private Set<TypeReferenceModel> typeReferences = new HashSet<>();
-
+        private int firstRuleMatchCount = 0;
+        private int secondRuleMatchCount = 0;
+        
         @Override
         public RulePhase getPhase()
         {
             return RulePhase.INITIAL_ANALYSIS;
         }
 
-        @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+        public int getFirstRuleMatchCount()
         {
-            return asClassList(AnalyzeJavaFilesRuleProvider.class);
+            return firstRuleMatchCount;
+        }
+
+        public void setFirstRuleMatchCount(int firstRuleMatchCount)
+        {
+            this.firstRuleMatchCount = firstRuleMatchCount;
+        }
+
+        public int getSecondRuleMatchCount()
+        {
+            return secondRuleMatchCount;
+        }
+
+        public void setSecondRuleMatchCount(int secondRuleMatchCount)
+        {
+            this.secondRuleMatchCount = secondRuleMatchCount;
+        }
+
+        @Override
+        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+        {
+            return generateDependencies(AnalyzeJavaFilesRuleProvider.class);
         }
 
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            AbstractIterationOperation<TypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<TypeReferenceModel>()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
-                {
-                    typeReferences.add(payload);
-                }
-            };
-            
             return ConfigurationBuilder.begin()
                         
                         .addRule()
-                        .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT))
-                        .perform(
-                            Classification.as("Furnace Service").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
-                                .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
-                                         .withEffort(8)
-                                .and(addTypeRefToList))
+                        .when(JavaClass.references("org.jboss.forge.furnace.*").inFile(".*").at(TypeReferenceLocation.IMPORT))
+                        .perform(Iteration.over()
+                                    .perform(new AbstractIterationOperation<TypeReferenceModel>()
+                                                {
+                                        @Override
+                                        public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
+                                        {
+                                            firstRuleMatchCount++;
+                                        }
+                                    })
+                                    .endIteration()
+                        )
+                        .addRule()
+                        .when(JavaClass.references("org.jboss.forge.furnace.*").inFile(".*JavaClassTest.*").at(TypeReferenceLocation.IMPORT))
+                        .perform(Iteration.over()
+                                    .perform(new AbstractIterationOperation<TypeReferenceModel>()
+                                                {
+                                        @Override
+                                        public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
+                                        {
+                                            secondRuleMatchCount++;
+                                        }
+                                    })
+                                    .endIteration()
                         );
-
         }
         // @formatter:on
 
-        public Set<TypeReferenceModel> getTypeReferences()
-        {
-            return typeReferences;
-        }
     }
 
 }
