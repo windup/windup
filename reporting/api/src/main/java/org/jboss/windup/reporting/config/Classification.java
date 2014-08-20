@@ -118,7 +118,6 @@ public class Classification extends AbstractIterationOperation<FileModel>
         if (classification == null)
         {
             classification = classificationService.create();
-            classification.addFileModel(payload);
             classification.setEffort(effort);
             classification.setDescription(details);
             classification.setClassifiation(classificationText);
