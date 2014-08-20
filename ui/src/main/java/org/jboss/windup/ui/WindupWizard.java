@@ -68,6 +68,10 @@ public class WindupWizard implements UIWizard, UICommand
     @WithAttributes(label = "Overwrite", required = false, defaultValue = "false", description = "Force overwrite of the output directory, without prompting")
     private UIInput<Boolean> overwrite;
 
+    @Inject
+    @WithAttributes(label = "User Rules Directory", required = false, description = "User Rules Directory (Search pattern: *.windup.groovy)")
+    private UIInput<DirectoryResource> userRulesDirectory;
+
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
     {
@@ -79,7 +83,7 @@ public class WindupWizard implements UIWizard, UICommand
     public void initializeUI(UIBuilder builder) throws Exception
     {
         builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode)
-                    .add(overwrite);
+                    .add(overwrite).add(userRulesDirectory);
     }
 
     @Override
@@ -87,6 +91,9 @@ public class WindupWizard implements UIWizard, UICommand
     {
         File inputFile = this.input.getValue().getUnderlyingResourceObject();
         File outputFile = this.output.getValue().getUnderlyingResourceObject();
+        FileResource<DirectoryResource> userRulesInputValue = this.userRulesDirectory.getValue();
+        File userRulesDirectory = userRulesInputValue != null ? userRulesInputValue.getUnderlyingResourceObject()
+                    : null;
         List<String> scanJavaPackages = (List<String>) this.packages.getValue();
         List<String> excludeJavaPackages = (List<String>) this.excludePackages.getValue();
         boolean fetchRemote = this.fetchRemote.getValue();
@@ -111,6 +118,10 @@ public class WindupWizard implements UIWizard, UICommand
         cfg.setSourceMode(sourceMode);
         cfg.setScanJavaPackageList(scanJavaPackages);
         cfg.setExcludeJavaPackageList(excludeJavaPackages);
+        if (userRulesDirectory != null)
+        {
+            cfg.setUserRulesPath(userRulesDirectory.getAbsolutePath());
+        }
 
         windupService.execute();
 
@@ -133,18 +144,25 @@ public class WindupWizard implements UIWizard, UICommand
     @Override
     public void validate(UIValidationContext context)
     {
-        FileResource<?> inputValue = input.getValue();
+        FileResource<?> inputValue = this.input.getValue();
         if (inputValue == null)
         {
-            context.addValidationError(input, "Input path not specified");
+            context.addValidationError(this.input, "Input path not specified");
             return;
         }
 
         File inputFile = inputValue.getUnderlyingResourceObject();
         if (inputFile == null || !inputFile.exists())
         {
-            context.addValidationError(input, "Input path does not exist");
+            context.addValidationError(this.input, "Input path does not exist");
         }
+
+        FileResource<DirectoryResource> userRulesInputValue = this.userRulesDirectory.getValue();
+        if (userRulesInputValue != null && !userRulesInputValue.getUnderlyingResourceObject().isDirectory())
+        {
+            context.addValidationError(this.userRulesDirectory, "User Rules Directory must exist");
+        }
+
         List<String> scanJavaPackages = (List<String>) this.packages.getValue();
         if (scanJavaPackages == null || scanJavaPackages.isEmpty())
         {
