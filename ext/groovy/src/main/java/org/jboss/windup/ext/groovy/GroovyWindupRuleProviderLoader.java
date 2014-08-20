@@ -3,10 +3,17 @@ package org.jboss.windup.ext.groovy;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +29,8 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
@@ -29,6 +38,9 @@ import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 {
     public static final String CURRENT_WINDUP_SCRIPT = "CURRENT_WINDUP_SCRIPT";
+
+    private static final String GROOVY_RULES_EXTENSION = "windup.groovy";
+
     @Inject
     private FurnaceClasspathScanner scanner;
     @Inject
@@ -136,8 +148,41 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 
     private Iterable<URL> getScripts()
     {
-        Iterable<URL> scripts = scanner.scan("windup.groovy");
-        return scripts;
-    }
+        WindupConfigurationModel cfg = GraphService.getConfigurationModel(graphContext);
+        String userRulesPath = cfg.getUserRulesPath();
 
+        List<URL> scripts = scanner.scan(GROOVY_RULES_EXTENSION);
+
+        // no user dir, so just return the ones that we found in the classpath
+        if (userRulesPath == null)
+        {
+            return scripts;
+        }
+
+        // create the results as a copy (as we will be adding user groovy files to them)
+        final List<URL> results = new ArrayList<>(scripts);
+
+        try
+        {
+            Files.walkFileTree(Paths.get(userRulesPath), new SimpleFileVisitor<Path>()
+            {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+                {
+                    if (file.getFileName().toString().endsWith(GROOVY_RULES_EXTENSION))
+                    {
+                        results.add(file.toUri().toURL());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+        catch (IOException e)
+        {
+            throw new WindupException("Failed to search userdir: \"" + userRulesPath + "\" for groovy rules due to: "
+                        + e.getMessage(), e);
+        }
+
+        return results;
+    }
 }

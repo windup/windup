@@ -29,12 +29,12 @@ public class FurnaceClasspathScanner
     @Inject
     private Furnace furnace;
 
-    public Iterable<URL> scan(String fileExtension)
+    public List<URL> scan(String fileExtension)
     {
         return scan(new FurnaceScannerFileExtensionFilenameFilter(fileExtension));
     }
 
-    public Iterable<URL> scan(FurnaceScannerFilenameFilter filter)
+    public List<URL> scan(FurnaceScannerFilenameFilter filter)
     {
         List<URL> discoveredURLs = new ArrayList<>();
 

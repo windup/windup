@@ -15,6 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("WindupConfiguration")
 public interface WindupConfigurationModel extends WindupVertexFrame
 {
+    public static final String USER_RULES_PATH = "userRulesPath";
     public static final String PROPERTY_SOURCE_MODE = "sourceMode";
     public static final String PROPERTY_FETCH_REMOTE_RESOURCES = "fetchRemoteResources";
     public static final String PROPERTY_EXCLUDE_JAVA_PACKAGES = "excludeJavaPackages";
@@ -34,7 +35,19 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     void setInputPath(FileModel inputPath);
 
     /**
-     * Where to put the report.
+     * The location for a user provided rules directory (typically Groovy Rules)
+     */
+    @Property(USER_RULES_PATH)
+    void setUserRulesPath(String userRulesPath);
+
+    /**
+     * The location for a user provided rules directory (typically Groovy Rules)
+     */
+    @Property(USER_RULES_PATH)
+    String getUserRulesPath();
+
+    /**
+     * Where to put the report and other files produced during Windup execution.
      */
     @JavaHandler
     void setOutputPath(String outputPath);
