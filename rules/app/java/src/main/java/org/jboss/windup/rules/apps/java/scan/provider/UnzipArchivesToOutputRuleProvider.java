@@ -9,12 +9,12 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToTemporaryFolder;
+import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolder;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class UnzipArchivesToTempRuleProvider extends WindupRuleProvider
+public class UnzipArchivesToOutputRuleProvider extends WindupRuleProvider
 {
     @Override
     public RulePhase getPhase()
@@ -41,7 +41,7 @@ public class UnzipArchivesToTempRuleProvider extends WindupRuleProvider
                 binaryModeOnly.and(Query.find(ArchiveModel.class))
             )
             .perform(Iteration.over(ArchiveModel.class)
-                .perform(UnzipArchiveToTemporaryFolder.unzip())
+                .perform(UnzipArchiveToOutputFolder.unzip())
                 .endIteration()
             );
     }

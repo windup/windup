@@ -61,6 +61,53 @@ public class WindupWizardTest
     private WindupService windupService;
 
     @Test
+    public void testOverwriteConfirmation() throws Exception
+    {
+        Assert.assertNotNull(windupService);
+        Assert.assertNotNull(uiTestHarness);
+
+        String overwritePromptMessage = "Overwrite all contents of .*\\?";
+
+        // Sets the overwrite response flag to false
+        uiTestHarness.getPromptResults().put(overwritePromptMessage, "false");
+
+        try (WizardCommandController controller = uiTestHarness.createWizardController(WindupWizard.class))
+        {
+            File inputFile = File.createTempFile("windupwizardtest", "jar");
+            inputFile.deleteOnExit();
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
+            {
+                try (OutputStream oStream = new FileOutputStream(inputFile))
+                {
+                    IOUtils.copy(iStream, oStream);
+                }
+            }
+
+            File reportPath = new File(inputFile.getAbsoluteFile() + "_output");
+            try
+            {
+                reportPath.mkdirs();
+                File newFileInOutputPath = new File(reportPath, "forceoverwriteprompt");
+                // make sure that at least one file is in the output
+                newFileInOutputPath.createNewFile();
+
+                setupController(controller, inputFile, reportPath);
+
+                Result result = controller.execute();
+
+                // make sure that it failed to run (since the user's response to the overwrite question is false)
+                Assert.assertTrue(result instanceof Failed);
+                Assert.assertTrue(result.getMessage().contains("Windup execution aborted"));
+            }
+            finally
+            {
+                inputFile.delete();
+                FileUtils.deleteDirectory(reportPath);
+            }
+        }
+    }
+
+    @Test
     public void testNewMigration() throws Exception
     {
         Assert.assertNotNull(windupService);
@@ -82,14 +129,7 @@ public class WindupWizardTest
             {
                 reportPath.mkdirs();
 
-                controller.initialize();
-                Assert.assertTrue(controller.isEnabled());
-                controller.setValueFor("input", inputFile);
-                Assert.assertFalse(controller.canExecute());
-                controller.setValueFor("output", reportPath);
-                Assert.assertFalse(controller.canExecute());
-                controller.setValueFor("packages", "org.jboss");
-                Assert.assertTrue(controller.canExecute());
+                setupController(controller, inputFile, reportPath);
 
                 Result result = controller.execute();
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
@@ -101,6 +141,18 @@ public class WindupWizardTest
                 FileUtils.deleteDirectory(reportPath);
             }
         }
+    }
+
+    private void setupController(WizardCommandController controller, File inputFile, File outputFile) throws Exception
+    {
+        controller.initialize();
+        Assert.assertTrue(controller.isEnabled());
+        controller.setValueFor("input", inputFile);
+        Assert.assertFalse(controller.canExecute());
+        controller.setValueFor("output", outputFile);
+        Assert.assertFalse(controller.canExecute());
+        controller.setValueFor("packages", "org.jboss");
+        Assert.assertTrue(controller.canExecute());
     }
 
 }

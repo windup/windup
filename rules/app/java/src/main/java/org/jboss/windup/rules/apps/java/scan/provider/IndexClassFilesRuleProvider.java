@@ -25,7 +25,7 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
     @Override
     public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
-        return generateDependencies(UnzipArchivesToTempRuleProvider.class);
+        return generateDependencies(UnzipArchivesToOutputRuleProvider.class);
     }
 
     // @formatter:off

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.UICommand;
@@ -26,6 +27,12 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 
+/**
+ * Provides a basic forge UI for running windup from within the Forge shell.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class WindupWizard implements UIWizard, UICommand
 {
     private static Logger log = Logger.getLogger(WindupWizard.class.getName());
@@ -38,7 +45,7 @@ public class WindupWizard implements UIWizard, UICommand
     private UIInput<FileResource<?>> input;
 
     @Inject
-    @WithAttributes(label = "Output", required = true, description = "Output Directory")
+    @WithAttributes(label = "Output", required = true, description = "Output Directory (WARNING: any existing files will be removed)")
     private UIInput<DirectoryResource> output;
 
     @Inject
@@ -57,6 +64,10 @@ public class WindupWizard implements UIWizard, UICommand
     @WithAttributes(label = "Source Mode", required = false, defaultValue = "false", description = "Indicates whether the input file or directory is a source code or compiled binaries (Default: Compiled)")
     private UIInput<Boolean> sourceMode;
 
+    @Inject
+    @WithAttributes(label = "Overwrite", required = false, defaultValue = "false", description = "Force overwrite of the output directory, without prompting")
+    private UIInput<Boolean> overwrite;
+
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
     {
@@ -67,7 +78,8 @@ public class WindupWizard implements UIWizard, UICommand
     @Override
     public void initializeUI(UIBuilder builder) throws Exception
     {
-        builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode);
+        builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode)
+                    .add(overwrite);
     }
 
     @Override
@@ -79,25 +91,56 @@ public class WindupWizard implements UIWizard, UICommand
         List<String> excludeJavaPackages = (List<String>) this.excludePackages.getValue();
         boolean fetchRemote = this.fetchRemote.getValue();
         boolean sourceMode = this.sourceMode.getValue();
+        boolean overwrite = this.overwrite.getValue();
+        if (!overwrite && pathNotEmpty(outputFile))
+        {
+            String promptMsg = "Overwrite all contents of \"" + outputFile.toString()
+                        + "\" (anything already in the directory will be deleted)?";
+            if (!context.getPrompt().promptBoolean(promptMsg))
+            {
+                return Results.fail("Windup execution aborted!");
+            }
+        }
 
-        WindupConfigurationModel cfg = windupService.createServiceConfiguration();
+        FileUtils.deleteDirectory(outputFile);
+
+        WindupConfigurationModel cfg = windupService.createServiceConfiguration(outputFile.toPath());
         cfg.setInputPath(inputFile.getAbsolutePath());
         cfg.setOutputPath(outputFile.getAbsolutePath());
-        cfg.setInputPath(inputFile.getAbsolutePath());
         cfg.setFetchRemoteResources(fetchRemote);
         cfg.setSourceMode(sourceMode);
         cfg.setScanJavaPackageList(scanJavaPackages);
         cfg.setExcludeJavaPackageList(excludeJavaPackages);
 
-        windupService.execute(cfg);
+        windupService.execute();
 
         return Results.success("Windup execution successful!");
+    }
+
+    private boolean pathNotEmpty(File f)
+    {
+        if (f.exists() && !f.isDirectory())
+        {
+            return true;
+        }
+        if (f.isDirectory() && f.listFiles() != null && f.listFiles().length > 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void validate(UIValidationContext context)
     {
-        File inputFile = input.getValue().getUnderlyingResourceObject();
+        FileResource<?> inputValue = input.getValue();
+        if (inputValue == null)
+        {
+            context.addValidationError(input, "Input path not specified");
+            return;
+        }
+
+        File inputFile = inputValue.getUnderlyingResourceObject();
         if (inputFile == null || !inputFile.exists())
         {
             context.addValidationError(input, "Input path does not exist");

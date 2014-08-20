@@ -50,7 +50,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     @Override
     public List<Class<? extends WindupRuleProvider>> getClassDependencies()
     {
-        return generateDependencies(UnzipArchivesToTempRuleProvider.class, ArchiveTypingRuleProvider.class);
+        return generateDependencies(UnzipArchivesToOutputRuleProvider.class, ArchiveTypingRuleProvider.class);
     }
 
     @Override
