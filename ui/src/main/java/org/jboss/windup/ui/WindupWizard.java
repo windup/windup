@@ -64,6 +64,10 @@ public class WindupWizard implements UIWizard, UICommand
     @WithAttributes(label = "Source Mode", required = false, defaultValue = "false", description = "Indicates whether the input file or directory is a source code or compiled binaries (Default: Compiled)")
     private UIInput<Boolean> sourceMode;
 
+    @Inject
+    @WithAttributes(label = "Overwrite", required = false, defaultValue = "false", description = "Force overwrite of the output directory, without prompting")
+    private UIInput<Boolean> overwrite;
+
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
     {
@@ -74,7 +78,8 @@ public class WindupWizard implements UIWizard, UICommand
     @Override
     public void initializeUI(UIBuilder builder) throws Exception
     {
-        builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode);
+        builder.add(input).add(output).add(packages).add(excludePackages).add(fetchRemote).add(sourceMode)
+                    .add(overwrite);
     }
 
     @Override
@@ -86,6 +91,16 @@ public class WindupWizard implements UIWizard, UICommand
         List<String> excludeJavaPackages = (List<String>) this.excludePackages.getValue();
         boolean fetchRemote = this.fetchRemote.getValue();
         boolean sourceMode = this.sourceMode.getValue();
+        boolean overwrite = this.overwrite.getValue();
+        if (!overwrite && pathNotEmpty(outputFile))
+        {
+            String promptMsg = "Overwrite all contents of \"" + outputFile.toString()
+                        + "\" (anything already in the directory will be deleted)?";
+            if (!context.getPrompt().promptBoolean(promptMsg))
+            {
+                return Results.fail("Windup execution aborted!");
+            }
+        }
 
         FileUtils.deleteDirectory(outputFile);
 
@@ -100,6 +115,19 @@ public class WindupWizard implements UIWizard, UICommand
         windupService.execute();
 
         return Results.success("Windup execution successful!");
+    }
+
+    private boolean pathNotEmpty(File f)
+    {
+        if (f.exists() && !f.isDirectory())
+        {
+            return true;
+        }
+        if (f.isDirectory() && f.listFiles() != null && f.listFiles().length > 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     @Override
