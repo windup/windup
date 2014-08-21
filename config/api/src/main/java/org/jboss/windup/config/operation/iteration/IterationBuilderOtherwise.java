@@ -6,12 +6,17 @@
  */
 package org.jboss.windup.config.operation.iteration;
 
+import org.jboss.windup.config.operation.Iteration;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Intermediate step to construct an {@link Iteration}.
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface IterationBuilderOtherwise
 {
+    /**
+     * End the {@link Iteration}
+     */
     IterationBuilderComplete endIteration();
 }

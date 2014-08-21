@@ -23,7 +23,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
@@ -178,14 +177,13 @@ public class HintsClassificationsTest
                         
                         .addRule()
                         .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT))
-                        .perform(Iteration.over()
-                                    .perform(Classification.as("Furnace Service")
-                                                .with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
-                                            .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
-                                                     .withEffort(8)
-                                            .and(addTypeRefToList))
-                                    ).endIteration()
+                        .perform(
+                            Classification.as("Furnace Service").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
+                                .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
+                                         .withEffort(8)
+                                .and(addTypeRefToList))
                         );
+
         }
         // @formatter:on
 

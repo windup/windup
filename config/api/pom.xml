@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.ocpsoft.rewrite</groupId>
             <artifactId>rewrite-api</artifactId>
-            <version>3.0.0.Alpha2</version>
+            <version>3.0.0.Alpha3</version>
         </dependency>
 
         <dependency>
