@@ -39,7 +39,7 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public List<String> getIDDependencies()
+    public List<String> getExecuteAfterIDs()
     {
         return Collections.singletonList("Windup:DecompileArchivesRuleProvider");
     }

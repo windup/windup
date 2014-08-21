@@ -18,105 +18,233 @@ import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
+/**
+ * Sorts {@link WindupRuleProvider}s based upon their Phase and executeBefore/executeAfter methods.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class WindupRuleProviderSorter
 {
-    public static List<WindupRuleProvider> sort(
-                List<WindupRuleProvider> windupRuleProviderList)
-    {
-        // add all items to a temporary list (to avoid making gratuitous modifications to the original list)
-        List<WindupRuleProvider> tempList = new ArrayList<WindupRuleProvider>(
-                    windupRuleProviderList);
+    /**
+     * All {@link WindupRuleProvider}s
+     */
+    private List<WindupRuleProvider> providers;
 
-        // Sort by phase
-        Collections.sort(tempList, new Comparator<WindupRuleProvider>()
+    /**
+     * Maps from the WindupRuleProvider class back to the instance of WindupRuleProvider
+     */
+    private IdentityHashMap<Class<? extends WindupRuleProvider>, WindupRuleProvider> classToProviderMap = new IdentityHashMap<>();
+
+    /**
+     * Maps from the provider's ID to the RuleProvider
+     */
+    private Map<String, WindupRuleProvider> idToProviderMap = new HashMap<>();
+
+    private WindupRuleProviderSorter(List<WindupRuleProvider> providers)
+    {
+        this.providers = new ArrayList<>(providers);
+        initializeLookupCaches();
+        sort();
+    }
+
+    /**
+     * Sort the provided list of {@link WindupRuleProvider}s and return the result.
+     */
+    public static List<WindupRuleProvider> sort(List<WindupRuleProvider> providers)
+    {
+        WindupRuleProviderSorter sorter = new WindupRuleProviderSorter(providers);
+        return sorter.getProviders();
+    }
+
+    /**
+     * Gets the provider list
+     */
+    private List<WindupRuleProvider> getProviders()
+    {
+        return providers;
+    }
+
+    /**
+     * Initializes lookup caches that are used during sort to lookup providers by ID or Java {@link Class}.
+     */
+    private void initializeLookupCaches()
+    {
+        // Initialize lookup maps
+        for (WindupRuleProvider provider : providers)
+        {
+            @SuppressWarnings("unchecked")
+            Class<? extends WindupRuleProvider> unproxiedClass = unwrapType(provider.getClass());
+            classToProviderMap.put(unproxiedClass, provider);
+            idToProviderMap.put(provider.getID(), provider);
+        }
+    }
+
+    /**
+     * Perform the entire sort operation
+     */
+    private void sort()
+    {
+        // Build a directed graph based upon the dependencies
+        DefaultDirectedWeightedGraph<WindupRuleProvider, DefaultEdge> g = new DefaultDirectedWeightedGraph<>(
+                    DefaultEdge.class);
+
+        // Add initial vertices to the graph
+        // Initialize lookup maps
+        for (WindupRuleProvider provider : providers)
+        {
+            g.addVertex(unwrap(provider));
+        }
+
+        sortByPhase();
+
+        // check for phase relationships that would cause cycles
+        checkForImproperPhaseRelationships();
+
+        addProviderRelationships(g);
+
+        checkForCycles(g);
+
+        // create the final results list
+        List<WindupRuleProvider> result = new ArrayList<WindupRuleProvider>(this.providers.size());
+        // use topological ordering to make it all the right order
+        TopologicalOrderIterator<WindupRuleProvider, DefaultEdge> iterator = new TopologicalOrderIterator<>(g);
+        while (iterator.hasNext())
+        {
+            WindupRuleProvider provider = iterator.next();
+            result.add(provider);
+        }
+
+        this.providers = Collections.unmodifiableList(result);
+    }
+
+    /**
+     * Sort the providers by phase
+     */
+    private void sortByPhase()
+    {
+        Collections.sort(providers, new Comparator<WindupRuleProvider>()
         {
             @Override
             public int compare(WindupRuleProvider o1, WindupRuleProvider o2)
             {
-                return o1.getPhase().getPriority() - o2.getPhase().getPriority();
+                RulePhase o1Phase = o1.getPhase();
+                RulePhase o2Phase = o2.getPhase();
+                if (o1Phase == o2Phase)
+                {
+                    return 0;
+                }
+                else if (o1Phase == null && o2Phase != null)
+                {
+                    return 1;
+                }
+                else if (o1Phase != null && o2Phase == null)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return o1Phase.getPriority() - o2Phase.getPriority();
+                }
             }
         });
+    }
 
-        // Create a map to get back from Class to Object
-        // (this helps as we will sort the dependencies by class, but we want to ultimately return a list of
-        // GraphVisitor Objects)
-        IdentityHashMap<WindupRuleProvider, WindupRuleProvider> unwrappedToWrappedMap = new IdentityHashMap<>();
-
-        IdentityHashMap<Class<? extends WindupRuleProvider>, WindupRuleProvider> classToCfgProviderMap = new IdentityHashMap<>();
-        Map<String, WindupRuleProvider> idToCfgProviderMap = new HashMap<>();
-
-        // Now build a directed graph based upon the dependencies
-        DefaultDirectedWeightedGraph<WindupRuleProvider, DefaultEdge> g = new DefaultDirectedWeightedGraph<>(
-                    DefaultEdge.class);
-        // Also, keep this around to make sure we didn't accidentally introduce any cyclic dependencies
-        CycleDetector<WindupRuleProvider, DefaultEdge> cycleDetector = new CycleDetector<>(g);
-
-        // Add the initial vertices and the class to object mapping
-        for (WindupRuleProvider v : tempList)
-        {
-            @SuppressWarnings("unchecked")
-            Class<? extends WindupRuleProvider> unproxiedClass = (Class<? extends WindupRuleProvider>) Proxies
-                        .unwrapProxyTypes(v
-                                    .getClass());
-
-            WindupRuleProvider unwrappedObject = unwrap(v);
-            unwrappedToWrappedMap.put(unwrappedObject, v);
-            classToCfgProviderMap.put(unproxiedClass, v);
-            idToCfgProviderMap.put(v.getID(), v);
-            g.addVertex(unwrappedObject);
-        }
-
-        checkForImproperPhaseDependencies(classToCfgProviderMap, tempList);
-
+    /**
+     * Add edges between {@link WinduPRuleProvider}s based upon their dependency relationships.
+     */
+    private void addProviderRelationships(DefaultDirectedWeightedGraph<WindupRuleProvider, DefaultEdge> g)
+    {
         // Keep a list of all visitors from the previous phase
         // This allows us to create edges from nodes in one phase to the next,
         // allowing the topological sort to sort by phases as well.
-        List<WindupRuleProvider> previousCfgProviders = new ArrayList<>();
-        List<WindupRuleProvider> currentCfgProviders = new ArrayList<>();
+        List<WindupRuleProvider> previousProviders = new ArrayList<>();
+        List<WindupRuleProvider> currentProviders = new ArrayList<>();
         RulePhase previousPhase = null;
-        for (WindupRuleProvider v : tempList)
+        for (WindupRuleProvider provider : providers)
         {
-            if (v.getPhase() != previousPhase)
+            RulePhase currentPhase = provider.getPhase();
+
+            if (currentPhase != previousPhase)
             {
                 // we've reached a new phase, so move the current phase to the last
-                previousCfgProviders.clear();
-                previousCfgProviders.addAll(currentCfgProviders);
-                currentCfgProviders.clear();
+                previousProviders.clear();
+                previousProviders.addAll(currentProviders);
+                currentProviders.clear();
             }
-            currentCfgProviders.add(v);
+            currentProviders.add(provider);
 
-            // add dependencies for each visitor by class
-            for (Class<? extends WindupRuleProvider> clz : v.getClassDependencies())
+            // add connections to ruleproviders that should execute before this one
+            for (Class<? extends WindupRuleProvider> clz : provider.getExecuteAfter())
             {
-                WindupRuleProvider otherProvider = classToCfgProviderMap.get(clz);
+                WindupRuleProvider otherProvider = getByClass(clz);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("Configuration Provider: " + v.getID() + " depends on class: "
+                    throw new WindupException("Configuration Provider: " + provider.getID()
+                                + " is specified to execute after class: "
                                 + clz.getCanonicalName() + " but this class could not be found!");
                 }
-                g.addEdge(unwrap(otherProvider), unwrap(v));
+                g.addEdge(unwrap(otherProvider), unwrap(provider));
             }
 
-            // add dependencies for each visitor by id
-            for (String depID : v.getIDDependencies())
+            // add connections to ruleproviders that should execute after this one
+            for (Class<? extends WindupRuleProvider> clz : provider.getExecuteBefore())
             {
-                WindupRuleProvider otherProvider = idToCfgProviderMap.get(depID);
+                WindupRuleProvider otherProvider = getByClass(clz);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("Configuration Provider: " + v.getID()
-                                + " depends on configuration provider: "
-                                + depID + " but this provider could not be found!");
+                    throw new WindupException("Configuration Provider: " + provider.getID()
+                                + " is specified to execute before: "
+                                + clz.getCanonicalName() + " but this class could not be found!");
                 }
-                g.addEdge(unwrap(otherProvider), unwrap(v));
+                g.addEdge(unwrap(provider), unwrap(otherProvider));
             }
 
-            // also, add dependencies onto all visitors from the previous phase
-            for (WindupRuleProvider prevV : previousCfgProviders)
+            // add connections to ruleproviders that should execute before this one (by String ID)
+            for (String depID : provider.getExecuteAfterIDs())
             {
-                g.addEdge(unwrap(prevV), unwrap(v));
+                WindupRuleProvider otherProvider = getByID(depID);
+                if (otherProvider == null)
+                {
+                    throw new WindupException("Configuration Provider: " + provider.getID()
+                                + " is specified to execute after: "
+                                + depID + " but this provider could not be found!");
+                }
+                g.addEdge(unwrap(otherProvider), unwrap(provider));
             }
-            previousPhase = v.getPhase();
+
+            // add connections to ruleproviders that should execute before this one (by String ID)
+            for (String depID : provider.getExecuteBeforeIDs())
+            {
+                WindupRuleProvider otherProvider = getByID(depID);
+                if (otherProvider == null)
+                {
+                    throw new WindupException("Configuration Provider: " + provider.getID()
+                                + " is specified to execute before: "
+                                + depID + " but this provider could not be found!");
+                }
+                g.addEdge(unwrap(provider), unwrap(otherProvider));
+            }
+
+            // also, if the current provider is not an implicit phase, then
+            // add dependencies onto all visitors from the previous phase
+            if (currentPhase != null)
+            {
+                for (WindupRuleProvider prevV : previousProviders)
+                {
+                    g.addEdge(unwrap(prevV), unwrap(provider));
+                }
+            }
+            previousPhase = currentPhase;
         }
+    }
+
+    /**
+     * Use the jgrapht cycle checker to detect any cycles in the provided dependency graph.
+     */
+    private void checkForCycles(DefaultDirectedWeightedGraph<WindupRuleProvider, DefaultEdge> g)
+    {
+        CycleDetector<WindupRuleProvider, DefaultEdge> cycleDetector = new CycleDetector<>(g);
 
         if (cycleDetector.detectCycles())
         {
@@ -134,43 +262,135 @@ public class WindupRuleProviderSorter
             }
             throw new RuntimeException("Dependency cycles detected: " + errorSB.toString());
         }
-
-        // create the final results list
-        List<WindupRuleProvider> result = new ArrayList<WindupRuleProvider>(tempList.size());
-        // use topological ordering to make it all the right order
-        TopologicalOrderIterator<WindupRuleProvider, DefaultEdge> iterator = new TopologicalOrderIterator<>(
-                    g);
-        while (iterator.hasNext())
-        {
-            WindupRuleProvider provider = iterator.next();
-            result.add(unwrappedToWrappedMap.get(provider));
-        }
-
-        return result;
-
     }
 
-    private static void checkForImproperPhaseDependencies(
-                IdentityHashMap<Class<? extends WindupRuleProvider>, WindupRuleProvider> classToCfgProviderMap,
-                List<WindupRuleProvider> ruleProviders)
+    /**
+     * Check that no rules from earlier phases have inadvertantly become dependent upon rules from later phases.
+     */
+    private void checkForImproperPhaseRelationships()
     {
-        for (WindupRuleProvider ruleProvider : ruleProviders)
+        for (WindupRuleProvider provider : this.providers)
         {
-            RulePhase rulePhase = ruleProvider.getPhase();
-
-            for (Class<? extends WindupRuleProvider> classDep : ruleProvider.getClassDependencies())
+            RulePhase rulePhase = provider.getPhase();
+            if (rulePhase == null)
             {
-                WindupRuleProvider otherRuleProvider = classToCfgProviderMap.get(classDep);
-                if (rulePhase != otherRuleProvider.getPhase())
+                // just make sure it has at least one dependency
+                if ((provider.getExecuteAfter() == null || provider.getExecuteAfter().isEmpty()) &&
+                            (provider.getExecuteAfterIDs() == null || provider.getExecuteAfterIDs().isEmpty()) &&
+                            (provider.getExecuteBefore() == null || provider.getExecuteBefore().isEmpty()) &&
+                            (provider.getExecuteBeforeIDs() == null || provider.getExecuteBeforeIDs().isEmpty()))
                 {
-                    throw new IncorrectPhaseDependencyException("Error, rule \"" + ruleProvider.getID()
+                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
+                                + "\" Uses an implicit phase (phase is null) "
+                                + " but does not specify any dependencies");
+                }
+
+                continue;
+            }
+
+            for (Class<? extends WindupRuleProvider> classDep : provider.getExecuteAfter())
+            {
+                WindupRuleProvider otherProvider = getByClass(classDep);
+                if (otherProvider == null)
+                {
+                    // skip, as we will check for these types of errors
+                    continue;
+                }
+                if (!phaseRelationshipOk(otherProvider, provider))
+                {
+                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
                                 + "\" from phase \"" + rulePhase
-                                + "\" depends on rule \"" + otherRuleProvider.getID() + "\"" + " from phase \""
-                                + otherRuleProvider.getPhase()
-                                + "\". Rules must only depend on other rules from within the same phase.");
+                                + "\" is to set to execute after rule \"" + otherProvider.getID() + "\""
+                                + " from phase \""
+                                + otherProvider.getPhase()
+                                + "\". Rules must only specify rules " + rulePhase + " or an earlier phase.");
+                }
+            }
+
+            for (Class<? extends WindupRuleProvider> classDep : provider.getExecuteBefore())
+            {
+                WindupRuleProvider otherProvider = getByClass(classDep);
+                if (otherProvider == null)
+                {
+                    // skip, as we will check for these types of conditions later
+                    continue;
+                }
+                if (!phaseRelationshipOk(provider, otherProvider))
+                {
+                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
+                                + "\" from phase \"" + rulePhase
+                                + "\" is to set to execute before rule \"" + otherProvider.getID() + "\""
+                                + " from phase \""
+                                + otherProvider.getPhase()
+                                + "\". Rules must only specify rules " + rulePhase + " or a later phase.");
+                }
+            }
+
+            for (String idDep : provider.getExecuteAfterIDs())
+            {
+                WindupRuleProvider otherProvider = getByID(idDep);
+                if (otherProvider == null)
+                {
+                    // skip, as we will check for these types of conditions later
+                    continue;
+                }
+                if (!phaseRelationshipOk(otherProvider, provider))
+                {
+                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
+                                + "\" from phase \"" + rulePhase
+                                + "\" is to set to execute after rule \"" + otherProvider.getID() + "\""
+                                + " from phase \""
+                                + otherProvider.getPhase()
+                                + "\". Rules must only specify rules " + rulePhase + " or an earlier phase.");
+                }
+            }
+
+            for (String idDep : provider.getExecuteBeforeIDs())
+            {
+                WindupRuleProvider otherProvider = getByID(idDep);
+                if (otherProvider == null)
+                {
+                    // skip, as we will check for these types of conditions later
+                    continue;
+                }
+                if (!phaseRelationshipOk(provider, otherProvider))
+                {
+                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
+                                + "\" from phase \"" + rulePhase
+                                + "\" is to set to execute before rule \"" + otherProvider.getID() + "\""
+                                + " from phase \""
+                                + otherProvider.getPhase()
+                                + "\". Rules must only specify rules " + rulePhase + " or a later phase.");
                 }
             }
         }
+    }
+
+    private static boolean phaseRelationshipOk(WindupRuleProvider before, WindupRuleProvider after)
+    {
+        RulePhase beforePhase = before.getPhase();
+        RulePhase afterPhase = after.getPhase();
+        if (beforePhase == null || afterPhase == null)
+        {
+            return true;
+        }
+        return beforePhase.getPriority() <= afterPhase.getPriority();
+    }
+
+    private WindupRuleProvider getByClass(Class<? extends WindupRuleProvider> c)
+    {
+        return classToProviderMap.get(c);
+    }
+
+    private WindupRuleProvider getByID(String id)
+    {
+        return idToProviderMap.get(id);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> Class<T> unwrapType(Class<T> wrapped)
+    {
+        return (Class<T>) Proxies.unwrapProxyTypes(wrapped);
     }
 
     private static WindupRuleProvider unwrap(WindupRuleProvider provider)
