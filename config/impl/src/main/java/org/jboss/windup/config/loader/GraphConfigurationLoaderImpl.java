@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.bind.Evaluation;
@@ -32,14 +33,14 @@ import org.ocpsoft.rewrite.util.Visitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GraphConfigurationLoader
+public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
 {
-    public static Logger LOG = LoggerFactory.getLogger(GraphConfigurationLoader.class);
+    public static Logger LOG = LoggerFactory.getLogger(GraphConfigurationLoaderImpl.class);
 
     @Inject
     private Imported<WindupRuleProviderLoader> loaders;
 
-    public GraphConfigurationLoader()
+    public GraphConfigurationLoaderImpl()
     {
     }
 
@@ -49,7 +50,16 @@ public class GraphConfigurationLoader
      */
     public Configuration loadConfiguration(GraphContext context)
     {
-        return build(context);
+        return build(context, null);
+    }
+
+    /**
+     * Load all {@link ConfigurationProvider} instances that are accepted by the filter, sort by
+     * {@link ConfigurationProvider#priority()}, and return a unified, composite {@link Configuration} object.
+     */
+    public Configuration loadConfiguration(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
+    {
+        return build(context, ruleProviderFilter);
     }
 
     private List<WindupRuleProvider> getProviders()
@@ -63,13 +73,19 @@ public class GraphConfigurationLoader
         return WindupRuleProviderSorter.sort(allProviders);
     }
 
-    private Configuration build(GraphContext context)
+    private Configuration build(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
     {
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
 
         for (WindupRuleProvider provider : getProviders())
         {
+            if (ruleProviderFilter != null && !ruleProviderFilter.accept(provider))
+            {
+                // if there is a filter, and it rejects the ruleProvider, then skip this rule provider
+                continue;
+            }
+
             Configuration cfg = provider.getConfiguration(context);
             List<Rule> list = cfg.getRules();
             for (final Rule rule : list)
