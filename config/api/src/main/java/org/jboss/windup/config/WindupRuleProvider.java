@@ -19,14 +19,20 @@ import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.ocpsoft.rewrite.context.Context;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * WindupRuleProvider provides metadata, and a list of {@link Rule} objects that are then evaluated by the
+ * {@link RuleSubet} during Windup execution.
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class WindupRuleProvider implements ConfigurationProvider<GraphContext>
 {
     @Inject
     private Addon addon;
 
+    /**
+     * Returns a unique identifier for this particular rule provider. The default is based on the addon and classname,
+     * but this can be overridden in subclasses to provide a more readable name.
+     */
     public String getID()
     {
         return addon.getId().getName() + "." + getClass().getSimpleName();
@@ -75,6 +81,33 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
         return Collections.emptyList();
     }
 
+    /**
+     * Convenience method for generating a list of classes based upon the passed parameters.
+     * 
+     * For: generateDependencies(Foo.class, Bar.class, Baz.class) will return a List containing these three elements.
+     */
+    @SafeVarargs
+    protected final List<Class<? extends WindupRuleProvider>> generateDependencies(
+                Class<? extends WindupRuleProvider>... deps)
+    {
+        return Arrays.asList(deps);
+    }
+
+    /**
+     * Convenience method for generating a list of Strings based upon the passed parameters.
+     * 
+     * For: generateDependencies("Foo", "Bar", "Baz") will return a List containing these three elements.
+     */
+    @SafeVarargs
+    protected final List<String> generateDependencies(
+                String... deps)
+    {
+        return Arrays.asList(deps);
+    }
+
+    /**
+     * The "priority" of the RuleProvider. This is not presently used by Windup.
+     */
     @Override
     public int priority()
     {
@@ -85,19 +118,5 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     public boolean handles(Object payload)
     {
         return payload instanceof GraphContext;
-    }
-
-    @SafeVarargs
-    protected final List<Class<? extends WindupRuleProvider>> generateDependencies(
-                Class<? extends WindupRuleProvider>... deps)
-    {
-        return Arrays.asList(deps);
-    }
-
-    @SafeVarargs
-    protected final List<String> generateDependencies(
-                String... deps)
-    {
-        return Arrays.asList(deps);
     }
 }

@@ -18,6 +18,9 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * {@link GraphCondition} that matches Vertices in the graph based upon the provided parameters.
+ */
 public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaClassBuilderAt
 {
     private final String regex;
@@ -31,13 +34,16 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     }
 
     /**
-     * Create a new {@link JavaClass} {@link Condition}.
+     * Create a new {@link JavaClass} {@link Condition} based upon the provided Java regular expression.
      */
     public static JavaClassBuilder references(String regex)
     {
         return new JavaClass(regex);
     }
 
+    /**
+     * Only match if the TypeReference is at the specified location within the file.
+     */
     @Override
     public JavaClassBuilderAt at(TypeReferenceLocation... locations)
     {
@@ -46,6 +52,9 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
         return this;
     }
 
+    /**
+     * Optionally specify the variable name to use for the output of this condition
+     */
     @Override
     public ConditionBuilder as(String variable)
     {
