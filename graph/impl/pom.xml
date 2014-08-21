@@ -38,7 +38,13 @@
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-lucene</artifactId>
-            <version>${version.titangraph.lucene}</version>
+            <version>${version.titangraph}</version>
+        </dependency>
+        <!-- Guava dep is hardcoded to 14.0.1, because including the v15 that titan depends on breaks arquillian as of 2014/08/21 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
         </dependency>
 
 
