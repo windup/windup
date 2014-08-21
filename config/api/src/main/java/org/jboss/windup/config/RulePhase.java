@@ -1,5 +1,10 @@
 package org.jboss.windup.config;
 
+/**
+ * Lists the various phases of execution of Windup. The integer controls the order of phase execution.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ */
 public enum RulePhase
 {
     /**
