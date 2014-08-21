@@ -63,7 +63,7 @@ public class HintsClassificationsTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(HintsClassificationsTestRuleProvider.class)
+                    .addClass(TestHintsClassificationsTestRuleProvider.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -77,7 +77,7 @@ public class HintsClassificationsTest
     }
 
     @Inject
-    private HintsClassificationsTestRuleProvider provider;
+    private TestHintsClassificationsTestRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -145,7 +145,7 @@ public class HintsClassificationsTest
     }
 
     @Singleton
-    public static class HintsClassificationsTestRuleProvider extends WindupRuleProvider
+    public static class TestHintsClassificationsTestRuleProvider extends WindupRuleProvider
     {
         private Set<TypeReferenceModel> typeReferences = new HashSet<>();
 

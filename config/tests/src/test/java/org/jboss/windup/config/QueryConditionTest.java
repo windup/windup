@@ -41,15 +41,15 @@ public class QueryConditionTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClasses(MavenExampleRuleProvider.class,
-                                JavaExampleRuleProvider.class,
-                                XmlExampleRuleProvider1.class,
-                                XmlExampleRuleProvider2.class,
-                                XmlExampleRuleProvider3.class,
+                    .addClasses(TestMavenExampleRuleProvider.class,
+                                TestJavaExampleRuleProvider.class,
+                                TestXmlExampleRuleProvider1.class,
+                                TestXmlExampleRuleProvider2.class,
+                                TestXmlExampleRuleProvider3.class,
                                 TestGremlinQueryOnlyRuleProvider.class,
                                 TestXmlMetaFacetModel.class,
                                 TestSomeModel.class,
-                                WindupConfigurationExampleRuleProvider.class)
+                                TestWindupConfigurationExampleRuleProvider.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
@@ -149,7 +149,7 @@ public class QueryConditionTest
         methodModelToString.setJavaClass(classModel2);
         methodModelToString.setMethodName("toString");
 
-        WindupConfigurationExampleRuleProvider provider = new WindupConfigurationExampleRuleProvider();
+        TestWindupConfigurationExampleRuleProvider provider = new TestWindupConfigurationExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
 
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
@@ -187,7 +187,7 @@ public class QueryConditionTest
         methodModelToString.setJavaClass(classModel2);
         methodModelToString.setMethodName("toString");
 
-        JavaExampleRuleProvider provider = new JavaExampleRuleProvider();
+        TestJavaExampleRuleProvider provider = new TestJavaExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
 
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
@@ -215,7 +215,7 @@ public class QueryConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         // build a configuration, and make sure it matches what we expect (4 items)
-        MavenExampleRuleProvider provider = new MavenExampleRuleProvider();
+        TestMavenExampleRuleProvider provider = new TestMavenExampleRuleProvider();
         Configuration configuration = provider.getConfiguration(context);
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
@@ -237,7 +237,7 @@ public class QueryConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         // build a configuration, and make sure it matches what we expect (4 items)
-        XmlExampleRuleProvider1 provider = new XmlExampleRuleProvider1();
+        TestXmlExampleRuleProvider1 provider = new TestXmlExampleRuleProvider1();
         Configuration configuration = provider.getConfiguration(context);
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
@@ -267,7 +267,7 @@ public class QueryConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         // build a configuration, and make sure it matches what we expect (4 items)
-        XmlExampleRuleProvider2 provider = new XmlExampleRuleProvider2();
+        TestXmlExampleRuleProvider2 provider = new TestXmlExampleRuleProvider2();
         Configuration configuration = provider.getConfiguration(context);
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
@@ -290,7 +290,7 @@ public class QueryConditionTest
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
         // build a configuration, and make sure it matches what we expect (4 items)
-        XmlExampleRuleProvider3 provider = new XmlExampleRuleProvider3();
+        TestXmlExampleRuleProvider3 provider = new TestXmlExampleRuleProvider3();
         Configuration configuration = provider.getConfiguration(context);
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 

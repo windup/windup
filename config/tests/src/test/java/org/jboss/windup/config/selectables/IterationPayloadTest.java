@@ -35,7 +35,7 @@ public class IterationPayloadTest
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addClasses(IterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
+                    .addClasses(TestIterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
                     .addBeansXML()
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -48,7 +48,7 @@ public class IterationPayloadTest
     private GraphContextFactory factory;
 
     @Inject
-    private IterationPayloadTestRuleProvider provider;
+    private TestIterationPayloadTestRuleProvider provider;
 
     @Test
     public void testIterationVariableResolving()
