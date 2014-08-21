@@ -8,6 +8,9 @@ package org.jboss.windup.engine;
 
 import java.nio.file.Path;
 
+import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.windup.config.WindupRuleProvider;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -18,5 +21,13 @@ public interface WindupProcessor
      */
     void setOutputDirectory(Path outputDirectory);
 
+    /**
+     * Executes Windup (including all rules)
+     */
     void execute();
+
+    /**
+     * Executes only the rules contained in providers that are accepted by the provided ruleProviderFilter.
+     */
+    void execute(Predicate<WindupRuleProvider> ruleProviderFilter);
 }

@@ -8,6 +8,7 @@ package org.jboss.windup.config;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.loader.GraphConfigurationLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -23,10 +24,21 @@ public class ConfigurationProcessorImpl implements ConfigurationProcessor
     private GraphConfigurationLoader graphConfigurationLoader;
 
     @Override
-    public void run(GraphContext context)
+    public void run(final GraphContext context)
     {
         final Configuration configuration = graphConfigurationLoader.loadConfiguration(context);
+        run(context, configuration);
+    }
 
+    @Override
+    public void run(final GraphContext context, final Predicate<WindupRuleProvider> ruleProviderFilter)
+    {
+        final Configuration configuration = graphConfigurationLoader.loadConfiguration(context, ruleProviderFilter);
+        run(context, configuration);
+    }
+
+    private void run(final GraphContext context, final Configuration configuration)
+    {
         GraphRewrite event = new GraphRewrite(context);
         RuleSubset.evaluate(configuration).perform(event, createEvaluationContext());
     }

@@ -4,7 +4,9 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.ConfigurationProcessor;
+import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.slf4j.Logger;
@@ -32,6 +34,12 @@ public class WindupProcessorImpl implements WindupProcessor
 
         Path graphDirectory = outputDirectory.resolve("graph");
         graphContext.setGraphDirectory(graphDirectory);
+    }
+
+    @Override
+    public void execute(Predicate<WindupRuleProvider> ruleProviderFilter)
+    {
+        this.configProcessor.run(graphContext, ruleProviderFilter);
     }
 
     /**
