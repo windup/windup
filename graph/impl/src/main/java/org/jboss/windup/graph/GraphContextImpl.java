@@ -14,8 +14,11 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.util.exception.WindupException;
 
+import com.thinkaurelius.titan.core.Cardinality;
+import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
@@ -133,10 +136,9 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("storage.directory", berkeley.toAbsolutePath().toString());
         conf.setProperty("storage.backend", "berkeleyje");
 
-        conf.setProperty("storage.index.search.backend", "lucene");
-        conf.setProperty("storage.index.search.directory", lucene.toAbsolutePath().toString());
-        conf.setProperty("storage.index.search.client-only", "false");
-        conf.setProperty("storage.index.search.local-mode", "true");
+        conf.setProperty("index.search.backend", "lucene");
+        conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
+        conf.setProperty("index.search.local-mode", "true");
 
         TitanGraph titanGraph = TitanFactory.open(conf);
 
@@ -144,20 +146,30 @@ public class GraphContextImpl implements GraphContext
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
         String[] keys = new String[] { "namespaceURI", "schemaLocation", "publicId", "rootTagName",
                     "systemId", "qualifiedName", "filePath", "mavenIdentifier", "packageName" };
+
+        TitanManagement mgmt = titanGraph.getManagementSystem();
+
         for (String key : keys)
         {
-            titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
+                        .make();
+            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
+            // titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
 
         for (String key : new String[] { "archiveEntry" })
         {
-            titanGraph.makeKey(key).dataType(String.class).indexed("search", Vertex.class).make();
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
+                        .make();
+            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
         }
 
         for (String key : new String[] { WindupVertexFrame.TYPE_PROP })
         {
-            titanGraph.makeKey(key).list().dataType(String.class).indexed(Vertex.class).make();
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.LIST).make();
+            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
         }
+        mgmt.commit();
 
         this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
         batch = new BatchGraph<TitanGraph>(titanGraph, 1000L);
