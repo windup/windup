@@ -42,6 +42,19 @@
             <artifactId>windup-exec-impl</artifactId>
             <optional>true</optional>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-se</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        
     </dependencies>
 
 
