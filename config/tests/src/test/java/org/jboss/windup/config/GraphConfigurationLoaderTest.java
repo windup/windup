@@ -78,7 +78,7 @@ public class GraphConfigurationLoaderTest
             @Override
             public boolean accept(WindupRuleProvider arg0)
             {
-                return arg0.getPhase() == null || arg0.getPhase() == RulePhase.MIGRATION_RULES;
+                return arg0.getPhase() == RulePhase.MIGRATION_RULES;
             }
         };
 

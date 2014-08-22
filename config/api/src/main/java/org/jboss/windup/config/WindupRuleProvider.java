@@ -40,8 +40,13 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
 
     /**
      * Return the {@link RulePhase} in which the rules from this provider should be executed.
+     * 
+     * The default if no phase is specified is {@link RulePhase.MIGRATION_RULES}.
      */
-    public abstract RulePhase getPhase();
+    public RulePhase getPhase()
+    {
+        return RulePhase.MIGRATION_RULES;
+    }
 
     /**
      * Specify additional meta-data about the {@link Rule} instances originating from this {@link WindupRuleProvider}.
@@ -138,7 +143,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     @Override
     public int priority()
     {
-        return getPhase() == null ? 0 : getPhase().getPriority();
+        return getPhase().getPriority();
     }
 
     @Override

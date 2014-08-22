@@ -128,24 +128,7 @@ public class WindupRuleProviderSorter
             @Override
             public int compare(WindupRuleProvider o1, WindupRuleProvider o2)
             {
-                RulePhase o1Phase = o1.getPhase();
-                RulePhase o2Phase = o2.getPhase();
-                if (o1Phase == o2Phase)
-                {
-                    return 0;
-                }
-                else if (o1Phase == null && o2Phase != null)
-                {
-                    return 1;
-                }
-                else if (o1Phase != null && o2Phase == null)
-                {
-                    return -1;
-                }
-                else
-                {
-                    return o1Phase.getPriority() - o2Phase.getPriority();
-                }
+                return o1.getPhase().getPriority() - o2.getPhase().getPriority();
             }
         });
     }
@@ -165,7 +148,7 @@ public class WindupRuleProviderSorter
         {
             RulePhase currentPhase = provider.getPhase();
 
-            if (currentPhase != previousPhase)
+            if (currentPhase != previousPhase && currentPhase != RulePhase.IMPLICIT)
             {
                 // we've reached a new phase, so move the current phase to the last
                 previousProviders.clear();
@@ -228,7 +211,7 @@ public class WindupRuleProviderSorter
 
             // also, if the current provider is not an implicit phase, then
             // add dependencies onto all visitors from the previous phase
-            if (currentPhase != null)
+            if (currentPhase != RulePhase.IMPLICIT)
             {
                 for (WindupRuleProvider prevV : previousProviders)
                 {
@@ -370,7 +353,7 @@ public class WindupRuleProviderSorter
     {
         RulePhase beforePhase = before.getPhase();
         RulePhase afterPhase = after.getPhase();
-        if (beforePhase == null || afterPhase == null)
+        if (beforePhase == RulePhase.IMPLICIT || afterPhase == RulePhase.IMPLICIT)
         {
             return true;
         }

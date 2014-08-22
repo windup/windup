@@ -289,7 +289,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public RulePhase getPhase()
         {
-            return null;
+            return RulePhase.IMPLICIT;
         }
 
         @Override

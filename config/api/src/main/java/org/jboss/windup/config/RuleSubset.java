@@ -130,7 +130,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         {
             RulePhaseExecutionStatisticsModel model = graphContext.getService(RulePhaseExecutionStatisticsModel.class)
                         .create();
-            model.setRulePhase(phase == null ? "Implicit" : phase.toString());
+            model.setRulePhase(phase.toString());
             model.setTimeTaken(timeTaken);
             timeTakenByPhase.put(phase, model);
         }
