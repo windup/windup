@@ -59,17 +59,19 @@
       <ul>
       <#list sourceReport.sourceFileModel.classificationModels.iterator() as classificationLineItem>
         <li>
-          ${classificationLineItem.ruleID}
-          <h3>Links</h3>
-          <ul>
-            <#if classificationLineItem.linkDecorators??>
-            <#list classificationLineItem.linkDecorators.iterator() as linkDecorator>
-              <li>
-                <a href='${linkDecorator.link}'>${linkDecorator.description}</a>
-              </li>
-            </#list>
-            </#if>
-          </ul>
+          ${classificationLineItem.classification!""}
+          <#if classificationLineItem.description??>
+            - ${classificationLineItem.description!""}
+          </#if>
+          <#if classificationLineItem.links??>
+            <ul>
+              <#list classificationLineItem.links.iterator() as link>
+                <li>
+                  <a href='${link.link}'>${link.description}</a>
+                </li>
+              </#list>
+            </ul>
+          </#if>
         </li>
       </#list>
       </ul>

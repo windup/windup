@@ -8,7 +8,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Model saves an additional links for the {@link InlineHintModel} or {@link ClassificationModel}.
  */
-@TypeValue("LinkDecoratorModel")
+@TypeValue("LinkModel")
 public interface LinkModel extends WindupVertexFrame
 {
 
