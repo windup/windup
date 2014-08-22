@@ -138,7 +138,6 @@ public class GraphContextImpl implements GraphContext
 
         conf.setProperty("index.search.backend", "lucene");
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
-        conf.setProperty("index.search.local-mode", "true");
 
         TitanGraph titanGraph = TitanFactory.open(conf);
 
