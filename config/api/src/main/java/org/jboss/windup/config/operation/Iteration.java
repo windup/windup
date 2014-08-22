@@ -21,101 +21,113 @@ import org.jboss.windup.config.operation.iteration.IterationBuilderOver;
 import org.jboss.windup.config.operation.iteration.IterationBuilderPerform;
 import org.jboss.windup.config.operation.iteration.IterationBuilderVar;
 import org.jboss.windup.config.operation.iteration.IterationBuilderWhen;
-import org.jboss.windup.config.operation.iteration.IterationImpl;
 import org.jboss.windup.config.operation.iteration.IterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.NamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.TypedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.CompositeOperation;
 import org.ocpsoft.rewrite.config.Condition;
+import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.config.Operation;
+import org.ocpsoft.rewrite.config.Perform;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Used to iterate over an implicit or explicit variable defined within the corresponding
+ * {@link ConfigurationRuleBuilder#when(Condition)} clause in the current rule.
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class Iteration extends DefaultOperationBuilder
+public class Iteration extends DefaultOperationBuilder
             implements IterationBuilderVar, IterationBuilderOver,
             IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise,
             IterationBuilderComplete, CompositeOperation
 {
     private static final String VAR_INSTANCE_STRING = "_instance";
-    public static final String DEFAULT_VARIABLE_LIST_STRING="default";
-    public static final String DEFAULT_SINGLE_VARIABLE_STRING=singleVariableIterationName(DEFAULT_VARIABLE_LIST_STRING);
-    
+    public static final String DEFAULT_VARIABLE_LIST_STRING = "default";
+    public static final String DEFAULT_SINGLE_VARIABLE_STRING = singleVariableIterationName(DEFAULT_VARIABLE_LIST_STRING);
+
     private Condition condition;
     private Operation operationPerform;
     private Operation operationOtherwise;
-    
+
+    private IterationPayloadManager payloadManager;
+    private final FramesSelector selectionManager;
+
     /**
      * Calculates the default name for the single variable in the selection with the given name.
      */
-    public static String singleVariableIterationName(String selectionName){
-        return selectionName+VAR_INSTANCE_STRING;
+    public static String singleVariableIterationName(String selectionName)
+    {
+        return selectionName + VAR_INSTANCE_STRING;
     }
 
-    public abstract FramesSelector getSelectionManager();
-
-    public abstract IterationPayloadManager getPayloadManager();
-
-    public abstract void setPayloadManager(IterationPayloadManager payloadManager);
-    
     /**
-     * Begin an {@link Iteration} over the named selection of the given type. 
-     * Also sets the name and type of the variable for this iteration's "current element". The type server for automatic type
-     * check.
+     * Create a new {@link Iteration}
+     */
+    private Iteration(FramesSelector selectionManager)
+    {
+        Assert.notNull(selectionManager, "Selection manager must not be null.");
+        this.selectionManager = selectionManager;
+    }
+
+    /**
+     * Begin an {@link Iteration} over the named selection of the given type. Also sets the name and type of the
+     * variable for this iteration's "current element". The type server for automatic type check.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
-        IterationImpl iterationImpl = new IterationImpl(new TypedNamedFramesSelector(sourceType, source));
-        iterationImpl.setPayloadManager(new TypedNamedIterationPayloadManager(sourceType, singleVariableIterationName(source)));
+        Iteration iterationImpl = new Iteration(new TypedNamedFramesSelector(sourceType, source));
+        iterationImpl.setPayloadManager(new TypedNamedIterationPayloadManager(sourceType,
+                    singleVariableIterationName(source)));
         return iterationImpl;
     }
 
     /**
-     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's "current element".
+     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's
+     * "current element".
      */
     public static IterationBuilderOver over(String source)
     {
-        IterationImpl iterationImpl = new IterationImpl(new NamedFramesSelector(source));
+        Iteration iterationImpl = new Iteration(new NamedFramesSelector(source));
         iterationImpl.setPayloadManager(new NamedIterationPayloadManager(singleVariableIterationName(source)));
         return iterationImpl;
     }
-    
+
     /**
-     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name of the variable for this iteration's "current element"
-     * to have the default value.
+     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name
+     * of the variable for this iteration's "current element" to have the default value.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType)
     {
-        IterationImpl iterationImpl = new IterationImpl(new TypedFramesSelector(sourceType));
-        iterationImpl.setPayloadManager(new TypedNamedIterationPayloadManager(sourceType, DEFAULT_SINGLE_VARIABLE_STRING));
+        Iteration iterationImpl = new Iteration(new TypedFramesSelector(sourceType));
+        iterationImpl.setPayloadManager(new TypedNamedIterationPayloadManager(sourceType,
+                    DEFAULT_SINGLE_VARIABLE_STRING));
         return iterationImpl;
     }
-    
+
     /**
-     * Begin an {@link Iteration} over the selection named with the default name. Also sets the name of the variable for this iteration's "current element"
-     * to have the default value.
+     * Begin an {@link Iteration} over the selection named with the default name. Also sets the name of the variable for
+     * this iteration's "current element" to have the default value.
      */
     public static IterationBuilderOver over()
     {
-        IterationImpl iterationImpl = new IterationImpl(new NamedFramesSelector(DEFAULT_VARIABLE_LIST_STRING));
+        Iteration iterationImpl = new Iteration(new NamedFramesSelector(DEFAULT_VARIABLE_LIST_STRING));
         iterationImpl.setPayloadManager(new NamedIterationPayloadManager(DEFAULT_SINGLE_VARIABLE_STRING));
         return iterationImpl;
     }
-    
+
     /**
-     * Change the name of the single variable of the given type. If this method is not called, the name is calculated using the {@link Iteration.singleVariableIterationName()} method.
+     * Change the name of the single variable of the given type. If this method is not called, the name is calculated
+     * using the {@link Iteration.singleVariableIterationName()} method.
      */
     @Override
     public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var)
@@ -125,7 +137,8 @@ public abstract class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Change the name of the single variable. If this method is not called, the name is calculated using the {@link Iteration.singleVariableIterationName()} method.
+     * Change the name of the single variable. If this method is not called, the name is calculated using the {@link
+     * Iteration.singleVariableIterationName()} method.
      */
     @Override
     public IterationBuilderVar as(String var)
@@ -140,30 +153,27 @@ public abstract class Iteration extends DefaultOperationBuilder
         return this;
     }
 
-    /**
-     * A condition which decides for each frame whether .perform() or otherwise() will be processed.
-     */
     @Override
     public IterationBuilderWhen when(Condition condition)
     {
         this.condition = condition;
         return this;
     }
-    
-    /**
-     * Will be processed for frames which comply to the condition in when().
-     */
+
     @Override
     public IterationBuilderPerform perform(Operation operation)
     {
         this.operationPerform = operation;
-        //if the operation is iteration specific, set the payload variable name if it is not set
         return this;
     }
-    
-    /**
-     * Will be processed for frames which DO NOT comply to the condition in when().
-     */
+
+    @Override
+    public IterationBuilderPerform perform(Operation... operations)
+    {
+        this.operationPerform = Perform.all(operations);
+        return this;
+    }
+
     @Override
     public IterationBuilderOtherwise otherwise(Operation operation)
     {
@@ -172,7 +182,7 @@ public abstract class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Visual cap of the iteration.
+     * Visual end of the iteration.
      */
     @Override
     public IterationBuilderComplete endIteration()
@@ -225,12 +235,15 @@ public abstract class Iteration extends DefaultOperationBuilder
     {
         return Arrays.asList(operationPerform, operationOtherwise);
     }
-    
-    public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx) {
+
+    public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx)
+    {
         Variables varStack = Variables.instance(event);
         Map<String, Iterable<WindupVertexFrame>> topLayer = varStack.peek();
-        if(!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size()>1) {
-            throw new IllegalArgumentException("Cannot return the payload name because the top layer of varstack is not a singleton.");
+        if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
+        {
+            throw new IllegalArgumentException(
+                        "Cannot return the payload name because the top layer of varstack is not a singleton.");
         }
         String name = topLayer.keySet().iterator().next();
         return name;
@@ -313,7 +326,7 @@ public abstract class Iteration extends DefaultOperationBuilder
 
         return payload;
     }
-    
+
     /**
      * Remove the current {@link Iteration} payload.
      */
@@ -326,6 +339,22 @@ public abstract class Iteration extends DefaultOperationBuilder
         vars.remove(name);
 
         return payload;
+    }
+
+    public void setPayloadManager(IterationPayloadManager payloadManager)
+    {
+        Assert.notNull(payloadManager, "Payload manager must not be null.");
+        this.payloadManager = payloadManager;
+    }
+
+    public FramesSelector getSelectionManager()
+    {
+        return selectionManager;
+    }
+
+    public IterationPayloadManager getPayloadManager()
+    {
+        return payloadManager;
     }
 
     private static class IterationPayload<T> extends HashSet<T>

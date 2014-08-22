@@ -6,11 +6,13 @@
  */
 package org.jboss.windup.config.operation.iteration;
 
+import org.jboss.windup.config.operation.Iteration;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Completed step to construct an {@link Iteration}
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface IterationBuilderComplete extends OperationBuilder
 {
