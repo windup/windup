@@ -13,6 +13,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,7 +58,9 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     @Test
     public void testRunWindupMedium() throws Exception
     {
-        final String path = "../../test-files/Windup1x-javaee-example.war";
+        //final String path = "../../test-files/Windup1x-javaee-example.war";
+        final String path = System.getProperty("testApp.path");
+        Assert.assertNotNull("testApp.path is null", path);
         super.runTest(processor, graphContext, path, false);
     }
 }

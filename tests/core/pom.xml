@@ -16,9 +16,24 @@
     
     <properties>
         <rootProject.dir>../..</rootProject.dir>
-        <ts.appPath>${rootProject.dir}</ts.appPath>
-        <jvm.args.local>${ts.appPath}</jvm.args.local>
+        <!-- Update when PR 190 is merged. -->
+        <ts.appPath>${rootProject.dir}/test-files/Windup1x-javaee-example.war</ts.appPath>
     </properties>
+    
+    <build>
+        <plugins>
+            <!-- Remove when PR 190 is merged. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <testApp.path>${ts.appPath}</testApp.path>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <!-- Test deps -->
