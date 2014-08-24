@@ -13,6 +13,12 @@
     <artifactId>tests</artifactId>
 
     <name>Windup Engine - Tests</name>
+    
+    <properties>
+        <rootProject.dir>../..</rootProject.dir>
+        <ts.appPath>${rootProject.dir}</ts.appPath>
+        <jvm.args.local>${ts.appPath}</jvm.args.local>
+    </properties>
 
     <dependencies>
         <!-- Test deps -->
