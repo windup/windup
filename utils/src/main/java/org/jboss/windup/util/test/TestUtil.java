@@ -1,5 +1,6 @@
 package org.jboss.windup.util.test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -9,13 +10,13 @@ import java.nio.file.Paths;
  * @see WINDUP-191
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class TestUtil 
+public final class TestUtil 
 {
     // Inner class, so that everything is under TestUtil, which will cover more than just paths.
     // Leaving everything at level 0 is a mess.
     // Having it scattered over multiple classess is a mess.
     // Having to call new TestUtil().getPaths().getModuleDirAbs() is an overkill.
-    public static class Dirs 
+    public static final class Dirs 
     {
         
         /**
@@ -65,6 +66,22 @@ public class TestUtil
             if(val == null)  return null;
             return Paths.get(val).normalize();
         }
+    }
+    
+    /**
+     * Workaround for WINDUP-197 Forge + Surefire hide exception's message and cause
+     */
+    public static Exception rewrap(Exception ex)
+    {
+        String msg = ex.getMessage();
+        if(ex instanceof InvocationTargetException){
+            InvocationTargetException ite = (InvocationTargetException)ex;
+            if( ite.getTargetException() instanceof Exception )
+                ex = (Exception) ite.getTargetException();
+            msg = ite.getTargetException().getMessage();
+        }
+
+        return new Exception(msg, ex);
     }
 
 }// class
