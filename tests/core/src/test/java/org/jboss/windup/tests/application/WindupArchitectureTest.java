@@ -3,6 +3,8 @@ package org.jboss.windup.tests.application;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.engine.WindupProcessor;
@@ -12,8 +14,15 @@ import org.junit.Assert;
 
 public abstract class WindupArchitectureTest
 {
-
     void runTest(WindupProcessor processor, GraphContext graphContext, String inputPath, boolean sourceMode)
+                throws Exception
+    {
+        List<String> excludeList = Collections.emptyList();
+        runTest(processor, graphContext, inputPath, sourceMode, Collections.singletonList(""), excludeList);
+    }
+
+    void runTest(WindupProcessor processor, GraphContext graphContext, String inputPath, boolean sourceMode,
+                List<String> includePackages, List<String> excludePackages)
                 throws Exception
     {
         Assert.assertNotNull(processor);
@@ -28,6 +37,8 @@ public abstract class WindupArchitectureTest
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
         windupCfg.setSourceMode(sourceMode);
+        windupCfg.setScanJavaPackageList(includePackages);
+        windupCfg.setExcludeJavaPackageList(excludePackages);
 
         windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
         windupCfg.setSourceMode(false);

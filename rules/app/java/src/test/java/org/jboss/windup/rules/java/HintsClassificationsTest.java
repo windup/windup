@@ -3,6 +3,7 @@ package org.jboss.windup.rules.java;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class HintsClassificationsTest
     public void testIterationVariableResolving() throws Exception
     {
         ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-        pm.setName("Main Proejct");
+        pm.setName("Main Project");
 
         FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
         inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java/");
@@ -109,6 +110,7 @@ public class HintsClassificationsTest
         try
         {
             WindupConfigurationModel config = GraphService.getConfigurationModel(context);
+            config.setScanJavaPackageList(Collections.singletonList(""));
             config.setInputPath(inputPath);
             config.setSourceMode(true);
             config.setOutputPath(outputPath.toString());
@@ -157,7 +159,7 @@ public class HintsClassificationsTest
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
-            return generateDependencies(AnalyzeJavaFilesRuleProvider.class);
+            return asClassList(AnalyzeJavaFilesRuleProvider.class);
         }
 
         // @formatter:off

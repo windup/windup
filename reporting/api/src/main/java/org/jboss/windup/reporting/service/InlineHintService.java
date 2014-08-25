@@ -3,11 +3,14 @@ package org.jboss.windup.reporting.service;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
@@ -27,6 +30,19 @@ public class InlineHintService extends GraphService<InlineHintModel>
     public InlineHintService(GraphContext context)
     {
         super(context, InlineHintModel.class);
+    }
+
+    /**
+     * Gets all inline hints that are directly associated with the given file
+     */
+    public Iterable<InlineHintModel> getHintsForFile(FileModel file)
+    {
+        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(file.asVertex());
+        inlineHintPipeline.in(FileReferenceModel.FILE_MODEL);
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+
+        return new FramedVertexIterable<InlineHintModel>(getGraphContext().getFramed(), inlineHintPipeline,
+                    InlineHintModel.class);
     }
 
     /**

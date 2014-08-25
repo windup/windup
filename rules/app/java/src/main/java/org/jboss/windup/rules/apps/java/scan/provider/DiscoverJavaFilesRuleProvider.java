@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -14,7 +13,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -43,13 +41,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
             .addRule()
             .when(javaSourceQuery)
-            .perform(
-                Iteration.over()
-                .perform(
-                    new IndexJavaFileIterationOperator()
-                )
-                .endIteration()
-            );
+            .perform(new IndexJavaFileIterationOperator());
         // @formatter:on
     }
 
@@ -83,25 +75,21 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             String classFilePath = filepath.substring(inputDir.length() + 1);
             String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
                         classFilePath.length() - JAVA_SUFFIX_LEN);
-            String typeName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1, qualifiedName.length());
 
             String packageName = "";
-            if (typeName.contains("."))
+            if (qualifiedName.contains("."))
                 packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
+
+            if (packageName.startsWith("src.main.java."))
+            {
+                packageName = packageName.substring("src.main.java.".length());
+            }
 
             // make sure we mark this as a Java file
             JavaSourceFileModel javaFileModel = GraphService.addTypeToModel(graphContext, payload,
                         JavaSourceFileModel.class);
+
             javaFileModel.setPackageName(packageName);
-
-            GraphService<JavaClassModel> graphService = new GraphService<>(graphContext, JavaClassModel.class);
-            JavaClassModel javaClassModel = graphService.create();
-            javaClassModel.setSimpleName(typeName);
-            javaClassModel.setPackageName(packageName);
-            javaClassModel.setQualifiedName(qualifiedName);
-            javaClassModel.setClassFile(javaFileModel);
-
-            javaFileModel.addJavaClass(javaClassModel);
         }
 
     }

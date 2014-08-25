@@ -9,5 +9,4 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @ArchiveType(".war")
 public interface WarArchiveModel extends ArchiveModel
 {
-
 }
