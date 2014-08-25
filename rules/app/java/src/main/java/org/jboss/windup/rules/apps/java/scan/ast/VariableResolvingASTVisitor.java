@@ -172,14 +172,13 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         if (type == null)
             return;
 
-        if (TypeInterestFactory.matchesAny(type.toString()))
+        String sourceString = type.toString();
+        sourceString = resolveClassname(sourceString);
+        if (TypeInterestFactory.matchesAny(sourceString))
         {
             int lineNumber = cu.getLineNumber(type.getStartPosition());
             int columnNumber = cu.getColumnNumber(type.getStartPosition());
             int length = type.getLength();
-
-            String sourceString = type.toString();
-            sourceString = resolveClassname(sourceString);
 
             TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
                         lineNumber, columnNumber, length, sourceString);

@@ -144,7 +144,7 @@ public class GraphContextImpl implements GraphContext
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
         String[] keys = new String[] { "namespaceURI", "schemaLocation", "publicId", "rootTagName",
-                    "systemId", "qualifiedName", "filePath", "mavenIdentifier", "packageName" };
+                    "systemId", "qualifiedName", "filePath", "mavenIdentifier", "packageName", "classification" };
 
         TitanManagement mgmt = titanGraph.getManagementSystem();
 
