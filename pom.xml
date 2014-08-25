@@ -18,6 +18,12 @@
     <description>Migration Tools</description>
 
     <properties>
+        <jvm.args.standard>-Xms512m -Xmx2048m -XX:MaxPermSize=512m</jvm.args.standard>
+        <jvm.args.debug></jvm.args.debug>
+        <!-- This needs to be redefined in each submodule. -->
+        <rootProject.dir></rootProject.dir>
+        <testFiles.dir>${rootProject.dir}/test-files</testFiles.dir>
+        
         <version.furnace>2.7.3-SNAPSHOT</version.furnace>
         <version.titangraph>0.5.0</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
@@ -136,7 +142,13 @@
                     <excludes>
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
-                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=512m</argLine>
+                    <argLine>${jvm.args.standard}</argLine>
+                    <!-- Pass some values to the test environment. Use through TestUtil. -->
+                    <systemPropertyVariables>
+                        <ts.module.dir>${project.basedir}</ts.module.dir>
+                        <ts.projectRoot.dir>${rootProject.dir}</ts.projectRoot.dir>
+                        <ts.testFiles.dir>${testFiles.dir}</ts.testFiles.dir>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
@@ -206,6 +218,16 @@
                 <module>sample-apps</module>
             </modules>
         </profile>
+        
+        <!-- Debug. -->
+        <profile>
+            <id>debug</id>
+            <activation><property><name>debug</name></property></activation>
+            <properties>
+                <jvm.args.debug>-Xrunjdwp:transport=dt_socket,address=4000,server=y,suspend=y</jvm.args.debug>
+            </properties>
+        </profile>
+
     </profiles>
 
 
@@ -216,7 +238,6 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 

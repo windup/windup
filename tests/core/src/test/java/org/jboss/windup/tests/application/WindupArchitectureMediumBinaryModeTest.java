@@ -13,6 +13,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.test.TestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,18 +34,19 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addClass(WindupArchitectureTest.class)
+            .addClass(TestUtil.class)
+            .addAsResource(TestUtil.Dirs.getModuleDir().resolve("src/test/groovy/GroovyExampleRule.windup.groovy").toFile())
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
         return archive;
     }
 
@@ -57,7 +59,8 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     @Test
     public void testRunWindupMedium() throws Exception
     {
-        final String path = "../../test-files/Windup1x-javaee-example.war";
-        super.runTest(processor, graphContext, path, false);
+        final String path = TestUtil.Dirs.getTestFilesDir().resolve("Windup1x-javaee-example.war").toString();
+        System.out.println("Running binary mode test with: " + path);
+        runTest(processor, graphContext, path, false);
     }
 }
