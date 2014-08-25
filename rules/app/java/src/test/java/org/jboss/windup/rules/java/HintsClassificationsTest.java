@@ -155,7 +155,7 @@ public class HintsClassificationsTest
         }
 
         @Override
-        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
             return generateDependencies(AnalyzeJavaFilesRuleProvider.class);
         }

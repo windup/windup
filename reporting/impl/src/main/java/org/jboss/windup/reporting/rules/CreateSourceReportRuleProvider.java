@@ -59,7 +59,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
         return generateDependencies(CreateMainNavigationIndexRuleProvider.class);
     }

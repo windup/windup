@@ -19,7 +19,7 @@ public class WindupRuleProviderSorterTest
         private List<Class<? extends WindupRuleProvider>> deps = new ArrayList<>();
 
         @Override
-        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
             return deps;
         }
@@ -52,7 +52,7 @@ public class WindupRuleProviderSorterTest
     private class WCPPhase1Class2 extends WindupRuleProvider
     {
         @Override
-        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
             List<Class<? extends WindupRuleProvider>> l = new ArrayList<>();
             l.add(WCPPhase1Class1.class);
@@ -87,7 +87,7 @@ public class WindupRuleProviderSorterTest
     private class WCPPhase1Class3 extends WindupRuleProvider
     {
         @Override
-        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
             List<Class<? extends WindupRuleProvider>> l = new ArrayList<>();
             l.add(WCPPhase1Class2.class);
@@ -130,7 +130,6 @@ public class WindupRuleProviderSorterTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            // TODO Auto-generated method stub
             return null;
         }
 
@@ -138,40 +137,6 @@ public class WindupRuleProviderSorterTest
         public String toString()
         {
             return "Phase2Class1";
-        }
-
-        @Override
-        public String getID()
-        {
-            return toString();
-        }
-    }
-
-    private class WCPPhase2Class2 extends WindupRuleProvider
-    {
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.INITIAL_ANALYSIS;
-        }
-
-        @Override
-        public List<String> getIDDependencies()
-        {
-            return Arrays.asList(new String[] { "Phase2Class1" });
-        }
-
-        @Override
-        public Configuration getConfiguration(GraphContext context)
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "Phase2Class2";
         }
 
         @Override
@@ -190,15 +155,20 @@ public class WindupRuleProviderSorterTest
         }
 
         @Override
-        public List<String> getIDDependencies()
+        public List<String> getExecuteAfterIDs()
         {
-            return Arrays.asList(new String[] { "Phase2Class2" });
+            return Arrays.asList(new String[] { "WCPImplicitPhase2Step2" });
+        }
+
+        @Override
+        public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
+        {
+            return generateDependencies(WCPPhase2Class4.class);
         }
 
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            // TODO Auto-generated method stub
             return null;
         }
 
@@ -206,6 +176,39 @@ public class WindupRuleProviderSorterTest
         public String toString()
         {
             return "Phase2Class3";
+        }
+
+        @Override
+        public String getID()
+        {
+            return toString();
+        }
+    }
+
+    private class WCPPhase2Class4 extends WindupRuleProvider
+    {
+        @Override
+        public RulePhase getPhase()
+        {
+            return RulePhase.INITIAL_ANALYSIS;
+        }
+
+        @Override
+        public List<String> getExecuteAfterIDs()
+        {
+            return Arrays.asList(new String[] { "Phase2Class3" });
+        }
+
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            return null;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Phase2Class4";
         }
 
         @Override
@@ -224,7 +227,7 @@ public class WindupRuleProviderSorterTest
         }
 
         @Override
-        public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
             return generateDependencies(WCPPhase2Class1.class);
         }
@@ -232,7 +235,6 @@ public class WindupRuleProviderSorterTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            // TODO Auto-generated method stub
             return null;
         }
 
@@ -249,6 +251,79 @@ public class WindupRuleProviderSorterTest
         }
     }
 
+    private class WCPAcceptableCrossPhaseDep extends WindupRuleProvider
+    {
+        @Override
+        public RulePhase getPhase()
+        {
+            return RulePhase.REPORT_RENDERING;
+        }
+
+        @Override
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+        {
+            return generateDependencies(WCPPhase2Class1.class);
+        }
+
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            return null;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Phase1AcceptableCrossPhaseDep";
+        }
+
+        @Override
+        public String getID()
+        {
+            return toString();
+        }
+    }
+
+    private class WCPImplicitPhase2Step2 extends WindupRuleProvider
+    {
+        @Override
+        public RulePhase getPhase()
+        {
+            return RulePhase.IMPLICIT;
+        }
+
+        @Override
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+        {
+            return generateDependencies(WCPPhase2Class1.class);
+        }
+
+        @Override
+        public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
+        {
+            return generateDependencies(WCPPhase2Class3.class);
+        }
+
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            return null;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "WCPImplicitPhase2Step2";
+        }
+
+        @Override
+        public String getID()
+        {
+            return toString();
+        }
+
+    }
+
     @Test
     public void testSort()
     {
@@ -256,9 +331,11 @@ public class WindupRuleProviderSorterTest
         WindupRuleProvider v2 = new WCPPhase1Class2();
         WindupRuleProvider v3 = new WCPPhase1Class3();
         WindupRuleProvider v4 = new WCPPhase2Class1();
-        WindupRuleProvider v5 = new WCPPhase2Class2();
+        WindupRuleProvider v5 = new WCPImplicitPhase2Step2();
         WindupRuleProvider v6 = new WCPPhase2Class3();
+        WindupRuleProvider v7 = new WCPPhase2Class4();
         List<WindupRuleProvider> ruleProviders = new ArrayList<>();
+        ruleProviders.add(v7);
         ruleProviders.add(v6);
         ruleProviders.add(v5);
         ruleProviders.add(v3);
@@ -277,6 +354,7 @@ public class WindupRuleProviderSorterTest
         Assert.assertEquals(v4, sortedRCPList.get(3));
         Assert.assertEquals(v5, sortedRCPList.get(4));
         Assert.assertEquals(v6, sortedRCPList.get(5));
+        Assert.assertEquals(v7, sortedRCPList.get(6));
     }
 
     @Test
@@ -306,14 +384,14 @@ public class WindupRuleProviderSorterTest
     }
 
     @Test
-    public void testCrossPhaseDependency()
+    public void testImproperCrossPhaseDependency()
     {
         WindupRuleProvider v1 = new WCPPhase1Class1();
         WindupRuleProvider v2 = new WCPPhase1Class2();
         WindupRuleProvider v3 = new WCPPhase1Class3();
         WindupRuleProvider v4 = new WCPPhase2Class1();
-        WindupRuleProvider v5 = new WCPPhase2Class2();
-        WindupRuleProvider v6 = new WCPPhase2Class3();
+        WindupRuleProvider v5 = new WCPPhase2Class3();
+        WindupRuleProvider v6 = new WCPPhase2Class4();
         WindupRuleProvider wrongPhaseDep = new WCPPhase1WrongPhaseDep();
         List<WindupRuleProvider> ruleProviders = new ArrayList<>();
         ruleProviders.add(v6);
@@ -333,6 +411,40 @@ public class WindupRuleProviderSorterTest
         catch (IncorrectPhaseDependencyException ipde)
         {
             // ignore... this exception is expected in this test
+        }
+    }
+
+    @Test
+    public void testAcceptableCrossPhaseDependency()
+    {
+        WindupRuleProvider v1 = new WCPPhase1Class1();
+        WindupRuleProvider v2 = new WCPPhase1Class2();
+        WindupRuleProvider v3 = new WCPPhase1Class3();
+        WindupRuleProvider v4 = new WCPPhase2Class1();
+        WindupRuleProvider v5 = new WCPImplicitPhase2Step2();
+        WindupRuleProvider v6 = new WCPPhase2Class3();
+        WindupRuleProvider v7 = new WCPPhase2Class4();
+        WindupRuleProvider acceptablePhaseDep = new WCPAcceptableCrossPhaseDep();
+        List<WindupRuleProvider> ruleProviders = new ArrayList<>();
+        ruleProviders.add(v7);
+        ruleProviders.add(v6);
+        ruleProviders.add(v5);
+        ruleProviders.add(v3);
+        ruleProviders.add(v4);
+        ruleProviders.add(v2);
+        ruleProviders.add(v1);
+        ruleProviders.add(acceptablePhaseDep);
+
+        try
+        {
+            List<WindupRuleProvider> sortedRCPList = WindupRuleProviderSorter
+                        .sort(ruleProviders);
+
+        }
+        catch (IncorrectPhaseDependencyException ipde)
+        {
+            ipde.printStackTrace();
+            Assert.fail("This cross-dependency should be acceptable!");
         }
     }
 

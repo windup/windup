@@ -117,7 +117,16 @@ public enum RulePhase
     /**
      * Immediately after finalize
      */
-    POST_FINALIZE(710);
+    POST_FINALIZE(710),
+
+    /**
+     * These rules will operate solely based the return the return value of {@link
+     * org.jboss.windup.config.WindupRuleProvider.getExecuteAfter()} and {@link
+     * org.jboss.windup.config.WindupRuleProvider.getExecuteBefore()}.
+     * 
+     * Depending upon the ordering specified by those methods, this could occur during any phase of execution.
+     */
+    IMPLICIT(Integer.MAX_VALUE);
 
     private int priority;
 

@@ -40,8 +40,13 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
 
     /**
      * Return the {@link RulePhase} in which the rules from this provider should be executed.
+     * 
+     * The default if no phase is specified is {@link RulePhase.MIGRATION_RULES}.
      */
-    public abstract RulePhase getPhase();
+    public RulePhase getPhase()
+    {
+        return RulePhase.MIGRATION_RULES;
+    }
 
     /**
      * Specify additional meta-data about the {@link Rule} instances originating from this {@link WindupRuleProvider}.
@@ -57,26 +62,53 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     }
 
     /**
-     * Returns a list of WindupRuleProvider classes that this instance depends on.
+     * Returns a list of {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this
+     * {@link WindupRuleProvider}.
      * 
-     * Dependencies can also be specified based on id ({@link #getIDDependencies}).
+     * {@link WindupRuleProvider}s can also be specified based on id ({@link #getExecuteAfterID}).
      */
-    public List<Class<? extends WindupRuleProvider>> getClassDependencies()
+    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
         return Collections.emptyList();
     }
 
     /**
-     * Returns a list of the WindupRuleProvider dependencies for this configuration provider.
+     * Returns a list of the {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this
+     * {@link WindupRuleProvider}.
      * 
      * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
      * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
      * IDs.
      * 
-     * For depending upon Java-based rules, getClassDependencies is preferred. Dependencies of both types can be
-     * returned by a single WindupRuleProvider.
+     * For specifying Java-based rules, getExecuteAfter is preferred.
      */
-    public List<String> getIDDependencies()
+    public List<String> getExecuteAfterIDs()
+    {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns a list of {@link WindupRuleProvider} classes that should execute after the {@link Rule}s in this
+     * {@link WindupRuleProvider}.
+     * 
+     * {@link WindupRuleProvider}s can also be specified based on id ({@link #getExecuteBeforeID}).
+     */
+    public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
+    {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns a list of the {@link WindupRuleProvider} classes that should execute after the {@link Rule}s in this
+     * {@link WindupRuleProvider}.
+     * 
+     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
+     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
+     * IDs.
+     * 
+     * For specifying Java-based rules, getExecuteBefore is preferred.
+     */
+    public List<String> getExecuteBeforeIDs()
     {
         return Collections.emptyList();
     }
