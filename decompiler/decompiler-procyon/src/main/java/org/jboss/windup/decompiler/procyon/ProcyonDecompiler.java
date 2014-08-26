@@ -80,8 +80,8 @@ public class ProcyonDecompiler implements Decompiler
         {
             DecompilerSettings settings = getDefaultSettings(outputDir);
             MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
-            this.decompileType(metadataSystem, typeName);
-            res.addDecompiled(name);
+            File outputFile = this.decompileType(metadataSystem, typeName);
+            res.addDecompiled(classFile.getAbsolutePath(), outputFile.getAbsolutePath());
         }
         catch (Throwable e)
         {
@@ -96,6 +96,14 @@ public class ProcyonDecompiler implements Decompiler
 
     @Override
     public DecompilationResult decompileDirectory(File classesDir, File outputDir) throws DecompilationException
+    {
+        DecompilationResult result = new DecompilationResult();
+        decompileDirectory(classesDir, outputDir, result);
+        return result;
+    }
+
+    public void decompileDirectory(File classesDir, File outputDir, DecompilationResult result)
+                throws DecompilationException
     {
         if (classesDir == null)
             throw new IllegalArgumentException("Directory to decompile must not be null.");
@@ -115,22 +123,12 @@ public class ProcyonDecompiler implements Decompiler
         DecompilerSettings settings = getDefaultSettings(outputDir);
         MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
 
-        DecompilationResult result = new DecompilationResult();
-
         final List<File> files = Arrays.asList(classesDir.listFiles());
         for (File file : files)
         {
             if (file.isDirectory())
             {
-                DecompilationResult intermediateResult = decompileDirectory(file, new File(outputDir, file.getName()));
-                for (String decompiled : intermediateResult.getDecompiled())
-                {
-                    result.addDecompiled(decompiled);
-                }
-                for (DecompilationFailure failure : intermediateResult.getFailures())
-                {
-                    result.addFailure(failure);
-                }
+                decompileDirectory(file, new File(outputDir, file.getName()), result);
                 continue;
             }
 
@@ -143,8 +141,8 @@ public class ProcyonDecompiler implements Decompiler
 
             try
             {
-                this.decompileType(metadataSystem, typeName);
-                result.addDecompiled(name);
+                File outputFile = this.decompileType(metadataSystem, typeName);
+                result.addDecompiled(file.getAbsolutePath(), outputFile.getAbsolutePath());
             }
             catch (Throwable e)
             {
@@ -154,8 +152,6 @@ public class ProcyonDecompiler implements Decompiler
                 result.addFailure(failure);
             }
         }
-
-        return result;
     }
 
     @Override
@@ -212,8 +208,7 @@ public class ProcyonDecompiler implements Decompiler
                 File outputFile = this.decompileType(metadataSystem, typeName);
                 if (outputFile != null)
                 {
-                    res.addDecompiled(name);
-                    res.addDecompiledOutputFile(outputFile.getAbsolutePath());
+                    res.addDecompiled(name, outputFile.getAbsolutePath());
                 }
 
                 // Taken from mstrobel's, not sure what's the purpose.

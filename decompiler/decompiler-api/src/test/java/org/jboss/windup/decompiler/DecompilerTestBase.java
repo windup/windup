@@ -1,14 +1,14 @@
 package org.jboss.windup.decompiler;
 
-import org.jboss.windup.decompiler.api.DecompilationException;
-import org.jboss.windup.decompiler.api.Decompiler;
-import org.jboss.windup.decompiler.api.DecompilationResult;
-import org.jboss.windup.decompiler.api.DecompilationFailure;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
+import org.jboss.windup.decompiler.api.DecompilationException;
+import org.jboss.windup.decompiler.api.DecompilationFailure;
+import org.jboss.windup.decompiler.api.DecompilationResult;
+import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.util.ZipUtil;
 import org.junit.After;
 import org.junit.Assert;
@@ -80,7 +80,8 @@ public abstract class DecompilerTestBase
             else
                 log.error(sb.toString());
         }
-        log.info("Compilation results: {} succeeded, {} failed.", res.getDecompiled().size(), res.getFailures().size());
+        log.info("Compilation results: {} succeeded, {} failed.", res.getDecompiledFiles().size(), res.getFailures()
+                    .size());
 
         final File sampleFile = new File(outputFolder, "org/apache/wicket/model/LoadableDetachableModel.java");
         Assert.assertTrue("Decompiled class files exist:\n    " + sampleFile.getAbsolutePath(), sampleFile.exists());
@@ -115,7 +116,8 @@ public abstract class DecompilerTestBase
             else
                 log.error(sb.toString());
         }
-        log.info("Compilation results: {} succeeded, {} failed.", res.getDecompiled().size(), res.getFailures().size());
+        log.info("Compilation results: {} succeeded, {} failed.", res.getDecompiledFiles().size(), res.getFailures()
+                    .size());
 
         final File sampleFile = new File(outputFolder, "org/apache/wicket/model/LoadableDetachableModel.java");
         Assert.assertTrue("Decompiled class did not exist in: " + sampleFile.getAbsolutePath(), sampleFile.exists());

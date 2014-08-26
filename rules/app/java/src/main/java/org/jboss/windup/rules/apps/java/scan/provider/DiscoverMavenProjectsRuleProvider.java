@@ -11,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -117,17 +116,16 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             }
         };
 
+        // @formatter:off
         return ConfigurationBuilder.begin()
             .addRule()
             .when(fileWhen)
-            .perform(
-                Iteration.over().perform(evaluatePomFiles).endIteration()
-            );
+            .perform(evaluatePomFiles);
+        // @formatter:on
     }
 
     private void addFilesToModel(MavenProjectModel mavenProjectModel, FileModel fileModel)
     {
-        String filePath = fileModel.getFilePath();
         // First, make sure we aren't looking at a separate module (we assume that if a pom.xml is in the folder,
         // it is a separate module)
         for (FileModel childFile : fileModel.getFilesInDirectory())
