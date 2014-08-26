@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.javadecompiler;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
+import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -56,11 +56,22 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
             try
             {
                 DecompilationResult result = decompiler.decompileArchive(archive, outputDir);
-                Set<String> decompiledOutputFileSet = result.getDecompiledOutputFiles();
+                Map<String, String> decompiledOutputFiles = result.getDecompiledFiles();
 
                 FileModelService fileService = new FileModelService(event.getGraphContext());
-                for (String decompiledOutputFile : decompiledOutputFileSet)
+                for (Map.Entry<String, String> decompiledEntry : decompiledOutputFiles.entrySet())
                 {
+                    // original source is a path inside the archive... split it up by separator, and append
+                    // it to the unzipped directory
+                    String[] classFilePathTokens = decompiledEntry.getKey().split("\\\\|/");
+
+                    Path classFilePath = Paths.get(payload.getUnzippedDirectory().getFilePath());
+                    for (String pathToken : classFilePathTokens)
+                    {
+                        classFilePath = classFilePath.resolve(pathToken);
+                    }
+
+                    String decompiledOutputFile = decompiledEntry.getValue();
                     FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
                                 decompiledOutputFile);
 
@@ -78,7 +89,6 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
 
                     if (decompiledOutputFile.endsWith(".java"))
                     {
-
                         if (!(decompiledFileModel instanceof JavaSourceFileModel))
                         {
                             decompiledFileModel = GraphService.addTypeToModel(event.getGraphContext(),
@@ -86,16 +96,19 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
 
-                        Path classFilepath = Paths.get(decompiledOutputFile.substring(0,
-                                    decompiledOutputFile.length() - 5)
-                                    + ".class");
                         FileModel classFileModel = fileService.getUniqueByProperty(
-                                    FileModel.FILE_PATH, classFilepath);
+                                    FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
                         if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
                         {
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
+                        }
+                        else
+                        {
+                            throw new WindupException(
+                                        "Failed to find original JavaClassFileModel for decompiled Java file: "
+                                                    + decompiledOutputFile + " at: " + classFilePath.toString());
                         }
                     }
                     payload.addDecompiledFileModel(decompiledFileModel);

@@ -1,10 +1,10 @@
 package org.jboss.windup.decompiler.api;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Keeps a count of successful decompilations and list of failed ones, in the form of an exception with String path and
@@ -16,22 +16,16 @@ import java.util.Set;
 public class DecompilationResult
 {
     private final List<DecompilationFailure> failed = new LinkedList<>();
-    private final Set<String> decompiled = new HashSet<>();
-    private final Set<String> decompiledOutputFiles = new HashSet<>();
+    private final Map<String, String> decompiledFiles = new HashMap<>();
 
-    public void addDecompiledOutputFile(String path)
+    public void addDecompiled(String inputPath, String path)
     {
-        this.decompiledOutputFiles.add(path);
+        this.decompiledFiles.put(inputPath, path);
     }
 
-    public Set<String> getDecompiledOutputFiles()
+    public Map<String, String> getDecompiledFiles()
     {
-        return this.decompiledOutputFiles;
-    }
-
-    public void addDecompiled(String path)
-    {
-        this.decompiled.add(path);
+        return this.decompiledFiles;
     }
 
     public void addFailure(DecompilationFailure failure)
@@ -43,10 +37,4 @@ public class DecompilationResult
     {
         return Collections.unmodifiableList(this.failed);
     }
-
-    public Set<String> getDecompiled()
-    {
-        return this.decompiled;
-    }
-
 }
