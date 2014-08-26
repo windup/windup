@@ -85,13 +85,13 @@ public interface FileModel extends ResourceModel
      * @return
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
-    public Iterable<FileModel> getContainedFiles();
+    public Iterable<FileModel> getFilesInDirectory();
 
     /**
      * Add a file to this directory
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
-    public void addContainedFiles(FileModel fileModel);
+    public void addFileToDirectory(FileModel fileModel);
 
     /**
      * Indicates the archive that contained this file

@@ -163,7 +163,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
         {
-            return generateDependencies(WCPPhase2Class4.class);
+            return asClassList(WCPPhase2Class4.class);
         }
 
         @Override
@@ -229,7 +229,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
-            return generateDependencies(WCPPhase2Class1.class);
+            return asClassList(WCPPhase2Class1.class);
         }
 
         @Override
@@ -262,7 +262,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
-            return generateDependencies(WCPPhase2Class1.class);
+            return asClassList(WCPPhase2Class1.class);
         }
 
         @Override
@@ -295,13 +295,13 @@ public class WindupRuleProviderSorterTest
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
-            return generateDependencies(WCPPhase2Class1.class);
+            return asClassList(WCPPhase2Class1.class);
         }
 
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
         {
-            return generateDependencies(WCPPhase2Class3.class);
+            return asClassList(WCPPhase2Class3.class);
         }
 
         @Override

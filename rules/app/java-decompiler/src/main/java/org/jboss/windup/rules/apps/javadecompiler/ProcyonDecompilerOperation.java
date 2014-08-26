@@ -17,8 +17,9 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -47,6 +48,10 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
             String archivePath = ((FileModel) payload).getFilePath();
             File archive = new File(archivePath);
             File outputDir = new File(payload.getUnzippedDirectory().getFilePath());
+            if (payload instanceof WarArchiveModel)
+            {
+                outputDir = outputDir.toPath().resolve("WEB-INF").resolve("classes").toFile();
+            }
 
             try
             {
@@ -80,18 +85,16 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                                         decompiledFileModel, JavaSourceFileModel.class);
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
-                        decompiledSourceFileModel.setPackageName(decompiledOutputFile);
 
                         Path classFilepath = Paths.get(decompiledOutputFile.substring(0,
                                     decompiledOutputFile.length() - 5)
                                     + ".class");
                         FileModel classFileModel = fileService.getUniqueByProperty(
                                     FileModel.FILE_PATH, classFilepath);
-                        if (classFileModel != null && classFileModel instanceof JavaClassModel)
+                        if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
                         {
-                            JavaClassModel classModel = (JavaClassModel) classFileModel;
-                            classModel.setDecompiledSource(decompiledSourceFileModel);
-
+                            JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
+                            classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
                         }
                     }

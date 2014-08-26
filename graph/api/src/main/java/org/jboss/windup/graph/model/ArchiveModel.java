@@ -37,10 +37,10 @@ public interface ArchiveModel extends FileModel
     @Adjacency(label = "unzippedDirectory", direction = Direction.OUT)
     public FileModel getUnzippedDirectory();
 
-    @Adjacency(label = "archiveFiles", direction = Direction.OUT)
+    @Adjacency(label = FileModel.ARCHIVE_FILES, direction = Direction.OUT)
     public Iterable<FileModel> getContainedFileModels();
 
-    @Adjacency(label = "archiveFiles", direction = Direction.OUT)
+    @Adjacency(label = FileModel.ARCHIVE_FILES, direction = Direction.OUT)
     public void addContainedFileModel(FileModel archiveFile);
 
     @Adjacency(label = "decompiledFiles", direction = Direction.OUT)

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
@@ -25,7 +24,7 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return generateDependencies(UnzipArchivesToOutputRuleProvider.class);
+        return asClassList(UnzipArchivesToOutputRuleProvider.class);
     }
 
     // @formatter:off
@@ -39,10 +38,7 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
             .withProperty(FileModel.IS_DIRECTORY, false)
             .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.class")
         )
-        .perform(
-            Iteration.over()
-            .perform(new AddClassFileMetadata()).endIteration()
-        );
+        .perform(new AddClassFileMetadata());
     }
     // @formatter:on
 }

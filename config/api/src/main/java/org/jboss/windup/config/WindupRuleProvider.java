@@ -119,7 +119,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
      * For: generateDependencies(Foo.class, Bar.class, Baz.class) will return a List containing these three elements.
      */
     @SafeVarargs
-    protected final List<Class<? extends WindupRuleProvider>> generateDependencies(
+    protected final List<Class<? extends WindupRuleProvider>> asClassList(
                 Class<? extends WindupRuleProvider>... deps)
     {
         return Arrays.asList(deps);
@@ -131,7 +131,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
      * For: generateDependencies("Foo", "Bar", "Baz") will return a List containing these three elements.
      */
     @SafeVarargs
-    protected final List<String> generateDependencies(
+    protected final List<String> asStringList(
                 String... deps)
     {
         return Arrays.asList(deps);

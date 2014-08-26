@@ -58,7 +58,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return generateDependencies(DiscoverXmlFilesRuleProvider.class);
+        return asClassList(DiscoverXmlFilesRuleProvider.class);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                             mavenProjectModel.setRootFileModel(parentFileModel);
 
                             // now add all child folders that do not contain pom files
-                            for (FileModel childFile : parentFileModel.getContainedFiles())
+                            for (FileModel childFile : parentFileModel.getFilesInDirectory())
                             {
                                 addFilesToModel(mavenProjectModel, childFile);
                             }
@@ -130,7 +130,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
         String filePath = fileModel.getFilePath();
         // First, make sure we aren't looking at a separate module (we assume that if a pom.xml is in the folder,
         // it is a separate module)
-        for (FileModel childFile : fileModel.getContainedFiles())
+        for (FileModel childFile : fileModel.getFilesInDirectory())
         {
             String filename = childFile.getFileName();
             if (filename.equals("pom.xml"))
@@ -144,7 +144,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
         mavenProjectModel.addFileModel(fileModel);
 
         // now recursively all files to the project
-        for (FileModel childFile : fileModel.getContainedFiles())
+        for (FileModel childFile : fileModel.getFilesInDirectory())
         {
             addFilesToModel(mavenProjectModel, childFile);
         }

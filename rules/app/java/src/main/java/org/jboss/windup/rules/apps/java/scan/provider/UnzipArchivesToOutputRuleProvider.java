@@ -25,7 +25,7 @@ public class UnzipArchivesToOutputRuleProvider extends WindupRuleProvider
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return generateDependencies(FileScannerWindupRuleProvider.class);
+        return asClassList(FileScannerWindupRuleProvider.class);
     }
 
     // @formatter:off

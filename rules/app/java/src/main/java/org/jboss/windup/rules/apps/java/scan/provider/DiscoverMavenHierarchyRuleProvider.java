@@ -41,7 +41,7 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return generateDependencies(DiscoverMavenProjectsRuleProvider.class);
+        return asClassList(DiscoverMavenProjectsRuleProvider.class);
     }
 
     @Override

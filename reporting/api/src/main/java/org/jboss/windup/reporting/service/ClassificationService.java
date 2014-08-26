@@ -12,8 +12,19 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
+/**
+ * Adds methods for loading and querying ClassificationModel related data.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class ClassificationService extends GraphService<ClassificationModel>
 {
+    public ClassificationService()
+    {
+        super(ClassificationModel.class);
+    }
+
     @Inject
     public ClassificationService(GraphContext context)
     {

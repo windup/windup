@@ -22,12 +22,12 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
     {
         super(variableName);
     }
-    
+
     public AddClassFileMetadata()
     {
         super();
     }
-    
+
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
