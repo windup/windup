@@ -2,21 +2,15 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
-import org.jboss.windup.rules.apps.maven.dao.MavenModelService;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -26,11 +20,6 @@ import org.slf4j.LoggerFactory;
 public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
 {
     private static final Logger LOG = LoggerFactory.getLogger(DiscoverMavenProjectsRuleProvider.class);
-
-    @Inject
-    private MavenModelService mavenModelService;
-    @Inject
-    private FileModelService fileModelService;
 
     @Override
     public RulePhase getPhase()
@@ -47,9 +36,6 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext arg0)
     {
-        ConditionBuilder allProjects = Query
-            .find(MavenProjectModel.class);
-
         AbstractIterationOperation<MavenProjectModel> setupParentModule = new AbstractIterationOperation<MavenProjectModel>()
         {
             @Override
@@ -59,13 +45,12 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
             }
         };
 
+        // @formatter:off
         return ConfigurationBuilder.begin()
             .addRule()
-            .when(allProjects)
-            .perform(
-                Iteration.over().perform(setupParentModule)
-                        .endIteration()
-            );
+            .when(Query.find(MavenProjectModel.class))
+            .perform(setupParentModule);
+        // @formatter:on
     }
 
     private void setParentProject(ArchiveModel archiveModel, MavenProjectModel projectModel)
