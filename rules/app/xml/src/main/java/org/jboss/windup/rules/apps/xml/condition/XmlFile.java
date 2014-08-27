@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.xml.condition;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +29,6 @@ import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.util.exception.MarshallingException;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
-=======
->>>>>>> WINDUP-222: Complete the xml-legacy API
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,10 +60,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
-<<<<<<< HEAD
 import org.w3c.dom.Node;
-=======
->>>>>>> WINDUP-222: Complete the xml-legacy API
 import org.w3c.dom.NodeList;
 
 public class XmlFile extends GraphCondition
@@ -107,11 +101,6 @@ public class XmlFile extends GraphCondition
         XmlFile xmlFile = new XmlFile();
         xmlFile.publicId = publicIdRegex;
         return xmlFile;
-    }
-    public XmlFile havingDTDPublicId(String regex)
-    {
-        this.publicId = regex;
-        return this;
     }
 
     public ConditionBuilder as(String variable)
