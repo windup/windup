@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import  org.ocpsoft.rewrite.config.Rule;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
@@ -20,32 +21,17 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
-import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.util.exception.MarshallingException;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.condition.GraphCondition;
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.query.QueryBuilderFind;
-import org.jboss.windup.graph.service.Service;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
-import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -76,7 +62,6 @@ public class XmlFile extends GraphCondition
     XmlFile()
     {
     }
-    
     /**
      * Create a new {@link XmlFile} {@link Condition}.
      */
@@ -128,8 +113,8 @@ public class XmlFile extends GraphCondition
         // list will cache all the created xpath matches for this given condition running
         List<WindupVertexFrame> resultLocations = new ArrayList<WindupVertexFrame>();
         GraphContext graphContext = event.getGraphContext();
-        GraphService<XmlResourceModel> xmlResourceService = new GraphService<XmlResourceModel>(graphContext,
-                    XmlResourceModel.class);
+        GraphService<XmlFileModel> xmlResourceService = new GraphService<XmlFileModel>(graphContext,
+                    XmlFileModel.class);
         Iterable<? extends WindupVertexFrame> allXmls;
         if (fromVariables == null || fromVariables.equals(""))
         {
@@ -142,11 +127,11 @@ public class XmlFile extends GraphCondition
 
         for (WindupVertexFrame iterated : allXmls)
         {
-            XmlResourceModel xml = null;
+            XmlFileModel xml = null;
             if(iterated instanceof FileReferenceModel) {
-                xml = (XmlResourceModel)((FileReferenceModel)iterated).getFile();
-            } else if(iterated instanceof XmlResourceModel){
-                xml= (XmlResourceModel)iterated;
+                xml = (XmlFileModel)((FileReferenceModel)iterated).getFile();
+            } else if(iterated instanceof XmlFileModel){
+                xml= (XmlFileModel)iterated;
             } else {
                 throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString() + ")");
             }
@@ -170,6 +155,7 @@ public class XmlFile extends GraphCondition
             {
                 try
                 {
+               
                     Document document = xml.asDocument();
                     NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
                     String documentString = getStringFromDocument(document);
@@ -217,11 +203,10 @@ public class XmlFile extends GraphCondition
                             }
                             resultLocations.add(fileLocation);
                         }
-                    }
-                }
+                } }
                 catch (TransformerException | MarshallingException e)
                 {
-                    Service<ClassificationModel> classificationService = event.getGraphContext().getService(
+                    GraphService<ClassificationModel> classificationService = event.getGraphContext().getService(
                                 ClassificationModel.class);
 
                     ClassificationModel classification = classificationService.getUniqueByProperty(
@@ -236,10 +221,11 @@ public class XmlFile extends GraphCondition
                         // TODO replace this with a link to a RuleModel, if that gets implemented.
                         classification.setRuleID(((Rule) context.get(Rule.class)).getId());
                     }
-
                     classification.addFileModel(xml);
                 }
+
             }
+            
 
         }
         Variables.instance(event).setVariable(variable, resultLocations);
