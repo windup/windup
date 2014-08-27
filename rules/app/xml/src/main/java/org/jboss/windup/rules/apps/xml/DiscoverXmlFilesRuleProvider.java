@@ -50,7 +50,6 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     {
         return RulePhase.DISCOVERY;
     }
-
     public List<String> getExecuteAfterIDs()
     {
         List<String> ids = new ArrayList<String>();

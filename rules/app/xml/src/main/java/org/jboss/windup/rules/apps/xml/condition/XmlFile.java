@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.xml.condition;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,26 +30,43 @@ import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.util.exception.MarshallingException;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
+=======
+>>>>>>> WINDUP-222: Complete the xml-legacy API
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.query.QueryBuilderFind;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
+import org.jboss.windup.util.exception.MarshallingException;
+import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
+<<<<<<< HEAD
 import org.w3c.dom.Node;
+=======
+>>>>>>> WINDUP-222: Complete the xml-legacy API
 import org.w3c.dom.NodeList;
 
 public class XmlFile extends GraphCondition
@@ -76,7 +94,6 @@ public class XmlFile extends GraphCondition
     XmlFile()
     {
     }
-    
     /**
      * Create a new {@link XmlFile} {@link Condition}.
      */
@@ -90,6 +107,11 @@ public class XmlFile extends GraphCondition
         XmlFile xmlFile = new XmlFile();
         xmlFile.publicId = publicIdRegex;
         return xmlFile;
+    }
+    public XmlFile havingDTDPublicId(String regex)
+    {
+        this.publicId = regex;
+        return this;
     }
 
     public ConditionBuilder as(String variable)
@@ -168,7 +190,7 @@ public class XmlFile extends GraphCondition
             }
             if (xpath != null)
             {
-                try
+                if (!xml.getFileName().equals(fileName))
                 {
                     Document document = xml.asDocument();
                     NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
@@ -221,24 +243,65 @@ public class XmlFile extends GraphCondition
                 }
                 catch (TransformerException | MarshallingException e)
                 {
-                    Service<ClassificationModel> classificationService = event.getGraphContext().getService(
-                                ClassificationModel.class);
-
-                    ClassificationModel classification = classificationService.getUniqueByProperty(
-                                ClassificationModel.PROPERTY_CLASSIFICATION, XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
-
-                    if (classification == null)
-                    {
-                        classification = classificationService.create();
-                        classification.setDescription(XmlFile.UNPARSEABLE_XML_DESCRIPTION);
-                        classification.setClassifiation(XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
-
-                        // TODO replace this with a link to a RuleModel, if that gets implemented.
-                        classification.setRuleID(((Rule) context.get(Rule.class)).getId());
-                    }
-
-                    classification.addFileModel(xml);
+                    continue;
                 }
+
+            }
+            try
+            {
+                Document document = xml.asDocument();
+                NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
+                if (result != null && (result.getLength() != 0))
+                {
+                    int lineNumber = (int) result.item(0).getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+                    int columnNumber = (int) result.item(0).getUserData(
+                                LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
+                    String documentString = getStringFromDocument(document);
+                    String[] strings = documentString.split("\n");
+                    int lineLength = strings[lineNumber - 1].length();
+                    graphContext = event.getGraphContext();
+                    GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<XmlTypeReferenceModel>(
+                                graphContext,
+                                XmlTypeReferenceModel.class);
+                    XmlTypeReferenceModel fileLocation = fileLocationService.create();
+                    fileLocation.setLineNumber(lineNumber);
+                    fileLocation.setColumnNumber(columnNumber);
+                    fileLocation.setLength(lineLength);
+                    fileLocation.setFile(xml);
+                    fileLocation.setXpath(xpath);
+                    GraphService<NamespaceMetaModel> metaModelService = new GraphService<NamespaceMetaModel>(
+                                graphContext,
+                                NamespaceMetaModel.class);
+                    for (Map.Entry<String, String> namespace : namespaces.entrySet())
+                    {
+                        NamespaceMetaModel metaModel = metaModelService.create();
+                        metaModel.setSchemaLocation(namespace.getKey());
+                        metaModel.setSchemaLocation(namespace.getValue());
+                        metaModel.addXmlResource(xml);
+                        fileLocation.addNamespace(metaModel);
+                    }
+                    resultLocations.add(fileLocation);
+                }
+            }
+            catch (TransformerException|MarshallingException e)
+            {
+                // TODO: In case of bad xpath, this exception is raised also
+                Service<ClassificationModel> classificationService = event.getGraphContext().getService(
+                            ClassificationModel.class);
+
+                ClassificationModel classification = classificationService.getUniqueByProperty(
+                            ClassificationModel.PROPERTY_CLASSIFICATION, XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
+
+                if (classification == null)
+                {
+                    classification = classificationService.create();
+                    classification.setDescription(XmlFile.UNPARSEABLE_XML_DESCRIPTION);
+                    classification.setClassifiation(XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
+
+                    // TODO replace this with a link to a RuleModel, if that gets implemented.
+                    classification.setRuleID(((Rule) context.get(Rule.class)).getId());
+                }
+                classification.addFileModel(xml);
             }
 
         }
