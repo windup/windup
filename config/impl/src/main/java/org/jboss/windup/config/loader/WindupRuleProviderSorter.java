@@ -93,7 +93,7 @@ public class WindupRuleProviderSorter
         // Initialize lookup maps
         for (WindupRuleProvider provider : providers)
         {
-            g.addVertex(unwrap(provider));
+            g.addVertex(provider);
         }
 
         sortByPhase();
@@ -167,7 +167,7 @@ public class WindupRuleProviderSorter
                                 + " is specified to execute after class: "
                                 + clz.getCanonicalName() + " but this class could not be found!");
                 }
-                g.addEdge(unwrap(otherProvider), unwrap(provider));
+                g.addEdge(otherProvider, provider);
             }
 
             // add connections to ruleproviders that should execute after this one
@@ -180,7 +180,7 @@ public class WindupRuleProviderSorter
                                 + " is specified to execute before: "
                                 + clz.getCanonicalName() + " but this class could not be found!");
                 }
-                g.addEdge(unwrap(provider), unwrap(otherProvider));
+                g.addEdge(provider, otherProvider);
             }
 
             // add connections to ruleproviders that should execute before this one (by String ID)
@@ -193,7 +193,7 @@ public class WindupRuleProviderSorter
                                 + " is specified to execute after: "
                                 + depID + " but this provider could not be found!");
                 }
-                g.addEdge(unwrap(otherProvider), unwrap(provider));
+                g.addEdge(otherProvider, provider);
             }
 
             // add connections to ruleproviders that should execute before this one (by String ID)
@@ -206,7 +206,7 @@ public class WindupRuleProviderSorter
                                 + " is specified to execute before: "
                                 + depID + " but this provider could not be found!");
                 }
-                g.addEdge(unwrap(provider), unwrap(otherProvider));
+                g.addEdge(provider, otherProvider);
             }
 
             // also, if the current provider is not an implicit phase, then
@@ -215,7 +215,7 @@ public class WindupRuleProviderSorter
             {
                 for (WindupRuleProvider prevV : previousProviders)
                 {
-                    g.addEdge(unwrap(prevV), unwrap(provider));
+                    g.addEdge(prevV, provider);
                 }
             }
             previousPhase = currentPhase;
@@ -374,10 +374,5 @@ public class WindupRuleProviderSorter
     private <T> Class<T> unwrapType(Class<T> wrapped)
     {
         return (Class<T>) Proxies.unwrapProxyTypes(wrapped);
-    }
-
-    private static WindupRuleProvider unwrap(WindupRuleProvider provider)
-    {
-        return Proxies.unwrap(provider);
     }
 }
