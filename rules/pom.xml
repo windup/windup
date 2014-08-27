@@ -21,7 +21,6 @@
         <module>server/java-ee-server</module>
         <module>app/java</module>
         <module>app/java-ee</module>
-        <module>app/java-decompiler</module>
         <module>app/xml</module>
     </modules>
     

@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.java.model;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ArchiveType;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
 
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

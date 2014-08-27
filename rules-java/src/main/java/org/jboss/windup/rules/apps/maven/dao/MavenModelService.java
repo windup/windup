@@ -10,7 +10,6 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
