@@ -96,6 +96,15 @@ public class Variables
 
         frame.put(name, frames);
     }
+    
+    /**
+     * Remove a variable in the top variables layer. 
+     */
+    public void removeVariable(String name)
+    {
+        Map<String, Iterable<WindupVertexFrame>> frame = peek();
+        frame.remove(name);
+    }
 
     /**
      * Wrapper around {@link #findVariable(String)} which gives only one framed vertex, and checks if there is 0 or 1;

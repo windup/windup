@@ -56,7 +56,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext arg0)
     {
-        ConditionBuilder fileWhen = Query
+        ConditionBuilder isXml = Query
                     .find(FileModel.class)
                     .withProperty(FileModel.IS_DIRECTORY, false)
                     .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$");
@@ -72,7 +72,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(fileWhen)
+                    .when(isXml)
                     .perform(
                                 Iteration.over().perform(evaluatePomFiles).endIteration()
                     );

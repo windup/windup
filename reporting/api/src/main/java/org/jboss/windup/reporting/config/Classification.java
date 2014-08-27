@@ -110,7 +110,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
          * want to add another.
          */
         GraphContext graphContext = event.getGraphContext();
-        GraphService<ClassificationModel> classificationService = new GraphService<>(graphContext,
+        GraphService<ClassificationModel> classificationService =  new GraphService<ClassificationModel>(graphContext,
                     ClassificationModel.class);
         ClassificationModel classification = classificationService.getUniqueByProperty(
                     ClassificationModel.PROPERTY_CLASSIFICATION, classificationText);

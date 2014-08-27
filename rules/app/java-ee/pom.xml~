@@ -10,6 +10,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
+<<<<<<< HEAD:rules/app/java-ee/pom.xml
     <groupId>org.jboss.windup.rules.apps</groupId>
     <artifactId>rules-java-ee</artifactId>
 
@@ -84,6 +85,78 @@
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
+=======
+	<groupId>org.jboss.windup.rules.apps</groupId>
+	<artifactId>rules-xml</artifactId>
+
+	<name>XML Basic Ruleset</name>
+	<description>XML files related module.</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>joox</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
+
+		<!-- Project deps -->
+		<dependency>
+			<groupId>org.jboss.windup.graph</groupId>
+			<artifactId>windup-graph</artifactId>
+			<classifier>forge-addon</classifier>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.config</groupId>
+			<artifactId>windup-config</artifactId>
+			<classifier>forge-addon</classifier>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.ext</groupId>
+			<artifactId>windup-config-groovy</artifactId>
+			<classifier>forge-addon</classifier>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.windup.utils</groupId>
+			<artifactId>utils</artifactId>
+			<classifier>forge-addon</classifier>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.reporting</groupId>
+			<artifactId>windup-reporting</artifactId>
+			<version>${project.version}</version>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.forge.furnace.container</groupId>
+			<artifactId>cdi</artifactId>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.forge.furnace.test</groupId>
+			<artifactId>furnace-test-harness</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.furnace.test</groupId>
+			<artifactId>arquillian-furnace-classpath</artifactId>
+			<scope>test</scope>
+		</dependency>
+>>>>>>> WINDUP-222: Complete the xml-legacy API:rules/app/xml/pom.xml
+
 		<dependency>
 			<groupId>org.jboss.windup.exec</groupId>
 			<artifactId>windup-exec</artifactId>
