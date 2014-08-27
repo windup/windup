@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.xml.transform.Result;
@@ -135,14 +136,10 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlResourceMo
 
     public void setup()
     {
-        // TODO: Play the game with classloaders, not this absolutepath one.
-        InputStream resourceAsStream = contextClassLoader.getResourceAsStream(location);
-        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
-        Source xsltSource = null;
-        try
+        try(InputStream resourceAsStream = contextClassLoader.getResourceAsStream(location))
         {
-            xsltSource = new StreamSource(resourceAsStream);
-            TransformerFactory tf = TransformerFactory.newInstance();
+            final Source xsltSource = new StreamSource(resourceAsStream);
+            final TransformerFactory tf = TransformerFactory.newInstance();
             tf.setURIResolver(new URIResolver()
             {
                 @Override
@@ -159,7 +156,17 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlResourceMo
                 }
             });
             Thread.currentThread().setContextClassLoader(javax.xml.transform.TransformerFactory.class.getClassLoader());
-            xsltTransformer = tf.newTransformer(xsltSource);
+            ClassLoaders.executeIn(TransformerFactory.class.getClassLoader(), new Callable<Object>(){
+
+                @Override
+                public Object call() throws Exception
+                {
+                    xsltTransformer = tf.newTransformer(xsltSource);
+                    return null;
+                }
+                
+            });
+            
             if (xsltParameters != null)
             {
                 for (String key : xsltParameters.keySet())
@@ -180,10 +187,6 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlResourceMo
         catch (Exception e)
         {
             throw new IllegalStateException("Not able to initialize the XSLT transformer.", e);
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader(oldLoader);
         }
     }
 

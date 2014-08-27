@@ -64,7 +64,7 @@ public class XmlFile extends GraphCondition
         return new XmlFile(xpath);
     }
 
-    public XmlFile havingDTDPublicId(String regex)
+    public XmlFile withDTDPublicId(String regex)
     {
         this.publicId = regex;
         return this;
@@ -89,7 +89,7 @@ public class XmlFile extends GraphCondition
      * @param fromVariables
      * @return
      */
-    public static XmlFileBeing being(String fromVariables)
+    public static XmlFileBeing from(String fromVariables)
     {
         return new XmlFileBeing(fromVariables);
     }

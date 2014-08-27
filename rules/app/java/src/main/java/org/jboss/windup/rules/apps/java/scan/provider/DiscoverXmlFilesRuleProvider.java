@@ -73,9 +73,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(isXml)
-                    .perform(
-                                Iteration.over().perform(evaluatePomFiles).endIteration()
-                    );
+                    .perform(evaluatePomFiles);
     }
 
     private void addXmlMetaInformation(GraphContext context, FileModel file)

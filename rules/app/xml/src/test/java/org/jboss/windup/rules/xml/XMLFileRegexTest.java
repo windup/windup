@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,12 +18,12 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
@@ -32,12 +31,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.config.Classification;
-import org.jboss.windup.reporting.config.Hint;
-import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileLocationModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,8 +41,11 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class XMLHintsClassificationsTest
+public class XMLFileRegexTest
 {
+    
+    private static final String EXAMPLE_EJB_JAR_2_XML = "example-ejb-jar.2.xml";
+    
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -63,7 +60,7 @@ public class XMLHintsClassificationsTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(TestXMLHintsClassificationsRuleProvider.class)
+                    .addClass(TestXMLFileRegexRuleProvider.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -78,7 +75,7 @@ public class XMLHintsClassificationsTest
     }
 
     @Inject
-    private TestXMLHintsClassificationsRuleProvider provider;
+    private TestXMLFileRegexRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -124,19 +121,17 @@ public class XMLHintsClassificationsTest
                 throw e;
         }
 
-        GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
-        GraphService<ClassificationModel> classificationService = new GraphService<>(context, ClassificationModel.class);
-
-        Assert.assertEquals(2, provider.getXmlFileMatches().size());
-        List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-        Assert.assertEquals(2, hints.size());
-        List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-        Assert.assertEquals(1, classifications.size());
+        // 1 out of 2 should match the file regex
+        Assert.assertEquals(1, provider.getXmlFileMatches().size());
+        FileModel matchedFile = provider.getXmlFileMatches().iterator().next().getFile();
+        String fileName = matchedFile.getFileName();
+        Assert.assertTrue(fileName.equals(EXAMPLE_EJB_JAR_2_XML));
     }
 
     @Singleton
-    public static class TestXMLHintsClassificationsRuleProvider extends WindupRuleProvider
+    public static class TestXMLFileRegexRuleProvider extends WindupRuleProvider
     {
+        
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
         @Override
@@ -149,7 +144,7 @@ public class XMLHintsClassificationsTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>()
+            AbstractIterationOperation<FileLocationModel> addMatchedFile = new AbstractIterationOperation<FileLocationModel>()
             {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
@@ -161,13 +156,9 @@ public class XMLHintsClassificationsTest
             return ConfigurationBuilder
                         .begin()
                         .addRule()
-                        .when(XmlFile.matchesXpath("/abc:ejb-jar")
+                        .when(XmlFile.matchesXpath("/abc:ejb-jar").inFile(EXAMPLE_EJB_JAR_2_XML)
                                     .namespace("abc", "http://java.sun.com/xml/ns/javaee"))
-                        .perform(Classification.as("Maven POM File")
-                                               .with(Link.to("Apache Maven POM Reference",
-                                                            "http://maven.apache.org/pom.html")).withEffort(0)
-                                               .and(Hint.withText("simple text").withEffort(2))
-                                               .and(addTypeRefToList));
+                        .perform(addMatchedFile);
         }
 
         // @formatter:on
