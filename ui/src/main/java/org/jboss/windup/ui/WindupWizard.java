@@ -2,7 +2,6 @@ package org.jboss.windup.ui;
 
 import java.io.File;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -19,12 +18,14 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 
 /**
@@ -35,8 +36,6 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
  */
 public class WindupWizard implements UIWizard, UICommand
 {
-    private static Logger log = Logger.getLogger(WindupWizard.class.getName());
-
     @Inject
     private WindupService windupService;
 
@@ -89,6 +88,7 @@ public class WindupWizard implements UIWizard, UICommand
     @Override
     public Result execute(UIExecutionContext context) throws Exception
     {
+
         File inputFile = this.input.getValue().getUnderlyingResourceObject();
         File outputFile = this.output.getValue().getUnderlyingResourceObject();
         FileResource<DirectoryResource> userRulesInputValue = this.userRulesDirectory.getValue();
@@ -123,7 +123,11 @@ public class WindupWizard implements UIWizard, UICommand
             cfg.setUserRulesPath(userRulesDirectory.getAbsolutePath());
         }
 
-        windupService.execute();
+        UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();
+        WindupProgressMonitor progressMonitor = new WindupProgressMonitorAdapter(uiProgressMonitor);
+        windupService.execute(progressMonitor);
+
+        uiProgressMonitor.done();
 
         return Results.success("Windup execution successful!");
     }
