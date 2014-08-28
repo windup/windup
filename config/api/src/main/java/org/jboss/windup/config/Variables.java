@@ -88,7 +88,7 @@ public class Variables
     public void setVariable(String name, Iterable<WindupVertexFrame> frames)
     {
         Map<String, Iterable<WindupVertexFrame>> frame = peek();
-        if (findVariable(name) != null)
+        if (!Iteration.DEFAULT_VARIABLE_LIST_STRING.equals(name) && findVariable(name) != null)
         {
             throw new IllegalArgumentException("Variable \"" + name
                         + "\" has already been assigned and cannot be reassigned");

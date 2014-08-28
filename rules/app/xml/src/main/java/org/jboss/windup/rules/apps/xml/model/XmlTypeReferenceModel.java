@@ -21,10 +21,10 @@ public interface XmlTypeReferenceModel extends FileLocationModel
         public void setXpath(String xpath);
         
         @Adjacency(label = PROPERTY_NAMESPACES)
-        Iterable<NamespaceMetaModel> getChildren();
+        Iterable<NamespaceMetaModel> getNamespaces();
         
         @Adjacency(label = PROPERTY_NAMESPACES)
-        void setChildren(Iterable<NamespaceMetaModel> children);
+        void setNamespaces(Iterable<NamespaceMetaModel> children);
 
         @Adjacency(label = PROPERTY_NAMESPACES)
         NamespaceMetaModel addNamespace(NamespaceMetaModel friend);

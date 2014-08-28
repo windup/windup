@@ -113,7 +113,8 @@ public class XMLHintsClassificationsTest
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return provider.getPhase() != RulePhase.REPORT_GENERATION;
+                    return (provider.getPhase() != RulePhase.REPORT_GENERATION) && 
+                                (provider.getPhase() != RulePhase.MIGRATION_RULES);
                 }
             };
             processor.execute(predicate);
@@ -131,6 +132,10 @@ public class XMLHintsClassificationsTest
         List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
         Assert.assertEquals(2, hints.size());
         List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
+        for (ClassificationModel model : classifications) {
+            String classification = model.getClassification();
+            String string = classification.toString();
+        }
         Assert.assertEquals(1, classifications.size());
     }
 
@@ -142,7 +147,7 @@ public class XMLHintsClassificationsTest
         @Override
         public RulePhase getPhase()
         {
-            return RulePhase.MIGRATION_RULES;
+            return RulePhase.POST_MIGRATION_RULES;
         }
 
         // @formatter:off

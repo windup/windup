@@ -22,10 +22,12 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.util.exception.MarshallingException;
+import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Condition;
@@ -33,6 +35,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XmlFile extends GraphCondition
@@ -46,6 +49,12 @@ public class XmlFile extends GraphCondition
     private String fileName;
     private String fromVariables;
     private String publicId;
+    private String xpathResultMatch;
+
+    public void setXpathResultMatch(String xpathResultMatch)
+    {
+        this.xpathResultMatch = xpathResultMatch;
+    }
 
     private XmlFile(String xpath)
     {
@@ -64,10 +73,11 @@ public class XmlFile extends GraphCondition
         return new XmlFile(xpath);
     }
 
-    public XmlFile withDTDPublicId(String regex)
+    public static XmlFile withDTDPublicId(String publicIdRegex)
     {
-        this.publicId = regex;
-        return this;
+        XmlFile xmlFile = new XmlFile();
+        xmlFile.publicId = publicIdRegex;
+        return xmlFile;
     }
 
     public ConditionBuilder as(String variable)
@@ -80,6 +90,12 @@ public class XmlFile extends GraphCondition
     public XmlFile inFile(String fileName)
     {
         this.fileName = fileName;
+        return this;
+    }
+
+    public XmlFile resultMatches(String regex)
+    {
+        this.xpathResultMatch = regex;
         return this;
     }
 
@@ -114,7 +130,15 @@ public class XmlFile extends GraphCondition
 
         for (WindupVertexFrame iterated : allXmls)
         {
-            XmlResourceModel xml = (XmlResourceModel) iterated;
+            XmlResourceModel xml = null;
+            if(iterated instanceof FileReferenceModel) {
+                xml = (XmlResourceModel)((FileReferenceModel)iterated).getFile();
+            } else if(iterated instanceof XmlResourceModel){
+                xml= (XmlResourceModel)iterated;
+            } else {
+                throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString() + ")");
+            }
+            
             if (fileName != null && !fileName.equals(""))
             {
                 if (!xml.getFileName().equals(fileName))
@@ -130,62 +154,79 @@ public class XmlFile extends GraphCondition
                 }
 
             }
-            try
+            if (xpath != null)
             {
-                Document document = xml.asDocument();
-                NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
-                if (result != null && (result.getLength() != 0))
+                try
                 {
-                    int lineNumber = (int) result.item(0).getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
-                    int columnNumber = (int) result.item(0).getUserData(
-                                LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
+                    Document document = xml.asDocument();
+                    NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
                     String documentString = getStringFromDocument(document);
                     String[] strings = documentString.split("\n");
-                    int lineLength = strings[lineNumber - 1].length();
-                    graphContext = event.getGraphContext();
-                    GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<XmlTypeReferenceModel>(
-                                graphContext,
-                                XmlTypeReferenceModel.class);
-                    XmlTypeReferenceModel fileLocation = fileLocationService.create();
-                    fileLocation.setLineNumber(lineNumber);
-                    fileLocation.setColumnNumber(columnNumber);
-                    fileLocation.setLength(lineLength);
-                    fileLocation.setFile(xml);
-                    fileLocation.setXpath(xpath);
-                    GraphService<NamespaceMetaModel> metaModelService = new GraphService<NamespaceMetaModel>(
-                                graphContext,
-                                NamespaceMetaModel.class);
-                    for (Map.Entry<String, String> namespace : namespaces.entrySet())
+                    if (result != null && (result.getLength() != 0))
                     {
-                        NamespaceMetaModel metaModel = metaModelService.create();
-                        metaModel.setSchemaLocation(namespace.getKey());
-                        metaModel.setSchemaLocation(namespace.getValue());
-                        metaModel.addXmlResource(xml);
-                        fileLocation.addNamespace(metaModel);
+                        for (int i = 0; i < result.getLength(); i++)
+                        {
+                            Node node = result.item(i);
+                            if (xpathResultMatch != null)
+                            {
+                                if (!node.toString().matches(xpathResultMatch))
+                                {
+                                    continue;
+                                }
+                            }
+
+                            // Everything passed for this Node. Start creating XmlTypeReferenceModel for it.
+                            int lineNumber = (int) node.getUserData(
+                                        LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+                            int columnNumber = (int) node.getUserData(
+                                        LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
+
+                            int lineLength = strings[lineNumber - 1].length();
+                            graphContext = event.getGraphContext();
+                            GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<XmlTypeReferenceModel>(
+                                        graphContext,
+                                        XmlTypeReferenceModel.class);
+                            XmlTypeReferenceModel fileLocation = fileLocationService.create();
+                            fileLocation.setLineNumber(lineNumber);
+                            fileLocation.setColumnNumber(columnNumber);
+                            fileLocation.setLength(lineLength);
+                            fileLocation.setFile(xml);
+                            fileLocation.setXpath(xpath);
+                            GraphService<NamespaceMetaModel> metaModelService = new GraphService<NamespaceMetaModel>(
+                                        graphContext,
+                                        NamespaceMetaModel.class);
+                            for (Map.Entry<String, String> namespace : namespaces.entrySet())
+                            {
+                                NamespaceMetaModel metaModel = metaModelService.create();
+                                metaModel.setSchemaLocation(namespace.getKey());
+                                metaModel.setSchemaLocation(namespace.getValue());
+                                metaModel.addXmlResource(xml);
+                                fileLocation.addNamespace(metaModel);
+                            }
+                            resultLocations.add(fileLocation);
+                        }
                     }
-                    resultLocations.add(fileLocation);
                 }
-            }
-            catch (TransformerException|MarshallingException e)
-            {
-                // TODO: In case of bad xpath, this exception is raised also
-                Service<ClassificationModel> classificationService = event.getGraphContext().getService(
-                            ClassificationModel.class);
-
-                ClassificationModel classification = classificationService.getUniqueByProperty(
-                            ClassificationModel.PROPERTY_CLASSIFICATION, XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
-
-                if (classification == null)
+                catch (TransformerException | MarshallingException e)
                 {
-                    classification = classificationService.create();
-                    classification.setDescription(XmlFile.UNPARSEABLE_XML_DESCRIPTION);
-                    classification.setClassifiation(XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
+                    Service<ClassificationModel> classificationService = event.getGraphContext().getService(
+                                ClassificationModel.class);
 
-                    // TODO replace this with a link to a RuleModel, if that gets implemented.
-                    classification.setRuleID(((Rule) context.get(Rule.class)).getId());
+                    ClassificationModel classification = classificationService.getUniqueByProperty(
+                                ClassificationModel.PROPERTY_CLASSIFICATION, XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
+
+                    if (classification == null)
+                    {
+                        classification = classificationService.create();
+                        classification.setDescription(XmlFile.UNPARSEABLE_XML_DESCRIPTION);
+                        classification.setClassifiation(XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
+
+                        // TODO replace this with a link to a RuleModel, if that gets implemented.
+                        classification.setRuleID(((Rule) context.get(Rule.class)).getId());
+                    }
+
+                    classification.addFileModel(xml);
                 }
-
-                classification.addFileModel(xml);
             }
 
         }
@@ -217,7 +258,7 @@ public class XmlFile extends GraphCondition
 
     public void setPublicId(String publicId)
     {
-        this.publicId=publicId;
+        this.publicId = publicId;
     }
 
 }

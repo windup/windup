@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class XSLTTransformation extends AbstractIterationOperation<XmlResourceModel>
 {
 
-    private static ClassLoader contextClassLoader;
+    private ClassLoader contextClassLoader;
 
     @Inject
     GraphApiCompositeClassLoaderProvider compositeClassLoader;
@@ -122,9 +122,9 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlResourceMo
      */
     public static XSLTTransformation using(String location)
     {
-        // classLoader instance needed to see the file passed in the location
-        contextClassLoader = Thread.currentThread().getContextClassLoader();
         XSLTTransformation tansformation = new XSLTTransformation();
+        // classLoader instance needed to see the file passed in the location
+        tansformation.contextClassLoader = Thread.currentThread().getContextClassLoader();
         tansformation.location = location;
         return tansformation;
     }
@@ -155,7 +155,6 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlResourceMo
                     return new StreamSource(Thread.currentThread().getContextClassLoader().getResourceAsStream(href));
                 }
             });
-            Thread.currentThread().setContextClassLoader(javax.xml.transform.TransformerFactory.class.getClassLoader());
             ClassLoaders.executeIn(TransformerFactory.class.getClassLoader(), new Callable<Object>(){
 
                 @Override
