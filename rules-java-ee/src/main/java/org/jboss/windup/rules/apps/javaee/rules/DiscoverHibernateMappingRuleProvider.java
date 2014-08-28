@@ -25,7 +25,7 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateMappingFileModel;
 import org.jboss.windup.rules.apps.javaee.service.HibernateEntityService;
 import org.jboss.windup.rules.apps.javaee.service.HibernateMappingFileService;
 import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
-import org.jboss.windup.rules.apps.xml.DoctypeMetaModel;
+import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.xml.XmlUtil;

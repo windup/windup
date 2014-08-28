@@ -1,9 +1,7 @@
 package org.jboss.windup.rules.apps.xml.operation.xslt;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -28,14 +26,13 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.FileReferenceModel;
-import org.jboss.windup.rules.apps.xml.model.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
-import org.jboss.windup.util.FurnaceCompositeClassLoader;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XSLTTransformation extends AbstractIterationOperation<XmlResourceModel>
+public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 {
 
     private ClassLoader contextClassLoader;
@@ -77,7 +74,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlResourceMo
         if (payload instanceof FileReferenceModel)
         {
             FileModel file = ((FileReferenceModel) payload).getFile();
-            perform(event, context, (XmlResourceModel) file);
+            perform(event, context, (XmlFileModel) file);
         }
         else
         {
@@ -127,11 +124,6 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlResourceMo
         tansformation.contextClassLoader = Thread.currentThread().getContextClassLoader();
         tansformation.location = location;
         return tansformation;
-    }
-
-    public void processMeta(XmlResourceModel file)
-    {
-
     }
 
     public void setup()
@@ -189,7 +181,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlResourceMo
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlResourceModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         setup();
         GraphContext graphContext = event.getGraphContext();

@@ -21,7 +21,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.maven.dao.MavenModelService;
 import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
-import org.jboss.windup.rules.apps.xml.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.exception.MarshallingException;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.ConditionBuilder;

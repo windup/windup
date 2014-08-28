@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
-import org.jboss.windup.reporting.config.Classification;
 
 /**
  * Intermediate step for constructing {@link XmlFile} instances for a specified ref.
@@ -15,7 +14,7 @@ public class XmlFileBeing
     {
         this.xmlFile = new XmlFile();
     }
-
+    
     /**
      * Set the xpath of this {@link XmlFile}. 
      */
