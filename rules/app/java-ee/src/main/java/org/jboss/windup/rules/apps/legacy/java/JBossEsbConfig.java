@@ -30,17 +30,12 @@ public class JBossEsbConfig extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        Configuration configuration = ConfigurationBuilder.begin()
+        Configuration configuration = ConfigurationBuilder
+                    .begin()
                     .addRule()
-                    .when(
-                    JavaClass.references("org.jboss.soa.esb.helpers.ConfigTree") .at(TypeReferenceLocation.METHOD) ) .perform(
-                    Iteration.over().perform(
-                    Classification.as(
-                    "JBoss ESB 5 Action Handler" ).withEffort( 0
-                    ) )
-                    .endIteration()
-                    );
-       
+                    .when(JavaClass.references("org.jboss.soa.esb.helpers.ConfigTree").at(TypeReferenceLocation.METHOD))
+                    .perform(Classification.as("JBoss ESB 5 Action Handler").withEffort(0));
+
         return configuration;
     }
     // @formatter:on

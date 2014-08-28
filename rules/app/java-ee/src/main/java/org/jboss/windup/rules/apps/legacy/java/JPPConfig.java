@@ -31,36 +31,34 @@ public class JPPConfig extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        Configuration configuration = ConfigurationBuilder.begin()
+        Configuration configuration = ConfigurationBuilder
+                    .begin()
                     .addRule()
-                    .when(
-                    JavaClass.references("org.exoplatform.web.login.InitiateLoginServlet") .at(TypeReferenceLocation.IMPORT) ) .perform( Iteration.over().perform( Hint.withText( "This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version." ).withEffort( 0 )
-                    )
-                    .endIteration()
+                    .when(JavaClass.references("org.exoplatform.web.login.InitiateLoginServlet").at(
+                                            TypeReferenceLocation.IMPORT))
+                    .perform(Hint.withText("This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version.")
+                                 .withEffort(0)
+                              
                     )
 
                     .addRule()
-                    .when(
-                    JavaClass.references("org.exoplatform.web.login.DoLoginServlet") .at(TypeReferenceLocation.IMPORT) ) .perform( Iteration.over().perform( Hint.withText( "This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version." ).withEffort( 0 )
-                    )
-                    .endIteration()
-                    )
+                    .when(JavaClass.references("org.exoplatform.web.login.DoLoginServlet").at(
+                                             TypeReferenceLocation.IMPORT))
+                    .perform(Hint.withText("This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version.")
+                                 .withEffort(0))
 
                     .addRule()
-                    .when(
-                    JavaClass.references("org.exoplatform.web.login.ErrorLoginServlet") .at(TypeReferenceLocation.IMPORT) ) .perform( Iteration.over().perform( Hint.withText( "This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version." ).withEffort( 0 )
-                    )
-                    .endIteration()
-                    )
+                    .when(JavaClass.references("org.exoplatform.web.login.ErrorLoginServlet").at(
+                                            TypeReferenceLocation.IMPORT))
+                    .perform(Hint.withText("This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version.")
+                                 .withEffort(0))
 
                     .addRule()
-                    .when(
-                    JavaClass.references("org.exoplatform.web.security.PortalLoginController") .at(TypeReferenceLocation.IMPORT) ) .perform( Iteration.over().perform( Hint.withText( "This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version." ).withEffort( 0 )
-                    )
-                    .endIteration()
-                    );
+                    .when(JavaClass.references("org.exoplatform.web.security.PortalLoginController").at(
+                                            TypeReferenceLocation.IMPORT))
+                    .perform(Hint.withText("This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version.")
+                                 .withEffort(0));
 
-       
         return configuration;
     }
     // @formatter:on

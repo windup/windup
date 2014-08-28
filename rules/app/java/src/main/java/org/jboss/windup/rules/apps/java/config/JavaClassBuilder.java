@@ -10,7 +10,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaClassBuilder
+public interface JavaClassBuilder extends ConditionBuilder
 {
     /**
      * Specify one or more {@link TypeReferenceLocation} where the specified regex is of interest.

@@ -8,7 +8,6 @@ package org.jboss.windup.rules.apps.java.scan.ast;
 public enum TypeReferenceLocation
 {
     IMPORT,
-    NOTSPECIFIED,
     TYPE,
     METHOD,
     INHERITANCE,

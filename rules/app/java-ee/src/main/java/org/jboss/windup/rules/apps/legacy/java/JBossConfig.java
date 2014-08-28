@@ -32,60 +32,46 @@ public class JBossConfig extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        Configuration configuration = ConfigurationBuilder.begin()
+        Configuration configuration = ConfigurationBuilder
+                    .begin()
                     .addRule()
-                    .when(
-                    JavaClass.references("org.jboss.ejb3.annotation.Management") .at(TypeReferenceLocation.TYPE) ) .perform(
-                    Iteration.over().perform(
-                    Classification.as(
-                    "JBoss 5 JMX ManagementBean" ).withEffort( 0
-                    ) )
-                    .endIteration()
-                    )
+                    .when(JavaClass.references("org.jboss.ejb3.annotation.Management").at(
+                                            TypeReferenceLocation.TYPE))
+                    .perform(Classification.as("JBoss 5 JMX ManagementBean").withEffort(0))
+                                            
                     .addRule()
-                    .when(
-                    JavaClass.references("javax.jms.QueueConnectionFactory") .at(TypeReferenceLocation.TYPE) ) .perform( Iteration.over().perform( Hint.withText( "If migrating from JBoss 4, replace lookup string \"QueueConnectionFactory\" with \"ConnectionFactory\"" ).withEffort( 1 )
-                    )
-                    .endIteration()
-                    )
+                    .when(JavaClass.references("javax.jms.QueueConnectionFactory").at(TypeReferenceLocation.TYPE))
+                    .perform(Hint.withText("If migrating from JBoss 4, replace lookup string \"QueueConnectionFactory\" with \"ConnectionFactory\"")
+                                 .withEffort(1))
 
                     .addRule()
-                    .when(
-                    JavaClass.references("javax.persistence.JoinColumn") .at(TypeReferenceLocation.TYPE) ) .perform( Iteration.over().perform( Hint.withText( "If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn" ).withEffort( 0 )
-                    )
-                    .endIteration()
-                    )
+                    .when(JavaClass.references("javax.persistence.JoinColumn").at(TypeReferenceLocation.TYPE))
+                    .perform(Hint.withText("If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn")
+                                 .withEffort(0))
+                                
+                    .addRule()
+                    .when(JavaClass.references("org.jboss.annotation.ejb.Service").at(
+                                            TypeReferenceLocation.IMPORT))
+                    .perform(Hint.withText("Migrated to org.jboss.ejb3.annotation.Service").withEffort(0))
+                                
 
                     .addRule()
-                    .when(
-                    JavaClass.references("org.jboss.annotation.ejb.Service") .at(TypeReferenceLocation.IMPORT) ) .perform( Iteration.over().perform( Hint.withText( "Migrated to org.jboss.ejb3.annotation.Service" ).withEffort( 0 )
-                    )
-                    .endIteration()
-                    )
+                    .when(JavaClass.references("org.jboss.annotation.ejb.Management").at(
+                                            TypeReferenceLocation.IMPORT))
+                    .perform(Hint.withText("Migrated to org.jboss.ejb3.annotation.Management").withEffort(0))
+                                
 
                     .addRule()
-                    .when(
-                    JavaClass.references("org.jboss.annotation.ejb.Management") .at(TypeReferenceLocation.IMPORT) ) .perform( Iteration.over().perform( Hint.withText( "Migrated to org.jboss.ejb3.annotation.Management" ).withEffort( 0 )
-                    )
-                    .endIteration()
-                    )
+                    .when(JavaClass.references("org.jboss.annotation.ejb.LocalBinding").at(
+                                            TypeReferenceLocation.IMPORT))
+                    .perform(Hint.withText("Migrated to org.jboss.ejb3.annotation.LocalBinding").withEffort(0))
+
 
                     .addRule()
-                    .when(
-                    JavaClass.references("org.jboss.annotation.ejb.LocalBinding") .at(TypeReferenceLocation.IMPORT) ) .perform( Iteration.over().perform( Hint.withText( "Migrated to org.jboss.ejb3.annotation.LocalBinding" ).withEffort( 0 )
-                    )
-                    .endIteration()
-                    )
-
-                    .addRule()
-                    .when(
-                    JavaClass.references("org.jboss.annotation.ejb.Depends") .at(TypeReferenceLocation.TYPE) ) .perform( Iteration.over().perform( Hint.withText( "Validate that JBoss 6 Dependency exists." ).withEffort( 0 )
-                    )
-                    .endIteration()
-                    );
+                    .when(JavaClass.references("org.jboss.annotation.ejb.Depends").at(TypeReferenceLocation.TYPE))
+                    .perform(Hint.withText("Validate that JBoss 6 Dependency exists.").withEffort(0));
 
         return configuration;
-        // @formatter:on
     }
     // @formatter:on
 }
