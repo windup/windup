@@ -25,32 +25,6 @@ public interface ReportModel extends WindupVertexFrame
     public static final String TEMPLATE_PATH = "templatePath";
     public static final String REPORT_FILENAME = "reportFilename";
     public static final String REPORT_NAME = "reportName";
-    public static final String REPORT_MODEL_TO_MAIN_NAVIGATION_INDEX = "reportModelToMainNavigationIndex";
-    public static final String REPORT_PRIORITY = "reportPriority";
-
-    /**
-     * Provides a link to the Navigation Index that is used for this particular report
-     */
-    @Adjacency(label = REPORT_MODEL_TO_MAIN_NAVIGATION_INDEX, direction = Direction.OUT)
-    public void setMainNavigationIndexModel(MainNavigationIndexModel navIndex);
-
-    /**
-     * Provides a link to the Navigation Index that is used for this particular report
-     */
-    @Adjacency(label = REPORT_MODEL_TO_MAIN_NAVIGATION_INDEX, direction = Direction.OUT)
-    public MainNavigationIndexModel getMainNavigationIndexModel();
-
-    /**
-     * This can be used to determine a reports location in a navigation bar. The primary purpose is sorting.
-     */
-    @Property(REPORT_PRIORITY)
-    public int getReportPriority();
-
-    /**
-     * This can be used to determine a reports location in a navigation bar. The primary purpose is sorting.
-     */
-    @Property(REPORT_PRIORITY)
-    public void setReportPriority(int priority);
 
     /**
      * The name of the report (for example, 'ClassLoader Report' or 'EJB Report')

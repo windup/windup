@@ -17,34 +17,34 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * This lists all of the top level reports within the application report (eg, Application classes report, Hibernate
- * entity report, EJB report, etc).
+ * entity report, EJB report, etc). Potential uses include navigation bars within a report.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-@TypeValue("MainNavigationIndexModel")
-public interface MainNavigationIndexModel extends WindupVertexFrame
+@TypeValue("ApplicationReportIndexModel")
+public interface ApplicationReportIndexModel extends WindupVertexFrame
 {
-    public static final String NAVIGATION_INDEX_TO_PROJECT_MODEL = "navigationIndexToProjectModel";
-    public static final String NAVIGATION_INDEX_TO_REPORT_MODEL = "navigationIndexToReportModel";
+    public static final String APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL = "appReportIndexToProjectModel";
+    public static final String APPLICATION_REPORT_INDEX_TO_REPORT_MODEL = "appReportIndexToAppReportModel";
 
     /**
      * Get all ReportModels that should be displayed in the index in ascending order, according to priority
      */
     @JavaHandler
-    public List<ReportModel> getReportModelsSortedByPriority();
+    public List<ApplicationReportModel> getApplicationReportModelsSortedByPriority();
 
     /**
      * Get all ReportModels that should be displayed in the index
      */
-    @Adjacency(label = NAVIGATION_INDEX_TO_REPORT_MODEL, direction = Direction.OUT)
-    public Iterable<ReportModel> getReportModels();
+    @Adjacency(label = APPLICATION_REPORT_INDEX_TO_REPORT_MODEL, direction = Direction.OUT)
+    public Iterable<ApplicationReportModel> getApplicationReportModels();
 
     /**
      * Adds a ReportModel that should be displayed in the index
      */
-    @Adjacency(label = NAVIGATION_INDEX_TO_REPORT_MODEL, direction = Direction.OUT)
-    public void addReportModel(ReportModel reportModel);
+    @Adjacency(label = APPLICATION_REPORT_INDEX_TO_REPORT_MODEL, direction = Direction.OUT)
+    public void addApplicationReportModel(ApplicationReportModel reportModel);
 
     /**
      * Associates a Set of ProjectModels with this index. This allows us to get from any Project Model to the associated
@@ -52,7 +52,7 @@ public interface MainNavigationIndexModel extends WindupVertexFrame
      * 
      * NOTE: This should generally include the projectmodel and all child projects (flattened) to make searching easier.
      */
-    @Adjacency(label = NAVIGATION_INDEX_TO_PROJECT_MODEL, direction = Direction.OUT)
+    @Adjacency(label = APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL, direction = Direction.OUT)
     public Iterable<ProjectModel> getProjectModels();
 
     /**
@@ -61,23 +61,23 @@ public interface MainNavigationIndexModel extends WindupVertexFrame
      * 
      * NOTE: This should generally include the projectmodel and all child projects (flattened) to make searching easier.
      */
-    @Adjacency(label = NAVIGATION_INDEX_TO_PROJECT_MODEL, direction = Direction.OUT)
+    @Adjacency(label = APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL, direction = Direction.OUT)
     public void addProjectModel(ProjectModel projectModel);
 
-    abstract class Impl implements MainNavigationIndexModel, JavaHandlerContext<Vertex>
+    abstract class Impl implements ApplicationReportIndexModel, JavaHandlerContext<Vertex>
     {
-        public List<ReportModel> getReportModelsSortedByPriority()
+        public List<ApplicationReportModel> getApplicationReportModelsSortedByPriority()
         {
-            List<ReportModel> reports = new ArrayList<>();
-            for (ReportModel m : getReportModels())
+            List<ApplicationReportModel> reports = new ArrayList<>();
+            for (ApplicationReportModel m : getApplicationReportModels())
             {
                 reports.add(m);
             }
 
-            Collections.sort(reports, new Comparator<ReportModel>()
+            Collections.sort(reports, new Comparator<ApplicationReportModel>()
             {
                 @Override
-                public int compare(ReportModel o1, ReportModel o2)
+                public int compare(ApplicationReportModel o1, ApplicationReportModel o2)
                 {
                     return o1.getReportPriority() - o2.getReportPriority();
                 }

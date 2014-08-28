@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<#assign mainNavigationIndexModel = sourceReport.mainNavigationIndexModel>
+<#assign applicationReportIndexModel = projectModelToApplicationIndex(sourceReport.sourceFileModel.projectModel)>
 
   <head>
     <meta charset="utf-8">
@@ -39,6 +39,11 @@
                 <span class="icon-bar"></span>
               </button>
             </div>
+            <div class="navbar-collapse collapse navbar-responsive-collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="index.html">&lt;- All Applications</a></li>
+              </ul>
+            </div><!-- /.nav-collapse -->
             <div class="navbar-collapse collapse navbar-responsive-collapse">
               <ul class="nav navbar-nav">
                 <#include "include/navbar.ftl">

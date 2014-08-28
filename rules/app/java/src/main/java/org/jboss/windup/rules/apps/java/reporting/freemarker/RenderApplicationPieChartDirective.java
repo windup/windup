@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.reporting;
+package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
 import java.io.IOException;
 import java.io.Writer;

@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.reporting;
+package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import javax.inject.Inject;
 

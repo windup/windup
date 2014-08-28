@@ -1,35 +1,28 @@
-package org.jboss.windup.reporting.rules.generation;
+package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import javax.inject.Inject;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.reporting.model.MainNavigationIndexModel;
-import org.jboss.windup.reporting.service.MainNavigationIndexModelService;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
+import org.jboss.windup.reporting.service.ReportModelService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-/**
- * Creates the main application index. Anything that needs to link to the application index should depend on this.
- * 
- * @author jsightler
- * 
- */
-public class CreateMainNavigationIndexRuleProvider extends WindupRuleProvider
+public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleProvider
 {
 
     @Inject
-    private MainNavigationIndexModelService mainNavigationIndexService;
+    private ReportModelService reportModelService;
 
     @Override
     public RulePhase getPhase()
@@ -37,10 +30,11 @@ public class CreateMainNavigationIndexRuleProvider extends WindupRuleProvider
         return RulePhase.REPORT_GENERATION;
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder findProjectModels = Query
+        ConditionBuilder applicationProjectModelsFound = Query
                     .find(WindupConfigurationModel.class);
 
         AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
@@ -55,39 +49,30 @@ public class CreateMainNavigationIndexRuleProvider extends WindupRuleProvider
                     throw new WindupException("Error, no project found in " + msg + ": "
                                 + payload.getInputPath().getFilePath());
                 }
-                createMainNavigationIndex(event.getGraphContext(), projectModel);
+                createApplicationReport(event.getGraphContext(), projectModel);
             }
         };
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(findProjectModels)
-                    .perform(
-                                Iteration.over()
-                                            .perform(addApplicationReport).endIteration()
-                    );
+                    .when(applicationProjectModelsFound)
+                    .perform(addApplicationReport);
 
     }
+    // @formatter:on
 
-    /**
-     * Create the index and associate it with all project models
-     */
-    private MainNavigationIndexModel createMainNavigationIndex(GraphContext context, ProjectModel projectModel)
+    private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
-        // Create the index, and add this report to it
-        MainNavigationIndexModel navIndex = mainNavigationIndexService.create();
-        addAllProjectModels(navIndex, projectModel);
+        ApplicationReportModel applicationReportModel = context.getFramed().addVertex(null,
+                    ApplicationReportModel.class);
+        applicationReportModel.setReportPriority(100);
+        applicationReportModel.setDisplayInApplicationReportIndex(true);
+        applicationReportModel.setReportName("Overview");
+        applicationReportModel.setProjectModel(projectModel);
 
-        return navIndex;
+        // Set the filename for the report
+        reportModelService.setUniqueFilename(applicationReportModel, projectModel.getName(), "html");
+
+        return applicationReportModel;
     }
-
-    private void addAllProjectModels(MainNavigationIndexModel navIdx, ProjectModel projectModel)
-    {
-        navIdx.addProjectModel(projectModel);
-        for (ProjectModel childProject : projectModel.getChildProjects())
-        {
-            addAllProjectModels(navIdx, childProject);
-        }
-    }
-
 }

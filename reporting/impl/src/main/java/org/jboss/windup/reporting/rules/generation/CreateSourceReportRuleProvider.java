@@ -1,6 +1,4 @@
-package org.jboss.windup.reporting.rules;
-
-import java.util.List;
+package org.jboss.windup.reporting.rules.generation;
 
 import javax.inject.Inject;
 
@@ -13,16 +11,12 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.SourceTypeResolver;
-import org.jboss.windup.reporting.model.MainNavigationIndexModel;
 import org.jboss.windup.reporting.model.ReportFileModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
-import org.jboss.windup.reporting.rules.generation.CreateMainNavigationIndexRuleProvider;
-import org.jboss.windup.reporting.service.MainNavigationIndexModelService;
 import org.jboss.windup.reporting.service.ReportModelService;
 import org.jboss.windup.reporting.service.SourceReportModelService;
 import org.ocpsoft.rewrite.config.Condition;
@@ -47,21 +41,12 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
     private SourceReportModelService sourceReportService;
 
     @Inject
-    private MainNavigationIndexModelService mainNavigationIndexService;
-
-    @Inject
     private Imported<SourceTypeResolver> resolvers;
 
     @Override
     public RulePhase getPhase()
     {
         return RulePhase.REPORT_GENERATION;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(CreateMainNavigationIndexRuleProvider.class);
     }
 
     // @formatter:off
@@ -79,15 +64,11 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {
                 SourceReportModel sm = sourceReportService.create();
-                ProjectModel projectModel = payload.getProjectModel();
-                MainNavigationIndexModel mainNavigationIndexModel = mainNavigationIndexService
-                            .getNavigationIndexForProjectModel(projectModel);
                 ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
                             ReportFileModel.class);
                 sm.setSourceFileModel(reportFileModel);
                 sm.setReportName(payload.getPrettyPath());
                 sm.setSourceType(resolveSourceType(payload));
-                sm.setMainNavigationIndexModel(mainNavigationIndexModel);
                 reportModelService.setUniqueFilename(sm, payload.getFileName(), "html");
             }
         };
