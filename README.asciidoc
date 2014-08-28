@@ -1,5 +1,7 @@
 == Windup 2.0
 
+NOTE:: The Windup 2.0 project is currently under development. If you want to contribute or participate in developer discussions, join us on the irc.freenode.net #windup channel or subscribe to the windup-dev mailing list at https://lists.jboss.org/mailman/listinfo/windup-dev.
+
 Get involved at: http://windup.jboss.org
 
 * Forums: https://community.jboss.org/en/windup
