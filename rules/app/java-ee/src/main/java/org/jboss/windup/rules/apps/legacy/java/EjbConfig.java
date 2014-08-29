@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.rules.apps.java.config.JavaClass;
@@ -12,32 +11,25 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
-public class EjbConfig
+public class EjbConfig extends WindupRuleProvider
 {
 
-    /**
-     * @author <a href="mailto:mbriskar@gmail.com">Matej Briškár</a>
-     * 
-     */
-    public class BaseConfig extends WindupRuleProvider
+    @Override
+    public RulePhase getPhase()
     {
+        return RulePhase.DISCOVERY;
+    }
 
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.DISCOVERY;
-        }
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        context.put(RuleMetadata.CATEGORY, "Java");
+    }
 
-        @Override
-        public void enhanceMetadata(Context context)
-        {
-            context.put(RuleMetadata.CATEGORY, "Java");
-        }
-
-        @Override
-        public Configuration getConfiguration(GraphContext context)
-        {
-         // @formatter:off
+    @Override
+    public Configuration getConfiguration(GraphContext context)
+    {
+        // @formatter:off
             Configuration configuration = ConfigurationBuilder
                         .begin()
                         .addRule()
@@ -93,8 +85,6 @@ public class EjbConfig
                         .when(JavaClass.references("javax.ejb.Stateful$").at(TypeReferenceLocation.TYPE))
                         .perform(Classification.as("EJB 3.x - Stateful Session Bean").withEffort(0));
             // @formatter:on
-            return configuration;
-        }
+        return configuration;
     }
-
 }

@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
@@ -76,10 +75,10 @@ public class WebLogicConfig extends WindupRuleProvider
                                             TypeReferenceLocation.INHERITANCE))
                     .perform(Classification.as("Weblogic ApplicationLifecycleListener, proprietary class, must be migrated.")
                                            .with(Link.to("Master the JBoss Tutorial: EJB 3.1 Tutorial",
-                                                         "http://www.mastertheboss.com/ejb-3/ejb-31-tutorial")
-                                                     .to("Caucho.com Tutorial: ServletContextListener, @WebListener tutorial",
-                                                         "http://blog.caucho.com/2009/10/06/servlet-30-tutorial-weblistener-webservlet-webfilter-and-webinitparam/")
-                                                     .to("Rose India Tutorial: ServletContextListener, @WebListener tutorial",
+                                                         "http://www.mastertheboss.com/ejb-3/ejb-31-tutorial"))
+                                                     .with(Link.to("Caucho.com Tutorial: ServletContextListener, @WebListener tutorial",
+                                                         "http://blog.caucho.com/2009/10/06/servlet-30-tutorial-weblistener-webservlet-webfilter-and-webinitparam/"))
+                                                     .with(Link.to("Rose India Tutorial: ServletContextListener, @WebListener tutorial",
                                                           "http://www.roseindia.net/servlets/servlet3/WebListener_annotation.shtml"))
                                                      .withEffort(3))
                                             

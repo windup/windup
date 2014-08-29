@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
@@ -44,8 +43,8 @@ public class WebsphereConfig extends WindupRuleProvider
                                             .at(TypeReferenceLocation.INHERITANCE))
                     .perform(Classification.as("Websphere Startup Service")
                                                                     .with(Link.to("EJB3.1 Singleton Bean",
-                                                                                "http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html")
-                                                                                .to("EJB3.1 Startup Bean",
+                                                                                "http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html"))
+                                                                                .with(Link.to("EJB3.1 Startup Bean",
                                                                                     "http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html"))
                                                                     .withEffort(4))
                                             
