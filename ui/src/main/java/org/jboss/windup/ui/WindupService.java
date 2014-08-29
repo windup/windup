@@ -2,6 +2,7 @@ package org.jboss.windup.ui;
 
 import java.nio.file.Path;
 
+import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 
 /**
@@ -23,5 +24,10 @@ public interface WindupService
      * Execute Windup
      */
     public void execute();
+
+    /**
+     * Execute Windup using the given {@link WindupProgressMonitor} to receive updates on progress.
+     */
+    public void execute(WindupProgressMonitor progressMonitor);
 
 }

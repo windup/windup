@@ -27,7 +27,18 @@ public interface WindupProcessor
     void execute();
 
     /**
+     * Executes Windup (including all rules). Progress will be reported using the given {@link WindupProgressMonitor}
+     */
+    void execute(WindupProgressMonitor progressMonitor);
+
+    /**
      * Executes only the rules contained in providers that are accepted by the provided ruleProviderFilter.
      */
     void execute(Predicate<WindupRuleProvider> ruleProviderFilter);
+
+    /**
+     * Executes only the rules contained in providers that are accepted by the provided {@link Predicate}. Progress will
+     * be reported using the given {@link WindupProgressMonitor}.
+     */
+    void execute(Predicate<WindupRuleProvider> ruleProviderFilter, WindupProgressMonitor progressMonitor);
 }

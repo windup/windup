@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import javax.inject.Inject;
 
 import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -30,6 +31,19 @@ public class WindupServiceImpl implements WindupService
         try
         {
             windupProcessor.execute();
+        }
+        finally
+        {
+            graphContext.disconnectFromGraph();
+        }
+    }
+
+    @Override
+    public void execute(WindupProgressMonitor progressMonitor)
+    {
+        try
+        {
+            windupProcessor.execute(progressMonitor);
         }
         finally
         {

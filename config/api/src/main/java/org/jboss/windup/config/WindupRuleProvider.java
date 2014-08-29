@@ -54,7 +54,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     public void enhanceMetadata(Context context)
     {
         if (!context.containsKey(RuleMetadata.CATEGORY))
-            context.put(RuleMetadata.CATEGORY, "none");
+            context.put(RuleMetadata.CATEGORY, "Uncategorized");
         if (!context.containsKey(RuleMetadata.ORIGIN))
             context.put(RuleMetadata.ORIGIN, this.getClass().getName());
         if (!context.containsKey(RuleMetadata.RULE_PROVIDER))

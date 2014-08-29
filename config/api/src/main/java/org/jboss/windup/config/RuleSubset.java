@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
@@ -81,6 +82,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     private final Map<RulePhase, RulePhaseExecutionStatisticsModel> timeTakenByPhase = new HashMap<>();
 
     private final Configuration config;
+
+    private List<RuleLifecycleListener> listeners = new ArrayList<>();
 
     private RuleSubset(Configuration config)
     {
@@ -158,10 +161,16 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
         List<Rule> rules = config.getRules();
 
+        for (RuleLifecycleListener listener : listeners)
+        {
+            listener.beforeExecution();
+        }
+
         final EvaluationContextImpl subContext = new EvaluationContextImpl();
         for (int i = 0; i < rules.size(); i++)
         {
             Rule rule = rules.get(i);
+
             Context ruleContext = rule instanceof Context ? (Context) rule : null;
             long ruleTimeStarted = System.currentTimeMillis();
             try
@@ -177,37 +186,65 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 event.selectionPush();
                 try
                 {
-                    if (!rule.evaluate(event, subContext))
-                        continue;
-
-                    if (!handleBindings(event, subContext, values))
-                        continue;
-
-                    subContext.setState(RewriteState.PERFORMING);
-                    log.debug("Rule [" + rule + "] matched and will be performed.");
-
-                    List<Operation> preOperations = subContext.getPreOperations();
-                    for (Operation preOperation : preOperations)
+                    for (RuleLifecycleListener listener : listeners)
                     {
-                        preOperation.perform(event, subContext);
+                        listener.beforeRuleEvaluation(rule, subContext);
                     }
 
-                    if (event.getFlow().isHandled())
-                        break;
-
-                    rule.perform(event, subContext);
-
-                    if (event.getFlow().isHandled())
-                        break;
-
-                    List<Operation> postOperations = subContext.getPostOperations();
-                    for (Operation postOperation : postOperations)
+                    if (rule.evaluate(event, subContext))
                     {
-                        postOperation.perform(event, subContext);
-                    }
+                        for (RuleLifecycleListener listener : listeners)
+                        {
+                            listener.afterRuleConditionEvaluation(event, subContext, rule, true);
+                        }
 
-                    if (event.getFlow().isHandled())
-                        break;
+                        if (!handleBindings(event, subContext, values))
+                            continue;
+
+                        subContext.setState(RewriteState.PERFORMING);
+                        log.debug("Rule [" + rule + "] matched and will be performed.");
+                        
+                        for (RuleLifecycleListener listener : listeners)
+                        {
+                            listener.beforeRuleOperationsPerformed(event, subContext, rule);
+                        }
+
+                        List<Operation> preOperations = subContext.getPreOperations();
+                        for (Operation preOperation : preOperations)
+                        {
+                            preOperation.perform(event, subContext);
+                        }
+
+                        if (event.getFlow().isHandled())
+                            break;
+
+                        rule.perform(event, subContext);
+                        
+
+                        for (RuleLifecycleListener listener : listeners)
+                        {
+                            listener.afterRuleOperationsPerformed(event, subContext, rule);
+                        }
+
+                        if (event.getFlow().isHandled())
+                            break;
+
+                        List<Operation> postOperations = subContext.getPostOperations();
+                        for (Operation postOperation : postOperations)
+                        {
+                            postOperation.perform(event, subContext);
+                        }
+
+                        if (event.getFlow().isHandled())
+                            break;
+                    }
+                    else
+                    {
+                        for (RuleLifecycleListener listener : listeners)
+                        {
+                            listener.afterRuleConditionEvaluation(event, subContext, rule, false);
+                        }
+                    }
                 }
                 finally
                 {
@@ -247,6 +284,12 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 }
                 throw new WindupException(message, e);
             }
+        }
+        
+
+        for (RuleLifecycleListener listener : listeners)
+        {
+            listener.afterExecution();
         }
     }
 
@@ -451,6 +494,25 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         + "] that was configured in parent Configuration. Re-definition was attempted at ["
                         + rule + "] ");
         }
+
+    }
+
+    /**
+     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and
+     * their results.
+     */
+    public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener)
+    {
+        this.listeners.add(listener);
+        return new ListenerRegistration<RuleLifecycleListener>()
+        {
+            @Override
+            public RuleLifecycleListener removeListener()
+            {
+                listeners.remove(listener);
+                return listener;
+            }
+        };
 
     }
 }
