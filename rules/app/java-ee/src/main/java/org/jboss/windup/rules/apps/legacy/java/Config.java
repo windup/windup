@@ -17,7 +17,7 @@ public class Config extends WindupRuleProvider
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return RulePhase.MIGRATION_RULES;
     }
 
     @Override
