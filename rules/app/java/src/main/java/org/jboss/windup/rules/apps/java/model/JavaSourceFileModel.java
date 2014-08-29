@@ -11,6 +11,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface JavaSourceFileModel extends FileModel
 {
     public static final String PROPERTY_PACKAGE_NAME = "packageName";
+    public static final String PROPERTY_JAVA_CLASS_MODEL = "javaClass";
 
     @Property(PROPERTY_PACKAGE_NAME)
     public String getPackageName();
@@ -18,9 +19,9 @@ public interface JavaSourceFileModel extends FileModel
     @Property(PROPERTY_PACKAGE_NAME)
     public void setPackageName(String packageName);
 
-    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    @Adjacency(label = PROPERTY_JAVA_CLASS_MODEL, direction = Direction.OUT)
     public Iterable<JavaClassModel> getJavaClasses();
 
-    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    @Adjacency(label = PROPERTY_JAVA_CLASS_MODEL, direction = Direction.OUT)
     public void addJavaClass(JavaClassModel javaClassModel);
 }

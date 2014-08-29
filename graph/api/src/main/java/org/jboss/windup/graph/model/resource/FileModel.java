@@ -63,7 +63,7 @@ public interface FileModel extends ResourceModel
 
     @Property(MD5_HASH)
     public void setMD5Hash(String md5Hash);
-
+    
     @Property(SHA1_HASH)
     public String getSHA1Hash();
 

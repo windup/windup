@@ -1,10 +1,14 @@
 package org.jboss.windup.reporting.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.LinkModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -15,6 +19,7 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
 {
     private String hintText;
     private int effort;
+    private List<Link> links = new ArrayList<>();
 
     protected Hint(String variable)
     {
@@ -60,6 +65,15 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
 
         hintModel.setEffort(effort);
         hintModel.setHint(hintText);
+        
+        GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
+        for (Link link : links)
+        {
+            LinkModel linkModel = linkService.create();
+            linkModel.setDescription(link.getDescription());
+            linkModel.setLink(link.getLink());
+            hintModel.addLink(linkModel);
+        }
     }
 
     /**
@@ -68,6 +82,15 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     public OperationBuilder withEffort(int effort)
     {
         this.effort = effort;
+        return this;
+    }
+    
+    /**
+     * Add a {@link Link} to this {@link Hint}.
+     */
+    public Hint with(Link link)
+    {
+        this.links.add(link);
         return this;
     }
 
