@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
@@ -59,8 +58,8 @@ public class WebServiceConfig extends WindupRuleProvider
                     .perform(Classification
                                                                     .as("Asynchronous Web Service Client")
                                                                     .with(Link.to("Weblogic Asynchronous Execution Documentation",
-                                                                                "http://docs.oracle.com/cd/E15051_01/wls/docs103/webserv_adv_rpc/asynch.html")
-                                                                                .to("CXF Asynchronous Webservice Client Example",
+                                                                                "http://docs.oracle.com/cd/E15051_01/wls/docs103/webserv_adv_rpc/asynch.html"))
+                                                                                .with(Link.to("CXF Asynchronous Webservice Client Example",
                                                                                             "http://singztechmusings.in/consuming-web-services-in-cxf-non-blocking-asynchronous-invocation-model/"))
                                                                     .withEffort(8
                                                                     ))
@@ -85,8 +84,8 @@ public class WebServiceConfig extends WindupRuleProvider
                     .when(JavaClass.references("weblogic.common.T3StartupDef").at(TypeReferenceLocation.INHERITANCE))
                     .perform(Classification.as("Weblogic Startup Service")
                                                                     .with(Link.to("EJB3.1 Singleton Bean",
-                                                                                "http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html")
-                                                                                .to("EJB3.1 Startup Bean",
+                                                                                "http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html"))
+                                                                                .with(Link.to("EJB3.1 Startup Bean",
                                                                                             "http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html"))
                                                                     .withEffort(4))
                                             
@@ -99,8 +98,8 @@ public class WebServiceConfig extends WindupRuleProvider
                     .when(JavaClass.references("weblogic.common.T3ServicesDef").at(TypeReferenceLocation.INHERITANCE))
                     .perform(Classification.as("Weblogic Startup Service")
                                                                     .with(Link.to("EJB3.1 Startup Bean",
-                                                                                "http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html")
-                                                                                .to("EJB3.1 Singleton Bean",
+                                                                                "http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html"))
+                                                                                .with(Link.to("EJB3.1 Singleton Bean",
                                                                                     "http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html"))
                                                                     .withEffort(8))
                                             
@@ -118,8 +117,8 @@ public class WebServiceConfig extends WindupRuleProvider
                     .when(JavaClass.references("weblogic.time.common.Triggerable$").at(TypeReferenceLocation.INHERITANCE))
                     .perform(Classification.as("Weblogic Scheduled Job")
                                            .with(Link.to("JBoss EJB3.1 Scheduled Job",
-                                                         "http://jaitechwriteups.blogspot.com/2010/07/ejb31-timerservice-in-jboss-as-600m4.html")
-                                                     .to("JBoss EJB3.0 Timeout Job","http://www.java2s.com/Code/Java/EJB3/EJBTutorialfromJBosstimer.htm"))
+                                                         "http://jaitechwriteups.blogspot.com/2010/07/ejb31-timerservice-in-jboss-as-600m4.html"))
+                                                     .with(Link.to("JBoss EJB3.0 Timeout Job","http://www.java2s.com/Code/Java/EJB3/EJBTutorialfromJBosstimer.htm"))
                                             .withEffort(0))
                                             
                     .addRule()

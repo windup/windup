@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
@@ -39,12 +38,13 @@ public class SeamToCDI extends WindupRuleProvider
                     .addRule()
                     .when(JavaClass.references("org.jboss.seam"))
                     .perform(Classification.as("SEAM Component").with(
-                                                           Link.to("Seam 2 to Seam 3 Migration Notes","http://www.seamframework.org/Seam3/Seam2ToSeam3MigrationNotes")
+                                                           Link.to("Seam 2 to Seam 3 Migration Notes","http://www.seamframework.org/Seam3/Seam2ToSeam3MigrationNotes"))
+                                                           .with(Link
                                                                .to("JSF Web Application Example",
-                                                                                            "http://docs.jboss.org/weld/reference/latest/en-US/html/example.html")
-                                                               .to("JBoss Context Documentation",
-                                                                                            "http://docs.jboss.org/weld/reference/latest/en-US/html/contexts.html")
-                                                               .to("CDI Conversations Blog Post",
+                                                                                            "http://docs.jboss.org/weld/reference/latest/en-US/html/example.html"))
+                                                               .with(Link.to("JBoss Context Documentation",
+                                                                                            "http://docs.jboss.org/weld/reference/latest/en-US/html/contexts.html"))
+                                                               .with(Link.to("CDI Conversations Blog Post",
                                                                                             "http://www.andygibson.net/blog/tutorial/cdi-conversations-part-2/"))
                                                      .withEffort(1)
                             )

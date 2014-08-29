@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;

@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.legacy.java;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
@@ -2762,7 +2761,7 @@ public class JDKConfig extends WindupRuleProvider
                     .perform(Hint.withText("Deprecated By JDK 6. As of JSR-181 2.0 with no replacement.")
                                  .withEffort(0));
 
-        return null;
+        return configuration;
     }
     // @formatter:on
 }
