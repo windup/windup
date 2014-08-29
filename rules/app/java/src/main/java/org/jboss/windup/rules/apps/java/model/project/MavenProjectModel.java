@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.model.project;
 
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.XmlFileModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -33,10 +33,10 @@ public interface MavenProjectModel extends ProjectModel
     public Iterable<MavenProjectModel> getMavenChildProjects();
 
     @Adjacency(label = "mavenPom", direction = Direction.OUT)
-    public Iterable<XmlResourceModel> getMavenPom();
+    public Iterable<XmlFileModel> getMavenPom();
 
     @Adjacency(label = "mavenPom", direction = Direction.OUT)
-    public void addMavenPom(XmlResourceModel pom);
+    public void addMavenPom(XmlFileModel pom);
 
     /**
      * The full maven id (groupid, artifactid, and version)

@@ -10,7 +10,7 @@ import com.tinkerpop.frames.VertexFrame;
  * Base service interface for interacting with {@link WindupVertexFrame} instances.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  * @param <FRAMETYPE>
  */
 public interface Service<FRAMETYPE extends VertexFrame>
@@ -45,6 +45,11 @@ public interface Service<FRAMETYPE extends VertexFrame>
      * id. The returned instance will already be persisted in the graph.
      */
     FRAMETYPE create(Object id);
+
+    /**
+     * Adds the type of this service to the provided {@link WindupVertexFrame}, and returns the result
+     */
+    FRAMETYPE addTypeToModel(WindupVertexFrame model);
 
     /**
      * Remove the given {@link WindupVertexFrame} instance from the graph.

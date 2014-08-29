@@ -14,9 +14,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
-import com.thinkaurelius.titan.core.TitanGraphQuery;
 import com.thinkaurelius.titan.core.TitanTransaction;
-import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import com.tinkerpop.blueprints.GraphQuery;
@@ -94,10 +92,17 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         context.getFramed().removeVertex(frame.asVertex());
     }
 
-    protected FramedGraphQuery findAllQuery() {
-    	return context.getQuery().type(type);
+    @Override
+    public T addTypeToModel(WindupVertexFrame model)
+    {
+        return GraphService.addTypeToModel(getGraphContext(), model, type);
     }
-    
+
+    protected FramedGraphQuery findAllQuery()
+    {
+        return context.getQuery().type(type);
+    }
+
     @Override
     public Iterable<T> findAll()
     {
@@ -225,6 +230,26 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         }
 
         return result;
+    }
+
+    protected T getUnique(GraphQuery framedQuery)
+    {
+        Iterable<Vertex> results = framedQuery.vertices();
+
+        if (!results.iterator().hasNext())
+        {
+            return null;
+        }
+
+        Iterator<Vertex> iter = results.iterator();
+        Vertex result = iter.next();
+
+        if (iter.hasNext())
+        {
+            throw new NonUniqueResultException("Expected unique value, but returned non-unique.");
+        }
+
+        return frame(result);
     }
 
     protected GraphContext getGraphContext()

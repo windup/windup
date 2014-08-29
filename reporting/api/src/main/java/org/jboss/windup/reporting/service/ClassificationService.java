@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 
@@ -58,5 +59,18 @@ public class ClassificationService extends GraphService<ClassificationModel>
             }
         }
         return classificationEffort;
+    }
+
+    public void attachClassification(FileModel fileModel, String classificationText, String description)
+    {
+        ClassificationModel model = getUnique(getTypedQuery()
+                    .has(ClassificationModel.PROPERTY_CLASSIFICATION, classificationText));
+        if (model == null)
+        {
+            model = create();
+            model.setClassifiation(classificationText);
+            model.setDescription(description);
+        }
+        model.addFileModel(fileModel);
     }
 }

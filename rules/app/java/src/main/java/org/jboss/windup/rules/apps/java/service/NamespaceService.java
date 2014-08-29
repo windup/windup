@@ -7,6 +7,11 @@ import org.jboss.windup.rules.apps.xml.NamespaceMetaModel;
 public class NamespaceService extends GraphService<NamespaceMetaModel>
 {
 
+    public NamespaceService()
+    {
+        super(NamespaceMetaModel.class);
+    }
+
     public NamespaceService(GraphContext context)
     {
         super(context, NamespaceMetaModel.class);

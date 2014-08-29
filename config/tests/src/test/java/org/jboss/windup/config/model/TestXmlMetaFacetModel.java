@@ -1,7 +1,7 @@
 package org.jboss.windup.config.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.XmlFileModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -15,10 +15,10 @@ public interface TestXmlMetaFacetModel extends WindupVertexFrame
     public static final String PROPERTY_ROOT_TAG_NAME = "rootTagName";
 
     @Adjacency(label = "xmlFacet", direction = Direction.OUT)
-    public void setXmlFacet(XmlResourceModel facet);
+    public void setXmlFacet(XmlFileModel facet);
 
     @Adjacency(label = "xmlFacet", direction = Direction.OUT)
-    public XmlResourceModel getXmlFacet();
+    public XmlFileModel getXmlFacet();
 
     @Property(PROPERTY_ROOT_TAG_NAME)
     public String getRootTagName();

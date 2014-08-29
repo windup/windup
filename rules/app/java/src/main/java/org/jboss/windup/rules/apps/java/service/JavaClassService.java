@@ -22,6 +22,11 @@ import com.tinkerpop.pipes.PipeFunction;
 
 public class JavaClassService extends GraphService<JavaClassModel>
 {
+    public JavaClassService()
+    {
+        super(JavaClassModel.class);
+    }
+
     @Inject
     public JavaClassService(GraphContext context)
     {
@@ -57,11 +62,11 @@ public class JavaClassService extends GraphService<JavaClassModel>
     {
         return getGraphContext().getQuery().type(JavaClassModel.class)
                     .has("packageName", packageName).vertices(getType());
-    } 
+    }
 
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
-    	return getGraphContext().getQuery().type(JavaClassModel.class)
+        return getGraphContext().getQuery().type(JavaClassModel.class)
                     .has("majorVersion", version.getMajor())
                     .has("minorVersion", version.getMinor()).vertices(getType());
     }

@@ -2,5 +2,8 @@ package org.jboss.windup.config.query;
 
 public interface QueryBuilderFrom
 {
-    public QueryBuilderPiped piped(QueryGremlinCriterion criterion);
+    /**
+     * Narrow the query via a {@link QueryGremlinCriterion} in order to execute Gremlin queries.
+     */
+    QueryBuilderPiped piped(QueryGremlinCriterion criterion);
 }
