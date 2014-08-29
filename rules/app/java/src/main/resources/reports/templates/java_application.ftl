@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<#assign mainNavigationIndexModel = applicationReport.mainNavigationIndexModel>
+<#assign applicationReportIndexModel = applicationReport.applicationReportIndexModel>
 
 <#macro tagRenderer tag>
 	<span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
@@ -83,6 +83,11 @@
             <span class="icon-bar"></span>
           </button>
         </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">&lt;- All Applications</a></li>
+          </ul>
+        </div><!-- /.nav-collapse -->
         <div class="navbar-collapse collapse navbar-responsive-collapse">
           <ul class="nav navbar-nav">
             <#include "include/navbar.ftl">

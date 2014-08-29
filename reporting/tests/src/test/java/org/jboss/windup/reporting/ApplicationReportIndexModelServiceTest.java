@@ -14,15 +14,15 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.dao.ProjectModelService;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
-import org.jboss.windup.reporting.model.MainNavigationIndexModel;
+import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.service.ApplicationReportModelService;
-import org.jboss.windup.reporting.service.MainNavigationIndexModelService;
+import org.jboss.windup.reporting.service.ApplicationReportIndexService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class MainNavigationIndexModelServiceTest
+public class ApplicationReportIndexModelServiceTest
 {
 
     @Deployment
@@ -51,7 +51,7 @@ public class MainNavigationIndexModelServiceTest
     @Inject
     private ApplicationReportModelService applicationReportModelService;
     @Inject
-    private MainNavigationIndexModelService mainNavigationIndexModelService;
+    private ApplicationReportIndexService applicationReportIndexModelService;
 
     @Test
     public void testGetApplicationReportsForProjectModelSortedByPriority()
@@ -75,19 +75,19 @@ public class MainNavigationIndexModelServiceTest
         m5.setReportName("m5");
         m5.setReportPriority(500);
 
-        MainNavigationIndexModel idx1 = mainNavigationIndexModelService.create();
+        ApplicationReportIndexModel idx1 = applicationReportIndexModelService.create();
         idx1.addProjectModel(projectModel);
 
         @SuppressWarnings("unused")
-        MainNavigationIndexModel idx2 = mainNavigationIndexModelService.create();
+        ApplicationReportIndexModel idx2 = applicationReportIndexModelService.create();
 
         m1.setProjectModel(projectModel);
         m2.setProjectModel(projectModel);
         m3.setProjectModel(projectModel);
         m4.setProjectModel(projectModel);
 
-        MainNavigationIndexModel result = mainNavigationIndexModelService
-                    .getNavigationIndexForProjectModel(projectModel);
+        ApplicationReportIndexModel result = applicationReportIndexModelService
+                    .getApplicationReportIndexForProjectModel(projectModel);
         Assert.assertNotNull(result);
         Assert.assertEquals(idx1.asVertex().getId(), result.asVertex().getId());
     }
