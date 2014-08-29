@@ -66,13 +66,13 @@ public class WindupProcessorImpl implements WindupProcessor
             @Override
             public void beforeExecution()
             {
-                progressMonitor.beginTask("Executing Windup Rules", configuration.getRules().size());
+                progressMonitor.beginTask("Executing Rules: ", configuration.getRules().size());
             }
 
             @Override
             public void beforeRuleEvaluation(Rule rule, EvaluationContext context)
             {
-                progressMonitor.subTask("Executing Rule: " + prettyPrintRule(rule));
+                progressMonitor.subTask(prettyPrintRule(rule));
 
             }
 
@@ -132,15 +132,21 @@ public class WindupProcessorImpl implements WindupProcessor
         {
             WindupRuleProvider ruleProvider = (WindupRuleProvider) ((Context) rule)
                         .get(RuleMetadata.RULE_PROVIDER);
-            if (ruleProvider != null)
-                builder.append(ruleProvider.getID());
 
             String category = (String) ((Context) rule).get(RuleMetadata.CATEGORY);
+
+            if (ruleProvider != null)
+            {
+                builder.append(ruleProvider.getPhase() + " - ");
+                builder.append(ruleProvider.getID() + " ");
+            }
+
             if (category != null)
                 builder.append("[" + category + "] ");
+
         }
 
-        return builder.append(rule.toString()).toString();
+        return builder.append(rule.getId()).toString();
     }
 
     /*
