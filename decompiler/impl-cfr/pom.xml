@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-        <groupId>org.jboss.windup</groupId>
-        <artifactId>windup-parent</artifactId>
+        <groupId>org.jboss.windup.decompiler</groupId>
+        <artifactId>decompiler-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../..</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     
     <artifactId>decompiler-cfr</artifactId>
@@ -22,28 +22,20 @@
             </resource>
         </resources>
         <plugins>
-            <!-- Copy Wicket Core jar as a test .jar for decompilation. -->
+            
+            <!-- Surefire -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals><goal>copy</goal></goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.apache.wicket</groupId>
-                                    <artifactId>wicket-core</artifactId>
-                                    <version>6.11.0</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>target/TestJars</outputDirectory>
-                            <destFileName>wicket-core-6.11.0</destFileName>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <!-- Set JUL Formatting -->
+                        <java.util.logging.SimpleFormatter.format>%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s %2$s %5$s%6$s%n</java.util.logging.SimpleFormatter.format>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
-            
+                  
             <!-- Forge addon creation -->
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
@@ -92,15 +84,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Test jar -->
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-core</artifactId>
-            <version>6.11.0</version>
-            <scope>test</scope>
-        </dependency>
-        
-        
         <!-- Logging -->
         <!--
         <dependency>
