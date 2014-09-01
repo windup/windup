@@ -60,7 +60,7 @@ public class WindupProcessorImpl implements WindupProcessor
         final Configuration configuration = graphConfigurationLoader.loadConfiguration(context);
         GraphRewrite event = new GraphRewrite(context);
 
-        RuleSubset ruleSubset = RuleSubset.evaluate(configuration);
+        RuleSubset ruleSubset = RuleSubset.create(configuration);
         ruleSubset.addLifecycleListener(new RuleLifecycleListener()
         {
             @Override
@@ -106,6 +106,9 @@ public class WindupProcessorImpl implements WindupProcessor
         ruleSubset.perform(event, createEvaluationContext());
     }
 
+    /**
+     * Only runs certain rule providers - based on given filter.
+     */
     @Override
     public void execute(Predicate<WindupRuleProvider> ruleProviderFilter, WindupProgressMonitor progressMonitor)
     {
@@ -113,8 +116,7 @@ public class WindupProcessorImpl implements WindupProcessor
         final Predicate<WindupRuleProvider> ruleProviderFilter1 = ruleProviderFilter;
         final Configuration configuration = graphConfigurationLoader.loadConfiguration(context, ruleProviderFilter1);
         GraphRewrite event = new GraphRewrite(context);
-        RuleSubset.evaluate(configuration).perform(event, createEvaluationContext());
-
+        RuleSubset.create(configuration).perform(event, createEvaluationContext());
     }
 
     private DefaultEvaluationContext createEvaluationContext()

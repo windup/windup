@@ -91,7 +91,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         this.config = config;
     }
 
-    public static RuleSubset evaluate(Configuration config)
+    public static RuleSubset create(Configuration config)
     {
         return new RuleSubset(config);
     }
