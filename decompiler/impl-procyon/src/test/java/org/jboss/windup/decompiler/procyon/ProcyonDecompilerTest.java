@@ -3,7 +3,7 @@ package org.jboss.windup.decompiler.procyon;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.DecompilerTestBase;
-import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
+
 
 /**
  *
