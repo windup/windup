@@ -1,7 +1,5 @@
 package org.jboss.windup.graph;
 
-import java.nio.file.Path;
-
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.service.Service;
 
@@ -18,6 +16,17 @@ import com.tinkerpop.frames.VertexFrame;
 public interface GraphContext
 {
     /**
+     * Initializes the graph.
+     * Called from the WindupProcessorImpl. If not using that
+     * (e.g. tests of graph functionality), needs to be called manually.
+     * Although currently, getGraph(), getBatch() and getFramed() still call initGraphIfNeeded().
+     * 
+     * @param config If null, a default configuration is used.
+     * @throws IllegalStateException if the graph was already initialized.
+     */
+    public void init(GraphContextConfig config);
+
+    /**
      * Disconnect completely from the graph. The next call to "getGraph" will reinitialize
      */
     public void disconnectFromGraph();
@@ -30,12 +39,12 @@ public interface GraphContext
      * 
      * NOTE: All files in this directory will be deleted!
      */
-    void setGraphDirectory(Path graphDirectory);
+    //void setGraphDirectory(Path graphDirectory);
 
     /**
      * Get the location on disk where the underlying {@link TitanGraph} is stored.
      */
-    Path getGraphDirectory();
+    //Path getGraphDirectory();
 
     /**
      * Get the underlying {@link EventGraph}, which is itself a wrapper for a {@link TitanGraph}.

@@ -1,14 +1,13 @@
 package org.jboss.windup.ui;
 
-import java.nio.file.Path;
-
 import javax.inject.Inject;
-
 import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
+
 
 public class WindupServiceImpl implements WindupService
 {
@@ -19,9 +18,8 @@ public class WindupServiceImpl implements WindupService
     private WindupProcessor windupProcessor;
 
     @Override
-    public WindupConfigurationModel createServiceConfiguration(Path outputFolder)
+    public WindupConfigurationModel createServiceConfiguration()
     {
-        windupProcessor.setOutputDirectory(outputFolder);
         return GraphService.getConfigurationModel(graphContext);
     }
 
@@ -38,12 +36,15 @@ public class WindupServiceImpl implements WindupService
         }
     }
 
+    /**
+     * Execute with given ProgressMonitor.
+     */
     @Override
-    public void execute(WindupProgressMonitor progressMonitor)
+    public void execute(WindupProcessorConfig config)
     {
         try
         {
-            windupProcessor.execute(progressMonitor);
+            windupProcessor.execute(config);
         }
         finally
         {

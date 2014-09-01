@@ -46,6 +46,7 @@ public class InMemoryFrameTest
     public void testInMemoryFrame() throws Exception
     {
         Assert.assertNotNull(context);
+        context.init(null);
 
         GraphService<TestFooModel> fooModelService = context.getService(TestFooModel.class);
 

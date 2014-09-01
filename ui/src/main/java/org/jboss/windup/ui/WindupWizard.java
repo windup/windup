@@ -25,6 +25,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 
@@ -111,7 +112,7 @@ public class WindupWizard implements UIWizard, UICommand
 
         FileUtils.deleteDirectory(outputFile);
 
-        WindupConfigurationModel cfg = windupService.createServiceConfiguration(outputFile.toPath());
+        WindupConfigurationModel cfg = windupService.createServiceConfiguration();
         cfg.setInputPath(inputFile.getAbsolutePath());
         cfg.setOutputPath(outputFile.getAbsolutePath());
         cfg.setFetchRemoteResources(fetchRemote);
@@ -125,7 +126,8 @@ public class WindupWizard implements UIWizard, UICommand
 
         UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();
         WindupProgressMonitor progressMonitor = new WindupProgressMonitorAdapter(uiProgressMonitor);
-        windupService.execute(progressMonitor);
+        WindupProcessorConfig wpConf = new WindupProcessorConfig().setProgressMonitor(progressMonitor).setOutputDirectory(outputFile.toPath());
+        windupService.execute(wpConf);
 
         uiProgressMonitor.done();
 
