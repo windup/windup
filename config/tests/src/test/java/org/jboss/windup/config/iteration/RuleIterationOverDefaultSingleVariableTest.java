@@ -102,12 +102,12 @@ public class RuleIterationOverDefaultSingleVariableTest
         Configuration configuration = provider.getConfiguration(context);
 
         // this should call perform()
-        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.create(configuration).perform(event, evaluationContext);
         Assert.assertEquals(TestSimple1ModelCounter, 1);
         Assert.assertEquals(TestSimple2ModelCounter, 2);
         vertex.asVertex().remove();
         // this should call otherwise()
-        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.create(configuration).perform(event, evaluationContext);
         Assert.assertEquals(TestSimple1ModelCounter, 1);
         Assert.assertEquals(TestSimple2ModelCounter, 4);
 
@@ -134,7 +134,7 @@ public class RuleIterationOverDefaultSingleVariableTest
         Configuration configuration = provider.getConfiguration(context);
 
         // this should call perform()
-        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.create(configuration).perform(event, evaluationContext);
 
     }
 
