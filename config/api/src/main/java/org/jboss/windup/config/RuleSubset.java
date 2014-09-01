@@ -267,22 +267,22 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     }
                 }
             }
-            catch (RuntimeException e)
+            catch (RuntimeException ex)
             {
-                String message = "Error encountered while evaluating rule: " + rule;
+                String message = "\n" + ex.getMessage();
+                
+                message += "\n  Error encountered while evaluating rule: " + rule;
                 if (ruleContext != null)
                 {
                     Object origin = ruleContext.get(RuleMetadata.ORIGIN);
-
                     if (origin != null)
-                        message += " from: " + origin;
+                        message += "\n  From: " + origin;
 
                     Object location = ruleContext.get(org.ocpsoft.rewrite.config.RuleMetadata.PROVIDER_LOCATION);
-
                     if (location != null)
-                        message += " defined in: " + location;
+                        message += "\n  Defined in: " + location;
                 }
-                throw new WindupException(message, e);
+                throw new WindupException(message, ex);
             }
         }
         
