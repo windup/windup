@@ -32,24 +32,20 @@ public class WindupProcessorImpl implements WindupProcessor
     private GraphConfigurationLoader graphConfigurationLoader;
 
     @Override
-    public void setOutputDirectory(Path outputDirectory)
-    {
-        Path graphDirectory = outputDirectory.resolve("graph");
-        graphContext.setGraphDirectory(graphDirectory);
-    }
-    
-    
-    @Override
     public void execute( WindupProcessorConfig config )
     {
-        final GraphContext context = graphContext;
+        if( config.getOutputDirectory() != null ){
+            Path graphDir = config.getOutputDirectory().resolve("graph");
+            this.graphContext.setGraphDirectory(graphDir);
+        }
+        
         final Configuration ocpConfig;
         if( config.getRuleProviderFilter() != null )
-            ocpConfig = graphConfigurationLoader.loadConfiguration(context, config.getRuleProviderFilter());
+            ocpConfig = graphConfigurationLoader.loadConfiguration(this.graphContext, config.getRuleProviderFilter());
         else 
-            ocpConfig = graphConfigurationLoader.loadConfiguration(context);
+            ocpConfig = graphConfigurationLoader.loadConfiguration(this.graphContext);
         
-        GraphRewrite event = new GraphRewrite(context);
+        GraphRewrite event = new GraphRewrite(this.graphContext);
         
         final RuleSubset ruleSubset = RuleSubset.create(ocpConfig);
 

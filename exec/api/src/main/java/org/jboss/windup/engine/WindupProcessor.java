@@ -17,15 +17,13 @@ import org.jboss.windup.config.WindupRuleProvider;
 public interface WindupProcessor
 {
     /**
-     * Sets the output directory (directory containing the graph, reporting files, and other data)
-     */
-    void setOutputDirectory(Path outputDirectory);
-
-    /**
      * Executes Windup according to given configuration.
      */
     void execute(WindupProcessorConfig config);
 
+    
+    // Convenience / deprecated methods.
+    
     /**
      * Executes Windup (including all rules)
      * 

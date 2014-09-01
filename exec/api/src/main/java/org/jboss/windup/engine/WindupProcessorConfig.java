@@ -1,5 +1,6 @@
 package org.jboss.windup.engine;
 
+import java.nio.file.Path;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
 
@@ -13,11 +14,24 @@ public class WindupProcessorConfig {
     private Predicate<WindupRuleProvider> ruleProviderFilter;
     
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
+    
+    private Path outputDirectory;
 
 
     
     //<editor-fold defaultstate="collapsed" desc="get/set">
     
+    public Path getOutputDirectory()
+    {
+        return outputDirectory;
+    }
+
+    public void setOutputDirectory(Path outputDirectory)
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+
     public Predicate<WindupRuleProvider> getRuleProviderFilter()
     {
         return ruleProviderFilter;
