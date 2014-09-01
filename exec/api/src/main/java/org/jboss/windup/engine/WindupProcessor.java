@@ -22,23 +22,36 @@ public interface WindupProcessor
     void setOutputDirectory(Path outputDirectory);
 
     /**
+     * Executes Windup according to given configuration.
+     */
+    void execute(WindupProcessorConfig config);
+
+    /**
      * Executes Windup (including all rules)
+     * 
+     * @deprecated  Use execute( WindupProcessorConfig ).
      */
     void execute();
 
     /**
      * Executes Windup (including all rules). Progress will be reported using the given {@link WindupProgressMonitor}
+     * 
+     * @deprecated  Use execute( WindupProcessorConfig ).
      */
     void execute(WindupProgressMonitor progressMonitor);
 
     /**
      * Executes only the rules contained in providers that are accepted by the provided ruleProviderFilter.
+     * 
+     * @deprecated  Use execute( WindupProcessorConfig ).
      */
     void execute(Predicate<WindupRuleProvider> ruleProviderFilter);
 
     /**
      * Executes only the rules contained in providers that are accepted by the provided {@link Predicate}. Progress will
      * be reported using the given {@link WindupProgressMonitor}.
+     * 
+     * @deprecated  Use execute( WindupProcessorConfig ).
      */
     void execute(Predicate<WindupRuleProvider> ruleProviderFilter, WindupProgressMonitor progressMonitor);
 }

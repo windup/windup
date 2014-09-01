@@ -1,5 +1,6 @@
 package org.jboss.windup.exec;
 
+import org.jboss.windup.engine.WindupProcessorConfig;
 import java.nio.file.Path;
 
 import javax.inject.Inject;
@@ -36,42 +37,62 @@ public class WindupProcessorImpl implements WindupProcessor
         Path graphDirectory = outputDirectory.resolve("graph");
         graphContext.setGraphDirectory(graphDirectory);
     }
+    
+    
+    @Override
+    public void execute( WindupProcessorConfig config )
+    {
+        final GraphContext context = graphContext;
+        final Configuration ocpConfig;
+        if( config.getRuleProviderFilter() != null )
+            ocpConfig = graphConfigurationLoader.loadConfiguration(context, config.getRuleProviderFilter());
+        else 
+            ocpConfig = graphConfigurationLoader.loadConfiguration(context);
+        
+        GraphRewrite event = new GraphRewrite(context);
+        
+        final RuleSubset ruleSubset = RuleSubset.create(ocpConfig);
 
+        if( config.getProgressMonitor() != null )
+            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(config.getProgressMonitor(), ocpConfig));
+        
+        ruleSubset.perform(event, createEvaluationContext());
+    }
+
+    
+    
+    // Convenience/deprecated methods.
+    
     @Override
     public void execute()
     {
-        execute(new NullWindupProgressMonitor());
+        execute( new WindupProcessorConfig() );
     }
 
     @Override
     public void execute(Predicate<WindupRuleProvider> ruleProviderFilter)
     {
-        execute(ruleProviderFilter, new NullWindupProgressMonitor());
+        WindupProcessorConfig conf = new WindupProcessorConfig().setRuleProviderFilter(ruleProviderFilter);
+        execute( conf );
     }
 
     @Override
-    public void execute(final WindupProgressMonitor progressMonitor)
+    public void execute(final WindupProgressMonitor monitor)
     {
-        final GraphContext context = graphContext;
-        final Configuration configuration = graphConfigurationLoader.loadConfiguration(context);
-        GraphRewrite event = new GraphRewrite(context);
-
-        RuleSubset ruleSubset = RuleSubset.create(configuration);
-        ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(progressMonitor, configuration));
-        ruleSubset.perform(event, createEvaluationContext());
+        WindupProcessorConfig conf = new WindupProcessorConfig().setProgressMonitor(monitor);
+        this.execute(conf);
     }
 
     /**
      * Only runs certain rule providers - based on given filter.
      */
     @Override
-    public void execute(Predicate<WindupRuleProvider> ruleProviderFilter, WindupProgressMonitor progressMonitor)
+    public void execute(Predicate<WindupRuleProvider> ruleProviderFilter, WindupProgressMonitor monitor)
     {
-        final GraphContext context = graphContext;
-        final Predicate<WindupRuleProvider> ruleProviderFilter1 = ruleProviderFilter;
-        final Configuration configuration = graphConfigurationLoader.loadConfiguration(context, ruleProviderFilter1);
-        GraphRewrite event = new GraphRewrite(context);
-        RuleSubset.create(configuration).perform(event, createEvaluationContext());
+        WindupProcessorConfig conf = new WindupProcessorConfig()
+                .setRuleProviderFilter(ruleProviderFilter)
+                .setProgressMonitor(monitor);
+        this.execute(conf);
     }
 
     private DefaultEvaluationContext createEvaluationContext()
