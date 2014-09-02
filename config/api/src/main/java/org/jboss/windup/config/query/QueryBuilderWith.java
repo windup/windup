@@ -9,6 +9,11 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 public interface QueryBuilderWith extends ConditionBuilder
 {
     /**
+     * Narrow the query via a {@link QueryGremlinCriterion} in order to execute Gremlin queries.
+     */
+    QueryBuilderPiped piped(QueryGremlinCriterion criterion);
+
+    /**
      * Narrow the query to {@link WindupVertexFrame} instances that contain the given property value.
      */
     QueryBuilderWith withProperty(String property, Object searchValue);

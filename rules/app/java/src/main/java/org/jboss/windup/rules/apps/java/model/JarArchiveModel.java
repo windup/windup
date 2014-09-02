@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ArchiveType;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.XmlFileModel;
 
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -22,7 +22,7 @@ public interface JarArchiveModel extends ArchiveModel
     public Iterable<JarArchiveModel> providesForArchives();
 
     @GremlinGroovy("it.out('childArchiveEntry').out('xmlResourceFacet')")
-    public Iterable<XmlResourceModel> getXmlFiles();
+    public Iterable<XmlFileModel> getXmlFiles();
 
     @GremlinGroovy("it.out('childArchiveEntry').out('manifestFacet')")
     public JarManifestModel getJarManifest();

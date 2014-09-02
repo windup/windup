@@ -20,7 +20,7 @@ import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.maven.dao.MavenModelService;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.XmlFileModel;
 import org.jboss.windup.util.exception.MarshallingException;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -64,13 +64,13 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext arg0)
     {
         ConditionBuilder fileWhen = Query
-                    .find(XmlResourceModel.class)
+                    .find(XmlFileModel.class)
                     .withProperty(FileModel.FILE_NAME, "pom.xml");
 
-        AbstractIterationOperation<XmlResourceModel> evaluatePomFiles = new AbstractIterationOperation<XmlResourceModel>()
+        AbstractIterationOperation<XmlFileModel> evaluatePomFiles = new AbstractIterationOperation<XmlFileModel>()
         {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, XmlResourceModel payload)
+            public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
             {
                 GraphContext graphContext = event.getGraphContext();
                 MavenProjectModel mavenProjectModel = extractMavenProjectModel(graphContext, payload);
@@ -148,7 +148,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
         }
     }
 
-    public MavenProjectModel extractMavenProjectModel(GraphContext context, XmlResourceModel xmlResourceModel)
+    public MavenProjectModel extractMavenProjectModel(GraphContext context, XmlFileModel xmlResourceModel)
     {
         File myFile = xmlResourceModel.asFile();
         Document document = xmlResourceModel.asDocument();
@@ -188,7 +188,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
         {
             // make sure we are associated as a file that provides this maven project information
             boolean found = false;
-            for (XmlResourceModel foundPom : mavenProjectModel.getMavenPom())
+            for (XmlFileModel foundPom : mavenProjectModel.getMavenPom())
             {
                 File foundPomFile = foundPom.asFile();
                 if (foundPomFile.getAbsoluteFile().equals(myFile))

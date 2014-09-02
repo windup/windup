@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -22,7 +24,7 @@ import org.jboss.windup.rules.apps.java.service.DoctypeMetaService;
 import org.jboss.windup.rules.apps.java.service.NamespaceService;
 import org.jboss.windup.rules.apps.xml.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.NamespaceMetaModel;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.XmlFileModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.LocationAwareContentHandler.Doctype;
@@ -32,14 +34,12 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(DiscoverMavenProjectsRuleProvider.class);
+    private static final Logger LOG = Logger.getLogger(DiscoverMavenProjectsRuleProvider.class.getSimpleName());
 
     @Override
     public RulePhase getPhase()
@@ -80,8 +80,8 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
 
     private void addXmlMetaInformation(GraphContext context, FileModel file)
     {
-        DoctypeMetaService docTypeService = new DoctypeMetaService(context);
-        NamespaceService namespaceService = new NamespaceService(context);
+        DoctypeMetaService docTypeService = context.getService(DoctypeMetaModel.class);
+        NamespaceService namespaceService = context.getService(NamespaceMetaModel.class);
 
         // try and read the XML...
         try (InputStream is = file.asInputStream())
@@ -95,7 +95,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
 
             // if this is successful, then we know it is a proper XML file.
             // set it to the graph as an XML file.
-            XmlResourceModel xmlResourceModel = GraphService.addTypeToModel(context, file, XmlResourceModel.class);
+            XmlFileModel xmlResourceModel = GraphService.addTypeToModel(context, file, XmlFileModel.class);
 
             // get and index by the root tag.
             String tagName = $(parsedDocument).tag();
@@ -136,11 +136,13 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
         }
         catch (SAXException e)
         {
-            LOG.warn("Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(), e);
+            LOG.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(),
+                        e);
         }
         catch (IOException e)
         {
-            LOG.warn("Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(), e);
+            LOG.log(Level.WARNING,
+                        "Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(), e);
         }
         catch (Exception e)
         {

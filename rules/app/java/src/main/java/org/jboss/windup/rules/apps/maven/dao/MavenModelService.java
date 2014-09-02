@@ -9,7 +9,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
-import org.jboss.windup.rules.apps.xml.XmlResourceModel;
+import org.jboss.windup.rules.apps.xml.XmlFileModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
@@ -47,14 +47,14 @@ public class MavenModelService extends GraphService<MavenProjectModel>
         return groupId + ":" + artifactId + ":" + version;
     }
 
-    public boolean isMavenConfiguration(XmlResourceModel resource)
+    public boolean isMavenConfiguration(XmlFileModel resource)
     {
         return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet")
                     .has(WindupVertexFrame.TYPE_PROP, this.getTypeValueForSearch()).back("facet")
                     .iterator().hasNext();
     }
 
-    public MavenProjectModel getMavenConfigurationFromResource(XmlResourceModel resource)
+    public MavenProjectModel getMavenConfigurationFromResource(XmlFileModel resource)
     {
         @SuppressWarnings("unchecked")
         Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))

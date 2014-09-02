@@ -15,31 +15,39 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("XmlResource")
-public interface XmlResourceModel extends FileModel
+@TypeValue(XmlFileModel.TYPE)
+public interface XmlFileModel extends FileModel
 {
-    @Adjacency(label = "doctype", direction = Direction.OUT)
+    public static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
+    public static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed via XPath";
+
+    public static final String ROOT_TAG_NAME = "rootTagName";
+    public static final String NAMESPACE = "namespace";
+    public static final String DOCTYPE = "doctype";
+    public static final String TYPE = "XmlFileModel";
+
+    @Adjacency(label = DOCTYPE, direction = Direction.OUT)
     public void setDoctype(DoctypeMetaModel doctype);
 
-    @Adjacency(label = "doctype", direction = Direction.OUT)
+    @Adjacency(label = DOCTYPE, direction = Direction.OUT)
     public DoctypeMetaModel getDoctype();
 
-    @Adjacency(label = "namespace", direction = Direction.OUT)
+    @Adjacency(label = NAMESPACE, direction = Direction.OUT)
     public void addNamespace(NamespaceMetaModel namespace);
 
-    @Adjacency(label = "namespace", direction = Direction.OUT)
+    @Adjacency(label = NAMESPACE, direction = Direction.OUT)
     public Iterable<NamespaceMetaModel> getNamespaces();
 
-    @Property("rootTagName")
+    @Property(ROOT_TAG_NAME)
     public String getRootTagName();
 
-    @Property("rootTagName")
+    @Property(ROOT_TAG_NAME)
     public void setRootTagName(String rootTagName);
 
     @JavaHandler
     public Document asDocument();
 
-    abstract class Impl implements XmlResourceModel, JavaHandlerContext<Vertex>
+    abstract class Impl implements XmlFileModel, JavaHandlerContext<Vertex>
     {
 
         @Override
