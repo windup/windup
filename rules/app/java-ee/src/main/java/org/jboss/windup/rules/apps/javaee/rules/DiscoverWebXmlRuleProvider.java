@@ -20,7 +20,6 @@ import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.service.ClassificationService;
-import org.jboss.windup.rules.apps.java.scan.provider.DiscoverMavenProjectsRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.provider.DiscoverXmlFilesRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
@@ -47,7 +46,7 @@ import org.xml.sax.SAXException;
  */
 public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverMavenProjectsRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getSimpleName());
 
     private static final String dtdRegex = "(?i).*web.application.*";
 
