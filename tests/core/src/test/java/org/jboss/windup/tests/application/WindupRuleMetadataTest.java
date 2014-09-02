@@ -12,7 +12,7 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleMetadata;
 import org.jboss.windup.rules.apps.java.JavaRulesMetadata;
-import org.jboss.windup.rules.apps.javadecompiler.DecompilerRuleMetadata;
+import org.jboss.windup.rules.apps.legacy.java.JavaEERulesMetadata;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +26,8 @@ public class WindupRuleMetadataTest
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:java-decompiler"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java-ee"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
@@ -39,8 +39,8 @@ public class WindupRuleMetadataTest
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java-ee"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
@@ -67,10 +67,10 @@ public class WindupRuleMetadataTest
                 foundJavaRulesMeta = true;
                 Assert.assertEquals(JavaRulesMetadata.RULE_SET_ID, m.getRuleSetID());
             }
-            else if (m instanceof DecompilerRuleMetadata)
+            else if (m instanceof JavaEERulesMetadata)
             {
                 foundDecompilerRulesMeta = true;
-                Assert.assertEquals(DecompilerRuleMetadata.RULE_SET_ID, m.getRuleSetID());
+                Assert.assertEquals(JavaEERulesMetadata.RULE_SET_ID, m.getRuleSetID());
             }
         }
 

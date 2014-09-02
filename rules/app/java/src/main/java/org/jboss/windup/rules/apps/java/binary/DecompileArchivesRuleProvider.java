@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javadecompiler;
+package org.jboss.windup.rules.apps.java.binary;
 
 import java.util.List;
 import java.util.logging.Logger;
