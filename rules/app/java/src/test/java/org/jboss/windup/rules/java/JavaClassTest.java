@@ -35,7 +35,6 @@ import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -43,7 +42,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-@Ignore
 public class JavaClassTest
 {
     @Deployment
