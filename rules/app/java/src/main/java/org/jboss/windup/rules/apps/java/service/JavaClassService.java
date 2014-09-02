@@ -20,6 +20,11 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
+/**
+ * 
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ */
 public class JavaClassService extends GraphService<JavaClassModel>
 {
     public JavaClassService()
