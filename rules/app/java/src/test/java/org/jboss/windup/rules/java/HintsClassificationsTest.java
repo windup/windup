@@ -54,7 +54,6 @@ public class HintsClassificationsTest
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:java-decompiler", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
@@ -67,7 +66,6 @@ public class HintsClassificationsTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -132,7 +130,8 @@ public class HintsClassificationsTest
             }
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
-            GraphService<ClassificationModel> classificationService = new GraphService<>(context, ClassificationModel.class);
+            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
+                        ClassificationModel.class);
 
             GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
             Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
@@ -144,19 +143,19 @@ public class HintsClassificationsTest
             List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
             Assert.assertEquals(1, classifications.size());
             Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
-            int fileModelsCounter=0;
-            for(FileModel f : fileModels) {
+            int fileModelsCounter = 0;
+            for (FileModel f : fileModels)
+            {
                 filePath = f.getFilePath();
                 fileModelsCounter++;
             }
-           // this falls right now, because there is a file multiple times: Assert.assertEquals(2, fileModelsCounter);
+            // this falls right now, because there is a file multiple times: Assert.assertEquals(2, fileModelsCounter);
         }
         finally
         {
             FileUtils.deleteDirectory(outputPath.toFile());
         }
 
-        
     }
 
     @Singleton

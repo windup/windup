@@ -6,24 +6,27 @@
 </#macro>
  
 <#macro applicationReportRenderer applicationReport>
-	<tr><td><a href="${applicationReport.reportFilename}">${applicationReport.projectModel.name}</a></td>
-		<td>
-			<#-- <#list application.technologyTags as tag>
-		    <@tagRenderer tag>${tag.title}</@tagRenderer>
-		    </#list>
-		  -->
-		</td>
-		<td>
-		  <#-- ${application.effort.name()?capitalize} -->
-		</td>
-		<td>
-		  <#--
-			<#list application.issueTags as tag>
-		    <@tagRenderer tag>${tag.title}</@tagRenderer>
-		    </#list>
-		  -->
-		</td>
+  <#if applicationReport.displayInApplicationList>
+	<tr>
+	   <td><a href="${applicationReport.reportFilename}">${applicationReport.projectModel.name}</a></td>
+	       <td>
+      <#-- <#list application.technologyTags as tag>
+        <@tagRenderer tag>${tag.title}</@tagRenderer>
+        </#list>
+      -->
+    </td>
+    <td>
+      <#-- ${application.effort.name()?capitalize} -->
+    </td>
+    <td>
+      <#--
+      <#list application.issueTags as tag>
+        <@tagRenderer tag>${tag.title}</@tagRenderer>
+        </#list>
+      -->
+   </td>
 	</tr>
+	</#if>
 </#macro>
 
   <head>

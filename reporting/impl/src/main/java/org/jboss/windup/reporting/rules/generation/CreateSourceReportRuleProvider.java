@@ -7,17 +7,18 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.SourceTypeResolver;
+import org.jboss.windup.reporting.model.FreeMarkerSourceReportModel;
 import org.jboss.windup.reporting.model.ReportFileModel;
+import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
-import org.jboss.windup.reporting.service.ReportModelService;
+import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportModelService;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -34,8 +35,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class CreateSourceReportRuleProvider extends WindupRuleProvider
 {
+    private static final String TEMPLATE = "/reports/templates/source.ftl";
+
     @Inject
-    private ReportModelService reportModelService;
+    private ReportService reportService;
 
     @Inject
     private SourceReportModelService sourceReportService;
@@ -69,17 +72,21 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
                 sm.setSourceFileModel(reportFileModel);
                 sm.setReportName(payload.getPrettyPath());
                 sm.setSourceType(resolveSourceType(payload));
-                reportModelService.setUniqueFilename(sm, payload.getFileName(), "html");
+                
+                sm.setReportName(payload.getFileName());
+                sm.setTemplatePath(TEMPLATE);
+                sm.setTemplateType(TemplateType.FREEMARKER);
+                
+                GraphService.addTypeToModel(event.getGraphContext(), sm, FreeMarkerSourceReportModel.class);
+                
+                reportService.setUniqueFilename(sm, payload.getFileName(), "html");
             }
         };
 
         return ConfigurationBuilder.begin()
             .addRule()
             .when(finder)
-            .perform(
-                Iteration.over()
-                .perform(addSourceReport).endIteration()
-            );
+            .perform(addSourceReport);
     }
     // @formatter:on
 

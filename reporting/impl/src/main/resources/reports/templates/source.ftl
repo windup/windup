@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<#assign applicationReportIndexModel = projectModelToApplicationIndex(sourceReport.sourceFileModel.projectModel)>
+<#assign applicationReportIndexModel = projectModelToApplicationIndex(reportModel.sourceFileModel.projectModel)>
 
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Source Report for ${sourceReport.reportName}</title>
+    <title>Source Report for ${reportModel.reportName}</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
 	  <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
@@ -29,7 +29,7 @@
             <h1>
               Source Report
               <span class="slash">/</span>
-              <small style="margin-left: 20px; font-weight: 100;">${sourceReport.sourceFileModel.prettyPath}</small>
+              <small style="margin-left: 20px; font-weight: 100;">${reportModel.sourceFileModel.prettyPath}</small>
             </h1>
             <div class="navbar navbar-default">
             <div class="navbar-header">
@@ -62,7 +62,7 @@
       <h3>Classification</h3>
       
       <ul>
-      <#list sourceReport.sourceFileModel.classificationModels.iterator() as classificationLineItem>
+      <#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
         <li>
           ${classificationLineItem.classification!""}
           <#if classificationLineItem.description??>
@@ -83,7 +83,7 @@
     </div>
 
 	<pre id='source'><#t><#rt>
-		${sourceReport.sourceBody?html}<#t><#rt>
+		${reportModel.sourceBody?html}<#t><#rt>
 	</pre><#t><#rt>
 	
     </div> <!-- /container -->
@@ -101,15 +101,15 @@
 	    
 	<script type='text/javascript'>
 		$(document).ready(function(){
-			$('pre').snippet('${sourceReport.sourceType}',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '${sourceReport.sourceBlock}' });
+			$('pre').snippet('${reportModel.sourceType}',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '${reportModel.sourceBlock}' });
 	
 	
-		<#list sourceReport.sourceFileModel.inlineHints.iterator() as hintLine>
+		<#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine>
 			<#assign lineNumber = hintLine.lineNumber>
 			$("<div id='${lineNumber?c}-inlines' class='inline-source-hint-group'/>").appendTo('ol.snippet-num li:nth-child(${lineNumber?c})');
 		</#list>
 		
-		<#list sourceReport.sourceFileModel.inlineHints.iterator() as hintLine >
+		<#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine >
 			<#assign lineNumber = hintLine.lineNumber>
 			
 			<#compress>

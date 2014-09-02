@@ -19,9 +19,9 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleProvider
+public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRuleProvider
 {
-    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
+    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/non_classified_files.ftl";
 
     @Inject
     private ReportService reportService;
@@ -67,16 +67,16 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
     {
         ApplicationReportModel applicationReportModel = context.getFramed().addVertex(null,
                     ApplicationReportModel.class);
-        applicationReportModel.setReportPriority(100);
+        applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("Overview");
+        applicationReportModel.setReportName("Unclassified Files");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-        applicationReportModel.setDisplayInApplicationList(true);
+        applicationReportModel.setDisplayInApplicationList(false);
 
         // Set the filename for the report
-        reportService.setUniqueFilename(applicationReportModel, projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "nonclassifiedfiles_" + projectModel.getName(), "html");
 
         return applicationReportModel;
     }

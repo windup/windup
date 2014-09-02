@@ -1,7 +1,8 @@
 package org.jboss.windup.reporting.query;
 
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.query.QueryGremlinCriterion;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -11,24 +12,30 @@ import org.jboss.windup.reporting.model.FileLocationModel;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.PipeFunction;
 
 /**
- * This provides a helper class that can be used in a Windup Query call to execute a Gremlin search returning all
- * FileModels that have associated {@link FileLocationModel}s or @{link ClassificationModel}s.
+ * This provides a helper class that can be used execute a Gremlin search returning all FileModels that do not have
+ * associated {@link FileLocationModel}s or @{link ClassificationModel}s.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
  */
-public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterion
+public class FindFilesNotClassifiedOrHintedGremlinCriterion
 {
     @SuppressWarnings("unchecked")
-    @Override
-    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+    public Iterable<Vertex> query(GraphContext context, Iterable<Vertex> initialVertices)
     {
-        GraphContext context = event.getGraphContext();
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(initialVertices);
+
+        final Set<Vertex> allClassifiedOrHintedVertices = new HashSet<>();
 
         // create a pipeline to get all blacklisted items
         GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
                     context.getQuery().type(FileModel.class).vertices());
         hintPipeline.as("fileModel1").in(FileLocationModel.FILE_MODEL)
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileLocationModel.TYPE).back("fileModel1");
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileLocationModel.TYPE)
+                    .back("fileModel1");
+        hintPipeline.fill(allClassifiedOrHintedVertices);
 
         // create a pipeline to get all items with attached classifications
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
@@ -37,8 +44,17 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE)
                     .back("fileModel2");
+        classificationPipeline.fill(allClassifiedOrHintedVertices);
 
-        // combine these to get all file models that have either classifications or blacklists
-        pipeline.or(hintPipeline, classificationPipeline);
+        pipeline.filter(new PipeFunction<Vertex, Boolean>()
+        {
+            @Override
+            public Boolean compute(Vertex argument)
+            {
+                return !allClassifiedOrHintedVertices.contains(argument);
+            }
+        });
+
+        return pipeline;
     }
 }
