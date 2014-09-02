@@ -54,7 +54,13 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
         
         
         <dependency>
@@ -85,6 +91,24 @@
             <groupId>org.eclipse.core</groupId>
             <artifactId>org.eclipse.core.resources</artifactId>
             <version>3.6.0.v20100526-0737</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>furnace-test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-furnace-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
         </dependency>
     
     </dependencies>

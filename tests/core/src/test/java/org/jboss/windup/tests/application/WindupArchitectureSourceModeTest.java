@@ -1,6 +1,7 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
+import java.util.Iterator;
 
 import javax.inject.Inject;
 
@@ -13,6 +14,10 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
+import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
+import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -25,6 +30,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:java-decompiler"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java-ee"),
                 @AddonDependency(name = "org.jboss.windup.utils:utils"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
@@ -41,6 +47,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java-ee"),
                                 AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
@@ -60,5 +67,36 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     {
         // The test-files folder in the project root dir.
         super.runTest(processor, graphContext, "../../test-files/src_example", true);
+
+        validateWebXmlReferences();
+    }
+
+    /**
+     * Validate that a web.xml file was found, and that the metadata was extracted correctly
+     */
+    private void validateWebXmlReferences()
+    {
+        WebXmlService webXmlService = new WebXmlService(graphContext);
+        Iterator<WebXmlModel> models = webXmlService.findAll().iterator();
+
+        // There should be at least one file
+        Assert.assertTrue(models.hasNext());
+        WebXmlModel model = models.next();
+
+        // and only one file
+        Assert.assertFalse(models.hasNext());
+
+        Assert.assertEquals("Sample Display Name", model.getDisplayName());
+
+        int numberFound = 0;
+        for (EnvironmentReferenceModel envRefModel : model.getEnvironmentReferences())
+        {
+            Assert.assertEquals("jdbc/myJdbc", envRefModel.getName());
+            Assert.assertEquals("javax.sql.DataSource", envRefModel.getReferenceType());
+            numberFound++;
+        }
+
+        // there is only one env-ref
+        Assert.assertEquals(1, numberFound);
     }
 }

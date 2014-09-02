@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,8 +69,7 @@ public class JavaClassTest
 
         return archive;
     }
-    
-    
+
     @Inject
     TestJavaClassTestRuleProvider provider;
 
@@ -104,12 +104,12 @@ public class JavaClassTest
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + UUID.randomUUID().toString());
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
-       
 
         WindupConfigurationModel config = GraphService.getConfigurationModel(context);
         config.setInputPath(inputPath);
         config.setSourceMode(true);
         config.setOutputPath(outputPath.toString());
+        config.setScanJavaPackageList(Collections.singletonList(""));
 
         try
         {
@@ -134,11 +134,11 @@ public class JavaClassTest
     {
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
-        
+
         @Override
         public RulePhase getPhase()
         {
-            return RulePhase.INITIAL_ANALYSIS;
+            return RulePhase.MIGRATION_RULES;
         }
 
         public int getFirstRuleMatchCount()
