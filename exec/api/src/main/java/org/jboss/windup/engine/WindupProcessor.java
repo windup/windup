@@ -6,8 +6,6 @@
  */
 package org.jboss.windup.engine;
 
-import java.nio.file.Path;
-
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
 

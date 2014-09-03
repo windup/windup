@@ -24,13 +24,13 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
  */
 public class WindupProcessorImpl implements WindupProcessor
 {
-
     @Inject
     private GraphContext graphContext;
 
     @Inject
     private GraphConfigurationLoader graphConfigurationLoader;
 
+    
     @Override
     public void execute( WindupProcessorConfig config )
     {
@@ -62,14 +62,14 @@ public class WindupProcessorImpl implements WindupProcessor
     @Override
     public void execute()
     {
-        execute( new WindupProcessorConfig() );
+        execute(new WindupProcessorConfig());
     }
 
     @Override
     public void execute(Predicate<WindupRuleProvider> ruleProviderFilter)
     {
         WindupProcessorConfig conf = new WindupProcessorConfig().setRuleProviderFilter(ruleProviderFilter);
-        execute( conf );
+        execute(conf);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class FreeMarkerIterationOperationTest
 
         Configuration configuration = provider.getConfiguration(context);
 
-        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.create(configuration).perform(event, evaluationContext);
 
         Path outputFile = tempFolder.resolve("reports").resolve(provider.getOutputFilename());
         String results = FileUtils.readFileToString(outputFile.toFile());

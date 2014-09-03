@@ -49,7 +49,7 @@ public abstract class WindupArchitectureTest
         wpc.setOutputDirectory(outputPath);
         RecordingWindupProgressMonitor progressMonitor = new RecordingWindupProgressMonitor();
         wpc.setProgressMonitor(progressMonitor);
-        processor.execute();
+        processor.execute(wpc);
 
         Assert.assertFalse(progressMonitor.isCancelled());
         Assert.assertTrue(progressMonitor.isDone());

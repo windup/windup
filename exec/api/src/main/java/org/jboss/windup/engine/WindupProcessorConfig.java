@@ -26,9 +26,10 @@ public class WindupProcessorConfig {
         return outputDirectory;
     }
 
-    public void setOutputDirectory(Path outputDirectory)
+    public WindupProcessorConfig setOutputDirectory(Path outputDirectory)
     {
         this.outputDirectory = outputDirectory;
+        return this;
     }
 
 
