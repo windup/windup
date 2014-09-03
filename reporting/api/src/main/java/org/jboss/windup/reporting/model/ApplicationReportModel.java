@@ -17,6 +17,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ApplicationReportModel.TYPE)
 public interface ApplicationReportModel extends ReportModel
 {
+    public static final String DISPLAY_IN_APPLICATION_REPORT_INDEX = "displayInApplicationReportIndex";
+    public static final String DISPLAY_IN_APPLICATION_LIST = "displayInApplicationList";
     public static final String TYPE = "ApplicationReport";
     public static final String REPORT_TO_APPLICATION_NOTE = "reportToApplicationNote";
     public static final String REPORT_TO_PROJECT_MODEL = "reportToProjectModel";
@@ -46,10 +48,30 @@ public interface ApplicationReportModel extends ReportModel
     @Property(REPORT_PRIORITY)
     public void setReportPriority(int priority);
 
-    @Property("displayInApplicationReportIndex")
+    /**
+     * Indicates whether or not to display this in the list of all applications. Usually this would be true for a main
+     * "overview" type report for a particular application, and false for everything else.
+     */
+    @Property(DISPLAY_IN_APPLICATION_LIST)
+    public Boolean getDisplayInApplicationList();
+
+    /**
+     * Indicates whether or not to display this in the list of all applications. Usually this would be true for a main
+     * "overview" type report for a particular application, and false for everything else.
+     */
+    @Property(DISPLAY_IN_APPLICATION_LIST)
+    public void setDisplayInApplicationList(Boolean displayInApplicationList);
+
+    /**
+     * Indicates whether to display this report in the navigation index for the current application.
+     */
+    @Property(DISPLAY_IN_APPLICATION_REPORT_INDEX)
     public Boolean getDisplayInApplicationReportIndex();
 
-    @Property("displayInApplicationReportIndex")
+    /**
+     * Indicates whether to display this report in the navigation index for the current application.
+     */
+    @Property(DISPLAY_IN_APPLICATION_REPORT_INDEX)
     public void setDisplayInApplicationReportIndex(Boolean displayInIndex);
 
     /**

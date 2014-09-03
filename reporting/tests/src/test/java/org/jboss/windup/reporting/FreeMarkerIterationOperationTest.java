@@ -57,7 +57,7 @@ public class FreeMarkerIterationOperationTest
 
     @Inject
     private GraphContext context;
-    
+
     @Inject
     private TestFreeMarkerOperationRuleProvider provider;
 
@@ -74,7 +74,7 @@ public class FreeMarkerIterationOperationTest
 
         RuleSubset.evaluate(configuration).perform(event, evaluationContext);
 
-        Path outputFile = tempFolder.resolve(provider.getOutputFilename());
+        Path outputFile = tempFolder.resolve("reports").resolve(provider.getOutputFilename());
         String results = FileUtils.readFileToString(outputFile.toFile());
         Assert.assertEquals("Test freemarker report", results);
     }

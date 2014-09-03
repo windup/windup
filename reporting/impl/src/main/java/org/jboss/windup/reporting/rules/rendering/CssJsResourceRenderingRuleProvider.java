@@ -31,6 +31,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.service.ReportService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -42,6 +43,8 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
     private Addon addon;
     @Inject
     private Furnace furnace;
+    @Inject
+    private ReportService reportService;
 
     @Override
     public RulePhase getPhase()
@@ -71,7 +74,7 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
 
     private void copyCssResourcesToOutput(String outputDir)
     {
-        Path outputPath = Paths.get(outputDir, "resources");
+        Path outputPath = Paths.get(reportService.getReportDirectory(), "resources");
 
         // iterate through the addons to scan
         for (Addon addonToScan : getAddonsToScan())

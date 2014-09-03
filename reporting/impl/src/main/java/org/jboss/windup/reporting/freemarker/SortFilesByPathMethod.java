@@ -7,8 +7,10 @@ import java.util.List;
 
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.util.exception.WindupException;
 
-import freemarker.ext.beans.StringModel;
+import freemarker.ext.beans.BeanModel;
+import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -49,9 +51,7 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
         }
-        StringModel stringModelArg = (StringModel) arguments.get(0);
-        @SuppressWarnings("unchecked")
-        Iterable<FileModel> fileModelIterable = (Iterable<FileModel>) stringModelArg.getWrappedObject();
+        Iterable<FileModel> fileModelIterable = getList(arguments.get(0));
         List<FileModel> fileModelList = new ArrayList<>();
         for (FileModel fm : fileModelIterable)
         {
@@ -67,6 +67,27 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
                 return filePathComparator.compare(o1.getFilePath(), o2.getFilePath());
             }
         });
+
         return fileModelList;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Iterable<FileModel> getList(Object arg) throws TemplateModelException
+    {
+        if (arg instanceof BeanModel)
+        {
+            BeanModel beanModel = (BeanModel) arg;
+            return (Iterable<FileModel>) beanModel.getWrappedObject();
+        }
+        else if (arg instanceof SimpleSequence)
+        {
+            SimpleSequence simpleSequence = (SimpleSequence) arg;
+            return (Iterable<FileModel>) simpleSequence.toList();
+        }
+        else
+        {
+            throw new WindupException("Unrecognized type passed to: " + getMethodName() + ": "
+                        + arg.getClass().getCanonicalName());
+        }
     }
 }

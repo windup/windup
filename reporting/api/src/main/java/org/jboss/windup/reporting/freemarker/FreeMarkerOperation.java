@@ -15,10 +15,9 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
+import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -82,8 +81,8 @@ public class FreeMarkerOperation extends GraphOperation
     {
         try
         {
-            WindupConfigurationModel windupCfg = GraphService.getConfigurationModel(event.getGraphContext());
-            String outputDir = windupCfg.getOutputPath().getFilePath();
+            ReportService reportService = event.getGraphContext().getService(ReportModel.class);
+            String outputDir = reportService.getReportDirectory();
             Path outputPath = Paths.get(outputDir, outputFilename);
 
             LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \""

@@ -20,10 +20,14 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
+import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -55,8 +59,16 @@ public class InlineHintModelQueryTest
     @Inject
     private GraphContext context;
 
+    @After
+    public void beforeTest()
+    {
+        TitanGraph titanGraph = context.getGraph().getBaseGraph();
+        context.disconnectFromGraph();
+        TitanCleanup.clear(titanGraph);
+    }
+
     @Test
-    public void testQuerying() throws Exception
+    public void testFindingClassifiedFiles() throws Exception
     {
         FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
         f1.setFilePath("/f1");
@@ -139,4 +151,93 @@ public class InlineHintModelQueryTest
         Assert.assertTrue(foundF2);
         Assert.assertTrue(foundF3);
     }
+
+    @Test
+    public void testFindingNonClassifiedFiles() throws Exception
+    {
+        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        f1.setFilePath("/f1");
+        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        f2.setFilePath("/f2");
+        FileModel f3 = context.getFramed().addVertex(null, FileModel.class);
+        f3.setFilePath("/f3");
+        FileModel f4 = context.getFramed().addVertex(null, FileModel.class);
+        f4.setFilePath("/f4");
+        FileModel f5 = context.getFramed().addVertex(null, FileModel.class);
+        f5.setFilePath("/f5");
+        FileModel f6 = context.getFramed().addVertex(null, FileModel.class);
+        f6.setFilePath("/f6");
+        FileModel f7 = context.getFramed().addVertex(null, FileModel.class);
+        f7.setFilePath("/f7");
+
+        InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
+        InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
+        b1.setFile(f1);
+        b1b.setFile(f1);
+
+        InlineHintModel b2 = context.getFramed().addVertex(null, InlineHintModel.class);
+        b2.setFile(f2);
+
+        ClassificationModel c1 = context.getFramed().addVertex(null, ClassificationModel.class);
+        ClassificationModel c1b = context.getFramed().addVertex(null, ClassificationModel.class);
+        c1.addFileModel(f1);
+        c1b.addFileModel(f1);
+
+        ClassificationModel c2 = context.getFramed().addVertex(null, ClassificationModel.class);
+        c2.addFileModel(f3);
+
+        List<Vertex> vertexList = new ArrayList<>();
+        for (Vertex v : context.getQuery().type(FileModel.class).vertices())
+        {
+            vertexList.add(v);
+        }
+
+        // manually execute this criterion (this just adds things to the pipeline)
+        Iterable<Vertex> allFMVertices = context.getQuery().type(FileModel.class).vertices();
+        Iterable<Vertex> fileModelIterable = new FindFilesNotClassifiedOrHintedGremlinCriterion()
+                    .query(context, allFMVertices);
+
+        List<FileModel> fileModels = new ArrayList<>();
+        for (Vertex v : fileModelIterable)
+        {
+            // Explicit cast here insures that the frame returned was actually a FileModel. If it is not, a
+            // ClassCastException will
+            // occur and the test will fail.
+            //
+            // If we called frame(v, FileModel.class) directly, frames would happily force it to be a FileModel
+            // even if the underlying query were returning invalid results.
+            FileModel fm = (FileModel) context.getFramed().frame(v, WindupVertexFrame.class);
+            fileModels.add(fm);
+        }
+
+        boolean foundF4 = false;
+        boolean foundF5 = false;
+        boolean foundF6 = false;
+        boolean foundF7 = false;
+        Assert.assertEquals(4, fileModels.size());
+        for (FileModel fm : fileModels)
+        {
+            if (fm.getFilePath().equals(f4.getFilePath()))
+            {
+                foundF4 = true;
+            }
+            else if (fm.getFilePath().equals(f5.getFilePath()))
+            {
+                foundF5 = true;
+            }
+            else if (fm.getFilePath().equals(f6.getFilePath()))
+            {
+                foundF6 = true;
+            }
+            else if (fm.getFilePath().equals(f7.getFilePath()))
+            {
+                foundF7 = true;
+            }
+        }
+        Assert.assertTrue(foundF4);
+        Assert.assertTrue(foundF5);
+        Assert.assertTrue(foundF6);
+        Assert.assertTrue(foundF7);
+    }
+
 }
