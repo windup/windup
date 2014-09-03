@@ -30,7 +30,6 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:java-decompiler"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java-ee"),
                 @AddonDependency(name = "org.jboss.windup.utils:utils"),
@@ -47,7 +46,6 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:java-decompiler"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java-ee"),
                                 AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
