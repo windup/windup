@@ -2,11 +2,8 @@ package org.jboss.windup.rules.apps.javaee.rules;
 
 import static org.joox.JOOX.$;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -22,7 +19,6 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
-import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.provider.DiscoverXmlFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -35,8 +31,8 @@ import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.xml.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.XmlFileService;
 import org.jboss.windup.util.xml.DoctypeUtils;
-import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.jboss.windup.util.xml.NamespaceUtils;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -44,7 +40,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 /**
  * Discovers ejb-jar.xml files and parses the related metadata
@@ -59,11 +54,11 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
     private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
 
     @Inject
-    private ClassificationService classificationService;
-    @Inject
     private EnvironmentReferenceService environmentReferenceService;
     @Inject
     private JavaClassService javaClassService;
+    @Inject
+    private XmlFileService xmlFileService;
 
     @Override
     public RulePhase getPhase()
@@ -97,7 +92,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
         {
-            Document doc = parseDoc(payload);
+            Document doc = xmlFileService.loadDocumentQuiet(payload);
             if (doc == null)
             {
                 // failed to parse, skip
@@ -106,32 +101,6 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
 
             extractMetadata(event.getGraphContext(), payload, doc);
         }
-    }
-
-    private Document parseDoc(XmlFileModel payload)
-    {
-        try (InputStream is = payload.asInputStream())
-        {
-
-            Document doc = LocationAwareXmlReader.readXML(is);
-            return doc;
-        }
-        catch (SAXException e)
-        {
-            LOG.log(Level.WARNING,
-                        "Failed to parse xml entity: " + payload.getFilePath() + ", due to: " + e.getMessage(),
-                        e);
-            classificationService.attachClassification(payload, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
-                        XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
-        }
-        catch (IOException e)
-        {
-            LOG.log(Level.WARNING,
-                        "Failed to parse xml entity: " + payload.getFilePath() + ", due to: " + e.getMessage(), e);
-            classificationService.attachClassification(payload, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
-                        XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
-        }
-        return null;
     }
 
     private void extractMetadata(GraphContext context, XmlFileModel xmlModel, Document doc)
