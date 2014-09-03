@@ -6,11 +6,9 @@
  */
 package org.jboss.windup.engine;
 
-import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.WindupRuleProvider;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 public interface WindupProcessor
 {
@@ -23,31 +21,7 @@ public interface WindupProcessor
     // Convenience / deprecated methods.
     
     /**
-     * Executes Windup (including all rules)
-     * 
-     * @deprecated  Use execute( WindupProcessorConfig ).
+     * Executes Windup (including all rules).
      */
     void execute();
-
-    /**
-     * Executes Windup (including all rules). Progress will be reported using the given {@link WindupProgressMonitor}
-     * 
-     * @deprecated  Use execute( WindupProcessorConfig ).
-     */
-    void execute(WindupProgressMonitor progressMonitor);
-
-    /**
-     * Executes only the rules contained in providers that are accepted by the provided ruleProviderFilter.
-     * 
-     * @deprecated  Use execute( WindupProcessorConfig ).
-     */
-    void execute(Predicate<WindupRuleProvider> ruleProviderFilter);
-
-    /**
-     * Executes only the rules contained in providers that are accepted by the provided {@link Predicate}. Progress will
-     * be reported using the given {@link WindupProgressMonitor}.
-     * 
-     * @deprecated  Use execute( WindupProcessorConfig ).
-     */
-    void execute(Predicate<WindupRuleProvider> ruleProviderFilter, WindupProgressMonitor progressMonitor);
 }

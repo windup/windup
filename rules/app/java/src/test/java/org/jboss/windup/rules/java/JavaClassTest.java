@@ -25,6 +25,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.PackageModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -114,7 +115,8 @@ public class JavaClassTest
 
         try
         {
-            processor.execute();
+            // TODO: Consolidate the config - e.g. the outputPath is now set at 2 places.
+            processor.execute(new WindupProcessorConfig().setOutputDirectory(outputPath));
         }
         catch (Exception e)
         {

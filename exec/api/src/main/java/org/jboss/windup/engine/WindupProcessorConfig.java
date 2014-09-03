@@ -6,8 +6,9 @@ import org.jboss.windup.config.WindupRuleProvider;
 
 
 /**
- *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * Configuration of WindupProcessor.
+ * 
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 public class WindupProcessorConfig {
 
@@ -20,12 +21,15 @@ public class WindupProcessorConfig {
 
     
     //<editor-fold defaultstate="collapsed" desc="get/set">
-    
+
     public Path getOutputDirectory()
     {
         return outputDirectory;
     }
 
+    /**
+     * Sets the directory to put the output to (migration report, temporary files, exported graph data...).
+     */
     public WindupProcessorConfig setOutputDirectory(Path outputDirectory)
     {
         this.outputDirectory = outputDirectory;
@@ -38,7 +42,9 @@ public class WindupProcessorConfig {
         return ruleProviderFilter;
     }
     
-    
+    /**
+     * A filter to limit which rule providers' rules will be executed.
+     */
     public WindupProcessorConfig setRuleProviderFilter(Predicate<WindupRuleProvider> ruleProviderFilter)
     {
         this.ruleProviderFilter = ruleProviderFilter;
@@ -51,7 +57,9 @@ public class WindupProcessorConfig {
         return progressMonitor;
     }
     
-    
+    /**
+     * A progress monitor which will get notification of the rule execution progress.
+     */
     public WindupProcessorConfig setProgressMonitor(WindupProgressMonitor progressMonitor)
     {
         this.progressMonitor = progressMonitor;
