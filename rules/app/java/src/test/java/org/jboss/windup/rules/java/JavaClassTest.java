@@ -43,7 +43,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-@Ignore
 public class JavaClassTest
 {
     @Deployment
@@ -175,29 +174,25 @@ public class JavaClassTest
                         
                         .addRule()
                         .when(JavaClass.references("org.jboss.forge.furnace.*").inFile(".*").at(TypeReferenceLocation.IMPORT))
-                        .perform(Iteration.over()
-                                    .perform(new AbstractIterationOperation<TypeReferenceModel>()
+                        .perform(new AbstractIterationOperation<TypeReferenceModel>()
                                                 {
                                         @Override
                                         public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
                                         {
                                             firstRuleMatchCount++;
                                         }
-                                    })
-                                    .endIteration()
+                                    }
                         )
                         .addRule()
                         .when(JavaClass.references("org.jboss.forge.furnace.*").inFile(".*JavaClassTest.*").at(TypeReferenceLocation.IMPORT))
-                        .perform(Iteration.over()
-                                    .perform(new AbstractIterationOperation<TypeReferenceModel>()
+                        .perform(new AbstractIterationOperation<TypeReferenceModel>()
                                                 {
                                         @Override
                                         public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
                                         {
                                             secondRuleMatchCount++;
                                         }
-                                    })
-                                    .endIteration()
+                                    }
                         );
         }
         // @formatter:on
