@@ -131,7 +131,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         newFileModel.setParentArchive(archiveModel);
 
         // add all unzipped files, and make sure their parent archive is set
-        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, newFileModel, false);
+        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, newFileModel);
     }
 
     /**
@@ -143,7 +143,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
      */
     private void recurseAndAddFiles(GraphContext context, Path tempFolder, FileModelService fileService,
                 ArchiveModel archiveModel,
-                FileModel parentFileModel, boolean setParentFile)
+                FileModel parentFileModel)
     {
         File fileReference = parentFileModel.asFile();
 
@@ -154,15 +154,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             {
                 for (File subFile : subFiles)
                 {
-                    FileModel subFileModel;
-                    if (setParentFile)
-                    {
-                        subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
-                    }
-                    else
-                    {
-                        subFileModel = fileService.createByFilePath(subFile.getAbsolutePath());
-                    }
+                    FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
                     subFileModel.setParentArchive(archiveModel);
 
                     if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
@@ -178,7 +170,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 
                     if (subFile.isDirectory())
                     {
-                        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, subFileModel, true);
+                        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, subFileModel);
                     }
                 }
             }

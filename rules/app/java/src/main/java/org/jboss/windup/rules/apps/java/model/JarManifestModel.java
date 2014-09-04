@@ -1,29 +1,24 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import java.util.Set;
-
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("JarManifestMeta")
+/**
+ * Contains information from the META-INF/MANIFEST.MF file within an archive.
+ */
+@TypeValue(JarManifestModel.TYPE)
 public interface JarManifestModel extends FileModel
 {
-    @Adjacency(label = "archive", direction = Direction.IN)
-    public void setJarArchive(final JarArchiveModel archive);
+    public static final String TYPE = "JarManifestModel";
+    public static final String ARCHIVE = "archive";
 
-    @Adjacency(label = "archive", direction = Direction.IN)
-    public JarArchiveModel getJarArchive();
+    @Adjacency(label = ARCHIVE, direction = Direction.IN)
+    public void setArchive(final ArchiveModel archive);
 
-    @JavaHandler
-    public String getProperty(String property);
-
-    @JavaHandler
-    public void setProperty(String propertyName, String obj);
-
-    @JavaHandler
-    public Set<String> keySet();
+    @Adjacency(label = ARCHIVE, direction = Direction.IN)
+    public ArchiveModel getArchive();
 }

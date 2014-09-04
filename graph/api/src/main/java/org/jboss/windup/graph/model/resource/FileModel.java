@@ -63,7 +63,7 @@ public interface FileModel extends ResourceModel
 
     @Property(MD5_HASH)
     public void setMD5Hash(String md5Hash);
-    
+
     @Property(SHA1_HASH)
     public String getSHA1Hash();
 
@@ -135,7 +135,16 @@ public interface FileModel extends ResourceModel
             else
             {
                 FileModel projectModelFileModel = projectModel.getRootFileModel();
-                Path projectPath = Paths.get(projectModelFileModel.getFilePath());
+                Path projectPath;
+                if (projectModelFileModel instanceof ArchiveModel)
+                {
+                    ArchiveModel archiveModelForProject = (ArchiveModel) projectModelFileModel;
+                    projectPath = Paths.get(archiveModelForProject.getUnzippedDirectory().getFilePath());
+                }
+                else
+                {
+                    projectPath = Paths.get(projectModelFileModel.getFilePath());
+                }
 
                 List<String> paths = generatePathList(projectPath);
                 return generatePathString(paths);
@@ -191,7 +200,6 @@ public interface FileModel extends ResourceModel
 
                 if (fileModel.getParentFile() != null)
                 {
-
                     FileModel parent = fileModel.getParentFile();
                     appendPath(paths, stopPath, parent);
                 }
