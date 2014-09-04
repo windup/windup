@@ -13,7 +13,7 @@
 	<tr>
 	  <td>
 	     <a href="${sourceReportModel.reportFilename}">
-	       ${fileModel.prettyPathWithinProject}
+	       ${getPrettyPathForFile(fileModel)}
 	     </a>
 	  </td>
 		<td>

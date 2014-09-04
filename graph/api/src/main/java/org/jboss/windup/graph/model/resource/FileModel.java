@@ -23,6 +23,10 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * Represents a File on disk
+ * 
+ */
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
 {
@@ -42,31 +46,60 @@ public interface FileModel extends ResourceModel
     public static final String FILE_PATH = "filePath";
     public static final String IS_DIRECTORY = "isDirectory";
 
+    /**
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
+     * to "file.txt"
+     */
     @Property(FILE_NAME)
     public String getFileName();
 
+    /**
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
+     * to "file.txt"
+     */
     @Property(FILE_NAME)
     public void setFileName(String filename);
 
+    /**
+     * Contains the full path to the file (eg, /tmp/foo/bar/file.txt)
+     */
     @Property(FILE_PATH)
     public String getFilePath();
 
+    /**
+     * Contains the full path to the file (eg, /tmp/foo/bar/file.txt)
+     */
     // implemented via a handler that makes sure the isDirectory property is set as well
     @JavaHandler
     public void setFilePath(String filePath);
 
+    /**
+     * Indicates whether the file is a directory or not
+     */
     @Property(IS_DIRECTORY)
     public boolean isDirectory();
 
+    /**
+     * Contains a MD5 Hash of the file
+     */
     @Property(MD5_HASH)
     public String getMD5Hash();
 
+    /**
+     * Contains a MD5 Hash of the file
+     */
     @Property(MD5_HASH)
     public void setMD5Hash(String md5Hash);
 
+    /**
+     * Contains a SHA1 Hash of the file
+     */
     @Property(SHA1_HASH)
     public String getSHA1Hash();
 
+    /**
+     * Contains a SHA1 Hash of the file
+     */
     @Property(SHA1_HASH)
     public void setSHA1Hash(String sha1Hash);
 
@@ -76,6 +109,9 @@ public interface FileModel extends ResourceModel
     @Adjacency(label = PARENT_FILE, direction = Direction.OUT)
     public FileModel getParentFile();
 
+    /**
+     * Parent directory
+     */
     @Adjacency(label = PARENT_FILE, direction = Direction.OUT)
     public void setParentFile(FileModel parentFile);
 
@@ -95,30 +131,49 @@ public interface FileModel extends ResourceModel
 
     /**
      * Indicates the archive that contained this file
-     * 
-     * @return
      */
     @Adjacency(label = ARCHIVE_FILES, direction = Direction.IN)
     public ArchiveModel getParentArchive();
 
+    /**
+     * Sets the archive that contained this file
+     */
     @Adjacency(label = ARCHIVE_FILES, direction = Direction.IN)
     public void setParentArchive(ArchiveModel parentArchive);
 
+    /**
+     * Gets the ProjectModel that this file is a part of
+     */
     @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
     public ProjectModel getProjectModel();
 
+    /**
+     * Sets the ProjectModel that this file is a part of
+     */
     @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
     public void setProjectModel(ProjectModel projectModel);
 
+    /**
+     * Gets a {@link File} object representing this file
+     */
     @JavaHandler
     public File asFile() throws RuntimeException;
 
+    /**
+     * Returns an open {@link InputStream} for reading from this file
+     */
     @JavaHandler
     public InputStream asInputStream() throws RuntimeException;
 
+    /**
+     * Returns the path of this file within the archive (including all subarchives, etc)
+     */
     @JavaHandler
     public String getPrettyPath();
 
+    /**
+     * Returns the path of this file within the parent project (format suitable for reporting)
+     */
     @JavaHandler
     public String getPrettyPathWithinProject();
 
