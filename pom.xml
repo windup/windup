@@ -56,7 +56,6 @@
         <module>ext/xml</module>
         <module>rules</module>
 
-        <module>tinkerpop/titan-lucene</module>
     </modules>
 
     <build>
