@@ -1,21 +1,18 @@
 package org.jboss.windup.graph.dao;
 
-import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 
-import com.thinkaurelius.titan.core.attribute.Cmp;
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
-
+/**
+ * Provides methods for searching, creating, and deleting ArchiveModel Vertices.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ * 
+ */
 public class ArchiveService extends GraphService<ArchiveModel>
 {
     public ArchiveService()
@@ -28,43 +25,43 @@ public class ArchiveService extends GraphService<ArchiveModel>
         super(context, ArchiveModel.class);
     }
 
-    public Iterable<ArchiveModel> findAllRootArchives()
+    /**
+     * Finds the file at the provided path within the archive.
+     * 
+     * Eg, getChildFile(ArchiveModel, "/META-INF/MANIFEST.MF") will return a {@link FileModel} if a file named
+     * /META-INF/MANIFEST.MF exists within the archive
+     * 
+     * This function expects filePath to use "/" characters to index within the archive, regardless of the underlying
+     * operating system platform being used.
+     * 
+     * @return Returns the located {@link FileModel} or null if no file with this path could be located
+     */
+    public FileModel getChildFile(ArchiveModel archiveModel, String filePath)
     {
-        // iterate through all vertices
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getTypedQuery())
-                    // check to see whether there is an edge coming in that links to the resource providing the java
-                    // class model.
-                    .filter(new PipeFunction<Vertex, Boolean>()
-                    {
-                        public Boolean compute(Vertex argument)
-                        {
-                            Iterator<Edge> edges = argument.getEdges(Direction.IN, "child").iterator();
-                            if (!edges.hasNext())
-                            {
-                                return true;
-                            }
-                            // if there aren't two edges, return false.
-                            return false;
-                        }
-                    });
-        return getGraphContext().getFramed().frameVertices(pipeline, ArchiveModel.class);
-    }
+        StringTokenizer stk = new StringTokenizer(filePath, "/");
 
-    public boolean isArchiveResource(ResourceModel resource)
-    {
-        return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("archiveResourceFacet").iterator()
-                    .hasNext();
-    }
+        FileModel currentFileModel = archiveModel.getUnzippedDirectory();
 
-    public ArchiveModel getArchiveFromResource(ResourceModel resource)
-    {
-        Iterator<Vertex> v = (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("archiveResourceFacet")
-                    .iterator();
-        if (v.hasNext())
+        while (stk.hasMoreTokens() && currentFileModel != null)
         {
-            return getGraphContext().getFramed().frame(v.next(), ArchiveModel.class);
-        }
+            String pathElement = stk.nextToken();
 
-        return null;
+            currentFileModel = findFileModel(currentFileModel, pathElement);
+        }
+        return currentFileModel;
+    }
+
+    private FileModel findFileModel(FileModel fm, String pathElement)
+    {
+        FileModel result = null;
+        for (FileModel child : fm.getFilesInDirectory())
+        {
+            if (child.getFileName().equals(pathElement))
+            {
+                result = child;
+                break;
+            }
+        }
+        return result;
     }
 }

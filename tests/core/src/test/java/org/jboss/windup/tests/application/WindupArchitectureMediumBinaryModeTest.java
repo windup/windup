@@ -13,6 +13,9 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.rules.apps.java.model.JarManifestModel;
+import org.jboss.windup.rules.apps.java.service.JarManifestService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,5 +60,30 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     {
         final String path = "../../test-files/Windup1x-javaee-example.war";
         super.runTest(processor, graphContext, path, false);
+
+        validateManifestEntries();
+    }
+
+    private void validateManifestEntries() throws Exception
+    {
+        JarManifestService jarManifestService = new JarManifestService(graphContext);
+        Iterable<JarManifestModel> manifests = jarManifestService.findAll();
+
+        int numberFound = 0;
+        boolean warManifestFound = false;
+        for (JarManifestModel manifest : manifests)
+        {
+            if (manifest.getArchive().getFileName().equals("Windup1x-javaee-example.war"))
+            {
+                Assert.assertEquals("1.0", manifest.asVertex().getProperty("Manifest-Version"));
+                Assert.assertEquals("Plexus Archiver", manifest.asVertex().getProperty("Archiver-Version"));
+                Assert.assertEquals("Apache Maven", manifest.asVertex().getProperty("Created-By"));
+                warManifestFound = true;
+            }
+
+            numberFound++;
+        }
+        Assert.assertEquals(9, numberFound);
+        Assert.assertTrue(warManifestFound);
     }
 }
