@@ -7,6 +7,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileLocationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
@@ -28,7 +29,7 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
         GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
                     context.getQuery().type(FileModel.class).vertices());
         hintPipeline.as("fileModel1").in(FileLocationModel.FILE_MODEL)
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileLocationModel.TYPE).back("fileModel1");
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE).back("fileModel1");
 
         // create a pipeline to get all items with attached classifications
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(

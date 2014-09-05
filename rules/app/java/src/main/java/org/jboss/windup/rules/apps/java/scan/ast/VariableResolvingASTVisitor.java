@@ -114,7 +114,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         this.names.clear();
         this.nameInstance.clear();
 
-        String packageName = cu.getPackage().getName().getFullyQualifiedName();
+        PackageDeclaration packageDeclaration = cu.getPackage();
+        String packageName = packageDeclaration == null ? "" : packageDeclaration.getName().getFullyQualifiedName();
         @SuppressWarnings("unchecked")
         List<TypeDeclaration> types = cu.types();
         if (!types.isEmpty())

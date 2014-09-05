@@ -16,6 +16,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.ProjectModelService;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ZipUtil;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -66,21 +67,31 @@ public class DiscoverNonMavenProjectsRuleProvider extends WindupRuleProvider
                         @Override
                         public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
                         {
-                            if(payload.getProjectModel() == null)
+                            List<ArchiveModel> hierarchy = new ArrayList<>();
+                            
+                            ArchiveModel parentArchive = payload;
+                            while(parentArchive != null)
                             {
-                                List<ArchiveModel> hierarchy = new ArrayList<>();
+                                hierarchy.add(parentArchive);
                                 
-                                ArchiveModel parentArchive = payload;
-                                while(parentArchive != null && parentArchive.getProjectModel() == null)
+                                // break once we have added a parent with a project model
+                                if (parentArchive.getProjectModel() != null)
                                 {
-                                    hierarchy.add(parentArchive);
-                                    parentArchive = parentArchive.getParentArchive();
+                                    break;
                                 }
                                 
-                                ProjectModel childProjectModel = null;
-                                for (ArchiveModel archiveModel : hierarchy)
-                                {
-                                    ProjectModel projectModel = projectModelService.create();
+                                parentArchive = parentArchive.getParentArchive();
+                                
+                            }
+                            
+                            ProjectModel childProjectModel = null;
+                            for (ArchiveModel archiveModel : hierarchy)
+                            {
+                                ProjectModel projectModel = archiveModel.getProjectModel();
+                                
+                                // create the project if we don't already have one
+                                if (projectModel == null) {
+                                    projectModel = projectModelService.create();
                                     projectModel.setName(archiveModel.getArchiveName());
                                     projectModel.setRootFileModel(archiveModel);
                                     projectModel.setDescription("Unidentified Archive");
@@ -95,13 +106,25 @@ public class DiscoverNonMavenProjectsRuleProvider extends WindupRuleProvider
                                     }
                                     
                                     archiveModel.setProjectModel(projectModel);
-                                    
-                                    if(childProjectModel != null)
+                                    // Attach the project to all files within the archive
+                                    for (FileModel f : archiveModel.getContainedFileModels())
                                     {
-                                        childProjectModel.setParentProject(projectModel);
+                                        // don't add archive models, as those really are separate projects...
+                                        // also, don't set the project model if one is already set
+                                        if (!(f instanceof ArchiveModel) && f.getProjectModel() == null)
+                                        {
+                                            // only set it if it has not already been set
+                                            f.setProjectModel(projectModel);
+                                            projectModel.addFileModel(f);
+                                        }
                                     }
-                                    childProjectModel = projectModel;
                                 }
+                                
+                                if(childProjectModel != null)
+                                {
+                                    childProjectModel.setParentProject(projectModel);
+                                }
+                                childProjectModel = projectModel;
                             }
                         }
                     }
