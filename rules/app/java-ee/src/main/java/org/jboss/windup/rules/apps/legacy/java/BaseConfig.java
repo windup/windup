@@ -59,7 +59,6 @@ public class BaseConfig extends WindupRuleProvider
                           .and(Hint.withText("Migrate to JBoss JCA WorkManager").withEffort(8))
                     )
                     
-                   
                     /*
                      * <windup:java-classification source-type="INHERITANCE" regex="commonj.work.Work"
                      * description="Commonj Work" effort="2"> <windup:hints> <windup:java-hint regex="commonj.work.Work"

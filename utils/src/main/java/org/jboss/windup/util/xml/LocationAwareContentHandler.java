@@ -29,6 +29,7 @@ import org.xml.sax.ext.DefaultHandler2;
 
 public class LocationAwareContentHandler extends DefaultHandler2 {
 	final public static String LINE_NUMBER_KEY_NAME = "ln";
+	final public static String COLUMN_NUMBER_KEY_NAME = "cn";
 	final public static String DOCTYPE_KEY_NAME = "dt";
 	final public static String NAMESPACE_KEY_NAME = "nsuri";
 	
@@ -64,8 +65,8 @@ public class LocationAwareContentHandler extends DefaultHandler2 {
 		else {
 			e = doc.createElement(qName);
 		}
-		e.setUserData(LINE_NUMBER_KEY_NAME, this.locator.getLineNumber(), null);
 		
+		storeLineInformation(e);
 		if(StringUtils.isNotBlank(uri)) {
 			namespaceURIs.add(uri);
 		}
@@ -89,13 +90,13 @@ public class LocationAwareContentHandler extends DefaultHandler2 {
 				if (attrs.getLocalName(i) != null && !"".equals(attrs.getLocalName(i))) {
 					attr = doc.createAttributeNS(attrs.getURI(i), attrs.getLocalName(i));
 					attr.setValue(attrs.getValue(i));
-					attr.setUserData(LINE_NUMBER_KEY_NAME, this.locator.getLineNumber(), null);
+					storeLineInformation(attr);
 					current.setAttributeNodeNS(attr);
 				}
 				else {
 					attr = doc.createAttribute(attrs.getQName(i));
 					attr.setValue(attrs.getValue(i));
-					attr.setUserData(LINE_NUMBER_KEY_NAME, this.locator.getLineNumber(), null);
+					storeLineInformation(attr);
 					current.setAttributeNode(attr);
 				}
 			}
@@ -118,12 +119,17 @@ public class LocationAwareContentHandler extends DefaultHandler2 {
 			current = (Element) current.getParentNode();
 		}
 	}
+	
+	private void storeLineInformation(Node e) {
+	    e.setUserData(LINE_NUMBER_KEY_NAME, this.locator.getLineNumber(), null);
+        e.setUserData(COLUMN_NUMBER_KEY_NAME, this.locator.getColumnNumber(), null);
+	}
 
 	@Override
 	public void characters(char buf[], int offset, int length) {
 		if (current != null) {
 			Node n = doc.createTextNode(new String(buf, offset, length));
-			n.setUserData(LINE_NUMBER_KEY_NAME, this.locator.getLineNumber(), null);
+			storeLineInformation(n);
 			current.appendChild(n);
 		}
 	}

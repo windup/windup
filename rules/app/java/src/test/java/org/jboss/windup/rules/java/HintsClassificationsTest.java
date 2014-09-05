@@ -27,6 +27,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.PackageModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -110,7 +111,7 @@ public class HintsClassificationsTest
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + UUID.randomUUID().toString());
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
-
+        
         try
         {
             WindupConfigurationModel config = GraphService.getConfigurationModel(context);
