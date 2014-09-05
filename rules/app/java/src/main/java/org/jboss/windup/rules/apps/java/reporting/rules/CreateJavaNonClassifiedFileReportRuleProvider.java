@@ -12,6 +12,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
+import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -25,6 +26,8 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
 
     @Inject
     private ReportService reportService;
+    @Inject
+    private ApplicationReportService applicationReportService;
 
     @Override
     public RulePhase getPhase()
@@ -65,8 +68,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
 
     private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
-        ApplicationReportModel applicationReportModel = context.getFramed().addVertex(null,
-                    ApplicationReportModel.class);
+        ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Unclassified Files");

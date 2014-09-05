@@ -15,7 +15,7 @@ import org.jboss.windup.graph.dao.ProjectModelService;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
-import org.jboss.windup.reporting.service.ApplicationReportModelService;
+import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ApplicationReportIndexService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class ApplicationReportIndexModelServiceTest
     @Inject
     private ProjectModelService projectModelService;
     @Inject
-    private ApplicationReportModelService applicationReportModelService;
+    private ApplicationReportService applicationReportModelService;
     @Inject
     private ApplicationReportIndexService applicationReportIndexModelService;
 

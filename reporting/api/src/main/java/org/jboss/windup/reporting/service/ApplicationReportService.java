@@ -5,20 +5,20 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 /**
- * This class provides helpful utility methods for creating and finding ApplicationProjectModel vertices.
+ * This class provides helpful utility methods for creating and finding {@link ApplicationReportModel} vertices.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class ApplicationReportModelService extends GraphService<ApplicationReportModel>
+public class ApplicationReportService extends GraphService<ApplicationReportModel>
 {
 
-    public ApplicationReportModelService()
+    public ApplicationReportService()
     {
         super(ApplicationReportModel.class);
     }
 
-    public ApplicationReportModelService(GraphContext context)
+    public ApplicationReportService(GraphContext context)
     {
         super(context, ApplicationReportModel.class);
     }

@@ -16,7 +16,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.reporting.model.ReportModel;
-import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -38,8 +37,6 @@ public class FreeMarkerOperation extends GraphOperation
     private Furnace furnace;
     private String templatePath;
     private String outputFilename;
-    private String reportName;
-    private ReportModel parentReportModel;
     private List<String> variableNames = new ArrayList<>();
 
     protected FreeMarkerOperation(Furnace furnace, String templatePath, String outputFilename, String... varNames)
@@ -62,18 +59,6 @@ public class FreeMarkerOperation extends GraphOperation
                 String... varNames)
     {
         return new FreeMarkerOperation(furnace, templatePath, outputFilename, varNames);
-    }
-
-    public FreeMarkerOperation reportName(String reportName)
-    {
-        this.reportName = reportName;
-        return this;
-    }
-
-    public FreeMarkerOperation parentReport(ReportModel parentReport)
-    {
-        this.parentReportModel = parentReport;
-        return this;
     }
 
     @Override
@@ -110,21 +95,6 @@ public class FreeMarkerOperation extends GraphOperation
             {
                 template.process(objects, fw);
             }
-
-            ReportModel reportModel = event.getGraphContext().getFramed().addVertex(null, ReportModel.class);
-            reportModel.setTemplatePath(templatePath);
-            reportModel.setTemplateType(TemplateType.FREEMARKER);
-
-            if (parentReportModel != null)
-            {
-                reportModel.setParentReport(parentReportModel);
-            }
-            if (reportName != null)
-            {
-                reportModel.setReportName(reportName);
-            }
-
-            FreeMarkerUtil.addAssociatedReportData(event.getGraphContext(), reportModel, vars);
         }
         catch (IOException e)
         {
