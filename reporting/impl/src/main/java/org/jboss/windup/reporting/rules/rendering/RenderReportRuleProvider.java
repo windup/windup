@@ -8,18 +8,17 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerIterationOperation;
-import org.jboss.windup.reporting.model.source.SourceReportModel;
+import org.jboss.windup.reporting.model.ReportModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 /**
- * 
- * This renders all SourceReports to the output directory.
+ * This renders the ApplicationReport, along with all of its subapplications via freemarker.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class RenderSourceReportRuleProvider extends WindupRuleProvider
+public class RenderReportRuleProvider extends WindupRuleProvider
 {
     @Inject
     private Furnace furnace;
@@ -34,11 +33,13 @@ public class RenderSourceReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
+        FreeMarkerIterationOperation reportOperation = FreeMarkerIterationOperation.create(furnace);
+
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(Query.find(SourceReportModel.class))
-                    .perform(FreeMarkerIterationOperation.create(furnace));
+            .begin()
+            .addRule()
+            .when(Query.find(ReportModel.class))
+            .perform(reportOperation);
     }
     // @formatter:on
 }
