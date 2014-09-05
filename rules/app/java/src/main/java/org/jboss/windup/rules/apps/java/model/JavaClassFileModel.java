@@ -21,9 +21,9 @@ public interface JavaClassFileModel extends FileModel
     @Property(PROPERTY_PACKAGE_NAME)
     public void setPackageName(String packageName);
 
-    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    @Adjacency(label = JavaSourceFileModel.PROPERTY_JAVA_CLASS_MODEL, direction = Direction.OUT)
     public void setJavaClass(JavaClassModel model);
 
-    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    @Adjacency(label = JavaSourceFileModel.PROPERTY_JAVA_CLASS_MODEL, direction = Direction.OUT)
     public JavaClassModel getJavaClass();
 }

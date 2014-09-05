@@ -1,8 +1,15 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.List;
 
+import org.jboss.forge.furnace.util.Strings;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -13,7 +20,10 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -90,6 +100,54 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
                         JavaSourceFileModel.class);
 
             javaFileModel.setPackageName(packageName);
+            try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
+            {
+                addParsedClassToFile(fis,event.getGraphContext(),javaFileModel);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new WindupException("File in " + payload.getFilePath() + " was not found.",e);
+            }
+            catch (IOException e)
+            {
+                throw new WindupException("IOException thrown when parsing file located in " + payload.getFilePath(),e);
+            }
+        }
+        
+        private void addParsedClassToFile(FileInputStream fis, GraphContext context, JavaSourceFileModel classFileModel) {
+                JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, fis);
+                String packageName = javaClass.getPackage();
+                String qualifiedName = javaClass.getQualifiedName();
+
+                String simpleName = qualifiedName;
+                if (packageName != null && !packageName.equals("") && simpleName != null)
+                {
+                    simpleName = simpleName.substring(packageName.length() + 1);
+                }
+
+                JavaClassService javaClassService = new JavaClassService(context);
+                JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
+
+                javaClassModel.setSimpleName(simpleName);
+                javaClassModel.setPackageName(packageName);
+                javaClassModel.setQualifiedName(qualifiedName);
+                javaClassModel.setClassFile(classFileModel);
+
+                List<String> interfaceNames = javaClass.getInterfaces();
+                if (interfaceNames != null)
+                {
+                    for (String iface : interfaceNames)
+                    {
+                        JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
+                        javaClassModel.addImplements(interfaceModel);
+                    }
+                }
+
+                String superclassName = javaClass.getSuperType();
+                if (Strings.isNullOrEmpty(superclassName))
+                    javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
+
+                classFileModel.addJavaClass(javaClassModel);
         }
 
     }
