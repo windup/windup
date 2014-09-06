@@ -1,5 +1,6 @@
 package org.jboss.windup.exec;
 
+import org.jboss.windup.graph.GraphContextConfig;
 import org.jboss.windup.engine.WindupProcessorConfig;
 import java.nio.file.Path;
 import javax.inject.Inject;
@@ -30,10 +31,19 @@ public class WindupProcessorImpl implements WindupProcessor
     @Override
     public void execute( WindupProcessorConfig wpConfig )
     {
+        // Graph Context config.
+        GraphContextConfig gcConfig = new GraphContextConfig();
         if( wpConfig.getOutputDirectory() != null ){
             Path graphDir = wpConfig.getOutputDirectory().resolve("graph");
-            this.graphContext.setGraphDirectory(graphDir);
+            gcConfig.setGraphDataDir(graphDir);
         }
+
+        // Initialize the graph explicitely.
+        this.graphContext.init(gcConfig);
+        
+        // Call the listener.
+        if( null != wpConfig.getGraphListener() )
+            wpConfig.getGraphListener().postOpen(this.graphContext);
         
         final Configuration ocpConfig;
         ocpConfig = graphConfigurationLoader.loadConfiguration(this.graphContext, wpConfig.getRuleProviderFilter());
@@ -46,6 +56,10 @@ public class WindupProcessorImpl implements WindupProcessor
             ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(wpConfig.getProgressMonitor(), ocpConfig));
         
         ruleSubset.perform(event, createEvaluationContext());
+        
+        // Call the listener
+        if( null != wpConfig.getGraphListener() )
+            wpConfig.getGraphListener().preShutdown(this.graphContext);
     }
 
     

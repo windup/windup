@@ -3,6 +3,7 @@ package org.jboss.windup.engine;
 import java.nio.file.Path;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.graph.GraphLifecycleListener;
 
 
 /**
@@ -12,15 +13,29 @@ import org.jboss.windup.config.WindupRuleProvider;
  */
 public class WindupProcessorConfig {
 
+    private GraphLifecycleListener graphListener;
+
     private Predicate<WindupRuleProvider> ruleProviderFilter;
     
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
     
     private Path outputDirectory;
-
+    
 
     
     //<editor-fold defaultstate="collapsed" desc="get/set">
+    
+    public GraphLifecycleListener getGraphListener()
+    {
+        return graphListener;
+    }
+
+
+    public void setGraphListener(GraphLifecycleListener graphListener)
+    {
+        this.graphListener = graphListener;
+    }
+
 
     public Path getOutputDirectory()
     {

@@ -31,6 +31,10 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang.RandomStringUtils;
+
 
 public class GraphContextImpl implements GraphContext
 {
@@ -42,9 +46,14 @@ public class GraphContextImpl implements GraphContext
     private final Imported<Service<? extends VertexFrame>> graphServices;
     private final GraphTypeRegistry graphTypeRegistry;
     private EventGraph<TitanGraph> eventGraph;
-    private BatchGraph<TitanGraph> batch;
+    private BatchGraph<TitanGraph> batchGraph;
     private FramedGraph<EventGraph<TitanGraph>> framed;
-    private Path graphDirectory;
+    
+    //private Path graphDirectory;
+    private GraphContextConfig config;
+    private Exception initStack;
+    
+            
 
     @Override
     public GraphTypeRegistry getGraphTypeRegistry()
@@ -57,10 +66,11 @@ public class GraphContextImpl implements GraphContext
     {
         this.eventGraph.getBaseGraph().shutdown();
         this.eventGraph = null;
-        this.batch = null;
+        this.batchGraph = null;
         this.framed = null;
     }
 
+    @Override
     public EventGraph<TitanGraph> getGraph()
     {
         initGraphIfNeeded();
@@ -68,14 +78,14 @@ public class GraphContextImpl implements GraphContext
     }
 
     /**
-     * Returns a graph suitable for batch processing.
+     * Returns a graph suitable for batchGraph processing.
      * 
      * Note: This bypasses the event graph (thus no events will be fired for modifications to this graph)
      */
     public BatchGraph<TitanGraph> getBatch()
     {
         initGraphIfNeeded();
-        return batch;
+        return batchGraph;
     }
 
     public FramedGraph<EventGraph<TitanGraph>> getFramed()
@@ -93,6 +103,7 @@ public class GraphContextImpl implements GraphContext
         this.classLoaderProvider = classLoaderProvider;
     }
 
+    /*
     @Override
     public void setGraphDirectory(Path graphDirectory)
     {
@@ -110,26 +121,66 @@ public class GraphContextImpl implements GraphContext
     public Path getGraphDirectory()
     {
         return graphDirectory;
-    }
+    }/**/
 
+    
+    /**
+     * Lazily initializes the graph.
+     */
     private void initGraphIfNeeded()
     {
+        log.log(Level.WARNING, "Initializing graph lazily.", new Exception());
         if (eventGraph != null)
-        {
-            // graph is already initialized, just return
+            // Graph is already initialized, just return.
             return;
+        
+        this.reinitGraph(new GraphContextConfig());
+    }
+    
+    
+    /**
+     * Initializes the context - creates the data directory, creates the graph,
+     * applies the configuration, creates the indexes, creates the classloaders,
+     * creates FramedGraph.
+     * 
+     * @throws IllegalStateException if the graph was already initialized.
+     */
+    @Override
+    public void init(GraphContextConfig config){
+        if( this.eventGraph != null )
+            throw new IllegalStateException("Graph was already initialized, see cause's stacktrace for where.", this.initStack);
+        this.reinitGraph(config);
+    }
+    
+    
+    /**
+     * Initializes the context - creates the data directory, creates the graph,
+     * applies the configuration, creates the indexes, creates the classloaders,
+     * creates FramedGraph.
+     * 
+     * @param config If the directory.
+     */
+    private void reinitGraph(GraphContextConfig config)
+    {
+        log.fine("(Re)initializing graph.");
+        this.initStack = new Exception();
+        
+        if (config == null)
+            config = new GraphContextConfig();
+        this.config = config;
+
+        // Default graph data dir if null.
+        if (config.getGraphDataDir() == null){
+            log.fine("Setting default directory.");
+            config.setGraphDataDir(this.getDefaultGraphDirectory());
         }
 
-        if (graphDirectory == null)
-        {
-            // just give it a default value
-            setGraphDirectory(getDefaultGraphDirectory());
-        }
+        // Directories
+        Path graphDir = config.getGraphDataDir();
+        FileUtils.deleteQuietly(graphDir.toFile());
 
-        FileUtils.deleteQuietly(graphDirectory.toFile());
-
-        Path lucene = graphDirectory.resolve("graphsearch");
-        Path berkeley = graphDirectory.resolve("titangraph");
+        Path lucene = graphDir.resolve("graphsearch");
+        Path berkeley = graphDir.resolve("titangraph");
 
         // TODO: Externalize this.
         Configuration conf = new BaseConfiguration();
@@ -139,6 +190,7 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("index.search.backend", "lucene");
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
 
+        // Graph creation.
         TitanGraph titanGraph = TitanFactory.open(conf);
 
         // TODO: This has to load dynamically.
@@ -150,16 +202,14 @@ public class GraphContextImpl implements GraphContext
 
         for (String key : keys)
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
-                        .make();
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
             mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
             // titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
 
         for (String key : new String[] { "archiveEntry" })
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
-                        .make();
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
             mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
         }
 
@@ -170,9 +220,11 @@ public class GraphContextImpl implements GraphContext
         }
         mgmt.commit();
 
+        // Graph extensions.
         this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
-        batch = new BatchGraph<TitanGraph>(titanGraph, 1000L);
+        this.batchGraph = new BatchGraph<TitanGraph>(titanGraph, 1000L);
 
+        
         // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
@@ -209,6 +261,7 @@ public class GraphContextImpl implements GraphContext
         framed = factory.create(eventGraph);
 
     }
+    private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -236,7 +289,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public String toString()
     {
-        return "GraphContext: " + getGraphDirectory().toString();
+        return "GraphContext " + getConfig().getGraphDataDir().toString();
     }
 
     @Override
@@ -246,10 +299,17 @@ public class GraphContextImpl implements GraphContext
     }
 
     /**
-     * This is called if the user does not explicitly specify a graph directory
+     * This is called if the user does not explicitly specify a graph directory.
      */
     private Path getDefaultGraphDirectory()
     {
-        return new File(FileUtils.getTempDirectory(), "windupgraph_" + UUID.randomUUID().toString()).toPath();
+        return new File(FileUtils.getTempDirectory(), "windupgraph_" + RandomStringUtils.randomAlphanumeric(6)).toPath();
     }
+
+
+    public GraphContextConfig getConfig()
+    {
+        return config;
+    }
+
 }
