@@ -88,11 +88,11 @@ public class JavaClassTest
     {
         final String inputDir = "src/test/java/org/jboss/windup/rules/java";
 
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + RandomStringUtils.randomAlphanumeric(6));
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + RandomStringUtils.randomAlphanumeric(6));
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        
+
         // Fill the graph with test data.
         GraphLifecycleListener initializer = new GraphLifecycleListener() {
             public void postOpen( GraphContext context ){
@@ -114,20 +114,22 @@ public class JavaClassTest
                 fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/JavaClassTest.java");
                 fileModel.setProjectModel(pm);
                 pm.addFileModel(fileModel);
+
+                // TODO: WINDUP-274  WindupConfiguration[Model] construction without need for GraphContext.
+                final WindupConfigurationModel config = GraphService.getConfigurationModel(context);
+                config.setInputPath(inputDir);
+                config.setSourceMode(true);
+                config.setOutputPath(outputPath.toString());
+                config.setScanJavaPackageList(Collections.singletonList(""));
             }
-            
+
             public void preShutdown(GraphContext context){
             }
         };
 
         final WindupProcessorConfig processorConfig = new WindupProcessorConfig().setOutputDirectory(outputPath);
         processorConfig.setGraphListener( initializer );
-                
-        final WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-        config.setInputPath(inputDir);
-        config.setSourceMode(true);
-        config.setOutputPath(outputPath.toString());
-        config.setScanJavaPackageList(Collections.singletonList(""));
+
 
         try
         {
@@ -191,7 +193,7 @@ public class JavaClassTest
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()
-                        
+
                         .addRule()
                         .when(JavaClass.references("org.jboss.forge.furnace.*").inFile(".*").at(TypeReferenceLocation.IMPORT))
                         .perform(new AbstractIterationOperation<TypeReferenceModel>()

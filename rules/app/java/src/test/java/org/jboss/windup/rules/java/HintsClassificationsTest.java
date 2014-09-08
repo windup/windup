@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -29,6 +30,7 @@ import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.PackageModel;
+import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -90,37 +92,54 @@ public class HintsClassificationsTest
     @Test
     public void testIterationVariableResolving() throws Exception
     {
-        ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-        pm.setName("Main Project");
+        Assert.assertNotNull(context);
 
-        FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-        inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java/");
-        inputPath.setProjectModel(pm);
-        pm.setRootFileModel(inputPath);
-
-        FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-        fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/HintsClassificationsTest.java");
-        fileModel.setProjectModel(pm);
-
-        pm.addFileModel(inputPath);
-        pm.addFileModel(fileModel);
-        fileModel = context.getFramed().addVertex(null, FileModel.class);
-        fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/JavaClassTest.java");
-        fileModel.setProjectModel(pm);
-        pm.addFileModel(fileModel);
-
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + UUID.randomUUID().toString());
+        // Output dir.
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + RandomStringUtils.randomAlphanumeric(6));
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
         
+        // Data filler.
+        GraphLifecycleListener gll = new GraphLifecycleListener()
+        {
+            public void postOpen(GraphContext context)
+            {
+                ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+                pm.setName("Main Project");
+
+                FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+                inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java/");
+                inputPath.setProjectModel(pm);
+                pm.setRootFileModel(inputPath);
+
+                FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+                fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/HintsClassificationsTest.java");
+                fileModel.setProjectModel(pm);
+
+                pm.addFileModel(inputPath);
+                pm.addFileModel(fileModel);
+                fileModel = context.getFramed().addVertex(null, FileModel.class);
+                fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/JavaClassTest.java");
+                fileModel.setProjectModel(pm);
+                pm.addFileModel(fileModel);
+
+                // WindupConfigModel.
+                // I am coming to conclusion that we need a WindupConfig 
+                // which doesn't need context.
+                WindupConfigurationModel config = GraphService.getConfigurationModel(context);
+                config.setScanJavaPackageList(Collections.singletonList(""));
+                config.setInputPath(inputPath);
+                config.setSourceMode(true);
+                config.setOutputPath(outputPath.toString());
+            }
+
+            public void preShutdown(GraphContext context){
+            }
+        };
+
+
         try
         {
-            WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-            config.setScanJavaPackageList(Collections.singletonList(""));
-            config.setInputPath(inputPath);
-            config.setSourceMode(true);
-            config.setOutputPath(outputPath.toString());
-
             try
             {
                 // TODO: Consolidate the config - e.g. the outputPath is now set at 2 places.

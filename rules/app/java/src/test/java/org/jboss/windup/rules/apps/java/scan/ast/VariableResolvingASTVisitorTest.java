@@ -61,6 +61,7 @@ public class VariableResolvingASTVisitorTest
     public void testVisitorBasic()
     {
         Assert.assertNotNull(context);
+        context.init(null);
         Assert.assertNotNull(visitor);
 
         FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);

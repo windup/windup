@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
 
 @RunWith(Arquillian.class)
 public class GraphServiceTest
@@ -53,13 +53,15 @@ public class GraphServiceTest
     @After
     public void tearDown()
     {
-
+        context.disconnectFromGraph();
     }
+
 
     @Test
     public void testGraphTypeHandling() throws Exception
     {
         Assert.assertNotNull(context);
+        context.init(null);
 
         TestFooModel initialModelType = context.getFramed().addVertex(null, TestFooModel.class);
 
@@ -90,6 +92,7 @@ public class GraphServiceTest
     public void testGraphSearchWithoutCommit() throws Exception
     {
         Assert.assertNotNull(context);
+        context.init(null);
 
         TestFooModel foo1 = context.getFramed().addVertex(null, TestFooModel.class);
         TestFooModel foo2 = context.getFramed().addVertex(null, TestFooModel.class);
@@ -125,6 +128,9 @@ public class GraphServiceTest
     @Test
     public void testModelCreation()
     {
+        Assert.assertNotNull(context);
+        context.init(null);
+
         Service<TestFooSubModel> graphService = context.getService(TestFooSubModel.class);
 
         // test there is no vertex of such type
