@@ -25,7 +25,7 @@ public class HashArchivesRuleProvider extends IteratingRuleProvider<ArchiveModel
 {
 
     @Override
-    protected ConditionBuilder getCondition()
+    public ConditionBuilder when()
     {
         return Query.find(ArchiveModel.class);
     }
@@ -43,7 +43,7 @@ public class HashArchivesRuleProvider extends IteratingRuleProvider<ArchiveModel
     }
 
     @Override
-    protected void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
         try (InputStream is = payload.asInputStream())
         {

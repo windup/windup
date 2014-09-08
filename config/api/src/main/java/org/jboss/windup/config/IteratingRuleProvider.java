@@ -19,7 +19,7 @@ public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFram
     /**
      * Gets the condition for the {@link Configuration}'s "when" clause.
      */
-    public abstract ConditionBuilder getCondition();
+    public abstract ConditionBuilder when();
 
     /**
      * Perform this function for each {@link WindupVertexFrame} returned by the "when" clause.
@@ -40,7 +40,7 @@ public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFram
     {
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(getCondition())
+                    .when(when())
                     .perform(new IterationOperation());
     }
 }
