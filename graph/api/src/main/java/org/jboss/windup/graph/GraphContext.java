@@ -4,12 +4,10 @@ import java.io.Closeable;
 import java.nio.file.Path;
 
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
-import org.jboss.windup.graph.service.Service;
 
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.VertexFrame;
 
 /**
  * Context for interacting with the underlying graph database API.
@@ -42,4 +40,9 @@ public interface GraphContext extends Closeable
      * Get the {@link GraphTypeRegistry}.
      */
     TypeAwareFramedGraphQuery getQuery();
+
+    /**
+     * Clear all data from the graph (note: the graph must be closed for this operation to succeed)
+     */
+    public void clear();
 }

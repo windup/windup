@@ -7,25 +7,52 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("JavaParameter")
+/**
+ * Contains information regarding parameters to a Java Method.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ */
+@TypeValue(JavaParameterModel.TYPE)
 public interface JavaParameterModel extends WindupVertexFrame
 {
 
-    @Adjacency(label = "methodParameter", direction = Direction.IN)
+    public static final String METHOD_PARAMETER_TYPE = "methodParameterType";
+    public static final String PARAMETER_POSITION = "parameterPosition";
+    public static final String TYPE = "JavaParameter";
+
+    /**
+     * The {@link JavaMethodModel} containing this parameter.
+     */
+    @Adjacency(label = JavaMethodModel.METHOD_PARAMETER, direction = Direction.IN)
     public JavaMethodModel getJavaMethod();
 
-    @Adjacency(label = "methodParameter", direction = Direction.IN)
+    /**
+     * The {@link JavaMethodModel} containing this parameter.
+     */
+    @Adjacency(label = JavaMethodModel.METHOD_PARAMETER, direction = Direction.IN)
     public void setJavaMethod(JavaMethodModel method);
 
-    @Property("parameterPosition")
+    /**
+     * Contains the parameter's position within the parameter list (0-based index)
+     */
+    @Property(PARAMETER_POSITION)
     public int getPosition();
 
-    @Property("parameterPosition")
+    /**
+     * Contains the parameter's position within the parameter list (0-based index)
+     */
+    @Property(PARAMETER_POSITION)
     public void setPosition(int parameterPosition);
 
-    @Adjacency(label = "methodParameterType", direction = Direction.OUT)
+    /**
+     * Contains the parameter type
+     */
+    @Adjacency(label = METHOD_PARAMETER_TYPE, direction = Direction.OUT)
     public JavaClassModel getJavaType();
 
-    @Adjacency(label = "methodParameterType", direction = Direction.OUT)
+    /**
+     * Contains the parameter type
+     */
+    @Adjacency(label = METHOD_PARAMETER_TYPE, direction = Direction.OUT)
     public void setJavaType(JavaClassModel clz);
 }

@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.ResourceModel;
@@ -11,15 +13,11 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
+import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
+import org.jboss.windup.rules.apps.java.model.JavaParameterModel;
 
 /**
- * 
+ * Contains methods for searching, updating, and deleting {@link JavaClassModel} frames.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
@@ -30,9 +28,12 @@ public class JavaClassService extends GraphService<JavaClassModel>
         super(context, JavaClassModel.class);
     }
 
+    /**
+     * Find a {@link JavaClassModel} by the qualified name
+     */
     public JavaClassModel getUniqueByName(String qualifiedName) throws NonUniqueResultException
     {
-        return getUniqueByProperty("qualifiedName", qualifiedName);
+        return getUniqueByProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME, qualifiedName);
     }
 
     public synchronized JavaClassModel getOrCreate(String qualifiedName) throws NonUniqueResultException
@@ -64,124 +65,8 @@ public class JavaClassService extends GraphService<JavaClassModel>
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
         return getGraphContext().getQuery().type(JavaClassModel.class)
-                    .has("majorVersion", version.getMajor())
-                    .has("minorVersion", version.getMinor()).vertices(getType());
-    }
-
-    public Iterable<JavaClassModel> getAllClassNotFound()
-    {
-        // iterate through all vertices
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getTypedQuery().vertices())
-
-                    // check to see whether there is an edge coming in that links to the resource providing the java
-                    // class model.
-                    .filter(new PipeFunction<Vertex, Boolean>()
-                    {
-                        public Boolean compute(Vertex argument)
-                        {
-                            if (argument.getEdges(Direction.IN, "javaClassFacet").iterator().hasNext())
-                            {
-                                return false;
-                            }
-                            // allow it through if there are no edges coming in that provide the java class model.
-                            return true;
-                        }
-                    });
-        return getGraphContext().getFramed().frameVertices(pipeline, JavaClassModel.class);
-    }
-
-    public Iterable<JavaClassModel> getAllDuplicateClasses()
-    {
-        // iterate through all vertices
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getTypedQuery().vertices())
-
-                    // check to see whether there is an edge coming in that links to the resource providing the java
-                    // class model.
-                    .filter(new PipeFunction<Vertex, Boolean>()
-                    {
-                        public Boolean compute(Vertex argument)
-                        {
-                            Iterator<Edge> edges = argument.getEdges(Direction.IN, "javaClassFacet").iterator();
-                            if (edges.hasNext())
-                            {
-                                edges.next();
-                                if (edges.hasNext())
-                                {
-                                    return true;
-                                }
-                            }
-                            // if there aren't two edges, return false.
-                            return false;
-                        }
-                    });
-        return getGraphContext().getFramed().frameVertices(pipeline, JavaClassModel.class);
-    }
-
-    public JavaClassModel getJavaClassFromResource(ResourceModel resource)
-    {
-        Iterator<Vertex> v = (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).out("javaClassFacet")
-                    .iterator();
-        if (v.hasNext())
-        {
-            return getGraphContext().getFramed().frame(v.next(), JavaClassModel.class);
-        }
-
-        return null;
-    }
-
-    public Iterable<JavaClassModel> findClassesWithSource()
-    {
-        // iterate through all vertices
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getTypedQuery().vertices())
-
-                    // check to see whether there is an edge coming in that links to the resource providing the java
-                    // class model.
-                    .filter(new PipeFunction<Vertex, Boolean>()
-                    {
-                        public Boolean compute(Vertex argument)
-                        {
-                            return argument.getEdges(Direction.OUT, "source").iterator().hasNext();
-                        }
-                    });
-        return getGraphContext().getFramed().frameVertices(pipeline, JavaClassModel.class);
-    }
-
-    public Iterable<JavaClassModel> findCandidateBlacklistClasses()
-    {
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getTypedQuery().vertices())
-                    .as("clz").has("blacklistCandidate").back("clz").cast(Vertex.class);
-        return getGraphContext().getFramed().frameVertices(pipeline, JavaClassModel.class);
-    }
-
-    public Iterable<JavaClassModel> findClassesLeveragingCandidateBlacklists()
-    {
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getTypedQuery().vertices())
-                    .has("blacklistCandidate")
-                    .in("extends", "imports", "implements")
-                    .dedup();
-        return getGraphContext().getFramed().frameVertices(pipeline, JavaClassModel.class);
-    }
-
-    public Iterable<JavaClassModel> findLeveragedCandidateBlacklists(JavaClassModel clz)
-    {
-        Set<JavaClassModel> results = new HashSet<JavaClassModel>();
-        for (JavaClassModel javaClz : clz.dependsOnJavaClass())
-        {
-            if (javaClz.isBlacklistCandidate())
-            {
-                results.add(javaClz);
-            }
-        }
-
-        return results;
-    }
-
-    public Iterable<JavaClassModel> findCustomerPackageClasses()
-    {
-        // for all java classes
-        Iterable<Vertex> pipeline = new GremlinPipeline<Vertex, Vertex>(getTypedQuery().vertices())
-                    .has("customerPackage").V();
-        return getGraphContext().getFramed().frameVertices(pipeline, JavaClassModel.class);
+                    .has(JavaClassModel.MAJOR_VERSION, version.getMajor())
+                    .has(JavaClassModel.MINOR_VERSION, version.getMinor()).vertices(getType());
     }
 
     /**
@@ -222,6 +107,23 @@ public class JavaClassService extends GraphService<JavaClassModel>
 
             return ambiguousModel;
         }
+    }
+
+    public JavaMethodModel addJavaMethod(JavaClassModel jcm, String methodName, JavaClassModel[] params)
+    {
+        JavaMethodModel javaMethodModel = getGraphContext().getFramed().addVertex(null, JavaMethodModel.class);
+        javaMethodModel.setMethodName(methodName);
+
+        for (int i = 0; i < params.length; i++)
+        {
+            JavaClassModel param = params[i];
+            JavaParameterModel paramModel = getGraphContext().getFramed().addVertex(null, JavaParameterModel.class);
+            paramModel.setJavaType(param);
+            paramModel.setPosition(i);
+            javaMethodModel.addMethodParameter(paramModel);
+        }
+        jcm.addJavaMethod(javaMethodModel);
+        return javaMethodModel;
     }
 
     public enum JavaVersion

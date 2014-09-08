@@ -5,7 +5,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.Constant;
+import org.apache.bcel.classfile.ConstantClass;
+import org.apache.bcel.classfile.ConstantPool;
+import org.apache.bcel.classfile.EmptyVisitor;
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.Type;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -26,10 +33,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
 {
-    private static final Logger LOG = Logger.getLogger(AddClassFileMetadata.class.getSimpleName());
-
-    private static final String TECH_TAG = "Java Class";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
+    private static Logger LOG = Logger.getLogger(AddClassFileMetadata.class.getSimpleName());
 
     private AddClassFileMetadata(String variableName)
     {
@@ -48,15 +52,12 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
         {
             try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
             {
-                ClassParser parser = new ClassParser(fis, payload.getFilePath());
-                JavaClass javaClass = parser.parse();
-                String packageName = javaClass.getPackageName();
-                String qualifiedName = javaClass.getClassName();
-
-                JavaClassFileModel classFileModel = GraphService.addTypeToModel(event.getGraphContext(),
-                            payload, JavaClassFileModel.class);
-                TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
-                techTagService.addTagToFileModel(classFileModel, TECH_TAG, TECH_TAG_LEVEL);
+                final ClassParser parser = new ClassParser(fis, payload.getFilePath());
+                final JavaClass bcelJavaClass = parser.parse();
+                final String packageName = bcelJavaClass.getPackageName();
+                final String qualifiedName = bcelJavaClass.getClassName();
+                int majorVersion = bcelJavaClass.getMajor();
+                int minorVersion = bcelJavaClass.getMinor();
 
                 String simpleName = qualifiedName;
                 if (packageName != null && !packageName.equals("") && simpleName != null)
@@ -64,27 +65,64 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
                     simpleName = simpleName.substring(packageName.length() + 1);
                 }
 
+                final JavaClassFileModel classFileModel = GraphService.addTypeToModel(event.getGraphContext(),
+                            payload, JavaClassFileModel.class);
+
+                classFileModel.setMajorVersion(majorVersion);
+                classFileModel.setMinorVersion(minorVersion);
                 classFileModel.setPackageName(packageName);
 
-                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-                JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
+                final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+                final JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
 
                 javaClassModel.setSimpleName(simpleName);
                 javaClassModel.setPackageName(packageName);
                 javaClassModel.setQualifiedName(qualifiedName);
                 javaClassModel.setClassFile(classFileModel);
 
-                String[] interfaceNames = javaClass.getInterfaceNames();
+                final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
                 if (interfaceNames != null)
                 {
-                    for (String iface : interfaceNames)
+                    for (final String iface : interfaceNames)
                     {
                         JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
                         javaClassModel.addImplements(interfaceModel);
                     }
                 }
 
-                String superclassName = javaClass.getSuperclassName();
+                for (final Method method : bcelJavaClass.getMethods())
+                {
+                    javaClassService.addJavaMethod(javaClassModel, method.getName(),
+                                toJavaClasses(javaClassService, method.getArgumentTypes()));
+                }
+
+                final Constant[] pool = bcelJavaClass.getConstantPool().getConstantPool();
+                for (final Constant c : pool)
+                {
+                    if (c == null)
+                        continue;
+                    c.accept(new EmptyVisitor()
+                    {
+                        @Override
+                        public void visitConstantClass(final ConstantClass obj)
+                        {
+                            final ConstantPool pool = bcelJavaClass.getConstantPool();
+                            String classVal = obj.getConstantValue(pool).toString();
+                            classVal = StringUtils.replace(classVal, "/", ".");
+
+                            if (StringUtils.equals(classVal, bcelJavaClass.getClassName()))
+                            {
+                                // skip adding class name.
+                                return;
+                            }
+
+                            final JavaClassModel clz = javaClassService.getOrCreate(classVal);
+                            javaClassModel.addImport(clz);
+                        }
+                    });
+                }
+
+                String superclassName = bcelJavaClass.getSuperclassName();
                 if (Strings.isNullOrEmpty(superclassName))
                     javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
 
@@ -100,6 +138,19 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
             classificationService.attachClassification(payload, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
                         JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
         }
+    }
+
+    private JavaClassModel[] toJavaClasses(final JavaClassService javaClassService, final Type[] types)
+    {
+        JavaClassModel[] clz = new JavaClassModel[types.length];
+
+        for (int i = 0, j = types.length; i < j; i++)
+        {
+            Type t = types[i];
+            clz[i] = javaClassService.getOrCreate(t.toString());
+        }
+
+        return clz;
     }
 
     public static OperationBuilder to(String var)

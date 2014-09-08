@@ -12,6 +12,9 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.service.ArchiveService;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
+import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +56,7 @@ public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTe
         {
             super.runTest(context, "../test-files/Windup1x-javaee-example-tiny.war", false);
             validateArchiveHashes(context);
+            validateJavaClassModels(context);
         }
     }
 
@@ -68,5 +72,40 @@ public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTe
             Assert.assertEquals("1a1888023eff8629a9e55f023c8ecf63f69fad03", model.getSHA1Hash());
         }
         Assert.assertEquals(1, numberFound);
+    }
+
+    private void validateJavaClassModels(GraphContext context)
+    {
+        JavaClassService service = new JavaClassService(context);
+
+        boolean servletClassFound = false;
+        boolean doGetFound = false;
+        for (JavaClassModel model : service.findAll())
+        {
+            if (model.getQualifiedName().equals("org.windup.examples.servlet.SampleServlet"))
+            {
+                servletClassFound = true;
+                int methodsFound = 0;
+                for (JavaMethodModel method : model.getJavaMethods())
+                {
+                    methodsFound++;
+
+                    if (method.getMethodName().equals("doGet"))
+                    {
+                        doGetFound = true;
+                        long paramCount = method.countParameters();
+                        Assert.assertEquals(2, paramCount);
+
+                        Assert.assertEquals("javax.servlet.http.HttpServletRequest", method.getParameter(0)
+                                    .getJavaType().getQualifiedName());
+                        Assert.assertEquals("javax.servlet.http.HttpServletResponse", method.getParameter(1)
+                                    .getJavaType().getQualifiedName());
+                    }
+                }
+                Assert.assertEquals(2, methodsFound);
+            }
+        }
+        Assert.assertTrue(servletClassFound);
+        Assert.assertTrue(doGetFound);
     }
 }
