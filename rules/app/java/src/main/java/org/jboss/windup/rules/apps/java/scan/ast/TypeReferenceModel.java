@@ -10,9 +10,6 @@ public interface TypeReferenceModel extends FileLocationModel
 {
 
     public static final String PROPERTY_REFERENCE_TYPE = "referenceType";
-    public static final String PROPERTY_LINE_NUMBER = "referenceLineNumber";
-    public static final String PROPERTY_START_COLUMN = "referenceStartColumn";
-    public static final String PROPERTY_LENGTH = "referenceLength";
     public static final String PROPERTY_SOURCE_SNIPPIT = "referenceSourceSnippit";
 
     @Property(PROPERTY_REFERENCE_TYPE)

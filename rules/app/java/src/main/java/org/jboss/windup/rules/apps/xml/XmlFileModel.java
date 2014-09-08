@@ -19,7 +19,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface XmlFileModel extends FileModel
 {
     public static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
-    public static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed via XPath";
+    public static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed";
 
     public static final String ROOT_TAG_NAME = "rootTagName";
     public static final String NAMESPACE = "namespace";

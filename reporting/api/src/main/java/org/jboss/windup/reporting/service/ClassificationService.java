@@ -49,7 +49,11 @@ public class ClassificationService extends GraphService<ClassificationModel>
         int classificationEffort = 0;
         for (Vertex v : classificationPipeline)
         {
-            classificationEffort += (Integer) v.getProperty(ClassificationModel.PROPERTY_EFFORT);
+            Integer migrationEffort = v.getProperty(ClassificationModel.PROPERTY_EFFORT);
+            if (migrationEffort != null)
+            {
+                classificationEffort += migrationEffort;
+            }
         }
         if (recursive)
         {

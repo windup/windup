@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.java.scan.operation;
 
 import java.io.FileInputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
@@ -9,15 +11,17 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
 {
+    private static final Logger LOG = Logger.getLogger(AddClassFileMetadata.class.getSimpleName());
+
     private AddClassFileMetadata(String variableName)
     {
         super(variableName);
@@ -40,14 +44,14 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
                 String packageName = javaClass.getPackageName();
                 String qualifiedName = javaClass.getClassName();
 
+                JavaClassFileModel classFileModel = GraphService.addTypeToModel(event.getGraphContext(),
+                            payload, JavaClassFileModel.class);
+
                 String simpleName = qualifiedName;
                 if (packageName != null && !packageName.equals("") && simpleName != null)
                 {
                     simpleName = simpleName.substring(packageName.length() + 1);
                 }
-
-                JavaClassFileModel classFileModel = GraphService.addTypeToModel(event.getGraphContext(),
-                            payload, JavaClassFileModel.class);
 
                 classFileModel.setPackageName(packageName);
 
@@ -78,9 +82,12 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
         }
         catch (Exception e)
         {
-            throw new WindupException("Error getting class information for " + payload.getFilePath() + " due to: "
-                        + e.getMessage(),
+            LOG.log(Level.WARNING,
+                        "BCEL was unable to parse class file: " + payload.getFilePath() + " due to: " + e.getMessage(),
                         e);
+            ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+            classificationService.attachClassification(payload, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
+                        JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
         }
     }
 

@@ -103,7 +103,6 @@
 		$(document).ready(function(){
 			$('pre').snippet('${reportModel.sourceType}',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '${reportModel.sourceBlock}' });
 	
-	
 		<#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine>
 			<#assign lineNumber = hintLine.lineNumber>
 			$("<div id='${lineNumber?c}-inlines' class='inline-source-hint-group'/>").appendTo('ol.snippet-num li:nth-child(${lineNumber?c})');

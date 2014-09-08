@@ -86,7 +86,9 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                         // Attach the project to all files within the archive
                         for (FileModel f : archiveModel.getContainedFileModels())
                         {
-                            if (f.getProjectModel() == null)
+                            // don't add archive models, as those really are separate projects...
+                            // also, don't set the project model if one is already set
+                            if (!(f instanceof ArchiveModel) && f.getProjectModel() == null)
                             {
                                 // only set it if it has not already been set
                                 f.setProjectModel(mavenProjectModel);
