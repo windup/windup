@@ -13,6 +13,9 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.dao.ArchiveService;
+import org.jboss.windup.graph.model.ArchiveModel;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,5 +59,20 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
     public void testRunWindupTiny() throws Exception
     {
         super.runTest(processor, graphContext, "../../test-files/Windup1x-javaee-example-tiny.war", false);
+        validateArchiveHashes();
+    }
+
+    private void validateArchiveHashes() throws Exception
+    {
+        ArchiveService archiveService = new ArchiveService(graphContext);
+        int numberFound = 0;
+        for (ArchiveModel model : archiveService.findAll())
+        {
+            numberFound++;
+
+            Assert.assertEquals("c60bb0c51623a915cb4a9a90ba9ba70e", model.getMD5Hash());
+            Assert.assertEquals("1a1888023eff8629a9e55f023c8ecf63f69fad03", model.getSHA1Hash());
+        }
+        Assert.assertEquals(1, numberFound);
     }
 }

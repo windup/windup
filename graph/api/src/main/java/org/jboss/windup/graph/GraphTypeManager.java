@@ -76,7 +76,15 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
 
-        // Store the type value in a delimited list.
+        for (TitanProperty existingTypes : v.getProperties(typeFieldName))
+        {
+            if (existingTypes.getValue().toString().equals(typeValue))
+            {
+                // this is already in the list, so just exit now
+                return;
+            }
+        }
+
         v.addProperty(typeFieldName, typeValue);
         addSuperclassType(kind, element);
     }
