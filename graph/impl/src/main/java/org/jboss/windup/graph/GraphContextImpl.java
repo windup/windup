@@ -2,8 +2,6 @@ package org.jboss.windup.graph;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.UUID;
-
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
@@ -12,8 +10,6 @@ import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
-import org.jboss.windup.util.exception.WindupException;
-
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
@@ -147,7 +143,8 @@ public class GraphContextImpl implements GraphContext
      */
     @Override
     public void init(GraphContextConfig config){
-        if( this.eventGraph != null )
+        if(this.eventGraph != null)
+            if(this.config != null && this.config.isWarnOnLazyInit())
             throw new IllegalStateException("Graph was already initialized, see cause's stacktrace for where.", this.initStack);
         this.reinitGraph(config);
     }

@@ -10,6 +10,8 @@ import java.nio.file.Path;
 public class GraphContextConfig {
 
     private Path graphDataDir;
+    
+    private boolean warnOnLazyInit = false;
 
 
     //<editor-fold defaultstate="collapsed" desc="get/set">
@@ -26,7 +28,20 @@ public class GraphContextConfig {
         return this;
     }
     
-    //</editor-fold>
+
+    public boolean isWarnOnLazyInit()
+    {
+        return warnOnLazyInit;
+    }
+
+
+    public GraphContextConfig setWarnOnLazyInit(boolean warnOnLazyInit)
+    {
+        this.warnOnLazyInit = warnOnLazyInit;
+        return this;
+    }
     
+    
+    //</editor-fold>
 
 }// class
