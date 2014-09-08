@@ -14,6 +14,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.model.PropertiesModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
@@ -67,6 +69,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         super.runTest(processor, graphContext, "../../test-files/src_example", true);
 
         validateWebXmlReferences();
+        validatePropertiesModels();
     }
 
     /**
@@ -95,6 +98,26 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         }
 
         // there is only one env-ref
+        Assert.assertEquals(1, numberFound);
+    }
+
+    /**
+     * Validate that the expected Properties Models were found
+     */
+    private void validatePropertiesModels()
+    {
+        GraphService<PropertiesModel> service = new GraphService<>(graphContext, PropertiesModel.class);
+
+        int numberFound = 0;
+        for (PropertiesModel model : service.findAll())
+        {
+            numberFound++;
+
+            Assert.assertEquals("value1", model.getProperty("example1"));
+            Assert.assertEquals("anothervalue", model.getProperty("anotherproperty"));
+            Assert.assertEquals("1234", model.getProperty("timetaken"));
+        }
+
         Assert.assertEquals(1, numberFound);
     }
 }
