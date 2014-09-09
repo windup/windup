@@ -24,7 +24,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class AnalyzeArchivesChecksumRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
     @Override
-    public ConditionBuilder getCondition()
+    public ConditionBuilder when()
     {
         return Query.find(ArchiveModel.class);
     }
