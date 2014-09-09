@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
@@ -8,19 +7,17 @@
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ui</artifactId>
     <name>Windup Engine - UI</name>
 
     <dependencies>
-        <dependency>
-            <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-            <version>${project.version}</version>
-        </dependency>
+    
+        <!-- Local Dependencies -->
+        
+        <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>
@@ -28,7 +25,6 @@
             <scope>provided</scope>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui</artifactId>
@@ -41,12 +37,16 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Furnace Container -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>furnace-test-harness</artifactId>
@@ -68,14 +68,20 @@
 
     <build>
         <plugins>
-            <!-- Forge addon creation -->
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>
                         <phase>prepare-package</phase>
+                        <goals>
+                            <goal>generate-dot</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -85,6 +91,12 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>forge-addon</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

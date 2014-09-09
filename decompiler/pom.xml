@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.jboss.windup.tools</groupId>
-    <artifactId>decompiler</artifactId>
+    <groupId>org.jboss.windup.decompiler</groupId>
+    <artifactId>decompiler-parent</artifactId>
     <packaging>pom</packaging>
-    
+
     <name>Windup Engine - Decompiler</name>
-    
 
     <modules>
-        <module>decompiler-api</module>
-        <module>decompiler-procyon</module>
-	<!--
-		(jsightler) - 2014/05/14 - Commenting out as this is hanging the build for me at the moment
-        <module>decompiler-jad</module> 
-	-->
-        <!--
-        <module>decompiler-cfr</module>
-        Currently unusable - no API for CFR, but let's keep it for now in case it improves.
-        -->
+        <module>api</module>
+        <module>impl-procyon</module>
+        <!-- (jsightler) - 2014/05/14 - Commenting out as this is hanging the build for me at the moment <module>impl-jad</module> -->
+        <!-- Currently unusable - no API for CFR, but let's keep it for now in case it improves. <module>impl-cfr</module> -->
     </modules>
-    
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>decompiler-api</artifactId>
+                <version>${project.version}</version>
+                <classifier>forge-addon</classifier>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>decompiler-procyon</artifactId>
+                <version>${project.version}</version>
+                <classifier>forge-addon</classifier>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>

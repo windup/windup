@@ -73,7 +73,6 @@ public class WindupRuleProviderSorter
         // Initialize lookup maps
         for (WindupRuleProvider provider : providers)
         {
-            @SuppressWarnings("unchecked")
             Class<? extends WindupRuleProvider> unproxiedClass = unwrapType(provider.getClass());
             classToProviderMap.put(unproxiedClass, provider);
             idToProviderMap.put(provider.getID(), provider);

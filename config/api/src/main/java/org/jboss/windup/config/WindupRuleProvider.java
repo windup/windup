@@ -16,6 +16,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 
 /**
@@ -40,12 +41,23 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
 
     /**
      * Return the {@link RulePhase} in which the rules from this provider should be executed.
-     * 
-     * The default if no phase is specified is {@link RulePhase.MIGRATION_RULES}.
+     * <p>
+     * The default if no phase is specified, and dependencies are NOT specified, is {@link RulePhase#MIGRATION_RULES}.<br/>
+     * The default if no phase is specified, and dependencies ARE specified, is {@link RulePhase#IMPLICIT}
      */
     public RulePhase getPhase()
     {
-        return RulePhase.MIGRATION_RULES;
+        if (isNullOrEmpty(getExecuteAfter()) && isNullOrEmpty(getExecuteAfterIDs())
+                    && isNullOrEmpty(getExecuteBefore()) && isNullOrEmpty(getExecuteBeforeIDs()))
+        {
+            return RulePhase.MIGRATION_RULES;
+        }
+        return RulePhase.IMPLICIT;
+    }
+
+    private boolean isNullOrEmpty(List<?> list)
+    {
+        return list == null || list.isEmpty();
     }
 
     /**
