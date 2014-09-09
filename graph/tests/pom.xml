@@ -16,6 +16,14 @@
     <dependencies>
     
         <!-- Local Dependencies -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
+            <!-- Guava dep is hardcoded to 14.0.1, because including the v15 that Titan depends on breaks arquillian as of 
+                2014/08/21 -->
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>
