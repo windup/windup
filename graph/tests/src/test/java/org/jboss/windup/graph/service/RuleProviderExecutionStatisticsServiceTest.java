@@ -48,6 +48,8 @@ public class RuleProviderExecutionStatisticsServiceTest
     @Test
     public void testFindAllOrderedByIndex()
     {
+        this.context.init(null);
+        
         RuleProviderExecutionStatisticsModel m1 = service.create();
         m1.setRuleIndex(10);
         m1.setTimeTaken(1);
