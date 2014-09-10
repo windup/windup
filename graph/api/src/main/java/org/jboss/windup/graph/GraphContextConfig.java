@@ -28,7 +28,9 @@ public class GraphContextConfig {
         return this;
     }
     
-
+    /**
+     * Whether to log a WARNING when initializing the GraphContext lazily.
+     */
     public boolean isWarnOnLazyInit()
     {
         return warnOnLazyInit;

@@ -125,11 +125,12 @@ public class GraphContextImpl implements GraphContext
      */
     private void initGraphIfNeeded()
     {
-        log.log(Level.WARNING, "Initializing graph lazily.", new Exception());
+        log.log(Level.FINE, "initGraphIfNeeded() called.");
         if (eventGraph != null)
             // Graph is already initialized, just return.
             return;
         
+        log.log(Level.WARNING, "Initializing graph lazily.", new Exception());
         this.reinitGraph(new GraphContextConfig());
     }
     
@@ -143,9 +144,10 @@ public class GraphContextImpl implements GraphContext
      */
     @Override
     public void init(GraphContextConfig config){
-        if(this.eventGraph != null)
+        if(this.eventGraph != null){
             if(this.config != null && this.config.isWarnOnLazyInit())
-            throw new IllegalStateException("Graph was already initialized, see cause's stacktrace for where.", this.initStack);
+                throw new IllegalStateException("Graph was already initialized, see cause's stacktrace for where.", this.initStack);
+        }
         this.reinitGraph(config);
     }
     

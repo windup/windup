@@ -270,7 +270,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             catch (RuntimeException ex)
             {
                 String message = "Error encountered while evaluating rule: " + rule;
-                message= "\n" +  e.getMessage();
+                message= "\n" +  ex.getMessage();
                 if (ruleContext != null)
                 {
                     Object origin = ruleContext.get(RuleMetadata.ORIGIN);

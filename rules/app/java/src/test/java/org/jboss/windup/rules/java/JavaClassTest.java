@@ -1,17 +1,17 @@
 package org.jboss.windup.rules.java;
 
-import org.jboss.windup.graph.GraphLifecycleListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -20,6 +20,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -30,11 +31,14 @@ import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.PackageModel;
+import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.rules.CreateApplicationReportIndexRuleProvider;
 import org.jboss.windup.rules.apps.java.config.JavaClass;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
@@ -97,7 +101,7 @@ public class JavaClassTest
         GraphLifecycleListener initializer = new GraphLifecycleListener() {
             public void postOpen( GraphContext context ){
                 ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-                pm.setName("Main Proejct");
+                pm.setName("Main Project");
 
                 FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
                 inputPath.setFilePath(inputDir);
@@ -121,6 +125,7 @@ public class JavaClassTest
                 config.setSourceMode(true);
                 config.setOutputPath(outputPath.toString());
                 config.setScanJavaPackageList(Collections.singletonList(""));
+                context.getGraph().getBaseGraph().commit();
             }
 
             public void preShutdown(GraphContext context){
@@ -128,7 +133,19 @@ public class JavaClassTest
         };
 
         final WindupProcessorConfig processorConfig = new WindupProcessorConfig().setOutputDirectory(outputPath);
-        processorConfig.setGraphListener( initializer );
+        processorConfig.setGraphListener(initializer);
+        processorConfig.setRuleProviderFilter(new Predicate<WindupRuleProvider>(){
+            private Set<String> skip = new HashSet();
+            {
+                skip.add("CreateApplicationReportIndexRuleProvider");
+                skip.add("CreateJavaApplicationOverviewReportRuleProvider");
+                skip.add("RenderSourceReportRuleProvider");
+            }
+
+            public boolean accept(WindupRuleProvider type){
+                return ! skip.contains(type.getClass().getSimpleName());
+            }
+        });
 
 
         try
@@ -148,77 +165,6 @@ public class JavaClassTest
 
         Assert.assertEquals(3, provider.getFirstRuleMatchCount());
         Assert.assertEquals(1, provider.getSecondRuleMatchCount());
-    }
-
-    @Singleton
-    public static class TestJavaClassTestRuleProvider extends WindupRuleProvider
-    {
-        private int firstRuleMatchCount = 0;
-        private int secondRuleMatchCount = 0;
-
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.MIGRATION_RULES;
-        }
-
-        public int getFirstRuleMatchCount()
-        {
-            return firstRuleMatchCount;
-        }
-
-        public void setFirstRuleMatchCount(int firstRuleMatchCount)
-        {
-            this.firstRuleMatchCount = firstRuleMatchCount;
-        }
-
-        public int getSecondRuleMatchCount()
-        {
-            return secondRuleMatchCount;
-        }
-
-        public void setSecondRuleMatchCount(int secondRuleMatchCount)
-        {
-            this.secondRuleMatchCount = secondRuleMatchCount;
-        }
-
-        @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-        {
-            return asClassList(AnalyzeJavaFilesRuleProvider.class);
-        }
-
-        // @formatter:off
-        @Override
-        public Configuration getConfiguration(GraphContext context)
-        {
-            return ConfigurationBuilder.begin()
-
-                        .addRule()
-                        .when(JavaClass.references("org.jboss.forge.furnace.*").inFile(".*").at(TypeReferenceLocation.IMPORT))
-                        .perform(new AbstractIterationOperation<TypeReferenceModel>()
-                                                {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
-                                        {
-                                            firstRuleMatchCount++;
-                                        }
-                                    }
-                        )
-                        .addRule()
-                        .when(JavaClass.references("org.jboss.forge.furnace.*").inFile(".*JavaClassTest.*").at(TypeReferenceLocation.IMPORT))
-                        .perform(new AbstractIterationOperation<TypeReferenceModel>()
-                                                {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
-                                        {
-                                            secondRuleMatchCount++;
-                                        }
-                                    }
-                        );
-        }
-        // @formatter:on
-
     }
 
 }
