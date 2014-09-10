@@ -116,6 +116,11 @@ public class WindupRuleProviderSorterTest
         }
 
         @Override
+        public RulePhase getPhase() {
+        	return RulePhase.IMPLICIT;
+        }
+        
+        @Override
         public Configuration getConfiguration(GraphContext context)
         {
             return null;

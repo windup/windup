@@ -75,9 +75,9 @@ public class Classification extends AbstractIterationOperation<FileModel>
     /**
      * Set the description of this {@link Classification}.
      */
-    public Classification withDescription(String details)
+    public Classification withDescription(String description)
     {
-        this.description = details;
+        this.description = description;
         return this;
     }
 
