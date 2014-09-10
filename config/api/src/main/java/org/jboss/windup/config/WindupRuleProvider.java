@@ -47,17 +47,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
      */
     public RulePhase getPhase()
     {
-        if (isNullOrEmpty(getExecuteAfter()) && isNullOrEmpty(getExecuteAfterIDs())
-                    && isNullOrEmpty(getExecuteBefore()) && isNullOrEmpty(getExecuteBeforeIDs()))
-        {
-            return RulePhase.MIGRATION_RULES;
-        }
-        return RulePhase.IMPLICIT;
-    }
-
-    private boolean isNullOrEmpty(List<?> list)
-    {
-        return list == null || list.isEmpty();
+        return RulePhase.MIGRATION_RULES;
     }
 
     /**
