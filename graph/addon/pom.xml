@@ -13,19 +13,27 @@
     <name>Windup Engine - Graph Addon</name>
 
     <dependencies>
-    
-        <!-- Local Dependencies -->
+
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-api</artifactId>
         </dependency>
+       
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-impl</artifactId>
             <optional>true</optional>
         </dependency>
+	
+	 <dependency>
+            <groupId>org.jboss.windup.rexster</groupId>
+            <artifactId>rexster</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-        <!-- Addon Dependencies -->
+
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
@@ -35,12 +43,14 @@
         </dependency>
 
         <!-- Furnace Container -->
-        <dependency>
+	<dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+	
+
     </dependencies>
 
     <build>

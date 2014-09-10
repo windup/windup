@@ -1,16 +1,24 @@
 package org.jboss.windup.graph;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
+
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.rexster.RexsterInitializer;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 
 import com.thinkaurelius.titan.core.Cardinality;
@@ -137,8 +145,12 @@ public class GraphContextImpl implements GraphContext
         );
 
         framed = factory.create(eventGraph);
-
+        RexsterInitializer rexsterInitializer = new RexsterInitializer();
+        rexsterInitializer.loadConfiguration(conf);
+        rexsterInitializer.start(framed);
     }
+    
+    
 
     @Override
     public GraphTypeRegistry getGraphTypeRegistry()
