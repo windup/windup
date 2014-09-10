@@ -1,9 +1,11 @@
 package org.jboss.windup.rules.java;
 
 import java.util.List;
+import java.util.logging.Logger;
 import javax.inject.Singleton;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
+import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -23,6 +25,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 @Singleton
 public class TestJavaClassTestRuleProvider extends WindupRuleProvider {
+    private static Logger log = Logger.getLogger(RuleSubset.class.getName());
+
+    
     private int firstRuleMatchCount = 0;
     private int secondRuleMatchCount = 0;
 
@@ -34,6 +39,42 @@ public class TestJavaClassTestRuleProvider extends WindupRuleProvider {
     }
 
 
+    // @formatter:off
+    @Override
+    public Configuration getConfiguration(GraphContext context)
+    {
+        return ConfigurationBuilder.begin()
+        .addRule().when(
+            JavaClass.references("org.jboss.forge.furnace.*").inFile(".*").at(TypeReferenceLocation.IMPORT)
+        ).perform(
+            Iteration.over().perform(new AbstractIterationOperation<TypeReferenceModel>()
+            {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
+                {
+                    firstRuleMatchCount++;
+                    log.info("First rule matched: " + payload.getFile().getFilePath());
+                }
+            }).endIteration()
+        )
+                
+        .addRule().when(
+            JavaClass.references("org.jboss.forge.furnace.*").inFile(".*JavaClassTest.*").at(TypeReferenceLocation.IMPORT)
+        ).perform(
+            Iteration.over().perform(new AbstractIterationOperation<TypeReferenceModel>()
+            {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
+                {
+                    secondRuleMatchCount++;
+                }
+            }).endIteration()
+        );
+    }
+    // @formatter:on
+
+    
+    //<editor-fold defaultstate="collapsed" desc="get/set">
     public int getFirstRuleMatchCount()
     {
         return firstRuleMatchCount;
@@ -63,41 +104,7 @@ public class TestJavaClassTestRuleProvider extends WindupRuleProvider {
     {
         return asClassList(AnalyzeJavaFilesRuleProvider.class);
     }
-
-
-    // @formatter:off
-    @Override
-    public Configuration getConfiguration(GraphContext context)
-    {
-        return ConfigurationBuilder.begin()
-        .addRule().when(
-            JavaClass.references("org.jboss.forge.furnace.*").inFile(".*").at(TypeReferenceLocation.IMPORT)
-        ).perform(
-            Iteration.over().perform(new AbstractIterationOperation<TypeReferenceModel>()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
-                {
-                    firstRuleMatchCount++;
-                }
-            }).endIteration()
-        )
-                
-        .addRule().when(
-            JavaClass.references("org.jboss.forge.furnace.*").inFile(".*JavaClassTest.*").at(TypeReferenceLocation.IMPORT)
-        ).perform(
-            Iteration.over().perform(new AbstractIterationOperation<TypeReferenceModel>()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
-                {
-                    secondRuleMatchCount++;
-                }
-            }).endIteration()
-        );
-    }
-    // @formatter:on
-
     
+    //</editor-fold>
 
 }

@@ -102,24 +102,26 @@ public class HintsClassificationsTest
         // Data filler.
         GraphLifecycleListener gll = new GraphLifecycleListener()
         {
+            private static final String INPUT_PATH = "src/test/java/org/jboss/windup/rules/java";
+            
             public void postOpen(GraphContext context)
             {
                 ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
                 pm.setName("Main Project");
 
-                FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-                inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java/");
-                inputPath.setProjectModel(pm);
-                pm.setRootFileModel(inputPath);
+                FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+                inputPathFrame.setFilePath(INPUT_PATH);
+                inputPathFrame.setProjectModel(pm);
+                pm.setRootFileModel(inputPathFrame);
 
                 FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-                fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/HintsClassificationsTest.java");
+                fileModel.setFilePath(INPUT_PATH + "/HintsClassificationsTest.java");
                 fileModel.setProjectModel(pm);
 
-                pm.addFileModel(inputPath);
+                pm.addFileModel(inputPathFrame);
                 pm.addFileModel(fileModel);
                 fileModel = context.getFramed().addVertex(null, FileModel.class);
-                fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/JavaClassTest.java");
+                fileModel.setFilePath(INPUT_PATH + "/JavaClassTest.java");
                 fileModel.setProjectModel(pm);
                 pm.addFileModel(fileModel);
 
@@ -128,7 +130,7 @@ public class HintsClassificationsTest
                 // which doesn't need context.
                 WindupConfigurationModel config = GraphService.getConfigurationModel(context);
                 config.setScanJavaPackageList(Collections.singletonList(""));
-                config.setInputPath(inputPath);
+                config.setInputPath(inputPathFrame); // Must be the same frame!
                 config.setSourceMode(true);
                 config.setOutputPath(outputPath.toString());
             }
@@ -159,9 +161,9 @@ public class HintsClassificationsTest
             Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
-            Assert.assertEquals(3, provider.getTypeReferences().size());
+            Assert.assertEquals(4, provider.getTypeReferences().size());
             List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-            Assert.assertEquals(3, hints.size());
+            Assert.assertEquals(4, hints.size());
             List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
             Assert.assertEquals(1, classifications.size());
             Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
@@ -211,15 +213,14 @@ public class HintsClassificationsTest
             };
             
             return ConfigurationBuilder.begin()
-                        
-                        .addRule()
-                        .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT))
-                        .perform(
-                            Classification.as("Furnace Service").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
-                                .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
-                                         .withEffort(8)
-                                .and(addTypeRefToList))
-                        );
+            .addRule()
+            .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT))
+            .perform(
+                Classification.as("Furnace Service").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
+                    .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
+                             .withEffort(8)
+                    .and(addTypeRefToList))
+            );
 
         }
         // @formatter:on

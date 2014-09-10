@@ -6,12 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
-
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -22,33 +18,20 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.PackageModel;
 import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.rules.CreateApplicationReportIndexRuleProvider;
-import org.jboss.windup.rules.apps.java.config.JavaClass;
-import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.context.EvaluationContext;
+
 
 @RunWith(Arquillian.class)
 public class JavaClassTest
@@ -100,28 +83,36 @@ public class JavaClassTest
         // Fill the graph with test data.
         GraphLifecycleListener initializer = new GraphLifecycleListener() {
             public void postOpen( GraphContext context ){
+                System.out.println("AAAAA " + context);
+                
+                // Create project
                 ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
                 pm.setName("Main Project");
 
-                FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-                inputPath.setFilePath(inputDir);
-                inputPath.setProjectModel(pm);
-                pm.setRootFileModel(inputPath);
+                // Create FileModel for $inputDir
+                FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+                inputPathFrame.setFilePath(inputDir);
+                inputPathFrame.setProjectModel(pm);
+                pm.addFileModel(inputPathFrame);
 
+                // Set project.rootFileModel to inputPath
+                pm.setRootFileModel(inputPathFrame);
+                
+                // Create FileModel for $inputDir/HintsClassificationsTest.java
                 FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
                 fileModel.setFilePath(inputDir + "/HintsClassificationsTest.java");
                 fileModel.setProjectModel(pm);
-
-                pm.addFileModel(inputPath);
                 pm.addFileModel(fileModel);
+                
+                // Create FileModel for $inputDir/JavaClassTest.java
                 fileModel = context.getFramed().addVertex(null, FileModel.class);
-                fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/JavaClassTest.java");
+                fileModel.setFilePath(inputDir + "/JavaClassTest.java");
                 fileModel.setProjectModel(pm);
                 pm.addFileModel(fileModel);
 
                 // TODO: WINDUP-274  WindupConfiguration[Model] construction without need for GraphContext.
                 final WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-                config.setInputPath(inputDir);
+                config.setInputPath(inputPathFrame); // Must be the same frame!
                 config.setSourceMode(true);
                 config.setOutputPath(outputPath.toString());
                 config.setScanJavaPackageList(Collections.singletonList(""));
@@ -134,16 +125,27 @@ public class JavaClassTest
 
         final WindupProcessorConfig processorConfig = new WindupProcessorConfig().setOutputDirectory(outputPath);
         processorConfig.setGraphListener(initializer);
+        // Filter out some rules. NOT USED.
         processorConfig.setRuleProviderFilter(new Predicate<WindupRuleProvider>(){
             private Set<String> skip = new HashSet();
             {
+                //allow.add("TestJavaClassTestRuleProvider");
                 skip.add("CreateApplicationReportIndexRuleProvider");
                 skip.add("CreateJavaApplicationOverviewReportRuleProvider");
                 skip.add("RenderSourceReportRuleProvider");
             }
 
             public boolean accept(WindupRuleProvider type){
-                return ! skip.contains(type.getClass().getSimpleName());
+                //return allow.contains(type.getClass().getSimpleName());
+                return ! skip.remove(type.getClass().getSimpleName()); // Just once.
+            }
+        });
+        // Just once.
+        processorConfig.setRuleProviderFilter(new Predicate<WindupRuleProvider>(){
+            private Set<String> done = new HashSet();
+
+            public boolean accept(WindupRuleProvider type){
+                return done.add(type.getClass().getSimpleName());
             }
         });
 
@@ -163,8 +165,8 @@ public class JavaClassTest
         Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
         Assert.assertTrue(typeReferences.iterator().hasNext());
 
-        Assert.assertEquals(3, provider.getFirstRuleMatchCount());
-        Assert.assertEquals(1, provider.getSecondRuleMatchCount());
+        Assert.assertEquals(4, provider.getFirstRuleMatchCount());
+        Assert.assertEquals(2, provider.getSecondRuleMatchCount());
     }
 
 }

@@ -27,6 +27,8 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.RandomStringUtils;
@@ -130,7 +132,7 @@ public class GraphContextImpl implements GraphContext
             // Graph is already initialized, just return.
             return;
         
-        log.log(Level.WARNING, "Initializing graph lazily.", new Exception());
+        log.log(Level.WARNING, "Initializing graph lazily.", stripProxyCalls(new Exception()));
         this.reinitGraph(new GraphContextConfig());
     }
     
@@ -146,7 +148,7 @@ public class GraphContextImpl implements GraphContext
     public void init(GraphContextConfig config){
         if(this.eventGraph != null){
             if(this.config != null && this.config.isWarnOnLazyInit())
-                throw new IllegalStateException("Graph was already initialized, see cause's stacktrace for where.", this.initStack);
+                throw new IllegalStateException("Graph was already initialized, see cause's stacktrace for where.", stripProxyCalls(this.initStack));
         }
         this.reinitGraph(config);
     }
@@ -288,7 +290,9 @@ public class GraphContextImpl implements GraphContext
     @Override
     public String toString()
     {
-        return "GraphContext " + getConfig().getGraphDataDir().toString();
+        String graphHash = getGraph() == null ? "null" : "" + getGraph().hashCode();
+        return "GraphContextImpl " + hashCode() + ", " +
+            (getConfig() == null ? "uninitialized" : ("graph "+graphHash+" in " + getConfig().getGraphDataDir()));
     }
 
     @Override
@@ -309,6 +313,33 @@ public class GraphContextImpl implements GraphContext
     public GraphContextConfig getConfig()
     {
         return config;
+    }
+
+
+    private Throwable stripProxyCalls(Exception ex)
+    {
+        List<StackTraceElement> newStack = new LinkedList();
+        
+        for( StackTraceElement call : ex.getStackTrace())
+        {
+            if(call.getClassName().startsWith("org.jboss.forge.furnace.proxy.")) continue;
+            if(call.getClassName().startsWith("org.jboss.forge.furnace.util.ClassLoaders")) continue;
+            if(call.getClassName().startsWith("org.jboss.weld.bean.proxy.")) continue;
+            if(call.getClassName().startsWith("org.jboss.weld.proxies."))
+                // Weld prefixes proxies with its package, but we need to see the method name.
+                if( ! call.getClassName().contains("$$") ) continue;
+            if(call.getClassName().startsWith("sun.reflect.")) continue;
+            if(call.getClassName().startsWith("java.lang.reflect.")) continue;
+            
+            newStack.add(call);
+
+            // Skip Arquillian, Surefire and Maven stuff.
+            if(call.getClassName().startsWith("org.jboss.arquillian.")) break;
+        }
+        
+        Exception newEx = new Exception(ex.getMessage(), ex.getCause());
+        newEx.setStackTrace(newStack.toArray(new StackTraceElement[newStack.size()]));
+        return newEx;
     }
 
 }

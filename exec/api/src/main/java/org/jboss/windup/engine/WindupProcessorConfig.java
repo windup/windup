@@ -31,9 +31,10 @@ public class WindupProcessorConfig {
     }
 
 
-    public void setGraphListener(GraphLifecycleListener graphListener)
+    public WindupProcessorConfig setGraphListener(GraphLifecycleListener graphListener)
     {
         this.graphListener = graphListener;
+        return this;
     }
 
 
