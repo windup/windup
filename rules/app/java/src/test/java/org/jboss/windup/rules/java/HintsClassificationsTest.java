@@ -143,7 +143,7 @@ public class HintsClassificationsTest
             try
             {
                 // TODO: Consolidate the config - e.g. the outputPath is now set at 2 places.
-                processor.execute(new WindupProcessorConfig().setOutputDirectory(outputPath));
+                processor.execute(new WindupProcessorConfig().setOutputDirectory(outputPath).setGraphListener(gll));
             }
             catch (Exception e)
             {
