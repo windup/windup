@@ -2,7 +2,9 @@ package org.jboss.windup.reporting.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.service.GraphService;
@@ -17,6 +19,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class Hint extends AbstractIterationOperation<FileLocationModel>
 {
+    private static final Logger log = Logger.getLogger(Hint.class.getName());
+
     private String hintText;
     private int effort;
     private List<Link> links = new ArrayList<>();
@@ -45,6 +49,7 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
      */
     public static Hint withText(String text)
     {
+        Assert.notNull(text, "Hint text must not be null.");
         Hint hint = new Hint();
         hint.hintText = text;
         return hint;
@@ -65,7 +70,7 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
 
         hintModel.setEffort(effort);
         hintModel.setHint(hintText);
-        
+
         GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
         for (Link link : links)
         {
@@ -74,6 +79,8 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
             linkModel.setLink(link.getLink());
             hintModel.addLink(linkModel);
         }
+
+        log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this + "] ");
     }
 
     /**
@@ -84,7 +91,7 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
         this.effort = effort;
         return this;
     }
-    
+
     /**
      * Add a {@link Link} to this {@link Hint}.
      */
@@ -101,4 +108,17 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     {
         this.hintText = text;
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder result = new StringBuilder();
+        result.append("Hint.withText(\"" + hintText + "\")");
+        if (effort != 0)
+            result.append(".withEffort(" + effort + ")");
+        if (links != null && !links.isEmpty())
+            result.append(".with(" + links + ")");
+        return result.toString();
+    }
+
 }

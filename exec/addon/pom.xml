@@ -2,37 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <parent>
         <groupId>org.jboss.windup.exec</groupId>
         <artifactId>windup-exec-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
+    
     <artifactId>windup-exec</artifactId>
-
-    <name>Windup Engine - Rules Exec Addon</name>
+    <name>Windup Engine - Execution API Addon</name>
 
     <dependencies>
-        <dependency>
-            <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
+    
+        <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec-api</artifactId>
@@ -42,6 +25,28 @@
             <artifactId>windup-exec-impl</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- Addon Dependencies -->
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Furnace Container -->
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 
@@ -50,10 +55,17 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>
                         <phase>prepare-package</phase>
+                        <goals>
+                            <goal>generate-dot</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -63,6 +75,12 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>forge-addon</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

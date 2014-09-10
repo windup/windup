@@ -3,6 +3,7 @@ package org.jboss.windup.config.loader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -10,6 +11,7 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.ServiceLogger;
 import org.ocpsoft.rewrite.bind.Evaluation;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionVisit;
@@ -30,12 +32,10 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
 {
-    public static Logger LOG = LoggerFactory.getLogger(GraphConfigurationLoaderImpl.class);
+    public static Logger LOG = Logger.getLogger(GraphConfigurationLoaderImpl.class.getName());
 
     @Inject
     private Imported<WindupRuleProviderLoader> loaders;
@@ -70,7 +70,9 @@ public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
             allProviders.addAll(loader.getProviders());
         }
 
-        return WindupRuleProviderSorter.sort(allProviders);
+        List<WindupRuleProvider> providers = WindupRuleProviderSorter.sort(allProviders);
+        ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, providers);
+        return providers;
     }
 
     private Configuration build(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)

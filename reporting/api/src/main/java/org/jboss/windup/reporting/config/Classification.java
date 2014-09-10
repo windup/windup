@@ -2,7 +2,9 @@ package org.jboss.windup.reporting.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -23,9 +25,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class Classification extends AbstractIterationOperation<FileModel>
 {
+    private static final Logger log = Logger.getLogger(Classification.class.getName());
+
     private List<Link> links = new ArrayList<>();
     private String classificationText;
-    private String details;
+    private String description;
     private int effort;
 
     Classification(String variable)
@@ -71,9 +75,9 @@ public class Classification extends AbstractIterationOperation<FileModel>
     /**
      * Set the description of this {@link Classification}.
      */
-    public Classification withDescription(String details)
+    public Classification withDescription(String description)
     {
-        this.details = details;
+        this.description = description;
         return this;
     }
 
@@ -97,6 +101,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
      */
     public static Classification as(String classification)
     {
+        Assert.notNull(classification, "Classification text must not be null.");
         Classification classif = new Classification();
         classif.classificationText = classification;
         return classif;
@@ -110,7 +115,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
          * want to add another.
          */
         GraphContext graphContext = event.getGraphContext();
-        GraphService<ClassificationModel> classificationService =  new GraphService<ClassificationModel>(graphContext,
+        GraphService<ClassificationModel> classificationService = new GraphService<ClassificationModel>(graphContext,
                     ClassificationModel.class);
         ClassificationModel classification = classificationService.getUniqueByProperty(
                     ClassificationModel.PROPERTY_CLASSIFICATION, classificationText);
@@ -119,7 +124,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
         {
             classification = classificationService.create();
             classification.setEffort(effort);
-            classification.setDescription(details);
+            classification.setDescription(description);
             classification.setClassifiation(classificationText);
 
             // TODO replace this with a link to a RuleModel, once that is implemented.
@@ -136,11 +141,27 @@ public class Classification extends AbstractIterationOperation<FileModel>
         }
 
         classification.addFileModel(payload);
+
+        log.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
     }
 
     protected void setClassificationText(String classification)
     {
         this.classificationText = classification;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder result = new StringBuilder();
+        result.append("Classification.as(" + classificationText + ")");
+        if (description != null && !description.trim().isEmpty())
+            result.append(".withDescription(" + description + ")");
+        if (effort != 0)
+            result.append(".withEffort(" + effort + ")");
+        if (links != null && !links.isEmpty())
+            result.append(".with(" + links + ")");
+        return result.toString();
     }
 
 }

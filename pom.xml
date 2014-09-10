@@ -18,7 +18,7 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.furnace>2.8.0.Final</version.furnace>
+        <version.furnace>2.9.2.Final</version.furnace>
         <version.titangraph>0.5.0</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.20</version.freemarker>
@@ -27,8 +27,7 @@
         <windup.developer.connection>scm:git:git@github.com:windup/windup.git</windup.developer.connection>
         <windup.scm.url>http://github.com/windup/windup</windup.scm.url>
 
-        <!-- This keeps javadoc from failing on projects with no actual .java 
-            source files -->
+        <!-- This keeps javadoc from failing on projects with no actual .java source files -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
@@ -43,102 +42,38 @@
 
     <modules>
         <module>graph</module>
-        <module>decompiler</module> <!-- Needed by one the JavaAST... rule in config/api. -->
-        <module>config</module>     <!-- TODO: Break parts of this into rules/app/... -->
-        <module>tests/core</module>
-        <module>utils</module>
-        <module>exec</module>       <!-- TODO: Break this into ext/config-xml and rules/app/... -->
+
+        <module>config</module>
+        <module>config-xml</module>
+        <module>config-groovy</module>
+
+        <module>decompiler</module>
+
+        <module>rules-java</module>
+        <module>rules-java-ee</module>
+        <module>rules-xml</module>
+
+        <module>exec</module>
         <module>reporting</module>
         <module>ui</module>
-        <module>logging</module>
 
-        <module>ext/groovy</module>
-        <module>ext/xml</module>
-        <module>rules</module>
+        <module>utils</module>
+        <module>tests</module>
 
     </modules>
 
     <build>
-
         <plugins>
-            <!-- Local repo cleanup - project artifacts. -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>deleteLocalRepoProjectArtifacts</id>
-                        <goals>
-                            <goal>remove-project-artifact</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Local repo cleanup - dependencies. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>deleteLocalRepoProjectDeps</id>
-                        <goals>
-                            <goal>purge-local-repository</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${skipDeleteDeps}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
-            <!-- Forge addon creation - to be inherited & activated using 
-                phase=prepare-package, resp. package. -->
-            <plugin>
-                <groupId>org.jboss.forge.furnace</groupId>
-                <artifactId>furnace-maven-plugin</artifactId>
-                <version>${version.furnace}</version>
-                <executions>
-                    <execution>
-                        <id>generate-dot</id>
-                        <phase>none</phase>
-                        <goals>
-                            <goal>generate-dot</goal>
-                        </goals>
-                        <configuration>
-                            <attach>true</attach>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create-forge-addon</id>
-                        <phase>none</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>forge-addon</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Surefire -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
                 <configuration>
                     <excludes>
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
-                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=512m</argLine>
+                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=128m</argLine>
                 </configuration>
             </plugin>
-
         </plugins>
 
         <pluginManagement>
@@ -160,7 +95,41 @@
     </build>
 
     <profiles>
-        <!-- Aggregated Javadoc -->
+        <profile>
+            <id>cleanup</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deleteLocalRepoProjectArtifacts</id>
+                                <goals>
+                                    <goal>remove-project-artifact</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deleteLocalRepoProjectDeps</id>
+                                <goals>
+                                    <goal>purge-local-repository</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${skipDeleteDeps}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <id>javadocDist</id>
             <build>
@@ -195,18 +164,7 @@
                 <javadoc.branding>Windup ${project.version}</javadoc.branding>
             </properties>
         </profile>
-
-        <profile>
-            <id>legacy</id>
-            <modules combine.children="append">
-                <module>legacy</module>
-                <!-- Sample apps build runs Windup Maven Plugin, so legacy 
-                    needs to be above. To be changed later. -->
-                <module>sample-apps</module>
-            </modules>
-        </profile>
     </profiles>
-
 
     <dependencies>
         <dependency>
@@ -215,21 +173,11 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Jess Sightler's Frames classloading patch. https://github.com/jsight/frames/tree/classloaderresolver -->
-            <dependency>
-                <groupId>com.tinkerpop</groupId>
-                <artifactId>frames</artifactId>
-                <version>2.6.0-SNAPSHOT</version>
-            </dependency>
-
-            <!-- Forge and Furnace -->
 
             <!-- Forge BOM -->
             <dependency>
@@ -238,74 +186,6 @@
                 <version>${version.furnace}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <!-- Furnace CDI -->
-            <dependency>
-                <groupId>org.jboss.forge.furnace.container</groupId>
-                <artifactId>cdi</artifactId>
-                <classifier>forge-addon</classifier>
-                <version>${version.furnace}</version>
-                <scope>provided</scope>
-                <!-- Not propagated to submodules :/ -->
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-jdk14</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- Furnace CDI impl -->
-            <dependency>
-                <groupId>org.jboss.forge.furnace.container</groupId>
-                <artifactId>cdi-impl</artifactId>
-                <version>${version.furnace}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-jdk14</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.forge.furnace.test</groupId>
-                <artifactId>furnace-test-harness</artifactId>
-                <version>${version.furnace}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.forge.furnace.test</groupId>
-                <artifactId>arquillian-furnace-classpath</artifactId>
-                <version>${version.furnace}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- Logging -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
-            </dependency>
-
-            <!-- Commons -->
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
             </dependency>
 
 

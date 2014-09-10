@@ -7,22 +7,29 @@
         <groupId>org.jboss.windup.reporting</groupId>
         <artifactId>windup-reporting-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>windup-reporting</artifactId>
     <name>Windup Engine - Reporting Addon</name>
 
     <dependencies>
+
+        <!-- Local Dependencies -->
+        <dependency>
+            <groupId>org.jboss.windup.reporting</groupId>
+            <artifactId>windup-reporting-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.reporting</groupId>
+            <artifactId>windup-reporting-impl</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
@@ -35,23 +42,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Furnace Container -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>windup-reporting-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>windup-reporting-impl</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -61,10 +57,17 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>
                         <phase>prepare-package</phase>
+                        <goals>
+                            <goal>generate-dot</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -74,6 +77,12 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>forge-addon</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

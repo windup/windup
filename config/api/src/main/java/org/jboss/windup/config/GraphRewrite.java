@@ -6,8 +6,6 @@
  */
 package org.jboss.windup.config;
 
-import java.nio.file.Path;
-
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.AbstractRewrite;
 import org.ocpsoft.rewrite.event.Flow;
@@ -19,10 +17,7 @@ import org.ocpsoft.rewrite.event.Rewrite;
  */
 public class GraphRewrite extends AbstractRewrite implements Rewrite
 {
-    private static final String WINDUP_TEMP_PREFIX = "windup";
-
     private final GraphContext graphContext;
-    private Path tempDirectory;
 
     public GraphRewrite(GraphContext context)
     {
