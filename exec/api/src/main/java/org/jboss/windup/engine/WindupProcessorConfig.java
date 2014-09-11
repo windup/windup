@@ -31,6 +31,10 @@ public class WindupProcessorConfig {
     }
 
 
+    /**
+     * Set GraphLifecycleListener to the given one. Can be used to fill the graph 
+     * with data after it was initialized.
+     */
     public WindupProcessorConfig setGraphListener(GraphLifecycleListener graphListener)
     {
         this.graphListener = graphListener;

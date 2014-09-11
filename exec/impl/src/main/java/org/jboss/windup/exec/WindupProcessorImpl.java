@@ -29,11 +29,11 @@ public class WindupProcessorImpl implements WindupProcessor
 
     
     @Override
-    public void execute( WindupProcessorConfig wpConfig )
+    public void execute(WindupProcessorConfig wpConfig)
     {
         // Graph Context config.
         GraphContextConfig gcConfig = new GraphContextConfig();
-        if( wpConfig.getOutputDirectory() != null ){
+        if(wpConfig.getOutputDirectory() != null){
             Path graphDir = wpConfig.getOutputDirectory().resolve("graph");
             gcConfig.setGraphDataDir(graphDir);
         }
@@ -42,7 +42,7 @@ public class WindupProcessorImpl implements WindupProcessor
         this.graphContext.init(gcConfig);
         
         // Call the listener.
-        if( null != wpConfig.getGraphListener() )
+        if(null != wpConfig.getGraphListener())
             wpConfig.getGraphListener().postOpen(this.graphContext);
         
         final Configuration ocpConfig;
@@ -52,13 +52,13 @@ public class WindupProcessorImpl implements WindupProcessor
         
         final RuleSubset ruleSubset = RuleSubset.create(ocpConfig);
 
-        if( wpConfig.getProgressMonitor() != null )
+        if(wpConfig.getProgressMonitor() != null)
             ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(wpConfig.getProgressMonitor(), ocpConfig));
         
         ruleSubset.perform(event, createEvaluationContext());
         
         // Call the listener
-        if( null != wpConfig.getGraphListener() )
+        if(null != wpConfig.getGraphListener())
             wpConfig.getGraphListener().preShutdown(this.graphContext);
     }
 

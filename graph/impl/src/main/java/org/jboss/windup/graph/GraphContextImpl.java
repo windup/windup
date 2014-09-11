@@ -132,7 +132,7 @@ public class GraphContextImpl implements GraphContext
             // Graph is already initialized, just return.
             return;
         
-        log.log(Level.WARNING, "Initializing graph lazily.", stripProxyCalls(new Exception()));
+        log.log(Level.WARNING, "Initializing graph lazily.", stripProxyCalls(new StackTrace()));
         this.reinitGraph(new GraphContextConfig());
     }
     
@@ -147,7 +147,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void init(GraphContextConfig config){
         if(this.eventGraph != null){
-            if(this.config != null && this.config.isWarnOnLazyInit())
+            if(this.config != null && this.config.isThrowOnLazyInit())
                 throw new IllegalStateException("Graph was already initialized, see cause's stacktrace for where.", stripProxyCalls(this.initStack));
         }
         this.reinitGraph(config);
@@ -315,12 +315,17 @@ public class GraphContextImpl implements GraphContext
         return config;
     }
 
+    
+    private static class StackTrace extends RuntimeException
+    {
+    }
 
+    
     private Throwable stripProxyCalls(Exception ex)
     {
         List<StackTraceElement> newStack = new LinkedList();
         
-        for( StackTraceElement call : ex.getStackTrace())
+        for(StackTraceElement call : ex.getStackTrace())
         {
             if(call.getClassName().startsWith("org.jboss.forge.furnace.proxy.")) continue;
             if(call.getClassName().startsWith("org.jboss.forge.furnace.util.ClassLoaders")) continue;
@@ -340,6 +345,12 @@ public class GraphContextImpl implements GraphContext
         Exception newEx = new Exception(ex.getMessage(), ex.getCause());
         newEx.setStackTrace(newStack.toArray(new StackTraceElement[newStack.size()]));
         return newEx;
+    }
+
+    @Override
+    public Path getGraphDirectory()
+    {
+        return config.getGraphDataDir();
     }
 
 }
