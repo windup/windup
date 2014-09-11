@@ -11,17 +11,22 @@ public class GraphContextConfig {
 
     private Path graphDataDir;
     
-    private boolean warnOnLazyInit = false;
+    private boolean throwOnLazyInit = false;
 
 
     //<editor-fold defaultstate="collapsed" desc="get/set">
     
+    /**
+     * The directory to store graph data in.
+     */
     public Path getGraphDataDir()
     {
         return graphDataDir;
     }
     
-    
+    /**
+     * Sets the directory to store graph data in.
+     */
     public GraphContextConfig setGraphDataDir(Path path)
     {
         this.graphDataDir = path;
@@ -29,17 +34,20 @@ public class GraphContextConfig {
     }
     
     /**
-     * Whether to log a WARNING when initializing the GraphContext lazily.
+     * Whether to throw an exception when initializing the GraphContext lazily.
      */
-    public boolean isWarnOnLazyInit()
+    public boolean isThrowOnLazyInit()
     {
-        return warnOnLazyInit;
+        return throwOnLazyInit;
     }
 
 
-    public GraphContextConfig setWarnOnLazyInit(boolean warnOnLazyInit)
+    /**
+     * Enables/disables to log a WARNING when initializing the GraphContext lazily.
+     */
+    public GraphContextConfig setThrowOnLazyInit(boolean throwOnLazyInit)
     {
-        this.warnOnLazyInit = warnOnLazyInit;
+        this.throwOnLazyInit = throwOnLazyInit;
         return this;
     }
     
