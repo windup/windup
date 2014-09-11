@@ -42,7 +42,8 @@ public class DuplicateTypeValueTest
     public void testDuplicateTypeValue() throws Exception
     {
         Assert.assertNotNull(context);
-
+        context.init(null);
+        
         //this line needed to invoke GraphTypeRegistry.init()
         TestSimpleModel simpleModel = context.getFramed().addVertex(null, TestSimpleModel.class);
     }

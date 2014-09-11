@@ -65,8 +65,8 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
 
     private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
-        ApplicationReportModel applicationReportModel = context.getFramed().addVertex(null,
-                    ApplicationReportModel.class);
+        ApplicationReportModel applicationReportModel = 
+                context.getFramed().addVertex(null, ApplicationReportModel.class);
         applicationReportModel.setReportPriority(100);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Overview");

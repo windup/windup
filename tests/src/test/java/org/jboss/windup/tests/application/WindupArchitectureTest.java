@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -46,8 +47,7 @@ public abstract class WindupArchitectureTest
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        processor.setOutputDirectory(outputPath);
-
+        // Windup config
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
         windupCfg.setInputPath(inputPath);
         windupCfg.setSourceMode(sourceMode);
@@ -57,8 +57,14 @@ public abstract class WindupArchitectureTest
         windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
         windupCfg.setSourceMode(false);
 
+        // Processor config. Overlaps a bit.
+        WindupProcessorConfig wpc = new WindupProcessorConfig();
+        wpc.setOutputDirectory(outputPath);
         RecordingWindupProgressMonitor progressMonitor = new RecordingWindupProgressMonitor();
-        processor.execute(progressMonitor);
+        wpc.setProgressMonitor(progressMonitor);
+        
+        // Execute
+        processor.execute(wpc);
 
         Assert.assertFalse(progressMonitor.isCancelled());
         Assert.assertTrue(progressMonitor.isDone());

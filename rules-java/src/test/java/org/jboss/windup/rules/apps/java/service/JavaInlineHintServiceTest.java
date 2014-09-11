@@ -53,6 +53,9 @@ public class JavaInlineHintServiceTest
     @Test
     public void testGetPackageUseFrequencies() throws Exception
     {
+        Assert.assertNotNull(context);
+        context.init(null);
+
         JavaInlineHintService javaInlineHintService = new JavaInlineHintService(context);
 
         ProjectModel projectModel = fillData();
