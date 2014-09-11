@@ -1,5 +1,7 @@
 package org.jboss.windup.graph;
 
+import java.nio.file.Path;
+
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.service.Service;
 
@@ -16,10 +18,9 @@ import com.tinkerpop.frames.VertexFrame;
 public interface GraphContext
 {
     /**
-     * Initializes the graph.
-     * Called from the WindupProcessorImpl. If not using that
-     * (e.g. tests of graph functionality), needs to be called manually.
-     * Although currently, getGraph(), getBatch() and getFramed() still call initGraphIfNeeded().
+     * Initializes the graph. Called from the WindupProcessorImpl. If not using that (e.g. tests of graph
+     * functionality), needs to be called manually. Although currently, getGraph(), getBatch() and getFramed() still
+     * call initGraphIfNeeded().
      * 
      * @param config If null, a default configuration is used.
      * @throws IllegalStateException if the graph was already initialized.
@@ -39,12 +40,12 @@ public interface GraphContext
      * 
      * NOTE: All files in this directory will be deleted!
      */
-    //void setGraphDirectory(Path graphDirectory);
+    // void setGraphDirectory(Path graphDirectory);
 
     /**
      * Get the location on disk where the underlying {@link TitanGraph} is stored.
      */
-    //Path getGraphDirectory();
+    // Path getGraphDirectory();
 
     /**
      * Get the underlying {@link EventGraph}, which is itself a wrapper for a {@link TitanGraph}.
@@ -70,4 +71,9 @@ public interface GraphContext
      * Returns a {@link Service} object that is specialized for the provided type.
      */
     <T extends VertexFrame, S extends Service<T>> S getService(Class<T> type);
+
+    /**
+     * Get the {@link Path} on disk where this graph is stored.
+     */
+    public Path getGraphDirectory();
 }

@@ -12,8 +12,11 @@ import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.junit.Assert;
+
+import com.fasterxml.jackson.databind.ser.std.StdJdkSerializers.FileSerializer;
 
 /**
  * Base class for Windup end-to-end tests.
@@ -49,7 +52,8 @@ public abstract class WindupArchitectureTest
 
         // Windup config
         WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(inputPath);
+        FileModelService fileModelService = new FileModelService(graphContext);
+        windupCfg.setInputPath(fileModelService.createByFilePath(inputPath));
         windupCfg.setSourceMode(sourceMode);
         windupCfg.setScanJavaPackageList(includePackages);
         windupCfg.setExcludeJavaPackageList(excludePackages);

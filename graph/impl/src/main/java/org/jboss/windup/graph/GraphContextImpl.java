@@ -342,4 +342,10 @@ public class GraphContextImpl implements GraphContext
         return newEx;
     }
 
+    @Override
+    public Path getGraphDirectory()
+    {
+        return config.getGraphDataDir();
+    }
+
 }
