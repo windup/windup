@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,20 +62,21 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
 
             Path graphDirectory = context.getGraphDirectory();
             Path reportsDirectory = graphDirectory.resolve("reports");
-            Path indexPath = reportsDirectory.resolve("index.html");
+            Path indexPath = reportsDirectory.resolve(Paths.get("index.html"));
 
             Path appReportPath = resolveChildPath(reportsDirectory,
-                        "JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d\\.html");
+                        "JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d+\\.html");
             Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
-                        "nonclassifiedfiles_JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d\\.html");
-            Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBeanjava\\.\\d\\.html");
-            Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilterjava\\.\\d\\.html");
-            Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisherjava\\.\\d\\.html");
-            Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilterjava\\.\\d\\.html");
-            Path webStartupListenerPath = resolveChildPath(reportsDirectory, "AnvilWebStartupListenerjava\\.\\d\\.html");
-            Path webServletPath = resolveChildPath(reportsDirectory, "AnvilWebServletjava\\.\\d\\.html");
+                        "nonclassifiedfiles_JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d+\\.html");
+            Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBeanjava\\.\\d+\\.html");
+            Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilterjava\\.\\d+\\.html");
+            Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisherjava\\.\\d+\\.html");
+            Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilterjava\\.\\d+\\.html");
+            Path webStartupListenerPath = resolveChildPath(reportsDirectory,
+                        "AnvilWebStartupListenerjava\\.\\d+\\.html");
+            Path webServletPath = resolveChildPath(reportsDirectory, "AnvilWebServletjava\\.\\d+\\.html");
             Path webLifecycleListenerPath = resolveChildPath(reportsDirectory,
-                        "AnvilWebLifecycleListenerjava\\.\\d\\.html");
+                        "AnvilWebLifecycleListenerjava\\.\\d+\\.html");
 
             Assert.assertTrue(indexPath.toFile().exists());
             Assert.assertTrue(appReportPath.toFile().exists());
@@ -95,7 +97,6 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Assert.assertTrue(webListenerContent
                         .contains("This class is proprietary to Weblogic, remove."));
         }
-
     }
 
     private Path resolveChildPath(Path parent, final String childPattern)

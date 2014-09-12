@@ -19,7 +19,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleProvider
 {
-    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
+    public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
 
     @Override
     public RulePhase getPhase()
