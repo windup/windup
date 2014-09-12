@@ -1,6 +1,10 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
+import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -158,8 +162,7 @@ public class XmlFile extends GraphCondition
                
                     Document document = xml.asDocument();
                     NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
-                    String documentString = getStringFromDocument(document);
-                    String[] strings = documentString.split("\n");
+                    List<String> lines = Files.readAllLines(Paths.get(xml.getFilePath()),Charset.defaultCharset());
                     if (result != null && (result.getLength() != 0))
                     {
                         for (int i = 0; i < result.getLength(); i++)
@@ -172,14 +175,13 @@ public class XmlFile extends GraphCondition
                                     continue;
                                 }
                             }
-
                             // Everything passed for this Node. Start creating XmlTypeReferenceModel for it.
                             int lineNumber = (int) node.getUserData(
                                         LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
                             int columnNumber = (int) node.getUserData(
                                         LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
 
-                            int lineLength = strings[lineNumber - 1].length();
+                            int lineLength = lines.get(lineNumber - 1).length();
                             graphContext = event.getGraphContext();
                             GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<XmlTypeReferenceModel>(
                                         graphContext,
@@ -204,7 +206,7 @@ public class XmlFile extends GraphCondition
                             resultLocations.add(fileLocation);
                         }
                 } }
-                catch (TransformerException | MarshallingException e)
+                catch (MarshallingException e)
                 {
                     GraphService<ClassificationModel> classificationService = event.getGraphContext().getService(
                                 ClassificationModel.class);
@@ -223,6 +225,10 @@ public class XmlFile extends GraphCondition
                     }
                     classification.addFileModel(xml);
                 }
+                catch (IOException e)
+                {
+                    throw new WindupException("Error while processing xml file in the file system", e);
+                }
 
             }
             
@@ -230,17 +236,6 @@ public class XmlFile extends GraphCondition
         }
         Variables.instance(event).setVariable(variable, resultLocations);
         return !resultLocations.isEmpty();
-    }
-
-    public String getStringFromDocument(Document doc) throws TransformerException
-    {
-        DOMSource domSource = new DOMSource(doc);
-        StringWriter writer = new StringWriter();
-        StreamResult result = new StreamResult(writer);
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.transform(domSource, result);
-        return writer.toString();
     }
 
     public XmlFile namespace(String prefix, String url)

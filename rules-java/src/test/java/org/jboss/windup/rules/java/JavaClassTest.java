@@ -139,7 +139,7 @@ public class JavaClassTest
         @Override
         public RulePhase getPhase()
         {
-            return RulePhase.MIGRATION_RULES;
+            return RulePhase.POST_MIGRATION_RULES;
         }
 
         public int getFirstRuleMatchCount()
