@@ -26,19 +26,22 @@ public class GraphContextFactoryImpl implements GraphContextFactory
 
     private GraphContext graphContext;
 
+    
     @Override
     public GraphContext create()
     {
-        return produceGraphContext();
+        return new GraphContextImpl(
+            this.graphServices,
+            this.graphTypeRegistry,
+            this.graphApiCompositeClassLoaderProvider);
     }
 
     @Override
-    public GraphContext create(Path runDirectory)
+    public GraphContext create(Path graphDataDir)
     {
-        GraphContextImpl context = new GraphContextImpl(graphServices,
-                    this.graphTypeRegistry,
-                    this.graphApiCompositeClassLoaderProvider);
-        context.setGraphDirectory(runDirectory);
+        GraphContext context = this.create();
+        GraphContextConfig cfg = new GraphContextConfig().setGraphDataDir(graphDataDir);
+        context.init(cfg);
         return context;
     }
 
@@ -48,9 +51,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     {
         if (this.graphContext == null)
         {
-            this.graphContext = new GraphContextImpl(graphServices,
-                        this.graphTypeRegistry,
-                        this.graphApiCompositeClassLoaderProvider);
+            this.graphContext = this.create();
         }
         return graphContext;
     }

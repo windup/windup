@@ -47,6 +47,7 @@ public class FrameMapHandlerTest
     public void testMapHandling() throws Exception
     {
         Assert.assertNotNull(context);
+        context.init(null);
 
         TestMapMainModel mainModel = context.getFramed().addVertex(null, TestMapMainModel.class);
         TestMapValueModel value1 = context.getFramed().addVertex(null, TestMapValueModel.class);

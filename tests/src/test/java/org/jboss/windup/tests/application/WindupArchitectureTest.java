@@ -6,13 +6,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.junit.Assert;
+
 
 /**
  * Base class for Windup end-to-end tests.
@@ -35,30 +37,48 @@ public abstract class WindupArchitectureTest
         runTest(processor, graphContext, inputPath, sourceMode, includePackages, excludeList);
     }
 
-    void runTest(WindupProcessor processor, GraphContext graphContext, String inputPath, boolean sourceMode,
-                List<String> includePackages, List<String> excludePackages)
-                throws Exception
+    void runTest(WindupProcessor processor,
+            final GraphContext graphContext,
+            final String inputPath,
+            final boolean sourceMode,
+            final List<String> includePackages,
+            final List<String> excludePackages) throws Exception
     {
         Assert.assertNotNull(processor);
         Assert.assertNotNull(processor.toString());
 
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupReport");
+        // Output dir
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupReport");
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        processor.setOutputDirectory(outputPath);
+        // GraphContext init
+        final GraphLifecycleListener initer = new GraphLifecycleListener()
+        {
+            public void postOpen(GraphContext context)
+            {
+                // Windup config
+                WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
+                windupCfg.setInputPath(inputPath);
+                windupCfg.setSourceMode(sourceMode);
+                windupCfg.setScanJavaPackageList(includePackages);
+                windupCfg.setExcludeJavaPackageList(excludePackages);
+                
+                windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
+                windupCfg.setSourceMode(false);
+            }
 
-        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(inputPath);
-        windupCfg.setSourceMode(sourceMode);
-        windupCfg.setScanJavaPackageList(includePackages);
-        windupCfg.setExcludeJavaPackageList(excludePackages);
+            public void preShutdown(GraphContext context) { }
+        };
 
-        windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
-        windupCfg.setSourceMode(false);
-
+        // Processor config. Overlaps a bit.
+        WindupProcessorConfig wpc = new WindupProcessorConfig().setGraphListener(initer);
+        wpc.setOutputDirectory(outputPath);
         RecordingWindupProgressMonitor progressMonitor = new RecordingWindupProgressMonitor();
-        processor.execute(progressMonitor);
+        wpc.setProgressMonitor(progressMonitor);
+        
+        // Execute
+        processor.execute(wpc);
 
         Assert.assertFalse(progressMonitor.isCancelled());
         Assert.assertTrue(progressMonitor.isDone());

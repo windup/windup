@@ -49,6 +49,9 @@ public class JavaHandlerSubclassSpecializationTest
     @Test
     public void testSubclassMethodHandling() throws Exception
     {
+        Assert.assertNotNull(context);
+        context.init(null);
+        
         TestFooModel model = context.getFramed().addVertex(null, TestFooModel.class);
         TestFooSubModel subModel = GraphService.addTypeToModel(context, model, TestFooSubModel.class);
         TestFooModel asParent = subModel;
