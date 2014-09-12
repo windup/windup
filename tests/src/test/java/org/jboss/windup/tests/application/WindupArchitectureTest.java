@@ -40,9 +40,12 @@ public abstract class WindupArchitectureTest
         runTest(processor, graphContext, inputPath, sourceMode, includePackages, excludeList);
     }
 
-    void runTest(WindupProcessor processor, GraphContext graphContext, String inputPath, boolean sourceMode,
-                List<String> includePackages, List<String> excludePackages)
-                throws Exception
+    void runTest(WindupProcessor processor,
+            final GraphContext graphContext,
+            final String inputPath,
+            final boolean sourceMode,
+            final List<String> includePackages,
+            final List<String> excludePackages) throws Exception
     {
         Assert.assertNotNull(processor);
         Assert.assertNotNull(processor.toString());

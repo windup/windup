@@ -16,12 +16,17 @@ public class GraphContextConfig {
 
     //<editor-fold defaultstate="collapsed" desc="get/set">
     
+    /**
+     * The directory to store graph data in.
+     */
     public Path getGraphDataDir()
     {
         return graphDataDir;
     }
     
-    
+    /**
+     * Sets the directory to store graph data in.
+     */
     public GraphContextConfig setGraphDataDir(Path path)
     {
         this.graphDataDir = path;
@@ -37,6 +42,9 @@ public class GraphContextConfig {
     }
 
 
+    /**
+     * Enables/disables to log a WARNING when initializing the GraphContext lazily.
+     */
     public GraphContextConfig setWarnOnLazyInit(boolean warnOnLazyInit)
     {
         this.warnOnLazyInit = warnOnLazyInit;

@@ -76,7 +76,7 @@ public class GraphContextImpl implements GraphContext
     }
 
     /**
-     * Returns a graph suitable for batchGraph processing.
+     * Returns a graph suitable for batch processing.
      * 
      * Note: This bypasses the event graph (thus no events will be fired for modifications to this graph)
      */
