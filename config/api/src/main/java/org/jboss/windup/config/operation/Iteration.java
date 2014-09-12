@@ -207,11 +207,20 @@ public class Iteration extends DefaultOperationBuilder
     {
         Variables variables = Variables.instance(event);
         Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, context);
-        variables.push();
         for (WindupVertexFrame frame : frames)
         {
+            variables.push();
             getPayloadManager().setCurrentPayload(variables, frame);
-            if (condition == null || condition.evaluate(event, context))
+            boolean conditionResult = true;
+            if (condition != null)
+            {
+                conditionResult = condition.evaluate(event, context);
+                /* Add special clear layer for perform, because condition used one and could have added new variables. 
+                 The condition result put into varstack is ignored. */
+                variables.push();
+                getPayloadManager().setCurrentPayload(variables, frame);
+            }
+            if (conditionResult)
             {
                 if (operationPerform != null)
                 {
@@ -225,10 +234,20 @@ public class Iteration extends DefaultOperationBuilder
                     operationOtherwise.perform(event, context);
                 }
             }
+            getPayloadManager().removeCurrentPayload(variables);
+            //remove the perform layer
+            variables.pop();
+            if (condition != null)
+            {
+                //remove the condition layer
+                variables.pop();
+            }
         }
-        getPayloadManager().removeCurrentPayload(variables);
-        variables.pop();
+       
+       
+       
     }
+
 
     @Override
     public List<Operation> getOperations()
