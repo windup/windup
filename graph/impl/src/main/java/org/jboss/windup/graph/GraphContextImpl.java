@@ -76,7 +76,7 @@ public class GraphContextImpl implements GraphContext
     }
 
     /**
-     * Returns a graph suitable for batch processing.
+     * Returns a graph suitable for batchGraph processing.
      * 
      * Note: This bypasses the event graph (thus no events will be fired for modifications to this graph)
      */
@@ -147,7 +147,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void init(GraphContextConfig config){
         if(this.eventGraph != null){
-            if(this.config != null && this.config.isWarnOnLazyInit())
+            if(this.config != null && this.config.isThrowOnLazyInit())
                 throw new IllegalStateException("Graph was already initialized, see cause's stacktrace for where.", stripProxyCalls(this.initStack));
         }
         this.reinitGraph(config);
