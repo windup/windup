@@ -16,6 +16,50 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
 {
 
     /**
+     * Checks if the given App section, filepath, and effort level can be seen in the report.
+     * 
+     * For example checkFilePathEffort("src_example", "src/main/resources/test.properties", 13) will ensure that an
+     * application called "src_example" is in the report, with a line referencing "src/main/resources/test.properties"
+     * and that this line contains the effort level 13).
+     */
+    public boolean checkFilePathEffort(String appSection, String filePath, int effort)
+    {
+        WebElement appSectionEl = getAppSectionElement(appSection);
+        if (appSectionEl == null)
+        {
+            return false;
+        }
+
+        WebElement fileRowElement = getFileRowElement(appSection, filePath);
+        if (fileRowElement == null)
+        {
+            return false;
+        }
+
+        List<WebElement> elements = fileRowElement.findElements(By.xpath("./td[position() = 4]"));
+        for (WebElement element : elements)
+        {
+            if (element.getText() != null)
+            {
+                try
+                {
+                    int number = Integer.parseInt(element.getText());
+                    if (number == effort)
+                    {
+                        return true;
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    // ignore
+                }
+
+            }
+        }
+        return false;
+    }
+
+    /**
      * Checks if the given App section, filepath, and tag can be found in the report.
      * 
      * For example calling checkFilePathAndIssues("src_example", "src/main/resources/test.properties",

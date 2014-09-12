@@ -63,6 +63,7 @@
         <h3>Classification</h3>
         
         <ul>
+          <li>Estimated Story Points: ${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</li>
           <li>
             <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
               <span class="label label-info">${techTag.name}</span>

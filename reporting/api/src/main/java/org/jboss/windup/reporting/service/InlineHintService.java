@@ -40,6 +40,24 @@ public class InlineHintService extends GraphService<InlineHintModel>
     }
 
     /**
+     * Returns the total effort points in all of the {@link InlineHintModel}s associated with the provided
+     * {@link FileModel}.
+     */
+    public int getMigrationEffortPoints(FileModel fileModel)
+    {
+        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(fileModel.asVertex());
+        inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+
+        int hintEffort = 0;
+        for (Vertex v : inlineHintPipeline)
+        {
+            hintEffort += (Integer) v.getProperty(InlineHintModel.EFFORT);
+        }
+        return hintEffort;
+    }
+
+    /**
      * Returns the total effort points in all of the {@link InlineHintModel}s associated with the files in this project.
      * 
      * If set to recursive, then also include the effort points from child projects.
