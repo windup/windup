@@ -8,11 +8,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
@@ -25,8 +27,6 @@ import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.xml.DoctypeUtils;
 import org.jboss.windup.util.xml.NamespaceUtils;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,8 +36,11 @@ import org.w3c.dom.Element;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
+public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
+    private static final String TECH_TAG = "Web XML";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+
     private static final String dtdRegex = "(?i).*web.application.*";
 
     @Override
@@ -52,29 +55,19 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
         return asClassList(DiscoverXmlFilesRuleProvider.class);
     }
 
-    public Configuration getConfiguration(GraphContext context)
+    @Override
+    public ConditionBuilder when()
     {
-        ConditionBuilder webXmlFound = Query
-                    .find(XmlFileModel.class)
-                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app");
-
-        return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(webXmlFound)
-                    .perform(new AddWebXmlMetadata());
+        return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app");
     }
 
-    private class AddWebXmlMetadata extends AbstractIterationOperation<XmlFileModel>
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
-        @Override
-        public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
+        XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
+        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        if (doc != null && isWebXml(payload, doc))
         {
-            XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
-            Document doc = xmlFileService.loadDocumentQuiet(payload);
-            if (doc != null && isWebXml(payload, doc))
-            {
-                addWebXmlMetadata(event.getGraphContext(), payload, doc);
-            }
+            addWebXmlMetadata(event.getGraphContext(), payload, doc);
         }
     }
 
@@ -132,10 +125,14 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
 
     private void addWebXmlMetadata(GraphContext context, XmlFileModel xml, Document doc)
     {
+        TechnologyTagService technologyTagService = new TechnologyTagService(context);
+        technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
+        WebXmlService webXmlService = new WebXmlService(context);
+
         String webXmlVersion = getVersion(xml, doc);
 
         // check the root XML node.
-        WebXmlModel webXml = new WebXmlService(context).addTypeToModel(xml);
+        WebXmlModel webXml = webXmlService.addTypeToModel(xml);
 
         // change "_" in the version to "."
         if (StringUtils.isNotBlank(webXmlVersion))

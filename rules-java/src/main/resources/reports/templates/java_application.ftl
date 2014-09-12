@@ -4,7 +4,7 @@
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
 <#macro tagRenderer tag>
-	<span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
+	<span class="label label-info"><#nested/></span>
 </#macro>
 
 <#macro fileModelRenderer fileModel>
@@ -17,14 +17,21 @@
 	     </a>
 	  </td>
 		<td>
-			<#-- <#list resource.technologyTags as tag>
-		    <@tagRenderer tag>${tag.title}</@tagRenderer>
-		    </#list> -->
+			<#list getTechnologyTagsForFile(fileModel).iterator() as tag>
+		    <@tagRenderer tag>${tag.name}</@tagRenderer>
+		  </#list>
 		</td>
 		<td>
-			<#-- <#list resource.issueTags as tag>
-		    <@tagRenderer tag>${tag.title}</@tagRenderer>
-		    </#list> -->
+		  <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content>
+  		  <b>Warnings: ${sourceReportModel.sourceFileModel.inlineHintCount} items</b>
+          <ul class='notifications'>
+            <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
+              <#if hintLine.hint?has_content>
+                <li class='warning'>${hintLine.hint}</li>
+              </#if>
+            </#list>
+          </ul>
+      </#if>
 		</td>
 	</tr>
 	</#if>
