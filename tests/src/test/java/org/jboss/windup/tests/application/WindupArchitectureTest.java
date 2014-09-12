@@ -13,6 +13,7 @@ import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.FileModelService;
+import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.junit.Assert;
 
@@ -46,23 +47,32 @@ public abstract class WindupArchitectureTest
         Assert.assertNotNull(processor);
         Assert.assertNotNull(processor.toString());
 
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupReport");
+        // Output dir
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupReport");
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        // Windup config
-        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
-        FileModelService fileModelService = new FileModelService(graphContext);
-        windupCfg.setInputPath(fileModelService.createByFilePath(inputPath));
-        windupCfg.setSourceMode(sourceMode);
-        windupCfg.setScanJavaPackageList(includePackages);
-        windupCfg.setExcludeJavaPackageList(excludePackages);
+        // GraphContext init
+        final GraphLifecycleListener initer = new GraphLifecycleListener()
+        {
+            public void postOpen(GraphContext context)
+            {
+                // Windup config
+                WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
+                windupCfg.setInputPath(inputPath);
+                windupCfg.setSourceMode(sourceMode);
+                windupCfg.setScanJavaPackageList(includePackages);
+                windupCfg.setExcludeJavaPackageList(excludePackages);
+                
+                windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
+                windupCfg.setSourceMode(false);
+            }
 
-        windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
-        windupCfg.setSourceMode(false);
+            public void preShutdown(GraphContext context) { }
+        };
 
         // Processor config. Overlaps a bit.
-        WindupProcessorConfig wpc = new WindupProcessorConfig();
+        WindupProcessorConfig wpc = new WindupProcessorConfig().setGraphListener(initer);
         wpc.setOutputDirectory(outputPath);
         RecordingWindupProgressMonitor progressMonitor = new RecordingWindupProgressMonitor();
         wpc.setProgressMonitor(progressMonitor);
