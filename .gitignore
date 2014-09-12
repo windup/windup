@@ -21,3 +21,4 @@ bin
 *.orig
 /localRepo/
 /utils/nb-configuration.xml
+/nbactions.xml

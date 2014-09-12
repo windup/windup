@@ -79,7 +79,7 @@ public class IterationPayloadTest
         parent2child1.setParent(parent1);
         parent2child1.setName("parent2child1");
 
-        RuleSubset.evaluate(provider.getConfiguration(context)).perform(event, evaluationContext);
+        RuleSubset.create(provider.getConfiguration(context)).perform(event, evaluationContext);
 
         Assert.assertEquals(3, provider.getChildCount());
         Assert.assertEquals(2, provider.getParentCount());

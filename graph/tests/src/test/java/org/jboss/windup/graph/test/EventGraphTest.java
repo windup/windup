@@ -45,6 +45,7 @@ public class EventGraphTest
     public void testEventGraph() throws Exception
     {
         Assert.assertNotNull(context);
+        context.init(null);
 
         StubGraphChangedListener stubGraphListener = new StubGraphChangedListener();
         context.getGraph().addListener(stubGraphListener);

@@ -97,7 +97,7 @@ public class IterationPayLoadPassTest
         Configuration configuration = provider.getConfiguration(context);
 
         // this should call perform()
-        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.create(configuration).perform(event, evaluationContext);
         Assert.assertEquals(3, modelCounter);
         modelCounter = 0;
 
@@ -124,7 +124,7 @@ public class IterationPayLoadPassTest
         Configuration configuration = provider.getConfiguration(context);
 
         // this should call perform()
-        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
+        RuleSubset.create(configuration).perform(event, evaluationContext);
         Assert.assertEquals(3, modelCounter);
         modelCounter = 0;
 
