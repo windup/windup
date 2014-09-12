@@ -8,6 +8,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
@@ -34,12 +35,18 @@ public class FindClassifiedFilesGremlinCriterion implements QueryGremlinCriterio
         // create a pipeline to get all items with attached classifications
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
                     context.getQuery().type(FileModel.class).vertices());
-
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE)
                     .back("fileModel2");
 
+        // create a pipeline to get all items with attached technology tags
+        GremlinPipeline<Vertex, Vertex> technologyTagPipeline = new GremlinPipeline<Vertex, Vertex>(
+                    context.getQuery().type(FileModel.class).vertices());
+        technologyTagPipeline.as("fileModel3").in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL)
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE)
+                    .back("fileModel3");
+
         // combine these to get all file models that have either classifications or blacklists
-        pipeline.or(hintPipeline, classificationPipeline);
+        pipeline.or(hintPipeline, classificationPipeline, technologyTagPipeline);
     }
 }

@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
@@ -15,6 +17,8 @@ import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.TechnologyTagModel.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -27,6 +31,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel>
 {
+    private static final String TECH_TAG = "Properties";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.SUCCESS;
+
+    @Inject
+    private TechnologyTagService technologyTagService;
+
     private GraphService<PropertiesModel> propertiesService;
 
     @Override
@@ -53,6 +63,8 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
         GraphService<PropertiesModel> service = getPropertiesService(event.getGraphContext());
         PropertiesModel properties = service.create();
         properties.setFileResource(payload);
+
+        technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
 
         try (InputStream is = payload.asInputStream())
         {

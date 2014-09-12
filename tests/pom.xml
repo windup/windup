@@ -20,6 +20,13 @@
 
         <!-- Addon Dependencies -->
         <dependency>
+            <groupId>org.jboss.windup.tests</groupId>
+            <artifactId>test-util</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>rules-java</artifactId>
             <version>${project.version}</version>
