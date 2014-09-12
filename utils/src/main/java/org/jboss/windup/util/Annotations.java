@@ -11,8 +11,6 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.enterprise.inject.Stereotype;
-
 /**
  * Utility class for common @{@link Annotation} operations.
  * <p/>

@@ -9,27 +9,29 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Streams;
 import org.jboss.windup.util.exception.WindupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ZipUtil
 {
-    private static final Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
+    private static final Logger log = Logger.getLogger(ZipUtil.class.getName());
 
     private static Set<String> supportedExtensions;
 
     public static void unzipToFolder(File inputFile, File outputDir) throws IOException
     {
-        if( inputFile == null ) throw new IllegalArgumentException("Argument inputFile is null.");
-        if( outputDir == null ) throw new IllegalArgumentException("Argument outputDir is null.");
-        
+        if (inputFile == null)
+            throw new IllegalArgumentException("Argument inputFile is null.");
+        if (outputDir == null)
+            throw new IllegalArgumentException("Argument outputDir is null.");
+
         try (ZipFile zipFile = new ZipFile(inputFile))
         {
             Enumeration<? extends ZipEntry> entryEnum = zipFile.entries();
@@ -49,7 +51,7 @@ public class ZipUtil
                     {
                         try (FileOutputStream outputStream = new FileOutputStream(destFile))
                         {
-                            IOUtils.copy(zipInputStream, outputStream);
+                            Streams.write(zipInputStream, outputStream);
                         }
                     }
                 }
@@ -64,12 +66,13 @@ public class ZipUtil
         try
         {
             String entryExtension = StringUtils.substringAfterLast(entry.getName(), ".");
-            File temp = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString() + "." + entryExtension);
+            File temp = new File(OperatingSystemUtils.getTempDirectory(), UUID.randomUUID().toString() + "."
+                        + entryExtension);
             in = file.getInputStream(entry);
             out = new FileOutputStream(temp);
 
-            IOUtils.copy(in, out);
-            LOG.debug("Extracting entry: " + entry.getName() + " to: " + temp.getAbsolutePath());
+            Streams.write(in, out);
+            log.log(Level.INFO, "Extracting entry: " + entry.getName() + " to: " + temp.getAbsolutePath());
             return temp;
         }
         catch (Exception e)
@@ -78,8 +81,8 @@ public class ZipUtil
         }
         finally
         {
-            IOUtils.closeQuietly(in);
-            IOUtils.closeQuietly(out);
+            Streams.closeQuietly(in);
+            Streams.closeQuietly(out);
         }
     }
 

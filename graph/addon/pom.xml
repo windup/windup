@@ -2,31 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <parent>
         <groupId>org.jboss.windup.graph</groupId>
         <artifactId>windup-graph-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>windup-graph</artifactId>
-
-    <name>Windup Engine - Graph addon</name>
-    <description>It's necessary as a classified POM artifact for Furnace addon-manager to pick up.
-        If we were not using the "exploded" project layout, this is where the code would be.
-        UIWizard and forge command could go here. There or the IMPL. there's no real difference between the two.
-        Most of the time in forge this module just remains empty.
-    </description>
+    <name>Windup Engine - Graph Addon</name>
 
     <dependencies>
-        <!-- Project deps -->
-        <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>utils</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
+    
+        <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-api</artifactId>
@@ -37,7 +26,16 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Furnace -->
+        <!-- Addon Dependencies -->
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Furnace Container -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
@@ -51,10 +49,17 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>
                         <phase>prepare-package</phase>
+                        <goals>
+                            <goal>generate-dot</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -64,6 +69,12 @@
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>forge-addon</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

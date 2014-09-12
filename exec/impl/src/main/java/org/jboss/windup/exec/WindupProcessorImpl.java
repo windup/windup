@@ -39,7 +39,7 @@ public class WindupProcessorImpl implements WindupProcessor
         }
 
         // Initialize the graph explicitely.
-        this.graphContext.init(gcConfig);
+//        this.graphContext.init(gcConfig);
         
         // Call the listener.
         if( null != wpConfig.getGraphListener() )

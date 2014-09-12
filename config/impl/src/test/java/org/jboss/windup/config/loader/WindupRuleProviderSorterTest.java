@@ -14,6 +14,27 @@ import org.ocpsoft.rewrite.config.Configuration;
 public class WindupRuleProviderSorterTest
 {
 
+    private class WCPPhaseDefaultClass1 extends WindupRuleProvider
+    {
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            return null;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "PhaseDefaultClass1";
+        }
+
+        @Override
+        public String getID()
+        {
+            return toString();
+        }
+    }
+
     private class WCPPhase1Class1 extends WindupRuleProvider
     {
         private List<Class<? extends WindupRuleProvider>> deps = new ArrayList<>();
@@ -75,6 +96,40 @@ public class WindupRuleProviderSorterTest
         public String toString()
         {
             return "Phase1Class2";
+        }
+
+        @Override
+        public String getID()
+        {
+            return toString();
+        }
+    }
+
+    private class WCPPhaseImplicitClass2 extends WindupRuleProvider
+    {
+        @Override
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+        {
+            List<Class<? extends WindupRuleProvider>> l = new ArrayList<>();
+            l.add(WCPPhase1Class1.class);
+            return l;
+        }
+
+        @Override
+        public RulePhase getPhase() {
+        	return RulePhase.IMPLICIT;
+        }
+        
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            return null;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "PhaseImplicitClass2";
         }
 
         @Override
@@ -327,8 +382,10 @@ public class WindupRuleProviderSorterTest
     @Test
     public void testSort()
     {
+        WindupRuleProvider vD = new WCPPhaseDefaultClass1();
         WindupRuleProvider v1 = new WCPPhase1Class1();
         WindupRuleProvider v2 = new WCPPhase1Class2();
+        WindupRuleProvider vI = new WCPPhaseImplicitClass2();
         WindupRuleProvider v3 = new WCPPhase1Class3();
         WindupRuleProvider v4 = new WCPPhase2Class1();
         WindupRuleProvider v5 = new WCPImplicitPhase2Step2();
@@ -336,7 +393,9 @@ public class WindupRuleProviderSorterTest
         WindupRuleProvider v7 = new WCPPhase2Class4();
         List<WindupRuleProvider> ruleProviders = new ArrayList<>();
         ruleProviders.add(v7);
+        ruleProviders.add(vD);
         ruleProviders.add(v6);
+        ruleProviders.add(vI);
         ruleProviders.add(v5);
         ruleProviders.add(v3);
         ruleProviders.add(v4);
@@ -350,11 +409,13 @@ public class WindupRuleProviderSorterTest
 
         Assert.assertEquals(v1, sortedRCPList.get(0));
         Assert.assertEquals(v2, sortedRCPList.get(1));
-        Assert.assertEquals(v3, sortedRCPList.get(2));
-        Assert.assertEquals(v4, sortedRCPList.get(3));
-        Assert.assertEquals(v5, sortedRCPList.get(4));
-        Assert.assertEquals(v6, sortedRCPList.get(5));
-        Assert.assertEquals(v7, sortedRCPList.get(6));
+        Assert.assertEquals(vI, sortedRCPList.get(2));
+        Assert.assertEquals(v3, sortedRCPList.get(3));
+        Assert.assertEquals(v4, sortedRCPList.get(4));
+        Assert.assertEquals(v5, sortedRCPList.get(5));
+        Assert.assertEquals(v6, sortedRCPList.get(6));
+        Assert.assertEquals(v7, sortedRCPList.get(7));
+        Assert.assertEquals(vD, sortedRCPList.get(8));
     }
 
     @Test
@@ -373,8 +434,7 @@ public class WindupRuleProviderSorterTest
 
         try
         {
-            List<WindupRuleProvider> sortedRCPList = WindupRuleProviderSorter
-                        .sort(ruleProviders);
+            WindupRuleProviderSorter.sort(ruleProviders);
             Assert.fail("No cycles detected");
         }
         catch (RuntimeException e)
@@ -404,11 +464,10 @@ public class WindupRuleProviderSorterTest
 
         try
         {
-            List<WindupRuleProvider> sortedRCPList = WindupRuleProviderSorter
-                        .sort(ruleProviders);
+            WindupRuleProviderSorter.sort(ruleProviders);
             Assert.fail("No improper phase dependencies detected!");
         }
-        catch (IncorrectPhaseDependencyException ipde)
+        catch (IncorrectPhaseDependencyException e)
         {
             // ignore... this exception is expected in this test
         }
@@ -437,13 +496,11 @@ public class WindupRuleProviderSorterTest
 
         try
         {
-            List<WindupRuleProvider> sortedRCPList = WindupRuleProviderSorter
-                        .sort(ruleProviders);
-
+            WindupRuleProviderSorter.sort(ruleProviders);
         }
-        catch (IncorrectPhaseDependencyException ipde)
+        catch (IncorrectPhaseDependencyException e)
         {
-            ipde.printStackTrace();
+            e.printStackTrace();
             Assert.fail("This cross-dependency should be acceptable!");
         }
     }

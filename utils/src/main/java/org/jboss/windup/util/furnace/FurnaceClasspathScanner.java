@@ -7,27 +7,30 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.AddonFilters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author jsightler
  */
-public class FurnaceClasspathScanner
+public class FurnaceClasspathScanner implements Service
 {
-    private static final Logger LOG = LoggerFactory.getLogger(FurnaceClasspathScanner.class);
+    private static final Logger LOG = Logger.getLogger(FurnaceClasspathScanner.class.getName());
+    private final Furnace furnace;
 
-    @Inject
-    private Furnace furnace;
+    public FurnaceClasspathScanner()
+    {
+        furnace = SimpleContainer.getFurnace(FurnaceClasspathScanner.class.getClassLoader());
+    }
 
     public List<URL> scan(String fileExtension)
     {
@@ -95,7 +98,7 @@ public class FurnaceClasspathScanner
                 }
                 catch (ClassNotFoundException cnfe)
                 {
-                    LOG.warn("Failed to load class for name: " + discoveredClassName);
+                    LOG.log(Level.WARNING, "Failed to load class for name: " + discoveredClassName);
                 }
             }
         }
@@ -143,7 +146,7 @@ public class FurnaceClasspathScanner
                 }
                 catch (MalformedURLException e)
                 {
-                    LOG.error("Error loading file: " + newPath, e);
+                    LOG.log(Level.SEVERE, "Error loading file: " + newPath, e);
                 }
             }
         }
