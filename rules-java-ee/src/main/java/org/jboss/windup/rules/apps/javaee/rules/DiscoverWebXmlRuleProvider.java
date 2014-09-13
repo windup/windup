@@ -4,18 +4,18 @@ import static org.joox.JOOX.$;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.TechnologyTagModel.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
@@ -28,8 +28,6 @@ import org.jboss.windup.rules.apps.xml.XmlFileService;
 import org.jboss.windup.util.xml.DoctypeUtils;
 import org.jboss.windup.util.xml.NamespaceUtils;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,9 +37,10 @@ import org.w3c.dom.Element;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
+public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getSimpleName());
+    private static final String TECH_TAG = "Web XML";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.SUCCESS;
 
     private static final String dtdRegex = "(?i).*web.application.*";
 
@@ -51,6 +50,8 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
     private EnvironmentReferenceService environmentReferenceService;
     @Inject
     private XmlFileService xmlFileService;
+    @Inject
+    private TechnologyTagService technologyTagService;
 
     @Override
     public RulePhase getPhase()
@@ -64,28 +65,18 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
         return asClassList(DiscoverXmlFilesRuleProvider.class);
     }
 
-    public Configuration getConfiguration(GraphContext context)
+    @Override
+    public ConditionBuilder when()
     {
-        ConditionBuilder webXmlFound = Query
-                    .find(XmlFileModel.class)
-                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app");
-
-        return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(webXmlFound)
-                    .perform(new AddWebXmlMetadata());
+        return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app");
     }
 
-    private class AddWebXmlMetadata extends AbstractIterationOperation<XmlFileModel>
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
-        @Override
-        public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
+        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        if (doc != null && isWebXml(payload, doc))
         {
-            Document doc = xmlFileService.loadDocumentQuiet(payload);
-            if (doc != null && isWebXml(payload, doc))
-            {
-                addWebXmlMetadata(payload, doc);
-            }
+            addWebXmlMetadata(payload, doc);
         }
     }
 
@@ -143,6 +134,8 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
 
     private void addWebXmlMetadata(XmlFileModel xml, Document doc)
     {
+        technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
+
         String webXmlVersion = getVersion(xml, doc);
 
         // check the root XML node.

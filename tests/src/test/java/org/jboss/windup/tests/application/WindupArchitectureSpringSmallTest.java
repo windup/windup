@@ -1,6 +1,8 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -16,9 +18,13 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.service.SpringConfigurationFileService;
+import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +40,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java-ee"),
+                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
@@ -49,6 +56,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java-ee"),
+                                AddonDependencyEntry.create("org.jboss.windup.tests:test-util"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
@@ -71,6 +79,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
         super.runTest(processor, graphContext, path, false, includeList, excludeList);
 
         validateSpringBeans();
+        validateReports();
     }
 
     /**
@@ -107,5 +116,19 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
         Assert.assertEquals(2, numberFound);
         Assert.assertTrue(foundSpringMvcContext);
         Assert.assertTrue(foundSpringBusinessContext);
+    }
+
+    private void validateReports()
+    {
+        ReportService reportService = new ReportService(graphContext);
+        ReportModel reportModel = graphContext.getService(ReportModel.class).getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateJavaApplicationOverviewReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
+        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+
+        TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
+        util.loadPage(appReportPath);
+        Assert.assertTrue(util.checkFilePathAndTag("spring-small-example.war",
+                    "WEB-INF/spring-business-context.xml", "Spring XML"));
     }
 }

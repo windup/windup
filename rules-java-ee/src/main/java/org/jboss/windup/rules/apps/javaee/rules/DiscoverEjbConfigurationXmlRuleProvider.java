@@ -4,21 +4,21 @@ import static org.joox.JOOX.$;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
+import org.jboss.windup.reporting.model.TechnologyTagModel.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
@@ -35,8 +35,6 @@ import org.jboss.windup.rules.apps.xml.XmlFileService;
 import org.jboss.windup.util.xml.DoctypeUtils;
 import org.jboss.windup.util.xml.NamespaceUtils;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,9 +45,10 @@ import org.w3c.dom.Element;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
+public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getSimpleName());
+    private static final String TECH_TAG = "EJB XML";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.SUCCESS;
 
     private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
 
@@ -59,6 +58,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
     private JavaClassService javaClassService;
     @Inject
     private XmlFileService xmlFileService;
+    @Inject
+    private TechnologyTagService technologyTagService;
 
     @Override
     public RulePhase getPhase()
@@ -73,38 +74,27 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public ConditionBuilder when()
     {
-        ConditionBuilder ejbJarXmlFound = Query
-                    .find(XmlFileModel.class)
-                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar");
-
-        GraphOperation addEjbMetadata = new ExtractEJBMetadata();
-
-        return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(ejbJarXmlFound)
-                    .perform(addEjbMetadata);
+        return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar");
     }
 
-    private class ExtractEJBMetadata extends AbstractIterationOperation<XmlFileModel>
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
-        @Override
-        public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
+        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        if (doc == null)
         {
-            Document doc = xmlFileService.loadDocumentQuiet(payload);
-            if (doc == null)
-            {
-                // failed to parse, skip
-                return;
-            }
-
-            extractMetadata(event.getGraphContext(), payload, doc);
+            // failed to parse, skip
+            return;
         }
+
+        extractMetadata(event.getGraphContext(), payload, doc);
     }
 
     private void extractMetadata(GraphContext context, XmlFileModel xmlModel, Document doc)
     {
+        technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
+
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null)
         {

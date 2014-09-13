@@ -8,20 +8,19 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.TechnologyTagModel.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.service.HibernateConfigurationFileService;
 import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
 import org.jboss.windup.rules.apps.xml.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.XmlFileModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -36,12 +35,17 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class DiscoverHibernateConfigurationRuleProvider extends WindupRuleProvider
+public class DiscoverHibernateConfigurationRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
+    private static final String TECH_TAG = "Hibernate Cfg";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.SUCCESS;
+
     private static final String hibernateRegex = "(?i).*hibernate.configuration.*";
 
     @Inject
     private HibernateConfigurationFileService hibernateConfigurationFileService;
+    @Inject
+    private TechnologyTagService technologyTagService;
 
     @Override
     public RulePhase getPhase()
@@ -56,7 +60,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends WindupRuleProvid
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public ConditionBuilder when()
     {
         QueryGremlinCriterion doctypeSearchCriterion = new QueryGremlinCriterion()
         {
@@ -75,36 +79,28 @@ public class DiscoverHibernateConfigurationRuleProvider extends WindupRuleProvid
             }
         };
 
-        ConditionBuilder hibernateConfigurationsFound = Query.find(DoctypeMetaModel.class)
-                    .piped(doctypeSearchCriterion);
-
-        return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(hibernateConfigurationsFound)
-                    .perform(new AddHibernateConfigurationMetadata());
+        return Query.find(DoctypeMetaModel.class).piped(doctypeSearchCriterion);
     }
 
-    private class AddHibernateConfigurationMetadata extends AbstractIterationOperation<DoctypeMetaModel>
+    @Override
+    public void perform(GraphRewrite event, EvaluationContext context, DoctypeMetaModel payload)
     {
-        @Override
-        public void perform(GraphRewrite event, EvaluationContext context, DoctypeMetaModel payload)
+        String publicId = payload.getPublicId();
+        String systemId = payload.getSystemId();
+
+        // extract the version information from the public / system ID.
+        String versionInformation = extractVersion(publicId, systemId);
+
+        for (XmlFileModel xml : payload.getXmlResources())
         {
-            String publicId = payload.getPublicId();
-            String systemId = payload.getSystemId();
+            // check the root XML node.
+            HibernateConfigurationFileModel hibernateCfgModel = hibernateConfigurationFileService
+                        .addTypeToModel(xml);
+            technologyTagService.addTagToFileModel(hibernateCfgModel, TECH_TAG, TECH_TAG_LEVEL);
 
-            // extract the version information from the public / system ID.
-            String versionInformation = extractVersion(publicId, systemId);
-
-            for (XmlFileModel xml : payload.getXmlResources())
+            if (StringUtils.isNotBlank(versionInformation))
             {
-                // check the root XML node.
-                HibernateConfigurationFileModel hibernateCfgModel = hibernateConfigurationFileService
-                            .addTypeToModel(xml);
-
-                if (StringUtils.isNotBlank(versionInformation))
-                {
-                    hibernateCfgModel.setSpecificationVersion(versionInformation);
-                }
+                hibernateCfgModel.setSpecificationVersion(versionInformation);
             }
         }
     }

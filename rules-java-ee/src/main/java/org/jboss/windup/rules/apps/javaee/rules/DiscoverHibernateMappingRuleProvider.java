@@ -12,12 +12,13 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.TechnologyTagModel.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
@@ -30,8 +31,6 @@ import org.jboss.windup.rules.apps.xml.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.XmlFileService;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 
@@ -40,9 +39,12 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-public class DiscoverHibernateMappingRuleProvider extends WindupRuleProvider
+public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
     private static final Logger LOG = Logger.getLogger(DiscoverHibernateMappingRuleProvider.class.getSimpleName());
+
+    private static final String TECH_TAG = "Hibernate Mapping";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.SUCCESS;
 
     private static final String hibernateRegex = "(?i).*hibernate.mapping.*";
 
@@ -54,6 +56,8 @@ public class DiscoverHibernateMappingRuleProvider extends WindupRuleProvider
     private HibernateEntityService hibernateEntityService;
     @Inject
     private XmlFileService xmlFileService;
+    @Inject
+    private TechnologyTagService technologyTagService;
 
     @Override
     public RulePhase getPhase()
@@ -68,8 +72,9 @@ public class DiscoverHibernateMappingRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public ConditionBuilder when()
     {
+
         QueryGremlinCriterion doctypeSearchCriterion = new QueryGremlinCriterion()
         {
             @Override
@@ -87,76 +92,69 @@ public class DiscoverHibernateMappingRuleProvider extends WindupRuleProvider
             }
         };
 
-        ConditionBuilder hibernateConfigurationsFound = Query.find(DoctypeMetaModel.class)
-                    .piped(doctypeSearchCriterion);
-
-        return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(hibernateConfigurationsFound)
-                    .perform(new AddHibernateMappingMetadata());
+        return Query.find(DoctypeMetaModel.class).piped(doctypeSearchCriterion);
     }
 
-    private class AddHibernateMappingMetadata extends AbstractIterationOperation<DoctypeMetaModel>
+    @Override
+    public void perform(GraphRewrite event, EvaluationContext context, DoctypeMetaModel payload)
     {
-        @Override
-        public void perform(GraphRewrite event, EvaluationContext context, DoctypeMetaModel payload)
+        String publicId = payload.getPublicId();
+        String systemId = payload.getSystemId();
+
+        // extract the version information from the public / system ID.
+        String versionInformation = extractVersion(publicId, systemId);
+
+        for (XmlFileModel xml : payload.getXmlResources())
         {
-            String publicId = payload.getPublicId();
-            String systemId = payload.getSystemId();
+            // create a facet, and then identify the XML.
+            HibernateMappingFileModel hibernateMapping = hibernateMappingFileService.addTypeToModel(xml);
 
-            // extract the version information from the public / system ID.
-            String versionInformation = extractVersion(publicId, systemId);
+            Document doc = xmlFileService.loadDocumentQuiet(hibernateMapping);
 
-            for (XmlFileModel xml : payload.getXmlResources())
+            if (!XmlUtil.xpathExists(doc, "/hibernate-mapping", null))
             {
-                // create a facet, and then identify the XML.
-                HibernateMappingFileModel hibernateMapping = hibernateMappingFileService.addTypeToModel(xml);
+                LOG.log(Level.INFO, "Docment does not contain Hibernate Mapping.");
+                continue;
+            }
 
-                Document doc = xmlFileService.loadDocumentQuiet(hibernateMapping);
+            String clzPkg = $(doc).xpath("/hibernate-mapping").attr("package");
+            String clzName = $(doc).xpath("/hibernate-mapping/class").attr("name");
+            String tableName = $(doc).xpath("/hibernate-mapping/class").attr("table");
+            String schemaName = $(doc).xpath("/hibernate-mapping/class").attr("schema");
+            String catalogName = $(doc).xpath("/hibernate-mapping/class").attr("catalog");
 
-                if (!XmlUtil.xpathExists(doc, "/hibernate-mapping", null))
-                {
-                    LOG.log(Level.INFO, "Docment does not contain Hibernate Mapping.");
-                    continue;
-                }
+            if (StringUtils.isBlank(clzName))
+            {
+                LOG.log(Level.FINE, "Docment does not contain class name. Skipping.");
+                continue;
+            }
 
-                String clzPkg = $(doc).xpath("/hibernate-mapping").attr("package");
-                String clzName = $(doc).xpath("/hibernate-mapping/class").attr("name");
-                String tableName = $(doc).xpath("/hibernate-mapping/class").attr("table");
-                String schemaName = $(doc).xpath("/hibernate-mapping/class").attr("schema");
-                String catalogName = $(doc).xpath("/hibernate-mapping/class").attr("catalog");
+            technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
 
-                if (StringUtils.isBlank(clzName))
-                {
-                    LOG.log(Level.FINE, "Docment does not contain class name. Skipping.");
-                    continue;
-                }
+            // prepend with package name.
+            if (StringUtils.isNotBlank(clzPkg) && !StringUtils.startsWith(clzName, clzPkg))
+            {
+                clzName = clzPkg + "." + clzName;
+            }
 
-                // prepend with package name.
-                if (StringUtils.isNotBlank(clzPkg) && !StringUtils.startsWith(clzName, clzPkg))
-                {
-                    clzName = clzPkg + "." + clzName;
-                }
+            // get a reference to the Java class.
+            JavaClassModel clz = javaClassService.getOrCreate(clzName);
 
-                // get a reference to the Java class.
-                JavaClassModel clz = javaClassService.getOrCreate(clzName);
+            // create the hibernate facet.
+            HibernateEntityModel hibernateEntity = hibernateEntityService.create();
+            hibernateEntity.setSpecificationVersion(versionInformation);
+            hibernateEntity.setJavaClass(clz);
+            hibernateEntity.setTableName(tableName);
+            hibernateEntity.setSchemaName(schemaName);
+            hibernateEntity.setCatalogName(catalogName);
 
-                // create the hibernate facet.
-                HibernateEntityModel hibernateEntity = hibernateEntityService.create();
+            // map the entity back to the XML mapping.
+            hibernateMapping.addHibernateEntity(hibernateEntity);
+
+            if (StringUtils.isNotBlank(versionInformation))
+            {
                 hibernateEntity.setSpecificationVersion(versionInformation);
-                hibernateEntity.setJavaClass(clz);
-                hibernateEntity.setTableName(tableName);
-                hibernateEntity.setSchemaName(schemaName);
-                hibernateEntity.setCatalogName(catalogName);
-
-                // map the entity back to the XML mapping.
-                hibernateMapping.addHibernateEntity(hibernateEntity);
-
-                if (StringUtils.isNotBlank(versionInformation))
-                {
-                    hibernateEntity.setSpecificationVersion(versionInformation);
-                    hibernateMapping.setSpecificationVersion(versionInformation);
-                }
+                hibernateMapping.setSpecificationVersion(versionInformation);
             }
         }
     }

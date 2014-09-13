@@ -72,16 +72,17 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
 
         Path indexPath = reportsDirectory.resolve(Paths.get("index.html"));
         Path appReportPath = resolveChildPath(reportsDirectory,
-                    "JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d\\.html");
+                    "JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d+\\.html");
         Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
-                    "nonclassifiedfiles_JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d\\.html");
-        Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBeanjava\\.\\d\\.html");
-        Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilterjava\\.\\d\\.html");
-        Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisherjava\\.\\d\\.html");
-        Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilterjava\\.\\d\\.html");
-        Path webStartupListenerPath = resolveChildPath(reportsDirectory, "AnvilWebStartupListenerjava\\.\\d\\.html");
-        Path webServletPath = resolveChildPath(reportsDirectory, "AnvilWebServletjava\\.\\d\\.html");
-        Path webLifecycleListenerPath = resolveChildPath(reportsDirectory, "AnvilWebLifecycleListenerjava\\.\\d\\.html");
+                    "nonclassifiedfiles_JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d+\\.html");
+        Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBeanjava\\.\\d+\\.html");
+        Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilterjava\\.\\d+\\.html");
+        Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisherjava\\.\\d+\\.html");
+        Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilterjava\\.\\d+\\.html");
+        Path webStartupListenerPath = resolveChildPath(reportsDirectory, "AnvilWebStartupListenerjava\\.\\d+\\.html");
+        Path webServletPath = resolveChildPath(reportsDirectory, "AnvilWebServletjava\\.\\d+\\.html");
+        Path webLifecycleListenerPath = resolveChildPath(reportsDirectory,
+                    "AnvilWebLifecycleListenerjava\\.\\d+\\.html");
 
         Assert.assertTrue(indexPath.toFile().exists());
         Assert.assertTrue(appReportPath.toFile().exists());
