@@ -149,7 +149,7 @@ public class XmlFile extends GraphCondition
             }
             if (publicId != null && !publicId.equals(""))
             {
-                if (xml.getDoctype() == null || !xml.getDoctype().getPublicId().matches(publicId))
+                if (xml.getDoctype() == null || xml.getDoctype().getPublicId() == null || !xml.getDoctype().getPublicId().matches(publicId))
                 {
                     continue;
                 }
@@ -252,6 +252,10 @@ public class XmlFile extends GraphCondition
     public void setPublicId(String publicId)
     {
         this.publicId = publicId;
+    }
+    
+    public String toString() {
+       return "XmlFile.from().matchesXpath(" + xpath + ").inFile(" + fileName + ").withDTDPublicId(" + publicId + ");"; 
     }
 
 }

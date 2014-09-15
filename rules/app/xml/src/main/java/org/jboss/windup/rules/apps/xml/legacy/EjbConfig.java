@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.xml.legacy;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
@@ -43,13 +44,13 @@ public class EjbConfig extends WindupRuleProvider
                                 .and(XmlFile.from("ejb").matchesXpath("//*[local-name()='ejb-relation']/*[local-name()='ejb-relationship-role'][2]/*[local-name()='ejb-relationship-role-name']").as("ejbRelationship"))
                                 .and(XmlFile.from("ejb").withDTDPublicId("Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2..").as("ejb2"))
                                 .and(XmlFile.from("ejb").withDTDPublicId("Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1..").as("ejb1")))
-                    .perform(Classification.of("ejb").as("EJB XML")
-                             .and(Classification.of("MDB").as("EJB - MDB"))
-                             .and(Hint.in("sessionEJB").withText("EJB - Session"))
-                             .and(Hint.in("entityEJB").withText("EJB - Entity"))
-                             .and(Hint.in("ejbRelationship").withText("EJB Relationship"))
-                             .and(Classification.of("ejb1").as("EJB 1.x"))
-                             .and(Classification.of("ejb2").as("EJB 2.x")));
+                    .perform(Iteration.over("ejb").perform(Classification.as("EJB XML")).endIteration()
+                             .and(Iteration.over("MDB").perform(Classification.as("EJB - MDB")).endIteration())
+                             .and(Iteration.over("sessionEJB").perform(Hint.withText("EJB - Session")).endIteration())
+                             .and(Iteration.over("entityEJB").perform(Hint.withText("EJB - Entity")).endIteration())
+                             .and(Iteration.over("ejbRelationship").perform(Hint.withText("EJB Relationship")).endIteration())
+                             .and(Iteration.over("ejb1").perform(Classification.as("EJB 1.x")).endIteration())
+                             .and(Iteration.over("ejb2").perform(Classification.as("EJB 2.x")).endIteration()));
         return configuration;
     }
     // @formatter:on
