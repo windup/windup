@@ -32,7 +32,7 @@ public class RenderGraphRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext arg0)
+    public Configuration getConfiguration(final GraphContext graphContext)
     {
         return ConfigurationBuilder.begin()
                     .addRule()
@@ -43,7 +43,7 @@ public class RenderGraphRuleProvider extends WindupRuleProvider
                         {
                             for (GraphRenderer renderer : renderers)
                             {
-                                renderer.renderGraph();
+                                renderer.renderGraph(graphContext);
                             }
                         }
                     });

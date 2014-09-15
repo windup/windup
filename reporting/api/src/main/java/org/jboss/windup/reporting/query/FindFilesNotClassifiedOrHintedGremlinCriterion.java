@@ -22,7 +22,6 @@ import com.tinkerpop.pipes.PipeFunction;
  */
 public class FindFilesNotClassifiedOrHintedGremlinCriterion
 {
-    @SuppressWarnings("unchecked")
     public Iterable<Vertex> query(GraphContext context, Iterable<Vertex> initialVertices)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(initialVertices);

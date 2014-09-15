@@ -3,8 +3,6 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import java.io.File;
 import java.io.IOException;
 
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -31,12 +29,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
 {
 
-    @Inject
-    private WindupConfigurationService windupConfigurationService;
-
-    @Inject
-    private VariableResolvingASTVisitor variableResolvingASTVisitor;
-
     @Override
     public RulePhase getPhase()
     {
@@ -61,6 +53,8 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     {
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
+            WindupConfigurationService windupConfigurationService = new WindupConfigurationService(
+                        event.getGraphContext());
             if (!windupConfigurationService.shouldScanPackage(payload.getPackageName()))
             {
                 // should not analyze this one, skip it
@@ -83,8 +77,9 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
             }
             parser.setKind(ASTParser.K_COMPILATION_UNIT);
             final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-            variableResolvingASTVisitor.init(cu, payload);
-            cu.accept(variableResolvingASTVisitor);
+            VariableResolvingASTVisitor visitor = new VariableResolvingASTVisitor(event.getGraphContext());
+            visitor.init(cu, payload);
+            cu.accept(visitor);
         }
     }
 }

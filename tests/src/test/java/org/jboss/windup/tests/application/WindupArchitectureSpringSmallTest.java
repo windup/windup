@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -14,7 +12,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
@@ -55,12 +52,6 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
     public void testRunWindupSmallSpringApp() throws Exception
     {
@@ -68,17 +59,22 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
 
         List<String> includeList = Collections.singletonList("nocodescanning");
         List<String> excludeList = Collections.emptyList();
-        super.runTest(processor, graphContext, path, false, includeList, excludeList);
+        try (GraphContext context = getFactory().create())
+        {
+            super.runTest(context, path, false, includeList, excludeList);
 
-        validateSpringBeans();
+            validateSpringBeans(context);
+        }
     }
 
     /**
      * Validate that the spring beans were extracted correctly
+     * 
+     * @param context
      */
-    private void validateSpringBeans()
+    private void validateSpringBeans(GraphContext context)
     {
-        SpringConfigurationFileService springConfigurationFileService = new SpringConfigurationFileService(graphContext);
+        SpringConfigurationFileService springConfigurationFileService = new SpringConfigurationFileService(context);
         Iterable<SpringConfigurationFileModel> models = springConfigurationFileService.findAll();
 
         int numberFound = 0;

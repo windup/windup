@@ -4,10 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
@@ -41,16 +38,7 @@ import org.w3c.dom.Element;
  */
 public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getSimpleName());
-
     private static final String dtdRegex = "(?i).*web.application.*";
-
-    @Inject
-    private WebXmlService webXmlService;
-    @Inject
-    private EnvironmentReferenceService environmentReferenceService;
-    @Inject
-    private XmlFileService xmlFileService;
 
     @Override
     public RulePhase getPhase()
@@ -81,10 +69,11 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
         {
+            XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
             Document doc = xmlFileService.loadDocumentQuiet(payload);
             if (doc != null && isWebXml(payload, doc))
             {
-                addWebXmlMetadata(payload, doc);
+                addWebXmlMetadata(event.getGraphContext(), payload, doc);
             }
         }
     }
@@ -141,12 +130,12 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
         return version;
     }
 
-    private void addWebXmlMetadata(XmlFileModel xml, Document doc)
+    private void addWebXmlMetadata(GraphContext context, XmlFileModel xml, Document doc)
     {
         String webXmlVersion = getVersion(xml, doc);
 
         // check the root XML node.
-        WebXmlModel webXml = webXmlService.addTypeToModel(xml);
+        WebXmlModel webXml = new WebXmlService(context).addTypeToModel(xml);
 
         // change "_" in the version to "."
         if (StringUtils.isNotBlank(webXmlVersion))
@@ -163,7 +152,7 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
         }
 
         // extract references.
-        List<EnvironmentReferenceModel> refs = processEnvironmentReference(doc.getDocumentElement());
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(context, doc.getDocumentElement());
         for (EnvironmentReferenceModel ref : refs)
         {
             webXml.addEnvironmentReference(ref);
@@ -201,8 +190,9 @@ public class DiscoverWebXmlRuleProvider extends WindupRuleProvider
         return versionInformation;
     }
 
-    private List<EnvironmentReferenceModel> processEnvironmentReference(Element element)
+    private List<EnvironmentReferenceModel> processEnvironmentReference(GraphContext context, Element element)
     {
+        EnvironmentReferenceService environmentReferenceService = new EnvironmentReferenceService(context);
         List<EnvironmentReferenceModel> resources = new ArrayList<>();
 
         // find JMS references...

@@ -3,8 +3,6 @@ package org.jboss.windup.tests.application;
 import java.io.File;
 import java.util.Iterator;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -12,7 +10,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
@@ -56,28 +53,25 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
     public void testRunWindupSourceMode() throws Exception
     {
-        // The test-files folder in the project root dir.
-        super.runTest(processor, graphContext, "../test-files/src_example", true);
+        try (GraphContext context = getFactory().create())
+        {
+            // The test-files folder in the project root dir.
+            super.runTest(context, "../test-files/src_example", true);
 
-        validateWebXmlReferences();
-        validatePropertiesModels();
+            validateWebXmlReferences(context);
+            validatePropertiesModels(context);
+        }
     }
 
     /**
      * Validate that a web.xml file was found, and that the metadata was extracted correctly
      */
-    private void validateWebXmlReferences()
+    private void validateWebXmlReferences(GraphContext context)
     {
-        WebXmlService webXmlService = new WebXmlService(graphContext);
+        WebXmlService webXmlService = new WebXmlService(context);
         Iterator<WebXmlModel> models = webXmlService.findAll().iterator();
 
         // There should be at least one file
@@ -104,9 +98,9 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     /**
      * Validate that the expected Properties Models were found
      */
-    private void validatePropertiesModels()
+    private void validatePropertiesModels(GraphContext context)
     {
-        GraphService<PropertiesModel> service = new GraphService<>(graphContext, PropertiesModel.class);
+        GraphService<PropertiesModel> service = new GraphService<>(context, PropertiesModel.class);
 
         int numberFound = 0;
         for (PropertiesModel model : service.findAll())

@@ -29,11 +29,6 @@ public class ReportService extends GraphService<ReportModel>
      */
     private AtomicInteger index = new AtomicInteger(1);
 
-    public ReportService()
-    {
-        super(ReportModel.class);
-    }
-
     public ReportService(GraphContext context)
     {
         super(context, ReportModel.class);
@@ -66,6 +61,7 @@ public class ReportService extends GraphService<ReportModel>
     {
         String filename = FilenameUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
 
+        // FIXME this looks nasty
         for (int i = 1; usedFilenames.contains(filename.toString()); i++)
         {
             filename = FilenameUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;

@@ -27,6 +27,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.junit.Assert;
@@ -66,66 +67,16 @@ public class LoadGroovyRulesTest
     }
 
     @Inject
-    private GraphContext context;
+    private Furnace furnace;
 
     @Inject
-    private Furnace furnace;
+    private GraphContextFactory factory;
 
     @Test
     public void testGroovyRuleProviderFactory() throws Exception
     {
-        Assert.assertNotNull(furnace);
-
-        Imported<WindupRuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
-                    WindupRuleProviderLoader.class);
-
-        Assert.assertNotNull(loaders);
-
-        List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
-        for (WindupRuleProviderLoader loader : loaders)
+        try (GraphContext context = factory.create())
         {
-            allProviders.addAll(loader.getProviders());
-        }
-
-        boolean foundScriptPath = false;
-        for (WindupRuleProvider provider : allProviders)
-        {
-            Context context = RuleBuilder.define();
-            provider.enhanceMetadata(context);
-            String origin = ((String) context.get(RuleMetadata.ORIGIN));
-            if (origin.contains(EXAMPLE_GROOVY_FILE))
-            {
-                foundScriptPath = true;
-                break;
-            }
-        }
-        Assert.assertTrue("Script path should have been set in Rule Metatada", foundScriptPath);
-        Assert.assertTrue(allProviders.size() > 0);
-    }
-
-    @Test
-    public void testGroovyUserDirectoryRuleProvider() throws Exception
-    {
-        Assert.assertNotNull(furnace);
-
-        WindupConfigurationModel cfg = GraphService.getConfigurationModel(context);
-
-        // create a user path
-        Path userRulesPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupGroovyPath");
-        try
-        {
-            FileUtils.deleteDirectory(userRulesPath.toFile());
-            Files.createDirectories(userRulesPath);
-            Path exampleGroovyUserDirGroovyFile = userRulesPath.resolve("ExampleUserFile.windup.groovy");
-
-            // copy a groovy rule example to it
-            try (InputStream is = getClass().getResourceAsStream(EXAMPLE_GROOVY_FILE);
-                        OutputStream os = new FileOutputStream(exampleGroovyUserDirGroovyFile.toFile()))
-            {
-                IOUtils.copy(is, os);
-            }
-
-            cfg.setUserRulesPath(userRulesPath.toAbsolutePath().toString());
 
             Imported<WindupRuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
                         WindupRuleProviderLoader.class);
@@ -135,17 +86,16 @@ public class LoadGroovyRulesTest
             List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
             for (WindupRuleProviderLoader loader : loaders)
             {
-                allProviders.addAll(loader.getProviders());
+                allProviders.addAll(loader.getProviders(context));
             }
 
             boolean foundScriptPath = false;
             for (WindupRuleProvider provider : allProviders)
             {
-                Context context = RuleBuilder.define();
-                provider.enhanceMetadata(context);
-                String origin = ((String) context.get(RuleMetadata.ORIGIN));
-                // make sure we found the one from the user dir
-                if (origin.endsWith("ExampleUserFile.windup.groovy"))
+                Context ruleContext = RuleBuilder.define();
+                provider.enhanceMetadata(ruleContext);
+                String origin = ((String) ruleContext.get(RuleMetadata.ORIGIN));
+                if (origin.contains(EXAMPLE_GROOVY_FILE))
                 {
                     foundScriptPath = true;
                     break;
@@ -154,9 +104,63 @@ public class LoadGroovyRulesTest
             Assert.assertTrue("Script path should have been set in Rule Metatada", foundScriptPath);
             Assert.assertTrue(allProviders.size() > 0);
         }
-        finally
+    }
+
+    @Test
+    public void testGroovyUserDirectoryRuleProvider() throws Exception
+    {
+        try (GraphContext context = factory.create())
         {
-            FileUtils.deleteDirectory(userRulesPath.toFile());
+            WindupConfigurationModel cfg = GraphService.getConfigurationModel(context);
+
+            // create a user path
+            Path userRulesPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupGroovyPath");
+            try
+            {
+                FileUtils.deleteDirectory(userRulesPath.toFile());
+                Files.createDirectories(userRulesPath);
+                Path exampleGroovyUserDirGroovyFile = userRulesPath.resolve("ExampleUserFile.windup.groovy");
+
+                // copy a groovy rule example to it
+                try (InputStream is = getClass().getResourceAsStream(EXAMPLE_GROOVY_FILE);
+                            OutputStream os = new FileOutputStream(exampleGroovyUserDirGroovyFile.toFile()))
+                {
+                    IOUtils.copy(is, os);
+                }
+
+                cfg.setUserRulesPath(userRulesPath.toAbsolutePath().toString());
+
+                Imported<WindupRuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
+                            WindupRuleProviderLoader.class);
+
+                Assert.assertNotNull(loaders);
+
+                List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
+                for (WindupRuleProviderLoader loader : loaders)
+                {
+                    allProviders.addAll(loader.getProviders(context));
+                }
+
+                boolean foundScriptPath = false;
+                for (WindupRuleProvider provider : allProviders)
+                {
+                    Context ruleContext = RuleBuilder.define();
+                    provider.enhanceMetadata(ruleContext);
+                    String origin = ((String) ruleContext.get(RuleMetadata.ORIGIN));
+                    // make sure we found the one from the user dir
+                    if (origin.endsWith("ExampleUserFile.windup.groovy"))
+                    {
+                        foundScriptPath = true;
+                        break;
+                    }
+                }
+                Assert.assertTrue("Script path should have been set in Rule Metatada", foundScriptPath);
+                Assert.assertTrue(allProviders.size() > 0);
+            }
+            finally
+            {
+                FileUtils.deleteDirectory(userRulesPath.toFile());
+            }
         }
     }
 }

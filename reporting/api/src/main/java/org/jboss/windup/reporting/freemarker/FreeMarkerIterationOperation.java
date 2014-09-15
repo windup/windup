@@ -87,7 +87,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     {
         try
         {
-            ReportService reportService = event.getGraphContext().getService(ReportModel.class);
+            ReportService reportService = new ReportService(event.getGraphContext());
 
             String templatePath = payload.getTemplatePath();
             String outputFilename = payload.getReportFilename();
@@ -124,7 +124,8 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             // also, extension functions (these are kept separate from vars in order to prevent them
             // from being stored in the associated data with the reportmodel)
-            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace);
+            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace,
+                        event.getGraphContext());
 
             Map<String, Object> objects = new HashMap<>(vars);
             objects.putAll(freeMarkerExtensions);

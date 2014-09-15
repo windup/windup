@@ -4,10 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
@@ -49,16 +46,7 @@ import org.w3c.dom.Element;
  */
 public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getSimpleName());
-
     private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
-
-    @Inject
-    private EnvironmentReferenceService environmentReferenceService;
-    @Inject
-    private JavaClassService javaClassService;
-    @Inject
-    private XmlFileService xmlFileService;
 
     @Override
     public RulePhase getPhase()
@@ -92,6 +80,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
         {
+            XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
             Document doc = xmlFileService.loadDocumentQuiet(payload);
             if (doc == null)
             {
@@ -204,7 +193,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         return versionInformation;
     }
 
-    private void processSessionBeanElement(GraphContext ctx, EjbDeploymentDescriptorModel ejbConfig, Element element)
+    private void processSessionBeanElement(GraphContext context, EjbDeploymentDescriptorModel ejbConfig, Element element)
     {
         JavaClassModel home = null;
         JavaClassModel localHome = null;
@@ -217,6 +206,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         String ejbName = extractChildTagAndTrim(element, "ejb-name");
 
         // get local class.
+        JavaClassService javaClassService = new JavaClassService(context);
         String localClz = extractChildTagAndTrim(element, "local");
         if (localClz != null)
         {
@@ -254,7 +244,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         String sessionType = extractChildTagAndTrim(element, "session-type");
         String transactionType = extractChildTagAndTrim(element, "transaction-type");
 
-        Service<EjbSessionBeanModel> sessionBeanService = ctx.getService(EjbSessionBeanModel.class);
+        Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(context, EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();
         sessionBean.setEjbId(ejbId);
         sessionBean.setDisplayName(displayName);
@@ -267,7 +257,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         sessionBean.setSessionType(sessionType);
         sessionBean.setTransactionType(transactionType);
 
-        List<EnvironmentReferenceModel> refs = processEnvironmentReference(element);
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(context, element);
         for (EnvironmentReferenceModel ref : refs)
         {
             sessionBean.addEnvironmentReference(ref);
@@ -276,8 +266,10 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         ejbConfig.addEjbSessionBean(sessionBean);
     }
 
-    private void processMessageDrivenElement(GraphContext ctx, EjbDeploymentDescriptorModel ejbConfig, Element element)
+    private void processMessageDrivenElement(GraphContext context, EjbDeploymentDescriptorModel ejbConfig,
+                Element element)
     {
+        JavaClassService javaClassService = new JavaClassService(context);
         JavaClassModel ejb = null;
 
         String ejbId = extractAttributeAndTrim(element, "id");
@@ -294,7 +286,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         String sessionType = extractChildTagAndTrim(element, "session-type");
         String transactionType = extractChildTagAndTrim(element, "transaction-type");
 
-        Service<EjbMessageDrivenModel> sessionBeanService = ctx.getService(EjbMessageDrivenModel.class);
+        Service<EjbMessageDrivenModel> sessionBeanService = new GraphService<>(context, EjbMessageDrivenModel.class);
         EjbMessageDrivenModel mdb = sessionBeanService.create();
         mdb.setEjbClass(ejb);
         mdb.setBeanName(ejbName);
@@ -303,7 +295,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         mdb.setSessionType(sessionType);
         mdb.setTransactionType(transactionType);
 
-        List<EnvironmentReferenceModel> refs = processEnvironmentReference(element);
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(context, element);
         for (EnvironmentReferenceModel ref : refs)
         {
             mdb.addEnvironmentReference(ref);
@@ -312,7 +304,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         ejbConfig.addMessageDriven(mdb);
     }
 
-    private void processEntityElement(GraphContext ctx, EjbDeploymentDescriptorModel ejbConfig, Element element)
+    private void processEntityElement(GraphContext context, EjbDeploymentDescriptorModel ejbConfig, Element element)
     {
         JavaClassModel localHome = null;
         JavaClassModel local = null;
@@ -323,6 +315,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         String ejbName = extractChildTagAndTrim(element, "ejb-name");
 
         // get local class.
+        JavaClassService javaClassService = new JavaClassService(context);
         String localClz = extractChildTagAndTrim(element, "local");
         if (localClz != null)
         {
@@ -346,7 +339,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         String persistenceType = extractChildTagAndTrim(element, "persistence-type");
 
         // create new entity facet.
-        Service<EjbEntityBeanModel> ejbEntityService = ctx.getService(EjbEntityBeanModel.class);
+        Service<EjbEntityBeanModel> ejbEntityService = new GraphService<>(context, EjbEntityBeanModel.class);
         EjbEntityBeanModel entity = ejbEntityService.create();
         entity.setPersistenceType(persistenceType);
         entity.setEjbId(ejbId);
@@ -356,7 +349,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         entity.setEjbLocalHome(localHome);
         entity.setEjbLocal(local);
 
-        List<EnvironmentReferenceModel> refs = processEnvironmentReference(element);
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(context, element);
         for (EnvironmentReferenceModel ref : refs)
         {
             entity.addEnvironmentReference(ref);
@@ -365,8 +358,10 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends WindupRuleProvider
         ejbConfig.addEjbEntityBean(entity);
     }
 
-    private List<EnvironmentReferenceModel> processEnvironmentReference(Element element)
+    private List<EnvironmentReferenceModel> processEnvironmentReference(GraphContext context, Element element)
     {
+        EnvironmentReferenceService environmentReferenceService = new EnvironmentReferenceService(context);
+
         List<EnvironmentReferenceModel> resources = new LinkedList<EnvironmentReferenceModel>();
 
         // find JMS references...

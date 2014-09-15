@@ -3,8 +3,6 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
@@ -33,8 +31,13 @@ import freemarker.template.TemplateModelException;
  */
 public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
 {
-    @Inject
     private GraphContext context;
+
+    @Override
+    public void setGraphContext(GraphContext context)
+    {
+        this.context = context;
+    }
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException

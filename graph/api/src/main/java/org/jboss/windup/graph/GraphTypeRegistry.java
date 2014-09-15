@@ -1,14 +1,17 @@
 package org.jboss.windup.graph;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.ServiceLogger;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 import org.jboss.windup.util.furnace.FurnaceScannerFilenameFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.FramedGraphConfiguration;
@@ -19,7 +22,7 @@ import com.tinkerpop.frames.modules.Module;
 @Singleton
 public class GraphTypeRegistry
 {
-    private static final Logger LOG = LoggerFactory.getLogger(GraphTypeRegistry.class);
+    private static final Logger LOG = Logger.getLogger(GraphTypeRegistry.class.getName());
 
     @Inject
     private FurnaceClasspathScanner scanner;
@@ -47,10 +50,10 @@ public class GraphTypeRegistry
 
         Iterable<Class<?>> classes = scanner.scanClasses(modelClassFilter);
 
+        ServiceLogger.logLoadedServices(LOG, WindupVertexFrame.class, Iterators.asList(classes));
         for (Class<?> clazz : classes)
         {
             // Add those extending WindupVertexFrame.
-            LOG.info("Found class: " + clazz);
             if (WindupVertexFrame.class.isAssignableFrom(clazz))
             {
                 @SuppressWarnings("unchecked")
@@ -59,7 +62,7 @@ public class GraphTypeRegistry
             }
             else
             {
-                LOG.debug("Not adding to GraphTypeRegistry, not a subclass of WindupVertexFrame: "
+                LOG.log(Level.FINE, "Not adding to GraphTypeRegistry, not a subclass of WindupVertexFrame: "
                             + clazz.getCanonicalName());
             }
         }

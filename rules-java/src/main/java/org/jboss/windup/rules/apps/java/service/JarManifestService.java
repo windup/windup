@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.java.service;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
@@ -14,13 +12,6 @@ import org.jboss.windup.rules.apps.java.model.JarManifestModel;
  */
 public class JarManifestService extends GraphService<JarManifestModel>
 {
-
-    public JarManifestService()
-    {
-        super(JarManifestModel.class);
-    }
-
-    @Inject
     public JarManifestService(GraphContext context)
     {
         super(context, JarManifestModel.class);

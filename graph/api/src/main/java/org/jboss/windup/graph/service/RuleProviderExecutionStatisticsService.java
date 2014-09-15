@@ -16,18 +16,13 @@ import com.tinkerpop.pipes.util.structures.Pair;
  */
 public class RuleProviderExecutionStatisticsService extends GraphService<RuleProviderExecutionStatisticsModel>
 {
-    public RuleProviderExecutionStatisticsService()
-    {
-        super(RuleProviderExecutionStatisticsModel.class);
-    }
-
     public RuleProviderExecutionStatisticsService(GraphContext context)
     {
         super(context, RuleProviderExecutionStatisticsModel.class);
     }
 
     /**
-     * Return an iterable of all RuleProviderExecutionStatisticsModel ordered by Index (ascending)
+     * Return an {@link Iterable} of all RuleProviderExecutionStatisticsModel ordered by Index (ascending)
      */
     public Iterable<RuleProviderExecutionStatisticsModel> findAllOrderedByIndex()
     {

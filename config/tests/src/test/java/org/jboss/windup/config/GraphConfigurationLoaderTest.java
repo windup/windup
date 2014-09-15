@@ -1,5 +1,7 @@
 package org.jboss.windup.config;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -13,6 +15,7 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.GraphConfigurationLoader;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,59 +48,65 @@ public class GraphConfigurationLoaderTest
     }
 
     @Inject
-    private GraphContext context;
+    private GraphContextFactory factory;
     @Inject
     private GraphConfigurationLoader loader;
 
     @Test
-    public void testRuleProviderNoFilter()
+    public void testRuleProviderNoFilter() throws IOException
     {
-        Configuration configuration1 = loader.loadConfiguration(context);
-        boolean found1 = false;
-        boolean found2 = false;
-        for (Rule rule : configuration1.getRules())
+        try (GraphContext context = factory.create())
         {
-            if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
+            Configuration configuration1 = loader.loadConfiguration(context);
+            boolean found1 = false;
+            boolean found2 = false;
+            for (Rule rule : configuration1.getRules())
             {
-                found1 = true;
+                if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
+                {
+                    found1 = true;
+                }
+                else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName()))
+                {
+                    found2 = true;
+                }
             }
-            else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName()))
-            {
-                found2 = true;
-            }
+            Assert.assertTrue(found1);
+            Assert.assertTrue(found2);
         }
-        Assert.assertTrue(found1);
-        Assert.assertTrue(found2);
     }
 
     @Test
-    public void testRuleProviderWithFilter()
+    public void testRuleProviderWithFilter() throws IOException
     {
-        Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+        try (GraphContext context = factory.create())
         {
-            @Override
-            public boolean accept(WindupRuleProvider arg0)
+            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
             {
-                return arg0.getPhase() == RulePhase.MIGRATION_RULES;
-            }
-        };
+                @Override
+                public boolean accept(WindupRuleProvider arg0)
+                {
+                    return arg0.getPhase() == RulePhase.MIGRATION_RULES;
+                }
+            };
 
-        Configuration configuration1 = loader.loadConfiguration(context, predicate);
-        boolean found1 = false;
-        boolean found2 = false;
-        for (Rule rule : configuration1.getRules())
-        {
-            if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
+            Configuration configuration1 = loader.loadConfiguration(context, predicate);
+            boolean found1 = false;
+            boolean found2 = false;
+            for (Rule rule : configuration1.getRules())
             {
-                found1 = true;
+                if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
+                {
+                    found1 = true;
+                }
+                else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName()))
+                {
+                    found2 = true;
+                }
             }
-            else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName()))
-            {
-                found2 = true;
-            }
+            Assert.assertTrue(found1);
+            Assert.assertFalse(found2);
         }
-        Assert.assertTrue(found1);
-        Assert.assertFalse(found2);
     }
 
     @Singleton

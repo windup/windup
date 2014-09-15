@@ -2,8 +2,6 @@ package org.jboss.windup.rules.apps.java.binary;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -26,9 +24,6 @@ import com.tinkerpop.pipes.PipeFunction;
 
 public class DecompileArchivesRuleProvider extends WindupRuleProvider
 {
-    @Inject
-    private WindupConfigurationService windupConfigurationService;
-
     @Override
     public RulePhase getPhase()
     {
@@ -70,6 +65,8 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
                 public Boolean compute(Vertex argument)
                 {
                     ArchiveModel archive = event.getGraphContext().getFramed().frame(argument, ArchiveModel.class);
+                    WindupConfigurationService windupConfigurationService = new WindupConfigurationService(
+                                event.getGraphContext());
                     for (FileModel fileModel : archive.getContainedFileModels())
                     {
                         if (fileModel instanceof JavaClassFileModel)

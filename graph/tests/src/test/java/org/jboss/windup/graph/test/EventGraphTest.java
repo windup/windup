@@ -10,6 +10,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.typedgraph.TestFooModel;
 import org.jboss.windup.graph.typedgraph.TestFooSubModel;
 import org.junit.Assert;
@@ -39,28 +40,30 @@ public class EventGraphTest
     }
 
     @Inject
-    private GraphContext context;
+    private GraphContextFactory factory;
 
     @Test
     public void testEventGraph() throws Exception
     {
-        Assert.assertNotNull(context);
-        context.init(null);
+        try (GraphContext context = factory.create())
+        {
+            Assert.assertNotNull(context);
 
-        StubGraphChangedListener stubGraphListener = new StubGraphChangedListener();
-        context.getGraph().addListener(stubGraphListener);
+            StubGraphChangedListener stubGraphListener = new StubGraphChangedListener();
+            context.getGraph().addListener(stubGraphListener);
 
-        TestFooModel initialModelType = context.getFramed().addVertex(null, TestFooModel.class);
+            TestFooModel initialModelType = context.getFramed().addVertex(null, TestFooModel.class);
 
-        // There should be one added vertex
-        Assert.assertEquals(1, stubGraphListener.addVertexEventRecorded());
+            // There should be one added vertex
+            Assert.assertEquals(1, stubGraphListener.addVertexEventRecorded());
 
-        // reset all stats to zero
-        stubGraphListener.reset();
+            // reset all stats to zero
+            stubGraphListener.reset();
 
-        //records as a property change.
-        initialModelType.setProp1("ex");
-        
-        Assert.assertEquals(1, stubGraphListener.vertexPropertyChangedEventRecorded());
+            // records as a property change.
+            initialModelType.setProp1("ex");
+
+            Assert.assertEquals(1, stubGraphListener.vertexPropertyChangedEventRecorded());
+        }
     }
 }

@@ -5,6 +5,9 @@ import info.aduna.iteration.CloseableIteration;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.openrdf.model.Namespace;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
@@ -19,16 +22,16 @@ import com.tinkerpop.blueprints.oupls.sail.pg.PropertyGraphSail;
 
 public class GraphRDFRenderer extends AbstractGraphRenderer
 {
-
     @Override
-    public void renderGraph()
+    public void renderGraph(GraphContext context)
     {
         try
         {
-            Path outputFolder = createOutputFolder("rdf");
+            WindupConfigurationModel configuration = GraphService.getConfigurationModel(context);
+            Path outputFolder = createOutputFolder(configuration, "rdf");
             Path outputFile = outputFolder.resolve("graph.rdf");
 
-            Graph graph = getContext().getGraph();
+            Graph graph = context.getGraph();
             Sail sail = new PropertyGraphSail(graph);
             sail.initialize();
 

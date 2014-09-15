@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.comparator.ProjectModelByRootFileComparator;
 
@@ -55,5 +56,10 @@ public class SortProjectsByPathMethod implements WindupFreeMarkerMethod
         }
         Collections.sort(projectModelList, new ProjectModelByRootFileComparator());
         return projectModelList;
+    }
+
+    @Override
+    public void setGraphContext(GraphContext context)
+    {
     }
 }

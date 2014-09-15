@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.renderer.dot.VizJSHtmlWriter;
 import org.jboss.windup.reporting.renderer.gexf.SigmaJSHtmlWriter;
 import org.jboss.windup.reporting.renderer.graphlib.DagreD3JSHtmlWriter;
@@ -18,13 +21,14 @@ public class GraphExporter extends AbstractGraphRenderer
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GraphExporter.class);
 
     @Override
-    public void renderGraph()
+    public void renderGraph(GraphContext context)
     {
-        Graph graph = getContext().getGraph();
+        Graph graph = context.getGraph();
 
-        Path vizJSOutFile = createOutputFolder("visjs").resolve("index.html");
-        Path sigmaOutFile = createOutputFolder("sigma").resolve("index.html");
-        Path dagreD3OutFile = createOutputFolder("dagred3").resolve("index.html");
+        WindupConfigurationModel configuration = GraphService.getConfigurationModel(context);
+        Path vizJSOutFile = createOutputFolder(configuration, "visjs").resolve("index.html");
+        Path sigmaOutFile = createOutputFolder(configuration, "sigma").resolve("index.html");
+        Path dagreD3OutFile = createOutputFolder(configuration, "dagred3").resolve("index.html");
 
         renderVizjs(graph, vizJSOutFile.toFile(), "label", "id");
         renderSigma(graph, sigmaOutFile.toFile(), "label", "id");

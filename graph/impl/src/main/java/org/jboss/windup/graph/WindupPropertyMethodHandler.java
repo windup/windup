@@ -56,12 +56,17 @@ public class WindupPropertyMethodHandler implements MethodHandler<Property>
         return frame;
     }
 
-    private Enum getValueAsEnum(final Method method, final Object value)
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private Enum<?> getValueAsEnum(final Method method, final Object value)
     {
-        Class<Enum> en = (Class<Enum>) method.getReturnType();
-        if (value != null)
-            return Enum.valueOf(en, value.toString());
+        Class<?> returnType = method.getReturnType();
+        if (Enum.class.isAssignableFrom(returnType))
+        {
+            Class<Enum<?>> en = (Class<Enum<?>>) returnType;
 
-        return null;
+            if (value != null)
+                return Enum.valueOf((Class) en, value.toString());
+        }
+        throw new IllegalArgumentException("Method does not return an Enum type.");
     }
 }

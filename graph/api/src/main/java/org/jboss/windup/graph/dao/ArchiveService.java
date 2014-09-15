@@ -15,11 +15,6 @@ import org.jboss.windup.graph.service.GraphService;
  */
 public class ArchiveService extends GraphService<ArchiveModel>
 {
-    public ArchiveService()
-    {
-        super(ArchiveModel.class);
-    }
-
     public ArchiveService(GraphContext context)
     {
         super(context, ArchiveModel.class);

@@ -11,11 +11,6 @@ import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
 public class FileModelService extends GraphService<FileModel>
 {
-    public FileModelService()
-    {
-        super(FileModel.class);
-    }
-
     public FileModelService(GraphContext context)
     {
         super(context, FileModel.class);

@@ -45,22 +45,20 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
     private FurnaceClasspathScanner scanner;
     @Inject
     private Furnace furnace;
-    @Inject
-    private GraphContext graphContext;
 
     @Inject
     private Imported<GroovyConfigMethod> methods;
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<WindupRuleProvider> getProviders()
+    public List<WindupRuleProvider> getProviders(final GraphContext context)
     {
         final List<WindupRuleProvider> ruleProviders = new ArrayList<WindupRuleProvider>();
 
         Binding binding = new Binding();
         binding.setVariable("windupRuleProviderBuilders", ruleProviders);
         binding.setVariable("supportFunctions", new HashMap<>());
-        binding.setVariable("graphContext", graphContext);
+        binding.setVariable("graphContext", context);
 
         GroovyConfigContext configContext = new GroovyConfigContext()
         {
@@ -74,7 +72,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
             @Override
             public GraphContext getGraphContext()
             {
-                return graphContext;
+                return context;
             }
         };
 
@@ -84,7 +82,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         }
 
         CompilerConfiguration config = new CompilerConfiguration();
-        // config.addCompilationCustomizers(new ImportCustomizer());
+        // TODO import everything!!! config.addCompilationCustomizers(new ImportCustomizer());
         ClassLoader loader = getCompositeClassloader();
         GroovyShell shell = new GroovyShell(loader, binding, config);
 
@@ -106,7 +104,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         }
         binding.setVariable("supportFunctions", null);
 
-        for (URL resource : getScripts())
+        for (URL resource : getScripts(context))
         {
             try (Reader reader = new InputStreamReader(resource.openStream()))
             {
@@ -146,9 +144,9 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         return new FurnaceCompositeClassLoader(getClass().getClassLoader(), loaders);
     }
 
-    private Iterable<URL> getScripts()
+    private Iterable<URL> getScripts(GraphContext context)
     {
-        WindupConfigurationModel cfg = GraphService.getConfigurationModel(graphContext);
+        WindupConfigurationModel cfg = GraphService.getConfigurationModel(context);
         String userRulesPath = cfg.getUserRulesPath();
 
         List<URL> scripts = scanner.scan(GROOVY_RULES_EXTENSION);

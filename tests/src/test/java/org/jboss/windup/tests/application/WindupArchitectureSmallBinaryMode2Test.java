@@ -2,8 +2,6 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -11,7 +9,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.dao.ArchiveService;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -49,22 +46,19 @@ public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTe
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
     public void testRunWindupTiny() throws Exception
     {
-        super.runTest(processor, graphContext, "../test-files/Windup1x-javaee-example-tiny.war", false);
-        validateArchiveHashes();
+        try (GraphContext context = getFactory().create())
+        {
+            super.runTest(context, "../test-files/Windup1x-javaee-example-tiny.war", false);
+            validateArchiveHashes(context);
+        }
     }
 
-    private void validateArchiveHashes() throws Exception
+    private void validateArchiveHashes(GraphContext context) throws Exception
     {
-        ArchiveService archiveService = new ArchiveService(graphContext);
+        ArchiveService archiveService = new ArchiveService(context);
         int numberFound = 0;
         for (ArchiveModel model : archiveService.findAll())
         {

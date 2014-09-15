@@ -1,6 +1,5 @@
 package org.jboss.windup.graph.duplicate.typevalue;
 
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -11,6 +10,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,15 +36,15 @@ public class DuplicateTypeValueTest
     }
 
     @Inject
-    private GraphContext context;
+    private GraphContextFactory factory;
 
-    @Test(expected=Exception.class)
+    @Test(expected = Exception.class)
     public void testDuplicateTypeValue() throws Exception
     {
-        Assert.assertNotNull(context);
-        context.init(null);
-        
-        //this line needed to invoke GraphTypeRegistry.init()
-        TestSimpleModel simpleModel = context.getFramed().addVertex(null, TestSimpleModel.class);
+        try (GraphContext context = factory.create())
+        {
+            Assert.assertNotNull(context);
+            context.getFramed().addVertex(null, TestSimpleModel.class);
+        }
     }
 }

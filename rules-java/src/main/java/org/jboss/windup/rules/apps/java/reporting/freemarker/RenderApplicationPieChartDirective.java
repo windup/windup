@@ -7,8 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
 import org.jboss.windup.rules.apps.java.service.JavaInlineHintService;
@@ -32,9 +31,7 @@ import freemarker.template.TemplateModel;
  */
 public class RenderApplicationPieChartDirective implements WindupFreeMarkerTemplateDirective
 {
-
-    @Inject
-    private JavaInlineHintService javaInlineHintService;
+    private GraphContext context;
 
     @Override
     public void execute(Environment env, @SuppressWarnings("rawtypes") Map params, TemplateModel[] loopVars,
@@ -49,7 +46,8 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
         SimpleScalar elementIDStringModel = (SimpleScalar) params.get("elementID");
         String elementID = elementIDStringModel.getAsString();
 
-        Map<String, Integer> data = javaInlineHintService.getPackageUseFrequencies(projectModel, 3, recursive);
+        Map<String, Integer> data = new JavaInlineHintService(context).getPackageUseFrequencies(projectModel, 3,
+                    recursive);
         if (data.keySet().size() > 0)
         {
             drawPie(env.getOut(), data, elementID);
@@ -155,6 +153,12 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
             else
                 return -1;
         }
+    }
+
+    @Override
+    public void setGraphContext(GraphContext context)
+    {
+        this.context = context;
     }
 
 }

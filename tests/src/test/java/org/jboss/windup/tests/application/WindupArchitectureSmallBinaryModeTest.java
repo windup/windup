@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -17,7 +14,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,66 +51,68 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
     public void testRunWindupTiny() throws Exception
     {
-        super.runTest(processor, graphContext, "../test-files/jee-example-app-1.0.0.ear", false,
-                    Arrays.asList("com.acme"));
+        try (GraphContext context = getFactory().create())
+        {
+            super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", false,
+                        Arrays.asList("com.acme"));
 
-        Path graphDirectory = graphContext.getGraphDirectory();
-        Path reportsDirectory = graphDirectory.resolveSibling("reports");
+            Path graphDirectory = context.getGraphDirectory();
+            Path reportsDirectory = graphDirectory.resolve("reports");
+            Path indexPath = reportsDirectory.resolve("index.html");
 
-        Path indexPath = reportsDirectory.resolve(Paths.get("index.html"));
-        Path appReportPath = resolveChildPath(reportsDirectory,
-                    "JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d\\.html");
-        Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
-                    "nonclassifiedfiles_JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d\\.html");
-        Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBeanjava\\.\\d\\.html");
-        Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilterjava\\.\\d\\.html");
-        Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisherjava\\.\\d\\.html");
-        Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilterjava\\.\\d\\.html");
-        Path webStartupListenerPath = resolveChildPath(reportsDirectory, "AnvilWebStartupListenerjava\\.\\d\\.html");
-        Path webServletPath = resolveChildPath(reportsDirectory, "AnvilWebServletjava\\.\\d\\.html");
-        Path webLifecycleListenerPath = resolveChildPath(reportsDirectory, "AnvilWebLifecycleListenerjava\\.\\d\\.html");
+            Path appReportPath = resolveChildPath(reportsDirectory,
+                        "JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d\\.html");
+            Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
+                        "nonclassifiedfiles_JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d\\.html");
+            Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBeanjava\\.\\d\\.html");
+            Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilterjava\\.\\d\\.html");
+            Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisherjava\\.\\d\\.html");
+            Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilterjava\\.\\d\\.html");
+            Path webStartupListenerPath = resolveChildPath(reportsDirectory, "AnvilWebStartupListenerjava\\.\\d\\.html");
+            Path webServletPath = resolveChildPath(reportsDirectory, "AnvilWebServletjava\\.\\d\\.html");
+            Path webLifecycleListenerPath = resolveChildPath(reportsDirectory,
+                        "AnvilWebLifecycleListenerjava\\.\\d\\.html");
 
-        Assert.assertTrue(indexPath.toFile().exists());
-        Assert.assertTrue(appReportPath.toFile().exists());
-        Assert.assertTrue(appNonClassifiedReportPath.toFile().exists());
-        Assert.assertTrue(productCatalogBeanPath.toFile().exists());
-        Assert.assertTrue(loginFilterPath.toFile().exists());
-        Assert.assertTrue(loginEventPublisherPath.toFile().exists());
-        Assert.assertTrue(authenticationFilterPath.toFile().exists());
-        Assert.assertTrue(webStartupListenerPath.toFile().exists());
-        Assert.assertTrue(webServletPath.toFile().exists());
-        Assert.assertTrue(webLifecycleListenerPath.toFile().exists());
+            Assert.assertTrue(indexPath.toFile().exists());
+            Assert.assertTrue(appReportPath.toFile().exists());
+            Assert.assertTrue(appNonClassifiedReportPath.toFile().exists());
+            Assert.assertTrue(productCatalogBeanPath.toFile().exists());
+            Assert.assertTrue(loginFilterPath.toFile().exists());
+            Assert.assertTrue(loginEventPublisherPath.toFile().exists());
+            Assert.assertTrue(authenticationFilterPath.toFile().exists());
+            Assert.assertTrue(webStartupListenerPath.toFile().exists());
+            Assert.assertTrue(webServletPath.toFile().exists());
+            Assert.assertTrue(webLifecycleListenerPath.toFile().exists());
 
-        String appReportContent = new String(Files.readAllBytes(appReportPath));
-        String webListenerContent = new String(Files.readAllBytes(webLifecycleListenerPath));
+            String appReportContent = new String(Files.readAllBytes(appReportPath));
+            String webListenerContent = new String(Files.readAllBytes(webLifecycleListenerPath));
 
-        Assert.assertTrue(appReportContent
-                    .contains("com.acme.anvil.listener.AnvilWebLifecycleListener"));
-        Assert.assertTrue(webListenerContent
-                    .contains("This class is proprietary to Weblogic, remove."));
+            Assert.assertTrue(appReportContent
+                        .contains("com.acme.anvil.listener.AnvilWebLifecycleListener"));
+            Assert.assertTrue(webListenerContent
+                        .contains("This class is proprietary to Weblogic, remove."));
+        }
 
     }
 
     private Path resolveChildPath(Path parent, final String childPattern)
     {
-        List<String> results = Arrays.asList(parent.toFile().list(new FilenameFilter()
+        String[] list = parent.toFile().list(new FilenameFilter()
         {
             @Override
             public boolean accept(File dir, String name)
             {
                 return name.matches(childPattern);
             }
-        }));
+        });
 
+        if (list == null)
+            throw new IllegalStateException("No files matched, for pattern [" + childPattern + "]");
+
+        List<String> results = Arrays.asList(list);
         if (results.size() == 0)
             throw new IllegalStateException("No files matched, for pattern [" + childPattern + "]");
 

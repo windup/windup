@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -39,9 +37,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 public class DiscoverHibernateConfigurationRuleProvider extends WindupRuleProvider
 {
     private static final String hibernateRegex = "(?i).*hibernate.configuration.*";
-
-    @Inject
-    private HibernateConfigurationFileService hibernateConfigurationFileService;
 
     @Override
     public RulePhase getPhase()
@@ -95,6 +90,8 @@ public class DiscoverHibernateConfigurationRuleProvider extends WindupRuleProvid
             // extract the version information from the public / system ID.
             String versionInformation = extractVersion(publicId, systemId);
 
+            HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(
+                        event.getGraphContext());
             for (XmlFileModel xml : payload.getXmlResources())
             {
                 // check the root XML node.

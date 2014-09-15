@@ -1,7 +1,5 @@
 package org.jboss.windup.graph.service;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.PackageModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -13,13 +11,6 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
  */
 public class WindupConfigurationService extends GraphService<WindupConfigurationModel>
 {
-
-    public WindupConfigurationService()
-    {
-        super(WindupConfigurationModel.class);
-    }
-
-    @Inject
     public WindupConfigurationService(GraphContext context)
     {
         super(context, WindupConfigurationModel.class);

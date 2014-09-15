@@ -10,8 +10,10 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.tests.application.model.TestSampleModel;
 import org.junit.Assert;
@@ -48,23 +50,26 @@ public class GraphServiceLookupTest
     }
 
     @Inject
-    private GraphContext graphContext;
+    private GraphContextFactory factory;
 
     @Test
     public void testServiceLookup() throws Exception
     {
-        Assert.assertNotNull(graphContext);
+        try (GraphContext graphContext = factory.create())
+        {
+            Assert.assertNotNull(graphContext);
 
-        FileModelService fileModelService = graphContext.getService(FileModel.class);
-        Assert.assertNotNull(fileModelService);
-        FileModel fileModel = fileModelService.create();
-        Assert.assertNotNull(fileModel);
-        Assert.assertTrue(fileModel instanceof FileModel);
+            FileModelService fileModelService = new FileModelService(graphContext);
+            Assert.assertNotNull(fileModelService);
+            FileModel fileModel = fileModelService.create();
+            Assert.assertNotNull(fileModel);
+            Assert.assertTrue(fileModel instanceof FileModel);
 
-        Service<TestSampleModel> sampleModelService = graphContext.getService(TestSampleModel.class);
-        Assert.assertNotNull(sampleModelService);
-        TestSampleModel sampleModel = sampleModelService.create();
-        Assert.assertNotNull(sampleModel);
-        Assert.assertTrue(sampleModel instanceof TestSampleModel);
+            Service<TestSampleModel> sampleModelService = new GraphService<>(graphContext, TestSampleModel.class);
+            Assert.assertNotNull(sampleModelService);
+            TestSampleModel sampleModel = sampleModelService.create();
+            Assert.assertNotNull(sampleModel);
+            Assert.assertTrue(sampleModel instanceof TestSampleModel);
+        }
     }
 }

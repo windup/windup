@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,10 +25,10 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.engine.WindupConfiguration;
 import org.jboss.windup.engine.WindupProcessor;
-import org.jboss.windup.engine.WindupProcessorConfig;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.PackageModel;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -85,101 +84,104 @@ public class HintsClassificationsTest
     private WindupProcessor processor;
 
     @Inject
-    private GraphContext context;
-
-    private String filePath;
+    private GraphContextFactory factory;
 
     @Test
     public void testIterationVariableResolving() throws Exception
     {
-        Assert.assertNotNull(context);
-
-        // Output dir.
-        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + RandomStringUtils.randomAlphanumeric(6));
-        FileUtils.deleteDirectory(outputPath.toFile());
-        Files.createDirectories(outputPath);
-        
-        // Data filler.
-        GraphLifecycleListener gll = new GraphLifecycleListener()
+        try (GraphContext context = factory.create())
         {
-            private static final String INPUT_PATH = "src/test/java/org/jboss/windup/rules/java";
-            
-            public void postOpen(GraphContext context)
+
+            Assert.assertNotNull(context);
+
+            // Output dir.
+            final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
+                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+            FileUtils.deleteDirectory(outputPath.toFile());
+            Files.createDirectories(outputPath);
+
+            // Data filler.
+            GraphLifecycleListener gll = new GraphLifecycleListener()
             {
-                ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-                pm.setName("Main Project");
+                private static final String INPUT_PATH = "src/test/java/org/jboss/windup/rules/java";
 
-                FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
-                inputPathFrame.setFilePath(INPUT_PATH);
-                inputPathFrame.setProjectModel(pm);
-                pm.setRootFileModel(inputPathFrame);
+                public void postOpen(GraphContext context)
+                {
+                    ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+                    pm.setName("Main Project");
 
-                FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-                fileModel.setFilePath(INPUT_PATH + "/HintsClassificationsTest.java");
-                fileModel.setProjectModel(pm);
+                    FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+                    inputPathFrame.setFilePath(INPUT_PATH);
+                    inputPathFrame.setProjectModel(pm);
+                    pm.setRootFileModel(inputPathFrame);
 
-                pm.addFileModel(inputPathFrame);
-                pm.addFileModel(fileModel);
-                fileModel = context.getFramed().addVertex(null, FileModel.class);
-                fileModel.setFilePath(INPUT_PATH + "/JavaClassTest.java");
-                fileModel.setProjectModel(pm);
-                pm.addFileModel(fileModel);
+                    FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+                    fileModel.setFilePath(INPUT_PATH + "/HintsClassificationsTest.java");
+                    fileModel.setProjectModel(pm);
 
-                // WindupConfigModel.
-                // I am coming to conclusion that we need a WindupConfig 
-                // which doesn't need context.
-                WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-                config.setScanJavaPackageList(Collections.singletonList(""));
-                config.setInputPath(inputPathFrame); // Must be the same frame!
-                config.setSourceMode(true);
-                config.setOutputPath(outputPath.toString());
-            }
+                    pm.addFileModel(inputPathFrame);
+                    pm.addFileModel(fileModel);
+                    fileModel = context.getFramed().addVertex(null, FileModel.class);
+                    fileModel.setFilePath(INPUT_PATH + "/JavaClassTest.java");
+                    fileModel.setProjectModel(pm);
+                    pm.addFileModel(fileModel);
 
-            public void preShutdown(GraphContext context){
-            }
-        };
+                    // WindupConfigModel.
+                    // I am coming to conclusion that we need a WindupConfig
+                    // which doesn't need context.
+                    WindupConfigurationModel config = GraphService.getConfigurationModel(context);
+                    config.setScanJavaPackageList(Collections.singletonList(""));
+                    config.setInputPath(inputPathFrame); // Must be the same frame!
+                    config.setSourceMode(true);
+                    config.setOutputPath(outputPath.toString());
+                }
 
-
-        try
-        {
+                public void preShutdown(GraphContext context)
+                {
+                }
+            };
 
             try
             {
-                // TODO: Consolidate the config - e.g. the outputPath is now set at 2 places.
-                processor.execute(new WindupProcessorConfig().setOutputDirectory(outputPath).setGraphListener(gll));
+
+                try
+                {
+                    // TODO: Consolidate the config - e.g. the outputPath is now set at 2 places.
+                    WindupConfiguration configuration = new WindupConfiguration()
+                                .setGraphContext(context)
+                                .setGraphListener(gll);
+                    processor.execute(configuration);
+                }
+                catch (Exception e)
+                {
+                    if (e.getMessage() == null || !e.getMessage().contains("CreateMainApplicationReport"))
+                        throw e;
+                }
+
+                GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
+                GraphService<ClassificationModel> classificationService = new GraphService<>(context,
+                            ClassificationModel.class);
+
+                GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
+                Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
+                Assert.assertTrue(typeReferences.iterator().hasNext());
+
+                Assert.assertEquals(4, provider.getTypeReferences().size());
+                List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
+                Assert.assertEquals(4, hints.size());
+                List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
+                Assert.assertEquals(1, classifications.size());
+
+                @SuppressWarnings("unused")
+                Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
+
+                // TODO fix this: there is a file multiple times:
+                // Assert.assertEquals(2, Iterators.asList(fileModels).size());
             }
-            catch (Exception e)
+            finally
             {
-                if (!e.getMessage().contains("CreateMainApplicationReport"))
-                    throw e;
+                FileUtils.deleteDirectory(outputPath.toFile());
             }
-
-            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
-            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
-
-            GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
-            Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
-            Assert.assertTrue(typeReferences.iterator().hasNext());
-
-            Assert.assertEquals(4, provider.getTypeReferences().size());
-            List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-            Assert.assertEquals(4, hints.size());
-            List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-            Assert.assertEquals(1, classifications.size());
-            Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
-            int fileModelsCounter = 0;
-            for (FileModel f : fileModels)
-            {
-                filePath = f.getFilePath();
-                fileModelsCounter++;
-            }
-            // TODO fix this: there is a file multiple times:
-            // Assert.assertEquals(2, fileModelsCounter);
-        }
-        finally
-        {
-            FileUtils.deleteDirectory(outputPath.toFile());
         }
 
     }

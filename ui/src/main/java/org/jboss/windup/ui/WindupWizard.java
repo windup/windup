@@ -25,9 +25,13 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.windup.engine.WindupProcessorConfig;
+import org.jboss.windup.engine.WindupConfiguration;
+import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.WindupProgressMonitor;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 
 /**
  * Provides a basic forge UI for running windup from within the Forge shell.
@@ -38,7 +42,10 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 public class WindupWizard implements UIWizard, UICommand
 {
     @Inject
-    private WindupService windupService;
+    private WindupProcessor processor;
+
+    @Inject
+    private GraphContextFactory factory;
 
     @Inject
     @WithAttributes(label = "Input", required = true, description = "Input File or Directory (a Directory is required for source mode)")
@@ -112,7 +119,8 @@ public class WindupWizard implements UIWizard, UICommand
 
         FileUtils.deleteDirectory(outputFile);
 
-        WindupConfigurationModel cfg = windupService.createServiceConfiguration();
+        GraphContext graphContext = factory.create(inputFile.toPath());
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(graphContext);
         cfg.setInputPath(inputFile.getAbsolutePath());
         cfg.setOutputPath(outputFile.getAbsolutePath());
         cfg.setFetchRemoteResources(fetchRemote);
@@ -126,8 +134,9 @@ public class WindupWizard implements UIWizard, UICommand
 
         UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();
         WindupProgressMonitor progressMonitor = new WindupProgressMonitorAdapter(uiProgressMonitor);
-        WindupProcessorConfig wpConf = new WindupProcessorConfig().setProgressMonitor(progressMonitor).setOutputDirectory(outputFile.toPath());
-        windupService.execute(wpConf);
+        WindupConfiguration wpConf = new WindupConfiguration().setProgressMonitor(progressMonitor).setGraphContext(
+                    graphContext);
+        processor.execute(wpConf);
 
         uiProgressMonitor.done();
 

@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -14,7 +12,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
@@ -57,23 +54,20 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
     public void testRunWindupHibernate() throws Exception
     {
         final String path = "../test-files/hibernate-tutorial-web-3.3.2.GA.war";
         List<String> includeList = Collections.singletonList("nocodescanning");
         List<String> excludeList = Collections.emptyList();
-        super.runTest(processor, graphContext, path, false, includeList, excludeList);
-        validateHibernateFiles();
+        try (GraphContext context = getFactory().create())
+        {
+            super.runTest(context, path, false, includeList, excludeList);
+            validateHibernateFiles(context);
+        }
     }
 
-    private void validateHibernateFiles()
+    private void validateHibernateFiles(GraphContext graphContext)
     {
         HibernateConfigurationFileService cfgService = new HibernateConfigurationFileService(graphContext);
 

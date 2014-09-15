@@ -2,8 +2,6 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -11,7 +9,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
@@ -49,24 +46,21 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
     public void testRunWindupMedium() throws Exception
     {
         final String path = "../test-files/Windup1x-javaee-example.war";
-        super.runTest(processor, graphContext, path, false);
 
-        validateManifestEntries();
+        try (GraphContext context = getFactory().create())
+        {
+            super.runTest(context, path, false);
+            validateManifestEntries(context);
+        }
     }
 
-    private void validateManifestEntries() throws Exception
+    private void validateManifestEntries(GraphContext context) throws Exception
     {
-        JarManifestService jarManifestService = new JarManifestService(graphContext);
+        JarManifestService jarManifestService = new JarManifestService(context);
         Iterable<JarManifestModel> manifests = jarManifestService.findAll();
 
         int numberFound = 0;

@@ -12,6 +12,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 import org.jboss.windup.graph.typedgraph.TestFooModel;
 import org.jboss.windup.graph.typedgraph.TestFooSubModel;
@@ -40,38 +41,37 @@ public class RuleProviderExecutionStatisticsServiceTest
     }
 
     @Inject
-    private GraphContext context;
-
-    @Inject
-    private RuleProviderExecutionStatisticsService service;
+    private GraphContextFactory factory;
 
     @Test
-    public void testFindAllOrderedByIndex()
+    public void testFindAllOrderedByIndex() throws Exception
     {
-        this.context.init(null);
-        
-        RuleProviderExecutionStatisticsModel m1 = service.create();
-        m1.setRuleIndex(10);
-        m1.setTimeTaken(1);
-        RuleProviderExecutionStatisticsModel m2 = service.create();
-        m2.setRuleIndex(20);
-        m2.setTimeTaken(2);
-        RuleProviderExecutionStatisticsModel m3 = service.create();
-        m3.setRuleIndex(30);
-        m3.setTimeTaken(3);
-        RuleProviderExecutionStatisticsModel m4 = service.create();
-        m4.setRuleIndex(40);
-        m4.setTimeTaken(4);
-        RuleProviderExecutionStatisticsModel m5 = service.create();
-        m5.setRuleIndex(50);
-        m5.setTimeTaken(5);
+        try (GraphContext context = factory.create())
+        {
+            RuleProviderExecutionStatisticsService service = new RuleProviderExecutionStatisticsService(context);
+            RuleProviderExecutionStatisticsModel m1 = service.create();
+            m1.setRuleIndex(10);
+            m1.setTimeTaken(1);
+            RuleProviderExecutionStatisticsModel m2 = service.create();
+            m2.setRuleIndex(20);
+            m2.setTimeTaken(2);
+            RuleProviderExecutionStatisticsModel m3 = service.create();
+            m3.setRuleIndex(30);
+            m3.setTimeTaken(3);
+            RuleProviderExecutionStatisticsModel m4 = service.create();
+            m4.setRuleIndex(40);
+            m4.setTimeTaken(4);
+            RuleProviderExecutionStatisticsModel m5 = service.create();
+            m5.setRuleIndex(50);
+            m5.setTimeTaken(5);
 
-        Iterator<RuleProviderExecutionStatisticsModel> i = service.findAllOrderedByIndex().iterator();
-        Assert.assertEquals(1, i.next().getTimeTaken());
-        Assert.assertEquals(2, i.next().getTimeTaken());
-        Assert.assertEquals(3, i.next().getTimeTaken());
-        Assert.assertEquals(4, i.next().getTimeTaken());
-        Assert.assertEquals(5, i.next().getTimeTaken());
+            Iterator<RuleProviderExecutionStatisticsModel> i = service.findAllOrderedByIndex().iterator();
+            Assert.assertEquals(1, i.next().getTimeTaken());
+            Assert.assertEquals(2, i.next().getTimeTaken());
+            Assert.assertEquals(3, i.next().getTimeTaken());
+            Assert.assertEquals(4, i.next().getTimeTaken());
+            Assert.assertEquals(5, i.next().getTimeTaken());
+        }
     }
 
 }

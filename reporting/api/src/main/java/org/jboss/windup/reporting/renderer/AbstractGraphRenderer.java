@@ -5,22 +5,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.inject.Inject;
-
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.exception.WindupException;
 
+/**
+ * @author jsigtler
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public abstract class AbstractGraphRenderer implements GraphRenderer
 {
-
-    @Inject
-    private GraphContext graphContext;
-
-    protected Path createOutputFolder(String name)
+    protected Path createOutputFolder(WindupConfigurationModel configuration, String name)
     {
-        Path outputFolder = getOutputPath().resolve(name);
+        Path outputPath = getOutputPath(configuration);
+        Path outputFolder = outputPath.resolve(name);
         try
         {
             Files.createDirectories(outputFolder);
@@ -32,18 +29,8 @@ public abstract class AbstractGraphRenderer implements GraphRenderer
         return outputFolder;
     }
 
-    private Path getOutputPath()
+    private Path getOutputPath(WindupConfigurationModel configuration)
     {
-        return Paths.get(getConfiguration().getOutputPath().getFilePath(), "renderedGraph");
-    }
-
-    protected WindupConfigurationModel getConfiguration()
-    {
-        return GraphService.getConfigurationModel(graphContext);
-    }
-
-    protected GraphContext getContext()
-    {
-        return graphContext;
+        return Paths.get(configuration.getOutputPath().getFilePath(), "renderedGraph");
     }
 }

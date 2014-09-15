@@ -38,12 +38,6 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
     private static final String TEMPLATE = "/reports/templates/source.ftl";
 
     @Inject
-    private ReportService reportService;
-
-    @Inject
-    private SourceReportModelService sourceReportService;
-
-    @Inject
     private Imported<SourceTypeResolver> resolvers;
 
     @Override
@@ -66,7 +60,8 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         {
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {
-                SourceReportModel sm = sourceReportService.create();
+                SourceReportModelService sourceReportModelService = new SourceReportModelService(event.getGraphContext());
+                SourceReportModel sm = sourceReportModelService.create();
                 ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
                             ReportFileModel.class);
                 sm.setSourceFileModel(reportFileModel);
@@ -79,6 +74,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
                 
                 GraphService.addTypeToModel(event.getGraphContext(), sm, FreeMarkerSourceReportModel.class);
                 
+                ReportService reportService = new ReportService(event.getGraphContext());
                 reportService.setUniqueFilename(sm, payload.getFileName(), "html");
             }
         };

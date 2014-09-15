@@ -24,7 +24,7 @@ public class FreeMarkerUtil
     /**
      * Gets freemarker extensions (eg, custom functions) provided by furnace addons
      */
-    public static Map<String, Object> findFreeMarkerExtensions(Furnace furnace)
+    public static Map<String, Object> findFreeMarkerExtensions(Furnace furnace, GraphContext context)
     {
         Imported<WindupFreeMarkerMethod> freeMarkerMethods = furnace.getAddonRegistry().getServices(
                     WindupFreeMarkerMethod.class);
@@ -32,6 +32,7 @@ public class FreeMarkerUtil
 
         for (WindupFreeMarkerMethod freeMarkerMethod : freeMarkerMethods)
         {
+            freeMarkerMethod.setGraphContext(context);
             if (results.containsKey(freeMarkerMethod.getMethodName()))
             {
                 throw new WindupException("Windup contains two freemarker extension providing the same name: "
@@ -44,6 +45,7 @@ public class FreeMarkerUtil
                     WindupFreeMarkerTemplateDirective.class);
         for (WindupFreeMarkerTemplateDirective freeMarkerDirective : freeMarkerDirectives)
         {
+            freeMarkerDirective.setGraphContext(context);
             if (results.containsKey(freeMarkerDirective.getDirectiveName()))
             {
                 throw new WindupException("Windup contains two freemarker extension providing the same name: "

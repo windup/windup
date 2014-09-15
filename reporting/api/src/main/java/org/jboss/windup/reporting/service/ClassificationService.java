@@ -1,7 +1,5 @@
 package org.jboss.windup.reporting.service;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -21,12 +19,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class ClassificationService extends GraphService<ClassificationModel>
 {
-    public ClassificationService()
-    {
-        super(ClassificationModel.class);
-    }
-
-    @Inject
     public ClassificationService(GraphContext context)
     {
         super(context, ClassificationModel.class);

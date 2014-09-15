@@ -2,8 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
@@ -26,11 +25,15 @@ import freemarker.template.TemplateModelException;
  */
 public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
 {
-
-    @Inject
     private ClassificationService classificationService;
-    @Inject
     private InlineHintService inlineHintService;
+
+    @Override
+    public void setGraphContext(GraphContext context)
+    {
+        this.classificationService = new ClassificationService(context);
+        this.inlineHintService = new InlineHintService(context);
+    }
 
     @Override
     public String getMethodName()

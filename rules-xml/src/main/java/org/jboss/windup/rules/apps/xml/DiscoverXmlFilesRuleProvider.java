@@ -65,8 +65,8 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
 
     private void addXmlMetaInformation(GraphContext context, FileModel file)
     {
-        DoctypeMetaService docTypeService = context.getService(DoctypeMetaModel.class);
-        NamespaceService namespaceService = context.getService(NamespaceMetaModel.class);
+        DoctypeMetaService docTypeService = new DoctypeMetaService(context);
+        NamespaceService namespaceService = new NamespaceService(context);
 
         // try and read the XML...
         try (InputStream is = file.asInputStream())

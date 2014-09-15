@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.freemarker;
 
+import org.jboss.windup.graph.GraphContext;
+
 import freemarker.template.TemplateMethodModelEx;
 
 /**
@@ -18,4 +20,9 @@ public interface WindupFreeMarkerMethod extends TemplateMethodModelEx
      * Returns the name to be used for the function inside of freemarker.
      */
     public String getMethodName();
+
+    /**
+     * Sets the current GraphContext for {@link #exec(java.util.List)}.
+     */
+    public void setGraphContext(GraphContext context);
 }

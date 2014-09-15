@@ -3,8 +3,6 @@ package org.jboss.windup.rules.apps.java.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -24,8 +22,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class JavaInlineHintService extends GraphService<JavaInlineHintModel>
 {
-
-    @Inject
     public JavaInlineHintService(GraphContext context)
     {
         super(context, JavaInlineHintModel.class);

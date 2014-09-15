@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -43,8 +42,6 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
     private Addon addon;
     @Inject
     private Furnace furnace;
-    @Inject
-    private ReportService reportService;
 
     @Override
     public RulePhase getPhase()
@@ -62,7 +59,7 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
             {
                 final WindupConfigurationModel cfg = GraphService.getConfigurationModel(event.getGraphContext());
                 String outputPath = cfg.getOutputPath().getFilePath();
-                copyCssResourcesToOutput(outputPath);
+                copyCssResourcesToOutput(event.getGraphContext(), outputPath);
             }
         };
 
@@ -72,8 +69,9 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
         return configuration;
     }
 
-    private void copyCssResourcesToOutput(String outputDir)
+    private void copyCssResourcesToOutput(GraphContext context, String outputDir)
     {
+        ReportService reportService = new ReportService(context);
         Path outputPath = Paths.get(reportService.getReportDirectory(), "resources");
 
         // iterate through the addons to scan
@@ -129,11 +127,10 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
     }
 
     /**
-     * Get the addons that depend on the reporting addon
+     * Get all {@link Addon} instances that depend on the reporting addon
      */
     private Set<Addon> getAddonsToScan()
     {
-        List<ClassLoader> loaders = new ArrayList<>();
         AddonFilter filter = new AddonFilter()
         {
             @Override

@@ -7,21 +7,20 @@
 package org.jboss.windup.engine;
 
 /**
+ * The entry point of the Windup engine.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 public interface WindupProcessor
 {
     /**
-     * Executes Windup according to given configuration.
+     * Executes Windup using the given {@link WindupConfiguration}.
      */
-    void execute(WindupProcessorConfig config);
+    void execute(WindupConfiguration config);
 
-    
-    // Convenience / deprecated methods.
-    
     /**
-     * Executes Windup (including all rules).
+     * Executes Windup (including all rules found in loaded addons).
      */
     void execute();
 }

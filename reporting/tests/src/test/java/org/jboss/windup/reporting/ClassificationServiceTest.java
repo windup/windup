@@ -12,6 +12,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -45,19 +46,23 @@ public class ClassificationServiceTest
     }
 
     @Inject
-    private GraphContext context;
+    private GraphContextFactory factory;
 
     @Test
     public void testHintEffort() throws Exception
     {
-        ClassificationService classificationService = new ClassificationService(context);
 
-        ProjectModel projectModel = fillData();
-        int totalEffort = classificationService.getMigrationEffortPoints(projectModel, true);
-        Assert.assertEquals(140, totalEffort);
+        try (GraphContext context = factory.create())
+        {
+            ClassificationService classificationService = new ClassificationService(context);
+
+            ProjectModel projectModel = fillData(context);
+            int totalEffort = classificationService.getMigrationEffortPoints(projectModel, true);
+            Assert.assertEquals(140, totalEffort);
+        }
     }
 
-    private ProjectModel fillData()
+    private ProjectModel fillData(GraphContext context)
     {
         ClassificationService classificationService = new ClassificationService(context);
 
