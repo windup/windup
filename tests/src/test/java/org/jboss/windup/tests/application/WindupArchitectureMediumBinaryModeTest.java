@@ -51,7 +51,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     {
         final String path = "../test-files/Windup1x-javaee-example.war";
 
-        try (GraphContext context = getFactory().create())
+        try (GraphContext context = createGraphContext())
         {
             super.runTest(context, path, false);
             validateManifestEntries(context);

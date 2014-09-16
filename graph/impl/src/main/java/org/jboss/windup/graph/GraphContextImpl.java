@@ -16,7 +16,6 @@ import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
-import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
@@ -142,7 +141,6 @@ public class GraphContextImpl implements GraphContext
     public void close()
     {
         this.eventGraph.getBaseGraph().shutdown();
-        TitanCleanup.clear(eventGraph.getBaseGraph());
     }
 
     @Override

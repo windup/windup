@@ -59,7 +59,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
         List<String> includePackages = Collections.singletonList("org.apache.wicket.ajax");
         List<String> excludePackages = Collections.emptyList();
 
-        try (GraphContext context = getFactory().create())
+        try (GraphContext context = createGraphContext())
         {
             super.runTest(context, path, false, includePackages, excludePackages);
 

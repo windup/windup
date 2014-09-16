@@ -54,7 +54,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
     @Test
     public void testRunWindupTiny() throws Exception
     {
-        try (GraphContext context = getFactory().create())
+        try (GraphContext context = createGraphContext())
         {
             super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", false,
                         Arrays.asList("com.acme"));

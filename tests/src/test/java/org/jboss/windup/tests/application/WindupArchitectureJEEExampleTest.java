@@ -56,7 +56,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
     @Test
     public void testRunWindupJEEExampleMode() throws Exception
     {
-        try (GraphContext context = getFactory().create())
+        try (GraphContext context = createGraphContext())
         {
             super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", false);
             validateEjbXmlReferences(context);

@@ -1,11 +1,14 @@
 package org.jboss.windup.tests.application;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.windup.engine.WindupConfiguration;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.WindupProgressMonitor;
@@ -36,11 +39,22 @@ public abstract class WindupArchitectureTest
         return factory;
     }
 
+    Path getDefaultPath()
+    {
+        return FileUtils.getTempDirectory().toPath().resolve("Windup")
+                    .resolve("windupgraph_" + RandomStringUtils.randomAlphanumeric(6));
+    }
+
+    GraphContext createGraphContext()
+    {
+        return factory.create(getDefaultPath());
+    }
+
     void runTest(String inputPath, boolean sourceMode) throws Exception
     {
         List<String> includeList = Collections.emptyList();
         List<String> excludeList = Collections.emptyList();
-        runTest(factory.create(), inputPath, sourceMode, includeList, excludeList);
+        runTest(createGraphContext(), inputPath, sourceMode, includeList, excludeList);
     }
 
     void runTest(GraphContext graphContext, String inputPath, boolean sourceMode)
