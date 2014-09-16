@@ -28,8 +28,6 @@ import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
-import org.jboss.windup.rules.apps.xml.DoctypeMetaModel;
-import org.jboss.windup.rules.apps.xml.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;

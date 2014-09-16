@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.xml;
+package org.jboss.windup.rules.apps.xml.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +11,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

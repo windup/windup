@@ -1,7 +1,8 @@
-package org.jboss.windup.rules.apps.xml;
+package org.jboss.windup.rules.apps.xml.service;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 
 public class NamespaceService extends GraphService<NamespaceMetaModel>
 {

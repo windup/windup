@@ -23,8 +23,6 @@ import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
 import org.jboss.windup.rules.apps.javaee.service.SpringConfigurationFileService;
 import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
-import org.jboss.windup.rules.apps.xml.XmlFileModel;
-import org.jboss.windup.rules.apps.xml.XmlFileService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;

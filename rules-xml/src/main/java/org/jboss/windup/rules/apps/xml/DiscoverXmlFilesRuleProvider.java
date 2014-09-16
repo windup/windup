@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.xml;
 
-import static org.joox.JOOX.$;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +18,11 @@ import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
+import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.service.DoctypeMetaService;
+import org.jboss.windup.rules.apps.xml.service.NamespaceService;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.LocationAwareContentHandler.Doctype;
@@ -30,6 +35,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import static org.joox.JOOX.$;
+
 public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getSimpleName());
@@ -38,6 +45,12 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+    public List<String> getExecuteAfterIDs()
+    {
+        List<String> ids = new ArrayList<String>();
+        ids.add("org.jboss.windup.rules.apps:rules-java.UnzipArchivesToOutputRuleProvider");
+        return ids;
     }
 
     @Override
@@ -131,8 +144,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
         }
         catch (Exception e)
         {
-            throw new WindupException("Failed to load and parse XML for entity: " + file.getFilePath() + ", due to: "
-                        + e.getMessage(), e);
+            throw new WindupException("Failed to load and parse XML for entity: " + file.getFilePath(), e);
         }
     }
 }
