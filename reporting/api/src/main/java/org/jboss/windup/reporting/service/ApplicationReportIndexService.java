@@ -15,12 +15,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class ApplicationReportIndexService extends GraphService<ApplicationReportIndexModel>
 {
-
-    public ApplicationReportIndexService()
-    {
-        super(ApplicationReportIndexModel.class);
-    }
-
     public ApplicationReportIndexService(GraphContext context)
     {
         super(context, ApplicationReportIndexModel.class);

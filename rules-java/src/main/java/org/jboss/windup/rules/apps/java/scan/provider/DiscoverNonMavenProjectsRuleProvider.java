@@ -3,8 +3,6 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -30,9 +28,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class DiscoverNonMavenProjectsRuleProvider extends WindupRuleProvider
 {
-    @Inject
-    private ProjectModelService projectModelService;
-
     @Override
     public RulePhase getPhase()
     {
@@ -85,6 +80,7 @@ public class DiscoverNonMavenProjectsRuleProvider extends WindupRuleProvider
                             }
                             
                             ProjectModel childProjectModel = null;
+                            ProjectModelService projectModelService = new ProjectModelService(event.getGraphContext());
                             for (ArchiveModel archiveModel : hierarchy)
                             {
                                 ProjectModel projectModel = archiveModel.getProjectModel();

@@ -21,12 +21,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class InlineHintService extends GraphService<InlineHintModel>
 {
-
-    public InlineHintService()
-    {
-        super(InlineHintModel.class);
-    }
-
     public InlineHintService(GraphContext context)
     {
         super(context, InlineHintModel.class);

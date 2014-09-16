@@ -1,8 +1,7 @@
 package org.jboss.windup.graph;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -10,9 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
-import org.jboss.windup.util.exception.WindupException;
 
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.PropertyKey;
@@ -34,102 +31,28 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 
 public class GraphContextImpl implements GraphContext
 {
-    private final GraphApiCompositeClassLoaderProvider classLoaderProvider;
+    private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
 
-    /**
-     * Used to get access to all implemented {@link Service} classes.
-     */
-    private final Imported<Service<? extends VertexFrame>> graphServices;
     private final GraphTypeRegistry graphTypeRegistry;
-    private EventGraph<TitanGraph> eventGraph;
-    private BatchGraph<TitanGraph> batch;
-    private FramedGraph<EventGraph<TitanGraph>> framed;
-    private Path graphDirectory;
+    private final EventGraph<TitanGraph> eventGraph;
+    private final BatchGraph<TitanGraph> batchGraph;
+    private final FramedGraph<EventGraph<TitanGraph>> framed;
 
-    @Override
-    public GraphTypeRegistry getGraphTypeRegistry()
-    {
-        return graphTypeRegistry;
-    }
-
-    @Override
-    public void disconnectFromGraph()
-    {
-        this.eventGraph.getBaseGraph().shutdown();
-        this.eventGraph = null;
-        this.batch = null;
-        this.framed = null;
-    }
-
-    public EventGraph<TitanGraph> getGraph()
-    {
-        initGraphIfNeeded();
-        return eventGraph;
-    }
-
-    /**
-     * Returns a graph suitable for batch processing.
-     * 
-     * Note: This bypasses the event graph (thus no events will be fired for modifications to this graph)
-     */
-    public BatchGraph<TitanGraph> getBatch()
-    {
-        initGraphIfNeeded();
-        return batch;
-    }
-
-    public FramedGraph<EventGraph<TitanGraph>> getFramed()
-    {
-        initGraphIfNeeded();
-        return framed;
-    }
+    private final Path graphDir;
 
     public GraphContextImpl(Imported<Service<? extends VertexFrame>> graphServices,
-                GraphTypeRegistry graphTypeRegistry,
-                GraphApiCompositeClassLoaderProvider classLoaderProvider)
+                GraphTypeRegistry graphTypeRegistry, GraphApiCompositeClassLoaderProvider classLoaderProvider,
+                Path graphDir)
     {
-        this.graphServices = graphServices;
         this.graphTypeRegistry = graphTypeRegistry;
-        this.classLoaderProvider = classLoaderProvider;
-    }
+        this.graphDir = graphDir;
 
-    @Override
-    public void setGraphDirectory(Path graphDirectory)
-    {
-        if (this.eventGraph != null)
-        {
-            throw new WindupException("Error, attempting to set graph directory to: \"" + graphDirectory.toString()
-                        + "\", but the graph has already been initialized (with graph folder: \""
-                        + this.graphDirectory.toString()
-                        + "\"! To change this, you must first disconnect from the graph!");
-        }
-        this.graphDirectory = graphDirectory;
-    }
+        log.fine("Initializing graph.");
 
-    @Override
-    public Path getGraphDirectory()
-    {
-        return graphDirectory;
-    }
+        FileUtils.deleteQuietly(graphDir.toFile());
 
-    private void initGraphIfNeeded()
-    {
-        if (eventGraph != null)
-        {
-            // graph is already initialized, just return
-            return;
-        }
-
-        if (graphDirectory == null)
-        {
-            // just give it a default value
-            setGraphDirectory(getDefaultGraphDirectory());
-        }
-
-        FileUtils.deleteQuietly(graphDirectory.toFile());
-
-        Path lucene = graphDirectory.resolve("graphsearch");
-        Path berkeley = graphDirectory.resolve("titangraph");
+        Path lucene = graphDir.resolve("graphsearch");
+        Path berkeley = graphDir.resolve("titangraph");
 
         // TODO: Externalize this.
         Configuration conf = new BaseConfiguration();
@@ -171,9 +94,8 @@ public class GraphContextImpl implements GraphContext
         mgmt.commit();
 
         this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
-        batch = new BatchGraph<TitanGraph>(titanGraph, 1000L);
+        this.batchGraph = new BatchGraph<TitanGraph>(titanGraph, 1000L);
 
-        // Composite classloader
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
         final AdjacentMapHandler frameMapHandler = new AdjacentMapHandler();
@@ -198,7 +120,6 @@ public class GraphContextImpl implements GraphContext
             }
         };
 
-        // Frames with all the features.
         FramedGraphFactory factory = new FramedGraphFactory(
                     addModules, // Composite classloader
                     new JavaHandlerModule(), // @JavaHandler
@@ -211,32 +132,37 @@ public class GraphContextImpl implements GraphContext
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T extends VertexFrame, S extends Service<T>> S getService(Class<T> type)
+    public GraphTypeRegistry getGraphTypeRegistry()
     {
-        S closestMatch = null;
-        for (Service<? extends VertexFrame> service : graphServices)
-        {
-            if (service.getType() == type)
-            {
-                closestMatch = (S) service;
-            }
-            else if (closestMatch == null && service.getType().isAssignableFrom(type))
-            {
-                closestMatch = (S) service;
-            }
-        }
-        if (closestMatch == null)
-        {
-            closestMatch = (S) new GraphService(this, type);
-        }
-        return closestMatch;
+        return graphTypeRegistry;
     }
 
     @Override
-    public String toString()
+    public void close()
     {
-        return "GraphContext: " + getGraphDirectory().toString();
+        this.eventGraph.getBaseGraph().shutdown();
+    }
+
+    @Override
+    public EventGraph<TitanGraph> getGraph()
+    {
+        return eventGraph;
+    }
+
+    /**
+     * Returns a graph suitable for batchGraph processing.
+     * <p>
+     * Note: This bypasses the event graph (thus no events will be fired for modifications to this graph)
+     */
+    public BatchGraph<TitanGraph> getBatch()
+    {
+        return batchGraph;
+    }
+
+    @Override
+    public FramedGraph<EventGraph<TitanGraph>> getFramed()
+    {
+        return framed;
     }
 
     @Override
@@ -245,11 +171,16 @@ public class GraphContextImpl implements GraphContext
         return new TypeAwareFramedGraphQuery(getFramed());
     }
 
-    /**
-     * This is called if the user does not explicitly specify a graph directory
-     */
-    private Path getDefaultGraphDirectory()
+    @Override
+    public Path getGraphDirectory()
     {
-        return new File(FileUtils.getTempDirectory(), "windupgraph_" + UUID.randomUUID().toString()).toPath();
+        return graphDir;
+    }
+
+    @Override
+    public String toString()
+    {
+        String graphHash = getGraph() == null ? "null" : "" + getGraph().hashCode();
+        return "GraphContextImpl(" + hashCode() + "), Graph(" + graphHash + ") + DataDir(" + getGraphDirectory() + ")";
     }
 }

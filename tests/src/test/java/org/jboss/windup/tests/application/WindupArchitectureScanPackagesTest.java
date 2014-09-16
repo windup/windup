@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -13,7 +11,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -55,12 +52,6 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
     public void testRunWindupMedium() throws Exception
     {
@@ -68,49 +59,52 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
         List<String> includePackages = Collections.singletonList("org.apache.wicket.ajax");
         List<String> excludePackages = Collections.emptyList();
 
-        super.runTest(processor, graphContext, path, false, includePackages, excludePackages);
-
-        GraphService<FileModel> fileModelService = graphContext.getService(FileModel.class);
-        boolean foundHintedFile = false;
-        boolean foundAjaxHintedFile = false;
-        boolean foundNonAjaxHintedFile = false;
-
-        InlineHintService inlineHintService = new InlineHintService(graphContext);
-
-        for (FileModel fileModel : fileModelService.findAll())
+        try (GraphContext context = createGraphContext())
         {
-            String pkg = null;
-            if (fileModel instanceof JavaClassFileModel)
+            super.runTest(context, path, false, includePackages, excludePackages);
+
+            GraphService<FileModel> fileModelService = new GraphService<>(context, FileModel.class);
+            boolean foundHintedFile = false;
+            boolean foundAjaxHintedFile = false;
+            boolean foundNonAjaxHintedFile = false;
+
+            InlineHintService inlineHintService = new InlineHintService(context);
+
+            for (FileModel fileModel : fileModelService.findAll())
             {
-                pkg = ((JavaClassFileModel) fileModel).getPackageName();
-            }
-            else if (fileModel instanceof JavaSourceFileModel)
-            {
-                pkg = ((JavaSourceFileModel) fileModel).getPackageName();
+                String pkg = null;
+                if (fileModel instanceof JavaClassFileModel)
+                {
+                    pkg = ((JavaClassFileModel) fileModel).getPackageName();
+                }
+                else if (fileModel instanceof JavaSourceFileModel)
+                {
+                    pkg = ((JavaSourceFileModel) fileModel).getPackageName();
+                }
+
+                if (pkg == null)
+                {
+                    continue;
+                }
+                Iterable<InlineHintModel> hintIterable = inlineHintService.getHintsForFile(fileModel);
+                if (hintIterable.iterator().hasNext())
+                {
+                    foundHintedFile = true;
+                    if (pkg.startsWith("org.apache.wicket.ajax"))
+                    {
+                        foundAjaxHintedFile = true;
+                    }
+                    else
+                    {
+                        foundNonAjaxHintedFile = true;
+                    }
+                }
             }
 
-            if (pkg == null)
-            {
-                continue;
-            }
-            Iterable<InlineHintModel> hintIterable = inlineHintService.getHintsForFile(fileModel);
-            if (hintIterable.iterator().hasNext())
-            {
-                foundHintedFile = true;
-                if (pkg.startsWith("org.apache.wicket.ajax"))
-                {
-                    foundAjaxHintedFile = true;
-                }
-                else
-                {
-                    foundNonAjaxHintedFile = true;
-                }
-            }
+            Assert.assertTrue(foundHintedFile);
+            Assert.assertTrue(foundAjaxHintedFile);
+            Assert.assertFalse(foundNonAjaxHintedFile);
         }
-
-        Assert.assertTrue(foundHintedFile);
-        Assert.assertTrue(foundAjaxHintedFile);
-        Assert.assertFalse(foundNonAjaxHintedFile);
     }
 
 }

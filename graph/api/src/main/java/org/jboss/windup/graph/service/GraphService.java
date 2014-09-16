@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
@@ -26,20 +24,13 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
-    @Inject
-    private GraphContext context;
-
     private Class<T> type;
-
-    protected GraphService(Class<T> type)
-    {
-        this.type = type;
-    }
+    private GraphContext context;
 
     public GraphService(GraphContext context, Class<T> type)
     {
-        this(type);
         this.context = context;
+        this.type = type;
     }
 
     public static synchronized WindupConfigurationModel getConfigurationModel(GraphContext context)

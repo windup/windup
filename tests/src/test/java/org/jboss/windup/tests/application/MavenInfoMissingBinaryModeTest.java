@@ -1,7 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -9,8 +7,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
-import org.jboss.windup.graph.GraphContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,16 +39,9 @@ public class MavenInfoMissingBinaryModeTest extends WindupArchitectureTest
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
-    public void testRunWindupMedium() throws Exception
+    public void testRunMavenInfoMissing() throws Exception
     {
-        final String path = "../test-files/maven-info-missing.war";
-        super.runTest(processor, graphContext, path, false);
+        super.runTest("../test-files/maven-info-missing.war", false);
     }
 }

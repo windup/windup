@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
@@ -14,12 +12,6 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
  */
 public class HibernateConfigurationFileService extends GraphService<HibernateConfigurationFileModel>
 {
-    public HibernateConfigurationFileService()
-    {
-        super(HibernateConfigurationFileModel.class);
-    }
-
-    @Inject
     public HibernateConfigurationFileService(GraphContext context)
     {
         super(context, HibernateConfigurationFileModel.class);

@@ -7,12 +7,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -25,8 +25,11 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.engine.WindupConfiguration;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -81,80 +84,104 @@ public class HintsClassificationsTest
     private WindupProcessor processor;
 
     @Inject
-    private GraphContext context;
-
-    private String filePath;
+    private GraphContextFactory factory;
 
     @Test
     public void testIterationVariableResolving() throws Exception
     {
-        ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-        pm.setName("Main Project");
-
-        FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-        inputPath.setFilePath("src/test/java/org/jboss/windup/rules/java/");
-        inputPath.setProjectModel(pm);
-        pm.setRootFileModel(inputPath);
-
-        FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-        fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/HintsClassificationsTest.java");
-        fileModel.setProjectModel(pm);
-
-        pm.addFileModel(inputPath);
-        pm.addFileModel(fileModel);
-        fileModel = context.getFramed().addVertex(null, FileModel.class);
-        fileModel.setFilePath("src/test/java/org/jboss/windup/rules/java/JavaClassTest.java");
-        fileModel.setProjectModel(pm);
-        pm.addFileModel(fileModel);
-
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_" + UUID.randomUUID().toString());
-        FileUtils.deleteDirectory(outputPath.toFile());
-        Files.createDirectories(outputPath);
-
-        try
+        try (GraphContext context = factory.create())
         {
-            WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-            config.setScanJavaPackageList(Collections.singletonList(""));
-            config.setInputPath(inputPath);
-            config.setSourceMode(true);
-            config.setOutputPath(outputPath.toString());
+
+            Assert.assertNotNull(context);
+
+            // Output dir.
+            final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
+                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+            FileUtils.deleteDirectory(outputPath.toFile());
+            Files.createDirectories(outputPath);
+
+            // Data filler.
+            GraphLifecycleListener gll = new GraphLifecycleListener()
+            {
+                private static final String INPUT_PATH = "src/test/java/org/jboss/windup/rules/java";
+
+                public void postOpen(GraphContext context)
+                {
+                    ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+                    pm.setName("Main Project");
+
+                    FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+                    inputPathFrame.setFilePath(INPUT_PATH);
+                    inputPathFrame.setProjectModel(pm);
+                    pm.setRootFileModel(inputPathFrame);
+
+                    FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+                    fileModel.setFilePath(INPUT_PATH + "/HintsClassificationsTest.java");
+                    fileModel.setProjectModel(pm);
+
+                    pm.addFileModel(inputPathFrame);
+                    pm.addFileModel(fileModel);
+                    fileModel = context.getFramed().addVertex(null, FileModel.class);
+                    fileModel.setFilePath(INPUT_PATH + "/JavaClassTest.java");
+                    fileModel.setProjectModel(pm);
+                    pm.addFileModel(fileModel);
+
+                    // WindupConfigModel.
+                    // I am coming to conclusion that we need a WindupConfig
+                    // which doesn't need context.
+                    WindupConfigurationModel config = GraphService.getConfigurationModel(context);
+                    config.setScanJavaPackageList(Collections.singletonList(""));
+                    config.setInputPath(inputPathFrame); // Must be the same frame!
+                    config.setSourceMode(true);
+                    config.setOutputPath(outputPath.toString());
+                }
+
+                public void preShutdown(GraphContext context)
+                {
+                }
+            };
 
             try
             {
-                processor.execute();
+
+                try
+                {
+                    // TODO: Consolidate the config - e.g. the outputPath is now set at 2 places.
+                    WindupConfiguration configuration = new WindupConfiguration()
+                                .setGraphContext(context)
+                                .setGraphListener(gll);
+                    processor.execute(configuration);
+                }
+                catch (Exception e)
+                {
+                    if (e.getMessage() == null || !e.getMessage().contains("CreateMainApplicationReport"))
+                        throw e;
+                }
+
+                GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
+                GraphService<ClassificationModel> classificationService = new GraphService<>(context,
+                            ClassificationModel.class);
+
+                GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
+                Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
+                Assert.assertTrue(typeReferences.iterator().hasNext());
+
+                Assert.assertEquals(4, provider.getTypeReferences().size());
+                List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
+                Assert.assertEquals(4, hints.size());
+                List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
+                Assert.assertEquals(1, classifications.size());
+
+                @SuppressWarnings("unused")
+                Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
+
+                // TODO fix this: there is a file multiple times:
+                // Assert.assertEquals(2, Iterators.asList(fileModels).size());
             }
-            catch (Exception e)
+            finally
             {
-                if (!e.getMessage().contains("CreateMainApplicationReport"))
-                    throw e;
+                FileUtils.deleteDirectory(outputPath.toFile());
             }
-
-            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
-            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
-
-            GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
-            Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
-            Assert.assertTrue(typeReferences.iterator().hasNext());
-
-            Assert.assertEquals(3, provider.getTypeReferences().size());
-            List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-            Assert.assertEquals(3, hints.size());
-            List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-            Assert.assertEquals(1, classifications.size());
-            Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
-            int fileModelsCounter = 0;
-            for (FileModel f : fileModels)
-            {
-                filePath = f.getFilePath();
-                fileModelsCounter++;
-            }
-            // TODO fix this: there is a file multiple times:
-            // Assert.assertEquals(2, fileModelsCounter);
-        }
-        finally
-        {
-            FileUtils.deleteDirectory(outputPath.toFile());
         }
 
     }
@@ -190,15 +217,14 @@ public class HintsClassificationsTest
             };
             
             return ConfigurationBuilder.begin()
-                        
-                        .addRule()
-                        .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT))
-                        .perform(
-                            Classification.as("Furnace Service").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
-                                .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
-                                         .withEffort(8)
-                                .and(addTypeRefToList))
-                        );
+            .addRule()
+            .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT))
+            .perform(
+                Classification.as("Furnace Service").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
+                    .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
+                             .withEffort(8)
+                    .and(addTypeRefToList))
+            );
 
         }
         // @formatter:on

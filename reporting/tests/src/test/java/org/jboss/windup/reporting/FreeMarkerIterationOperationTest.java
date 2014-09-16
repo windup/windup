@@ -20,6 +20,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.junit.Assert;
@@ -56,7 +57,7 @@ public class FreeMarkerIterationOperationTest
     }
 
     @Inject
-    private GraphContext context;
+    private GraphContextFactory factory;
 
     @Inject
     private TestFreeMarkerOperationRuleProvider provider;
@@ -66,17 +67,20 @@ public class FreeMarkerIterationOperationTest
     @Test
     public void testApplicationReportFreemarker() throws Exception
     {
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
-        fillData(context);
+        try (GraphContext context = factory.create())
+        {
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            fillData(context);
 
-        Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(context);
 
-        RuleSubset.evaluate(configuration).perform(event, evaluationContext);
+            RuleSubset.create(configuration).perform(event, evaluationContext);
 
-        Path outputFile = tempFolder.resolve("reports").resolve(provider.getOutputFilename());
-        String results = FileUtils.readFileToString(outputFile.toFile());
-        Assert.assertEquals("Test freemarker report", results);
+            Path outputFile = tempFolder.resolve("reports").resolve(provider.getOutputFilename());
+            String results = FileUtils.readFileToString(outputFile.toFile());
+            Assert.assertEquals("Test freemarker report", results);
+        }
     }
 
     private void fillData(final GraphContext context) throws Exception

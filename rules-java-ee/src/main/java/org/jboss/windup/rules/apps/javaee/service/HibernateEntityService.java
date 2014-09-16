@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
@@ -14,12 +12,6 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
  */
 public class HibernateEntityService extends GraphService<HibernateEntityModel>
 {
-    public HibernateEntityService()
-    {
-        super(HibernateEntityModel.class);
-    }
-
-    @Inject
     public HibernateEntityService(GraphContext context)
     {
         super(context, HibernateEntityModel.class);

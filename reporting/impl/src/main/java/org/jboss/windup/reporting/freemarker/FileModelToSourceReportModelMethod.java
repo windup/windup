@@ -2,8 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportModelService;
@@ -28,9 +27,13 @@ import freemarker.template.TemplateModelException;
 public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMethod
 {
     public static final String METHOD_NAME = "fileModelToSourceReport";
+    private SourceReportModelService sourceReportService;
 
-    @Inject
-    private SourceReportModelService sourceReportModelService;
+    @Override
+    public void setGraphContext(GraphContext context)
+    {
+        this.sourceReportService = new SourceReportModelService(context);
+    }
 
     @Override
     public String getMethodName()
@@ -47,7 +50,8 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
-        SourceReportModel result = sourceReportModelService.getSourceReportForFileModel(fileModel);
+        SourceReportModel result = sourceReportService
+                    .getSourceReportForFileModel(fileModel);
         return result;
     }
 

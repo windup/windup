@@ -17,12 +17,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class SourceReportModelService extends GraphService<SourceReportModel>
 {
-
-    public SourceReportModelService()
-    {
-        super(SourceReportModel.class);
-    }
-
     public SourceReportModelService(GraphContext context)
     {
         super(context, SourceReportModel.class);

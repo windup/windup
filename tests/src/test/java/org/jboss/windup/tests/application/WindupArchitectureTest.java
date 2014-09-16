@@ -1,17 +1,21 @@
 package org.jboss.windup.tests.application;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.jboss.windup.engine.WindupConfiguration;
 import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.junit.Assert;
 
 /**
@@ -21,44 +25,75 @@ import org.junit.Assert;
  */
 public abstract class WindupArchitectureTest
 {
-    void runTest(WindupProcessor processor, GraphContext graphContext, String inputPath, boolean sourceMode)
-                throws Exception
+    @Inject
+    private WindupProcessor processor;
+
+    @Inject
+    private GraphContextFactory factory;
+
+    /**
+     * Get an instance of the {@link GraphContextFactory}.
+     */
+    protected GraphContextFactory getFactory()
     {
-        List<String> excludeList = Collections.emptyList();
-        runTest(processor, graphContext, inputPath, sourceMode, Collections.singletonList(""), excludeList);
+        return factory;
     }
 
-    void runTest(WindupProcessor processor, GraphContext graphContext, String inputPath, boolean sourceMode,
+    Path getDefaultPath()
+    {
+        return FileUtils.getTempDirectory().toPath().resolve("Windup")
+                    .resolve("windupgraph_" + RandomStringUtils.randomAlphanumeric(6));
+    }
+
+    GraphContext createGraphContext()
+    {
+        return factory.create(getDefaultPath());
+    }
+
+    void runTest(String inputPath, boolean sourceMode) throws Exception
+    {
+        List<String> includeList = Collections.emptyList();
+        List<String> excludeList = Collections.emptyList();
+        runTest(createGraphContext(), inputPath, sourceMode, includeList, excludeList);
+    }
+
+    void runTest(GraphContext graphContext, String inputPath, boolean sourceMode)
+                throws Exception
+    {
+        List<String> includeList = Collections.emptyList();
+        List<String> excludeList = Collections.emptyList();
+        runTest(graphContext, inputPath, sourceMode, includeList, excludeList);
+    }
+
+    void runTest(GraphContext graphContext, String inputPath, boolean sourceMode,
                 List<String> includePackages) throws Exception
     {
         List<String> excludeList = Collections.emptyList();
-        runTest(processor, graphContext, inputPath, sourceMode, includePackages, excludeList);
+        runTest(graphContext, inputPath, sourceMode, includePackages, excludeList);
     }
 
-    void runTest(WindupProcessor processor, GraphContext graphContext, String inputPath, boolean sourceMode,
-                List<String> includePackages, List<String> excludePackages)
-                throws Exception
+    void runTest(final GraphContext graphContext,
+                final String inputPath,
+                final boolean sourceMode,
+                final List<String> includePackages,
+                final List<String> excludePackages) throws Exception
     {
-        Assert.assertNotNull(processor);
-        Assert.assertNotNull(processor.toString());
 
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupReport");
-        FileUtils.deleteDirectory(outputPath.toFile());
-        Files.createDirectories(outputPath);
+        WindupConfigurationModel windupConfig = GraphService.getConfigurationModel(graphContext);
+        windupConfig.setInputPath(inputPath);
+        windupConfig.setSourceMode(sourceMode);
+        windupConfig.setScanJavaPackageList(includePackages);
+        windupConfig.setExcludeJavaPackageList(excludePackages);
 
-        processor.setOutputDirectory(outputPath);
+        if (windupConfig.getOutputPath() == null)
+            windupConfig.setOutputPath(graphContext.getGraphDirectory().toString());
+        windupConfig.setSourceMode(false);
 
-        WindupConfigurationModel windupCfg = graphContext.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(inputPath);
-        windupCfg.setSourceMode(sourceMode);
-        windupCfg.setScanJavaPackageList(includePackages);
-        windupCfg.setExcludeJavaPackageList(excludePackages);
-
-        windupCfg.setOutputPath(outputPath.toAbsolutePath().toString());
-        windupCfg.setSourceMode(false);
-
+        WindupConfiguration wpc = new WindupConfiguration().setGraphContext(graphContext);
         RecordingWindupProgressMonitor progressMonitor = new RecordingWindupProgressMonitor();
-        processor.execute(progressMonitor);
+        wpc.setProgressMonitor(progressMonitor);
+
+        processor.execute(wpc);
 
         Assert.assertFalse(progressMonitor.isCancelled());
         Assert.assertTrue(progressMonitor.isDone());
@@ -134,11 +169,6 @@ public abstract class WindupArchitectureTest
         public boolean isDone()
         {
             return done;
-        }
-
-        public List<String> getTaskNames()
-        {
-            return taskNames;
         }
 
         public List<String> getSubTaskNames()

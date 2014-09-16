@@ -3,8 +3,6 @@ package org.jboss.windup.tests.application;
 import java.io.File;
 import java.util.Iterator;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -12,7 +10,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
@@ -56,27 +53,22 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         return archive;
     }
 
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContext graphContext;
-
     @Test
     public void testRunWindupJEEExampleMode() throws Exception
     {
-        // The test-files folder in the project root dir.
-        super.runTest(processor, graphContext, "../test-files/jee-example-app-1.0.0.ear", false);
-
-        validateEjbXmlReferences();
+        try (GraphContext context = createGraphContext())
+        {
+            super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", false);
+            validateEjbXmlReferences(context);
+        }
     }
 
     /**
      * Validate that a ejb-jar.xml file was found, and that the metadata was extracted correctly
      */
-    private void validateEjbXmlReferences()
+    private void validateEjbXmlReferences(GraphContext context)
     {
-        Service<EjbDeploymentDescriptorModel> ejbXmlService = new GraphService<>(graphContext,
+        Service<EjbDeploymentDescriptorModel> ejbXmlService = new GraphService<>(context,
                     EjbDeploymentDescriptorModel.class);
         Iterator<EjbDeploymentDescriptorModel> models = ejbXmlService.findAll().iterator();
 

@@ -1,12 +1,12 @@
 /*
  * Copyright 2014 <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,15 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.common.util.Assert;
-import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.bind.Binding;
 import org.ocpsoft.rewrite.bind.Evaluation;
 import org.ocpsoft.rewrite.config.CompositeOperation;
@@ -65,17 +66,18 @@ import org.ocpsoft.rewrite.util.Visitor;
 
 /**
  * An {@link Operation} that allows for conditional evaluation of nested {@link Rule} sets.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class RuleSubset extends DefaultOperationBuilder implements CompositeOperation, Parameterized
 {
-    private static Logger log = Logger.getLogger(RuleSubset.class);
+    private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
      * Used for tracking the time taken by the rules within each RuleProvider
      */
     private final IdentityHashMap<WindupRuleProvider, RuleProviderExecutionStatisticsModel> timeTakenByProvider = new IdentityHashMap<>();
+
     /**
      * Used for tracking the time taken by each phase of execution
      */
@@ -91,7 +93,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         this.config = config;
     }
 
-    public static RuleSubset evaluate(Configuration config)
+    public static RuleSubset create(Configuration config)
     {
         return new RuleSubset(config);
     }
@@ -107,8 +109,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
         if (!timeTakenByProvider.containsKey(ruleProvider))
         {
-            RuleProviderExecutionStatisticsModel model = graphContext
-                        .getService(RuleProviderExecutionStatisticsModel.class).create();
+            RuleProviderExecutionStatisticsModel model = new GraphService<>(graphContext,
+                        RuleProviderExecutionStatisticsModel.class).create();
             model.setRuleIndex(ruleIndex);
             model.setRuleProviderID(ruleProvider.getID());
             model.setTimeTaken(timeTaken);
@@ -131,8 +133,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     {
         if (!timeTakenByPhase.containsKey(phase))
         {
-            RulePhaseExecutionStatisticsModel model = graphContext.getService(RulePhaseExecutionStatisticsModel.class)
-                        .create();
+            RulePhaseExecutionStatisticsModel model = new GraphService<>(graphContext,
+                        RulePhaseExecutionStatisticsModel.class).create();
             model.setRulePhase(phase.toString());
             model.setTimeTaken(timeTaken);
             timeTakenByPhase.put(phase, model);
@@ -202,8 +204,9 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                             continue;
 
                         subContext.setState(RewriteState.PERFORMING);
-                        log.debug("Rule [" + rule + "] matched and will be performed.");
-                        
+                        final Object ruleProviderDesc = ((RuleBuilder) rule).get(RuleMetadata.RULE_PROVIDER);
+                        log.info("Rule [" + ruleProviderDesc + "] matched and will be performed.");
+
                         for (RuleLifecycleListener listener : listeners)
                         {
                             listener.beforeRuleOperationsPerformed(event, subContext, rule);
@@ -219,7 +222,6 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                             break;
 
                         rule.perform(event, subContext);
-                        
 
                         for (RuleLifecycleListener listener : listeners)
                         {
@@ -257,6 +259,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     {
                         event.getGraphContext().getGraph().getBaseGraph().commit();
                     }
+
                     event.selectionPop();
 
                     long ruleTimeCompleted = System.currentTimeMillis();
@@ -267,26 +270,25 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     }
                 }
             }
-            catch (RuntimeException e)
+            catch (RuntimeException ex)
             {
-                String message = "Error encountered while evaluating rule: " + rule;
-                message= "\n" +  e.getMessage();
+                String exMsg = "Error encountered while evaluating rule: " + rule;
+                String logMsg = exMsg + "\n" + ex.getMessage();
+                log.severe(logMsg);
                 if (ruleContext != null)
                 {
                     Object origin = ruleContext.get(RuleMetadata.ORIGIN);
-
                     if (origin != null)
-                        message += " from: " + origin;
+                        exMsg += "\n  From: " + origin;
 
                     Object location = ruleContext.get(org.ocpsoft.rewrite.config.RuleMetadata.PROVIDER_LOCATION);
-
                     if (location != null)
-                        message += " defined in: " + location;
+                        exMsg += "\n  Defined in: " + location;
                 }
-                throw new WindupException(message, e);
+                throw new WindupException(exMsg, ex);
+
             }
         }
-        
 
         for (RuleLifecycleListener listener : listeners)
         {
@@ -417,7 +419,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     /**
-     * 
+     *
      */
     private static class ParameterizedCallbackImpl implements ParameterizedCallback
     {

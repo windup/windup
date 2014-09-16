@@ -12,12 +12,6 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
  */
 public class ApplicationReportService extends GraphService<ApplicationReportModel>
 {
-
-    public ApplicationReportService()
-    {
-        super(ApplicationReportModel.class);
-    }
-
     public ApplicationReportService(GraphContext context)
     {
         super(context, ApplicationReportModel.class);

@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -23,11 +21,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRuleProvider
 {
     private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/non_classified_files.ftl";
-
-    @Inject
-    private ReportService reportService;
-    @Inject
-    private ApplicationReportService applicationReportService;
 
     @Override
     public RulePhase getPhase()
@@ -68,6 +61,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
 
     private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
+        ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
@@ -78,6 +72,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
         applicationReportModel.setDisplayInApplicationList(false);
 
         // Set the filename for the report
+        ReportService reportService = new ReportService(context);
         reportService.setUniqueFilename(applicationReportModel, "nonclassifiedfiles_" + projectModel.getName(), "html");
 
         return applicationReportModel;

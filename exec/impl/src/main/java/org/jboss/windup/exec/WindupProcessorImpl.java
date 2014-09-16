@@ -4,120 +4,80 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.loader.GraphConfigurationLoader;
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.engine.WindupConfiguration;
 import org.jboss.windup.engine.WindupProcessor;
-import org.jboss.windup.engine.WindupProgressMonitor;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.Rule;
-import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 /**
- * The entry point of the engine.
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class WindupProcessorImpl implements WindupProcessor
 {
-
     @Inject
-    private GraphContext graphContext;
+    private GraphContextFactory factory;
 
     @Inject
     private GraphConfigurationLoader graphConfigurationLoader;
 
     @Override
-    public void setOutputDirectory(Path outputDirectory)
-    {
-        Path graphDirectory = outputDirectory.resolve("graph");
-        graphContext.setGraphDirectory(graphDirectory);
-    }
-
-    @Override
     public void execute()
     {
-        execute(new NullWindupProgressMonitor());
+        execute(new WindupConfiguration());
     }
 
     @Override
-    public void execute(Predicate<WindupRuleProvider> ruleProviderFilter)
+    public void execute(WindupConfiguration windupConfiguration)
     {
-        execute(ruleProviderFilter, new NullWindupProgressMonitor());
-    }
+        Assert.notNull(windupConfiguration,
+                    "Windup configuration must not be null. (Call default execution if no configuration is required.)");
 
-    @Override
-    public void execute(final WindupProgressMonitor progressMonitor)
-    {
-        final GraphContext context = graphContext;
-        final Configuration configuration = graphConfigurationLoader.loadConfiguration(context);
-        GraphRewrite event = new GraphRewrite(context);
-
-        RuleSubset ruleSubset = RuleSubset.evaluate(configuration);
-        ruleSubset.addLifecycleListener(new RuleLifecycleListener()
+        GraphContext context = windupConfiguration.getGraphContext();
+        if (context == null)
         {
-            @Override
-            public void beforeExecution()
+            Path outputDirectory = windupConfiguration.getOutputDirectory();
+            if (outputDirectory != null)
             {
-                progressMonitor.beginTask("Executing Rules: ", configuration.getRules().size());
+                Path graphDir = outputDirectory.resolve("graph");
+                context = factory.create(graphDir);
             }
-
-            @Override
-            public void beforeRuleEvaluation(Rule rule, EvaluationContext context)
+            else
             {
-                progressMonitor.subTask(prettyPrintRule(rule));
-
+                context = factory.create();
             }
+        }
 
-            @Override
-            public void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule,
-                        boolean result)
-            {
-                if (result == false)
-                {
-                    progressMonitor.worked(1);
-                }
-            }
+        if (null != windupConfiguration.getGraphListener())
+            windupConfiguration.getGraphListener().postOpen(context);
 
-            @Override
-            public void beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
-            {
-            }
+        Configuration rules = graphConfigurationLoader.loadConfiguration(context,
+                    windupConfiguration.getRuleProviderFilter());
 
-            @Override
-            public void afterRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
-            {
-                progressMonitor.worked(1);
-            }
-
-            @Override
-            public void afterExecution()
-            {
-                progressMonitor.done();
-            }
-        });
-        ruleSubset.perform(event, createEvaluationContext());
-    }
-
-    @Override
-    public void execute(Predicate<WindupRuleProvider> ruleProviderFilter, WindupProgressMonitor progressMonitor)
-    {
-        final GraphContext context = graphContext;
-        final Predicate<WindupRuleProvider> ruleProviderFilter1 = ruleProviderFilter;
-        final Configuration configuration = graphConfigurationLoader.loadConfiguration(context, ruleProviderFilter1);
         GraphRewrite event = new GraphRewrite(context);
-        RuleSubset.evaluate(configuration).perform(event, createEvaluationContext());
 
+        RuleSubset ruleSubset = RuleSubset.create(rules);
+        if (windupConfiguration.getProgressMonitor() != null)
+            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(),
+                        rules));
+        ruleSubset.perform(event, createEvaluationContext());
+
+        if (null != windupConfiguration.getGraphListener())
+            windupConfiguration.getGraphListener().preShutdown(context);
     }
 
-    private DefaultEvaluationContext createEvaluationContext()
+    /**
+     * Creates EvaluationContext which serves as an environment and input for RuleSubset executor.
+     */
+    private EvaluationContext createEvaluationContext()
     {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -125,70 +85,4 @@ public class WindupProcessorImpl implements WindupProcessor
         return evaluationContext;
     }
 
-    private String prettyPrintRule(Rule rule)
-    {
-        StringBuilder builder = new StringBuilder();
-        if (rule instanceof Context)
-        {
-            WindupRuleProvider ruleProvider = (WindupRuleProvider) ((Context) rule)
-                        .get(RuleMetadata.RULE_PROVIDER);
-
-            String category = (String) ((Context) rule).get(RuleMetadata.CATEGORY);
-
-            if (ruleProvider != null)
-            {
-                builder.append(ruleProvider.getPhase() + " - ");
-                builder.append(ruleProvider.getID() + " ");
-            }
-
-            if (category != null)
-                builder.append("[" + category + "] ");
-
-        }
-
-        return builder.append(rule.getId()).toString();
-    }
-
-    /*
-     * Null object pattern, presents a no-op implementation to avoid adding cyclomatic complexity to underlying
-     * implementation.
-     */
-    private static class NullWindupProgressMonitor implements WindupProgressMonitor
-    {
-        @Override
-        public void beginTask(String name, int totalWork)
-        {
-        }
-
-        @Override
-        public void done()
-        {
-        }
-
-        @Override
-        public boolean isCancelled()
-        {
-            return false;
-        }
-
-        @Override
-        public void setCancelled(boolean value)
-        {
-        }
-
-        @Override
-        public void setTaskName(String name)
-        {
-        }
-
-        @Override
-        public void subTask(String name)
-        {
-        }
-
-        @Override
-        public void worked(int work)
-        {
-        }
-    }
 }

@@ -2,8 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.service.ApplicationReportIndexService;
@@ -27,8 +26,13 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
 
     private static final String PROJECT_MODEL_TO_APPLICATION_INDEX = "projectModelToApplicationIndex";
 
-    @Inject
     private ApplicationReportIndexService service;
+
+    @Override
+    public void setGraphContext(GraphContext context)
+    {
+        this.service = new ApplicationReportIndexService(context);
+    }
 
     @Override
     public String getMethodName()

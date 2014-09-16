@@ -10,6 +10,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.junit.Assert;
@@ -44,25 +45,30 @@ public class JavaHandlerSubclassSpecializationTest
     }
 
     @Inject
-    private GraphContext context;
+    private GraphContextFactory factory;
 
     @Test
     public void testSubclassMethodHandling() throws Exception
     {
-        TestFooModel model = context.getFramed().addVertex(null, TestFooModel.class);
-        TestFooSubModel subModel = GraphService.addTypeToModel(context, model, TestFooSubModel.class);
-        TestFooModel asParent = subModel;
+        try (GraphContext context = factory.create())
+        {
+            Assert.assertNotNull(context);
 
-        TestFooModel reframed = (TestFooModel) context.getFramed().frame(model.asVertex(), WindupVertexFrame.class);
+            TestFooModel model = context.getFramed().addVertex(null, TestFooModel.class);
+            TestFooSubModel subModel = GraphService.addTypeToModel(context, model, TestFooSubModel.class);
+            TestFooModel asParent = subModel;
 
-        String s1 = model.testJavaMethod();
-        String s2 = subModel.testJavaMethod();
-        String s3 = asParent.testJavaMethod();
-        String s4 = reframed.testJavaMethod();
+            TestFooModel reframed = (TestFooModel) context.getFramed().frame(model.asVertex(), WindupVertexFrame.class);
 
-        Assert.assertEquals("base", s1);
-        Assert.assertEquals("subclass", s2);
-        Assert.assertEquals("subclass", s3);
-        Assert.assertEquals("subclass", s4);
+            String s1 = model.testJavaMethod();
+            String s2 = subModel.testJavaMethod();
+            String s3 = asParent.testJavaMethod();
+            String s4 = reframed.testJavaMethod();
+
+            Assert.assertEquals("base", s1);
+            Assert.assertEquals("subclass", s2);
+            Assert.assertEquals("subclass", s3);
+            Assert.assertEquals("subclass", s4);
+        }
     }
 }

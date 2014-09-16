@@ -10,6 +10,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
@@ -40,41 +41,44 @@ public class InMemoryFrameTest
     }
 
     @Inject
-    private GraphContext context;
+    private GraphContextFactory factory;
 
     @Test
     public void testInMemoryFrame() throws Exception
     {
-        Assert.assertNotNull(context);
-
-        GraphService<TestFooModel> fooModelService = context.getService(TestFooModel.class);
-
-        TestFooModel inMemoryModel = fooModelService.createInMemory();
-        inMemoryModel.setProp1("prop1");
-        inMemoryModel.setProp2("prop2");
-        inMemoryModel.setProp3("prop3");
-
-        Iterable<Vertex> vertices = context.getQuery().type(TestFooModel.class).vertices();
-
-        // we should have zero results, as this was only created in memory
-        Assert.assertFalse(vertices.iterator().hasNext());
-
-        InMemoryVertexFrame inMemoryFrame = (InMemoryVertexFrame) inMemoryModel;
-        inMemoryFrame.attachToGraph();
-
-        vertices = context.getQuery().type(TestFooModel.class).vertices();
-
-        int numberFound = 0;
-        for (Vertex v : vertices)
+        try (GraphContext context = factory.create())
         {
-            numberFound++;
-            TestFooModel framed = (TestFooModel) context.getFramed().frame(v, WindupVertexFrame.class);
+            Assert.assertNotNull(context);
 
-            Assert.assertTrue(framed instanceof TestFooModel);
-            Assert.assertEquals("prop1", framed.getProp1());
-            Assert.assertEquals("prop2", framed.getProp2());
-            Assert.assertEquals("prop3", framed.getProp3());
+            GraphService<TestFooModel> fooModelService = new GraphService<>(context, TestFooModel.class);
+
+            TestFooModel inMemoryModel = fooModelService.createInMemory();
+            inMemoryModel.setProp1("prop1");
+            inMemoryModel.setProp2("prop2");
+            inMemoryModel.setProp3("prop3");
+
+            Iterable<Vertex> vertices = context.getQuery().type(TestFooModel.class).vertices();
+
+            // we should have zero results, as this was only created in memory
+            Assert.assertFalse(vertices.iterator().hasNext());
+
+            InMemoryVertexFrame inMemoryFrame = (InMemoryVertexFrame) inMemoryModel;
+            inMemoryFrame.attachToGraph();
+
+            vertices = context.getQuery().type(TestFooModel.class).vertices();
+
+            int numberFound = 0;
+            for (Vertex v : vertices)
+            {
+                numberFound++;
+                TestFooModel framed = (TestFooModel) context.getFramed().frame(v, WindupVertexFrame.class);
+
+                Assert.assertTrue(framed instanceof TestFooModel);
+                Assert.assertEquals("prop1", framed.getProp1());
+                Assert.assertEquals("prop2", framed.getProp2());
+                Assert.assertEquals("prop3", framed.getProp3());
+            }
+            Assert.assertEquals(1, numberFound);
         }
-        Assert.assertEquals(1, numberFound);
     }
 }

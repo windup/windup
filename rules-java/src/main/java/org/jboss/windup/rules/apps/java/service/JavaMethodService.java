@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.java.service;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -13,11 +11,10 @@ public class JavaMethodService extends GraphService<JavaMethodModel>
 {
     private final JavaParameterService paramService;
 
-    @Inject
-    public JavaMethodService(GraphContext context, JavaParameterService paramService)
+    public JavaMethodService(GraphContext context)
     {
         super(context, JavaMethodModel.class);
-        this.paramService = paramService;
+        this.paramService = new JavaParameterService(context);
     }
 
     public synchronized JavaMethodModel createJavaMethod(JavaClassModel clz, String javaMethod,

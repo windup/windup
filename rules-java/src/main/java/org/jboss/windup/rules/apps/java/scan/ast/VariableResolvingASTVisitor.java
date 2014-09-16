@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -50,6 +48,7 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -67,11 +66,14 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 {
     private static final Logger LOG = LoggerFactory.getLogger(VariableResolvingASTVisitor.class);
 
-    @Inject
-    private JavaClassService javaClassService;
+    private final JavaClassService javaClassService;
+    private final TypeReferenceService typeRefService;
 
-    @Inject
-    private TypeReferenceService typeRefService;
+    public VariableResolvingASTVisitor(GraphContext context)
+    {
+        this.javaClassService = new JavaClassService(context);
+        this.typeRefService = new TypeReferenceService(context);
+    }
 
     private CompilationUnit cu;
 

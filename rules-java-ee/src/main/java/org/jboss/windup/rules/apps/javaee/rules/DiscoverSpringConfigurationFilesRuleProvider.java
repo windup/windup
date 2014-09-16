@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -42,15 +40,6 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends WindupRuleProv
     private static final Logger LOG = Logger.getLogger(DiscoverSpringConfigurationFilesRuleProvider.class
                 .getSimpleName());
 
-    @Inject
-    private XmlFileService xmlFileService;
-    @Inject
-    private JavaClassService javaClassService;
-    @Inject
-    private SpringConfigurationFileService springConfigurationFileService;
-    @Inject
-    private SpringBeanService springBeanService;
-
     @Override
     public RulePhase getPhase()
     {
@@ -83,7 +72,12 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends WindupRuleProv
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
         {
-            Document doc = xmlFileService.loadDocumentQuiet(payload);
+            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+            SpringBeanService springBeanService = new SpringBeanService(event.getGraphContext());
+            SpringConfigurationFileService springConfigurationFileService = new SpringConfigurationFileService(
+                        event.getGraphContext());
+
+            Document doc = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(payload);
             if (doc == null)
             {
                 // skip if the xml failed to load

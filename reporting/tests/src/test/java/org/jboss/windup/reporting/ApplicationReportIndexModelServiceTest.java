@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -11,6 +12,8 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.dao.ProjectModelService;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -47,48 +50,48 @@ public class ApplicationReportIndexModelServiceTest
     }
 
     @Inject
-    private ProjectModelService projectModelService;
-    @Inject
-    private ApplicationReportService applicationReportModelService;
-    @Inject
-    private ApplicationReportIndexService applicationReportIndexModelService;
+    private GraphContextFactory factory;
 
     @Test
-    public void testGetApplicationReportsForProjectModelSortedByPriority()
+    public void testGetApplicationReportsForProjectModelSortedByPriority() throws IOException
     {
+        try (GraphContext context = factory.create())
+        {
+            ProjectModel projectModel = new ProjectModelService(context).create();
+            ApplicationReportService applicationReportService = new ApplicationReportService(context);
 
-        ProjectModel projectModel = projectModelService.create();
+            ApplicationReportModel m1 = applicationReportService.create();
+            m1.setReportName("m1");
+            m1.setReportPriority(100);
+            ApplicationReportModel m2 = applicationReportService.create();
+            m2.setReportName("m2");
+            m2.setReportPriority(200);
+            ApplicationReportModel m3 = applicationReportService.create();
+            m3.setReportName("m3");
+            m3.setReportPriority(300);
+            ApplicationReportModel m4 = applicationReportService.create();
+            m4.setReportName("m4");
+            m4.setReportPriority(400);
+            ApplicationReportModel m5 = applicationReportService.create();
+            m5.setReportName("m5");
+            m5.setReportPriority(500);
 
-        ApplicationReportModel m1 = applicationReportModelService.create();
-        m1.setReportName("m1");
-        m1.setReportPriority(100);
-        ApplicationReportModel m2 = applicationReportModelService.create();
-        m2.setReportName("m2");
-        m2.setReportPriority(200);
-        ApplicationReportModel m3 = applicationReportModelService.create();
-        m3.setReportName("m3");
-        m3.setReportPriority(300);
-        ApplicationReportModel m4 = applicationReportModelService.create();
-        m4.setReportName("m4");
-        m4.setReportPriority(400);
-        ApplicationReportModel m5 = applicationReportModelService.create();
-        m5.setReportName("m5");
-        m5.setReportPriority(500);
+            ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(context);
+            ApplicationReportIndexModel idx1 = applicationReportIndexService.create();
+            idx1.addProjectModel(projectModel);
 
-        ApplicationReportIndexModel idx1 = applicationReportIndexModelService.create();
-        idx1.addProjectModel(projectModel);
+            @SuppressWarnings("unused")
+            ApplicationReportIndexModel idx2 = applicationReportIndexService.create();
 
-        @SuppressWarnings("unused")
-        ApplicationReportIndexModel idx2 = applicationReportIndexModelService.create();
+            m1.setProjectModel(projectModel);
+            m2.setProjectModel(projectModel);
+            m3.setProjectModel(projectModel);
+            m4.setProjectModel(projectModel);
 
-        m1.setProjectModel(projectModel);
-        m2.setProjectModel(projectModel);
-        m3.setProjectModel(projectModel);
-        m4.setProjectModel(projectModel);
-
-        ApplicationReportIndexModel result = applicationReportIndexModelService
-                    .getApplicationReportIndexForProjectModel(projectModel);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(idx1.asVertex().getId(), result.asVertex().getId());
+            ApplicationReportIndexModel result = applicationReportIndexService
+                        .getApplicationReportIndexForProjectModel(projectModel);
+            Assert.assertNotNull(result);
+            Assert.assertEquals(idx1.asVertex().getId(), result.asVertex().getId());
+        }
     }
 }

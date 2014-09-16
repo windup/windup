@@ -73,8 +73,8 @@ public class RuleExecutionTimeReportRuleProvider extends WindupRuleProvider
                             try (FileWriter fw = new FileWriter(outputPath.toFile()))
                             {
 
-                                RuleProviderExecutionStatisticsService statsByRuleProviderService = event
-                                            .getGraphContext().getService(RuleProviderExecutionStatisticsModel.class);
+                                RuleProviderExecutionStatisticsService statsByRuleProviderService = new RuleProviderExecutionStatisticsService(
+                                            event.getGraphContext());
                                 Iterable<RuleProviderExecutionStatisticsModel> ruleProviderStatModels = statsByRuleProviderService
                                             .findAllOrderedByIndex();
 
@@ -96,8 +96,8 @@ public class RuleExecutionTimeReportRuleProvider extends WindupRuleProvider
 
                                 // phase execution timings
                                 fw.write("Phase execution timings:\n\n");
-                                GraphService<RulePhaseExecutionStatisticsModel> statsByPhaseService = event
-                                            .getGraphContext().getService(RulePhaseExecutionStatisticsModel.class);
+                                GraphService<RulePhaseExecutionStatisticsModel> statsByPhaseService = new GraphService<>(
+                                            event.getGraphContext(), RulePhaseExecutionStatisticsModel.class);
                                 Iterable<RulePhaseExecutionStatisticsModel> rulePhaseStatModelIterable = statsByPhaseService
                                             .findAll();
                                 List<RulePhaseExecutionStatisticsModel> rulePhaseStatModelList = new ArrayList<>();

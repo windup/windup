@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.exception.WindupException;
@@ -89,5 +90,11 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
             throw new WindupException("Unrecognized type passed to: " + getMethodName() + ": "
                         + arg.getClass().getCanonicalName());
         }
+    }
+
+    @Override
+    public void setGraphContext(GraphContext context)
+    {
+        // noop
     }
 }

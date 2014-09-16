@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
 import java.util.List;
 
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -61,6 +62,12 @@ public class GetPrettyPathForFile implements WindupFreeMarkerMethod
     public String getMethodName()
     {
         return "getPrettyPathForFile";
+    }
+
+    @Override
+    public void setGraphContext(GraphContext context)
+    {
+        // no-op
     }
 
 }

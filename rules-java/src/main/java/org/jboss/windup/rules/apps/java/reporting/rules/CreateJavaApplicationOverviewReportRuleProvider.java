@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -22,9 +20,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleProvider
 {
     private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
-
-    @Inject
-    private ReportService reportService;
 
     @Override
     public RulePhase getPhase()
@@ -65,8 +60,8 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
 
     private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
-        ApplicationReportModel applicationReportModel = context.getFramed().addVertex(null,
-                    ApplicationReportModel.class);
+        ApplicationReportModel applicationReportModel =
+                    context.getFramed().addVertex(null, ApplicationReportModel.class);
         applicationReportModel.setReportPriority(100);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Overview");
@@ -76,6 +71,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
         applicationReportModel.setDisplayInApplicationList(true);
 
         // Set the filename for the report
+        ReportService reportService = new ReportService(context);
         reportService.setUniqueFilename(applicationReportModel, projectModel.getName(), "html");
 
         return applicationReportModel;

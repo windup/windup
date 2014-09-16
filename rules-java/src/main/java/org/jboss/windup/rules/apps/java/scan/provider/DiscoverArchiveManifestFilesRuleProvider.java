@@ -7,8 +7,6 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -35,12 +33,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class DiscoverArchiveManifestFilesRuleProvider extends WindupRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(DiscoverArchiveManifestFilesRuleProvider.class.getSimpleName());
-
-    @Inject
-    private ArchiveService archiveService;
-
-    @Inject
-    private JarManifestService jarManifestService;
 
     @Override
     public RulePhase getPhase()
@@ -70,6 +62,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends WindupRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
         {
+            ArchiveService archiveService = new ArchiveService(event.getGraphContext());
             FileModel manifestFile = archiveService.getChildFile(payload, "META-INF/MANIFEST.MF");
             if (manifestFile == null)
             {
@@ -77,6 +70,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends WindupRuleProvider
                 return;
             }
 
+            JarManifestService jarManifestService = new JarManifestService(event.getGraphContext());
             JarManifestModel jarManifest = jarManifestService.addTypeToModel(manifestFile);
             jarManifest.setArchive(payload);
 

@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.java.service;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -10,7 +8,6 @@ import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
 
 public class TypeReferenceService extends GraphService<TypeReferenceModel>
 {
-    @Inject
     public TypeReferenceService(GraphContext context)
     {
         super(context, TypeReferenceModel.class);

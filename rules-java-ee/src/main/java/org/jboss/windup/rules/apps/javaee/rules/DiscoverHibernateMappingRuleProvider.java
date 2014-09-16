@@ -8,8 +8,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -45,15 +43,6 @@ public class DiscoverHibernateMappingRuleProvider extends WindupRuleProvider
     private static final Logger LOG = Logger.getLogger(DiscoverHibernateMappingRuleProvider.class.getSimpleName());
 
     private static final String hibernateRegex = "(?i).*hibernate.mapping.*";
-
-    @Inject
-    private JavaClassService javaClassService;
-    @Inject
-    private HibernateMappingFileService hibernateMappingFileService;
-    @Inject
-    private HibernateEntityService hibernateEntityService;
-    @Inject
-    private XmlFileService xmlFileService;
 
     @Override
     public RulePhase getPhase()
@@ -107,6 +96,11 @@ public class DiscoverHibernateMappingRuleProvider extends WindupRuleProvider
             // extract the version information from the public / system ID.
             String versionInformation = extractVersion(publicId, systemId);
 
+            XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
+            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+            HibernateEntityService hibernateEntityService = new HibernateEntityService(event.getGraphContext());
+            HibernateMappingFileService hibernateMappingFileService = new HibernateMappingFileService(
+                        event.getGraphContext());
             for (XmlFileModel xml : payload.getXmlResources())
             {
                 // create a facet, and then identify the XML.

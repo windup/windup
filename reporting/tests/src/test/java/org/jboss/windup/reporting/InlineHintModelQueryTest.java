@@ -15,6 +15,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -23,11 +24,10 @@ import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
 import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -57,14 +57,20 @@ public class InlineHintModelQueryTest
     }
 
     @Inject
+    private GraphContextFactory factory;
+
     private GraphContext context;
 
-    @After
-    public void beforeTest()
+    @Before
+    public void beforeTest() throws Exception
     {
-        TitanGraph titanGraph = context.getGraph().getBaseGraph();
-        context.disconnectFromGraph();
-        TitanCleanup.clear(titanGraph);
+        context = factory.create();
+    }
+
+    @After
+    public void afterTest() throws Exception
+    {
+        context.close();
     }
 
     @Test

@@ -1,7 +1,5 @@
 package org.jboss.windup.reporting.rules;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -23,9 +21,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class AttachApplicationReportsToIndexRuleProvider extends WindupRuleProvider
 {
-    @Inject
-    private ApplicationReportIndexService applicationReportIndexService;
-
     @Override
     public RulePhase getPhase()
     {
@@ -52,9 +47,10 @@ public class AttachApplicationReportsToIndexRuleProvider extends WindupRuleProvi
         {
             if (payload.getDisplayInApplicationReportIndex() != null && payload.getDisplayInApplicationReportIndex())
             {
+                ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(
+                            event.getGraphContext());
                 ApplicationReportIndexModel index = applicationReportIndexService
-                            .getApplicationReportIndexForProjectModel(payload
-                                        .getProjectModel());
+                            .getApplicationReportIndexForProjectModel(payload.getProjectModel());
                 index.addApplicationReportModel(payload);
             }
         }

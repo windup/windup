@@ -9,14 +9,10 @@ import org.junit.Test;
 
 public class FilePathComparatorTest
 {
-
     @Test
     public void testPathComparator()
     {
-        FilePathComparator filePathComparator = new FilePathComparator();
-
         List<String> expectedFilePaths = new ArrayList<>();
-        // first, lets state the files in their expected order
         expectedFilePaths.add("/a/foo");
         expectedFilePaths.add("/c/a/");
         expectedFilePaths.add("/c/a.file");
@@ -30,16 +26,11 @@ public class FilePathComparatorTest
         expectedFilePaths.add("/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p");
 
         List<String> shuffledList = new ArrayList<>(expectedFilePaths);
-
-        // first, shuffle it
         Collections.shuffle(shuffledList);
 
-        // now sort it
         Collections.sort(shuffledList, new FilePathComparator());
 
-        // just a sanity check... there should be no reason for this to fail
         Assert.assertEquals(expectedFilePaths.size(), shuffledList.size());
-
         Assert.assertEquals(expectedFilePaths, shuffledList);
     }
 

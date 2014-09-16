@@ -6,39 +6,21 @@
  */
 package org.jboss.windup.engine;
 
-import java.nio.file.Path;
-
-import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.WindupRuleProvider;
-
 /**
+ * The entry point of the Windup engine.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 public interface WindupProcessor
 {
     /**
-     * Sets the output directory (directory containing the graph, reporting files, and other data)
+     * Executes Windup using the given {@link WindupConfiguration}.
      */
-    void setOutputDirectory(Path outputDirectory);
+    void execute(WindupConfiguration config);
 
     /**
-     * Executes Windup (including all rules)
+     * Executes Windup (including all rules found in loaded addons).
      */
     void execute();
-
-    /**
-     * Executes Windup (including all rules). Progress will be reported using the given {@link WindupProgressMonitor}
-     */
-    void execute(WindupProgressMonitor progressMonitor);
-
-    /**
-     * Executes only the rules contained in providers that are accepted by the provided ruleProviderFilter.
-     */
-    void execute(Predicate<WindupRuleProvider> ruleProviderFilter);
-
-    /**
-     * Executes only the rules contained in providers that are accepted by the provided {@link Predicate}. Progress will
-     * be reported using the given {@link WindupProgressMonitor}.
-     */
-    void execute(Predicate<WindupRuleProvider> ruleProviderFilter, WindupProgressMonitor progressMonitor);
 }

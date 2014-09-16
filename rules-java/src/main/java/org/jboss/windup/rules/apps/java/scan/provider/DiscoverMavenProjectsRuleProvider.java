@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
@@ -44,11 +42,6 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
         namespaces.put("pom", "http://maven.apache.org/POM/4.0.0");
     }
 
-    @Inject
-    private MavenModelService mavenModelService;
-    @Inject
-    private FileModelService fileModelService;
-
     @Override
     public RulePhase getPhase()
     {
@@ -62,7 +55,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext arg0)
+    public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder fileWhen = Query
                     .find(XmlFileModel.class)
@@ -101,7 +94,8 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                     {
                         // add the parent file
                         File parentFile = payload.asFile().getParentFile();
-                        FileModel parentFileModel = fileModelService.findByPath(parentFile.getAbsolutePath());
+                        FileModel parentFileModel = new FileModelService(graphContext).findByPath(parentFile
+                                    .getAbsolutePath());
                         if (parentFileModel != null)
                         {
                             parentFileModel.setProjectModel(mavenProjectModel);
@@ -180,6 +174,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             version = parentVersion;
         }
 
+        MavenModelService mavenModelService = new MavenModelService(context);
         MavenProjectModel mavenProjectModel = mavenModelService.findByGroupArtifactVersion(groupId, artifactId,
                     version);
         if (mavenProjectModel == null)

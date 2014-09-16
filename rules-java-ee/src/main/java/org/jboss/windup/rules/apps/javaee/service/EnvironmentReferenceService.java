@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
@@ -15,12 +13,6 @@ import com.tinkerpop.blueprints.GraphQuery;
  */
 public class EnvironmentReferenceService extends GraphService<EnvironmentReferenceModel>
 {
-    public EnvironmentReferenceService()
-    {
-        super(EnvironmentReferenceModel.class);
-    }
-
-    @Inject
     public EnvironmentReferenceService(GraphContext context)
     {
         super(context, EnvironmentReferenceModel.class);

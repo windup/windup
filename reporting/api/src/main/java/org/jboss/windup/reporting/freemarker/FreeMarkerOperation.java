@@ -15,7 +15,6 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -66,7 +65,7 @@ public class FreeMarkerOperation extends GraphOperation
     {
         try
         {
-            ReportService reportService = event.getGraphContext().getService(ReportModel.class);
+            ReportService reportService = new ReportService(event.getGraphContext());
             String outputDir = reportService.getReportDirectory();
             Path outputPath = Paths.get(outputDir, outputFilename);
 
@@ -86,7 +85,8 @@ public class FreeMarkerOperation extends GraphOperation
                                     .size()]));
 
             // also, extension functions
-            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace);
+            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace,
+                        event.getGraphContext());
 
             Map<String, Object> objects = new HashMap<>(vars);
             objects.putAll(freeMarkerExtensions);

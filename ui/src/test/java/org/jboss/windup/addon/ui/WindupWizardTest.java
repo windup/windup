@@ -20,7 +20,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.ui.WindupService;
 import org.jboss.windup.ui.WindupWizard;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,13 +56,9 @@ public class WindupWizardTest
     @Inject
     private UITestHarness uiTestHarness;
 
-    @Inject
-    private WindupService windupService;
-
     @Test
     public void testOverwriteConfirmation() throws Exception
     {
-        Assert.assertNotNull(windupService);
         Assert.assertNotNull(uiTestHarness);
 
         String overwritePromptMessage = "Overwrite all contents of .*\\?";
@@ -110,7 +105,6 @@ public class WindupWizardTest
     @Test
     public void testNewMigration() throws Exception
     {
-        Assert.assertNotNull(windupService);
         Assert.assertNotNull(uiTestHarness);
         try (WizardCommandController controller = uiTestHarness.createWizardController(WindupWizard.class))
         {

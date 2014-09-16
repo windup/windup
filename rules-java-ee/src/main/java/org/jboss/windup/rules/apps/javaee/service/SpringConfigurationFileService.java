@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import javax.inject.Inject;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
@@ -14,13 +12,6 @@ import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
  */
 public class SpringConfigurationFileService extends GraphService<SpringConfigurationFileModel>
 {
-
-    public SpringConfigurationFileService()
-    {
-        super(SpringConfigurationFileModel.class);
-    }
-
-    @Inject
     public SpringConfigurationFileService(GraphContext context)
     {
         super(context, SpringConfigurationFileModel.class);

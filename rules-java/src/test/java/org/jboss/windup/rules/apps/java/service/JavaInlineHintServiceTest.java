@@ -12,6 +12,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaInlineHintModel;
@@ -48,22 +49,27 @@ public class JavaInlineHintServiceTest
     }
 
     @Inject
-    private GraphContext context;
+    private GraphContextFactory factory;
 
     @Test
     public void testGetPackageUseFrequencies() throws Exception
     {
-        JavaInlineHintService javaInlineHintService = new JavaInlineHintService(context);
+        try (GraphContext context = factory.create())
+        {
+            Assert.assertNotNull(context);
 
-        ProjectModel projectModel = fillData();
+            JavaInlineHintService javaInlineHintService = new JavaInlineHintService(context);
 
-        Map<String, Integer> data = javaInlineHintService.getPackageUseFrequencies(projectModel, 2, false);
-        Assert.assertEquals(1, data.size());
-        Assert.assertEquals("com.example.*", data.keySet().iterator().next());
-        Assert.assertEquals(Integer.valueOf(2), data.values().iterator().next());
+            ProjectModel projectModel = fillData(context);
+
+            Map<String, Integer> data = javaInlineHintService.getPackageUseFrequencies(projectModel, 2, false);
+            Assert.assertEquals(1, data.size());
+            Assert.assertEquals("com.example.*", data.keySet().iterator().next());
+            Assert.assertEquals(Integer.valueOf(2), data.values().iterator().next());
+        }
     }
 
-    private ProjectModel fillData()
+    private ProjectModel fillData(GraphContext context)
     {
         TypeReferenceService typeReferenceService = new TypeReferenceService(context);
         JavaInlineHintService javaInlineHintService = new JavaInlineHintService(context);

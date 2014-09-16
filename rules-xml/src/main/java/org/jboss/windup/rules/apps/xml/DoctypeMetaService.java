@@ -10,12 +10,6 @@ import com.tinkerpop.frames.FramedGraphQuery;
 
 public class DoctypeMetaService extends GraphService<DoctypeMetaModel>
 {
-
-    public DoctypeMetaService()
-    {
-        super(DoctypeMetaModel.class);
-    }
-
     public DoctypeMetaService(GraphContext context)
     {
         super(context, DoctypeMetaModel.class);

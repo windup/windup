@@ -14,12 +14,13 @@ import org.ocpsoft.rewrite.config.Configuration;
 public interface GraphConfigurationLoader
 {
     /**
-     * Loads all {@link Configuration}s from the system and returns the result.
+     * Loads all known {@link WindupRuleProvider} instances and returns the compiled {@link Rewrite} pipeline {@link Configuration}.
      */
     public Configuration loadConfiguration(GraphContext context);
 
     /**
-     * Loads all {@link Configuration}s that are passed by the provided {@link Predicate} and returns the result.
+     * Loads all known {@link WindupRuleProvider} instances that are accepted by the provided {@link Predicate} and returns the result.
+     * @param ruleProviderFilter Must accept null.
      */
     public Configuration loadConfiguration(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter);
 }

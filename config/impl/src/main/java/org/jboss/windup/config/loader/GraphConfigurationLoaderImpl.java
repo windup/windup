@@ -62,12 +62,12 @@ public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
         return build(context, ruleProviderFilter);
     }
 
-    private List<WindupRuleProvider> getProviders()
+    private List<WindupRuleProvider> getProviders(GraphContext context)
     {
         List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
         for (WindupRuleProviderLoader loader : loaders)
         {
-            allProviders.addAll(loader.getProviders());
+            allProviders.addAll(loader.getProviders(context));
         }
 
         List<WindupRuleProvider> providers = WindupRuleProviderSorter.sort(allProviders);
@@ -80,7 +80,7 @@ public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
 
-        for (WindupRuleProvider provider : getProviders())
+        for (WindupRuleProvider provider : getProviders(context))
         {
             if (ruleProviderFilter != null && !ruleProviderFilter.accept(provider))
             {

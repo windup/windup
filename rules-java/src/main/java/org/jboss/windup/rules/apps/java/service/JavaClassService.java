@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.ResourceModel;
@@ -27,12 +25,6 @@ import com.tinkerpop.pipes.PipeFunction;
  */
 public class JavaClassService extends GraphService<JavaClassModel>
 {
-    public JavaClassService()
-    {
-        super(JavaClassModel.class);
-    }
-
-    @Inject
     public JavaClassService(GraphContext context)
     {
         super(context, JavaClassModel.class);
