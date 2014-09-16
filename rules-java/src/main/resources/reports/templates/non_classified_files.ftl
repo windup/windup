@@ -11,15 +11,10 @@
   <#if fileModel.prettyPathWithinProject?has_content>
   <tr>
     <td>
-         ${fileModel.prettyPathWithinProject}
+         ${getPrettyPathForFile(fileModel)}
     </td>
     <td>
       <#-- <#list resource.technologyTags as tag>
-        <@tagRenderer tag>${tag.title}</@tagRenderer>
-        </#list> -->
-    </td>
-    <td>
-      <#-- <#list resource.issueTags as tag>
         <@tagRenderer tag>${tag.title}</@tagRenderer>
         </#list> -->
     </td>
@@ -34,7 +29,7 @@
         </div>
         <table class="table table-striped table-bordered">
           <tr>
-            <th>Name</th><th>Technology</th><th>Issues</th>
+            <th>Name</th><th>Technology</th>
           </tr>
           <#list sortFilesByPathAscending(findFilesNotClassifiedOrHinted(projectModel.fileModelsNoDirectories)) as fileModel>
              <@fileModelRenderer fileModel/>

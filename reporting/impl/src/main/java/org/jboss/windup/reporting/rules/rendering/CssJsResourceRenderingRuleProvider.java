@@ -84,19 +84,26 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
                 {
                     if (addonResource.isDirectory())
                     {
-                        recursePath(addonResource.toPath(), outputPath);
+                        Path addonReportsResourcesPath = addonResource.toPath().resolve("reports").resolve("resources");
+                        if (Files.isDirectory(addonReportsResourcesPath))
+                        {
+                            recursePath(addonReportsResourcesPath, outputPath);
+                        }
                     }
                     else
                     {
-                        FileSystem fs = FileSystems.newFileSystem(addonResource.toPath(), addonToScan.getClassLoader());
-                        Path p = fs.getPath("reports", "resources");
-                        try
+                        try (FileSystem fs = FileSystems.newFileSystem(addonResource.toPath(),
+                                    addonToScan.getClassLoader()))
                         {
-                            recursePath(p, outputPath);
-                        }
-                        catch (NoSuchFileException e)
-                        {
-                            // ignore ... this just means this archive did not contain report resources
+                            Path p = fs.getPath("reports", "resources");
+                            try
+                            {
+                                recursePath(p, outputPath);
+                            }
+                            catch (NoSuchFileException e)
+                            {
+                                // ignore ... this just means this archive did not contain report resources
+                            }
                         }
                     }
                 }

@@ -56,7 +56,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     @Test
     public void testRunWindupSourceMode() throws Exception
     {
-        try (GraphContext context = getFactory().create())
+        try (GraphContext context = createGraphContext())
         {
             // The test-files folder in the project root dir.
             super.runTest(context, "../test-files/src_example", true);

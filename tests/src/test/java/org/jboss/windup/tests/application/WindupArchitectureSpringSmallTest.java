@@ -59,7 +59,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
 
         List<String> includeList = Collections.singletonList("nocodescanning");
         List<String> excludeList = Collections.emptyList();
-        try (GraphContext context = getFactory().create())
+        try (GraphContext context = createGraphContext())
         {
             super.runTest(context, path, false, includeList, excludeList);
 

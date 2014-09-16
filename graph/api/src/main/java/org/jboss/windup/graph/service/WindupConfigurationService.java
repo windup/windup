@@ -31,6 +31,12 @@ public class WindupConfigurationService extends GraphService<WindupConfiguration
             }
         }
 
+        // if the list is empty, assume it is intended to just accept all packages
+        if (!cfg.getScanJavaPackages().iterator().hasNext())
+        {
+            return true;
+        }
+
         for (PackageModel pkgModel : cfg.getScanJavaPackages())
         {
             String includePkg = pkgModel.getPackageName();
