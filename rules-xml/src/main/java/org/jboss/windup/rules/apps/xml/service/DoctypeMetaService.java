@@ -1,15 +1,22 @@
-package org.jboss.windup.rules.apps.xml;
+package org.jboss.windup.rules.apps.xml.service;
 
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 
 import com.tinkerpop.frames.FramedGraphQuery;
 
 public class DoctypeMetaService extends GraphService<DoctypeMetaModel>
 {
+
+    public DoctypeMetaService()
+    {
+        super(DoctypeMetaModel.class);
+    }
+
     public DoctypeMetaService(GraphContext context)
     {
         super(context, DoctypeMetaModel.class);

@@ -1,14 +1,17 @@
-package org.jboss.windup.rules.apps.xml;
+package org.jboss.windup.rules.apps.xml.service;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -22,6 +25,15 @@ public class XmlFileService extends GraphService<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(XmlFileService.class.getSimpleName());
 
+    @Inject
+    private ClassificationService classificationService;
+
+    public XmlFileService()
+    {
+        super(XmlFileModel.class);
+    }
+
+    @Inject
     public XmlFileService(GraphContext ctx)
     {
         super(ctx, XmlFileModel.class);
@@ -36,9 +48,9 @@ public class XmlFileService extends GraphService<XmlFileModel>
      */
     public Document loadDocumentQuiet(XmlFileModel model)
     {
-        ClassificationService classificationService = new ClassificationService(getGraphContext());
         try (InputStream is = model.asInputStream())
         {
+
             Document doc = LocationAwareXmlReader.readXML(is);
             return doc;
         }

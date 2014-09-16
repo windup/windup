@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:windup="http://www.jboss.org/schema/windup"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.jboss.org/schema/windup http://www.jboss.org/schema/windup.xsd">
+
+    <windup:pipeline type="XML" id="xml-weblogic-decorators">
+        <windup:xpath-classification description="Weblogic Entity EJB Configuration" xpath="/*[local-name()='weblogic-rdbms-jar']"
+            effort="3">
+            <windup:namespace prefix="wle" uri="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar" />
+            <windup:decorators>
+                <windup:xpath-value description="Weblogic Specific Transaction Property Delay Updates"
+                    xpath="//*[@value='delay-updates-until-end-of-tx']/text()">
+                    <windup:hints>
+                        <windup:regex-hint regex="delay-updates-until-end-of-tx$"
+                            hint="In EAP6 replace with: &lt;sync-on-commit-only&gt; in jbosscmp-jdbc.xml" />
+                    </windup:hints>
+                </windup:xpath-value>
+                <windup:xslt-transform location="transformations/xslt/weblogic-entity2-to-jboss.xsl"
+                    description="JBoss EJB CMP Descriptor (Windup-Generated)" extension="-jbosscmp-jdbc.xml" />
+            </windup:decorators>
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="Weblogic EJB XML" xpath="/weblogic-ejb-jar"
+            effort="3">
+            <windup:decorators>
+                <windup:xslt-transform location="transformations/xslt/weblogic-ejb-to-jboss.xsl"
+                    description="JBoss EJB Descriptor (Windup-Generated)" extension="-jboss.xml" />
+            </windup:decorators>
+        </windup:xpath-classification>
+
+
+        <windup:xpath-classification description="Weblogic EJB XML" xpath="/wl9:weblogic-ejb-jar"
+            effort="3">
+            <windup:namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+            <windup:decorators>
+                <windup:xslt-transform location="transformations/xslt/weblogic9-ejb-to-jboss.xsl"
+                    description="JBoss EJB Descriptor (Windup-Generated)" extension="-jboss.xml" />
+            </windup:decorators>
+        </windup:xpath-classification>
+
+
+        <windup:xpath-classification description="Weblogic EJB XML" xpath="/wl10:weblogic-ejb-jar"
+            effort="3">
+            <windup:namespace prefix="wl10" uri="http://www.bea.com/ns/weblogic/10.0" />
+            <windup:decorators>
+                <windup:xslt-transform location="transformations/xslt/weblogic10-ejb-to-jboss.xsl"
+                    description="JBoss EJB Descriptor (Windup-Generated)" extension="-jboss.xml" />
+            </windup:decorators>
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="Weblogic SOAP Client Mapping" effort="6"
+            xpath="/wl10:weblogic-wsee-standaloneclient">
+            <windup:namespace prefix="wl10" uri="http://www.bea.com/ns/weblogic/weblogic-wsee-standaloneclient" />
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="Java to WSDL Mapping" effort="3"
+            xpath="/jee:java-wsdl-mapping">
+            <windup:namespace prefix="jee" uri="http://java.sun.com/xml/ns/j2ee" />
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="Weblogic EAR Application Descriptor"
+            effort="3" xpath="/*[local-name()='weblogic-application']" />
+
+        <windup:xpath-classification description="Weblogic Webservice Policy"
+            xpath="/wl:webservice-policy-ref | /wl9:webservice-policy-ref">
+            <windup:namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/webservice-policy-ref" />
+            <windup:namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="Weblogic Webservice Descriptor"
+            xpath="/wl:weblogic-webservices | /wl9:weblogic-webservices">
+            <windup:namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/weblogic-webservices" />
+            <windup:namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+
+            <windup:decorators>
+                <windup:xpath-value description="Webservice Type" xpath="//wl:webservice-type | //wl9:webservice-type">
+                    <windup:namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/weblogic-webservices" />
+                    <windup:namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+                </windup:xpath-value>
+            </windup:decorators>
+        </windup:xpath-classification>
+
+        <windup:xpath-classification description="Weblogic JMS Descriptor" effort="1"
+            xpath="/*[local-name()='weblogic-jms']">
+            <windup:decorators>
+
+                <windup:xslt-transform location="transformations/xslt/weblogic-jms-to-jboss-messaging.xsl"
+                    description="JBoss Messaging Queue/Topic Configuration (Windup-Generated)" extension="-jms-queuetopic-service.xml" />
+
+            </windup:decorators>
+        </windup:xpath-classification>
+
+
+        <windup:xpath-classification description="Weblogic Web Application Descriptor"
+            xpath="/bea:weblogic-web-app | /wlso:weblogic-web-app | /wls:weblogic-web-app | /weblogic-web-app" effort="3">
+            <windup:namespace prefix="bea" uri="http://www.bea.com/ns/weblogic/90" />
+            <windup:namespace prefix="wls" uri="http://www.bea.com/ns/weblogic/weblogic-web-app" />
+            <windup:namespace prefix="wlso" uri="http://xmlns.oracle.com/weblogic/weblogic-web-app" />
+            <windup:decorators>
+
+                <windup:xslt-transform location="transformations/xslt/weblogic-jboss5-web-xml.xsl"
+                    description="JBoss Web EAP5 (Windup-Generated)" extension="-jboss-web.xml" />
+
+            </windup:decorators>
+        </windup:xpath-classification>
+
+        <windup:dtd-classification description="Weblogic RMI XML Version 1.x" effort="0"
+            public-id-regex="BEA.+RMI Runtime DTD 1.." />
+
+        <windup:xpath-classification description="Weblogic Webservice Type Mapping" xpath="/wsdd:type-mapping">
+            <windup:namespace prefix="wsdd" uri="http://www.bea.com/servers/wls70" />
+        </windup:xpath-classification>
+
+
+        <windup:xpath-classification description="Weblogic Services Configuration" xpath="/wlw:wlw-config">
+            <windup:namespace prefix="wlw" uri="http://www.bea.com/2003/03/wlw/config/" />
+        </windup:xpath-classification>
+
+
+        <windup:xpath-classification description="Weblogic-specifc Webservice Ant Tasks"
+            xpath="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']"
+            effort="10" />
+
+        <windup:xpath-classification description="Weblogic Annotation Manifest"
+            xpath="/wl:annotation-manifest | /annotation-manifest" effort="8">
+            <windup:namespace prefix="wl" uri="http://www.bea.com/2004/03/wlw/external-config/" />
+        </windup:xpath-classification>
+    </windup:pipeline>
+</beans>
+ 

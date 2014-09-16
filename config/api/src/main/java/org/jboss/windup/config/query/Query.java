@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
@@ -30,6 +31,8 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     private final List<QueryGremlinCriterion> pipelineCriteria = new ArrayList<>();
 
     private FramesSelector framesSelector;
+
+    private Predicate<WindupVertexFrame> resultFilter;
 
     private Query()
     {
@@ -136,16 +139,29 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             }
         }
 
-        List<WindupVertexFrame> reframed = new ArrayList<>();
+        List<WindupVertexFrame> result = new ArrayList<>();
         for (Vertex vertex : pipeline)
         {
-            reframed.add(event.getGraphContext().getFramed().frame(vertex, WindupVertexFrame.class));
+            result.add(event.getGraphContext().getFramed().frame(vertex, WindupVertexFrame.class));
+        }
+
+        if (resultFilter != null)
+        {
+            List<WindupVertexFrame> filtered = new LinkedList<>();
+            for (WindupVertexFrame frame : result)
+            {
+                if (resultFilter.accept(frame))
+                {
+                    filtered.add(frame);
+                }
+            }
+            result.retainAll(filtered);
         }
 
         Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
-        variables.setVariable(outputVar, reframed);
+        variables.setVariable(outputVar, result);
 
-        return reframed.iterator().hasNext();
+        return result.iterator().hasNext();
     }
 
     /*
@@ -208,5 +224,13 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     private void setInitialFramesSelector(FramesSelector selector)
     {
         this.framesSelector = selector;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <FRAMETYPE extends WindupVertexFrame> QueryBuilderAs filteredBy(Predicate<FRAMETYPE> predicate)
+    {
+        this.resultFilter = (Predicate<WindupVertexFrame>) predicate;
+        return this;
     }
 }
