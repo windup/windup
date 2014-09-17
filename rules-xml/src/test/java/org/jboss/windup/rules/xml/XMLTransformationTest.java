@@ -48,7 +48,7 @@ public class XMLTransformationTest
 {
 
     private static final String SIMPLE_XSLT_XSL = "simpleXSLT.xsl";
-    private static final String XSLT_EXTENSION = "-result.html";
+    private static final String XSLT_EXTENSION = "-test-result.html";
 
     @Deployment
     @Dependencies({

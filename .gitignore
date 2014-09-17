@@ -22,3 +22,4 @@ bin
 /localRepo/
 /utils/nb-configuration.xml
 /nbactions.xml
+*-test-result.html
