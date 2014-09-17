@@ -28,12 +28,6 @@ public class XmlFileService extends GraphService<XmlFileModel>
     @Inject
     private ClassificationService classificationService;
 
-    public XmlFileService()
-    {
-        super(XmlFileModel.class);
-    }
-
-    @Inject
     public XmlFileService(GraphContext ctx)
     {
         super(ctx, XmlFileModel.class);

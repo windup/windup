@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 {
-
     private ClassLoader contextClassLoader;
 
     @Inject
