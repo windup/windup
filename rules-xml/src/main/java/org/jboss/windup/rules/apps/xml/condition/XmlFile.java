@@ -9,8 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import  org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.config.Rule;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
@@ -60,6 +59,7 @@ public class XmlFile extends GraphCondition
     XmlFile()
     {
     }
+
     /**
      * Create a new {@link XmlFile} {@link Condition}.
      */
@@ -126,14 +126,20 @@ public class XmlFile extends GraphCondition
         for (WindupVertexFrame iterated : allXmls)
         {
             XmlFileModel xml = null;
-            if(iterated instanceof FileReferenceModel) {
-                xml = (XmlFileModel)((FileReferenceModel)iterated).getFile();
-            } else if(iterated instanceof XmlFileModel){
-                xml= (XmlFileModel)iterated;
-            } else {
-                throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString() + ")");
+            if (iterated instanceof FileReferenceModel)
+            {
+                xml = (XmlFileModel) ((FileReferenceModel) iterated).getFile();
             }
-            
+            else if (iterated instanceof XmlFileModel)
+            {
+                xml = (XmlFileModel) iterated;
+            }
+            else
+            {
+                throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString()
+                            + ")");
+            }
+
             if (fileName != null && !fileName.equals(""))
             {
                 if (!xml.getFileName().equals(fileName))
@@ -143,7 +149,8 @@ public class XmlFile extends GraphCondition
             }
             if (publicId != null && !publicId.equals(""))
             {
-                if (xml.getDoctype() == null || xml.getDoctype().getPublicId() == null || !xml.getDoctype().getPublicId().matches(publicId))
+                if (xml.getDoctype() == null || xml.getDoctype().getPublicId() == null
+                            || !xml.getDoctype().getPublicId().matches(publicId))
                 {
                     continue;
                 }
@@ -153,10 +160,10 @@ public class XmlFile extends GraphCondition
             {
                 try
                 {
-               
+
                     Document document = xml.asDocument();
                     NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
-                    List<String> lines = Files.readAllLines(Paths.get(xml.getFilePath()),Charset.defaultCharset());
+                    List<String> lines = Files.readAllLines(Paths.get(xml.getFilePath()), Charset.defaultCharset());
                     if (result != null && (result.getLength() != 0))
                     {
                         for (int i = 0; i < result.getLength(); i++)
@@ -199,11 +206,12 @@ public class XmlFile extends GraphCondition
                             }
                             resultLocations.add(fileLocation);
                         }
-                } }
+                    }
+                }
                 catch (MarshallingException e)
                 {
-                    GraphService<ClassificationModel> classificationService = event.getGraphContext().getService(
-                                ClassificationModel.class);
+                    GraphService<ClassificationModel> classificationService = new GraphService<>(
+                                event.getGraphContext(), ClassificationModel.class);
 
                     ClassificationModel classification = classificationService.getUniqueByProperty(
                                 ClassificationModel.PROPERTY_CLASSIFICATION, XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
@@ -225,7 +233,6 @@ public class XmlFile extends GraphCondition
                 }
 
             }
-            
 
         }
         Variables.instance(event).setVariable(variable, resultLocations);
@@ -247,9 +254,10 @@ public class XmlFile extends GraphCondition
     {
         this.publicId = publicId;
     }
-    
-    public String toString() {
-       return "XmlFile.from().matchesXpath(" + xpath + ").inFile(" + fileName + ").withDTDPublicId(" + publicId + ");"; 
+
+    public String toString()
+    {
+        return "XmlFile.from().matchesXpath(" + xpath + ").inFile(" + fileName + ").withDTDPublicId(" + publicId + ");";
     }
 
 }
