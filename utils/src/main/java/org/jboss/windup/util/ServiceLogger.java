@@ -28,7 +28,7 @@ public final class ServiceLogger
         for (int i = 0; i < list.size(); i++)
         {
             Object service = list.get(i);
-            result.append(service.getClass().getName());
+            result.append(service.getClass().getName().replaceAll("_\\$\\$_.*$", ""));
             if (service instanceof Weighted)
             {
                 result.append("<" + ((Weighted) service).priority() + ">");
