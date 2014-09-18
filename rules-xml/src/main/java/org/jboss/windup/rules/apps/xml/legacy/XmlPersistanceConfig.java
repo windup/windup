@@ -60,7 +60,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                 .withEffort(0)
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']")
                                                         .as("1")
@@ -79,7 +79,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
 
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -98,7 +98,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -117,7 +117,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value")
                                                         .as("1")
@@ -135,7 +135,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()")
                                                         .as("1")
@@ -153,7 +153,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()")
                                                         .as("1")
@@ -173,7 +173,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
 
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -191,7 +191,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value")
                                                         .as("1")
@@ -209,7 +209,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -226,7 +226,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -244,7 +244,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -261,7 +261,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA1")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA1"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value")
                                                         .as("1")
@@ -291,7 +291,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
 
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']")
                                                         .as("1")
@@ -311,7 +311,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
 
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -330,7 +330,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -349,7 +349,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value")
                                                         .as("1")
@@ -367,7 +367,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()")
                                                         .as("1")
@@ -386,7 +386,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()")
                                                         .as("1")
@@ -407,7 +407,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
 
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -426,7 +426,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value")
                                                         .as("1")
@@ -445,7 +445,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -463,7 +463,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -482,7 +482,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -500,7 +500,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("JPA2")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("JPA2"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value")
                                                         .as("1")
@@ -549,7 +549,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
 
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value")
                                                         .as("1")
@@ -568,7 +568,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
 
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 2
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value")
@@ -588,7 +588,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 3
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value")
@@ -608,7 +608,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 4
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()")
@@ -627,7 +627,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 5
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()")
@@ -646,7 +646,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 6
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value")
@@ -666,7 +666,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
 
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 7
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value")
@@ -685,7 +685,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 8
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value")
@@ -703,7 +703,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 9
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value")
@@ -721,7 +721,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 10
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value")
@@ -740,7 +740,7 @@ public class XmlPersistanceConfig extends WindupRuleProvider
                                             .endIteration())
                                 .and(Iteration
                                             .over("hibernate")
-                                            .when(XmlFile
+                                            .when(XmlFile.from(Iteration.singleVariableIterationName("hibernate"))
                                                         // 11
                                                         .matchesXpath(
                                                                     "//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value")
