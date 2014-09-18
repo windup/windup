@@ -56,7 +56,7 @@ public class WindupWizard implements UIWizard, UICommand
     private UIInput<DirectoryResource> output;
 
     @Inject
-    @WithAttributes(label = "Scan Java Packages", required = true, description = "A list of java package name prefixes to scan (eg, com.myapp)")
+    @WithAttributes(label = "Scan Java Packages", required = false, description = "A list of java package name prefixes to scan (eg, com.myapp)")
     private UIInputMany<String> packages;
 
     @Inject
@@ -162,12 +162,6 @@ public class WindupWizard implements UIWizard, UICommand
     public void validate(UIValidationContext context)
     {
         FileResource<?> inputValue = this.input.getValue();
-        if (inputValue == null)
-        {
-            context.addValidationError(this.input, "Input path not specified");
-            return;
-        }
-
         File inputFile = inputValue.getUnderlyingResourceObject();
         if (inputFile == null || !inputFile.exists())
         {
@@ -178,12 +172,6 @@ public class WindupWizard implements UIWizard, UICommand
         if (userRulesInputValue != null && !userRulesInputValue.getUnderlyingResourceObject().isDirectory())
         {
             context.addValidationError(this.userRulesDirectory, "User Rules Directory must exist");
-        }
-
-        List<String> scanJavaPackages = (List<String>) this.packages.getValue();
-        if (scanJavaPackages == null || scanJavaPackages.isEmpty())
-        {
-            context.addValidationError(this.packages, "Packages to scan must be specified");
         }
     }
 
