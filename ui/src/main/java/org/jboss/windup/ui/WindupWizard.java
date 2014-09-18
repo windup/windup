@@ -119,28 +119,30 @@ public class WindupWizard implements UIWizard, UICommand
 
         FileUtils.deleteDirectory(outputFile);
 
-        GraphContext graphContext = factory.create(inputFile.toPath());
-        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(graphContext);
-        cfg.setInputPath(inputFile.getAbsolutePath());
-        cfg.setOutputPath(outputFile.getAbsolutePath());
-        cfg.setFetchRemoteResources(fetchRemote);
-        cfg.setSourceMode(sourceMode);
-        cfg.setScanJavaPackageList(scanJavaPackages);
-        cfg.setExcludeJavaPackageList(excludeJavaPackages);
-        if (userRulesDirectory != null)
+        try (GraphContext graphContext = factory.create(outputFile.toPath().resolve("graph")))
         {
-            cfg.setUserRulesPath(userRulesDirectory.getAbsolutePath());
+            WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(graphContext);
+            cfg.setInputPath(inputFile.getAbsolutePath());
+            cfg.setOutputPath(outputFile.getAbsolutePath());
+            cfg.setFetchRemoteResources(fetchRemote);
+            cfg.setSourceMode(sourceMode);
+            cfg.setScanJavaPackageList(scanJavaPackages);
+            cfg.setExcludeJavaPackageList(excludeJavaPackages);
+            if (userRulesDirectory != null)
+            {
+                cfg.setUserRulesPath(userRulesDirectory.getAbsolutePath());
+            }
+
+            UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();
+            WindupProgressMonitor progressMonitor = new WindupProgressMonitorAdapter(uiProgressMonitor);
+            WindupConfiguration wpConf = new WindupConfiguration().setProgressMonitor(progressMonitor).setGraphContext(
+                        graphContext);
+            processor.execute(wpConf);
+
+            uiProgressMonitor.done();
+
+            return Results.success("Windup execution successful!");
         }
-
-        UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();
-        WindupProgressMonitor progressMonitor = new WindupProgressMonitorAdapter(uiProgressMonitor);
-        WindupConfiguration wpConf = new WindupConfiguration().setProgressMonitor(progressMonitor).setGraphContext(
-                    graphContext);
-        processor.execute(wpConf);
-
-        uiProgressMonitor.done();
-
-        return Results.success("Windup execution successful!");
     }
 
     private boolean pathNotEmpty(File f)
