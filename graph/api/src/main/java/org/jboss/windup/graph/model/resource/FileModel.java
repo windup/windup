@@ -248,20 +248,26 @@ public interface FileModel extends ResourceModel
                 {
                     return;
                 }
-                else
-                {
-                    paths.add(fileModel.getFileName());
-                }
 
                 if (fileModel.getParentFile() != null)
                 {
+                    paths.add(fileModel.getFileName());
                     FileModel parent = fileModel.getParentFile();
                     appendPath(paths, stopPath, parent);
                 }
                 else if (fileModel.getParentArchive() != null)
                 {
                     ArchiveModel parent = fileModel.getParentArchive();
-                    appendPath(paths, stopPath, parent);
+                    paths.add(parent.getFileName());
+
+                    if (parent.getParentFile() != null)
+                    {
+                        appendPath(paths, stopPath, parent.getParentFile());
+                    }
+                }
+                else
+                {
+                    paths.add(fileModel.getFileName());
                 }
             }
             catch (IOException e)

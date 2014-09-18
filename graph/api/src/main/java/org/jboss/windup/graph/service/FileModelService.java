@@ -1,10 +1,9 @@
-package org.jboss.windup.graph.dao;
+package org.jboss.windup.graph.service;
 
 import java.nio.file.Paths;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;

@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileModelService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<FileModel>
