@@ -162,6 +162,12 @@ public class WindupWizard implements UIWizard, UICommand
     public void validate(UIValidationContext context)
     {
         FileResource<?> inputValue = this.input.getValue();
+        if (inputValue == null)
+        {
+            context.addValidationError(this.input, "Input path not specified");
+            return;
+        }
+
         File inputFile = inputValue.getUnderlyingResourceObject();
         if (inputFile == null || !inputFile.exists())
         {

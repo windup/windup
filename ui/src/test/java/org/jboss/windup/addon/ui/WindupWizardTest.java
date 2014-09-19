@@ -144,7 +144,7 @@ public class WindupWizardTest
         controller.setValueFor("input", inputFile);
         Assert.assertFalse(controller.canExecute());
         controller.setValueFor("output", outputFile);
-        Assert.assertFalse(controller.canExecute());
+        Assert.assertTrue(controller.canExecute());
         controller.setValueFor("packages", "org.jboss");
         Assert.assertTrue(controller.canExecute());
     }
