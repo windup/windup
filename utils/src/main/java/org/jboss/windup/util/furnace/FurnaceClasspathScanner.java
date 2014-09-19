@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.apache.commons.lang.StringUtils;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
@@ -37,24 +38,28 @@ public class FurnaceClasspathScanner implements Service
         return scan(new FurnaceScannerFileExtensionFilenameFilter(fileExtension));
     }
 
+    /**
+     * Scans all Forge addons for files accepted by given filter.
+     */
     public List<URL> scan(FurnaceScannerFilenameFilter filter)
     {
         List<URL> discoveredURLs = new ArrayList<>();
 
+        // For each Forge addon...
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
             List<String> discoveredFileNames = new ArrayList<>();
             List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
+            // For each addon resource - i.e. addon's jar or directory.
             for (File addonFile : addonResources)
             {
+                // Addon in a directory
                 if (addonFile.isDirectory())
-                {
                     handleDirectory(filter, addonFile, null, discoveredFileNames);
-                }
+
+                // Addon in a .jar file.
                 else
-                {
                     handleArchiveByFile(filter, addonFile, discoveredFileNames);
-                }
             }
 
             for (String discoveredFileName : discoveredFileNames)
@@ -67,30 +72,37 @@ public class FurnaceClasspathScanner implements Service
         return discoveredURLs;
     }
 
+    
+    /**
+     * Scans all Forge addons for classes accepted by given filter.
+     * 
+     * TODO: Needs refactoring - scan() is almost the same.
+     */
     public Iterable<Class<?>> scanClasses(FurnaceScannerFilenameFilter filter)
     {
         List<Class<?>> discoveredClasses = new ArrayList<>();
 
+        // For each Forge addon...
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
             List<String> discoveredFileNames = new ArrayList<>();
             List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
+            // For each addon resource - i.e. addon's jar or directory.
             for (File addonFile : addonResources)
             {
+                // Addon in a directory
                 if (addonFile.isDirectory())
-                {
                     handleDirectory(filter, addonFile, null, discoveredFileNames);
-                }
+
+                // Addon in a .jar file.
                 else
-                {
                     handleArchiveByFile(filter, addonFile, discoveredFileNames);
-                }
             }
 
             // Then try to load the classes.
             for (String discoveredFilename : discoveredFileNames)
             {
-                String discoveredClassName = filenameToClassname(discoveredFilename);
+                String discoveredClassName = filepathToClassname(discoveredFilename);
                 try
                 {
                     Class<?> clazz = addon.getClassLoader().loadClass(discoveredClassName);
@@ -105,63 +117,67 @@ public class FurnaceClasspathScanner implements Service
         return discoveredClasses;
     }
 
-    private void handleArchiveByFile(FurnaceScannerFilenameFilter filter, File file, List<String> discoveredFiles)
+    
+    /**
+     * Scans given archive for files passing given filter.
+     */
+    private static void handleArchiveByFile(FurnaceScannerFilenameFilter filter, File archive, List<String> discoveredFiles)
     {
         try
         {
-            String archiveUrl = "jar:" + file.toURI().toURL().toExternalForm() + "!/";
-            ZipFile zip = new ZipFile(file);
+            String archiveUrl = "jar:" + archive.toURI().toURL().toExternalForm() + "!/";
+            ZipFile zip = new ZipFile(archive);
             Enumeration<? extends ZipEntry> entries = zip.entries();
 
             while (entries.hasMoreElements())
             {
                 ZipEntry entry = entries.nextElement();
-                String name = entry.getName();
-                handle(filter, name, new URL(archiveUrl + name), discoveredFiles);
+                String subPath = entry.getName();
+                handle(filter, subPath, new URL(archiveUrl + subPath), discoveredFiles);
             }
             zip.close();
         }
         catch (IOException e)
         {
-            throw new RuntimeException("Error handling file " + file, e);
+            throw new RuntimeException("Error handling file " + archive, e);
         }
     }
 
-    private void handleDirectory(FurnaceScannerFilenameFilter filter, File file, String path,
+    private static void handleDirectory(FurnaceScannerFilenameFilter filter, File file, String curPath,
                 List<String> discoveredFiles)
     {
         for (File child : file.listFiles())
         {
-            String newPath = (path == null) ? child.getName() : (path + '/' + child.getName());
+            String subPath = (curPath == null) ? child.getName() : (curPath + '/' + child.getName());
 
             if (child.isDirectory())
             {
-                handleDirectory(filter, child, newPath, discoveredFiles);
+                handleDirectory(filter, child, subPath, discoveredFiles);
             }
             else
             {
                 try
                 {
-                    handle(filter, newPath, child.toURI().toURL(), discoveredFiles);
+                    handle(filter, subPath, child.toURI().toURL(), discoveredFiles);
                 }
                 catch (MalformedURLException e)
                 {
-                    LOG.log(Level.SEVERE, "Error loading file: " + newPath, e);
+                    LOG.log(Level.SEVERE, "Error loading file: " + subPath, e);
                 }
             }
         }
     }
 
-    private void handle(FurnaceScannerFilenameFilter filter, String name, URL url, List<String> discoveredFiles)
+    private static void handle(FurnaceScannerFilenameFilter filter, String subPath, URL url, List<String> discoveredFiles)
     {
-        if (filter.accept(name))
+        if (filter.accept(subPath))
         {
-            discoveredFiles.add(name);
+            discoveredFiles.add(subPath);
         }
     }
 
-    private String filenameToClassname(String filename)
+    public static String filepathToClassname(String filename)
     {
-        return filename.substring(0, filename.lastIndexOf(".class")).replace('/', '.').replace('\\', '.');
+        return StringUtils.removeEndIgnoreCase(filename, ".class").replace('/', '.').replace('\\', '.');
     }
 }
