@@ -16,6 +16,7 @@ import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
+import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
@@ -62,7 +63,7 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("index.search.backend", "lucene");
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
 
-        TitanGraph titanGraph = TitanFactory.open(conf);
+        final TitanGraph titanGraph = TitanFactory.open(conf);
 
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
@@ -141,6 +142,12 @@ public class GraphContextImpl implements GraphContext
     public void close()
     {
         this.eventGraph.getBaseGraph().shutdown();
+    }
+
+    @Override
+    public void clear()
+    {
+        TitanCleanup.clear(this.eventGraph.getBaseGraph());
     }
 
     @Override

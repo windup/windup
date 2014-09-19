@@ -73,6 +73,7 @@ public class InlineHintModelQueryTest
     public void afterTest() throws Exception
     {
         context.close();
+        context.clear();
     }
 
     @Test

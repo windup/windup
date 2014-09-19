@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
@@ -11,118 +10,173 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("JavaClassResource")
+/**
+ * Represents a JavaClass, either from a .class file or a .java source file.
+ * 
+ */
+@TypeValue(JavaClassModel.TYPE)
 public interface JavaClassModel extends WindupVertexFrame
 {
+    public static final String JAVA_METHOD = "javaMethod";
+    public static final String CLASS_FILE = "classFile";
+    public static final String JAVA_CLASS = "javaClass";
+    public static final String DECOMPILED_SOURCE = "decompiledSource";
+    public static final String IMPLEMENTS = "implements";
+    public static final String EXTENDS = "extends";
+    public static final String IMPORTS = "imports";
+    public static final String TYPE = "JavaClassResource";
     public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
-    public static final String PROPERTY_CLASS_NAME = "className";
-    public static final String PROPERTY_PACKAGE_NAME = "packageName";
+    public static final String CLASS_NAME = "className";
+    public static final String PACKAGE_NAME = "packageName";
 
-    public static final String PROPERTY_CUSTOMER_PACKAGE = "customerPackage";
-    public static final String PROPERTY_BLACKLIST_CANDIDATE = "blacklistCandidate";
-    public static final String PROPERTY_MAJOR_VERSION = "majorVersion";
-    public static final String PROPERTY_MINOR_VERSION = "minorVersion";
+    public static final String CUSTOMER_PACKAGE = "customerPackage";
+    public static final String MAJOR_VERSION = "majorVersion";
+    public static final String MINOR_VERSION = "minorVersion";
 
-    @Property(PROPERTY_CLASS_NAME)
+    /**
+     * Contains the simple name of the class (no package)
+     */
+    @Property(CLASS_NAME)
     public void setSimpleName(String className);
 
-    @Property(PROPERTY_CLASS_NAME)
+    /**
+     * Contains the simple name of the class (no package)
+     */
+    @Property(CLASS_NAME)
     public String getClassName();
 
+    /**
+     * Contains the fully qualified name of the class
+     */
     @Property(PROPERTY_QUALIFIED_NAME)
     public String getQualifiedName();
 
+    /**
+     * Contains the fully qualified name of the class
+     */
     @Property(PROPERTY_QUALIFIED_NAME)
     public void setQualifiedName(String qualifiedName);
 
-    @Property(PROPERTY_PACKAGE_NAME)
+    /**
+     * Contains the class' package name
+     */
+    @Property(PACKAGE_NAME)
     public String getPackageName();
 
-    @Property(PROPERTY_PACKAGE_NAME)
+    /**
+     * Contains the class' package name
+     */
+    @Property(PACKAGE_NAME)
     public void setPackageName(String packageName);
 
-    @Property(PROPERTY_MAJOR_VERSION)
-    public int getMajorVersion();
-
-    @Property(PROPERTY_MAJOR_VERSION)
-    public void setMajorVersion(int majorVersion);
-
-    @Property(PROPERTY_MINOR_VERSION)
-    public int getMinorVersion();
-
-    @Property(PROPERTY_MINOR_VERSION)
-    public void setMinorVersion(int minorVersion);
-
-    @Adjacency(label = "imports", direction = Direction.OUT)
+    /**
+     * Lists classes imported by this class
+     */
+    @Adjacency(label = IMPORTS, direction = Direction.OUT)
     public void addImport(final JavaClassModel javaImport);
 
-    @Adjacency(label = "imports", direction = Direction.OUT)
+    /**
+     * Lists classes imported by this class
+     */
+    @Adjacency(label = IMPORTS, direction = Direction.OUT)
     public Iterable<JavaClassModel> getImports();
 
-    @Adjacency(label = "extends", direction = Direction.OUT)
+    /**
+     * Lists classes extended by this class
+     */
+    @Adjacency(label = EXTENDS, direction = Direction.OUT)
     public JavaClassModel getExtends();
 
-    @Adjacency(label = "extends", direction = Direction.OUT)
+    /**
+     * Lists classes extended by this class
+     */
+    @Adjacency(label = EXTENDS, direction = Direction.OUT)
     public void setExtends(final JavaClassModel javaFacet);
 
-    @Adjacency(label = "implements", direction = Direction.OUT)
+    /**
+     * Lists classes implemented by this class
+     */
+    @Adjacency(label = IMPLEMENTS, direction = Direction.OUT)
     public void addImplements(final JavaClassModel javaFacet);
 
-    @Adjacency(label = "implements", direction = Direction.OUT)
+    /**
+     * Lists classes implemented by this class
+     */
+    @Adjacency(label = IMPLEMENTS, direction = Direction.OUT)
     public Iterable<JavaClassModel> getImplements();
 
-    @GremlinGroovy("it.in('javaClassFacet').in('child').dedup")
-    public Iterable<JarArchiveModel> providedBy();
-
-    @Adjacency(label = "decompiledSource", direction = Direction.OUT)
+    /**
+     * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was
+     * decompiled from a .class file)
+     */
+    @Adjacency(label = DECOMPILED_SOURCE, direction = Direction.OUT)
     public void setDecompiledSource(JavaSourceFileModel source);
 
-    @Adjacency(label = "decompiledSource", direction = Direction.OUT)
+    /**
+     * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was
+     * decompiled from a .class file)
+     */
+    @Adjacency(label = DECOMPILED_SOURCE, direction = Direction.OUT)
     public JavaSourceFileModel getDecompiledSource();
 
-    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    /**
+     * Contains the original source code of this file, assuming that it was originally provided in source form (and not
+     * via a decompilation).
+     */
+    @Adjacency(label = JAVA_CLASS, direction = Direction.OUT)
     public void setOriginalSource(JavaSourceFileModel source);
 
-    @Adjacency(label = "javaClass", direction = Direction.OUT)
+    /**
+     * Contains the original source code of this file, assuming that it was originally provided in source form (and not
+     * via a decompilation).
+     */
+    @Adjacency(label = JAVA_CLASS, direction = Direction.OUT)
     public JavaSourceFileModel getOriginalSource();
 
-    @Adjacency(label = "classFile", direction = Direction.OUT)
+    /**
+     * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class
+     * file)
+     */
+    @Adjacency(label = CLASS_FILE, direction = Direction.OUT)
     public FileModel getClassFile();
 
-    @Adjacency(label = "classFile", direction = Direction.OUT)
+    /**
+     * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class
+     * file)
+     */
+    @Adjacency(label = CLASS_FILE, direction = Direction.OUT)
     public FileModel setClassFile(FileModel file);
 
-    @GremlinGroovy("it.out('javaMethod').has('methodName', methodName)")
+    /**
+     * Gets the {@link JavaMethodNodel} by name
+     */
+    @GremlinGroovy("it.out('" + JAVA_METHOD + "').has('" + JavaMethodModel.METHOD_NAME + "', methodName)")
     public Iterable<JavaMethodModel> getMethod(@GremlinParam("methodName") String methodName);
 
-    @Adjacency(label = "javaMethod", direction = Direction.OUT)
+    /**
+     * Adds a {@link JavaMethodModel} to this {@link JavaClassModel}
+     */
+    @Adjacency(label = JAVA_METHOD, direction = Direction.OUT)
     public void addJavaMethod(final JavaMethodModel javaMethod);
 
-    @Adjacency(label = "javaMethod", direction = Direction.OUT)
+    /**
+     * Adds a {@link JavaMethodModel} to this {@link JavaClassModel}
+     */
+    @Adjacency(label = JAVA_METHOD, direction = Direction.OUT)
     public Iterable<JavaMethodModel> getJavaMethods();
 
-    @GremlinGroovy("it.in('javaClassFacet').in('childArchiveEntry')")
-    public Iterable<ArchiveModel> getArchivesProvidingClass();
-
-    @GremlinGroovy("it.sideEffect{x=it}.out('extends', 'imports', 'implements').dedup().filter{it!=x}")
+    /**
+     * Returns the {@link JavaClassModel}s that this class depends on
+     */
+    @GremlinGroovy("it.sideEffect{x=it}.out('" + EXTENDS + "', '" + IMPORTS + "', '" + IMPLEMENTS
+                + "').dedup().filter{it!=x}")
     public Iterable<JavaClassModel> dependsOnJavaClass();
 
-    @GremlinGroovy("it.sideEffect{x=it}.in('extends', 'imports', 'implements').dedup().filter{it!=x}")
-    public Iterable<JavaClassModel> providesForJavaClass();
-
-    /*
-     * TODO Review and rename these methods to something more appropriate
+    /**
+     * Returns the {@link JavaClassModel}s that depend on this class
      */
-    @Property(PROPERTY_BLACKLIST_CANDIDATE)
-    public void setBlacklistCandidate(boolean blacklistCandidate);
-
-    @Property(PROPERTY_BLACKLIST_CANDIDATE)
-    public boolean isBlacklistCandidate();
-
-    @Property(PROPERTY_CUSTOMER_PACKAGE)
-    public void setCustomerPackage(boolean customerPackage);
-
-    @Property(PROPERTY_CUSTOMER_PACKAGE)
-    public boolean isCustomerPackage();
+    @GremlinGroovy("it.sideEffect{x=it}.in('" + EXTENDS + "', '" + IMPORTS + "', '" + IMPLEMENTS
+                + "').dedup().filter{it!=x}")
+    public Iterable<JavaClassModel> providesForJavaClass();
 
 }
