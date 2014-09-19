@@ -53,58 +53,63 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
     }
 
     @Test
-    public void testRunWindupMedium() throws Exception
+    public void testRunWindupScanPackages() throws Exception
     {
         final String path = "../test-files/Windup1x-javaee-example.war";
-        List<String> includePackages = Collections.singletonList("org.apache.wicket.ajax");
+        List<String> includePackages = Collections.singletonList("org.apache.wicket.application");
         List<String> excludePackages = Collections.emptyList();
 
         try (GraphContext context = createGraphContext())
         {
             super.runTest(context, path, false, includePackages, excludePackages);
 
-            GraphService<FileModel> fileModelService = new GraphService<>(context, FileModel.class);
-            boolean foundHintedFile = false;
-            boolean foundAjaxHintedFile = false;
-            boolean foundNonAjaxHintedFile = false;
+            validateInlineHintsInAppropriatePackages(context);
+        }
+    }
 
-            InlineHintService inlineHintService = new InlineHintService(context);
+    private void validateInlineHintsInAppropriatePackages(GraphContext context)
+    {
+        GraphService<FileModel> fileModelService = new GraphService<>(context, FileModel.class);
+        boolean foundHintedFile = false;
+        boolean foundAppHintedFile = false;
+        boolean foundNonAppHintedFile = false;
 
-            for (FileModel fileModel : fileModelService.findAll())
+        InlineHintService inlineHintService = new InlineHintService(context);
+
+        for (FileModel fileModel : fileModelService.findAll())
+        {
+            String pkg = null;
+            if (fileModel instanceof JavaClassFileModel)
             {
-                String pkg = null;
-                if (fileModel instanceof JavaClassFileModel)
-                {
-                    pkg = ((JavaClassFileModel) fileModel).getPackageName();
-                }
-                else if (fileModel instanceof JavaSourceFileModel)
-                {
-                    pkg = ((JavaSourceFileModel) fileModel).getPackageName();
-                }
-
-                if (pkg == null)
-                {
-                    continue;
-                }
-                Iterable<InlineHintModel> hintIterable = inlineHintService.getHintsForFile(fileModel);
-                if (hintIterable.iterator().hasNext())
-                {
-                    foundHintedFile = true;
-                    if (pkg.startsWith("org.apache.wicket.ajax"))
-                    {
-                        foundAjaxHintedFile = true;
-                    }
-                    else
-                    {
-                        foundNonAjaxHintedFile = true;
-                    }
-                }
+                pkg = ((JavaClassFileModel) fileModel).getPackageName();
+            }
+            else if (fileModel instanceof JavaSourceFileModel)
+            {
+                pkg = ((JavaSourceFileModel) fileModel).getPackageName();
             }
 
-            Assert.assertTrue(foundHintedFile);
-            Assert.assertTrue(foundAjaxHintedFile);
-            Assert.assertFalse(foundNonAjaxHintedFile);
+            if (pkg == null)
+            {
+                continue;
+            }
+            Iterable<InlineHintModel> hintIterable = inlineHintService.getHintsForFile(fileModel);
+            if (hintIterable.iterator().hasNext())
+            {
+                foundHintedFile = true;
+                if (pkg.startsWith("org.apache.wicket.application"))
+                {
+                    foundAppHintedFile = true;
+                }
+                else
+                {
+                    foundNonAppHintedFile = true;
+                }
+            }
         }
+
+        Assert.assertTrue(foundHintedFile);
+        Assert.assertTrue(foundAppHintedFile);
+        Assert.assertFalse(foundNonAppHintedFile);
     }
 
 }

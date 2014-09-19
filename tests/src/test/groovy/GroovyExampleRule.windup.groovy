@@ -7,20 +7,15 @@ import org.jboss.windup.config.metadata.RuleMetadata
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
-blacklistType("sampleRegexBlackListRule-001", "org.apache.wicket.request.handler.logger.NoLogData", "No Log Data")
-blacklistType("sampleRegexBlackListRule-002", "org.apache.wicket.request.IRequestHandler", "IRequestHandler Blacklisted")
-blacklistType("sampleRegexBlackListRule-003", "org.apache.wicket.util.resource.UrlResourceStream", "UrlResourceStream blacklisted")
-blacklistType("sampleRegexBlackListRule-004", "org.apache.wicket.Component", "Wicket Component")
-blacklistType("sampleRegexBlackListRule-005", "org.apache.wicket.ComponentEventSender", "Event Sender")
-blacklistType("sampleRegexBlackListRule-006", "org.apache.wicket.Behaviors", "Behaviors")
-blacklistType("sampleRegexBlackListRule-007", "org.apache.wicket.WicketRuntimeException", "Wicket Runtime Exception")
-blacklistType("sampleRegexBlackListRule-008", "org.apache.wicket.IResourceFactory", "Resource Factory")
-blacklistType("sampleRegexBlackListRule-009", "org.apache.wicket.Application", "Wicket Application")
-blacklistType("sampleRegexBlackListRule-010", "org.apache.wicket.model.IComponentAssignedModel", "Component Assigned Model")
-blacklistType("sampleRegexBlackListRule-011", "org.apache.wicket.model.IModelComparator", "Model Comparator")
-blacklistType("sampleRegexBlackListRule-012", "javax.servlet.annotation.WebServlet", "Web Servlet")
-blacklistType("sampleRegexBlackListRule-013", ".*WebServlet.*", "Web Servlet again")
 
+blacklistType("sampleRegexBlackListRule-001", "javax.servlet.annotation.WebServlet", "Web Servlet")
+blacklistType("sampleRegexBlackListRule-002", "java.lang.StringBuilder.*", "This is using a StringBuilder")
+blacklistType("sampleRegexBlackListRule-003", "java.net.URL.*", "This is using java.net.URL")
+blacklistType("sampleRegexBlackListRule-004", "URL.*", "This is using URL")
+blacklistType("sampleRegexBlackListRule-005", "java.io.InputStream.*", "This is using java.io.InputStream")
+blacklistType("sampleRegexBlackListRule-006", "InputStream.*", "This is using InputStream")
+blacklistType("sampleRegexBlackListRule-007", "java.io.OutputStream.*", "This is using java.io.OutputStream")
+blacklistType("sampleRegexBlackListRule-008", "OutputStream.*", "This is using OutputStream")
 
 
 ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
@@ -39,4 +34,6 @@ ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
         )
     )
     .withMetadata(RuleMetadata.CATEGORY, "Java")
+    
+
     

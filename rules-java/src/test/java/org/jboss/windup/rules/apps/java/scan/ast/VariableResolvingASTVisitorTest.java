@@ -90,7 +90,7 @@ public class VariableResolvingASTVisitorTest
             cu.accept(visitor);
 
             TypeReferenceService typeRefService = new TypeReferenceService(context);
-            Iterable<TypeReferenceModel> references = typeRefService.findAll();
+            Iterable<JavaTypeReferenceModel> references = typeRefService.findAll();
 
             Assert.assertTrue(references.iterator().hasNext());
 
@@ -100,7 +100,7 @@ public class VariableResolvingASTVisitorTest
             for (Import imprt : imports)
             {
                 boolean found = false;
-                for (TypeReferenceModel reference : references)
+                for (JavaTypeReferenceModel reference : references)
                 {
                     if (reference.getSourceSnippit().contains(imprt.getQualifiedName()))
                         found = true;

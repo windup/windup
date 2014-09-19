@@ -15,15 +15,16 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaInlineHintModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class JavaInlineHintServiceTest
+public class TypeReferenceServiceTest
 {
 
     @Deployment
@@ -58,11 +59,11 @@ public class JavaInlineHintServiceTest
         {
             Assert.assertNotNull(context);
 
-            JavaInlineHintService javaInlineHintService = new JavaInlineHintService(context);
+            TypeReferenceService typeReferenceService = new TypeReferenceService(context);
 
             ProjectModel projectModel = fillData(context);
 
-            Map<String, Integer> data = javaInlineHintService.getPackageUseFrequencies(projectModel, 2, false);
+            Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, 2, false);
             Assert.assertEquals(1, data.size());
             Assert.assertEquals("com.example.*", data.keySet().iterator().next());
             Assert.assertEquals(Integer.valueOf(2), data.values().iterator().next());
@@ -71,25 +72,24 @@ public class JavaInlineHintServiceTest
 
     private ProjectModel fillData(GraphContext context)
     {
+        InlineHintService inlineHintService = new InlineHintService(context);
         TypeReferenceService typeReferenceService = new TypeReferenceService(context);
-        JavaInlineHintService javaInlineHintService = new JavaInlineHintService(context);
-
         FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
         f1.setFilePath("/f1");
         FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
         f2.setFilePath("/f2");
 
-        TypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
+        JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
                     "com.example.Class1");
-        TypeReferenceModel t2 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
+        JavaTypeReferenceModel t2 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
                     "com.example.Class1");
 
-        JavaInlineHintModel b1 = javaInlineHintService.create();
-        JavaInlineHintModel b1b = javaInlineHintService.create();
+        InlineHintModel b1 = inlineHintService.create();
+        InlineHintModel b1b = inlineHintService.create();
         b1.setFile(f1);
-        b1.setTypeReferenceModel(t1);
+        b1.setFileLocationReference(t1);
         b1b.setFile(f1);
-        b1b.setTypeReferenceModel(t2);
+        b1b.setFileLocationReference(t2);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
         projectModel.addFileModel(f1);

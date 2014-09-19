@@ -142,7 +142,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         Assert.assertTrue(util.checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties"));
         Assert.assertTrue(util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "Web XML"));
         Assert.assertTrue(util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
-                    "Web Servlet again"));
+                    "Web Servlet"));
     }
 
 }

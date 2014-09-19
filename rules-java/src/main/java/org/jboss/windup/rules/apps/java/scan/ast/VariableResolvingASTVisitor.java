@@ -135,7 +135,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         String text = interest.toString();
         if (TypeInterestFactory.matchesAny(text))
         {
-            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
                         TypeReferenceLocation.CONSTRUCTOR_CALL,
                         lineNumber, columnNumber, length, text);
 
@@ -148,7 +148,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         String text = interest.toString();
         if (TypeInterestFactory.matchesAny(text))
         {
-            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
                         TypeReferenceLocation.METHOD_CALL,
                         lineNumber, columnNumber, length, text);
 
@@ -163,7 +163,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             sourceString = resolveClassname(sourceString);
 
-            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, TypeReferenceLocation.IMPORT,
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, TypeReferenceLocation.IMPORT,
                         lineNumber, columnNumber, length, interest.toString());
 
             LOG.trace("Candidate: " + typeRef);
@@ -183,7 +183,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             int columnNumber = cu.getColumnNumber(type.getStartPosition());
             int length = type.getLength();
 
-            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
                         lineNumber, columnNumber, length, sourceString);
 
             LOG.trace("Prefix: " + referenceLocation);
@@ -208,7 +208,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             sourceString = resolveClassname(sourceString);
 
-            TypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
                         lineNumber, columnNumber, length, sourceString);
 
             LOG.trace("Prefix: " + referenceLocation);

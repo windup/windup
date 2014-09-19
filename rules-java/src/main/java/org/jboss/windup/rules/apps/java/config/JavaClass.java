@@ -17,7 +17,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -82,8 +82,8 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
-        QueryBuilderFind query = Query.find(TypeReferenceModel.class);
-        query.withProperty(TypeReferenceModel.PROPERTY_SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, regex);
+        QueryBuilderFind query = Query.find(JavaTypeReferenceModel.class);
+        query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, regex);
         if (fileRegex != null)
         {
             QueryGremlinCriterion inFileWithName = new QueryGremlinCriterion()
@@ -109,7 +109,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
             query.piped(inFileWithName);
         }
         if (!locations.isEmpty())
-            query.withProperty(TypeReferenceModel.PROPERTY_REFERENCE_TYPE, locations);
+            query.withProperty(JavaTypeReferenceModel.REFERENCE_TYPE, locations);
         return query.as(variable).evaluate(event, context);
     }
 

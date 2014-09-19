@@ -62,7 +62,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
 
             Path graphDirectory = context.getGraphDirectory();
             Path reportsDirectory = graphDirectory.resolve("reports");
-            Path indexPath = reportsDirectory.resolve(Paths.get("index.html"));
+            Path indexPath = graphDirectory.resolve(Paths.get("index.html"));
 
             Path appReportPath = resolveChildPath(reportsDirectory,
                         "JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d+\\.html");
@@ -74,7 +74,6 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilterjava\\.\\d+\\.html");
             Path webStartupListenerPath = resolveChildPath(reportsDirectory,
                         "AnvilWebStartupListenerjava\\.\\d+\\.html");
-            Path webServletPath = resolveChildPath(reportsDirectory, "AnvilWebServletjava\\.\\d+\\.html");
             Path webLifecycleListenerPath = resolveChildPath(reportsDirectory,
                         "AnvilWebLifecycleListenerjava\\.\\d+\\.html");
 
@@ -86,7 +85,6 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Assert.assertTrue(loginEventPublisherPath.toFile().exists());
             Assert.assertTrue(authenticationFilterPath.toFile().exists());
             Assert.assertTrue(webStartupListenerPath.toFile().exists());
-            Assert.assertTrue(webServletPath.toFile().exists());
             Assert.assertTrue(webLifecycleListenerPath.toFile().exists());
 
             String appReportContent = new String(Files.readAllBytes(appReportPath));

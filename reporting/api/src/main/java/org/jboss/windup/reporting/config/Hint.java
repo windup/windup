@@ -61,13 +61,11 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
         GraphService<InlineHintModel> service = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
 
         InlineHintModel hintModel = service.create();
-
         hintModel.setLineNumber(locationModel.getLineNumber());
         hintModel.setColumnNumber(locationModel.getColumnNumber());
         hintModel.setLength(locationModel.getLength());
-
+        hintModel.setFileLocationReference(locationModel);
         hintModel.setFile(locationModel.getFile());
-
         hintModel.setEffort(effort);
         hintModel.setHint(hintText);
 
