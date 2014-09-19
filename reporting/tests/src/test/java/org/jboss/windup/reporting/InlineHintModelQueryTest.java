@@ -20,8 +20,10 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
 import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -107,6 +109,9 @@ public class InlineHintModelQueryTest
         ClassificationModel c2 = context.getFramed().addVertex(null, ClassificationModel.class);
         c2.addFileModel(f3);
 
+        TechnologyTagService techTagService = new TechnologyTagService(context);
+        techTagService.addTagToFileModel(f4, "TestTag", TechnologyTagLevel.IMPORTANT);
+
         List<Vertex> vertexList = new ArrayList<>();
         for (Vertex v : context.getQuery().type(FileModel.class).vertices())
         {
@@ -137,7 +142,8 @@ public class InlineHintModelQueryTest
         boolean foundF1 = false;
         boolean foundF2 = false;
         boolean foundF3 = false;
-        Assert.assertEquals(3, fileModels.size());
+        boolean foundF4 = false;
+        Assert.assertEquals(4, fileModels.size());
         for (FileModel fm : fileModels)
         {
             if (fm.getFilePath().equals(f1.getFilePath()))
@@ -152,10 +158,15 @@ public class InlineHintModelQueryTest
             {
                 foundF3 = true;
             }
+            else if (fm.getFilePath().equals(f4.getFilePath()))
+            {
+                foundF4 = true;
+            }
         }
         Assert.assertTrue(foundF1);
         Assert.assertTrue(foundF2);
         Assert.assertTrue(foundF3);
+        Assert.assertTrue(foundF4);
     }
 
     @Test

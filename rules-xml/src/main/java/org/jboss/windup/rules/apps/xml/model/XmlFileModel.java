@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.xml.model;
 import java.io.InputStream;
 
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.w3c.dom.Document;
@@ -16,7 +17,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(XmlFileModel.TYPE)
-public interface XmlFileModel extends FileModel
+public interface XmlFileModel extends FileModel, SourceFileModel
 {
     public static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
     public static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed";

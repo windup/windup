@@ -12,19 +12,26 @@ import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
-import org.jboss.windup.graph.dao.FileModelService;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * Decompile the provided archive and place metadata regarding which files were decompiled into the graph.
+ */
 public class ProcyonDecompilerOperation extends AbstractIterationOperation<ArchiveModel>
 {
+    private static final String TECH_TAG = "Decompiled Java File";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     public ProcyonDecompilerOperation(String variableName)
     {
@@ -95,6 +102,8 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                                         decompiledFileModel, JavaSourceFileModel.class);
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
+                        TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
+                        techTagService.addTagToFileModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
                         FileModel classFileModel = fileService.getUniqueByProperty(
                                     FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());

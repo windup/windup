@@ -58,29 +58,41 @@
 
     <div class="container theme-showcase" role="main">
 
+  <#if reportModel.sourceFileModel.classificationModels.iterator()?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
     <div class="windupHighLevel">
-      <h3>Classification</h3>
-      
-      <ul>
-      <#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
-        <li>
-          ${classificationLineItem.classification!""}
-          <#if classificationLineItem.description??>
-            - ${classificationLineItem.description!""}
-          </#if>
-          <#if classificationLineItem.links??>
-            <ul>
-              <#list classificationLineItem.links.iterator() as link>
-                <li>
-                  <a href='${link.link}'>${link.description}</a>
-                </li>
-              </#list>
-            </ul>
-          </#if>
-        </li>
-      </#list>
-      </ul>
-    </div>
+        <h3>Classification</h3>
+        
+        <ul>
+          <li>
+            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
+              <span class="label label-info">${techTag.name}</span>
+            </#list>
+          </li>
+        </ul>
+        
+        <ul>
+          <#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
+            <li>
+              ${classificationLineItem.classification!""}
+              <#if classificationLineItem.description??>
+                - ${classificationLineItem.description!""}
+              </#if>
+              <#if classificationLineItem.links??>
+                <ul>
+                  <#list classificationLineItem.links.iterator() as link>
+                    <li>
+                      <a href='${link.link}'>${link.description}</a>
+                    </li>
+                  </#list>
+                </ul>
+              </#if>
+            </li>
+          </#list>
+        </ul>
+      </div>
+    </#if>  
+    
+    
 
 	<pre id='source'><#t><#rt>
 		${reportModel.sourceBody?html}<#t><#rt>
