@@ -48,7 +48,8 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
      */
     protected void checkVariableName(GraphRewrite event, EvaluationContext context) {
         if(variableName == null ) {
-            setVariableName(Iteration.getPayloadVariableName(event, context));
+            Variables variables = Variables.instance(event);
+            setVariableName(variables.getTopLevelSingletonName());
         }
     }
 

@@ -24,6 +24,7 @@ import org.jboss.windup.config.operation.iteration.IterationBuilderWhen;
 import org.jboss.windup.config.operation.iteration.IterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.NamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
+import org.jboss.windup.config.operation.iteration.TopLayerSingletonFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
@@ -90,7 +91,7 @@ public class Iteration extends DefaultOperationBuilder
                     singleVariableIterationName(source)));
         return iterationImpl;
     }
-
+    
     /**
      * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's
      * "current element".
@@ -115,12 +116,12 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection named with the default name. Also sets the name of the variable for
-     * this iteration's "current element" to have the default value.
+     * Begin an {@link Iteration} over the selection that is placed on the top of the varstack. Also sets the name of the variable for
+     * this iteration's "current element" (i.e payload) to have the default value.
      */
     public static IterationBuilderOver over()
     {
-        Iteration iterationImpl = new Iteration(new NamedFramesSelector(DEFAULT_VARIABLE_LIST_STRING));
+        Iteration iterationImpl = new Iteration(new TopLayerSingletonFramesSelector());
         iterationImpl.setPayloadManager(new NamedIterationPayloadManager(DEFAULT_SINGLE_VARIABLE_STRING));
         return iterationImpl;
     }
@@ -253,19 +254,6 @@ public class Iteration extends DefaultOperationBuilder
     public List<Operation> getOperations()
     {
         return Arrays.asList(operationPerform, operationOtherwise);
-    }
-
-    public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx)
-    {
-        Variables varStack = Variables.instance(event);
-        Map<String, Iterable<WindupVertexFrame>> topLayer = varStack.peek();
-        if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
-        {
-            throw new IllegalArgumentException(
-                        "Cannot return the payload name because the top layer of varstack is not a singleton.");
-        }
-        String name = topLayer.keySet().iterator().next();
-        return name;
     }
 
     /**
