@@ -6,13 +6,14 @@ package org.jboss.windup.rules.apps.xml.condition;
  * 
  * @author mbriskar
  */
-public class XmlFileBeing
+public class XmlFileFrom
 {
     private XmlFile xmlFile;
 
-    XmlFileBeing(String variable)
+    XmlFileFrom(String variable)
     {
         this.xmlFile = new XmlFile();
+        xmlFile.setFromVariable(variable);
     }
     
     /**
