@@ -42,8 +42,9 @@ public class XmlFile extends GraphCondition
     private String xpath;
     private Map<String, String> namespaces = new HashMap<>();
     private String fileName;
-    private String fromVariables;
+    private String fromVariable;
     private String publicId;
+
     private String xpathResultMatch;
 
     public void setXpathResultMatch(String xpathResultMatch)
@@ -58,6 +59,16 @@ public class XmlFile extends GraphCondition
 
     XmlFile()
     {
+    }
+    
+    public String getFromVariable()
+    {
+        return fromVariable;
+    }
+
+    public void setFromVariable(String fromVariable)
+    {
+        this.fromVariable = fromVariable;
     }
 
     /**
@@ -97,12 +108,12 @@ public class XmlFile extends GraphCondition
     /**
      * Specify the name of the variables to base this query on.
      * 
-     * @param fromVariables
+     * @param fromVariable
      * @return
      */
-    public static XmlFileBeing from(String fromVariables)
+    public static XmlFileFrom from(String fromVariable)
     {
-        return new XmlFileBeing(fromVariables);
+        return new XmlFileFrom(fromVariable);
     }
 
     @Override
@@ -114,13 +125,13 @@ public class XmlFile extends GraphCondition
         GraphService<XmlFileModel> xmlResourceService = new GraphService<XmlFileModel>(graphContext,
                     XmlFileModel.class);
         Iterable<? extends WindupVertexFrame> allXmls;
-        if (fromVariables == null || fromVariables.equals(""))
+        if (fromVariable == null || fromVariable.equals(""))
         {
             allXmls = xmlResourceService.findAll();
         }
         else
         {
-            allXmls = Variables.instance(event).findVariable(fromVariables);
+            allXmls = Variables.instance(event).findVariable(fromVariable);
         }
 
         for (WindupVertexFrame iterated : allXmls)
