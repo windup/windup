@@ -13,9 +13,12 @@ import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
+/**
+ * Discovers .class files from the applications being analyzed.
+ * 
+ */
 public class IndexClassFilesRuleProvider extends WindupRuleProvider
 {
-
     @Override
     public RulePhase getPhase()
     {

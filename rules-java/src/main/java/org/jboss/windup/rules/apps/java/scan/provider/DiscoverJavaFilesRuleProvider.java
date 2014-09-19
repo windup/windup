@@ -20,6 +20,8 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -30,9 +32,15 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
+ * Discovers .java files from the applications being analyzed.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
  */
 public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
 {
+    private static final String TECH_TAG = "Java Source";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
+
     @Override
     public RulePhase getPhase()
     {
@@ -67,6 +75,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
         {
+            TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
             GraphContext graphContext = event.getGraphContext();
             WindupConfigurationModel configuration = new GraphService<>(graphContext, WindupConfigurationModel.class)
                         .getUnique();
@@ -98,56 +107,58 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             // make sure we mark this as a Java file
             JavaSourceFileModel javaFileModel = GraphService.addTypeToModel(graphContext, payload,
                         JavaSourceFileModel.class);
+            technologyTagService.addTagToFileModel(javaFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
             javaFileModel.setPackageName(packageName);
             try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
             {
-                addParsedClassToFile(fis,event.getGraphContext(),javaFileModel);
+                addParsedClassToFile(fis, event.getGraphContext(), javaFileModel);
             }
             catch (FileNotFoundException e)
             {
-                throw new WindupException("File in " + payload.getFilePath() + " was not found.",e);
+                throw new WindupException("File in " + payload.getFilePath() + " was not found.", e);
             }
             catch (IOException e)
             {
-                throw new WindupException("IOException thrown when parsing file located in " + payload.getFilePath(),e);
+                throw new WindupException("IOException thrown when parsing file located in " + payload.getFilePath(), e);
             }
         }
-        
-        private void addParsedClassToFile(FileInputStream fis, GraphContext context, JavaSourceFileModel classFileModel) {
-                JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, fis);
-                String packageName = javaClass.getPackage();
-                String qualifiedName = javaClass.getQualifiedName();
 
-                String simpleName = qualifiedName;
-                if (packageName != null && !packageName.equals("") && simpleName != null)
+        private void addParsedClassToFile(FileInputStream fis, GraphContext context, JavaSourceFileModel classFileModel)
+        {
+            JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, fis);
+            String packageName = javaClass.getPackage();
+            String qualifiedName = javaClass.getQualifiedName();
+
+            String simpleName = qualifiedName;
+            if (packageName != null && !packageName.equals("") && simpleName != null)
+            {
+                simpleName = simpleName.substring(packageName.length() + 1);
+            }
+
+            JavaClassService javaClassService = new JavaClassService(context);
+            JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
+
+            javaClassModel.setSimpleName(simpleName);
+            javaClassModel.setPackageName(packageName);
+            javaClassModel.setQualifiedName(qualifiedName);
+            javaClassModel.setClassFile(classFileModel);
+
+            List<String> interfaceNames = javaClass.getInterfaces();
+            if (interfaceNames != null)
+            {
+                for (String iface : interfaceNames)
                 {
-                    simpleName = simpleName.substring(packageName.length() + 1);
+                    JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
+                    javaClassModel.addImplements(interfaceModel);
                 }
+            }
 
-                JavaClassService javaClassService = new JavaClassService(context);
-                JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
+            String superclassName = javaClass.getSuperType();
+            if (Strings.isNullOrEmpty(superclassName))
+                javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
 
-                javaClassModel.setSimpleName(simpleName);
-                javaClassModel.setPackageName(packageName);
-                javaClassModel.setQualifiedName(qualifiedName);
-                javaClassModel.setClassFile(classFileModel);
-
-                List<String> interfaceNames = javaClass.getInterfaces();
-                if (interfaceNames != null)
-                {
-                    for (String iface : interfaceNames)
-                    {
-                        JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
-                        javaClassModel.addImplements(interfaceModel);
-                    }
-                }
-
-                String superclassName = javaClass.getSuperType();
-                if (Strings.isNullOrEmpty(superclassName))
-                    javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
-
-                classFileModel.addJavaClass(javaClassModel);
+            classFileModel.addJavaClass(javaClassModel);
         }
 
     }

@@ -11,16 +11,25 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * Adds metadata from the .class file itself to the graph.
+ * 
+ */
 public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
 {
     private static final Logger LOG = Logger.getLogger(AddClassFileMetadata.class.getSimpleName());
+
+    private static final String TECH_TAG = "Java Class";
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     private AddClassFileMetadata(String variableName)
     {
@@ -46,6 +55,8 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
 
                 JavaClassFileModel classFileModel = GraphService.addTypeToModel(event.getGraphContext(),
                             payload, JavaClassFileModel.class);
+                TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
+                techTagService.addTagToFileModel(classFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
                 String simpleName = qualifiedName;
                 if (packageName != null && !packageName.equals("") && simpleName != null)

@@ -1,11 +1,10 @@
-package org.jboss.windup.graph.dao;
+package org.jboss.windup.graph.service;
 
 import java.util.StringTokenizer;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
 
 /**
  * Provides methods for searching, creating, and deleting ArchiveModel Vertices.
