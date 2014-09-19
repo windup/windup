@@ -12,7 +12,7 @@ import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.config.JavaClass;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -47,10 +47,10 @@ public class TestJavaClassTestRuleProvider extends WindupRuleProvider {
         .addRule().when(
             JavaClass.references("org.jboss.forge.furnace.*").inFile(".*").at(TypeReferenceLocation.IMPORT)
         ).perform(
-            Iteration.over().perform(new AbstractIterationOperation<TypeReferenceModel>()
+            Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
             {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                 {
                     firstRuleMatchCount++;
                     log.info("First rule matched: " + payload.getFile().getFilePath());
@@ -61,10 +61,10 @@ public class TestJavaClassTestRuleProvider extends WindupRuleProvider {
         .addRule().when(
             JavaClass.references("org.jboss.forge.furnace.*").inFile(".*JavaClassTest.*").at(TypeReferenceLocation.IMPORT)
         ).perform(
-            Iteration.over().perform(new AbstractIterationOperation<TypeReferenceModel>()
+            Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
             {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                 {
                     secondRuleMatchCount++;
                 }

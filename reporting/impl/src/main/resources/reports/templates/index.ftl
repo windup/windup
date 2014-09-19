@@ -8,7 +8,7 @@
 <#macro applicationReportRenderer applicationReport>
   <#if applicationReport.displayInApplicationList>
 	<tr>
-	   <td><a href="${applicationReport.reportFilename}">${applicationReport.projectModel.name}</a></td>
+	   <td><a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.name}</a></td>
 	       <td>
       <#-- <#list application.technologyTags as tag>
         <@tagRenderer tag>${tag.title}</@tagRenderer>
@@ -35,8 +35,8 @@
     <title>Overview - Profiled by Windup</title>
 
     <!-- Bootstrap -->
-      <link href="resources/css/bootstrap.min.css" rel="stylesheet">
-      <link href="resources/css/windup.css" rel="stylesheet" media="screen">
+      <link href="reports/resources/css/bootstrap.min.css" rel="stylesheet">
+      <link href="reports/resources/css/windup.css" rel="stylesheet" media="screen">
       
       <style>
 
@@ -47,7 +47,7 @@
  <!-- Fixed navbar -->
     <div class="navbar-fixed-top windup-bar" role="navigation">
       <div class="container theme-showcase" role="main">
-        <img src="resources/img/windup-logo.png" class="logo"/>
+        <img src="reports/resources/img/windup-logo.png" class="logo"/>
       </div>
     </div>
 
@@ -77,7 +77,7 @@
     </div> <!-- /container -->
 
 
-    <script src="resources/js/jquery-1.10.1.min.js"></script>
-    <script src="resources/js/bootstrap.min.js"></script>
+    <script src="reports/resources/js/jquery-1.10.1.min.js"></script>
+    <script src="reports/resources/js/bootstrap.min.js"></script>
   </body>
 </html>

@@ -10,7 +10,7 @@ import java.util.Map;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
-import org.jboss.windup.rules.apps.java.service.JavaInlineHintService;
+import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.StringModel;
@@ -40,14 +40,15 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
     {
         StringModel projectStringModel = (StringModel) params.get("project");
         ProjectModel projectModel = (ProjectModel) projectStringModel.getWrappedObject();
+        String filename = projectModel.getRootFileModel().getPrettyPath();
 
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) params.get("recursive");
         boolean recursive = recursiveBooleanModel.getAsBoolean();
         SimpleScalar elementIDStringModel = (SimpleScalar) params.get("elementID");
         String elementID = elementIDStringModel.getAsString();
 
-        Map<String, Integer> data = new JavaInlineHintService(context).getPackageUseFrequencies(projectModel, 3,
-                    recursive);
+        TypeReferenceService typeReferenceService = new TypeReferenceService(context);
+        Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, 2, recursive);
         if (data.keySet().size() > 0)
         {
             drawPie(env.getOut(), data, elementID);

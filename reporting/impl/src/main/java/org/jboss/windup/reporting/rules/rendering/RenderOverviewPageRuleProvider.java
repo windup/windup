@@ -22,8 +22,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 public class RenderOverviewPageRuleProvider extends WindupRuleProvider
 {
     private static final String VAR_APPLICATION_REPORTS = "applicationReports";
-    private static final String OUTPUT_FILENAME = "index.html";
-    private static final String TEMPLATE_PATH = "/reports/templates/overview.ftl";
+    private static final String OUTPUT_FILENAME = "../index.html";
+    private static final String TEMPLATE_PATH = "/reports/templates/index.ftl";
 
     @Inject
     private Furnace furnace;

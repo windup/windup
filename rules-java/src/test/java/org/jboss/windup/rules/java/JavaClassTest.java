@@ -30,7 +30,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -167,8 +167,8 @@ public class JavaClassTest
                     throw e;
             }
 
-            GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
-            Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
+            GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context, JavaTypeReferenceModel.class);
+            Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
             Assert.assertEquals(4, provider.getFirstRuleMatchCount());

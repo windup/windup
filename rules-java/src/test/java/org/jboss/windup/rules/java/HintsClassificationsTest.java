@@ -41,7 +41,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.config.JavaClass;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -162,8 +162,8 @@ public class HintsClassificationsTest
                 GraphService<ClassificationModel> classificationService = new GraphService<>(context,
                             ClassificationModel.class);
 
-                GraphService<TypeReferenceModel> typeRefService = new GraphService<>(context, TypeReferenceModel.class);
-                Iterable<TypeReferenceModel> typeReferences = typeRefService.findAll();
+                GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context, JavaTypeReferenceModel.class);
+                Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
 
                 Assert.assertEquals(4, provider.getTypeReferences().size());
@@ -189,7 +189,7 @@ public class HintsClassificationsTest
     @Singleton
     public static class TestHintsClassificationsTestRuleProvider extends WindupRuleProvider
     {
-        private Set<TypeReferenceModel> typeReferences = new HashSet<>();
+        private Set<JavaTypeReferenceModel> typeReferences = new HashSet<>();
 
         @Override
         public RulePhase getPhase()
@@ -207,10 +207,10 @@ public class HintsClassificationsTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            AbstractIterationOperation<TypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<TypeReferenceModel>()
+            AbstractIterationOperation<JavaTypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<JavaTypeReferenceModel>()
             {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, TypeReferenceModel payload)
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                 {
                     typeReferences.add(payload);
                 }
@@ -229,7 +229,7 @@ public class HintsClassificationsTest
         }
         // @formatter:on
 
-        public Set<TypeReferenceModel> getTypeReferences()
+        public Set<JavaTypeReferenceModel> getTypeReferences()
         {
             return typeReferences;
         }
