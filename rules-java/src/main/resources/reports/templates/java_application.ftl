@@ -33,6 +33,10 @@
           </ul>
       </#if>
 		</td>
+		<td>
+		  <#assign fileEffort = getMigrationEffortPointsForFile(sourceReportModel.sourceFileModel)>
+	    ${fileEffort}
+		</td>
 	</tr>
 	</#if>
 </#macro>
@@ -42,6 +46,13 @@
         <div class="panel-heading">
             <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
             
+            <div class='col-md-3 text-right totalSummary'>
+                <div class='totalLoe'>
+                    ${getMigrationEffortPoints(projectModel, false)}
+                </div>
+                <div class='totalDesc'>Story Points</div>
+            </div>
+            
             <div class='col-md-6 pull-right windupPieGraph archiveGraphContainer'>
                 <div id="project_${projectModel.asVertex().getId()?string("0")}_pie" class='windupPieGraph'></div>
             </div>
@@ -49,7 +60,7 @@
         </div>
         <table class="table table-striped table-bordered">
           <tr>
-            <th>Name</th><th>Technology</th><th>Issues</th>
+            <th>Name</th><th>Technology</th><th>Issues</th><th>Estimated Story Points</th>
           </tr>
           <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
              <@fileModelRenderer fileModel/>

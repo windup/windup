@@ -58,7 +58,27 @@ public class InlineHintServiceTest
 
             ProjectModel projectModel = fillData(context);
             int totalEffort = inlineHintService.getMigrationEffortPoints(projectModel, true);
-            Assert.assertEquals(150, totalEffort);
+            Assert.assertEquals(153, totalEffort);
+
+            boolean foundF1Effort = false;
+            boolean foundF2Effort = false;
+            for (FileModel fm : projectModel.getFileModels())
+            {
+                if (fm.getFilePath().equals("/f1"))
+                {
+                    int fileEffort = inlineHintService.getMigrationEffortPoints(fm);
+                    Assert.assertEquals(150, fileEffort);
+                    foundF1Effort = true;
+                }
+                else if (fm.getFilePath().equals("/f2"))
+                {
+                    int fileEffort = inlineHintService.getMigrationEffortPoints(fm);
+                    Assert.assertEquals(3, fileEffort);
+                    foundF2Effort = true;
+                }
+            }
+            Assert.assertTrue(foundF1Effort);
+            Assert.assertTrue(foundF2Effort);
         }
     }
 
@@ -77,6 +97,10 @@ public class InlineHintServiceTest
         b1.setEffort(50);
         b1b.setFile(f1);
         b1b.setEffort(100);
+
+        InlineHintModel b2 = inlineHintService.create();
+        b2.setEffort(3);
+        b2.setFile(f2);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
         projectModel.addFileModel(f1);

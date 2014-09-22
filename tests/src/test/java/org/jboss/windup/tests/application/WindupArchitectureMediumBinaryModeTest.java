@@ -1,6 +1,8 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -10,8 +12,12 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
+import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +32,8 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java-ee"),
+                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
@@ -40,6 +48,8 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java-ee"),
+                                AddonDependencyEntry.create("org.jboss.windup.tests:test-util"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
@@ -55,6 +65,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         {
             super.runTest(context, path, false);
             validateManifestEntries(context);
+            validateReports(context);
         }
     }
 
@@ -79,5 +90,26 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         }
         Assert.assertEquals(9, numberFound);
         Assert.assertTrue(warManifestFound);
+    }
+
+    /**
+     * Validate that the report pages were generated correctly
+     */
+    private void validateReports(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateJavaApplicationOverviewReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
+        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+
+        TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
+        util.loadPage(appReportPath);
+        Assert.assertTrue(util.checkFilePathAndTag("Windup1x-javaee-example.war",
+                    "META-INF/maven/javaee/javaee/pom.properties", "Properties"));
+        Assert.assertTrue(util.checkFilePathEffort("Windup1x-javaee-example.war",
+                    "META-INF/maven/javaee/javaee/pom.properties", 0));
+        Assert.assertTrue(util.checkFilePathEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar",
+                    "org.joda.time.tz.DateTimeZoneBuilder", 48));
     }
 }

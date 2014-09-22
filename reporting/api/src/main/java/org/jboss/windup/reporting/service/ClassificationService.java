@@ -25,6 +25,30 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
+     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided
+     * {@link FileModel}.
+     * 
+     */
+    public int getMigrationEffortPoints(FileModel fileModel)
+    {
+        // 1. Get all classification models
+        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
+        classificationPipeline.in(ClassificationModel.FILE_MODEL);
+        classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+
+        int classificationEffort = 0;
+        for (Vertex v : classificationPipeline)
+        {
+            Integer migrationEffort = v.getProperty(ClassificationModel.PROPERTY_EFFORT);
+            if (migrationEffort != null)
+            {
+                classificationEffort += migrationEffort;
+            }
+        }
+        return classificationEffort;
+    }
+
+    /**
      * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this
      * project.
      * 
