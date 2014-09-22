@@ -91,7 +91,7 @@ public class Iteration extends DefaultOperationBuilder
                     singleVariableIterationName(source)));
         return iterationImpl;
     }
-    
+
     /**
      * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's
      * "current element".
@@ -116,8 +116,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection that is placed on the top of the varstack. Also sets the name of the variable for
-     * this iteration's "current element" (i.e payload) to have the default value.
+     * Begin an {@link Iteration} over the selection that is placed on the top of the {@link Variables}. Also sets the
+     * name of the variable for this iteration's "current element" (i.e payload) to have the default value.
      */
     public static IterationBuilderOver over()
     {
@@ -216,8 +216,10 @@ public class Iteration extends DefaultOperationBuilder
             if (condition != null)
             {
                 conditionResult = condition.evaluate(event, context);
-                /* Add special clear layer for perform, because condition used one and could have added new variables. 
-                 The condition result put into varstack is ignored. */
+                /*
+                 * Add special clear layer for perform, because condition used one and could have added new variables.
+                 * The condition result put into variables is ignored.
+                 */
                 variables.push();
                 getPayloadManager().setCurrentPayload(variables, frame);
             }
@@ -236,24 +238,34 @@ public class Iteration extends DefaultOperationBuilder
                 }
             }
             getPayloadManager().removeCurrentPayload(variables);
-            //remove the perform layer
+            // remove the perform layer
             variables.pop();
             if (condition != null)
             {
-                //remove the condition layer
+                // remove the condition layer
                 variables.pop();
             }
         }
-       
-       
-       
-    }
 
+    }
 
     @Override
     public List<Operation> getOperations()
     {
         return Arrays.asList(operationPerform, operationOtherwise);
+    }
+
+    public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx)
+    {
+        Variables variables = Variables.instance(event);
+        Map<String, Iterable<WindupVertexFrame>> topLayer = variables.peek();
+        if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
+        {
+            throw new IllegalArgumentException(
+                        "Cannot return the top layer name because the top layer of varstack is not a singleton.");
+        }
+        String name = topLayer.keySet().iterator().next();
+        return name;
     }
 
     /**

@@ -96,20 +96,9 @@ public class Variables
 
         frame.put(name, frames);
     }
-    
-    public String getTopLevelSingletonName() {
-        Map<String, Iterable<WindupVertexFrame>> topLayer = peek();
-        if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
-        {
-            throw new IllegalArgumentException(
-                        "Cannot return the top layer name because the top layer of varstack is not a singleton.");
-        }
-        String name = topLayer.keySet().iterator().next();
-        return name;
-    }
-    
+
     /**
-     * Remove a variable in the top variables layer. 
+     * Remove a variable in the top variables layer.
      */
     public void removeVariable(String name)
     {
