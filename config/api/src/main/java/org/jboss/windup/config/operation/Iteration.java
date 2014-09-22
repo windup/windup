@@ -24,6 +24,7 @@ import org.jboss.windup.config.operation.iteration.IterationBuilderWhen;
 import org.jboss.windup.config.operation.iteration.IterationPayloadManager;
 import org.jboss.windup.config.operation.iteration.NamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.NamedIterationPayloadManager;
+import org.jboss.windup.config.operation.iteration.TopLayerSingletonFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
@@ -115,12 +116,12 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection named with the default name. Also sets the name of the variable for
-     * this iteration's "current element" to have the default value.
+     * Begin an {@link Iteration} over the selection that is placed on the top of the {@link Variables}. Also sets the
+     * name of the variable for this iteration's "current element" (i.e payload) to have the default value.
      */
     public static IterationBuilderOver over()
     {
-        Iteration iterationImpl = new Iteration(new NamedFramesSelector(DEFAULT_VARIABLE_LIST_STRING));
+        Iteration iterationImpl = new Iteration(new TopLayerSingletonFramesSelector());
         iterationImpl.setPayloadManager(new NamedIterationPayloadManager(DEFAULT_SINGLE_VARIABLE_STRING));
         return iterationImpl;
     }
@@ -215,8 +216,10 @@ public class Iteration extends DefaultOperationBuilder
             if (condition != null)
             {
                 conditionResult = condition.evaluate(event, context);
-                /* Add special clear layer for perform, because condition used one and could have added new variables. 
-                 The condition result put into varstack is ignored. */
+                /*
+                 * Add special clear layer for perform, because condition used one and could have added new variables.
+                 * The condition result put into variables is ignored.
+                 */
                 variables.push();
                 getPayloadManager().setCurrentPayload(variables, frame);
             }
@@ -235,19 +238,16 @@ public class Iteration extends DefaultOperationBuilder
                 }
             }
             getPayloadManager().removeCurrentPayload(variables);
-            //remove the perform layer
+            // remove the perform layer
             variables.pop();
             if (condition != null)
             {
-                //remove the condition layer
+                // remove the condition layer
                 variables.pop();
             }
         }
-       
-       
-       
-    }
 
+    }
 
     @Override
     public List<Operation> getOperations()
@@ -257,12 +257,12 @@ public class Iteration extends DefaultOperationBuilder
 
     public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx)
     {
-        Variables varStack = Variables.instance(event);
-        Map<String, Iterable<WindupVertexFrame>> topLayer = varStack.peek();
+        Variables variables = Variables.instance(event);
+        Map<String, Iterable<WindupVertexFrame>> topLayer = variables.peek();
         if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
         {
             throw new IllegalArgumentException(
-                        "Cannot return the payload name because the top layer of varstack is not a singleton.");
+                        "Cannot return the top layer name because the top layer of varstack is not a singleton.");
         }
         String name = topLayer.keySet().iterator().next();
         return name;

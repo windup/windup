@@ -16,9 +16,10 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
     {
         this.variableName = variableName;
     }
-    
+
     /**
      * If the variable name is not specified, the iteration will set it.
+     * 
      * @param clazz
      */
     public AbstractIterationFilter()
@@ -29,32 +30,35 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
     {
         return variableName;
     }
-    
-    public boolean hasVariableNameSet() {
-        return getVariableName() !=null;
+
+    public boolean hasVariableNameSet()
+    {
+        return getVariableName() != null;
     }
 
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
-        checkVariableName(event,context);
+        checkVariableName(event, context);
         Variables varStack = Variables.instance(event);
         T payload = Iteration.getCurrentPayload(varStack, clazz, getVariableName());
         return evaluate(event, context, payload);
     }
-    
+
     /**
      * Check the variable name and if not set, set it with the singleton variable being on the top of the stack.
      */
-    protected void checkVariableName(GraphRewrite event, EvaluationContext context) {
-        if(variableName == null ) {
+    protected void checkVariableName(GraphRewrite event, EvaluationContext context)
+    {
+        if (variableName == null)
+        {
             setVariableName(Iteration.getPayloadVariableName(event, context));
         }
     }
 
     public void setVariableName(String payloadVariableName)
     {
-        variableName=payloadVariableName;
+        variableName = payloadVariableName;
     }
 
     public abstract boolean evaluate(GraphRewrite event, EvaluationContext context, T payload);

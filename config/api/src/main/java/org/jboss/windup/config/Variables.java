@@ -96,9 +96,9 @@ public class Variables
 
         frame.put(name, frames);
     }
-    
+
     /**
-     * Remove a variable in the top variables layer. 
+     * Remove a variable in the top variables layer.
      */
     public void removeVariable(String name)
     {
