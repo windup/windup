@@ -1,5 +1,25 @@
 package org.jboss.windup.decompiler.procyon;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+
+import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.decompiler.api.DecompilationException;
+import org.jboss.windup.decompiler.api.DecompilationFailure;
+import org.jboss.windup.decompiler.api.DecompilationResult;
+import org.jboss.windup.decompiler.api.Decompiler;
+import org.jboss.windup.decompiler.util.Filter;
+
 import com.strobel.assembler.InputTypeLoader;
 import com.strobel.assembler.metadata.ClasspathTypeLoader;
 import com.strobel.assembler.metadata.CompositeTypeLoader;
@@ -18,30 +38,10 @@ import com.strobel.decompiler.languages.LineNumberPosition;
 import com.strobel.decompiler.languages.TypeDecompilationResults;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import com.strobel.io.PathHelper;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.decompiler.api.DecompilationException;
-import org.jboss.windup.decompiler.api.DecompilationFailure;
-import org.jboss.windup.decompiler.api.DecompilationResult;
-import org.jboss.windup.decompiler.api.Decompiler;
-import org.jboss.windup.decompiler.util.Checks;
-import org.jboss.windup.decompiler.util.Filter;
-
 
 /**
  * Decompiles Java classes with Procyon Decompiler. See https://bitbucket.org/mstrobel/procyon
- *
+ * 
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -49,7 +49,6 @@ public class ProcyonDecompiler implements Decompiler
 {
     private static final Logger log = Logger.getLogger(ProcyonDecompiler.class.getName());
     private final ProcyonConfiguration procyonConf;
-
 
     public ProcyonDecompiler()
     {
@@ -64,15 +63,15 @@ public class ProcyonDecompiler implements Decompiler
         this.procyonConf = configuration;
     }
 
-
     /**
      * Decompiles the given .class file and creates the specified output source file.
-     *
+     * 
      * @param classFilePath the .class file to be decompiled.
      * @param outputDir The directory where decompiled .java files will be placed.
      */
     @Override
-    public DecompilationResult decompileClassFile(File rootDir, Path classFilePath, File outputDir) throws DecompilationException
+    public DecompilationResult decompileClassFile(File rootDir, Path classFilePath, File outputDir)
+                throws DecompilationException
     {
         Checks.checkDirectoryToBeRead(rootDir, "Classes root dir");
         File classFile = rootDir.toPath().resolve(classFilePath).toFile();
@@ -82,15 +81,16 @@ public class ProcyonDecompiler implements Decompiler
         log.info("Decompiling .class '" + classFilePath + "' to '" + outputDir.getPath() + "'");
 
         String name = classFilePath.toString();
-        final String typeName = StringUtils.removeEnd(name, ".class");//.replace('/', '.');
+        final String typeName = StringUtils.removeEnd(name, ".class");// .replace('/', '.');
 
         DecompilationResult res = new DecompilationResult();
         try
         {
             DecompilerSettings settings = getDefaultSettings(outputDir);
             this.procyonConf.setDecompilerSettings(settings); // TODO: This is horrible mess.
-            
-            ITypeLoader typeLoader = new CompositeTypeLoader(new ClasspathTypeLoader(rootDir.getPath()), new ClasspathTypeLoader());
+
+            ITypeLoader typeLoader = new CompositeTypeLoader(new ClasspathTypeLoader(rootDir.getPath()),
+                        new ClasspathTypeLoader());
             MetadataSystem metadataSystem = new MetadataSystem(typeLoader);
             File outputFile = this.decompileType(metadataSystem, typeName);
             res.addDecompiled(classFilePath.toString(), outputFile.getAbsolutePath());
@@ -106,7 +106,6 @@ public class ProcyonDecompiler implements Decompiler
         return res;
     }
 
-
     /**
      * Decompiles all .class files and archives in the given directory and places results in the specified output
      * directory.
@@ -115,7 +114,7 @@ public class ProcyonDecompiler implements Decompiler
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
      * <p>
      * Required directories will be created as needed.
-     *
+     * 
      * @param rootDir The directory containing source files and archives.
      * @param outputDir The directory where decompiled .java files will be placed.
      */
@@ -130,9 +129,8 @@ public class ProcyonDecompiler implements Decompiler
         return result;
     }
 
-
     private void decompileDirectory(File rootDir, File outputDir, Path subPath, DecompilationResult result)
-            throws DecompilationException
+                throws DecompilationException
     {
         Checks.checkDirectoryToBeRead(rootDir, "Directory to decompile");
         Checks.checkDirectoryToBeFilled(outputDir, "Output directory");
@@ -140,8 +138,8 @@ public class ProcyonDecompiler implements Decompiler
         log.info("Decompiling subdir '" + subPath + "'");
 
         DecompilerSettings settings = getDefaultSettings(outputDir);
-        //MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
-        //MetadataSystem metadataSystem = new NoRetryMetadataSystem(rootDir.getPath());
+        // MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
+        // MetadataSystem metadataSystem = new NoRetryMetadataSystem(rootDir.getPath());
         MetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());
 
         // TODO: Rewrite with Commons IO's DirectoryWalker.
@@ -150,7 +148,8 @@ public class ProcyonDecompiler implements Decompiler
         for (File file : files)
         {
             // Directory...
-            if (file.isDirectory()) {
+            if (file.isDirectory())
+            {
                 // Recurse.
                 Path subPathNew = subPath.resolve(file.getName());
                 decompileDirectory(rootDir, outputDir, subPathNew, result);
@@ -158,11 +157,11 @@ public class ProcyonDecompiler implements Decompiler
             }
 
             // .class ?
-            if ( ! file.getName().endsWith(".class"))
+            if (!file.getName().endsWith(".class"))
                 continue;
 
             // Inner class?
-            if(file.getName().contains("$"))
+            if (file.getName().contains("$"))
                 continue;
 
             String fileSubPath = subPath.resolve(file.getName()).toString();
@@ -170,21 +169,20 @@ public class ProcyonDecompiler implements Decompiler
             try
             {
                 File outputFile = this.decompileType(metadataSystem, fqcn);
-                if( null == outputFile )
+                if (null == outputFile)
                     throw new IllegalStateException("Unknown Procyon error, type not found.");
                 result.addDecompiled(file.getAbsolutePath(), outputFile.getAbsolutePath());
             }
             catch (Throwable ex)
             {
                 DecompilationFailure failure = new DecompilationFailure("Error during decompilation of "
-                            + rootDir.getPath() + " / " + fileSubPath + ":\n    " + ex.getMessage(), fileSubPath.toString(), ex);
+                            + rootDir.getPath() + " / " + fileSubPath + ":\n    " + ex.getMessage(),
+                            fileSubPath.toString(), ex);
                 log.log(Level.SEVERE, failure.getMessage(), failure);
                 result.addFailure(failure);
             }
         }
     }
-
-
 
     /**
      * Decompiles all .class files and nested archives in the given archive.
@@ -193,10 +191,10 @@ public class ProcyonDecompiler implements Decompiler
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
      * <p>
      * Required directories will be created as needed.
-     *
+     * 
      * @param archive The archive containing source files and archives.
      * @param outputDir The directory where decompiled .java files will be placed.
-     *
+     * 
      * @returns Result with all decompilation failures. Never throws.
      */
     @Override
@@ -204,7 +202,7 @@ public class ProcyonDecompiler implements Decompiler
     {
         return decompileArchive(archive, outputDir, null);
     }
-    
+
     /**
      * Decompiles .class files and nested archives in the given archive, as allowed by the given filter.
      * <p>
@@ -212,14 +210,15 @@ public class ProcyonDecompiler implements Decompiler
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
      * <p>
      * Required directories will be created as needed.
-     *
+     * 
      * @param archive The archive containing source files and archives.
      * @param outputDir The directory where decompiled .java files will be placed.
-     * @param filter   Decides which classes will be decompiled.
-     *
+     * @param filter Decides which classes will be decompiled.
+     * 
      * @returns Result with all decompilation failures. Never throws.
      */
-    public DecompilationResult decompileArchive(File archive, File outputDir, Filter<ZipEntry> filter) throws DecompilationException
+    public DecompilationResult decompileArchive(File archive, File outputDir, Filter<ZipEntry> filter)
+                throws DecompilationException
     {
         Checks.checkFileToBeRead(archive, "Archive to decompile");
         Checks.checkDirectoryToBeFilled(outputDir, "Output directory");
@@ -228,7 +227,6 @@ public class ProcyonDecompiler implements Decompiler
 
         JarFile jar = loadJar(archive);
 
-        
         // MetadataSystem, TypeLoader's
         DecompilerSettings settings = getDefaultSettings(outputDir);
         settings.setTypeLoader(new CompositeTypeLoader(new JarTypeLoader(jar), settings.getTypeLoader()));
@@ -242,14 +240,14 @@ public class ProcyonDecompiler implements Decompiler
         while (entries.hasMoreElements())
         {
             final JarEntry entry = entries.nextElement();
-            
-            if(filter != null)
+
+            if (filter != null)
                 filterRes = filter.decide(entry);
-            if(filterRes == Filter.Result.REJECT)
+            if (filterRes == Filter.Result.REJECT)
                 continue;
-            if(filterRes == Filter.Result.STOP)
+            if (filterRes == Filter.Result.STOP)
                 break;
-            
+
             final String name = entry.getName();
 
             if (!name.endsWith(".class"))
@@ -269,7 +267,8 @@ public class ProcyonDecompiler implements Decompiler
             }
             catch (Throwable th)
             {
-                String msg = "Error during decompilation of " + archive.getPath() + "!" + name + ":\n    " + th.getMessage();
+                String msg = "Error during decompilation of " + archive.getPath() + "!" + name + ":\n    "
+                            + th.getMessage();
                 DecompilationFailure ex = new DecompilationFailure(msg, name, th);
                 log.log(Level.SEVERE, msg, ex);
                 res.addFailure(ex);
@@ -279,11 +278,9 @@ public class ProcyonDecompiler implements Decompiler
         return res;
     }
 
-
-
     /**
      * Decompiles a single type.
-     *
+     * 
      * @param metadataSystem
      * @param typeName
      * @return
@@ -319,7 +316,7 @@ public class ProcyonDecompiler implements Decompiler
         }
 
         boolean nested = resolvedType.isNested() || resolvedType.isAnonymous() || resolvedType.isSynthetic();
-        if(!this.procyonConf.isIncludeNested() && nested)
+        if (!this.procyonConf.isIncludeNested() && nested)
             return null;
 
         DecompilerSettings settings = this.procyonConf.getDecompilerSettings();
@@ -357,9 +354,8 @@ public class ProcyonDecompiler implements Decompiler
         return writer.getFile();
     }
 
-
     /**
-     *  Default settings set type loader to ClasspathTypeLoader if not set before.
+     * Default settings set type loader to ClasspathTypeLoader if not set before.
      */
     private DecompilerSettings getDefaultSettings(File outputDir)
     {
@@ -373,8 +369,6 @@ public class ProcyonDecompiler implements Decompiler
             settings.setTypeLoader(new ClasspathTypeLoader());
         return settings;
     }
-
-
 
     /**
      * Opens the jar, wraps any IOException.
@@ -393,7 +387,6 @@ public class ProcyonDecompiler implements Decompiler
         }
         return jar;
     }
-
 
     /**
      * Constructs the path from FQCN, validates writability, and creates a writer.

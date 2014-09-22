@@ -1,12 +1,11 @@
 package org.jboss.windup.decompiler.procyon;
 
+import org.jboss.windup.decompiler.DecompilerTestBase;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
-import org.jboss.windup.decompiler.DecompilerTestBase;
-
 
 /**
- *
+ * 
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

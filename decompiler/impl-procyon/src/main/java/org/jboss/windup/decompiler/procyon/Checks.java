@@ -1,13 +1,13 @@
-package org.jboss.windup.decompiler.util;
+package org.jboss.windup.decompiler.procyon;
 
 import java.io.File;
 
-
 /**
- *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * 
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class Checks {
+public class Checks
+{
 
     // --- Input validating methods. ---
 
@@ -19,28 +19,26 @@ public class Checks {
             throw new IllegalArgumentException(fileDesc + " does not exist: " + archive.getAbsolutePath());
         if (archive.isDirectory())
             throw new IllegalArgumentException(fileDesc + " is a directory, expected a file: "
-                    + archive.getPath());
+                        + archive.getPath());
     }
 
-
-    public static  void checkDirectoryToBeFilled(File outputDir, String dirDesc) throws IllegalArgumentException
+    public static void checkDirectoryToBeFilled(File outputDir, String dirDesc) throws IllegalArgumentException
     {
         if (outputDir == null)
             throw new IllegalArgumentException(dirDesc + " must not be null.");
         if (outputDir.exists() && !outputDir.isDirectory())
             throw new IllegalArgumentException(dirDesc + " is a file, expected a directory: "
-                    + outputDir.getAbsolutePath());
+                        + outputDir.getAbsolutePath());
     }
 
-
-    public static  void checkDirectoryToBeRead(File rootDir, String dirDesc)
+    public static void checkDirectoryToBeRead(File rootDir, String dirDesc)
     {
         if (rootDir == null)
-            throw new IllegalArgumentException(" must not be null.");
+            throw new IllegalArgumentException(dirDesc + " must not be null.");
         if (!rootDir.exists())
-            throw new IllegalArgumentException(" does not exist: " + rootDir.getPath());
+            throw new IllegalArgumentException(dirDesc + " does not exist: " + rootDir.getPath());
         if (!rootDir.isDirectory())
-            throw new IllegalArgumentException(" is a file, expected a directory: " + rootDir.getPath());
-    }    
+            throw new IllegalArgumentException(dirDesc + " is a file, expected a directory: " + rootDir.getPath());
+    }
 
 }// class

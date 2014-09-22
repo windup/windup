@@ -23,11 +23,9 @@ public class ZipUtil
     {
         unzipWithFilter(inputFile, outputDir, null);
     }
-    
-    
+
     /**
-     * Unzip the given archive into the specified directory, using given filter.
-     * Directories are created only if needed.
+     * Unzip the given archive into the specified directory, using given filter. Directories are created only if needed.
      */
     public static void unzipWithFilter(File inputFile, File outputDir, Filter<ZipEntry> filter) throws IOException
     {
@@ -42,19 +40,22 @@ public class ZipUtil
                 if (entry.isDirectory())
                     continue;
 
-                if(filter != null){
+                if (filter != null)
+                {
                     final Filter.Result res = filter.decide(entry);
-                    switch(res){
-                        case STOP: return;
-                        case REJECT: continue;
+                    switch (res)
+                    {
+                    case STOP:
+                        return;
+                    case REJECT:
+                        continue;
                     }
                 }
 
                 File parentDir = destFile.getParentFile();
-                if ( ! parentDir.isDirectory() && ! parentDir.mkdirs())
+                if (!parentDir.isDirectory() && !parentDir.mkdirs())
                     throw new RuntimeException("Unable to create directory: " + parentDir.getAbsolutePath());
-                
-                
+
                 try (InputStream zipInputStream = zipFile.getInputStream(entry))
                 {
                     try (FileOutputStream outputStream = new FileOutputStream(destFile))
@@ -62,8 +63,18 @@ public class ZipUtil
                         IOUtils.copy(zipInputStream, outputStream);
                     }
                 }
+
+                if (filter != null)
+                {
+                    final Filter.Result res = filter.decide(entry);
+                    switch (res)
+                    {
+                    case ACCEPT_STOP:
+                        return;
+                    }
+                }
             }
         }
     }
-    
+
 }

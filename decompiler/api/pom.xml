@@ -11,11 +11,27 @@
     </parent>
 
     <!-- TODO Donate this addon to Forge. -->
-
     <artifactId>decompiler-api</artifactId>
-
     <name>Windup Engine - Decompiler API</name>
 
+    <dependencies>
+        <!-- Local Dependencies -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <!-- Addon Dependencies -->
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
@@ -31,7 +47,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <!-- Forge stuff -->
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
@@ -54,7 +70,8 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.5</version>
                 <executions>
-                    <!-- Package the tests to an artifact so they can be reused. -->
+                    <!-- Package the tests to an artifact so they can be 
+                        reused. -->
                     <execution>
                         <goals>
                             <goal>test-jar</goal>
@@ -75,26 +92,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-
-        <!-- Addon Dependencies -->
-        
-        <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>utils</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
-        <!-- Local Dependencies -->
-        
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-    </dependencies>
-
 </project>
