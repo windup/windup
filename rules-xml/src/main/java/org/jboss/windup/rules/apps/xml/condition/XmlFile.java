@@ -38,7 +38,7 @@ public class XmlFile extends GraphCondition
 {
     protected static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
     protected static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed via XPath";
-    private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;;
+    private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;
     private String xpath;
     private Map<String, String> namespaces = new HashMap<>();
     private String fileName;
