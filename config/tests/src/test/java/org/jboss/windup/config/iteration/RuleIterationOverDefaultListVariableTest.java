@@ -126,7 +126,7 @@ public class RuleIterationOverDefaultListVariableTest
         {
             Configuration configuration = ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.find(TestSimple2Model.class))
+            .when(Query.find(TestSimple2Model.class).as("abc"))
             .perform(Iteration
                 .over()
                 .perform(new GraphOperation()
