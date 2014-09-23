@@ -163,7 +163,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             sourceString = resolveClassname(sourceString);
 
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, TypeReferenceLocation.IMPORT,
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
+                        TypeReferenceLocation.IMPORT,
                         lineNumber, columnNumber, length, interest.toString());
 
             LOG.trace("Candidate: " + typeRef);
@@ -203,7 +204,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         if (name == null)
             return;
 
-        String sourceString = name.toString();
+        String sourceString = resolveClassname(name.toString());
         if (TypeInterestFactory.matchesAny(sourceString))
         {
             sourceString = resolveClassname(sourceString);

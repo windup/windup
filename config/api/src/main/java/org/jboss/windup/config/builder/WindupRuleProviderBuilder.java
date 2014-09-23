@@ -1,7 +1,9 @@
 package org.jboss.windup.config.builder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
 
@@ -12,6 +14,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
+import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderWithMetadata;
 import org.ocpsoft.rewrite.context.Context;
 
 /**
@@ -27,9 +30,14 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
             WindupRuleProviderBuilderAddDependencies
 {
     private String id;
-    private RulePhase rulePhase;
-    private List<String> dependencies = new ArrayList<>();
-    private List<Class<? extends WindupRuleProvider>> typeDependencies = new ArrayList<>();
+    private RulePhase rulePhase = WindupRuleProvider.DEFAULT_PHASE;
+
+    private List<String> executeAfterIDs = new ArrayList<>();
+    private List<Class<? extends WindupRuleProvider>> executeAfterTypes = new ArrayList<>();
+    private List<String> executeBeforeIDs = new ArrayList<>();
+    private List<Class<? extends WindupRuleProvider>> executeBeforeTypes = new ArrayList<>();
+
+    private Map<Object, Object> ruleMetadata = new HashMap<>();
     private ConfigurationBuilder configurationBuilder;
     private Predicate<Context> metadataEnhancer;
 
@@ -62,23 +70,49 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies addDependency(String id)
+    public WindupRuleProviderBuilderAddDependencies addExecuteAfter(String id)
     {
-        dependencies.add(id);
+        executeAfterIDs.add(id);
         return this;
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies addDependency(Class<? extends WindupRuleProvider> type)
+    public WindupRuleProviderBuilderAddDependencies addExecuteAfter(Class<? extends WindupRuleProvider> type)
     {
-        typeDependencies.add(type);
+        executeAfterTypes.add(type);
+        return this;
+    }
+
+    @Override
+    public WindupRuleProviderBuilderAddDependencies addExecuteBefore(String id)
+    {
+        executeBeforeIDs.add(id);
+        return this;
+    }
+
+    @Override
+    public WindupRuleProviderBuilderAddDependencies addExecuteBefore(Class<? extends WindupRuleProvider> type)
+    {
+        executeBeforeTypes.add(type);
+        return this;
+    }
+
+    public WindupRuleProviderBuilderAddDependencies withMetadata(Object key, Object value)
+    {
+        ruleMetadata.put(key, value);
         return this;
     }
 
     @Override
     public ConfigurationRuleBuilderCustom addRule()
     {
-        return configurationBuilder.addRule();
+        ConfigurationRuleBuilderCustom rule = configurationBuilder.addRule();
+        ConfigurationRuleBuilderWithMetadata ruleWithMetadata = (ConfigurationRuleBuilderWithMetadata) rule;
+        for (Map.Entry<Object, Object> metadataEntry : ruleMetadata.entrySet())
+        {
+            ruleWithMetadata.withMetadata(metadataEntry.getKey(), metadataEntry.getValue());
+        }
+        return rule;
     }
 
     @Override
@@ -104,5 +138,29 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     public RulePhase getPhase()
     {
         return rulePhase;
+    }
+
+    @Override
+    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    {
+        return executeAfterTypes;
+    }
+
+    @Override
+    public List<String> getExecuteAfterIDs()
+    {
+        return executeAfterIDs;
+    }
+
+    @Override
+    public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
+    {
+        return executeBeforeTypes;
+    }
+
+    @Override
+    public List<String> getExecuteBeforeIDs()
+    {
+        return executeBeforeIDs;
     }
 }
