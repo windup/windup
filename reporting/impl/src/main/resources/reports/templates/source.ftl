@@ -75,24 +75,32 @@
         
             <ul>
               <#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
-                <li>
-                  ${classificationLineItem.classification!""}
-                  <#if classificationLineItem.description??>
-                    - ${classificationLineItem.description!""}
-                  </#if>
-                  <#if classificationLineItem.links??>
-                    <ul>
-                      <#list classificationLineItem.links.iterator() as link>
-                        <li>
-                          <a href='${link.link}'>${link.description}</a>
-                        </li>
-                      </#list>
-                    </ul>
-                  </#if>
-                </li>
+	        <#if classificationLineItem.classification??>
+	            <li>
+					${classificationLineItem.classification!""}
+					<#if classificationLineItem.description??>
+						- ${classificationLineItem.description!""}
+					</#if>
+					<#if classificationLineItem.links??>
+					<ul>
+						<#list classificationLineItem.links.iterator() as link>
+							<li>
+								<a href='${link.link}'>${link.description}</a>
+							</li>
+						</#list>
+					</ul>
+				</li>
+			</#if>
+	        <#else>
+	            <#list classificationLineItem.links.iterator() as link>
+					<li>
+						<a href='${link.link}'>${link.description}</a>
+					</li>
+				</#list>	
+	        </#if>
               </#list>
             </ul>
-          </div>
+		</div>
       </div>
     </#if>  
     

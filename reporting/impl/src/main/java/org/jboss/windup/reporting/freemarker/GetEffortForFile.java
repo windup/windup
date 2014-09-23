@@ -44,7 +44,7 @@ public class GetEffortForFile implements WindupFreeMarkerMethod
         if (arguments.size() != 1)
         {
             throw new TemplateModelException(
-                        "Error, method expects two arguments (FileModel)");
+                        "Error, method expects one argument (FileModel)");
         }
         StringModel fileModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) fileModelArg.getWrappedObject();

@@ -8,44 +8,76 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("XsltTransformation")
+/**
+ * Contains metadata regarding the result of an XSLT Transformation
+ */
+@TypeValue(XsltTransformationModel.TYPE)
 public interface XsltTransformationModel extends WindupVertexFrame
 {
-        public static final String PROPERTY_LOCATION = "location";
-        public static final String PROPERTY_EXTENSION = "extension";
-        public static final String PROPERTY_DESCRIPTION = "description";
-        public static final String PROPERTY_FILE_SOURCE = "file_source";
-        public static final String PROPERTY_FILE_RESULT = "file_result";
+    public static final String TYPE = "XsltTransformation";
+    public static final String LOCATION = "location";
+    public static final String EXTENSION = "extension";
+    public static final String DESCRIPTION = "description";
+    public static final String FILE_SOURCE = "file_source";
+    public static final String FILE_RESULT = "file_result";
 
-        @Property(PROPERTY_LOCATION)
-        public String getSourceLocation();
+    /**
+     * Contains the location of the XSLT file
+     */
+    @Property(LOCATION)
+    public String getSourceLocation();
 
-        @Property(PROPERTY_LOCATION)
-        public void setSourceLocation(String location);
-        
-        @Property(PROPERTY_EXTENSION)
-        public String getExtension();
+    /**
+     * Contains the location of the XSLT file
+     */
+    @Property(LOCATION)
+    public void setSourceLocation(String location);
 
-        @Property(PROPERTY_EXTENSION)
-        public void setExtension(String extension);
-        
-        @Property(PROPERTY_DESCRIPTION)
-        public String getDescription();
+    /**
+     * Contains the suffix of the result file
+     */
+    @Property(EXTENSION)
+    public String getExtension();
 
-        @Property(PROPERTY_DESCRIPTION)
-        public void setDescription(String description);
-        
-        
-        
-        @Adjacency(label = PROPERTY_FILE_SOURCE, direction = Direction.OUT)
-        FileModel getSourceFile();
+    /**
+     * Contains the suffix of the result file
+     */
+    @Property(EXTENSION)
+    public void setExtension(String extension);
 
-        @Adjacency(label = PROPERTY_FILE_SOURCE, direction = Direction.OUT)
-        void setSourceFile(FileModel file);
-        
-        @Property(PROPERTY_FILE_RESULT)
-        String getResult();
+    /**
+     * Contains descriptive text describing the result
+     */
+    @Property(DESCRIPTION)
+    public String getDescription();
 
-        @Property(PROPERTY_FILE_RESULT)
-        void setResult(String path);
+    /**
+     * Contains descriptive text describing the result
+     */
+    @Property(DESCRIPTION)
+    public void setDescription(String description);
+
+    /**
+     * Links to the original {@link FileModel} with the original XML contents.
+     */
+    @Adjacency(label = FILE_SOURCE, direction = Direction.OUT)
+    FileModel getSourceFile();
+
+    /**
+     * Links to the original {@link FileModel} with the original XML contents.
+     */
+    @Adjacency(label = FILE_SOURCE, direction = Direction.OUT)
+    void setSourceFile(FileModel file);
+
+    /**
+     * Contains the result filename
+     */
+    @Property(FILE_RESULT)
+    String getResult();
+
+    /**
+     * Contains the result filename
+     */
+    @Property(FILE_RESULT)
+    void setResult(String path);
 }

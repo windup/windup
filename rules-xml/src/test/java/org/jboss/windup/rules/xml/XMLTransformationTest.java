@@ -37,6 +37,7 @@ import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
+import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -134,8 +135,12 @@ public class XMLTransformationTest
             XsltTransformationModel xsltTransformation = iterator.next();
             Assert.assertEquals(SIMPLE_XSLT_XSL, xsltTransformation.getSourceLocation());
             Assert.assertEquals(XSLT_EXTENSION, xsltTransformation.getExtension());
+            XsltTransformationService xsltTransformationService = new XsltTransformationService(context);
+            Path transformedPath = xsltTransformationService.getTransformedXSLTPath().resolve(
+                        xsltTransformation.getResult());
+
             int lineFound = 0;
-            try (BufferedReader br = new BufferedReader(new FileReader(xsltTransformation.getResult())))
+            try (BufferedReader br = new BufferedReader(new FileReader(transformedPath.toFile())))
             {
                 String line = br.readLine();
                 while (line != null)

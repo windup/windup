@@ -81,7 +81,12 @@ public class ClassificationService extends GraphService<ClassificationModel>
         return classificationEffort;
     }
 
-    public void attachClassification(FileModel fileModel, String classificationText, String description)
+    /**
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided
+     * {@link FileModel}. If an existing Model exists with the provided classificationText, that one will be used
+     * instead.
+     */
+    public ClassificationModel attachClassification(FileModel fileModel, String classificationText, String description)
     {
         ClassificationModel model = getUnique(getTypedQuery()
                     .has(ClassificationModel.PROPERTY_CLASSIFICATION, classificationText));
@@ -92,5 +97,6 @@ public class ClassificationService extends GraphService<ClassificationModel>
             model.setDescription(description);
         }
         model.addFileModel(fileModel);
+        return model;
     }
 }

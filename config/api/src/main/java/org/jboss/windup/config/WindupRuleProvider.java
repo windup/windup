@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 
 /**
- * WindupRuleProvider provides metadata, and a list of {@link Rule} objects that are then evaluated by the
+ * {@link WindupRuleProvider} provides metadata, and a list of {@link Rule} objects that are then evaluated by the
  * {@link RuleSubet} during Windup execution.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

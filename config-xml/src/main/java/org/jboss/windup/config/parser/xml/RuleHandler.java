@@ -13,39 +13,42 @@ import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderPerform;
 import org.ocpsoft.rewrite.config.Operation;
 import org.w3c.dom.Element;
 
+/**
+ * Handles parsing the "rule" element to add rules to the current ruleset.
+ */
 @NamespaceElementHandler(elementName = "rule", namespace = "http://windup.jboss.org/v1/xml")
 public class RuleHandler implements ElementHandler<Void>
 {
-   @Override
-   public Void processElement(ParserContext context, Element element)
-   {
-      ConfigurationRuleBuilderCustom rule = context.getBuilder().addRule();
+    @Override
+    public Void processElement(ParserContext context, Element element)
+    {
+        ConfigurationRuleBuilderCustom rule = context.getBuilder().addRule();
 
-      List<Element> children = $(element).children().get();
-      for (Element child : children)
-      {
-         Object result = context.processElement(child);
+        List<Element> children = $(element).children().get();
+        for (Element child : children)
+        {
+            Object result = context.processElement(child);
 
-         switch ($(child).tag())
-         {
-         case "when":
-            rule.when(((Condition) result));
-            break;
+            switch ($(child).tag())
+            {
+            case "when":
+                rule.when(((Condition) result));
+                break;
 
-         case "perform":
-            ConfigurationRuleBuilderPerform perform = rule.perform(((Operation) result));
-            context.setRuleBuilder(perform);
-            break;
+            case "perform":
+                ConfigurationRuleBuilderPerform perform = rule.perform(((Operation) result));
+                context.setRule(perform);
+                break;
 
-         case "otherwise":
-            rule.perform(((Operation) result));
+            case "otherwise":
+                rule.perform(((Operation) result));
 
-            break;
-         case "where":
-            break;
-         }
-      }
-      return null;
-   }
+                break;
+            case "where":
+                break;
+            }
+        }
+        return null;
+    }
 
 }
