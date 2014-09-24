@@ -1,9 +1,9 @@
 package org.jboss.windup.util;
 
 /**
+ * Provides useful methods for manpulating filenames (eg, removing illegal chars from files).
  *
  * @author jsightler
- *
  */
 public class FilenameUtil
 {
@@ -25,10 +25,9 @@ public class FilenameUtil
         return cleanName.toString();
     }
 
-
     /**
-     * Converts a path to a class file (like "foo/bar/My.class" or "foo\\bar\\My.class")
-     * to a fully qualified class name (like "foo.bar.My").
+     * Converts a path to a class file (like "foo/bar/My.class" or "foo\\bar\\My.class") to a fully qualified class name
+     * (like "foo.bar.My").
      */
     public static String classFilePathToClassname(String classFilePath)
     {

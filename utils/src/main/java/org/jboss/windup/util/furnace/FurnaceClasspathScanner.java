@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -21,6 +22,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.AddonFilters;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.util.FilenameUtil;
 
 /**
@@ -46,7 +48,7 @@ public class FurnaceClasspathScanner implements Service
     /**
      * Scans all Forge addons for files accepted by given filter.
      */
-    public List<URL> scan(Filter filter)
+    public List<URL> scan(Predicate<String> filter)
     {
         List<URL> discoveredURLs = new ArrayList<>();
 
@@ -64,14 +66,12 @@ public class FurnaceClasspathScanner implements Service
         return discoveredURLs;
     }
 
-
-
     /**
      * Scans all Forge addons for classes accepted by given filter.
      *
      * TODO: Needs refactoring - scan() is almost the same.
      */
-    public List<Class<?>> scanClasses(Filter<String> filter)
+    public List<Class<?>> scanClasses(Predicate<String> filter)
     {
         List<Class<?>> discoveredClasses = new ArrayList<>();
 
@@ -98,11 +98,10 @@ public class FurnaceClasspathScanner implements Service
         return discoveredClasses;
     }
 
-
     /**
      * Returns a list of files in given addon passing given filter.
      */
-    public List<String> filterAddonResources(Addon addon, Filter<String> filter)
+    public List<String> filterAddonResources(Addon addon, Predicate<String> filter)
     {
         List<String> discoveredFileNames = new ArrayList<>();
         List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
@@ -116,16 +115,13 @@ public class FurnaceClasspathScanner implements Service
         return discoveredFileNames;
     }
 
-
-
     /**
      * Scans given archive for files passing given filter, adds the results into given list.
      */
-    private void handleArchiveByFile(Filter<String> filter, File archive, List<String> discoveredFiles)
+    private void handleArchiveByFile(Predicate<String> filter, File archive, List<String> discoveredFiles)
     {
         try
         {
-            String archiveUrl = "jar:" + archive.toURI().toURL().toExternalForm() + "!/";
             ZipFile zip = new ZipFile(archive);
             Enumeration<? extends ZipEntry> entries = zip.entries();
 
@@ -147,15 +143,17 @@ public class FurnaceClasspathScanner implements Service
     /**
      * Scans given directory for files passing given filter, adds the results into given list.
      */
-    private void handleDirectory(final Filter<String> filter, final File rootDir, final List<String> discoveredFiles)
+    private void handleDirectory(final Predicate<String> filter, final File rootDir, final List<String> discoveredFiles)
     {
         try
         {
-            new DirectoryWalker<String>(DirectoryFileFilter.DIRECTORY, new SuffixFileFilter(".class", IOCase.INSENSITIVE), -1)
+            new DirectoryWalker<String>(DirectoryFileFilter.DIRECTORY, new SuffixFileFilter(".class",
+                        IOCase.INSENSITIVE), -1)
             {
                 private Path startDir;
 
-                public void walk() throws IOException{
+                public void walk() throws IOException
+                {
                     this.startDir = rootDir.toPath();
                     this.walk(rootDir, discoveredFiles);
                 }
@@ -170,7 +168,7 @@ public class FurnaceClasspathScanner implements Service
 
             }.walk();
         }
-        catch( IOException ex )
+        catch (IOException ex)
         {
             LOG.log(Level.SEVERE, "Error reading Furnace addon directory", ex);
         }

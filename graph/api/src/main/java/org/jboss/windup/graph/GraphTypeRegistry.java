@@ -1,10 +1,5 @@
 package org.jboss.windup.graph;
 
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.frames.FramedGraphConfiguration;
-import com.tinkerpop.frames.VertexFrame;
-import com.tinkerpop.frames.modules.AbstractModule;
-import com.tinkerpop.frames.modules.Module;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,14 +8,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.FilenameUtil;
-import org.jboss.windup.util.furnace.Filter;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
+
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.frames.FramedGraphConfiguration;
+import com.tinkerpop.frames.VertexFrame;
+import com.tinkerpop.frames.modules.AbstractModule;
+import com.tinkerpop.frames.modules.Module;
 
 @Singleton
 public class GraphTypeRegistry
@@ -42,10 +45,10 @@ public class GraphTypeRegistry
     public void init()
     {
         // Scan for all classes form *Model.class.
-        Filter<String> modelClassFilter = new Filter<String>()
+        Predicate<String> modelClassFilter = new Predicate<String>()
         {
             // Package prefixes to skip.
-            Set<String> skipPackages = new HashSet();
+            Set<String> skipPackages = new HashSet<>();
             {
                 this.skipPackages.add("org.dom4j.");
                 this.skipPackages.add("groovy.model.");
@@ -58,22 +61,21 @@ public class GraphTypeRegistry
                 this.skipPackages.add("org.jboss.weld.");
                 this.skipPackages.add("freemarker.");
             }
-            
+
             @Override
             public boolean accept(String path)
             {
-                if(!path.endsWith("Model.class"))
+                if (!path.endsWith("Model.class"))
                     return false;
-                
+
                 final String clsName = FilenameUtil.classFilePathToClassname(path);
-                for(String pkg : this.skipPackages)
-                    if(clsName.startsWith(pkg))
+                for (String pkg : this.skipPackages)
+                    if (clsName.startsWith(pkg))
                         return false;
-                
+
                 return true;
             }
         };
-        
 
         Iterable<Class<?>> classes = scanner.scanClasses(modelClassFilter);
 
