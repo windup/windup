@@ -65,17 +65,17 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Path indexPath = graphDirectory.resolve(Paths.get("index.html"));
 
             Path appReportPath = resolveChildPath(reportsDirectory,
-                        "JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d+\\.html");
+                        "JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.\\d+\\.html");
             Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
-                        "nonclassifiedfiles_JEEExampleApporgwindupexamplejeeexampleapp100\\.\\d+\\.html");
-            Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBeanjava\\.\\d+\\.html");
-            Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilterjava\\.\\d+\\.html");
-            Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisherjava\\.\\d+\\.html");
-            Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilterjava\\.\\d+\\.html");
+                        "nonclassifiedfiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.\\d+\\.html");
+            Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBean_java\\.\\d+\\.html");
+            Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilter_java\\.\\d+\\.html");
+            Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisher_java\\.\\d+\\.html");
+            Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilter_java\\.\\d+\\.html");
             Path webStartupListenerPath = resolveChildPath(reportsDirectory,
-                        "AnvilWebStartupListenerjava\\.\\d+\\.html");
+                        "AnvilWebStartupListener_java\\.\\d+\\.html");
             Path webLifecycleListenerPath = resolveChildPath(reportsDirectory,
-                        "AnvilWebLifecycleListenerjava\\.\\d+\\.html");
+                        "AnvilWebLifecycleListener_java\\.\\d+\\.html");
 
             Assert.assertTrue(indexPath.toFile().exists());
             Assert.assertTrue(appReportPath.toFile().exists());
