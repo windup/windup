@@ -17,7 +17,6 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
@@ -27,6 +26,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupConfiguration;
 import org.jboss.windup.engine.WindupProcessor;
@@ -37,11 +37,8 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Classification;
-import org.jboss.windup.reporting.config.Hint;
-import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileLocationModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.junit.Assert;
 import org.junit.Test;
@@ -133,7 +130,6 @@ public class XmlFileNestedConditionTest
                     throw e;
             }
 
-            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
                         ClassificationModel.class);
 
@@ -143,14 +139,13 @@ public class XmlFileNestedConditionTest
             {
                 String classification = model.getClassification();
                 String classificationString = classification.toString();
-                Assert.assertEquals("Spring File",classificationString);
+                Assert.assertEquals("Spring File", classificationString);
             }
             Assert.assertEquals(1, classifications.size());
             Iterator<FileModel> iterator = classifications.get(0).getFileModels().iterator();
             Assert.assertNotNull(iterator.next());
             Assert.assertNotNull(iterator.next());
             Assert.assertFalse(iterator.hasNext());
-
         }
     }
 
@@ -191,7 +186,6 @@ public class XmlFileNestedConditionTest
                                                            )
                                 );
         }
-
         // @formatter:on
 
         public Set<FileLocationModel> getXmlFileMatches()
