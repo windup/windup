@@ -2,26 +2,31 @@ package org.jboss.windup.util.furnace;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.apache.commons.lang.StringUtils;
-
+import org.apache.commons.io.DirectoryWalker;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.AddonFilters;
+import org.jboss.windup.util.FilenameUtil;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author jsightler
+ * @author Ondrej Zizka
  */
 public class FurnaceClasspathScanner implements Service
 {
@@ -35,36 +40,23 @@ public class FurnaceClasspathScanner implements Service
 
     public List<URL> scan(String fileExtension)
     {
-        return scan(new FurnaceScannerFileExtensionFilenameFilter(fileExtension));
+        return scan(new FileExtensionFilter(fileExtension));
     }
 
     /**
      * Scans all Forge addons for files accepted by given filter.
      */
-    public List<URL> scan(FurnaceScannerFilenameFilter filter)
+    public List<URL> scan(Filter filter)
     {
         List<URL> discoveredURLs = new ArrayList<>();
 
         // For each Forge addon...
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
-            List<String> discoveredFileNames = new ArrayList<>();
-            List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
-            // For each addon resource - i.e. addon's jar or directory.
-            for (File addonFile : addonResources)
+            List<String> filteredResourcePaths = filterAddonResources(addon, filter);
+            for (String filePath : filteredResourcePaths)
             {
-                // Addon in a directory
-                if (addonFile.isDirectory())
-                    handleDirectory(filter, addonFile, null, discoveredFileNames);
-
-                // Addon in a .jar file.
-                else
-                    handleArchiveByFile(filter, addonFile, discoveredFileNames);
-            }
-
-            for (String discoveredFileName : discoveredFileNames)
-            {
-                URL ruleFile = addon.getClassLoader().getResource(discoveredFileName);
+                URL ruleFile = addon.getClassLoader().getResource(filePath);
                 if (ruleFile != null)
                     discoveredURLs.add(ruleFile);
             }
@@ -72,56 +64,64 @@ public class FurnaceClasspathScanner implements Service
         return discoveredURLs;
     }
 
-    
+
+
     /**
      * Scans all Forge addons for classes accepted by given filter.
-     * 
+     *
      * TODO: Needs refactoring - scan() is almost the same.
      */
-    public Iterable<Class<?>> scanClasses(FurnaceScannerFilenameFilter filter)
+    public List<Class<?>> scanClasses(Filter<String> filter)
     {
         List<Class<?>> discoveredClasses = new ArrayList<>();
 
         // For each Forge addon...
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
         {
-            List<String> discoveredFileNames = new ArrayList<>();
-            List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
-            // For each addon resource - i.e. addon's jar or directory.
-            for (File addonFile : addonResources)
-            {
-                // Addon in a directory
-                if (addonFile.isDirectory())
-                    handleDirectory(filter, addonFile, null, discoveredFileNames);
-
-                // Addon in a .jar file.
-                else
-                    handleArchiveByFile(filter, addonFile, discoveredFileNames);
-            }
+            List<String> discoveredFileNames = filterAddonResources(addon, filter);
 
             // Then try to load the classes.
             for (String discoveredFilename : discoveredFileNames)
             {
-                String discoveredClassName = filepathToClassname(discoveredFilename);
+                String clsName = FilenameUtil.classFilePathToClassname(discoveredFilename);
                 try
                 {
-                    Class<?> clazz = addon.getClassLoader().loadClass(discoveredClassName);
+                    Class<?> clazz = addon.getClassLoader().loadClass(clsName);
                     discoveredClasses.add(clazz);
                 }
-                catch (ClassNotFoundException cnfe)
+                catch (ClassNotFoundException ex)
                 {
-                    LOG.log(Level.WARNING, "Failed to load class for name: " + discoveredClassName);
+                    LOG.log(Level.WARNING, "Failed to load class for name '" + clsName + "':\n" + ex.getMessage(), ex);
                 }
             }
         }
         return discoveredClasses;
     }
 
-    
+
     /**
-     * Scans given archive for files passing given filter.
+     * Returns a list of files in given addon passing given filter.
      */
-    private static void handleArchiveByFile(FurnaceScannerFilenameFilter filter, File archive, List<String> discoveredFiles)
+    public List<String> filterAddonResources(Addon addon, Filter<String> filter)
+    {
+        List<String> discoveredFileNames = new ArrayList<>();
+        List<File> addonResources = addon.getRepository().getAddonResources(addon.getId());
+        for (File addonFile : addonResources)
+        {
+            if (addonFile.isDirectory())
+                handleDirectory(filter, addonFile, discoveredFileNames);
+            else
+                handleArchiveByFile(filter, addonFile, discoveredFileNames);
+        }
+        return discoveredFileNames;
+    }
+
+
+
+    /**
+     * Scans given archive for files passing given filter, adds the results into given list.
+     */
+    private void handleArchiveByFile(Filter<String> filter, File archive, List<String> discoveredFiles)
     {
         try
         {
@@ -132,8 +132,9 @@ public class FurnaceClasspathScanner implements Service
             while (entries.hasMoreElements())
             {
                 ZipEntry entry = entries.nextElement();
-                String subPath = entry.getName();
-                handle(filter, subPath, new URL(archiveUrl + subPath), discoveredFiles);
+                String name = entry.getName();
+                if (filter.accept(name))
+                    discoveredFiles.add(name);
             }
             zip.close();
         }
@@ -143,41 +144,35 @@ public class FurnaceClasspathScanner implements Service
         }
     }
 
-    private static void handleDirectory(FurnaceScannerFilenameFilter filter, File file, String curPath,
-                List<String> discoveredFiles)
+    /**
+     * Scans given directory for files passing given filter, adds the results into given list.
+     */
+    private void handleDirectory(final Filter<String> filter, final File rootDir, final List<String> discoveredFiles)
     {
-        for (File child : file.listFiles())
+        try
         {
-            String subPath = (curPath == null) ? child.getName() : (curPath + '/' + child.getName());
+            new DirectoryWalker<String>(DirectoryFileFilter.DIRECTORY, new SuffixFileFilter(".class", IOCase.INSENSITIVE), -1)
+            {
+                private Path startDir;
 
-            if (child.isDirectory())
-            {
-                handleDirectory(filter, child, subPath, discoveredFiles);
-            }
-            else
-            {
-                try
-                {
-                    handle(filter, subPath, child.toURI().toURL(), discoveredFiles);
+                public void walk() throws IOException{
+                    this.startDir = rootDir.toPath();
+                    this.walk(rootDir, discoveredFiles);
                 }
-                catch (MalformedURLException e)
+
+                @Override
+                protected void handleFile(File file, int depth, Collection<String> discoveredFiles) throws IOException
                 {
-                    LOG.log(Level.SEVERE, "Error loading file: " + subPath, e);
+                    String newPath = startDir.relativize(file.toPath()).toString();
+                    if (filter.accept(newPath))
+                        discoveredFiles.add(newPath);
                 }
-            }
+
+            }.walk();
         }
-    }
-
-    private static void handle(FurnaceScannerFilenameFilter filter, String subPath, URL url, List<String> discoveredFiles)
-    {
-        if (filter.accept(subPath))
+        catch( IOException ex )
         {
-            discoveredFiles.add(subPath);
+            LOG.log(Level.SEVERE, "Error reading Furnace addon directory", ex);
         }
-    }
-
-    public static String filepathToClassname(String filename)
-    {
-        return StringUtils.removeEndIgnoreCase(filename, ".class").replace('/', '.').replace('\\', '.');
     }
 }

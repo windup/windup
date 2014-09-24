@@ -1,10 +1,10 @@
 package org.jboss.windup.util.furnace;
 
-public class FurnaceScannerFileExtensionFilenameFilter implements FurnaceScannerFilenameFilter
+public class FileExtensionFilter implements Filter<String>
 {
     private String extension;
 
-    public FurnaceScannerFileExtensionFilenameFilter(String extension)
+    public FileExtensionFilter(String extension)
     {
         super();
         this.extension = extension;

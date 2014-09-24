@@ -18,8 +18,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.FilenameUtil;
+import org.jboss.windup.util.furnace.Filter;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
-import org.jboss.windup.util.furnace.FurnaceScannerFilenameFilter;
 
 @Singleton
 public class GraphTypeRegistry
@@ -41,7 +42,7 @@ public class GraphTypeRegistry
     public void init()
     {
         // Scan for all classes form *Model.class.
-        FurnaceScannerFilenameFilter modelClassFilter = new FurnaceScannerFilenameFilter()
+        Filter<String> modelClassFilter = new Filter<String>()
         {
             // Package prefixes to skip.
             Set<String> skipPackages = new HashSet();
@@ -64,7 +65,7 @@ public class GraphTypeRegistry
                 if(!path.endsWith("Model.class"))
                     return false;
                 
-                final String clsName = FurnaceClasspathScanner.filepathToClassname(path);
+                final String clsName = FilenameUtil.classFilePathToClassname(path);
                 for(String pkg : this.skipPackages)
                     if(clsName.startsWith(pkg))
                         return false;
