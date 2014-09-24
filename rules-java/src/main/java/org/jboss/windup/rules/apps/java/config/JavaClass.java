@@ -15,9 +15,9 @@ import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -35,7 +35,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     private final String regex;
     private List<TypeReferenceLocation> locations = Collections.emptyList();
     private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;
-    private String fileRegex;;
+    private String fileRegex;
 
     private JavaClass(String regex)
     {

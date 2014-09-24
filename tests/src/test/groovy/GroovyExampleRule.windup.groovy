@@ -5,35 +5,46 @@ import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.metadata.RuleMetadata
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.rules.apps.java.config.JavaClass;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
+import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 
-
-blacklistType("sampleRegexBlackListRule-001", "javax.servlet.annotation.WebServlet", "Web Servlet")
-blacklistType("sampleRegexBlackListRule-002", "java.lang.StringBuilder.*", "This is using a StringBuilder")
-blacklistType("sampleRegexBlackListRule-003", "java.net.URL.*", "This is using java.net.URL")
-blacklistType("sampleRegexBlackListRule-004", "URL.*", "This is using URL")
-blacklistType("sampleRegexBlackListRule-005", "java.io.InputStream.*", "This is using java.io.InputStream")
-blacklistType("sampleRegexBlackListRule-006", "InputStream.*", "This is using InputStream")
-blacklistType("sampleRegexBlackListRule-007", "java.io.OutputStream.*", "This is using java.io.OutputStream")
-blacklistType("sampleRegexBlackListRule-008", "OutputStream.*", "This is using OutputStream")
-
-
-ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
+ruleSet("Example Servlet Rule")
+    .withMetadata(RuleMetadata.CATEGORY, "Java")
+    .addRule()
+    .when(JavaClass.references("javax.servlet.annotation.WebServlet").at(TypeReferenceLocation.ANNOTATION))
+    .perform(Hint.withText("Web Servlet").withEffort(8))
+    
+    .addRule()
+    .when(JavaClass.references("java.lang.StringBuilder.*"))
+    .perform(Hint.withText("This is using a StringBuilder").withEffort(8))
+    
+    .addRule()
+    .when(JavaClass.references("java.net.URL.*"))
+    .perform(Hint.withText("This is using java.net.URL").withEffort(8))
+    
+    .addRule()
+    .when(JavaClass.references("URL.*"))
+    .perform(Hint.withText("This is using URL").withEffort(8))
+    
+    .addRule()
+    .when(JavaClass.references("java.io.InputStream.*"))
+    .perform(Hint.withText("This is using java.io.InputStream").withEffort(8))
+    
+    .addRule()
+    .when(JavaClass.references("InputStream.*"))
+    .perform(Hint.withText("This is using InputStream").withEffort(8))
+    
+    .addRule()
+    .when(JavaClass.references("java.io.OutputStream.*"))
+    .perform(Hint.withText("This is using java.io.OutputStream").withEffort(8))
+    
+    .addRule()
+    .when(JavaClass.references("OutputStream.*"))
+    .perform(Hint.withText("This is using OutputStream").withEffort(8))
 
     .addRule()
-    .when(
-        Query.find(JavaClassModel.class).as("javaClasses")
-    )
-    .perform(
-        Iteration.over("javaClasses").perform(
-            new GraphOperation  () {
-                public void perform(GraphRewrite event, EvaluationContext context) {
-                    // System.out.println("Performing rewrite operation")
-                }
-            }
-        )
-    )
-    .withMetadata(RuleMetadata.CATEGORY, "Java")
-    
-
-    
+    .when(XmlFile.matchesXpath("/w:web-app").namespace("w", "http://java.sun.com/xml/ns/javaee"))
+    .perform(Hint.withText("This is a web descriptor").withEffort(2))

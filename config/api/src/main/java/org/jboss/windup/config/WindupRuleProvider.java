@@ -27,6 +27,8 @@ import org.ocpsoft.rewrite.context.Context;
  */
 public abstract class WindupRuleProvider implements ConfigurationProvider<GraphContext>
 {
+    public static final RulePhase DEFAULT_PHASE = RulePhase.MIGRATION_RULES;
+
     @Inject
     private Addon addon;
 
@@ -47,7 +49,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
      */
     public RulePhase getPhase()
     {
-        return RulePhase.MIGRATION_RULES;
+        return DEFAULT_PHASE;
     }
 
     /**
