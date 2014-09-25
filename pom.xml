@@ -61,6 +61,7 @@
         <module>tests</module>
         <module>test-util</module>
 
+        <module>dist</module>
     </modules>
 
     <build>
