@@ -42,9 +42,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
                 ProjectModel projectModel = payload.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    String msg = payload.isSourceMode() ? "source-based input directory" : "archive";
-                    throw new WindupException("Error, no project found in " + msg + ": "
-                                + payload.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }

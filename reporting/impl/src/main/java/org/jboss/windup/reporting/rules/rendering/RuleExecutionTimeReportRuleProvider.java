@@ -21,6 +21,7 @@ import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsMode
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.RuleProviderExecutionStatisticsService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -53,7 +54,8 @@ public class RuleExecutionTimeReportRuleProvider extends WindupRuleProvider
                         @Override
                         public void perform(GraphRewrite event, EvaluationContext context)
                         {
-                            WindupConfigurationModel cfg = GraphService.getConfigurationModel(event.getGraphContext());
+                            WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event
+                                        .getGraphContext());
                             String outputDir = cfg.getOutputPath().getFilePath();
 
                             // create a directory for the output

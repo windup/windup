@@ -9,10 +9,12 @@ import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.loader.GraphConfigurationLoader;
-import org.jboss.windup.engine.WindupConfiguration;
-import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
@@ -23,9 +25,6 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
  */
 public class WindupProcessorImpl implements WindupProcessor
 {
-    @Inject
-    private GraphContextFactory factory;
-
     @Inject
     private GraphConfigurationLoader graphConfigurationLoader;
 
@@ -42,22 +41,20 @@ public class WindupProcessorImpl implements WindupProcessor
                     "Windup configuration must not be null. (Call default execution if no configuration is required.)");
 
         GraphContext context = windupConfiguration.getGraphContext();
-        if (context == null)
-        {
-            Path outputDirectory = windupConfiguration.getOutputDirectory();
-            if (outputDirectory != null)
-            {
-                Path graphDir = outputDirectory.resolve("graph");
-                context = factory.create(graphDir);
-            }
-            else
-            {
-                context = factory.create();
-            }
-        }
+        Assert.notNull(context,
+                    "Windup GraphContext must not be null!");
 
-        if (null != windupConfiguration.getGraphListener())
-            windupConfiguration.getGraphListener().postOpen(context);
+        context.setOptions(windupConfiguration.getOptionMap());
+
+        // initialize the basic configuration data in the graph
+        WindupConfigurationModel configModel = WindupConfigurationService.getConfigurationModel(context);
+        configModel.setInputPath(getFileModel(context, windupConfiguration.getInputPath()));
+        configModel.setOutputPath(getFileModel(context, windupConfiguration.getOutputDirectory()));
+        configModel.setOfflineMode(windupConfiguration.isOffline());
+        if (windupConfiguration.getUserRulesDirectory() != null)
+        {
+            configModel.setUserRulesPath(getFileModel(context, windupConfiguration.getUserRulesDirectory()));
+        }
 
         Configuration rules = graphConfigurationLoader.loadConfiguration(context,
                     windupConfiguration.getRuleProviderFilter());
@@ -68,10 +65,13 @@ public class WindupProcessorImpl implements WindupProcessor
         if (windupConfiguration.getProgressMonitor() != null)
             ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(),
                         rules));
-        ruleSubset.perform(event, createEvaluationContext());
 
-        if (null != windupConfiguration.getGraphListener())
-            windupConfiguration.getGraphListener().preShutdown(context);
+        ruleSubset.perform(event, createEvaluationContext());
+    }
+
+    private FileModel getFileModel(GraphContext context, Path path)
+    {
+        return new FileModelService(context).createByFilePath(path.toString());
     }
 
     /**

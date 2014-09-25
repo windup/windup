@@ -5,8 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -18,19 +16,16 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.engine.WindupConfiguration;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
+import org.jboss.windup.exec.WindupProcessor;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -87,71 +82,50 @@ public class JavaClassTest
             Files.createDirectories(outputPath);
 
             // Fill the graph with test data.
-            GraphLifecycleListener initializer = new GraphLifecycleListener()
-            {
-                public void postOpen(GraphContext context)
-                {
-                    System.out.println("AAAAA " + context);
+            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            pm.setName("Main Project");
 
-                    ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-                    pm.setName("Main Project");
+            // Create FileModel for $inputDir
+            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            inputPathFrame.setFilePath(inputDir);
+            inputPathFrame.setProjectModel(pm);
+            pm.addFileModel(inputPathFrame);
 
-                    // Create FileModel for $inputDir
-                    FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
-                    inputPathFrame.setFilePath(inputDir);
-                    inputPathFrame.setProjectModel(pm);
-                    pm.addFileModel(inputPathFrame);
+            // Set project.rootFileModel to inputPath
+            pm.setRootFileModel(inputPathFrame);
 
-                    // Set project.rootFileModel to inputPath
-                    pm.setRootFileModel(inputPathFrame);
+            // Create FileModel for $inputDir/HintsClassificationsTest.java
+            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel.setFilePath(inputDir + "/JavaHintsClassificationsTest.java");
+            fileModel.setProjectModel(pm);
+            pm.addFileModel(fileModel);
 
-                    // Create FileModel for $inputDir/HintsClassificationsTest.java
-                    FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-                    fileModel.setFilePath(inputDir + "/JavaHintsClassificationsTest.java");
-                    fileModel.setProjectModel(pm);
-                    pm.addFileModel(fileModel);
+            // Create FileModel for $inputDir/JavaClassTest.java
+            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel.setFilePath(inputDir + "/JavaClassTest.java");
+            fileModel.setProjectModel(pm);
+            pm.addFileModel(fileModel);
 
-                    // Create FileModel for $inputDir/JavaClassTest.java
-                    fileModel = context.getFramed().addVertex(null, FileModel.class);
-                    fileModel.setFilePath(inputDir + "/JavaClassTest.java");
-                    fileModel.setProjectModel(pm);
-                    pm.addFileModel(fileModel);
-
-                    // TODO: WINDUP-274 WindupConfiguration[Model] construction without need for GraphContext.
-                    final WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-                    config.setInputPath(inputPathFrame); // Must be the same frame!
-                    config.setSourceMode(true);
-                    config.setOutputPath(outputPath.toString());
-                    config.setScanJavaPackageList(Collections.singletonList(""));
-                    context.getGraph().getBaseGraph().commit();
-                }
-
-                public void preShutdown(GraphContext context)
-                {
-                }
-            };
+            context.getGraph().getBaseGraph().commit();
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
-            processorConfig.setGraphListener(initializer);
-            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(TestJavaClassTestRuleProvider.class));
-            processorConfig.setGraphContext(context).setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(TestJavaClassTestRuleProvider.class));
+            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
+                        TestJavaClassTestRuleProvider.class));
+            processorConfig.setGraphContext(context).setRuleProviderFilter(
+                        new RuleProviderWithDependenciesPredicate(TestJavaClassTestRuleProvider.class));
+            processorConfig.setInputPath(Paths.get(inputDir));
+            processorConfig.setOutputDirectory(outputPath);
+            processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
 
-            try
-            {
-                processor.execute(processorConfig);
-            }
-            catch (Exception e)
-            {
-                if (!e.getMessage().contains("CreateMainApplicationReport"))
-                    throw e;
-            }
+            processor.execute(processorConfig);
 
-            GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context, JavaTypeReferenceModel.class);
+            GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
+                        JavaTypeReferenceModel.class);
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
-            Assert.assertEquals(4, provider.getFirstRuleMatchCount());
-            Assert.assertEquals(2, provider.getSecondRuleMatchCount());
+            Assert.assertEquals(3, provider.getFirstRuleMatchCount());
+            Assert.assertEquals(1, provider.getSecondRuleMatchCount());
         }
     }
 

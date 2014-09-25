@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.util.FilenameUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -34,9 +35,12 @@ public class ReportService extends GraphService<ReportModel>
         super(context, ReportModel.class);
     }
 
+    /**
+     * Returns the output directory for reporting.
+     */
     public String getReportDirectory()
     {
-        WindupConfigurationModel cfg = getConfigurationModel(getGraphContext());
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(getGraphContext());
         Path path = cfg.getOutputPath().asFile().toPath().resolve(REPORTS_DIR);
         if (!Files.isDirectory(path))
         {

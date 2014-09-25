@@ -8,7 +8,6 @@ import java.util.List;
 import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
@@ -31,14 +30,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         this.context = context;
         this.type = type;
-    }
-
-    public static synchronized WindupConfigurationModel getConfigurationModel(GraphContext context)
-    {
-        WindupConfigurationModel config = new GraphService<>(context, WindupConfigurationModel.class).getUnique();
-        if (config == null)
-            config = new GraphService<>(context, WindupConfigurationModel.class).create();
-        return config;
     }
 
     @Override

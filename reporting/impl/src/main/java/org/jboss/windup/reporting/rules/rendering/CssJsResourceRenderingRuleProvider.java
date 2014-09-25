@@ -29,7 +29,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -57,7 +57,8 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
             @Override
             public void perform(GraphRewrite event, EvaluationContext context)
             {
-                final WindupConfigurationModel cfg = GraphService.getConfigurationModel(event.getGraphContext());
+                final WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event
+                            .getGraphContext());
                 String outputPath = cfg.getOutputPath().getFilePath();
                 copyCssResourcesToOutput(event.getGraphContext(), outputPath);
             }

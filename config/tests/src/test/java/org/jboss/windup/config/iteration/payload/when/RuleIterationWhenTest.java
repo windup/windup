@@ -14,7 +14,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
@@ -24,6 +23,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.FileModelService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,8 +99,9 @@ public class RuleIterationWhenTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
-            windupCfg.setSourceMode(true);
+            FileModelService fileModelService = new FileModelService(context);
+            windupCfg.setInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
+                        .getAbsolutePath()));
 
             TestWhenProvider provider = new TestWhenProvider();
             Configuration configuration = provider.getConfiguration(context);
@@ -124,12 +125,6 @@ public class RuleIterationWhenTest
         private int outerConditionCounter = 0;
         private int sameConditionCounter = 0;
         private TestWhenModel model;
-
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.MIGRATION_RULES;
-        }
 
         // @formatter:off
         @Override

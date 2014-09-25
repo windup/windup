@@ -25,14 +25,12 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.engine.WindupConfiguration;
-import org.jboss.windup.engine.WindupProcessor;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
+import org.jboss.windup.exec.WindupProcessor;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.GraphLifecycleListener;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Classification;
@@ -40,9 +38,11 @@ import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.rules.apps.java.config.JavaClass;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
+import org.jboss.windup.rules.apps.java.condition.JavaClass;
+import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -101,76 +101,54 @@ public class JavaHintsClassificationsTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            // Data filler.
-            GraphLifecycleListener gll = new GraphLifecycleListener()
-            {
-                private static final String INPUT_PATH = "src/test/java/org/jboss/windup/rules/java";
+            String inputPath = "src/test/java/org/jboss/windup/rules/java";
 
-                public void postOpen(GraphContext context)
-                {
-                    ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-                    pm.setName("Main Project");
+            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            pm.setName("Main Project");
 
-                    FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
-                    inputPathFrame.setFilePath(INPUT_PATH);
-                    inputPathFrame.setProjectModel(pm);
-                    pm.setRootFileModel(inputPathFrame);
+            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            inputPathFrame.setFilePath(inputPath);
+            inputPathFrame.setProjectModel(pm);
+            pm.setRootFileModel(inputPathFrame);
 
-                    FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-                    fileModel.setFilePath(INPUT_PATH + "/JavaHintsClassificationsTest.java");
-                    fileModel.setProjectModel(pm);
+            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel.setFilePath(inputPath + "/JavaHintsClassificationsTest.java");
+            fileModel.setProjectModel(pm);
 
-                    pm.addFileModel(inputPathFrame);
-                    pm.addFileModel(fileModel);
-                    fileModel = context.getFramed().addVertex(null, FileModel.class);
-                    fileModel.setFilePath(INPUT_PATH + "/JavaClassTest.java");
-                    fileModel.setProjectModel(pm);
-                    pm.addFileModel(fileModel);
-
-                    // WindupConfigModel.
-                    // I am coming to conclusion that we need a WindupConfig
-                    // which doesn't need context.
-                    WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-                    config.setScanJavaPackageList(Collections.singletonList(""));
-                    config.setInputPath(inputPathFrame); // Must be the same frame!
-                    config.setSourceMode(true);
-                    config.setOutputPath(outputPath.toString());
-                }
-
-                public void preShutdown(GraphContext context)
-                {
-                }
-            };
+            pm.addFileModel(inputPathFrame);
+            pm.addFileModel(fileModel);
+            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel.setFilePath(inputPath + "/JavaClassTest.java");
+            fileModel.setProjectModel(pm);
+            pm.addFileModel(fileModel);
 
             try
             {
 
-                try
-                {
-                    // TODO: Consolidate the config - e.g. the outputPath is now set at 2 places.
-                    WindupConfiguration configuration = new WindupConfiguration()
-                                .setGraphContext(context)
-                                .setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(TestHintsClassificationsTestRuleProvider.class))
-                                .setGraphListener(gll);
-                    processor.execute(configuration);
-                }
-                catch (Exception e)
-                {
-                    if (e.getMessage() == null || !e.getMessage().contains("CreateMainApplicationReport"))
-                        throw e;
-                }
+                WindupConfiguration configuration = new WindupConfiguration()
+                            .setGraphContext(context)
+                            .setRuleProviderFilter(
+                                        new RuleProviderWithDependenciesPredicate(
+                                                    TestHintsClassificationsTestRuleProvider.class))
+                            .setInputPath(Paths.get(inputPath))
+                            .setOutputDirectory(outputPath)
+                            .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
+                            .setOptionValue(SourceModeOption.NAME, true);
+
+                processor.execute(configuration);
 
                 GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
                 GraphService<ClassificationModel> classificationService = new GraphService<>(context,
                             ClassificationModel.class);
 
-                GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context, JavaTypeReferenceModel.class);
+                GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
+                            JavaTypeReferenceModel.class);
                 Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
 
-                Assert.assertEquals(4, provider.getTypeReferences().size());
+                Assert.assertEquals(3, provider.getTypeReferences().size());
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-                Assert.assertEquals(4, hints.size());
+                Assert.assertEquals(3, hints.size());
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
                 Assert.assertEquals(1, classifications.size());
 

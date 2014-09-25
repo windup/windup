@@ -1,7 +1,7 @@
 package org.jboss.windup.ui;
 
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
-import org.jboss.windup.engine.WindupProgressMonitor;
+import org.jboss.windup.exec.WindupProgressMonitor;
 
 /**
  * Progress monitor implementation based on the Forge/Eclipse progress monitor feature.

@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.config;
+package org.jboss.windup.rules.apps.java.condition;
 
 import java.util.Arrays;
 import java.util.Collections;

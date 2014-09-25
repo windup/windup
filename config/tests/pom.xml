@@ -24,8 +24,8 @@
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
-            <classifier>forge-addon</classifier>
             <version>${project.version}</version>
+       	    <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
 

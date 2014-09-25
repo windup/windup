@@ -16,7 +16,7 @@ import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -91,7 +91,7 @@ public class TestWindupConfigurationExampleRuleProvider extends WindupRuleProvid
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, JavaMethodModel methodModel)
                 {
-                    TestWindupConfigurationExampleRuleProvider.this.config = GraphService
+                    TestWindupConfigurationExampleRuleProvider.this.config = WindupConfigurationService
                                 .getConfigurationModel(event.getGraphContext());
 
                     results.add(methodModel);

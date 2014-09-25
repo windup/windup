@@ -61,7 +61,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
 
         try (GraphContext context = createGraphContext())
         {
-            super.runTest(context, path, false, includePackages, excludePackages);
+            super.runTest(context, path, null, false, includePackages, excludePackages);
 
             validateInlineHintsInAppropriatePackages(context);
         }

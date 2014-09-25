@@ -14,6 +14,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -58,7 +59,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         }
 
         // create a temp folder for all archive contents
-        WindupConfigurationModel cfg = GraphService.getConfigurationModel(event.getGraphContext());
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
         String windupOutputFolder = cfg.getOutputPath().getFilePath();
 
         Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, ARCHIVES);

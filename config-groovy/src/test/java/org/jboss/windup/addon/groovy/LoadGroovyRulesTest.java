@@ -29,7 +29,8 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,6 +104,7 @@ public class LoadGroovyRulesTest
             }
             Assert.assertTrue("Script path should have been set in Rule Metatada", foundScriptPath);
             Assert.assertTrue(allProviders.size() > 0);
+            context.getGraph().getBaseGraph().commit();
         }
     }
 
@@ -111,7 +113,7 @@ public class LoadGroovyRulesTest
     {
         try (GraphContext context = factory.create())
         {
-            WindupConfigurationModel cfg = GraphService.getConfigurationModel(context);
+            WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
 
             // create a user path
             Path userRulesPath = Paths.get(FileUtils.getTempDirectory().toString(), "WindupGroovyPath");
@@ -128,7 +130,8 @@ public class LoadGroovyRulesTest
                     IOUtils.copy(is, os);
                 }
 
-                cfg.setUserRulesPath(userRulesPath.toAbsolutePath().toString());
+                FileModelService fileModelService = new FileModelService(context);
+                cfg.setUserRulesPath(fileModelService.createByFilePath(userRulesPath.toAbsolutePath().toString()));
 
                 Imported<WindupRuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
                             WindupRuleProviderLoader.class);

@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.config;
+package org.jboss.windup.rules.apps.java.condition;
 
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -10,9 +10,8 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaClassBuilderInFile
+public interface JavaClassBuilder extends ConditionBuilder
 {
-
     /**
      * Specify one or more {@link TypeReferenceLocation} where the specified regex is of interest.
      */
@@ -23,4 +22,10 @@ public interface JavaClassBuilderInFile
      * returning a fully configured {@link Condition} object.
      */
     ConditionBuilder as(String variable);
+    
+    /**
+     * File name/path in which the java class is located.
+     * @param regex
+     */
+    JavaClassBuilderInFile inFile(String regex);
 }
