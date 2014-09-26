@@ -64,11 +64,13 @@
         
         <ul>
           <li>Estimated Story Points: ${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</li>
-          <li>
-            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
-              <span class="label label-info">${techTag.name}</span>
-            </#list>
-          </li>
+          <#if getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
+	          <li>
+	            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
+	              <span class="label label-info">${techTag.name}</span>
+	            </#list>
+	          </li>
+	      </#if>
         </ul>
         
         <ul>
