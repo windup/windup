@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:s="http://jboss.com/products/seam/taglib">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>JBoss Suites: Seam Framework</title>
+	<link href="css/screen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<div id="document">
+	<div id="header">
+		<div id="title"><img src="img/hdr.title.gif" alt="JBoss Suites: seam framework demo"/></div>
+		<div id="status">
+            Welcome #{user.name}
+            | <s:link id="search" view="/main.xhtml" value="Search" propagation="none"/>
+            | <s:link id="settings" view="/password.xhtml" value="Settings" propagation="none"/>
+            | <s:link id="logout" action="#{identity.logout}" value="Logout"/>
+		</div>
+	</div>
+	<div id="container">
+		<div id="sidebar">
+			<ui:insert name="sidebar"/>
+		</div>
+		<div id="content">
+			<ui:insert name="content"/>
+		    <ui:include src="conversations.xhtml" />
+		</div>
+	</div>
+	<div id="footer">Created with JBoss Seam 2.2, JBoss EJB 3.0, JSF 1.2, Hibernate 3 and Facelets</div>
+</div>
+</body>
+</html>
+</f:view>

@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<suite name="Hotel Booking" verbose="2" parallel="false">
+
+   <test name="Hotel Booking">
+     <classes>
+       <class name="org.jboss.seam.example.booking.test.LoginTest"/>
+       <class name="org.jboss.seam.example.booking.test.BookingTest"/>
+       <class name="org.jboss.seam.example.booking.test.ChangePasswordTest"/>
+     </classes>
+   </test>
+	
+</suite>

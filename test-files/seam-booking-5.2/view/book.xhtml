@@ -1,0 +1,122 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	    		xmlns:ui="http://java.sun.com/jsf/facelets"
+	  			xmlns:h="http://java.sun.com/jsf/html"
+	  			xmlns:f="http://java.sun.com/jsf/core"
+	  			xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:a="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich"
+				template="template.xhtml">
+
+<!-- content -->
+<ui:define name="content">
+<div class="section">
+	<h1>Book Hotel</h1>
+</div>
+<div class="section">
+	<div class="entry errors">
+		<h:messages id="messages" globalOnly="true"/>
+	</div>
+
+	<ui:include src="hotelview.xhtml"/>
+	
+	<div style="clear:both"/>
+
+	<h:form id="booking">
+	<fieldset>
+			
+		<s:decorate id="checkinDateDecorate" template="edit.xhtml">
+			<ui:define name="label">Check In Date:</ui:define>
+			<rich:calendar id="checkinDate" value="#{booking.checkinDate}" required="true" datePattern="MM/dd/yyyy" event="onblur" reRender="checkinDateDecorate" style="width: auto;" />
+		</s:decorate>
+		
+		<s:decorate id="checkoutDateDecorate" template="edit.xhtml">
+			<ui:define name="label">Check Out Date:</ui:define>
+			<rich:calendar id="checkoutDate" value="#{booking.checkoutDate}" required="true" datePattern="MM/dd/yyyy" event="onblur" reRender="checkoutDateDecorate"  style="width: auto;"/>
+		</s:decorate>
+		
+		<s:decorate id="bedsDecorate" template="edit.xhtml">
+			<ui:define name="label">Room Preference:</ui:define>
+			<h:selectOneMenu id="beds" value="#{booking.beds}">
+				<f:selectItem id="OneKingBed" itemLabel="One king-size bed" itemValue="1"/>
+				<f:selectItem id="TwoDoubleBeds" itemLabel="Two double beds" itemValue="2"/>
+				<f:selectItem id="ThreeBeds" itemLabel="Three beds" itemValue="3"/>
+			</h:selectOneMenu>
+		</s:decorate>
+		
+		<s:decorate id="smokingDecorate" template="edit.xhtml">
+			<ui:define name="label">Smoking Preference:</ui:define>
+			<h:selectOneRadio id="smoking" value="#{booking.smoking}" layout="pageDirection" styleClass="radio">
+				<f:selectItem id="Smoking" itemLabel="Smoking" itemValue="true"/>
+				<f:selectItem id="NonSmoking" itemLabel="Non Smoking" itemValue="false"/>
+			</h:selectOneRadio>
+		</s:decorate>
+
+		<s:decorate id="creditCardDecorate" template="edit.xhtml">
+			<ui:define name="label">Credit Card #:</ui:define>
+			<h:inputText id="creditCard" value="#{booking.creditCard}" required="true">
+				<a:support id="onblur" event="onblur" reRender="creditCardDecorate"/>
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="creditCardNameDecorate" template="edit.xhtml">
+			<ui:define name="label">Credit Card Name:</ui:define>
+			<h:inputText id="creditCardName" value="#{booking.creditCardName}" required="true">
+				<a:support id="onblur" event="onblur" reRender="creditCardNameDecorate"/>
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="creditCardExpiryDecorate" template="edit.xhtml">
+			<ui:define name="label">Credit Card Expiry:</ui:define>
+			<h:selectOneMenu id="creditCardExpiryMonth" value="#{booking.creditCardExpiryMonth}">
+				<f:selectItem id="Jan" itemLabel="Jan" itemValue="1"/>
+				<f:selectItem id="Feb" itemLabel="Feb" itemValue="2"/>
+				<f:selectItem id="Mar" itemLabel="Mar" itemValue="3"/>
+				<f:selectItem id="Apr" itemLabel="Apr" itemValue="4"/>
+				<f:selectItem id="May" itemLabel="May" itemValue="5"/>
+				<f:selectItem id="Jun" itemLabel="Jun" itemValue="6"/>
+				<f:selectItem id="Jul" itemLabel="Jul" itemValue="7"/>
+				<f:selectItem id="Aug" itemLabel="Aug" itemValue="8"/>
+				<f:selectItem id="Sep" itemLabel="Sep" itemValue="9"/>
+				<f:selectItem id="Oct" itemLabel="Oct" itemValue="10"/>
+				<f:selectItem id="Nov" itemLabel="Nov" itemValue="11"/>
+				<f:selectItem id="Dec" itemLabel="Dec" itemValue="12"/>
+			</h:selectOneMenu>
+			<h:selectOneMenu id="creditCardExpiryYear" value="#{booking.creditCardExpiryYear}">
+				<f:selectItem id="Year2005" itemLabel="2005" itemValue="2005"/>
+				<f:selectItem id="Year2006" itemLabel="2006" itemValue="2006"/>
+				<f:selectItem id="Year2007" itemLabel="2007" itemValue="2007"/>
+				<f:selectItem id="Year2008" itemLabel="2008" itemValue="2008"/>
+				<f:selectItem id="Year2009" itemLabel="2009" itemValue="2009"/>
+			</h:selectOneMenu>
+		</s:decorate>
+		
+		<div class="buttonBox">
+			<h:commandButton id="proceed" value="Proceed" action="#{hotelBooking.setBookingDetails}"/>
+			&#160;
+			<s:button id="cancel" value="Cancel" action="#{hotelBooking.cancel}"/>
+		</div>
+		
+	</fieldset>
+	</h:form>
+</div>
+</ui:define>
+
+<!-- sidebar -->
+<ui:define name="sidebar">
+
+<h1>Workspace management</h1>
+<p>
+   As you can see, Seam makes it easy to work in multiple windows or multiple browser 
+   tabs. But you can even switch between multiple tasks inside a single browser tab!
+   The "Workspaces" section showcases this advanced feature.
+</p>
+<p>
+   <a href="#" onclick="window.open('exp/workspaceExp.html','exp','width=752,height=500,scrollbars=yes');">
+	  How does the workspace list work?
+   </a>
+</p>
+
+</ui:define>
+
+</ui:composition>

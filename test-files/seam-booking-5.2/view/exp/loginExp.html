@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>In-depth Explanation</title>
+	<link href="../css/trailblazer_main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div id="main">
+  <div class="trail">
+    <div class="numbox">2</div>
+    <h2>What happens when you login?</h2>
+    <img src="../img/header_line.gif" />
+    
+       <form>
+          <input type="button" value="Close Window" onclick="window.close()"/>
+       </form>
+    
+    <p>
+       The login page is defined using pure XHTML with JSF controls. 
+       The form uses JSF EL value binding and method binding 
+       expressions to refer to Seam components. For example, 
+       <code>#{identity.username}</code> refers to a property of the
+       <code>Identity</code> component and <code>#{identity.login}</code> 
+       refers to a method of the <code>Identity</code> component.
+    </p>
+
+<code class="block">
+&lt;div&gt;
+    &lt;h:outputLabel for="username">Login Name&lt;/h:outputLabel>
+    &lt;h:inputText id="username" value="#{identity.username}" />
+&lt;/div&gt;
+&lt;div&gt;
+    &lt;h:outputLabel for="password">Password&lt;/h:outputLabel>
+    &lt;h:inputSecret id="password" value="#{identity.password}" />
+&lt;/div&gt;
+
+... ...
+
+&lt;div class="buttonBox"&gt;
+    &lt;h:commandButton id="login"
+                     action="#{identity.login}" 
+                     value="Account Login" /&gt;
+&lt;/div&gt;
+</code>
+
+    <p>
+       After logging in, the <code>User</code> enity bean is mapped to the Seam  
+       context variable named <code>user</code> bean via the 
+       <code>@Name</code> annotation. <code>User</code> is
+       a session scoped bean, meaning that the <code>user</code>
+       component value is retained for the entire session for
+       each user. You might also notice there are validation annotation
+       on the data properties. We will discuss those annotations in the
+       <a href="registerExp.html">next step</a>.
+    </p>
+
+<code class="block">
+@Entity
+@Name("user")
+@Scope(SESSION)
+public class User implements Serializable {
+   private String username;
+   private String password;
+   private String name;
+
+   @NotNull
+   @Length(min=5, max=15)
+   public String getPassword() {
+      return password;
+   }
+   public void setPassword(String password) {
+      this.password = password;
+   }
+   
+
+   @Id
+   @Length(min=4, max=15)
+   @Pattern(regex="^\\w*$", message="not a valid username")
+   public String getUsername () {
+      return username;
+   }
+   public void setUsername (String username) {
+      this.username = username;
+   }
+
+    // ... ...
+}
+</code>
+
+    <p>
+       Seam comes with its own Security framework, based on JAAS.  It allows you 
+       to perform user authentication by configuring your own authentication method
+       in <code>components.xml</code>.
+    </p>
+    
+<code class="block">
+  &lt;security:identity authenticate-method="#{authenticator.authenticate}"/&gt;
+</code>
+
+    <p>
+       <code>AuthenticatorAction</code> is an EJB 3.0 session bean mapped 
+       to the Seam context variable named <code>authenticator</code>. When 
+       the login button is clicked, the JSF method binding 
+       <code>#{identity.login}</code> is evaluated, and based upon the previous configuration, the 
+       <code>authenticate()</code> method is invoked upon <code>AuthenticatorAction</code>.
+    </p>
+
+<code class="block">
+@Stateless
+@Scope(EVENT)
+@Name("authenticator")
+public class AuthenticatorAction implements Authenticator
+{
+   @PersistenceContext EntityManager em;
+   
+   @Out(required=false, scope = SESSION)
+   private User user;
+   
+   public boolean authenticate()
+   {
+      List results = em.createQuery("select u from User u where" + 
+                                    " u.username=#{identity.username}" + 
+                                    " and u.password=#{identity.password}")
+                       .getResultList();
+      
+      if ( results.size()==0 )
+      {
+         return false;
+      }
+      else
+      {
+         user = (User) results.get(0);
+         return true;
+      }
+   }
+}
+</code>
+
+    <p>
+       The <code>@Out</code> 
+       annotation indicates the <code>AuthenticatorAction</code> bean can change the
+       value of the <code>user</code> context variable and make the new instance 
+       available to other session beans and JSF pages.  The query expression 
+       makes use of a special syntax in Seam that allows EL expressions to 
+       serve as query parameters.  This query references the <code>identity</code> component,
+       a built-in Seam component that provides security functionality.
+    </p>
+
+       <form>
+          <input type="button" value="Close Window" onclick="window.close()"/>
+       </form>
+
+  </div>
+</div>
+
+</body>
+</html>

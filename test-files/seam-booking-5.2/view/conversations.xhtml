@@ -1,0 +1,36 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:c="http://java.sun.com/jstl/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:s="http://jboss.com/products/seam/taglib">
+	<div>
+	     
+	<div class="section">
+	    <h1><h:outputText rendered="#{not empty conversationList}" value="Workspaces"/></h1>
+	</div>
+	
+	<div class="section">
+	    <h:form id="ConversationListForm">
+	        <h:dataTable id="ConversationListDataTable" value="#{conversationList}" var="entry">
+	            <h:column id="column1">
+	                <h:commandLink id="EntryDescriptionLink" action="#{entry.select}" value="#{entry.description}"/>
+	                &#160;
+	                <h:outputText id="CurrentEntry" value="[current]" rendered="#{entry.current}"/>
+	            </h:column>
+	            <h:column id="column2">
+	                <h:outputText id="EntryStartDateTime" value="#{entry.startDatetime}">
+	                    <s:convertDateTime type="time" pattern="hh:mm"/>
+	                </h:outputText>
+	                -
+	                <h:outputText id="EntryLastDateTime" value="#{entry.lastDatetime}">
+	                    <s:convertDateTime type="time" pattern="hh:mm"/>
+	                </h:outputText>
+	            </h:column>
+	        </h:dataTable>
+	    </h:form>
+	</div>
+	
+	</div>
+</ui:composition>

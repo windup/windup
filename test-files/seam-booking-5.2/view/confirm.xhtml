@@ -1,0 +1,74 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	    		xmlns:ui="http://java.sun.com/jsf/facelets"
+	  			xmlns:h="http://java.sun.com/jsf/html"
+	  			xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+				template="template.xhtml">
+
+<!-- content -->
+<ui:define name="content">
+
+<div class="section">
+	<h1>Confirm Hotel Booking</h1>
+</div>
+
+<div class="section">
+
+	<ui:include src="hotelview.xhtml"/>
+		
+	<s:decorate id="DecorateTotalPayment" template="display.xhtml">
+		<ui:define name="label">Total Payment:</ui:define>
+		<h:outputText id="BookingTotal" value="#{booking.total}">
+			<f:convertNumber type="currency" currencySymbol="$"/>
+		</h:outputText>
+	</s:decorate>
+
+	<s:decorate id="DecorateCheckInDate" template="display.xhtml">
+		<ui:define name="label">Check In Date:</ui:define>
+		<h:outputText id="BookingCheckinDate" value="#{booking.checkinDate}"/>
+	</s:decorate>
+
+	<s:decorate id="DecorateCheckoutDate" template="display.xhtml">
+		<ui:define name="label">Check Out Date:</ui:define>
+		<h:outputText id="BookingCheckoutDate" value="#{booking.checkoutDate}"/>
+	</s:decorate>
+
+	<s:decorate id="DecorateCreditCard" template="display.xhtml">
+		<ui:define name="label">Credit Card #:</ui:define>
+		#{booking.creditCard}
+	</s:decorate>
+	
+	<div class="buttonBox">
+		<h:form id="confirm">
+			<h:commandButton id="confirm" value="Confirm" action="#{hotelBooking.confirm}"/>
+			&#160;
+    		<s:button id="revise" value="Revise" view="/book.xhtml"/>
+    		&#160;
+    		<h:commandButton id="cancel" value="Cancel" action="#{hotelBooking.cancel}"/>
+		</h:form>
+	</div>
+
+</div>
+
+</ui:define>
+
+<!-- sidebar -->
+<ui:define name="sidebar">
+<h1>Back button navigation</h1>
+<p>
+   When you click "Confirm", the new booking is written to the database, the 
+   conversation ends, and state associated with the conversation is automatically 
+   destroyed by Seam. After you confirm your booking, try hitting the back button
+   on your web browser and clicking "Confirm" again. Seam makes it easy implement
+   applications that behave elegantly in response to the back, forward and refresh
+   buttons.
+</p>
+<p>
+   <a href="#" onclick="window.open('exp/confirmExp.html','exp','width=752,height=500,scrollbars=yes');">
+      What happens when the conversation ends?
+   </a>
+</p>
+</ui:define>
+
+</ui:composition>

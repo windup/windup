@@ -1,0 +1,45 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	    		 xmlns:ui="http://java.sun.com/jsf/facelets"
+	  			 xmlns:h="http://java.sun.com/jsf/html"
+	  			 xmlns:f="http://java.sun.com/jsf/core"
+                 xmlns:s="http://jboss.com/products/seam/taglib">
+    
+    <s:decorate id="DecorateName" template="display.xhtml">             
+		<ui:define name="label">Name:</ui:define>
+		#{hotel.name}
+	</s:decorate>
+	
+    <s:decorate id="DecorateAddress" template="display.xhtml">             
+		<ui:define name="label">Address:</ui:define>
+		#{hotel.address}
+	</s:decorate>
+	
+    <s:decorate id="DecorateCity" template="display.xhtml">             
+		<ui:define name="label">City:</ui:define>
+		#{hotel.city}
+	</s:decorate>
+	
+    <s:decorate id="DecorateState" template="display.xhtml">             
+		<ui:define name="label">State:</ui:define>
+		#{hotel.state}
+	</s:decorate>
+	
+    <s:decorate id="DecorateZip" template="display.xhtml">             
+		<ui:define name="label">Zip:</ui:define>
+		#{hotel.zip}
+	</s:decorate>
+	
+    <s:decorate id="DecorateCountry" template="display.xhtml">             
+		<ui:define name="label">Country:</ui:define>
+		#{hotel.country}
+	</s:decorate>
+	
+    <s:decorate id="DecorateNightlyRate" template="display.xhtml">             
+		<ui:define name="label">Nightly rate:</ui:define>
+		<h:outputText id="HotelPrice" value="#{hotel.price}">
+			<f:convertNumber type="currency" currencySymbol="$"/>
+		</h:outputText>
+	</s:decorate>
+	  
+</ui:composition>

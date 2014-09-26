@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages xmlns="http://jboss.com/products/seam/pages"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+
+       no-conversation-view-id="/main.xhtml"
+                 login-view-id="/home.xhtml">
+
+    <page view-id="/register.xhtml">
+    
+        <action if="#{validation.failed}"
+           execute="#{register.invalid}"/>
+    
+        <navigation>
+            <rule if="#{register.registered}">
+                <redirect view-id="/home.xhtml"/>
+            </rule>
+        </navigation>
+        
+    </page>
+
+    <page view-id="/home.xhtml" action="#{identity.isLoggedIn}">
+
+        <navigation from-action="#{identity.isLoggedIn}">
+            <rule if-outcome="true">
+                <redirect view-id="/main.xhtml"/>
+            </rule>
+        </navigation>
+    
+        <navigation>
+            <rule if="#{identity.loggedIn}">
+                <redirect view-id="/main.xhtml"/>
+            </rule>
+        </navigation>
+        
+    </page>
+    
+    <page view-id="/password.xhtml"
+          login-required="true">
+    
+        <navigation>
+            <rule if="#{identity.loggedIn and changePassword.changed}">
+                <redirect view-id="/main.xhtml"/>
+            </rule>
+        </navigation>
+        
+    </page>
+
+    <page view-id="/main.xhtml" 
+          login-required="true">
+    
+        <navigation from-action="#{hotelBooking.selectHotel(hot)}">
+            <redirect view-id="/hotel.xhtml"/>
+        </navigation>
+        
+        <navigation from-action="#{bookingList.cancel}">
+            <redirect/>
+        </navigation>
+        
+    </page>
+    
+    <page view-id="/hotel.xhtml" 
+          conversation-required="true" 
+          login-required="true">
+          
+        <description>View hotel: #{hotel.name}</description>
+        
+        <navigation from-action="#{hotelBooking.bookHotel}">
+            <redirect view-id="/book.xhtml"/>
+        </navigation>
+        
+    </page>
+
+    <page view-id="/book.xhtml" 
+          conversation-required="true" 
+          login-required="true">
+          
+        <description>Book hotel: #{hotel.name}</description>
+        
+        <navigation from-action="#{hotelBooking.setBookingDetails}">
+            <rule if="#{hotelBooking.bookingValid}">
+                <redirect view-id="/confirm.xhtml"/>
+            </rule>
+        </navigation>
+        
+    </page>
+
+    <page view-id="/confirm.xhtml" 
+          conversation-required="true" 
+          login-required="true">
+          
+        <description>Confirm booking: #{booking.description}</description>
+        
+        <navigation from-action="#{hotelBooking.confirm}">
+            <redirect view-id="/main.xhtml"/>
+        </navigation>
+        
+    </page>
+    
+    <page view-id="*">    
+        <navigation from-action="#{identity.logout}">
+            <redirect view-id="/home.xhtml"/>
+        </navigation>
+
+        <navigation from-action="#{hotelBooking.cancel}">
+            <redirect view-id="/main.xhtml"/>
+        </navigation>
+        
+    </page>
+    
+    <exception class="org.jboss.seam.security.NotLoggedInException">
+        <redirect view-id="/home.xhtml">
+            <message severity="warn">You must be logged in to use this feature</message>
+        </redirect>
+    </exception>
+    
+    <exception class="javax.faces.application.ViewExpiredException">
+        <redirect view-id="/home.xhtml">
+            <message severity="warn">Session expired, please log in again</message>
+        </redirect>
+    </exception>
+
+</pages>

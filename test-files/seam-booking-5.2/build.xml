@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<project name="Booking" default="deploy" basedir=".">
+
+    <!-- Naming -->
+    <property name="Name"                   value="Seam on JBoss Booking Example"/>
+    <property name="example.name"           value="jboss-seam-booking"/>
+	
+    <!-- Libraries to include -->
+    <property name="seam.ui.lib"    value="yes"/>
+    <property name="seam.debug.lib" value="yes"/>
+    <property name="facelets.lib"   value="yes"/>
+    <property name="richfaces.lib"   value="yes"/>
+	
+	<!-- Datasource -->
+    <property name="example.ds"             value="jboss-seam-booking-ds.xml"/>
+    
+    <import file="../build.xml"/>
+</project>
