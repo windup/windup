@@ -98,4 +98,8 @@ class QueryPropertyCriterion implements QueryFramesCriterion
             return true;
         }
     }
+    
+    public String toString() {
+        return ".has(" +propertyName + ","+searchType+ "," +searchValue+ ")";
+    }
 }

@@ -423,4 +423,23 @@ public class Iteration extends DefaultOperationBuilder
         }
 
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Iteration.over(?)");
+        if(!getPayloadManager().getPayLoadName().equals(DEFAULT_SINGLE_VARIABLE_STRING)) {
+            builder.append(".as(" + getPayloadManager().getPayLoadName() + ")");
+        }
+        if(condition != null) {
+            builder.append(".when("+ condition +")");
+        }
+        if(operationPerform !=null) {
+            builder.append(".perform(" + operationPerform +")");
+        }
+        if(operationOtherwise !=null) {
+            builder.append(".otherwise(" + operationOtherwise +")");
+        }
+        return builder.toString();
+    }
 }

@@ -112,5 +112,21 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
             query.withProperty(JavaTypeReferenceModel.REFERENCE_TYPE, locations);
         return query.as(variable).evaluate(event, context);
     }
+    
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("JavaClass");
+        if(fileRegex != null) {
+            builder.append(".inFile(" + fileRegex + ")");
+        }
+        if(regex != null) {
+            builder.append(".references("+ regex +")");
+        }
+        if(!locations.isEmpty()) {
+            builder.append(".at(" + locations +")");
+        }
+        builder.append(".as("+variable+")");
+        return builder.toString();
+    }
 
 }

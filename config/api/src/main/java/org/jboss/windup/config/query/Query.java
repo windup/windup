@@ -233,4 +233,20 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         this.resultFilter = (Predicate<WindupVertexFrame>) predicate;
         return this;
     }
+    
+    
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Query");
+        for(QueryFramesCriterion criterion: criteria) {
+                builder.append(criterion);
+        }
+        for(QueryGremlinCriterion criterion: pipelineCriteria) {
+            builder.append(".gremlin("+criterion+")");
+        }
+        builder.append(".as("+ outputVar +")");
+        return builder.toString();
+    }
+    
+    
 }

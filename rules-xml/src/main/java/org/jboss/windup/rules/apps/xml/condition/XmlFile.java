@@ -266,9 +266,22 @@ public class XmlFile extends GraphCondition
         this.publicId = publicId;
     }
 
-    public String toString()
-    {
-        return "XmlFile.from().matchesXpath(" + xpath + ").inFile(" + fileName + ").withDTDPublicId(" + publicId + ");";
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("JavaClass");
+        if(fromVariable != null) {
+            builder.append(".from(" + fromVariable + ")");
+        }
+        if(xpath != null) {
+            builder.append(".matches("+ xpath +")");
+        }
+        if(fileName !=null) {
+            builder.append(".inFile(" + fileName +")");
+        }
+        if(publicId !=null) {
+            builder.append(".withDTDPublicId(" + publicId +")");
+        }
+        builder.append(".as("+variable+")");
+        return builder.toString();
     }
-
 }
