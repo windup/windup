@@ -102,7 +102,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
 
                     };
                     pipeline.as("result").out(FileReferenceModel.FILE_MODEL)
-                                .out(JavaSourceFileModel.PROPERTY_JAVA_CLASS_MODEL)
+                                .out(JavaSourceFileModel.JAVA_CLASS_MODEL)
                                 .has(JavaClassModel.PROPERTY_QUALIFIED_NAME, regexPredicate, fileRegex).back("result");
                 }
             };

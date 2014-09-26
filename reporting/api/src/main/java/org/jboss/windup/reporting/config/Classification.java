@@ -140,8 +140,17 @@ public class Classification extends AbstractIterationOperation<FileModel>
             }
         }
 
+        // check for duplicate adds first
+        for (FileModel existingFileModel : classification.getFileModels())
+        {
+            if (existingFileModel.asVertex().getId().equals(payload.asVertex().getId()))
+            {
+                log.info("Classification already added to " + payload.getPrettyPathWithinProject() + " [" + this
+                            + "] -- not adding again");
+                return;
+            }
+        }
         classification.addFileModel(payload);
-
         log.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
     }
 

@@ -37,13 +37,13 @@ public interface JavaClassFileModel extends FileModel
     /**
      * Contains the {@link JavaClassModel} represented by this .class file.
      */
-    @Adjacency(label = JavaSourceFileModel.PROPERTY_JAVA_CLASS_MODEL, direction = Direction.OUT)
+    @Adjacency(label = JavaSourceFileModel.JAVA_CLASS_MODEL, direction = Direction.OUT)
     public void setJavaClass(JavaClassModel model);
 
     /**
      * Contains the {@link JavaClassModel} represented by this .class file.
      */
-    @Adjacency(label = JavaSourceFileModel.PROPERTY_JAVA_CLASS_MODEL, direction = Direction.OUT)
+    @Adjacency(label = JavaSourceFileModel.JAVA_CLASS_MODEL, direction = Direction.OUT)
     public JavaClassModel getJavaClass();
 
     /**

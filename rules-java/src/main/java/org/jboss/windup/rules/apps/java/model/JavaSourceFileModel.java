@@ -8,21 +8,42 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("JavaSourceFileModel")
+/**
+ * Represents a source ".java" file on disk.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ */
+@TypeValue(JavaSourceFileModel.TYPE)
 public interface JavaSourceFileModel extends FileModel, SourceFileModel
 {
-    public static final String PROPERTY_PACKAGE_NAME = "packageName";
-    public static final String PROPERTY_JAVA_CLASS_MODEL = "javaClass";
+    public static final String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
+    public static final String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
 
-    @Property(PROPERTY_PACKAGE_NAME)
+    public static final String TYPE = "JavaSourceFileModel";
+    public static final String PACKAGE_NAME = "packageName";
+    public static final String JAVA_CLASS_MODEL = "javaClass";
+
+    /**
+     * Contains the Java package name
+     */
+    @Property(PACKAGE_NAME)
     public String getPackageName();
 
-    @Property(PROPERTY_PACKAGE_NAME)
+    /**
+     * Contains the Java package name
+     */
+    @Property(PACKAGE_NAME)
     public void setPackageName(String packageName);
 
-    @Adjacency(label = PROPERTY_JAVA_CLASS_MODEL, direction = Direction.OUT)
+    /**
+     * Lists the {@link JavaClassModel}s contained within this source file
+     */
+    @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
     public Iterable<JavaClassModel> getJavaClasses();
 
-    @Adjacency(label = PROPERTY_JAVA_CLASS_MODEL, direction = Direction.OUT)
+    /**
+     * Lists the {@link JavaClassModel}s contained within this source file
+     */
+    @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
     public void addJavaClass(JavaClassModel javaClassModel);
 }
