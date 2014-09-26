@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
+import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
 import org.jboss.windup.config.operation.iteration.IterationBuilderComplete;
 import org.jboss.windup.config.operation.iteration.IterationBuilderOtherwise;
@@ -215,6 +216,10 @@ public class Iteration extends DefaultOperationBuilder
             boolean conditionResult = true;
             if (condition != null)
             {
+                //automatically set the input variable to point to the current payload
+                if(condition instanceof GraphCondition) {
+                    ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
+                }
                 conditionResult = condition.evaluate(event, context);
                 /*
                  * Add special clear layer for perform, because condition used one and could have added new variables.

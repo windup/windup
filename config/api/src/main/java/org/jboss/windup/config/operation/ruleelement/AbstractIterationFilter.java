@@ -10,11 +10,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public abstract class AbstractIterationFilter<T extends WindupVertexFrame> extends GraphCondition
 {
     Class<T> clazz;
-    private String variableName;
 
     public AbstractIterationFilter(String variableName)
     {
-        this.variableName = variableName;
+        this.setInputVariablesName(variableName);
     }
 
     /**
@@ -26,14 +25,9 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
     {
     }
 
-    public String getVariableName()
-    {
-        return variableName;
-    }
-
     public boolean hasVariableNameSet()
     {
-        return getVariableName() != null;
+        return getInputVariablesName() != null;
     }
 
     @Override
@@ -41,7 +35,7 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
     {
         checkVariableName(event, context);
         Variables varStack = Variables.instance(event);
-        T payload = Iteration.getCurrentPayload(varStack, clazz, getVariableName());
+        T payload = Iteration.getCurrentPayload(varStack, clazz, getInputVariablesName());
         return evaluate(event, context, payload);
     }
 
@@ -50,15 +44,10 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
      */
     protected void checkVariableName(GraphRewrite event, EvaluationContext context)
     {
-        if (variableName == null)
+        if (getInputVariablesName() == null)
         {
-            setVariableName(Iteration.getPayloadVariableName(event, context));
+            setInputVariablesName(Iteration.getPayloadVariableName(event, context));
         }
-    }
-
-    public void setVariableName(String payloadVariableName)
-    {
-        variableName = payloadVariableName;
     }
 
     public abstract boolean evaluate(GraphRewrite event, EvaluationContext context, T payload);

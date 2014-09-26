@@ -16,6 +16,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
@@ -53,7 +54,17 @@ public class TestGremlinQueryOnlyRuleProvider extends WindupRuleProvider
                 @Override
                 public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
                 {
-                    pipeline.V(WindupVertexFrame.TYPE_PROP, JavaMethodModel.TYPE);
+                    pipeline.has(WindupVertexFrame.TYPE_PROP,new Predicate() {
+
+                        @Override
+                        public boolean evaluate(Object first, Object second)
+                        {
+                            List<String> firstString =(List<String>)first;
+                            boolean match =firstString.contains(second);
+                            return match;
+                        }
+                        
+                    }, JavaMethodModel.TYPE);
                 }
             }).as("javaMethods")
         )

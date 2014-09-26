@@ -36,11 +36,6 @@ public interface QueryBuilderWith extends ConditionBuilder, QueryBuilderAs
                 Object searchValue);
 
     /**
-     * Narrow the query with the given {@link QueryFramesCriterion}.
-     */
-    QueryBuilderWith with(QueryFramesCriterion criterion);
-
-    /**
      * Narrow the query with the given {@link Predicate}
      */
     <FRAMETYPE extends WindupVertexFrame> QueryBuilderAs filteredBy(Predicate<FRAMETYPE> predicate);
