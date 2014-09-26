@@ -10,6 +10,7 @@ import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryBuilderFind;
+import org.jboss.windup.config.query.QueryBuilderWith;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.reporting.model.FileReferenceModel;
@@ -82,7 +83,12 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
-        QueryBuilderFind query = Query.find(JavaTypeReferenceModel.class);
+        QueryBuilderWith query;
+        if(getInputVariablesName() != null && !getInputVariablesName().equals("")) {
+            query = Query.from(getInputVariablesName());
+        } else {
+            query = Query.find(JavaTypeReferenceModel.class);
+        }
         query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, regex);
         if (fileRegex != null)
         {

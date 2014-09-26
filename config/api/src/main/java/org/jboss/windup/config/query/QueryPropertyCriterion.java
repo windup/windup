@@ -1,10 +1,14 @@
 package org.jboss.windup.config.query;
 
+import org.jboss.windup.config.GraphRewrite;
+
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-class QueryPropertyCriterion implements QueryFramesCriterion
+class QueryPropertyCriterion implements QueryGremlinCriterion
 {
 
     private String propertyName;
@@ -21,21 +25,21 @@ class QueryPropertyCriterion implements QueryFramesCriterion
     }
 
     @Override
-    public void query(FramedGraphQuery q)
+    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
     {
         switch (searchType)
         {
         case EQUALS:
-            q.has(this.propertyName, this.searchValue);
+            pipeline.has(this.propertyName, this.searchValue);
             break;
         case CONTAINS_TOKEN:
-            q.has(this.propertyName, Text.CONTAINS, searchValue);
+            pipeline.has(this.propertyName, Text.CONTAINS, searchValue);
             break;
         case CONTAINS_ANY_TOKEN:
-            q.has(this.propertyName, new MultipleValueTitanPredicate(), searchValue);
+            pipeline.has(this.propertyName, new MultipleValueTitanPredicate(), searchValue);
             break;
         case REGEX:
-            q.has(this.propertyName, Text.REGEX, searchValue);
+            pipeline.has(this.propertyName, Text.REGEX, searchValue);
             break;
         default:
             throw new IllegalArgumentException("Unrecognized query type: " + searchType);

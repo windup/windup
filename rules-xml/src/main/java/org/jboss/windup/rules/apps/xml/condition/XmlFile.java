@@ -42,7 +42,6 @@ public class XmlFile extends GraphCondition
     private String xpath;
     private Map<String, String> namespaces = new HashMap<>();
     private String fileName;
-    private String fromVariable;
     private String publicId;
 
     private String xpathResultMatch;
@@ -61,16 +60,6 @@ public class XmlFile extends GraphCondition
     {
     }
     
-    public String getFromVariable()
-    {
-        return fromVariable;
-    }
-
-    public void setFromVariable(String fromVariable)
-    {
-        this.fromVariable = fromVariable;
-    }
-
     /**
      * Create a new {@link XmlFile} {@link Condition}.
      */
@@ -125,13 +114,13 @@ public class XmlFile extends GraphCondition
         GraphService<XmlFileModel> xmlResourceService = new GraphService<XmlFileModel>(graphContext,
                     XmlFileModel.class);
         Iterable<? extends WindupVertexFrame> allXmls;
-        if (fromVariable == null || fromVariable.equals(""))
+        if (getInputVariablesName() == null || getInputVariablesName().equals(""))
         {
             allXmls = xmlResourceService.findAll();
         }
         else
         {
-            allXmls = Variables.instance(event).findVariable(fromVariable);
+            allXmls = Variables.instance(event).findVariable(getInputVariablesName());
         }
 
         for (WindupVertexFrame iterated : allXmls)

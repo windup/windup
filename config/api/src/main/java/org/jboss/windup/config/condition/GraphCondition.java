@@ -28,7 +28,17 @@ import org.ocpsoft.rewrite.event.Rewrite;
  */
 public abstract class GraphCondition extends DefaultConditionBuilder
 {
+    
+   private String inputVariablesName;
    public abstract boolean evaluate(GraphRewrite event, EvaluationContext context);
+   
+   public void setInputVariablesName(String variablesName) {
+       this.inputVariablesName=variablesName;
+   }
+   
+   public String getInputVariablesName() {
+       return inputVariablesName;
+   }
 
    @Override
    public boolean evaluate(Rewrite event, EvaluationContext context)
