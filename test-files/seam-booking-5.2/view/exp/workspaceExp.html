@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>In-depth Explanation</title>
+	<link href="../css/trailblazer_main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div id="main">
+  <div class="trail">
+    <div class="numbox">6</div>
+    <h2>The Workspace List</h2>
+    <img src="../img/header_line.gif" />
+    
+    <p>
+       <center>
+       <form>
+          <INPUT type="button" value="Close Window" onclick="window.close()">
+       </form>
+       </center>
+    </p>
+
+    <p>
+       The workspace list allows the user to switch between multiple
+       conversations from the same browser tab. There is no Java code
+       to write, just the following JSF code to include:
+    </p>
+
+<code class="block">
+&lt;h:dataTable value="#{conversationList}" var="entry"&gt;
+  &lt;h:column&gt;
+    &lt;h:commandLink action="#{entry.select}" value="#{entry.description}"/&gt;
+    &nbsp;
+    &lt;h:outputText value="[current]" rendered="#{entry.current}"/&gt;
+  &lt;/h:column&gt;
+  &lt;h:column&gt;
+    &lt;h:outputText value="#{entry.startDatetime}"&gt;
+      &lt;f:convertDateTime type="time" pattern="hh:mm"/&gt;
+    &lt;/h:outputText&gt;
+    -
+    &lt;h:outputText value="#{entry.lastDatetime}"&gt;
+      &lt;f:convertDateTime type="time" pattern="hh:mm"/&gt;
+    &lt;/h:outputText&gt;
+  &lt;/h:column&gt;
+&lt;/h:dataTable&gt;
+</code>
+
+    <p>
+       We do need to specify what text will be displayed by <code>#{entry.description}</code>. 
+       We do this by setting the <code>description</code> value for each page in <code>pages.xml</code>.
+    </p>
+
+<code class="block">
+&lt;pages&gt;
+   &lt;!-- ... --&gt;
+   &lt;page view-id="/hotel.xhtml" 
+         conversation-required="true" 
+	 login-required="true"&gt;
+          
+       &lt;description&gt;View hotel: #{hotel.name}&lt;/description&gt;
+       &lt;!-- ... --&gt;
+    &lt;/page&gt;
+
+    &lt;page view-id="/book.xhtml" 
+             conversation-required="true" 
+	     login-required="true"&gt;
+      
+        &lt;description&gt;Book hotel: #{hotel.name}&lt;/description&gt;
+        &lt;!-- ... --&gt;
+    &lt;/page&gt;
+&lt;pages&gt;
+</code>
+
+    <p>
+       Note that you don't need the <code>pages.xml</code> file if you don't want the
+       workspace list in your application.
+    </p>
+
+    <p>
+       <form>
+      <input type="button" value="Close Window" onclick="window.close()"/>
+       </form>
+    </p>
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>In-depth Explanation</title>
+	<link href="../css/trailblazer_main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div id="main">
+  <div class="trail">
+    <div class="numbox">5</div>
+    <h2>Conversations</h2>
+    <img src="../img/header_line.gif" />
+    
+       <form>
+          <input type="button" value="Close Window" onclick="window.close()"/>
+       </form>
+
+    <p>
+       The hotel booking "wizard" is implemented by a conversation-scoped
+       stateful session bean. All Seam components are in the 
+       conversation scope by default. 
+       The <code>HotelBookingAction</code> maintains
+       state associated with the booking process in the Seam conversation
+       scope. This ensures that if the user is working in multiple brower
+       tabs or multiple brower windows, the various conversations are
+       completely isolated from each other.
+    </p>
+    <p>
+       To see this working in practice, right click on the "View Hotel" button 
+       in the search screen and select "open in new tab" or "open in new window",
+       and try working on multiple hotel bookings simultaneously. 
+       In the <a href="workspaceExp.html">next step</a>, we will discuss
+       Seam's built-in components to manage multiple concurrent conversations.
+    </p>
+    
+<code class="block">
+@Stateful
+@Name("hotelBooking")
+@LoggedIn
+public class HotelBookingAction implements HotelBooking
+{
+   
+   @PersistenceContext(type=EXTENDED)
+   private EntityManager em;
+   
+   @In
+   private User user;
+   
+   @In(required=false) @Out
+   private Hotel hotel;
+   
+   @In(required=false) 
+   @Out(required=false)
+   private Booking booking;
+   
+   @In(create=true)
+   private FacesMessages facesMessages;
+      
+   @In(create=true)
+   private Events events;
+      
+   @In 
+   private HotelSearching hotelSearch;
+   
+   @Logger 
+   private Log log;
+   
+   private boolean bookingValid;
+   
+   @Begin
+   public void selectHotel(Hotel selectedHotel)
+   {
+      hotel = em.merge(selectedHotel);
+   }
+   
+   public void bookHotel()
+   {      
+      booking = new Booking(hotel, user);
+      Calendar calendar = Calendar.getInstance();
+      booking.setCheckinDate( calendar.getTime() );
+      calendar.add(Calendar.DAY_OF_MONTH, 1);
+      booking.setCheckoutDate( calendar.getTime() );
+   }
+   
+
+   public void setBookingDetails()
+   {
+      Calendar calendar = Calendar.getInstance();
+      calendar.add(Calendar.DAY_OF_MONTH, -1);
+      if ( booking.getCheckinDate().before( calendar.getTime() ) )
+      {
+         facesMessages.addToControl("checkinDate", "Check in date must be a future date");
+         bookingValid=false;
+      }
+      else if ( !booking.getCheckinDate().before( booking.getCheckoutDate() ) )
+      {
+         facesMessages.addToControl("checkoutDate", "Check out date must be later than check in date");
+         bookingValid=false;
+      }
+      else
+      {
+         bookingValid=true;
+      }
+   }
+   
+   public boolean isBookingValid()
+   {
+      return bookingValid;
+   }
+   
+   @End
+   public void confirm()
+   {
+      em.persist(booking);
+      facesMessages.add("Thank you, #{user.name}, your confimation number for #{hotel.name} is #{booking.id}");
+      log.info("New booking: #{booking.id} for #{user.username}");
+      events.raiseTransactionSuccessEvent("bookingConfirmed");
+   }
+   
+   @End
+   public void cancel() {}
+   
+   @Remove
+   public void destroy() {}
+}</code>
+
+    <p>
+       The conversation begins when the <code>@Begin</code> annotated
+       <code>selectHotel()</code> is called, and ends when 
+       the <code>@End</code> annotated 
+       <code>confirm()</code> or <code>cancel()</code> is called. Between the
+       <code>@Begin</code> and <code>@End</code> methods, the user can do
+       any number of things with the application (i.e., invoke any 
+       event handler method or use the BACK button etc.) and the 
+       <code>hotelBooking</code> maintains its state throughout the process.
+       When the <code>@End</code> method is called, Seam destroys this
+       component and avoids any memory leak.
+    </p>
+    
+    <p>
+      However, none of the <code>HotelBookingAction</code> bean methods 
+      may be called outside of a long-running conversation. 
+      So if we try to use the 
+      back button after the end of the conversation, Seam will redirect to the main page, with an 
+      error message.
+   </p>
+
+
+       <form>
+          <input type="button" value="Close Window" onclick="window.close()"/>
+       </form>
+
+  </div>
+</div>
+
+</body>
+</html>

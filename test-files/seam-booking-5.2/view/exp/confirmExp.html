@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>In-depth Explanation</title>
+	<link href="../css/trailblazer_main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div id="main">
+  <div class="trail">
+    <div class="numbox">7</div>
+    <h2>Ending Conversations</h2>
+    <img src="../img/header_line.gif" />
+    
+       <form>
+          <input type="button" value="Close Window" onclick="window.close()"/>
+       </form>
+
+    <p>
+       The "Confirm" button is bound to the action method <code>confirm()</code>
+       of <code>HotelBookingAction</code>.
+    </p>
+
+<code class="block">
+&lt;h:commandButton value="Confirm" 
+                 action="#{hotelBooking.confirm}" 
+                 id="confirm"/&gt;
+</code>
+
+    <p>
+       The <code>confirm()</code> method is tagged with the <code>@End</code> annotation, 
+       which ends the long-running conversation and results in all state associated with
+       the conversation being destroyed at the end of the request. 
+       Since the <code>pages.xml</code> file specifies a redirect for this action, the state
+        will not be destroyed
+       until <em>after the redirect completes</em>. Note that even the success message
+       that we create using the built-in <code>facesMessages</code> component is transparently
+       propagated across the redirect!
+    </p>
+
+<code class="block">
+   @End
+   public void confirm()
+   {
+      if (booking==null || hotel==null) return "main";
+      em.persist(booking);
+      facesMessages.add("Thank you, #{user.name}, your confimation number " + 
+                        "for #{hotel.name} is #{booking.id}");
+      log.info("New booking: #{booking.id} for #{user.username}");
+      events.raiseEvent("bookingConfirmed");
+   }
+   
+   @End
+   public void cancel() {}
+   
+   @Destroy @Remove
+   public void destroy() {}
+}
+</code>
+
+   <p>
+      When the conversation state is finally destroyed, Seam calls the <code>@Destroy</code> method,
+      which results in removal of the SFSB.
+   </p>
+   
+   <p>
+      Notice that the <code>HotelBookingAction.confirm()</code> method
+      raises a <code>bookingConfirmed</code> event before it finishes. The
+      event mechanism allows Seam components to communicate with each other
+      without direct coupling. In this case, the <code>BookingListAction</code>
+      component captures the <code>bookingConfirmed</code> event and refreshes
+      the existing booking list for the current user.
+   </p>
+   
+<code class="block">
+public class BookingListAction implements BookingList, Serializable
+{
+
+   ... ...
+   
+   @Factory
+   @Observer("bookingConfirmed")
+   public void getBookings()
+   {
+      bookings = em.createQuery("from Booking b where b.user.username = " + 
+                                ":username order by b.checkinDate")
+            .setParameter("username", user.getUsername())
+            .getResultList();
+   }
+}
+</code>
+   
+       <form>
+          <input type="button" value="Close Window" onclick="window.close()"/>
+       </form>
+
+  </div>
+</div>
+
+</body>
+</html>
