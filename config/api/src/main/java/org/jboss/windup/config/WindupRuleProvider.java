@@ -44,8 +44,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     /**
      * Return the {@link RulePhase} in which the rules from this provider should be executed.
      * <p>
-     * The default if no phase is specified, and dependencies are NOT specified, is {@link RulePhase#MIGRATION_RULES}.<br/>
-     * The default if no phase is specified, and dependencies ARE specified, is {@link RulePhase#IMPLICIT}
+     * The default phase is {@link RulePhase#MIGRATION_RULES}.
      */
     public RulePhase getPhase()
     {

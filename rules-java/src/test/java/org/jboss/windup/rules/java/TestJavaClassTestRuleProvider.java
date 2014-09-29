@@ -2,42 +2,34 @@ package org.jboss.windup.rules.java;
 
 import java.util.List;
 import java.util.logging.Logger;
+
 import javax.inject.Singleton;
+
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.config.JavaClass;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-
 /**
  *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 @Singleton
-public class TestJavaClassTestRuleProvider extends WindupRuleProvider {
+public class TestJavaClassTestRuleProvider extends WindupRuleProvider
+{
     private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
-    
     private int firstRuleMatchCount = 0;
     private int secondRuleMatchCount = 0;
-
-
-    @Override
-    public RulePhase getPhase()
-    {
-        return RulePhase.MIGRATION_RULES;
-    }
-
 
     // @formatter:off
     @Override
@@ -73,38 +65,33 @@ public class TestJavaClassTestRuleProvider extends WindupRuleProvider {
     }
     // @formatter:on
 
-    
-    //<editor-fold defaultstate="collapsed" desc="get/set">
+    // <editor-fold defaultstate="collapsed" desc="get/set">
     public int getFirstRuleMatchCount()
     {
         return firstRuleMatchCount;
     }
-
 
     public void setFirstRuleMatchCount(int firstRuleMatchCount)
     {
         this.firstRuleMatchCount = firstRuleMatchCount;
     }
 
-
     public int getSecondRuleMatchCount()
     {
         return secondRuleMatchCount;
     }
-
 
     public void setSecondRuleMatchCount(int secondRuleMatchCount)
     {
         this.secondRuleMatchCount = secondRuleMatchCount;
     }
 
-
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
         return asClassList(AnalyzeJavaFilesRuleProvider.class);
     }
-    
-    //</editor-fold>
+
+    // </editor-fold>
 
 }
