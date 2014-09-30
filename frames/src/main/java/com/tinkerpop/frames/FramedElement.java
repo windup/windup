@@ -10,6 +10,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -62,19 +63,27 @@ public class FramedElement implements InvocationHandler {
         this(framedGraph, element, Direction.OUT);
     }
 
-    public Object invoke(final Object proxy, final Method method, final Object[] arguments) {
-
-        if (method.equals(hashCodeMethod)) {
-            return this.element.hashCode();
-        } else if (method.equals(equalsMethod)) {
-            return this.proxyEquals(arguments[0]);
-        } else if (method.equals(toStringMethod)) {
-            return this.element.toString();
-        } else if (method.equals(asVertexMethod) || method.equals(asEdgeMethod)) {
-            return this.element;
+    public Object invoke(final Object proxy, final Method originalMethod, final Object[] arguments) {
+        Method method = null;
+        
+        // try to find the method on one of the proxy's interfaces
+        // (the passed in Method is often from a superclass or from the {@link Proxy} object itself,
+        //  so we need to make sure we find the method that the user actually intended)
+        for (Class<?> c : proxy.getClass().getInterfaces()) {
+            for (Method interfaceMethod : c.getMethods()) {
+                if (compareMethods(originalMethod, interfaceMethod)) {
+                    if (interfaceMethod.getAnnotations().length > 0) {
+                	method = interfaceMethod;
+                    }
+                    break;
+                }
+            }
         }
-
-        final Annotation[] annotations = method.getAnnotations();
+        if (method == null) {
+            method = originalMethod;
+        }
+        
+        Annotation[] annotations = method.getAnnotations();
         Map<Class<? extends Annotation>, AnnotationHandler<?>> annotationHandlers = this.framedGraph.getConfig().getAnnotationHandlers();
         Map<Class<? extends Annotation>, MethodHandler<?>> methodHandlers = this.framedGraph.getConfig().getMethodHandlers();
         for (final Annotation annotation : annotations) {
@@ -89,13 +98,48 @@ public class FramedElement implements InvocationHandler {
                 return annotationHandler.processElement(annotation, method, arguments, this.framedGraph, this.element, this.direction);
             }
         }
-
-        if(method.getAnnotations().length == 0) {
-        	throw new UnhandledMethodException("The method " + method.getDeclaringClass().getName() + "." + method.getName() + " has no annotations, therefore frames cannot handle the method.");
+        
+        // Now that we have checked for annotations, check if it is one of the default methods that we 
+        // have builtin support for
+        if (originalMethod.equals(hashCodeMethod)) {
+            return this.element.hashCode();
+        } else if (originalMethod.equals(equalsMethod)) {
+            return this.proxyEquals(arguments[0]);
+        } else if (originalMethod.equals(toStringMethod)) {
+            return this.element.toString();
+        } else if (originalMethod.equals(asVertexMethod) || originalMethod.equals(asEdgeMethod)) {
+            return this.element;
         }
+        
+        if(method.getAnnotations().length == 0) {
+            throw new UnhandledMethodException("The method " + method.getDeclaringClass().getName() + "." + method.getName() + " has no annotations, therefore frames cannot handle the method.");
+        }
+        
         throw new UnhandledMethodException("The method " + method.getDeclaringClass().getName() + "." + method.getName() + " was not annotated with any annotations that the framed graph is configured for. Please check your frame interface and/or graph configuration.");
     }
 
+    /**
+     * Returns true if the two methods have the same arguments, return types, and method names.
+     */
+    private boolean compareMethods(Method m1, Method m2) {
+	if (!m1.getName().equals(m2.getName())) {
+	    return false;
+	}
+	if (!m1.getReturnType().equals(m2.getReturnType())) {
+	    return false;
+	}
+        Class<?>[] params1 = m1.getParameterTypes();
+        Class<?>[] params2 = m2.getParameterTypes();
+        if (params1.length == params2.length) {
+            for (int i = 0; i < params1.length; i++) {
+                if (params1[i] != params2[i])
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private Boolean proxyEquals(final Object other) {
         if (other instanceof VertexFrame) {
             return this.element.equals(((VertexFrame) other).asVertex());
