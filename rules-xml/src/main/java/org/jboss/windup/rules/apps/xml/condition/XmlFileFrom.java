@@ -13,7 +13,7 @@ public class XmlFileFrom
     XmlFileFrom(String variable)
     {
         this.xmlFile = new XmlFile();
-        xmlFile.setFromVariable(variable);
+        xmlFile.setInputVariablesName(variable);
     }
     
     /**
