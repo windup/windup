@@ -17,5 +17,4 @@ public class DecompilationException extends Exception
     {
         super(message, cause);
     }
-
 }

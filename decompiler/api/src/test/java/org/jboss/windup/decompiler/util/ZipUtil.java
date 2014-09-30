@@ -12,13 +12,22 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 public class ZipUtil
 {
     /**
-     * Unzip the given file into the specified directory.
+     * Unzip the given archive into the specified directory.
      */
     public static void unzip(File inputFile, File outputDir) throws IOException
+    {
+        unzipWithFilter(inputFile, outputDir, null);
+    }
+
+    /**
+     * Unzip the given archive into the specified directory, using given filter. Directories are created only if needed.
+     */
+    public static void unzipWithFilter(File inputFile, File outputDir, Filter<ZipEntry> filter) throws IOException
     {
         try (ZipFile zipFile = new ZipFile(inputFile))
         {
@@ -28,22 +37,44 @@ public class ZipUtil
                 ZipEntry entry = entryEnum.nextElement();
                 String entryName = entry.getName();
                 File destFile = new File(outputDir, entryName);
-                if (!entry.isDirectory())
+                if (entry.isDirectory())
+                    continue;
+
+                if (filter != null)
                 {
-                    File parentDir = destFile.getParentFile();
-                    if (!parentDir.isDirectory() && !parentDir.mkdirs())
+                    final Filter.Result res = filter.decide(entry);
+                    switch (res)
                     {
-                        throw new RuntimeException("Unable to create directory: " + parentDir.getAbsolutePath());
+                    case STOP:
+                        return;
+                    case REJECT:
+                        continue;
                     }
-                    try (InputStream zipInputStream = zipFile.getInputStream(entry))
+                }
+
+                File parentDir = destFile.getParentFile();
+                if (!parentDir.isDirectory() && !parentDir.mkdirs())
+                    throw new RuntimeException("Unable to create directory: " + parentDir.getAbsolutePath());
+
+                try (InputStream zipInputStream = zipFile.getInputStream(entry))
+                {
+                    try (FileOutputStream outputStream = new FileOutputStream(destFile))
                     {
-                        try (FileOutputStream outputStream = new FileOutputStream(destFile))
-                        {
-                            IOUtils.copy(zipInputStream, outputStream);
-                        }
+                        IOUtils.copy(zipInputStream, outputStream);
+                    }
+                }
+
+                if (filter != null)
+                {
+                    final Filter.Result res = filter.decide(entry);
+                    switch (res)
+                    {
+                    case ACCEPT_STOP:
+                        return;
                     }
                 }
             }
         }
     }
+
 }

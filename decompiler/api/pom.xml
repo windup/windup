@@ -11,14 +11,16 @@
     </parent>
 
     <!-- TODO Donate this addon to Forge. -->
-
     <artifactId>decompiler-api</artifactId>
-
     <name>Windup Engine - Decompiler API</name>
 
     <dependencies>
-
         <!-- Local Dependencies -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>
@@ -28,22 +30,25 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
     <build>
-        <!-- Package the tests to an artifact so they can be reused. -->
         <plugins>
+            <!-- Supress test jar copying in parent. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <inherited>false</inherited>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
+                        <id>decompiler.copy-test-jar</id>
+                        <phase>none</phase>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Forge stuff -->
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
@@ -63,7 +68,16 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.5</version>
                 <executions>
+                    <!-- Package the tests to an artifact so they can be 
+                        reused. -->
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                    <!-- Forge stuff -->
                     <execution>
                         <id>create-forge-addon</id>
                         <phase>package</phase>
@@ -78,5 +92,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

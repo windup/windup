@@ -19,8 +19,6 @@
     <modules>
         <module>api</module>
         <module>impl-procyon</module>
-        <!-- (jsightler) - 2014/05/14 - Commenting out as this is hanging the build for me at the moment <module>impl-jad</module> -->
-        <!-- Currently unusable - no API for CFR, but let's keep it for now in case it improves. <module>impl-cfr</module> -->
     </modules>
 
     <dependencyManagement>
@@ -39,5 +37,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>
