@@ -8,8 +8,11 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.jboss.forge.furnace.util.Strings;
+import org.jboss.forge.roaster.ParserException;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.Extendable;
+import org.jboss.forge.roaster.model.InterfaceCapable;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -21,6 +24,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -124,11 +128,24 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             }
         }
 
-        private void addParsedClassToFile(FileInputStream fis, GraphContext context, JavaSourceFileModel classFileModel)
+        private void addParsedClassToFile(FileInputStream fis, GraphContext context, JavaSourceFileModel sourceFileModel)
         {
-            JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, fis);
-            String packageName = javaClass.getPackage();
-            String qualifiedName = javaClass.getQualifiedName();
+            JavaSource<?> javaSource;
+            try
+            {
+                javaSource = Roaster.parse(JavaSource.class, fis);
+            }
+            catch (ParserException e)
+            {
+                ClassificationService classificationService = new ClassificationService(context);
+                classificationService.attachClassification(sourceFileModel,
+                            JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
+                            JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                return;
+            }
+
+            String packageName = javaSource.getPackage();
+            String qualifiedName = javaSource.getQualifiedName();
 
             String simpleName = qualifiedName;
             if (packageName != null && !packageName.equals("") && simpleName != null)
@@ -142,23 +159,31 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             javaClassModel.setSimpleName(simpleName);
             javaClassModel.setPackageName(packageName);
             javaClassModel.setQualifiedName(qualifiedName);
-            javaClassModel.setClassFile(classFileModel);
+            javaClassModel.setClassFile(sourceFileModel);
 
-            List<String> interfaceNames = javaClass.getInterfaces();
-            if (interfaceNames != null)
+            if (javaSource instanceof InterfaceCapable)
             {
-                for (String iface : interfaceNames)
+                InterfaceCapable interfaceCapable = (InterfaceCapable) javaSource;
+                List<String> interfaceNames = interfaceCapable.getInterfaces();
+                if (interfaceNames != null)
                 {
-                    JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
-                    javaClassModel.addImplements(interfaceModel);
+                    for (String iface : interfaceNames)
+                    {
+                        JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
+                        javaClassModel.addImplements(interfaceModel);
+                    }
                 }
             }
 
-            String superclassName = javaClass.getSuperType();
-            if (Strings.isNullOrEmpty(superclassName))
-                javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
+            if (javaSource instanceof Extendable)
+            {
+                Extendable<?> extendable = (Extendable<?>) javaSource;
+                String superclassName = extendable.getSuperType();
+                if (Strings.isNullOrEmpty(superclassName))
+                    javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
+            }
 
-            classFileModel.addJavaClass(javaClassModel);
+            sourceFileModel.addJavaClass(javaClassModel);
         }
 
     }

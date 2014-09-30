@@ -36,7 +36,7 @@ public class SeamToCDI extends WindupRuleProvider
                     .begin()
                     
                     .addRule()
-                    .when(JavaClass.references("org.jboss.seam"))
+                    .when(JavaClass.references("org.jboss.seam.*"))
                     .perform(Classification.as("SEAM Component").with(
                                                            Link.to("Seam 2 to Seam 3 Migration Notes","http://www.seamframework.org/Seam3/Seam2ToSeam3MigrationNotes"))
                                                            .with(Link
