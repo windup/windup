@@ -27,6 +27,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.WindupConfiguration;
 import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.GraphLifecycleListener;
@@ -149,6 +150,7 @@ public class HintsClassificationsTest
                     // TODO: Consolidate the config - e.g. the outputPath is now set at 2 places.
                     WindupConfiguration configuration = new WindupConfiguration()
                                 .setGraphContext(context)
+                                .setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(TestHintsClassificationsTestRuleProvider.class))
                                 .setGraphListener(gll);
                     processor.execute(configuration);
                 }
