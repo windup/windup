@@ -11,14 +11,14 @@ import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-class QueryTypeCriterion implements QueryFramesCriterion,QueryGremlinCriterion
+class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
 {
     private String typeValue;
     private Class<? extends WindupVertexFrame> searchedClass;
 
     public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {
-        this.searchedClass=clazz;
+        this.searchedClass = clazz;
         this.typeValue = getTypeValue(clazz);
     }
 
@@ -50,23 +50,26 @@ class QueryTypeCriterion implements QueryFramesCriterion,QueryGremlinCriterion
         pipeline.has(WindupVertexFrame.TYPE_PROP, getTypeValue(clazz));
         return pipeline;
     }
-    
-    public String toString() {
-        return ".find("+searchedClass.getSimpleName() + ")";
+
+    public String toString()
+    {
+        return ".find(" + searchedClass.getSimpleName() + ")";
     }
 
     @Override
     public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
     {
-        pipeline.has(WindupVertexFrame.TYPE_PROP, new Predicate(){
+        pipeline.has(WindupVertexFrame.TYPE_PROP, new Predicate()
+        {
 
             @Override
             public boolean evaluate(Object first, Object second)
             {
-                List<String>firstList =(List<String>)first;
+                @SuppressWarnings("unchecked")
+                List<String> firstList = (List<String>) first;
                 return firstList.contains(second);
             }
-            
-        },typeValue);
+
+        }, typeValue);
     }
 }

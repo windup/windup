@@ -216,8 +216,9 @@ public class Iteration extends DefaultOperationBuilder
             boolean conditionResult = true;
             if (condition != null)
             {
-                //automatically set the input variable to point to the current payload
-                if(condition instanceof GraphCondition) {
+                // automatically set the input variable to point to the current payload
+                if (condition instanceof GraphCondition)
+                {
                     ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
                 }
                 conditionResult = condition.evaluate(event, context);
@@ -428,22 +429,27 @@ public class Iteration extends DefaultOperationBuilder
         }
 
     }
-    
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder builder = new StringBuilder();
         builder.append("Iteration.over(?)");
-        if(!getPayloadManager().getPayLoadName().equals(DEFAULT_SINGLE_VARIABLE_STRING)) {
+        if (!getPayloadManager().getPayLoadName().equals(DEFAULT_SINGLE_VARIABLE_STRING))
+        {
             builder.append(".as(" + getPayloadManager().getPayLoadName() + ")");
         }
-        if(condition != null) {
-            builder.append(".when("+ condition +")");
+        if (condition != null)
+        {
+            builder.append(".when(" + condition + ")");
         }
-        if(operationPerform !=null) {
-            builder.append(".perform(" + operationPerform +")");
+        if (operationPerform != null)
+        {
+            builder.append(".perform(" + operationPerform + ")");
         }
-        if(operationOtherwise !=null) {
-            builder.append(".otherwise(" + operationOtherwise +")");
+        if (operationOtherwise != null)
+        {
+            builder.append(".otherwise(" + operationOtherwise + ")");
         }
         return builder.toString();
     }

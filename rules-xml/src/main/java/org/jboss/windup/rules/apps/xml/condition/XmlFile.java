@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ocpsoft.rewrite.config.Rule;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
@@ -29,6 +28,7 @@ import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -59,7 +59,7 @@ public class XmlFile extends GraphCondition
     XmlFile()
     {
     }
-    
+
     /**
      * Create a new {@link XmlFile} {@link Condition}.
      */
@@ -255,22 +255,27 @@ public class XmlFile extends GraphCondition
         this.publicId = publicId;
     }
 
-    public String toString() {
+    public String toString()
+    {
         StringBuilder builder = new StringBuilder();
         builder.append("JavaClass");
-        if(fromVariable != null) {
-            builder.append(".from(" + fromVariable + ")");
+        if (getInputVariablesName() != null)
+        {
+            builder.append(".inputVariable(" + getInputVariablesName() + ")");
         }
-        if(xpath != null) {
-            builder.append(".matches("+ xpath +")");
+        if (xpath != null)
+        {
+            builder.append(".matches(" + xpath + ")");
         }
-        if(fileName !=null) {
-            builder.append(".inFile(" + fileName +")");
+        if (fileName != null)
+        {
+            builder.append(".inFile(" + fileName + ")");
         }
-        if(publicId !=null) {
-            builder.append(".withDTDPublicId(" + publicId +")");
+        if (publicId != null)
+        {
+            builder.append(".withDTDPublicId(" + publicId + ")");
         }
-        builder.append(".as("+variable+")");
+        builder.append(".as(" + variable + ")");
         return builder.toString();
     }
 }

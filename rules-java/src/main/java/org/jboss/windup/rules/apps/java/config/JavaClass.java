@@ -9,7 +9,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.query.QueryBuilderFind;
 import org.jboss.windup.config.query.QueryBuilderWith;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -84,9 +83,12 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
         QueryBuilderWith query;
-        if(getInputVariablesName() != null && !getInputVariablesName().equals("")) {
+        if (getInputVariablesName() != null && !getInputVariablesName().equals(""))
+        {
             query = Query.from(getInputVariablesName());
-        } else {
+        }
+        else
+        {
             query = Query.find(JavaTypeReferenceModel.class);
         }
         query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, regex);
@@ -118,20 +120,24 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
             query.withProperty(JavaTypeReferenceModel.REFERENCE_TYPE, locations);
         return query.as(variable).evaluate(event, context);
     }
-    
-    public String toString() {
+
+    public String toString()
+    {
         StringBuilder builder = new StringBuilder();
         builder.append("JavaClass");
-        if(fileRegex != null) {
+        if (fileRegex != null)
+        {
             builder.append(".inFile(" + fileRegex + ")");
         }
-        if(regex != null) {
-            builder.append(".references("+ regex +")");
+        if (regex != null)
+        {
+            builder.append(".references(" + regex + ")");
         }
-        if(!locations.isEmpty()) {
-            builder.append(".at(" + locations +")");
+        if (!locations.isEmpty())
+        {
+            builder.append(".at(" + locations + ")");
         }
-        builder.append(".as("+variable+")");
+        builder.append(".as(" + variable + ")");
         return builder.toString();
     }
 

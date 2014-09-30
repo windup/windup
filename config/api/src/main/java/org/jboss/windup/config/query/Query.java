@@ -30,7 +30,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     private String outputVar = Iteration.DEFAULT_VARIABLE_LIST_STRING;
 
     private final List<QueryGremlinCriterion> pipelineCriteria = new ArrayList<>();
-    
+
     private Class<? extends WindupVertexFrame> searchType;
 
     private FramesSelector framesSelector;
@@ -55,8 +55,9 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     public static QueryBuilderFind find(Class<? extends WindupVertexFrame> type)
     {
         final Query query = new Query();
-        //this query is going to be added after evaluate() method, because in some cases we need gremlin and in some frames
-        query.searchType=type;
+        // this query is going to be added after evaluate() method, because in some cases we need gremlin and in some
+        // frames
+        query.searchType = type;
         return query;
     }
 
@@ -88,10 +89,11 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         Iterable<WindupVertexFrame> resultIterable = framesSelector.getFrames(event, context);
         Iterator<WindupVertexFrame> iterator = resultIterable.iterator();
         List<WindupVertexFrame> result = new ArrayList<WindupVertexFrame>();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             result.add(iterator.next());
         }
-        
+
         if (resultFilter != null)
         {
             List<WindupVertexFrame> filtered = new LinkedList<>();
@@ -124,32 +126,29 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     @Override
     public QueryBuilderWith withProperty(String property, Iterable<?> values)
     {
-        pipelineCriteria.add(new QueryPropertyCriterion(property, QueryPropertyComparisonType.CONTAINS_ANY_TOKEN, values));
+        pipelineCriteria.add(new QueryPropertyCriterion(property, QueryPropertyComparisonType.CONTAINS_ANY_TOKEN,
+                    values));
         return this;
     }
-    
-    private static Query initializeQuery() {
-        final Query query = new Query();
-        query.setInitialFramesSelector(createInitialFramesSelector(query));
-        return query;
-    }
 
-    private static FramesSelector createInitialFramesSelector(final Query query) {
+    private static FramesSelector createInitialFramesSelector(final Query query)
+    {
         return new FramesSelector()
         {
             @Override
             public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
             {
                 GremlinPipeline<Vertex, Vertex> pipeline;
-                Iterable<Vertex> startingVertices =getStartingVertices(event);
-                pipeline= new GremlinPipeline<Vertex, Vertex>(startingVertices);
+                Iterable<Vertex> startingVertices = getStartingVertices(event);
+                pipeline = new GremlinPipeline<Vertex, Vertex>(startingVertices);
                 Set<WindupVertexFrame> frames = new HashSet<>();
                 for (QueryGremlinCriterion c : query.getPipelineCriteria())
                 {
-                    c.query(event,pipeline);
+                    c.query(event, pipeline);
                 }
 
-                FramedVertexIterable<WindupVertexFrame> framedVertexIterable = new FramedVertexIterable<WindupVertexFrame>(event.getGraphContext().getFramed(), pipeline,
+                FramedVertexIterable<WindupVertexFrame> framedVertexIterable = new FramedVertexIterable<WindupVertexFrame>(
+                            event.getGraphContext().getFramed(), pipeline,
                             WindupVertexFrame.class);
                 for (WindupVertexFrame frame : framedVertexIterable)
                 {
@@ -157,36 +156,44 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                 }
                 return frames;
             }
-            
-            private Iterable<Vertex> getStartingVertices(GraphRewrite event) {
-                boolean hasStartingVerticesVariable = query.getInputVariablesName() != null && !query.getInputVariablesName().equals("");
+
+            private Iterable<Vertex> getStartingVertices(GraphRewrite event)
+            {
+                boolean hasStartingVerticesVariable = query.getInputVariablesName() != null
+                            && !query.getInputVariablesName().equals("");
                 Iterable<Vertex> startingVertices;
-                if(hasStartingVerticesVariable) {
-                    //save the type as a gremlin criterion
-                    if(query.searchType !=null) {
+                if (hasStartingVerticesVariable)
+                {
+                    // save the type as a gremlin criterion
+                    if (query.searchType != null)
+                    {
                         query.piped(new QueryTypeCriterion(query.searchType));
                     }
                     Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
                     Iterable<WindupVertexFrame> frames = variables.findVariable(query.getInputVariablesName());
-                    List<Vertex> startingVerticesList=new ArrayList<Vertex>();
-                    for(WindupVertexFrame frame : frames) {
+                    List<Vertex> startingVerticesList = new ArrayList<Vertex>();
+                    for (WindupVertexFrame frame : frames)
+                    {
                         startingVerticesList.add(frame.asVertex());
                     }
                     return startingVerticesList;
-                } else {
+                }
+                else
+                {
                     FramedGraphQuery framesQueryType = event.getGraphContext().getFramed().query();
-                    if(query.searchType != null) {
+                    if (query.searchType != null)
+                    {
                         new QueryTypeCriterion(query.searchType).query(framesQueryType);
                         startingVertices = framesQueryType.vertices();
                         return startingVertices;
                     }
-                    
+
                 }
                 return event.getGraphContext().getGraph().getVertices();
             }
         };
     }
-    
+
     @Override
     public QueryBuilderWith withProperty(String property, Object searchValue, Object... searchValues)
     {
@@ -216,7 +223,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     {
         this.framesSelector = selector;
     }
-    
+
     public Collection<QueryGremlinCriterion> getPipelineCriteria()
     {
         return pipelineCriteria;
@@ -229,20 +236,22 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         this.resultFilter = (Predicate<WindupVertexFrame>) predicate;
         return this;
     }
-    
-    
-    public String toString() {
+
+    public String toString()
+    {
         StringBuilder builder = new StringBuilder();
         builder.append("Query");
-        for(QueryFramesCriterion criterion: criteria) {
-                builder.append(criterion);
+        if (searchType != null)
+        {
+            builder.append(".find(").append(searchType.getClass().getName()).append(")");
         }
-        for(QueryGremlinCriterion criterion: pipelineCriteria) {
-            builder.append(".gremlin("+criterion+")");
+
+        for (QueryGremlinCriterion criterion : pipelineCriteria)
+        {
+            builder.append(".gremlin(" + criterion + ")");
         }
-        builder.append(".as("+ outputVar +")");
+        builder.append(".as(" + outputVar + ")");
         return builder.toString();
     }
-    
-    
+
 }
