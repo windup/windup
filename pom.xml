@@ -41,6 +41,7 @@
     </scm>
 
     <modules>
+        <module>frames</module>
         <module>graph</module>
 
         <module>config</module>
