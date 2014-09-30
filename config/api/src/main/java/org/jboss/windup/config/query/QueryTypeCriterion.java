@@ -10,9 +10,11 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 class QueryTypeCriterion implements QueryFramesCriterion
 {
     private String typeValue;
+    private Class<? extends WindupVertexFrame> searchedClass;
 
     public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {
+        this.searchedClass=clazz;
         this.typeValue = getTypeValue(clazz);
     }
 
@@ -43,5 +45,9 @@ class QueryTypeCriterion implements QueryFramesCriterion
     {
         pipeline.has(WindupVertexFrame.TYPE_PROP, getTypeValue(clazz));
         return pipeline;
+    }
+    
+    public String toString() {
+        return ".find("+searchedClass.getSimpleName() + ")";
     }
 }
