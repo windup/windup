@@ -155,4 +155,21 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     {
         return payload instanceof GraphContext;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        boolean result = false;
+        if (other instanceof WindupRuleProvider)
+        {
+            WindupRuleProvider that = (WindupRuleProvider) other;
+            result = this.getID().equals(that.getID());
+        }
+        return result;
+    }
+
+    public int hashCode()
+    {
+        return getID().hashCode();
+    }
 }
