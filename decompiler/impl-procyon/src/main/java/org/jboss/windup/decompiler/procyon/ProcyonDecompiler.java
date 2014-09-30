@@ -361,9 +361,13 @@ public class ProcyonDecompiler implements Decompiler
     {
         DecompilerSettings settings = this.procyonConf.getDecompilerSettings();
         if (settings == null)
+        {
             settings = new DecompilerSettings();
+            configuration.setDecompilerSettings(settings);
+        }
         settings.setOutputDirectory(outputDir.getPath());
         settings.setShowSyntheticMembers(false);
+        settings.setForceExplicitImports(true);
 
         if (settings.getTypeLoader() == null)
             settings.setTypeLoader(new ClasspathTypeLoader());

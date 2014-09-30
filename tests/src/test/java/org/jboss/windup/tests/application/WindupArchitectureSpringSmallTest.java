@@ -122,7 +122,6 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);
-        Assert.assertTrue(util.checkFilePathAndTag("spring-small-example.war",
-                    "WEB-INF/spring-business-context.xml", "Spring XML"));
+        util.checkFilePathAndTag("spring-small-example.war", "WEB-INF/spring-business-context.xml", "Spring XML");
     }
 }

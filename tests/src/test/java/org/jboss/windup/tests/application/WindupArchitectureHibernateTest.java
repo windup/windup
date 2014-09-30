@@ -157,11 +157,10 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);
-        Assert.assertTrue(util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war",
-                    "META-INF/MANIFEST.MF", "Manifest"));
-        Assert.assertTrue(util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war",
-                    "WEB-INF/classes/hibernate.cfg.xml", "Hibernate Cfg"));
-        Assert.assertTrue(util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war",
-                    "WEB-INF/classes/org/hibernate/tutorial/domain/Event.hbm.xml", "Hibernate Mapping"));
+        util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war", "META-INF/MANIFEST.MF", "Manifest");
+        util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war", "WEB-INF/classes/hibernate.cfg.xml",
+                    "Hibernate Cfg");
+        util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war",
+                    "WEB-INF/classes/org/hibernate/tutorial/domain/Event.hbm.xml", "Hibernate Mapping");
     }
 }
