@@ -66,7 +66,7 @@ public class RuleIterationWhenTest
 
     @Inject
     private GraphContextFactory factory;
-    
+
     private DefaultEvaluationContext createEvalContext(GraphRewrite event)
     {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -76,53 +76,55 @@ public class RuleIterationWhenTest
     }
 
     @Test
-    public void testTypeSelection()
+    public void testTypeSelection() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        TestWhenModel vertex = context.getFramed().addVertex(null, TestWhenModel.class);
-        vertex.setName(NAME);
-        vertex.setSecondName(NAME);
-        vertex = context.getFramed().addVertex(null, TestWhenModel.class);
-        vertex.setName(SECOND_NAME);
-        vertex.setSecondName(SECOND_NAME);
-        vertex= context.getFramed().addVertex(null, TestWhenModel.class);
-        vertex.setName(NAME);
-        vertex.setSecondName(SECOND_NAME);
-        vertex= context.getFramed().addVertex(null, TestWhenModel.class);
-        vertex.setName(SECOND_NAME);
-        vertex.setSecondName(NAME);
+            TestWhenModel vertex = context.getFramed().addVertex(null, TestWhenModel.class);
+            vertex.setName(NAME);
+            vertex.setSecondName(NAME);
+            vertex = context.getFramed().addVertex(null, TestWhenModel.class);
+            vertex.setName(SECOND_NAME);
+            vertex.setSecondName(SECOND_NAME);
+            vertex = context.getFramed().addVertex(null, TestWhenModel.class);
+            vertex.setName(NAME);
+            vertex.setSecondName(SECOND_NAME);
+            vertex = context.getFramed().addVertex(null, TestWhenModel.class);
+            vertex.setName(SECOND_NAME);
+            vertex.setSecondName(NAME);
 
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
-        windupCfg.setSourceMode(true);
+            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
+            windupCfg.setSourceMode(true);
 
-        TestWhenProvider provider = new TestWhenProvider();
-        Configuration configuration = provider.getConfiguration(context);
+            TestWhenProvider provider = new TestWhenProvider();
+            Configuration configuration = provider.getConfiguration(context);
 
-        // this should call perform()
-        RuleSubset.create(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(1, provider.getMatchCount());
-        Assert.assertEquals(0, provider.getTripleCondition());
-        Assert.assertEquals(1, provider.getOuterConditionCounter());
-        Assert.assertEquals(1, provider.getSameConditionCounter());
-        Assert.assertEquals(provider.getModel().getName(),NAME);
-        Assert.assertEquals(provider.getModel().getSecondName(),SECOND_NAME);
+            // this should call perform()
+            RuleSubset.create(configuration).perform(event, evaluationContext);
+            Assert.assertEquals(1, provider.getMatchCount());
+            Assert.assertEquals(0, provider.getTripleCondition());
+            Assert.assertEquals(1, provider.getOuterConditionCounter());
+            Assert.assertEquals(1, provider.getSameConditionCounter());
+            Assert.assertEquals(provider.getModel().getName(), NAME);
+            Assert.assertEquals(provider.getModel().getSecondName(), SECOND_NAME);
+        }
     }
 
     public class TestWhenProvider extends WindupRuleProvider
     {
 
-        private int matchCount =0;
-        private int tripleCondition =0;
-        private int outerConditionCounter =0;
-        private int sameConditionCounter =0;
+        private int matchCount = 0;
+        private int tripleCondition = 0;
+        private int outerConditionCounter = 0;
+        private int sameConditionCounter = 0;
         private TestWhenModel model;
-        
+
         @Override
         public RulePhase getPhase()
         {

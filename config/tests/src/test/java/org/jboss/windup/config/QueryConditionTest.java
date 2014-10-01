@@ -88,214 +88,229 @@ public class QueryConditionTest
     }
 
     @Test
-    public void testInitialQueryAsGremlin()
+    public void testInitialQueryAsGremlin() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            windupCfg.setInputPath(folder.toAbsolutePath().toString());
+            windupCfg.setSourceMode(true);
 
-        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(folder.toAbsolutePath().toString());
-        windupCfg.setSourceMode(true);
+            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel1.setQualifiedName("com.example.Class1NoToString");
+            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel2.setQualifiedName("com.example.Class2HasToString");
 
-        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel1.setQualifiedName("com.example.Class1NoToString");
-        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel2.setQualifiedName("com.example.Class2HasToString");
+            JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
+            methodModelSomeMethod.setJavaClass(classModel2);
+            methodModelSomeMethod.setMethodName("foo");
+            JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
+            methodModelToString.setJavaClass(classModel2);
+            methodModelToString.setMethodName("toString");
 
-        JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
-        methodModelSomeMethod.setJavaClass(classModel2);
-        methodModelSomeMethod.setMethodName("foo");
-        JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
-        methodModelToString.setJavaClass(classModel2);
-        methodModelToString.setMethodName("toString");
+            TestGremlinQueryOnlyRuleProvider provider = new TestGremlinQueryOnlyRuleProvider();
+            Configuration configuration = provider.getConfiguration(context);
 
-        TestGremlinQueryOnlyRuleProvider provider = new TestGremlinQueryOnlyRuleProvider();
-        Configuration configuration = provider.getConfiguration(context);
+            RuleSubset.create(configuration).perform(event, evaluationContext);
 
-        RuleSubset.create(configuration).perform(event, evaluationContext);
-
-        List<JavaMethodModel> methodModelList = provider.getResults();
-        Assert.assertTrue(methodModelList.size() == 2);
-        Assert.assertTrue(methodModelList.get(0) instanceof JavaMethodModel);
-        Assert.assertTrue(methodModelList.get(1) instanceof JavaMethodModel);
+            List<JavaMethodModel> methodModelList = provider.getResults();
+            Assert.assertTrue(methodModelList.size() == 2);
+            Assert.assertTrue(methodModelList.get(0) instanceof JavaMethodModel);
+            Assert.assertTrue(methodModelList.get(1) instanceof JavaMethodModel);
+        }
     }
 
     // TODO: Create shared method to set up the graph.
     @Test
-    public void testSingletonSelection()
+    public void testSingletonSelection() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(folder.toAbsolutePath().toString());
-        windupCfg.setSourceMode(true);
+            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            windupCfg.setInputPath(folder.toAbsolutePath().toString());
+            windupCfg.setSourceMode(true);
 
-        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel1.setQualifiedName("com.example.Class1NoToString");
-        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel2.setQualifiedName("com.example.Class2HasToString");
+            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel1.setQualifiedName("com.example.Class1NoToString");
+            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel2.setQualifiedName("com.example.Class2HasToString");
 
-        JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
-        methodModelSomeMethod.setJavaClass(classModel2);
-        methodModelSomeMethod.setMethodName("foo");
-        JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
-        methodModelToString.setJavaClass(classModel2);
-        methodModelToString.setMethodName("toString");
+            JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
+            methodModelSomeMethod.setJavaClass(classModel2);
+            methodModelSomeMethod.setMethodName("foo");
+            JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
+            methodModelToString.setJavaClass(classModel2);
+            methodModelToString.setMethodName("toString");
 
-        TestWindupConfigurationExampleRuleProvider provider = new TestWindupConfigurationExampleRuleProvider();
-        Configuration configuration = provider.getConfiguration(context);
+            TestWindupConfigurationExampleRuleProvider provider = new TestWindupConfigurationExampleRuleProvider();
+            Configuration configuration = provider.getConfiguration(context);
 
-        RuleSubset.create(configuration).perform(event, evaluationContext);
+            RuleSubset.create(configuration).perform(event, evaluationContext);
 
-        List<JavaMethodModel> methodModelList = provider.getResults();
-        Assert.assertTrue(methodModelList.size() == 1);
-        Assert.assertNotNull(methodModelList.get(0));
-        Assert.assertNotNull(methodModelList.get(0).getJavaClass());
-        Assert.assertEquals("toString", methodModelList.get(0).getMethodName());
-        Assert.assertEquals(classModel2.getQualifiedName(), methodModelList.get(0).getJavaClass().getQualifiedName());
+            List<JavaMethodModel> methodModelList = provider.getResults();
+            Assert.assertTrue(methodModelList.size() == 1);
+            Assert.assertNotNull(methodModelList.get(0));
+            Assert.assertNotNull(methodModelList.get(0).getJavaClass());
+            Assert.assertEquals("toString", methodModelList.get(0).getMethodName());
+            Assert.assertEquals(classModel2.getQualifiedName(), methodModelList.get(0).getJavaClass()
+                        .getQualifiedName());
 
-        WindupConfigurationModel foundCfgModel = provider.getConfig();
-        Assert.assertNotNull(foundCfgModel);
-        Assert.assertEquals(windupCfg.getInputPath(), foundCfgModel.getInputPath());
+            WindupConfigurationModel foundCfgModel = provider.getConfig();
+            Assert.assertNotNull(foundCfgModel);
+            Assert.assertEquals(windupCfg.getInputPath(), foundCfgModel.getInputPath());
+        }
     }
 
     @Test
-    public void testJavaMethodModel()
+    public void testJavaMethodModel() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel1.setQualifiedName("com.example.Class1NoToString");
-        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel2.setQualifiedName("com.example.Class2HasToString");
+            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel1.setQualifiedName("com.example.Class1NoToString");
+            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel2.setQualifiedName("com.example.Class2HasToString");
 
-        JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
-        methodModelSomeMethod.setJavaClass(classModel2);
-        methodModelSomeMethod.setMethodName("foo");
-        JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
-        methodModelToString.setJavaClass(classModel2);
-        methodModelToString.setMethodName("toString");
+            JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
+            methodModelSomeMethod.setJavaClass(classModel2);
+            methodModelSomeMethod.setMethodName("foo");
+            JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
+            methodModelToString.setJavaClass(classModel2);
+            methodModelToString.setMethodName("toString");
 
-        TestJavaExampleRuleProvider provider = new TestJavaExampleRuleProvider();
-        Configuration configuration = provider.getConfiguration(context);
+            TestJavaExampleRuleProvider provider = new TestJavaExampleRuleProvider();
+            Configuration configuration = provider.getConfiguration(context);
 
-        RuleSubset.create(configuration).perform(event, evaluationContext);
+            RuleSubset.create(configuration).perform(event, evaluationContext);
 
-        List<JavaMethodModel> methodModelList = provider.getResults();
-        Assert.assertTrue(methodModelList.size() == 1);
-        Assert.assertNotNull(methodModelList.get(0));
-        Assert.assertNotNull(methodModelList.get(0).getJavaClass());
-        Assert.assertEquals("toString", methodModelList.get(0).getMethodName());
-        Assert.assertEquals(classModel2.getQualifiedName(), methodModelList.get(0).getJavaClass().getQualifiedName());
+            List<JavaMethodModel> methodModelList = provider.getResults();
+            Assert.assertTrue(methodModelList.size() == 1);
+            Assert.assertNotNull(methodModelList.get(0));
+            Assert.assertNotNull(methodModelList.get(0).getJavaClass());
+            Assert.assertEquals("toString", methodModelList.get(0).getMethodName());
+            Assert.assertEquals(classModel2.getQualifiedName(), methodModelList.get(0).getJavaClass()
+                        .getQualifiedName());
+        }
     }
 
     @Test
-    public void testTypeTransition()
+    public void testTypeTransition() throws Exception
     {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        fillData(context);
-        context.getGraph().getBaseGraph().commit();
+            fillData(context);
+            context.getGraph().getBaseGraph().commit();
 
-        // setup the context for the rules
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            // setup the context for the rules
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        // build a configuration, and make sure it matches what we expect (4 items)
-        TestMavenExampleRuleProvider provider = new TestMavenExampleRuleProvider();
-        Configuration configuration = provider.getConfiguration(context);
-        RuleSubset.create(configuration).perform(event, evaluationContext);
+            // build a configuration, and make sure it matches what we expect (4 items)
+            TestMavenExampleRuleProvider provider = new TestMavenExampleRuleProvider();
+            Configuration configuration = provider.getConfiguration(context);
+            RuleSubset.create(configuration).perform(event, evaluationContext);
 
-        Assert.assertEquals(4, provider.getSearchResults().size());
+            Assert.assertEquals(4, provider.getSearchResults().size());
+        }
     }
 
     @Test
-    public void testTypeFilter()
+    public void testTypeFilter() throws Exception
     {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        fillData(context);
-        context.getGraph().getBaseGraph().commit();
+            fillData(context);
+            context.getGraph().getBaseGraph().commit();
 
-        // setup the context for the rules
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            // setup the context for the rules
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        // build a configuration, and make sure it matches what we expect (4 items)
-        TestXmlExampleRuleProvider1 provider = new TestXmlExampleRuleProvider1();
-        Configuration configuration = provider.getConfiguration(context);
-        RuleSubset.create(configuration).perform(event, evaluationContext);
+            // build a configuration, and make sure it matches what we expect (4 items)
+            TestXmlExampleRuleProvider1 provider = new TestXmlExampleRuleProvider1();
+            Configuration configuration = provider.getConfiguration(context);
+            RuleSubset.create(configuration).perform(event, evaluationContext);
 
-        Assert.assertEquals(4, provider.getTypeSearchResults().size());
-        Assert.assertEquals(3, provider.getXmlRootNames().size());
-        Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag1"));
-        Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag2"));
-        Assert.assertFalse(provider.getXmlRootNames().contains("xmlTag3"));
-        Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag4"));
-        Assert.assertFalse(provider.getXmlRootNames().contains("xmlTag5"));
-        Assert.assertEquals(1, provider.getExcludedXmlRootNames().size());
-        Assert.assertTrue(provider.getExcludedXmlRootNames().contains("xmlTag3"));
+            Assert.assertEquals(4, provider.getTypeSearchResults().size());
+            Assert.assertEquals(3, provider.getXmlRootNames().size());
+            Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag1"));
+            Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag2"));
+            Assert.assertFalse(provider.getXmlRootNames().contains("xmlTag3"));
+            Assert.assertTrue(provider.getXmlRootNames().contains("xmlTag4"));
+            Assert.assertFalse(provider.getXmlRootNames().contains("xmlTag5"));
+            Assert.assertEquals(1, provider.getExcludedXmlRootNames().size());
+            Assert.assertTrue(provider.getExcludedXmlRootNames().contains("xmlTag3"));
+        }
     }
 
     @Test
-    public void testPropertyFilter()
+    public void testPropertyFilter() throws Exception
     {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        fillData(context);
-        context.getGraph().getBaseGraph().commit();
+            fillData(context);
+            context.getGraph().getBaseGraph().commit();
 
-        // setup the context for the rules
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            // setup the context for the rules
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        // build a configuration, and make sure it matches what we expect (4 items)
-        TestXmlExampleRuleProvider2 provider = new TestXmlExampleRuleProvider2();
-        Configuration configuration = provider.getConfiguration(context);
-        RuleSubset.create(configuration).perform(event, evaluationContext);
+            // build a configuration, and make sure it matches what we expect (4 items)
+            TestXmlExampleRuleProvider2 provider = new TestXmlExampleRuleProvider2();
+            Configuration configuration = provider.getConfiguration(context);
+            RuleSubset.create(configuration).perform(event, evaluationContext);
 
-        Assert.assertEquals(1, provider.getTypeSearchResults().size());
-        Assert.assertEquals("xmlTag3", provider.getTypeSearchResults().get(0).getRootTagName());
+            Assert.assertEquals(1, provider.getTypeSearchResults().size());
+            Assert.assertEquals("xmlTag3", provider.getTypeSearchResults().get(0).getRootTagName());
+        }
     }
 
     @Test
-    public void testTypeAndPropertyFilter()
+    public void testTypeAndPropertyFilter() throws Exception
     {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        fillData(context);
-        context.getGraph().getBaseGraph().commit();
+            fillData(context);
+            context.getGraph().getBaseGraph().commit();
 
-        // setup the context for the rules
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            // setup the context for the rules
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        // build a configuration, and make sure it matches what we expect (4 items)
-        TestXmlExampleRuleProvider3 provider = new TestXmlExampleRuleProvider3();
-        Configuration configuration = provider.getConfiguration(context);
-        RuleSubset.create(configuration).perform(event, evaluationContext);
+            // build a configuration, and make sure it matches what we expect (4 items)
+            TestXmlExampleRuleProvider3 provider = new TestXmlExampleRuleProvider3();
+            Configuration configuration = provider.getConfiguration(context);
+            RuleSubset.create(configuration).perform(event, evaluationContext);
 
-        Assert.assertEquals(1, provider.getTypeSearchResults().size());
-        TestXmlMetaFacetModel result1 = provider.getTypeSearchResults().get(0);
-        Assert.assertEquals("xmlTag2", result1.getRootTagName());
+            Assert.assertEquals(1, provider.getTypeSearchResults().size());
+            TestXmlMetaFacetModel result1 = provider.getTypeSearchResults().get(0);
+            Assert.assertEquals("xmlTag2", result1.getRootTagName());
+        }
     }
 }

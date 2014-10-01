@@ -34,7 +34,8 @@ public class IterationPayloadTest
     })
     public static ForgeArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+        final ForgeArchive archive = ShrinkWrap
+                    .create(ForgeArchive.class)
                     .addClasses(TestIterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
                     .addBeansXML()
                     .addAsAddonDependencies(
@@ -51,40 +52,42 @@ public class IterationPayloadTest
     private TestIterationPayloadTestRuleProvider provider;
 
     @Test
-    public void testIterationVariableResolving()
+    public void testIterationVariableResolving() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
-        GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        GraphService<TestParentModel> parentService = new GraphService<>(context, TestParentModel.class);
-        GraphService<TestChildModel> childService = new GraphService<>(context, TestChildModel.class);
+            GraphRewrite event = new GraphRewrite(context);
+            final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+            final DefaultParameterValueStore values = new DefaultParameterValueStore();
+            evaluationContext.put(ParameterValueStore.class, values);
 
-        TestParentModel parent1 = parentService.create();
-        parent1.setName("parent1");
-        TestParentModel parent2 = parentService.create();
-        parent1.setName("parent2");
+            GraphService<TestParentModel> parentService = new GraphService<>(context, TestParentModel.class);
+            GraphService<TestChildModel> childService = new GraphService<>(context, TestChildModel.class);
 
-        TestChildModel parent1child1 = childService.create();
-        parent1child1.setParent(parent1);
-        parent1child1.setName("parent1child1");
-        TestChildModel parent1child2 = childService.create();
-        parent1child2.setParent(parent2);
-        parent1child2.setName("parent1child2");
+            TestParentModel parent1 = parentService.create();
+            parent1.setName("parent1");
+            TestParentModel parent2 = parentService.create();
+            parent1.setName("parent2");
 
-        TestChildModel parent2child1 = childService.create();
-        parent2child1.setParent(parent1);
-        parent2child1.setName("parent2child1");
+            TestChildModel parent1child1 = childService.create();
+            parent1child1.setParent(parent1);
+            parent1child1.setName("parent1child1");
+            TestChildModel parent1child2 = childService.create();
+            parent1child2.setParent(parent2);
+            parent1child2.setName("parent1child2");
 
-        RuleSubset.create(provider.getConfiguration(context)).perform(event, evaluationContext);
+            TestChildModel parent2child1 = childService.create();
+            parent2child1.setParent(parent1);
+            parent2child1.setName("parent2child1");
 
-        Assert.assertEquals(3, provider.getChildCount());
-        Assert.assertEquals(2, provider.getParentCount());
-        Assert.assertEquals(3, provider.getActualChildCount());
-        Assert.assertEquals(3, provider.getActualParentCount());
+            RuleSubset.create(provider.getConfiguration(context)).perform(event, evaluationContext);
 
+            Assert.assertEquals(3, provider.getChildCount());
+            Assert.assertEquals(2, provider.getParentCount());
+            Assert.assertEquals(3, provider.getActualChildCount());
+            Assert.assertEquals(3, provider.getActualParentCount());
+        }
     }
 }

@@ -49,15 +49,17 @@ public class ReadXMLConfigurationTest
     public void testRunWindup() throws Exception
     {
         final Path folder = File.createTempFile("windupGraph", "").toPath();
-        final GraphContext context = factory.create(folder);
-        final ConfigurationLoader loader = ConfigurationLoader.create(context);
-        final Configuration configuration = loader.loadConfiguration(context);
+        try (final GraphContext context = factory.create(folder))
+        {
+            final ConfigurationLoader loader = ConfigurationLoader.create(context);
+            final Configuration configuration = loader.loadConfiguration(context);
 
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+            final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
 
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
+            final DefaultParameterValueStore values = new DefaultParameterValueStore();
+            evaluationContext.put(ParameterValueStore.class, values);
 
-        Subset.evaluate(configuration).perform(new GraphRewrite(context), evaluationContext);
+            Subset.evaluate(configuration).perform(new GraphRewrite(context), evaluationContext);
+        }
     }
 }
