@@ -20,10 +20,20 @@ public interface WindupVertexFrame extends VertexFrame
     public static final String TYPE_PROP = "w:vertextype";
 
     @JavaHandler
+    @Override
+    public String toString();
+
+    @JavaHandler
     public String toPrettyString();
 
     abstract class Impl implements WindupVertexFrame, JavaHandlerContext<Vertex>
     {
+        @Override
+        public String toString()
+        {
+            return toPrettyString();
+        }
+
         public String toPrettyString()
         {
             Vertex v = it();
