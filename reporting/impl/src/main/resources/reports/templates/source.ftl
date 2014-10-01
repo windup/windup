@@ -59,39 +59,40 @@
     <div class="container theme-showcase" role="main">
 
   <#if reportModel.sourceFileModel.classificationModels.iterator()?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
-    <div class="windupHighLevel">
-        <h3>Classification</h3>
+    <div class="panel panel-default">
+    	<div class="panel-heading">Information</div>
+    	<div class="panel-body">
+	        <ul>
+	          <li>Estimated Story Points: ${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</li>
+	          <#if getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
+		          <li>
+		            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
+	              		<span class="label label-info">${techTag.name}</span>
+	            	</#list>
+	              </li>
+	          </#if>
+            </ul>
         
-        <ul>
-          <li>Estimated Story Points: ${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</li>
-          <#if getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
-	          <li>
-	            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
-	              <span class="label label-info">${techTag.name}</span>
-	            </#list>
-	          </li>
-	      </#if>
-        </ul>
-        
-        <ul>
-          <#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
-            <li>
-              ${classificationLineItem.classification!""}
-              <#if classificationLineItem.description??>
-                - ${classificationLineItem.description!""}
-              </#if>
-              <#if classificationLineItem.links??>
-                <ul>
-                  <#list classificationLineItem.links.iterator() as link>
-                    <li>
-                      <a href='${link.link}'>${link.description}</a>
-                    </li>
-                  </#list>
-                </ul>
-              </#if>
-            </li>
-          </#list>
-        </ul>
+            <ul>
+              <#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
+                <li>
+                  ${classificationLineItem.classification!""}
+                  <#if classificationLineItem.description??>
+                    - ${classificationLineItem.description!""}
+                  </#if>
+                  <#if classificationLineItem.links??>
+                    <ul>
+                      <#list classificationLineItem.links.iterator() as link>
+                        <li>
+                          <a href='${link.link}'>${link.description}</a>
+                        </li>
+                      </#list>
+                    </ul>
+                  </#if>
+                </li>
+              </#list>
+            </ul>
+          </div>
       </div>
     </#if>  
     

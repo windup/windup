@@ -1,5 +1,7 @@
 pre#source {
-	background: #F9F9F9;	
+	background: #F9F9F9;
+	margin: 0;
+	padding: 0;	
 }
 
 div.rightColumn {
