@@ -105,11 +105,10 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);
-        Assert.assertTrue(util.checkFilePathAndTag("Windup1x-javaee-example.war",
-                    "META-INF/maven/javaee/javaee/pom.properties", "Properties"));
-        Assert.assertTrue(util.checkFilePathEffort("Windup1x-javaee-example.war",
-                    "META-INF/maven/javaee/javaee/pom.properties", 0));
-        Assert.assertTrue(util.checkFilePathEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar",
-                    "org.joda.time.tz.DateTimeZoneBuilder", 48));
+        util.checkFilePathAndTag("Windup1x-javaee-example.war", "META-INF/maven/javaee/javaee/pom.properties",
+                    "Properties");
+        util.checkFilePathEffort("Windup1x-javaee-example.war", "META-INF/maven/javaee/javaee/pom.properties", 0);
+        util.checkFilePathEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar",
+                    "org.joda.time.tz.DateTimeZoneBuilder", 40);
     }
 }

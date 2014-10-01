@@ -3,7 +3,6 @@ package org.jboss.windup.testutil.html;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -14,7 +13,6 @@ import org.openqa.selenium.WebElement;
  */
 public class TestJavaApplicationOverviewUtil extends TestReportUtil
 {
-
     /**
      * Checks if the given App section, filepath, and effort level can be seen in the report.
      * 
@@ -22,18 +20,18 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
      * application called "src_example" is in the report, with a line referencing "src/main/resources/test.properties"
      * and that this line contains the effort level 13).
      */
-    public boolean checkFilePathEffort(String appSection, String filePath, int effort)
+    public void checkFilePathEffort(String appSection, String filePath, int effort)
     {
         WebElement appSectionEl = getAppSectionElement(appSection);
         if (appSectionEl == null)
         {
-            return false;
+            throw new CheckFailedException("Unable to find app section with name: " + appSection);
         }
 
         WebElement fileRowElement = getFileRowElement(appSection, filePath);
         if (fileRowElement == null)
         {
-            return false;
+            throw new CheckFailedException("Unable to find row for filePath: " + filePath);
         }
 
         List<WebElement> elements = fileRowElement.findElements(By.xpath("./td[position() = 4]"));
@@ -46,7 +44,13 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
                     int number = Integer.parseInt(element.getText());
                     if (number == effort)
                     {
-                        return true;
+                        return;
+                    }
+                    else
+                    {
+                        throw new CheckFailedException("Found row with appSection: " + appSection + " and filePath: "
+                                    + filePath
+                                    + ", but effort was: " + number + " (expected value: " + effort + ")");
                     }
                 }
                 catch (NumberFormatException e)
@@ -56,7 +60,8 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
 
             }
         }
-        return false;
+        throw new CheckFailedException("Unable to find app: " + appSection + " file: " + filePath + " with effort: "
+                    + effort);
     }
 
     /**
@@ -67,18 +72,18 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
      * referencing "src/main/resources/test.properties" and that this line contains text in the issues section saying
      * "Web Servlet again").
      */
-    public boolean checkFilePathAndIssues(String appSection, String filePath, String text)
+    public void checkFilePathAndIssues(String appSection, String filePath, String text)
     {
         WebElement appSectionEl = getAppSectionElement(appSection);
         if (appSectionEl == null)
         {
-            return false;
+            throw new CheckFailedException("Unable to find app section with name: " + appSection);
         }
 
         WebElement fileRowElement = getFileRowElement(appSection, filePath);
         if (fileRowElement == null)
         {
-            return false;
+            throw new CheckFailedException("Unable to find row for filePath: " + filePath);
         }
 
         List<WebElement> elements = fileRowElement.findElements(By.xpath("./td[position() = 3]"));
@@ -86,11 +91,12 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
         {
             if (element.getText() != null && element.getText().contains(text))
             {
-                return true;
+                return;
             }
         }
 
-        return false;
+        throw new CheckFailedException("Unable to find app: " + appSection + " file: " + filePath + " with issue: "
+                    + text);
     }
 
     /**
@@ -100,18 +106,18 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
      * ensure that an application called "src_example" is in the report, with a line referencing
      * "src/main/resources/test.properties" and that this file is tagged "Properties"
      */
-    public boolean checkFilePathAndTag(String appSection, String filePath, String tag)
+    public void checkFilePathAndTag(String appSection, String filePath, String tag)
     {
         WebElement appSectionEl = getAppSectionElement(appSection);
         if (appSectionEl == null)
         {
-            return false;
+            throw new CheckFailedException("Unable to find app section with name: " + appSection);
         }
 
         WebElement fileRowElement = getFileRowElement(appSection, filePath);
         if (fileRowElement == null)
         {
-            return false;
+            throw new CheckFailedException("Unable to find row for filePath: " + filePath);
         }
 
         List<WebElement> elements = fileRowElement.findElements(By.xpath("./td[position() = 2]/span"));
@@ -119,11 +125,12 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
         {
             if (element.getText() != null && element.getText().equals(tag))
             {
-                return true;
+                return;
             }
         }
 
-        return false;
+        throw new CheckFailedException("Unable to find app: " + appSection + " file: " + filePath + " with tag: "
+                    + tag);
     }
 
     /**
@@ -132,23 +139,21 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
      * For example calling checkFilePathAndTag("src_example", "src/main/resources/test.properties") will ensure that an
      * application called "src_example" is in the report, with a line referencing "src/main/resources/test.properties"
      */
-    public boolean checkFilePath(String appSection, String filePath)
+    public void checkFilePath(String appSection, String filePath)
     {
-        WebDriver driver = getDriver();
-
         WebElement appSectionEl = getAppSectionElement(appSection);
         if (appSectionEl == null)
         {
-            return false;
+            throw new CheckFailedException("Unable to find app section with name: " + appSection);
         }
 
         WebElement fileRowElement = getFileRowElement(appSection, filePath);
         if (fileRowElement == null)
         {
-            return false;
+            throw new CheckFailedException("Unable to find row for filePath: " + filePath);
         }
 
-        return true;
+        return;
     }
 
     private WebElement getFileRowElement(String appSection, String filePath)
