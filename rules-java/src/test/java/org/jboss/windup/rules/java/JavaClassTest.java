@@ -23,6 +23,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.engine.WindupConfiguration;
 import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.GraphLifecycleListener;
@@ -73,7 +74,7 @@ public class JavaClassTest
     private GraphContextFactory factory;
 
     @Test
-    public void testIterationVariableResolving() throws IOException
+    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
     {
         try (GraphContext context = factory.create())
         {
@@ -106,7 +107,7 @@ public class JavaClassTest
 
                     // Create FileModel for $inputDir/HintsClassificationsTest.java
                     FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-                    fileModel.setFilePath(inputDir + "/HintsClassificationsTest.java");
+                    fileModel.setFilePath(inputDir + "/JavaHintsClassificationsTest.java");
                     fileModel.setProjectModel(pm);
                     pm.addFileModel(fileModel);
 
@@ -132,30 +133,8 @@ public class JavaClassTest
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setGraphListener(initializer);
-            processorConfig.setRuleProviderFilter(new Predicate<WindupRuleProvider>()
-            {
-                private Set<String> skip = new HashSet<>();
-                {
-                    skip.add("CreateApplicationReportIndexRuleProvider");
-                    skip.add("CreateJavaApplicationOverviewReportRuleProvider");
-                    skip.add("RenderSourceReportRuleProvider");
-                }
-
-                public boolean accept(WindupRuleProvider type)
-                {
-                    return !skip.remove(type.getClass().getSimpleName());
-                }
-            });
-
-            processorConfig.setGraphContext(context).setRuleProviderFilter(new Predicate<WindupRuleProvider>()
-            {
-                private Set<String> done = new HashSet<>();
-
-                public boolean accept(WindupRuleProvider type)
-                {
-                    return done.add(type.getClass().getSimpleName());
-                }
-            });
+            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(TestJavaClassTestRuleProvider.class));
+            processorConfig.setGraphContext(context).setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(TestJavaClassTestRuleProvider.class));
 
             try
             {
