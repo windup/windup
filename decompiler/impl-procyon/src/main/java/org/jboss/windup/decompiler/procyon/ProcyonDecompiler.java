@@ -363,7 +363,7 @@ public class ProcyonDecompiler implements Decompiler
         if (settings == null)
         {
             settings = new DecompilerSettings();
-            configuration.setDecompilerSettings(settings);
+            procyonConf.setDecompilerSettings(settings);
         }
         settings.setOutputDirectory(outputDir.getPath());
         settings.setShowSyntheticMembers(false);
