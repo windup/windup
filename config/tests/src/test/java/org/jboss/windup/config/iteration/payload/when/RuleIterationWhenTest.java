@@ -90,6 +90,9 @@ public class RuleIterationWhenTest
         vertex= context.getFramed().addVertex(null, TestWhenModel.class);
         vertex.setName(NAME);
         vertex.setSecondName(SECOND_NAME);
+        vertex= context.getFramed().addVertex(null, TestWhenModel.class);
+        vertex.setName(SECOND_NAME);
+        vertex.setSecondName(NAME);
 
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
@@ -104,6 +107,9 @@ public class RuleIterationWhenTest
         // this should call perform()
         RuleSubset.create(configuration).perform(event, evaluationContext);
         Assert.assertEquals(1, provider.getMatchCount());
+        Assert.assertEquals(0, provider.getTripleCondition());
+        Assert.assertEquals(1, provider.getOuterConditionCounter());
+        Assert.assertEquals(1, provider.getSameConditionCounter());
         Assert.assertEquals(provider.getModel().getName(),NAME);
         Assert.assertEquals(provider.getModel().getSecondName(),SECOND_NAME);
     }
@@ -112,6 +118,9 @@ public class RuleIterationWhenTest
     {
 
         private int matchCount =0;
+        private int tripleCondition =0;
+        private int outerConditionCounter =0;
+        private int sameConditionCounter =0;
         private TestWhenModel model;
         
         @Override
@@ -148,16 +157,80 @@ public class RuleIterationWhenTest
                                     
                                     })).endIteration()
                                     
-                        );
+                        )
+                        
+                        .addRule()
+                        .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME))
+                        .perform(Iteration.over()
+                                    .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                    .perform(Iteration.over()
+                                                .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, NAME))
+                                                .perform( new GraphOperation()
+                                                {
+                                                    @Override
+                                                    public void perform(GraphRewrite event, EvaluationContext context)
+                                                    {
+                                                        tripleCondition++;
+                                                    }
+                                                }).endIteration()
+                                                ).endIteration()
+                                    
+                        )
+                        
+                        .addRule()
+                        .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME).as("outer_variable"))
+                        .perform(Iteration.over()
+                                    .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                    .perform(Iteration.over("outer_variable")
+                                                .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, NAME))
+                                                .perform( new GraphOperation()
+                                                {
+                                                    @Override
+                                                    public void perform(GraphRewrite event, EvaluationContext context)
+                                                    {
+                                                        outerConditionCounter++;
+                                                    }
+                                                }).endIteration()
+                                                ).endIteration()
+                                    
+                        )
+                        .addRule()
+                        .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME).as("outer_variable"))
+                        .perform(Iteration.over()
+                                    .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                    .perform(Iteration.over()
+                                                .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                                .perform( new GraphOperation()
+                                                {
+                                                    @Override
+                                                    public void perform(GraphRewrite event, EvaluationContext context)
+                                                    {
+                                                        sameConditionCounter++;
+                                                    }
+                                                }).endIteration()
+                                                ).endIteration()
+                                    
+                        )
+                        ;
             return configuration;
         }
         
         public int getMatchCount() {
             return matchCount;
         }
+        public int getTripleCondition() {
+            return tripleCondition;
+        }
+        public int getOuterConditionCounter() {
+            return outerConditionCounter;
+        }
         
         public TestWhenModel getModel() {
             return this.model;
+        }
+        
+        public int getSameConditionCounter() {
+            return sameConditionCounter;
         }
 
     }
