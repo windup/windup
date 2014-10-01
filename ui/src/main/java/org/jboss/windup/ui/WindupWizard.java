@@ -64,7 +64,7 @@ public class WindupWizard implements UIWizard, UICommand
     private UIInputMany<String> excludePackages;
 
     @Inject
-    @WithAttributes(label = "Fetch Remote Resources", required = false, defaultValue = "true", description = "Indicates whether to fetch maven information from the internet (default: false)")
+    @WithAttributes(label = "Fetch Remote Resources", required = false, defaultValue = "true", description = "Indicates whether to fetch maven information from the internet (default: true)")
     private UIInput<Boolean> fetchRemote;
 
     @Inject
