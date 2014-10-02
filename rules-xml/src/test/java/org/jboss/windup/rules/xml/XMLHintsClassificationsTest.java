@@ -87,7 +87,7 @@ public class XMLHintsClassificationsTest
     private GraphContextFactory factory;
 
     @Test
-    public void testIterationVariableResolving() throws IOException
+    public void testHintAndClassificationOperation() throws IOException
     {
         try (GraphContext context = factory.create())
         {
