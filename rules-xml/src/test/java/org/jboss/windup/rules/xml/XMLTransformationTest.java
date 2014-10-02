@@ -83,7 +83,7 @@ public class XMLTransformationTest
     private GraphContextFactory factory;
 
     @Test
-    public void testIterationVariableResolving() throws IOException
+    public void testXSLTTransformation() throws IOException
     {
         try (GraphContext context = factory.create())
         {

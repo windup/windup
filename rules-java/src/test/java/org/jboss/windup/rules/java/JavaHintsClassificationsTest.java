@@ -52,7 +52,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class HintsClassificationsTest
+public class JavaHintsClassificationsTest
 {
     @Deployment
     @Dependencies({
@@ -88,7 +88,7 @@ public class HintsClassificationsTest
     private GraphContextFactory factory;
 
     @Test
-    public void testIterationVariableResolving() throws Exception
+    public void testHintsAndClassificationOperation() throws Exception
     {
         try (GraphContext context = factory.create())
         {
@@ -117,7 +117,7 @@ public class HintsClassificationsTest
                     pm.setRootFileModel(inputPathFrame);
 
                     FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-                    fileModel.setFilePath(INPUT_PATH + "/HintsClassificationsTest.java");
+                    fileModel.setFilePath(INPUT_PATH + "/JavaHintsClassificationsTest.java");
                     fileModel.setProjectModel(pm);
 
                     pm.addFileModel(inputPathFrame);
