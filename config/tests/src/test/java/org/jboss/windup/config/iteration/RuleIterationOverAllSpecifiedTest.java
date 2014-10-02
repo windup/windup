@@ -76,67 +76,69 @@ public class RuleIterationOverAllSpecifiedTest
     }
 
     @Test
-    public void testTypeSelection()
+    public void testTypeSelection() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
-        context.getFramed().addVertex(null, TestSimple2Model.class);
-        context.getFramed().addVertex(null, TestSimple2Model.class);
+            TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
+            context.getFramed().addVertex(null, TestSimple2Model.class);
+            context.getFramed().addVertex(null, TestSimple2Model.class);
 
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
-        windupCfg.setSourceMode(true);
+            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
+            windupCfg.setSourceMode(true);
 
-        TestRuleIterationOverAllSpecifiedProvider provider = new TestRuleIterationOverAllSpecifiedProvider();
-        Configuration configuration = provider.getConfiguration(context);
+            TestRuleIterationOverAllSpecifiedProvider provider = new TestRuleIterationOverAllSpecifiedProvider();
+            Configuration configuration = provider.getConfiguration(context);
 
-        // this should call perform()
-        RuleSubset.create(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(1, TestSimple1ModelCounter);
-        Assert.assertEquals(2, TestSimple2ModelCounter);
-        vertex.asVertex().remove();
-        // this should call otherwise()
-        RuleSubset.create(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(1, TestSimple1ModelCounter);
-        Assert.assertEquals(4, TestSimple2ModelCounter);
-
+            // this should call perform()
+            RuleSubset.create(configuration).perform(event, evaluationContext);
+            Assert.assertEquals(1, TestSimple1ModelCounter);
+            Assert.assertEquals(2, TestSimple2ModelCounter);
+            vertex.asVertex().remove();
+            // this should call otherwise()
+            RuleSubset.create(configuration).perform(event, evaluationContext);
+            Assert.assertEquals(1, TestSimple1ModelCounter);
+            Assert.assertEquals(4, TestSimple2ModelCounter);
+        }
     }
 
     @Test(expected = Exception.class)
-    public void testTypeSelectionWithException()
+    public void testTypeSelectionWithException() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
-        context.getFramed().addVertex(null, TestSimple2Model.class);
-        context.getFramed().addVertex(null, TestSimple2Model.class);
+            TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
+            context.getFramed().addVertex(null, TestSimple2Model.class);
+            context.getFramed().addVertex(null, TestSimple2Model.class);
 
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
-        windupCfg.setSourceMode(true);
+            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
+            windupCfg.setSourceMode(true);
 
-        TestRuleIterationOverAllSpecifiedWithExceptionProvider provider = new TestRuleIterationOverAllSpecifiedWithExceptionProvider();
-        Configuration configuration = provider.getConfiguration(context);
+            TestRuleIterationOverAllSpecifiedWithExceptionProvider provider = new TestRuleIterationOverAllSpecifiedWithExceptionProvider();
+            Configuration configuration = provider.getConfiguration(context);
 
-        // this should call perform()
-        RuleSubset.create(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(TestSimple1ModelCounter, 1);
-        Assert.assertEquals(TestSimple2ModelCounter, 2);
-        vertex.asVertex().remove();
-        // this should call otherwise()
-        RuleSubset.create(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(TestSimple1ModelCounter, 1);
-        Assert.assertEquals(TestSimple2ModelCounter, 4);
-
+            // this should call perform()
+            RuleSubset.create(configuration).perform(event, evaluationContext);
+            Assert.assertEquals(TestSimple1ModelCounter, 1);
+            Assert.assertEquals(TestSimple2ModelCounter, 2);
+            vertex.asVertex().remove();
+            // this should call otherwise()
+            RuleSubset.create(configuration).perform(event, evaluationContext);
+            Assert.assertEquals(TestSimple1ModelCounter, 1);
+            Assert.assertEquals(TestSimple2ModelCounter, 4);
+        }
     }
 
     public class TestRuleIterationOverAllSpecifiedProvider extends WindupRuleProvider

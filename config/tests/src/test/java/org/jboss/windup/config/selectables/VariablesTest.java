@@ -53,86 +53,92 @@ public class VariablesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testInvalidTypeGet()
+    public void testInvalidTypeGet() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
-        GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-
-        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel1.setQualifiedName("com.example.Class1NoToString");
-        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel2.setQualifiedName("com.example.Class2HasToString");
-
-        Variables vars = Variables.instance(event);
-        vars.push();
-        vars.setSingletonVariable("classModel1", classModel1);
-        try
+        try (final GraphContext context = factory.create(folder))
         {
-            vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
-        }
-        catch (IllegalTypeArgumentException e)
-        {
-            Assert.assertNotNull(e.getMessage());
-            Assert.assertTrue(e
-                        .getMessage()
-                        .contains("Variable \"classModel1\" does not implement expected interface "
-                                    + "\"" + MavenProjectModel.class.getName()
-                                    + "\", actual implemented interfaces are"));
+            GraphRewrite event = new GraphRewrite(context);
+            final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+            final DefaultParameterValueStore values = new DefaultParameterValueStore();
+            evaluationContext.put(ParameterValueStore.class, values);
+
+            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel1.setQualifiedName("com.example.Class1NoToString");
+            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel2.setQualifiedName("com.example.Class2HasToString");
+
+            Variables vars = Variables.instance(event);
+            vars.push();
+            vars.setSingletonVariable("classModel1", classModel1);
+            try
+            {
+                vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
+            }
+            catch (IllegalTypeArgumentException e)
+            {
+                Assert.assertNotNull(e.getMessage());
+                Assert.assertTrue(e
+                            .getMessage()
+                            .contains("Variable \"classModel1\" does not implement expected interface "
+                                        + "\"" + MavenProjectModel.class.getName()
+                                        + "\", actual implemented interfaces are"));
+            }
         }
     }
 
     @Test
-    public void testUnTypedGet()
+    public void testUnTypedGet() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
-        GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
+        try (final GraphContext context = factory.create(folder))
+        {
+            GraphRewrite event = new GraphRewrite(context);
+            final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+            final DefaultParameterValueStore values = new DefaultParameterValueStore();
+            evaluationContext.put(ParameterValueStore.class, values);
 
-        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel1.setQualifiedName("com.example.Class1NoToString");
-        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel2.setQualifiedName("com.example.Class2HasToString");
+            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel1.setQualifiedName("com.example.Class1NoToString");
+            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel2.setQualifiedName("com.example.Class2HasToString");
 
-        Variables vars = Variables.instance(event);
-        vars.push();
-        vars.setSingletonVariable("classModel1", classModel1);
-        WindupVertexFrame frame = vars.findSingletonVariable("classModel1");
-        Assert.assertNotNull(frame);
+            Variables vars = Variables.instance(event);
+            vars.push();
+            vars.setSingletonVariable("classModel1", classModel1);
+            WindupVertexFrame frame = vars.findSingletonVariable("classModel1");
+            Assert.assertNotNull(frame);
+        }
     }
 
     @Test
-    public void testInvalidCountGet()
+    public void testInvalidCountGet() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
-        GraphRewrite event = new GraphRewrite(context);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-
-        JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel1.setQualifiedName("com.example.Class1NoToString");
-        JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
-        classModel2.setQualifiedName("com.example.Class2HasToString");
-
-        Variables vars = Variables.instance(event);
-        vars.push();
-        vars.setVariable("classModel1", Arrays.asList((WindupVertexFrame) classModel1, classModel2));
-        try
+        try (final GraphContext context = factory.create(folder))
         {
-            vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
-        }
-        catch (IllegalStateException e)
-        {
-            Assert.assertNotNull(e.getMessage());
-            Assert.assertTrue(e.getMessage().contains("More than one frame present"));
+            GraphRewrite event = new GraphRewrite(context);
+            final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+            final DefaultParameterValueStore values = new DefaultParameterValueStore();
+            evaluationContext.put(ParameterValueStore.class, values);
+
+            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel1.setQualifiedName("com.example.Class1NoToString");
+            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel2.setQualifiedName("com.example.Class2HasToString");
+
+            Variables vars = Variables.instance(event);
+            vars.push();
+            vars.setVariable("classModel1", Arrays.asList((WindupVertexFrame) classModel1, classModel2));
+            try
+            {
+                vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
+            }
+            catch (IllegalStateException e)
+            {
+                Assert.assertNotNull(e.getMessage());
+                Assert.assertTrue(e.getMessage().contains("More than one frame present"));
+            }
         }
     }
 }

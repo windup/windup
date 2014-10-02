@@ -77,57 +77,59 @@ public class IterationPayLoadPassTest
     }
 
     @Test
-    public void testPayloadPass()
+    public void testPayloadPass() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        TestPayloadModel vertex = context.getFramed().addVertex(null, TestPayloadModel.class);
-        context.getFramed().addVertex(null, TestPayloadModel.class);
-        context.getFramed().addVertex(null, TestPayloadModel.class);
+            TestPayloadModel vertex = context.getFramed().addVertex(null, TestPayloadModel.class);
+            context.getFramed().addVertex(null, TestPayloadModel.class);
+            context.getFramed().addVertex(null, TestPayloadModel.class);
 
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath("/tmp/testpath");
-        windupCfg.setSourceMode(true);
+            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            windupCfg.setInputPath("/tmp/testpath");
+            windupCfg.setSourceMode(true);
 
-        TestIterationPayLoadPassProvider provider = new TestIterationPayLoadPassProvider();
-        Configuration configuration = provider.getConfiguration(context);
+            TestIterationPayLoadPassProvider provider = new TestIterationPayLoadPassProvider();
+            Configuration configuration = provider.getConfiguration(context);
 
-        // this should call perform()
-        RuleSubset.create(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(3, modelCounter);
-        modelCounter = 0;
-
+            // this should call perform()
+            RuleSubset.create(configuration).perform(event, evaluationContext);
+            Assert.assertEquals(3, modelCounter);
+            modelCounter = 0;
+        }
     }
 
     @Test(expected = Exception.class)
-    public void testPayloadNotPass()
+    public void testPayloadNotPass() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        final GraphContext context = factory.create(folder);
+        try (final GraphContext context = factory.create(folder))
+        {
 
-        TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
-        context.getFramed().addVertex(null, TestSimple2Model.class);
-        context.getFramed().addVertex(null, TestSimple2Model.class);
+            TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
+            context.getFramed().addVertex(null, TestSimple2Model.class);
+            context.getFramed().addVertex(null, TestSimple2Model.class);
 
-        GraphRewrite event = new GraphRewrite(context);
-        DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-        windupCfg.setInputPath("/tmp/testpath");
-        windupCfg.setSourceMode(true);
+            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            windupCfg.setInputPath("/tmp/testpath");
+            windupCfg.setSourceMode(true);
 
-        TestIterationPayLoadNotPassProvider provider = new TestIterationPayLoadNotPassProvider();
-        Configuration configuration = provider.getConfiguration(context);
+            TestIterationPayLoadNotPassProvider provider = new TestIterationPayLoadNotPassProvider();
+            Configuration configuration = provider.getConfiguration(context);
 
-        // this should call perform()
-        RuleSubset.create(configuration).perform(event, evaluationContext);
-        Assert.assertEquals(3, modelCounter);
-        modelCounter = 0;
-
+            // this should call perform()
+            RuleSubset.create(configuration).perform(event, evaluationContext);
+            Assert.assertEquals(3, modelCounter);
+            modelCounter = 0;
+        }
     }
 
     public class TestIterationPayLoadPassProvider extends WindupRuleProvider
