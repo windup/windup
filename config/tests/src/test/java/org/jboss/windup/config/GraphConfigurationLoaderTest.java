@@ -113,12 +113,6 @@ public class GraphConfigurationLoaderTest
     public static class TestRuleProvider1Phase extends WindupRuleProvider
     {
         @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.MIGRATION_RULES;
-        }
-
-        @Override
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()

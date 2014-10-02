@@ -14,7 +14,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.iteration.TestSimple1Model;
@@ -134,13 +133,6 @@ public class IterationPayLoadPassTest
 
     public class TestIterationPayLoadPassProvider extends WindupRuleProvider
     {
-
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.MIGRATION_RULES;
-        }
-
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -169,13 +161,6 @@ public class IterationPayLoadPassTest
 
     public class TestIterationPayLoadNotPassProvider extends WindupRuleProvider
     {
-
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.MIGRATION_RULES;
-        }
-
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)

@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.xml.legacy;
 
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
@@ -16,12 +15,6 @@ import org.ocpsoft.rewrite.context.Context;
  */
 public class XmlSonicEsbConfig extends WindupRuleProvider
 {
-    @Override
-    public RulePhase getPhase()
-    {
-        return RulePhase.MIGRATION_RULES;
-    }
-
     @Override
     public void enhanceMetadata(Context context)
     {

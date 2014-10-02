@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.xml.legacy;
 
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.graph.GraphContext;
@@ -17,17 +16,12 @@ import org.ocpsoft.rewrite.context.Context;
 public class XmlKnowHowConfig extends WindupRuleProvider
 {
     @Override
-    public RulePhase getPhase()
-    {
-        return RulePhase.MIGRATION_RULES;
-    }
-
-    @Override
     public void enhanceMetadata(Context context)
     {
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 
+    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
@@ -177,4 +171,5 @@ public class XmlKnowHowConfig extends WindupRuleProvider
                     .perform(Hint.withText("Standard Message Inflow Driven Bean's Bean-specific instance pool can be set with one line in management CLI"));
         return configuration;
     }
+    // @formatter:on
 }

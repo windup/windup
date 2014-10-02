@@ -14,7 +14,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -143,13 +142,6 @@ public class RuleIterationOverAllSpecifiedTest
 
     public class TestRuleIterationOverAllSpecifiedProvider extends WindupRuleProvider
     {
-
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.MIGRATION_RULES;
-        }
-
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -208,13 +200,6 @@ public class RuleIterationOverAllSpecifiedTest
 
     public class TestRuleIterationOverAllSpecifiedWithExceptionProvider extends WindupRuleProvider
     {
-
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.MIGRATION_RULES;
-        }
-
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
