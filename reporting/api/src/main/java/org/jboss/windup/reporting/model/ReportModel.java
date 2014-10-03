@@ -1,13 +1,20 @@
 package org.jboss.windup.reporting.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -106,4 +113,28 @@ public interface ReportModel extends WindupVertexFrame
 
     @Adjacency(label = CHILD_REPORT, direction = Direction.OUT)
     public void addChildReport(final ReportModel reportResource);
+    
+    /**
+     * Get all ReportModels that should be displayed in the path to this report.
+     */
+    @JavaHandler
+    public List<ReportModel> getAllParentsInReversedOrder();
+    
+    abstract class Impl implements ReportModel, JavaHandlerContext<Vertex>
+    {
+        public List<ReportModel> getAllParentsInReversedOrder()
+        {
+            List<ReportModel> reports = new ArrayList<>();
+            ReportModel currentReport = this;
+            reports.add(this);
+            while(currentReport.getParentReport() != null) {
+                reports.add(currentReport.getParentReport());
+                currentReport = currentReport.getParentReport();
+            }
+
+            
+            Collections.reverse(reports);
+            return reports;
+        }
+    }
 }

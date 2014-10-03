@@ -70,10 +70,12 @@
             <span class="icon-bar"></span>
           </button>
         </div>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="../index.html">&lt;- All Applications</a></li>
-          </ul>
+       <div class="navbar-collapse collapse navbar-responsive-collapse">
+	  <ol class="breadcrumb">
+		<li><a href="../index.html">All Applications</a></li>
+			<#include "include/breadcrumbs.ftl">
+	  </ol> 
+          
         </div><!-- /.nav-collapse -->
         <div class="navbar-collapse collapse navbar-responsive-collapse">
           <ul class="nav navbar-nav">

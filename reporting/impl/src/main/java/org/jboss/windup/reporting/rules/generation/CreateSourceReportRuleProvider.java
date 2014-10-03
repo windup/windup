@@ -1,5 +1,11 @@
 package org.jboss.windup.reporting.rules.generation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.tinkerpop.blueprints.Vertex;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.services.Imported;
@@ -10,10 +16,12 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.SourceTypeResolver;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.FreeMarkerSourceReportModel;
 import org.jboss.windup.reporting.model.ReportFileModel;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -25,6 +33,9 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * This creates SourceReportModel entries for every relevant item within the graph.
@@ -44,7 +55,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.REPORT_GENERATION;
+        return RulePhase.POST_REPORT_GENERATION;
     }
 
     // @formatter:off
@@ -61,24 +72,47 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         {
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {
-                SourceReportModelService sourceReportModelService = new SourceReportModelService(event.getGraphContext());
+                SourceReportModelService sourceReportModelService = new SourceReportModelService(
+                            event.getGraphContext());
                 SourceReportModel sm = sourceReportModelService.create();
                 ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
                             ReportFileModel.class);
                 sm.setSourceFileModel(reportFileModel);
                 sm.setReportName(payload.getPrettyPath());
                 sm.setSourceType(resolveSourceType(payload));
-                
+
                 sm.setReportName(payload.getFileName());
                 sm.setTemplatePath(TEMPLATE);
                 sm.setTemplateType(TemplateType.FREEMARKER);
-                
+                GraphService<ApplicationReportModel> applicationReportService =
+                            new GraphService<ApplicationReportModel>(event.getGraphContext(),
+                                        ApplicationReportModel.class);
+                Iterable<ApplicationReportModel> allApplicationReports = applicationReportService.findAll();
+                List<Vertex> vertices = new ArrayList<Vertex>();
+                for (ApplicationReportModel model : allApplicationReports)
+                {
+                    vertices.add(model.asVertex());
+                }
+                GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<>(vertices);
+                if (payload.getProjectModel() != null && payload.getProjectModel().getRootFileModel() != null)
+                {
+
+                    String payloadProjectFilePath = payload.getProjectModel().getRootFileModel().getFilePath();
+                    pipe.as("result").has(ApplicationReportModel.MAIN_APPLICATION_REPORT, true).back("result");
+
+                    if (pipe.iterator().hasNext())
+                    {
+                        Vertex v = pipe.iterator().next();
+                        ApplicationReportModel parentReport = event.getGraphContext().getFramed()
+                                    .frame(v, ApplicationReportModel.class);
+                        sm.setParentReport(parentReport);
+                    }
+                }
                 GraphService.addTypeToModel(event.getGraphContext(), sm, FreeMarkerSourceReportModel.class);
-                
                 ReportService reportService = new ReportService(event.getGraphContext());
                 reportService.setUniqueFilename(sm, payload.getFileName(), "html");
             }
-            
+
             @Override
             public String toString()
             {
@@ -87,10 +121,11 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         };
 
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when(finder)
-            .perform(addSourceReport);
+                    .addRule()
+                    .when(finder)
+                    .perform(addSourceReport);
     }
+
     // @formatter:on
 
     private String resolveSourceType(FileModel f)

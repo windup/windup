@@ -40,10 +40,11 @@
               </button>
             </div>
             <div class="navbar-collapse collapse navbar-responsive-collapse">
-              <ul class="nav navbar-nav">
-                <li><a href="../index.html">&lt;- All Applications</a></li>
-              </ul>
-            </div><!-- /.nav-collapse -->
+	     <ol class="breadcrumb">
+		<li><a href="../index.html">All Applications</a></li>
+			<#include "include/breadcrumbs.ftl">
+	     </ol> 
+            </div>
             <div class="navbar-collapse collapse navbar-responsive-collapse">
               <ul class="nav navbar-nav">
                 <#include "include/navbar.ftl">
@@ -94,7 +95,12 @@
 	        <#else>
 	            <#list classificationLineItem.links.iterator() as link>
 					<li>
-						<a href='${link.link}'>${link.description}</a>
+						<#if link.description??>
+						 <a href='${link.link}'>${link.description}</a>
+						<#else>
+						<a href='${link.link}'>${link.link}</a>
+					       </#if>
+
 					</li>
 				</#list>	
 	        </#if>

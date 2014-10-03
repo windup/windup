@@ -19,6 +19,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleProvider
 {
+    public static final String OVERVIEW = "Overview";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
 
     @Override
@@ -70,7 +71,8 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
                     context.getFramed().addVertex(null, ApplicationReportModel.class);
         applicationReportModel.setReportPriority(100);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("Overview");
+        applicationReportModel.setReportName(OVERVIEW);
+        applicationReportModel.setMainApplicationReport(true);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
