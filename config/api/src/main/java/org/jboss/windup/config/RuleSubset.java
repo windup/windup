@@ -158,6 +158,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
          */
         GraphRewrite event = (GraphRewrite) rewrite;
 
+        List<Rule> rules = config.getRules();
+
         for (RuleLifecycleListener listener : listeners)
         {
             listener.beforeExecution();
