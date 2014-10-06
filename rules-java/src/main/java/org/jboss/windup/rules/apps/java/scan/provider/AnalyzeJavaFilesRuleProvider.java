@@ -81,5 +81,11 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
             visitor.init(cu, payload);
             cu.accept(visitor);
         }
+
+        @Override
+        public String toString()
+        {
+            return "ParseJavaSource";
+        }
     }
 }

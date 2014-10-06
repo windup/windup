@@ -49,6 +49,12 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     }
 
     @Override
+    public String toStringPerform()
+    {
+        return "DiscoverManifestFilesInArchives";
+    }
+
+    @Override
     public ConditionBuilder when()
     {
         return Query.find(ArchiveModel.class);

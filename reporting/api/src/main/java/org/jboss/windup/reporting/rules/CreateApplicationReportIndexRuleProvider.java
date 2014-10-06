@@ -49,6 +49,12 @@ public class CreateApplicationReportIndexRuleProvider extends WindupRuleProvider
                 }
                 createApplicationReportIndex(event.getGraphContext(), projectModel);
             }
+
+            @Override
+            public String toString()
+            {
+                return "AddApplicationReportIndex";
+            }
         };
 
         return ConfigurationBuilder.begin()

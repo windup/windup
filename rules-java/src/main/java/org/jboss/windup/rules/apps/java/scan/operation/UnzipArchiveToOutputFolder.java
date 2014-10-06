@@ -176,4 +176,10 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             }
         }
     }
+
+    @Override
+    public String toString()
+    {
+        return "UnzipArchivesToOutputFolder";
+    }
 }

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.logging.Logger.Level;
+import org.ocpsoft.rewrite.config.ConfigurationRuleParameterBuilder;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
@@ -102,4 +103,9 @@ public class Log extends DefaultOperationBuilder implements Parameterized
         messageBuilder.setParameterStore(store);
     }
 
+    @Override
+    public String toString()
+    {
+        return "LOG[" + level + ", " + messageBuilder.toString() + "]";
+    }
 }

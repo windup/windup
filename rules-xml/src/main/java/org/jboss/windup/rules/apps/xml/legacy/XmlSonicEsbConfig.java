@@ -18,7 +18,8 @@ public class XmlSonicEsbConfig extends WindupRuleProvider
     @Override
     public void enhanceMetadata(Context context)
     {
-        context.put(RuleMetadata.CATEGORY, "Xml");
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "XML");
     }
 
     // @formatter:off

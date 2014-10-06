@@ -124,6 +124,7 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     @Override
     public void enhanceMetadata(Context context)
     {
+        super.enhanceMetadata(context);
         if (this.metadataEnhancer != null)
             metadataEnhancer.accept(context);
     }

@@ -55,7 +55,13 @@ public class DiscoverNonMavenProjectsRuleProvider extends WindupRuleProvider
                     public boolean evaluate(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
                     {
                         return payload.getProjectModel() == null;
-                    }})
+                    }
+                    @Override
+                    public String toString()
+                    {
+                        return "ProjectModel == null";
+                    }
+                })
                 .perform(
                     new AbstractIterationOperation<ArchiveModel>()
                     {
@@ -122,6 +128,10 @@ public class DiscoverNonMavenProjectsRuleProvider extends WindupRuleProvider
                                 }
                                 childProjectModel = projectModel;
                             }
+                        }
+                        
+                        public String toString() {
+                            return "ScanAsNonMavenProject";
                         }
                     }
                 )

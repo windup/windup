@@ -54,5 +54,11 @@ public class AttachApplicationReportsToIndexRuleProvider extends WindupRuleProvi
                 index.addApplicationReportModel(payload);
             }
         }
+
+        @Override
+        public String toString()
+        {
+            return "AddToApplicationIndex";
+        }
     }
 }

@@ -42,6 +42,12 @@ public class AnalyzeArchivesChecksumRuleProvider extends IteratingRuleProvider<A
     }
 
     @Override
+    public String toStringPerform()
+    {
+        return "AttachChecksumsToArchives";
+    }
+
+    @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
         try (InputStream is = payload.asInputStream())

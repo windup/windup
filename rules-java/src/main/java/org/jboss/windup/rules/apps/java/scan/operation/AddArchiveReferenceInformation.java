@@ -16,17 +16,16 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
     {
         super(variableName);
     }
-    
+
     public AddArchiveReferenceInformation()
     {
         super();
     }
-    
+
     public static AddArchiveReferenceInformation to(String variableName)
     {
         return new AddArchiveReferenceInformation(variableName);
     }
-   
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel fileResourceModel)
@@ -40,5 +39,11 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
         ApplicationArchiveModel appArchiveModel = GraphService.addTypeToModel(event.getGraphContext(),
                     fileResourceModel, ApplicationArchiveModel.class);
         appArchiveModel.setApplicationName(file.getName());
+    }
+
+    @Override
+    public String toString()
+    {
+        return "AddArchiveReferenceInformation";
     }
 }

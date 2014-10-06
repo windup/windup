@@ -54,6 +54,12 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
     }
 
     @Override
+    public String toStringPerform()
+    {
+        return "Discover Spring Config Files";
+    }
+
+    @Override
     public ConditionBuilder when()
     {
         return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "beans");

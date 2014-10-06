@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.xml;
 
+import static org.joox.JOOX.$;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,8 +35,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import static org.joox.JOOX.$;
-
 public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getSimpleName());
@@ -61,6 +59,12 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {
                 addXmlMetaInformation(event.getGraphContext(), payload);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "DiscoverXMLFiles";
             }
         };
 

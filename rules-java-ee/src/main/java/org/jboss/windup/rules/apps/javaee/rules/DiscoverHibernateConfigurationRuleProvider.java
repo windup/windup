@@ -53,6 +53,12 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
     }
 
     @Override
+    public String toStringPerform()
+    {
+        return "Discover hibernate.cfg.xml files";
+    }
+
+    @Override
     public ConditionBuilder when()
     {
         QueryGremlinCriterion doctypeSearchCriterion = new QueryGremlinCriterion()

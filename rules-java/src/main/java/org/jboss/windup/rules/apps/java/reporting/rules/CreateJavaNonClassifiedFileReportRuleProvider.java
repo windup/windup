@@ -49,6 +49,12 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
+            
+            @Override
+            public String toString()
+            {
+                return "CreateNonClassifiedFilesApplicationReport";
+            }
         };
 
         return ConfigurationBuilder.begin()

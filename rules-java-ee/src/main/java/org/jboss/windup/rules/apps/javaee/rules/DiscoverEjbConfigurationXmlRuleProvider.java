@@ -63,6 +63,12 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     }
 
     @Override
+    public String toStringPerform()
+    {
+        return "Discover EJB-JAR XML Files";
+    }
+
+    @Override
     public ConditionBuilder when()
     {
         return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar");

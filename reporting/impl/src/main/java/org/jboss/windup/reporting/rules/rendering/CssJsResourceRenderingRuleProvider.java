@@ -61,6 +61,12 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
                 String outputPath = cfg.getOutputPath().getFilePath();
                 copyCssResourcesToOutput(event.getGraphContext(), outputPath);
             }
+
+            @Override
+            public String toString()
+            {
+                return "CopyCSSToOutput";
+            }
         };
 
         Configuration configuration = ConfigurationBuilder.begin()

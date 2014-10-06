@@ -48,6 +48,12 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
+            
+            @Override
+            public String toString()
+            {
+                return "CreateJavaApplicationOverviewReport";
+            }
         };
 
         return ConfigurationBuilder.begin()

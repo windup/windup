@@ -30,7 +30,7 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
         this.graphTypeManager = graphTypeManager;
         initTypes();
     }
-    
+
     public ConfigureArchiveTypes(GraphTypeManager graphTypeManager)
     {
         super();
@@ -42,7 +42,7 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
     {
         return new ConfigureArchiveTypes(variableName, graphTypeManager);
     }
-    
+
     public static ConfigureArchiveTypes withTypeManager(GraphTypeManager graphTypeManager)
     {
         return new ConfigureArchiveTypes(graphTypeManager);
@@ -80,5 +80,11 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
                 this.suffixToModelClass.put(archiveType.value(), frameClass);
             }
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ConfigureArchiveTypes";
     }
 }

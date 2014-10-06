@@ -111,6 +111,12 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                     }
                 }
             }
+
+            @Override
+            public String toString()
+            {
+                return "ScanMavenProject";
+            }
         };
 
         // @formatter:off

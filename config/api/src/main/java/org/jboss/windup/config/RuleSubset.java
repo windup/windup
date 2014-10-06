@@ -147,9 +147,6 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         }
     }
 
-    /*
-     * Executors
-     */
     @Override
     public void perform(Rewrite rewrite, EvaluationContext context)
     {
@@ -160,8 +157,6 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
          * Highly optimized loop - for performance reasons. Think before you change this!
          */
         GraphRewrite event = (GraphRewrite) rewrite;
-
-        List<Rule> rules = config.getRules();
 
         for (RuleLifecycleListener listener : listeners)
         {
