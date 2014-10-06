@@ -78,6 +78,12 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
                 ReportService reportService = new ReportService(event.getGraphContext());
                 reportService.setUniqueFilename(sm, payload.getFileName(), "html");
             }
+            
+            @Override
+            public String toString()
+            {
+                return "AddSourceReport";
+            }
         };
 
         return ConfigurationBuilder.begin()

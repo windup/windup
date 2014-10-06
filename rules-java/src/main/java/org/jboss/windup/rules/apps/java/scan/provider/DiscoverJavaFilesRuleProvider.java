@@ -186,5 +186,10 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             sourceFileModel.addJavaClass(javaClassModel);
         }
 
+        @Override
+        public String toString()
+        {
+            return "AttachJavaSourceInformationToGraph";
+        }
     }
 }

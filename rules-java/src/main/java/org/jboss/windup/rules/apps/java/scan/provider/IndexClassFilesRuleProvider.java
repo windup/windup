@@ -59,6 +59,12 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
                     uncommittedIterations = 0;
                 }
             }
+            
+            @Override
+            public String toString()
+            {
+                return "AttachClassMetadataToGraph";
+            }
         };
         
         return ConfigurationBuilder.begin()

@@ -59,6 +59,12 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
     }
 
     @Override
+    public String toStringPerform()
+    {
+        return "Discover hibernate.hbm.xml files";
+    }
+
+    @Override
     public ConditionBuilder when()
     {
 

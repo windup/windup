@@ -20,7 +20,8 @@ public class EjbConfig extends WindupRuleProvider
     @Override
     public void enhanceMetadata(Context context)
     {
-        context.put(RuleMetadata.CATEGORY, "Java");
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "XML");
     }
 
     // @formatter:off

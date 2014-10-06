@@ -17,6 +17,7 @@ public class WebsphereConfig extends WindupRuleProvider
     @Override
     public void enhanceMetadata(Context context)
     {
+        super.enhanceMetadata(context);
         context.put(RuleMetadata.CATEGORY, "Java");
     }
 

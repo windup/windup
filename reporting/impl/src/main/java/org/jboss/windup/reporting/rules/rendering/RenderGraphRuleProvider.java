@@ -46,6 +46,12 @@ public class RenderGraphRuleProvider extends WindupRuleProvider
                                 renderer.renderGraph(graphContext);
                             }
                         }
+
+                        @Override
+                        public String toString()
+                        {
+                            return "RenderGraphForDebugging";
+                        }
                     });
     }
 }

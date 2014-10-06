@@ -33,7 +33,18 @@ public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFram
         {
             IteratingRuleProvider.this.perform(event, context, payload);
         }
+
+        @Override
+        public String toString()
+        {
+            return IteratingRuleProvider.this.toStringPerform();
+        }
     }
+
+    /**
+     * This should return a string describing the operation to be performed by the subclass.
+     */
+    public abstract String toStringPerform();
 
     @Override
     public final Configuration getConfiguration(GraphContext context)

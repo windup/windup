@@ -138,6 +138,12 @@ public class RuleExecutionTimeReportRuleProvider extends WindupRuleProvider
                             }
 
                         }
+
+                        @Override
+                        public String toString()
+                        {
+                            return "RenderRuleExecutionTimeReport";
+                        }
                     });
     }
 }

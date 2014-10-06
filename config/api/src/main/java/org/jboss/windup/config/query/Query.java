@@ -243,12 +243,16 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         builder.append("Query");
         if (searchType != null)
         {
-            builder.append(".find(").append(searchType.getClass().getName()).append(")");
+            builder.append(".find(").append(searchType.getName()).append(")");
         }
 
-        for (QueryGremlinCriterion criterion : pipelineCriteria)
+        if (!pipelineCriteria.isEmpty())
         {
-            builder.append(".gremlin(" + criterion + ")");
+            builder.append(".gremlin()");
+            for (QueryGremlinCriterion criterion : pipelineCriteria)
+            {
+                builder.append(criterion);
+            }
         }
         builder.append(".as(" + outputVar + ")");
         return builder.toString();

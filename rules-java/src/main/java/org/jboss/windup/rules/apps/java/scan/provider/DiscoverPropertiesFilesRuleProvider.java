@@ -45,6 +45,12 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     }
 
     @Override
+    public String toStringPerform()
+    {
+        return "Discover Properties Files";
+    }
+
+    @Override
     public ConditionBuilder when()
     {
         return Query.find(FileModel.class).withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX,

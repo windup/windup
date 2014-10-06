@@ -43,6 +43,12 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
             {
                 setMavenParentProject(payload);
             }
+
+            @Override
+            public String toString()
+            {
+                return "ConfigureProjectHierarchy";
+            }
         };
 
         // @formatter:off

@@ -130,4 +130,10 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
             }
         }
     }
+
+    @Override
+    public String toString()
+    {
+        return "DecompileWithProcyon";
+    }
 }

@@ -56,6 +56,12 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     }
 
     @Override
+    public String toStringPerform()
+    {
+        return "Discover web.xml files";
+    }
+
+    @Override
     public ConditionBuilder when()
     {
         return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app");

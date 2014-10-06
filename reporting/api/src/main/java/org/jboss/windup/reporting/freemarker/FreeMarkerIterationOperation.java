@@ -146,4 +146,10 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             throw new WindupException("FreeMarkerOperation TemplateException: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    public String toString()
+    {
+        return "RenderFreeMarkerTemplate";
+    }
 }

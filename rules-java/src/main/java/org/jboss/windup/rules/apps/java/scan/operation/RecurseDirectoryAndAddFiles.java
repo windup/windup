@@ -14,7 +14,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     {
         super(variableName);
     }
-    
+
     /**
      * Let the variable name to be set by the current Iteration.
      */
@@ -27,7 +27,12 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     {
         return new RecurseDirectoryAndAddFiles(variableName);
     }
-    
+
+    @Override
+    public String toString()
+    {
+        return "RecurseDirectoryAndAddFiles";
+    }
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)

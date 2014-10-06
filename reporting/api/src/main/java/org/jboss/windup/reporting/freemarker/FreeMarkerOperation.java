@@ -105,4 +105,10 @@ public class FreeMarkerOperation extends GraphOperation
             throw new WindupException("FreeMarkerOperation TemplateException: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    public String toString()
+    {
+        return "FreeMarkerOperation[template=" + templatePath + ", output=" + outputFilename + "]";
+    }
 }
