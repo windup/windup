@@ -174,11 +174,8 @@ public class JavaHintsClassificationsTest
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
                 Assert.assertEquals(1, classifications.size());
 
-                @SuppressWarnings("unused")
                 Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
-
-                // TODO fix this: there is a file multiple times:
-                // Assert.assertEquals(2, Iterators.asList(fileModels).size());
+                Assert.assertEquals(2, Iterators.asList(fileModels).size());
             }
             finally
             {
