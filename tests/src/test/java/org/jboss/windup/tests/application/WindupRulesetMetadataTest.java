@@ -10,15 +10,16 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupRuleMetadata;
-import org.jboss.windup.rules.apps.java.JavaRulesMetadata;
-import org.jboss.windup.rules.apps.legacy.java.JavaEERulesMetadata;
+import org.jboss.windup.config.WindupRulesetMetadata;
+import org.jboss.windup.rules.apps.java.JavaRulesetMetadata;
+import org.jboss.windup.rules.apps.legacy.java.JavaEERulesetMetadata;
+import org.jboss.windup.rules.apps.xml.XmlRulesetMetadata;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupRuleMetadataTest
+public class WindupRulesetMetadataTest
 {
 
     @Deployment
@@ -48,7 +49,7 @@ public class WindupRuleMetadataTest
     }
 
     @Inject
-    private Imported<WindupRuleMetadata> ruleMetadata;
+    private Imported<WindupRulesetMetadata> ruleMetadata;
 
     @Test
     public void testRuleMetadata()
@@ -56,26 +57,33 @@ public class WindupRuleMetadataTest
         Assert.assertNotNull(ruleMetadata);
 
         int count = 0;
-        boolean foundJavaRulesMeta = false;
-        boolean foundDecompilerRulesMeta = false;
-        for (WindupRuleMetadata m : this.ruleMetadata)
+        boolean foundJavaRulesetMeta = false;
+        boolean foundJavaEERulesetMeta = false;
+        boolean foundXMLRulesetMeta = false;
+        for (WindupRulesetMetadata m : this.ruleMetadata)
         {
             count++;
 
-            if (m instanceof JavaRulesMetadata)
+            if (m instanceof JavaRulesetMetadata)
             {
-                foundJavaRulesMeta = true;
-                Assert.assertEquals(JavaRulesMetadata.RULE_SET_ID, m.getRuleSetID());
+                foundJavaRulesetMeta = true;
+                Assert.assertEquals(JavaRulesetMetadata.RULE_SET_ID, m.getRuleSetID());
             }
-            else if (m instanceof JavaEERulesMetadata)
+            else if (m instanceof JavaEERulesetMetadata)
             {
-                foundDecompilerRulesMeta = true;
-                Assert.assertEquals(JavaEERulesMetadata.RULE_SET_ID, m.getRuleSetID());
+                foundJavaEERulesetMeta = true;
+                Assert.assertEquals(JavaEERulesetMetadata.RULE_SET_ID, m.getRuleSetID());
+            }
+            else if (m instanceof XmlRulesetMetadata)
+            {
+                foundXMLRulesetMeta = true;
+                Assert.assertEquals(XmlRulesetMetadata.RULE_SET_ID, m.getRuleSetID());
             }
         }
 
-        Assert.assertEquals(2, count);
-        Assert.assertTrue(foundJavaRulesMeta);
-        Assert.assertTrue(foundDecompilerRulesMeta);
+        Assert.assertEquals(3, count);
+        Assert.assertTrue(foundJavaRulesetMeta);
+        Assert.assertTrue(foundJavaEERulesetMeta);
+        Assert.assertTrue(foundXMLRulesetMeta);
     }
 }

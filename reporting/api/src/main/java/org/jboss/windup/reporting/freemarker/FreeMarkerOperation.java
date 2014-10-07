@@ -23,8 +23,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 /**
- * This class is used to produce a freemarker report (and the associated ReportModel) from outside of an Iteration
- * context.
+ * This class is used to produce a freemarker report (and the associated ReportModel) from outside of an Iteration context.
  * 
  * @author jsightler <jesse.sightler@gmail.com)
  * 
@@ -49,8 +48,7 @@ public class FreeMarkerOperation extends GraphOperation
     /**
      * Create a FreeMarkerOperation with the provided furnace instance template path, and varNames.
      * 
-     * The variables in varNames will be provided to the template, and a new ReportModel will be created with these
-     * variables attached.
+     * The variables in varNames will be provided to the template, and a new ReportModel will be created with these variables attached.
      * 
      * 
      */
@@ -85,8 +83,7 @@ public class FreeMarkerOperation extends GraphOperation
                                     .size()]));
 
             // also, extension functions
-            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace,
-                        event.getGraphContext());
+            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);
 
             Map<String, Object> objects = new HashMap<>(vars);
             objects.putAll(freeMarkerExtensions);

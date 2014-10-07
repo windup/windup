@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java;
 
-import org.jboss.windup.config.WindupRuleMetadata;
+import org.jboss.windup.config.WindupRulesetMetadata;
 
 /**
  * Metadata for the Java Rules addon.
@@ -8,7 +8,7 @@ import org.jboss.windup.config.WindupRuleMetadata;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class JavaRulesMetadata implements WindupRuleMetadata
+public class JavaRulesetMetadata implements WindupRulesetMetadata
 {
     public static final String RULE_SET_ID = "CoreJavaRules";
 

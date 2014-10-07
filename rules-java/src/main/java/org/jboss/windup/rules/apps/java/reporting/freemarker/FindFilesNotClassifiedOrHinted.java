@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
@@ -18,8 +19,7 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * Finds the files that have not had {@link ClassificationModel}s linked, and also does not have
- * {@link FileLocationModel}s linked.
+ * Finds the files that have not had {@link ClassificationModel}s linked, and also does not have {@link FileLocationModel}s linked.
  * 
  * Called by:
  * 
@@ -34,9 +34,9 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
     private GraphContext context;
 
     @Override
-    public void setGraphContext(GraphContext context)
+    public void setContext(GraphRewrite event)
     {
-        this.context = context;
+        this.context = event.getGraphContext();
     }
 
     @Override

@@ -4,11 +4,14 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.loader.GraphConfigurationLoader;
+import org.jboss.windup.config.loader.WindupRuleLoader;
+import org.jboss.windup.config.metadata.WindupRuleMetadata;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -26,7 +29,10 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 public class WindupProcessorImpl implements WindupProcessor
 {
     @Inject
-    private GraphConfigurationLoader graphConfigurationLoader;
+    private WindupRuleLoader windupConfigurationLoader;
+
+    @Inject
+    private Imported<RuleLifecycleListener> listeners;
 
     @Override
     public void execute()
@@ -37,12 +43,10 @@ public class WindupProcessorImpl implements WindupProcessor
     @Override
     public void execute(WindupConfiguration windupConfiguration)
     {
-        Assert.notNull(windupConfiguration,
-                    "Windup configuration must not be null. (Call default execution if no configuration is required.)");
+        Assert.notNull(windupConfiguration, "Windup configuration must not be null. (Call default execution if no configuration is required.)");
 
         GraphContext context = windupConfiguration.getGraphContext();
-        Assert.notNull(context,
-                    "Windup GraphContext must not be null!");
+        Assert.notNull(context, "Windup GraphContext must not be null!");
 
         context.setOptions(windupConfiguration.getOptionMap());
 
@@ -56,15 +60,21 @@ public class WindupProcessorImpl implements WindupProcessor
             configModel.setUserRulesPath(getFileModel(context, windupConfiguration.getUserRulesDirectory()));
         }
 
-        Configuration rules = graphConfigurationLoader.loadConfiguration(context,
-                    windupConfiguration.getRuleProviderFilter());
-
         GraphRewrite event = new GraphRewrite(context);
+
+        WindupRuleMetadata ruleMetadata = windupConfigurationLoader.loadConfiguration(context, windupConfiguration.getRuleProviderFilter());
+        event.getRewriteContext().put(WindupRuleMetadata.class, ruleMetadata);
+
+        Configuration rules = ruleMetadata.getConfiguration();
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
         if (windupConfiguration.getProgressMonitor() != null)
-            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(),
-                        rules));
+            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(), rules));
+
+        for (RuleLifecycleListener listener : listeners)
+        {
+            ruleSubset.addLifecycleListener(listener);
+        }
 
         ruleSubset.perform(event, createEvaluationContext());
     }

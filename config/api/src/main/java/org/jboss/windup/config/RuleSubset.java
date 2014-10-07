@@ -162,7 +162,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
         for (RuleLifecycleListener listener : listeners)
         {
-            listener.beforeExecution();
+            listener.beforeExecution(event);
         }
 
         final EvaluationContextImpl subContext = new EvaluationContextImpl();
@@ -187,7 +187,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 {
                     for (RuleLifecycleListener listener : listeners)
                     {
-                        listener.beforeRuleEvaluation(rule, subContext);
+                        listener.beforeRuleEvaluation(event, rule, subContext);
                     }
 
                     if (rule.evaluate(event, subContext))
@@ -269,6 +269,10 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             }
             catch (RuntimeException ex)
             {
+                for (RuleLifecycleListener listener : listeners)
+                {
+                    listener.afterRuleExecutionFailed(event, subContext, rule, ex);
+                }
                 String exMsg = "Error encountered while evaluating rule: " + rule;
                 String logMsg = exMsg + "\n" + ex.getMessage();
                 log.severe(logMsg);
@@ -289,7 +293,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
         for (RuleLifecycleListener listener : listeners)
         {
-            listener.afterExecution();
+            listener.afterExecution(event);
         }
     }
 
@@ -498,8 +502,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     /**
-     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and
-     * their results.
+     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and their results.
      */
     public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener)
     {

@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
@@ -29,10 +29,10 @@ public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
     private InlineHintService inlineHintService;
 
     @Override
-    public void setGraphContext(GraphContext context)
+    public void setContext(GraphRewrite event)
     {
-        this.classificationService = new ClassificationService(context);
-        this.inlineHintService = new InlineHintService(context);
+        this.classificationService = new ClassificationService(event.getGraphContext());
+        this.inlineHintService = new InlineHintService(event.getGraphContext());
     }
 
     @Override

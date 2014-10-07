@@ -13,7 +13,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.loader.GraphConfigurationLoader;
+import org.jboss.windup.config.loader.WindupRuleLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
@@ -26,7 +26,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 @RunWith(Arquillian.class)
-public class GraphConfigurationLoaderTest
+public class WindupConfigurationLoaderTest
 {
 
     @Deployment
@@ -50,31 +50,7 @@ public class GraphConfigurationLoaderTest
     @Inject
     private GraphContextFactory factory;
     @Inject
-    private GraphConfigurationLoader loader;
-
-    @Test
-    public void testRuleProviderNoFilter() throws IOException
-    {
-        try (GraphContext context = factory.create())
-        {
-            Configuration configuration1 = loader.loadConfiguration(context);
-            boolean found1 = false;
-            boolean found2 = false;
-            for (Rule rule : configuration1.getRules())
-            {
-                if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
-                {
-                    found1 = true;
-                }
-                else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName()))
-                {
-                    found2 = true;
-                }
-            }
-            Assert.assertTrue(found1);
-            Assert.assertTrue(found2);
-        }
-    }
+    private WindupRuleLoader loader;
 
     @Test
     public void testRuleProviderWithFilter() throws IOException
@@ -90,7 +66,8 @@ public class GraphConfigurationLoaderTest
                 }
             };
 
-            Configuration configuration1 = loader.loadConfiguration(context, predicate);
+            GraphRewrite event = new GraphRewrite(context);
+            Configuration configuration1 = loader.loadConfiguration(context, predicate).getConfiguration();
             boolean found1 = false;
             boolean found2 = false;
             for (Rule rule : configuration1.getRules())

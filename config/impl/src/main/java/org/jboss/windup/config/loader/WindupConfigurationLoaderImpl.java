@@ -1,15 +1,18 @@
 package org.jboss.windup.config.loader;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.WindupRuleMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.ServiceLogger;
 import org.ocpsoft.rewrite.bind.Evaluation;
@@ -17,13 +20,13 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionVisit;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.OperationVisit;
 import org.ocpsoft.rewrite.config.ParameterizedCallback;
 import org.ocpsoft.rewrite.config.ParameterizedConditionVisitor;
 import org.ocpsoft.rewrite.config.ParameterizedOperationVisitor;
 import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.config.RuleBuilder;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.param.ConfigurableParameter;
 import org.ocpsoft.rewrite.param.DefaultParameter;
@@ -33,31 +36,19 @@ import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
 
-public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
+public class WindupConfigurationLoaderImpl implements WindupRuleLoader
 {
-    public static Logger LOG = Logger.getLogger(GraphConfigurationLoaderImpl.class.getName());
+    public static Logger LOG = Logger.getLogger(WindupConfigurationLoaderImpl.class.getName());
 
     @Inject
     private Imported<WindupRuleProviderLoader> loaders;
 
-    public GraphConfigurationLoaderImpl()
+    public WindupConfigurationLoaderImpl()
     {
     }
 
-    /**
-     * Load all {@link ConfigurationProvider} instances, sort by {@link ConfigurationProvider#priority()}, and return a
-     * unified, composite {@link Configuration} object.
-     */
-    public Configuration loadConfiguration(GraphContext context)
-    {
-        return build(context, null);
-    }
-
-    /**
-     * Load all {@link ConfigurationProvider} instances that are accepted by the filter, sort by
-     * {@link ConfigurationProvider#priority()}, and return a unified, composite {@link Configuration} object.
-     */
-    public Configuration loadConfiguration(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
+    @Override
+    public WindupRuleMetadata loadConfiguration(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
     {
         return build(context, ruleProviderFilter);
     }
@@ -72,15 +63,18 @@ public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
 
         List<WindupRuleProvider> providers = WindupRuleProviderSorter.sort(allProviders);
         ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, providers);
-        return providers;
+        return Collections.unmodifiableList(providers);
     }
 
-    private Configuration build(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
+    private WindupRuleMetadata build(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
     {
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
 
-        for (WindupRuleProvider provider : getProviders(context))
+        List<WindupRuleProvider> providers = getProviders(context);
+        WindupRuleMetadata executionMetadata = new WindupRuleMetadata();
+        executionMetadata.setProviders(providers);
+        for (WindupRuleProvider provider : providers)
         {
             if (ruleProviderFilter != null && !ruleProviderFilter.accept(provider))
             {
@@ -89,11 +83,21 @@ public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
             }
 
             Configuration cfg = provider.getConfiguration(context);
-            List<Rule> list = cfg.getRules();
-            for (final Rule rule : list)
+            List<Rule> rules = cfg.getRules();
+            executionMetadata.setRules(provider, rules);
+
+            int i = 0;
+            for (final Rule rule : rules)
             {
+                i++;
                 if (rule instanceof Context)
                     provider.enhanceMetadata((Context) rule);
+
+                if (rule instanceof RuleBuilder && StringUtils.isEmpty(rule.getId()))
+                {
+                    // set synthetic id
+                    ((RuleBuilder) rule).withId(generatedRuleID(provider, rule, i));
+                }
 
                 result.addRule(rule);
 
@@ -128,7 +132,12 @@ public class GraphConfigurationLoaderImpl implements GraphConfigurationLoader
             }
         }
 
-        return result;
+        executionMetadata.setConfiguration(result);
+        return executionMetadata;
     }
 
+    private String generatedRuleID(WindupRuleProvider provider, Rule rule, int idx)
+    {
+        return "GeneratedID_" + provider.getID() + "_" + idx;
+    }
 }

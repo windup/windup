@@ -6,7 +6,7 @@ package org.jboss.windup.config;
  * 
  * @author Jess Sightler <jesse.sightler@gmail.com>
  */
-public interface WindupRuleMetadata
+public interface WindupRulesetMetadata
 {
     /**
      * Returns a short identifier, that should uniquely identify a ruleset.
