@@ -1,7 +1,9 @@
 package org.jboss.windup.rules.apps.xml.operation.xslt;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -26,9 +28,13 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileReferenceModel;
+import org.jboss.windup.reporting.model.LinkModel;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
+import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,16 +125,46 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
      */
     public static XSLTTransformation using(String location)
     {
+        return using(location, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Set the location of the source XSLT file to a absolute path on the filesystem
+     */
+    public static XSLTTransformation usingFilesystem(String location)
+    {
         XSLTTransformation tansformation = new XSLTTransformation();
-        // classLoader instance needed to see the file passed in the location
-        tansformation.contextClassLoader = Thread.currentThread().getContextClassLoader();
         tansformation.location = location;
         return tansformation;
     }
 
-    public void setup()
+    /**
+     * Set the location of the source XSLT file and set it to use the provided {@link ClassLoader} for resource lookup.
+     */
+    public static XSLTTransformation using(String location, ClassLoader classLoader)
     {
-        try(InputStream resourceAsStream = contextClassLoader.getResourceAsStream(location))
+        XSLTTransformation tansformation = new XSLTTransformation();
+        // classLoader instance needed to see the file passed in the location
+        tansformation.contextClassLoader = classLoader;
+        tansformation.location = location;
+        return tansformation;
+    }
+
+    private InputStream openInputStream() throws IOException
+    {
+        if (this.contextClassLoader != null)
+        {
+            return contextClassLoader.getResourceAsStream(location);
+        }
+        else
+        {
+            return new FileInputStream(this.location);
+        }
+    }
+
+    private void setup()
+    {
+        try (InputStream resourceAsStream = openInputStream())
         {
             final Source xsltSource = new StreamSource(resourceAsStream);
             final TransformerFactory tf = TransformerFactory.newInstance();
@@ -147,7 +183,8 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
                     return new StreamSource(Thread.currentThread().getContextClassLoader().getResourceAsStream(href));
                 }
             });
-            ClassLoaders.executeIn(TransformerFactory.class.getClassLoader(), new Callable<Object>(){
+            ClassLoaders.executeIn(TransformerFactory.class.getClassLoader(), new Callable<Object>()
+            {
 
                 @Override
                 public Object call() throws Exception
@@ -155,7 +192,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
                     xsltTransformer = tf.newTransformer(xsltSource);
                     return null;
                 }
-                
+
             });
             if (xsltParameters != null)
             {
@@ -176,7 +213,8 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         }
         catch (TransformerConfigurationException e)
         {
-            throw new IllegalStateException("Problem working with xsl file located at " + location + ". Please check if the file really exists." , e);
+            throw new IllegalStateException("Problem working with xsl file located at " + location
+                        + ". Please check if the file really exists.", e);
         }
         catch (Exception e)
         {
@@ -189,19 +227,21 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     {
         setup();
         GraphContext graphContext = event.getGraphContext();
-        GraphService<XsltTransformationModel> transformationService = new GraphService<XsltTransformationModel>(
+        GraphService<XsltTransformationModel> transformationService = new GraphService<>(
                     graphContext,
                     XsltTransformationModel.class);
-        String relativeDirectory = StringUtils.substringBeforeLast(payload.getFilePath(), File.separator);
-        String fileName = StringUtils.substringAfterLast(payload.getFilePath(), File.separator);
+        String fileName = payload.getFileName();
 
         fileName = StringUtils.replace(fileName, ".", "-");
         fileName = fileName + extension;
 
-        File resultFile = new File(relativeDirectory + File.separator + fileName);
+        XsltTransformationService xsltTransformationService = new XsltTransformationService(graphContext);
+        Path outputPath = xsltTransformationService.getTransformedXSLTPath();
+
+        Path resultPath = outputPath.resolve(fileName);
 
         Source xmlSource = new DOMSource(payload.asDocument());
-        Result xmlResult = new StreamResult(resultFile);
+        Result xmlResult = new StreamResult(resultPath.toFile());
 
         try
         {
@@ -211,8 +251,17 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             transformation.setExtension(extension);
             transformation.setSourceLocation(location);
             transformation.setSourceFile(payload);
-            transformation.setResult(resultFile.getAbsolutePath());
+            transformation.setResult(fileName);
 
+            ClassificationService classificationService = new ClassificationService(graphContext);
+            ClassificationModel classificationModel = classificationService.create();
+            classificationModel.addFileModel(payload);
+
+            GraphService<LinkModel> linkService = new GraphService<>(graphContext, LinkModel.class);
+            LinkModel linkModel = linkService.create();
+            linkModel.setDescription(description);
+            linkModel.setLink(XsltTransformationService.TRANSFORMEDXML_DIR_NAME + "/" + fileName);
+            classificationModel.addLink(linkModel);
         }
         catch (TransformerException e)
         {

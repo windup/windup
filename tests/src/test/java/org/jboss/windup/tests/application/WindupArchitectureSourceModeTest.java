@@ -1,10 +1,17 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -13,6 +20,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
@@ -21,6 +29,7 @@ import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOve
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
+import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.jboss.windup.tests.application.rules.TestServletAnnotationRuleProvider;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.junit.Assert;
@@ -30,8 +39,13 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
 {
+    private static final String EXAMPLE_USERSCRIPT_INPUT = "/exampleuserscript.xml";
+    private static final String EXAMPLE_USERSCRIPT_OUTPUT = "exampleuserscript_output.windup.xml";
+    private static final String XSLT_OUTPUT_NAME = "exampleconversion_userdir.xslt";
+
     @Deployment
     @Dependencies({
+                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
@@ -49,7 +63,11 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     .addClass(WindupArchitectureTest.class)
                     .addClass(TestServletAnnotationRuleProvider.class)
                     .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
+                    .addAsResource(new File("src/test/xml/XmlExample.windup.xml"))
+                    .addAsResource(new File("src/test/xml/exampleuserscript.xml"), EXAMPLE_USERSCRIPT_INPUT)
+                    .addAsResource(new File("src/test/xml/exampleconversion.xsl"))
                     .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-xml"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
@@ -66,14 +84,38 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     @Test
     public void testRunWindupSourceMode() throws Exception
     {
-        try (GraphContext context = createGraphContext())
+        Path userPath = FileUtils.getTempDirectory().toPath().resolve("Windup")
+                    .resolve("windupuserscriptsdir_" + RandomStringUtils.randomAlphanumeric(6));
+        try
         {
-            // The test-files folder in the project root dir.
-            super.runTest(context, "../test-files/src_example", true);
+            Files.createDirectories(userPath);
+            try (InputStream is = getClass().getResourceAsStream(EXAMPLE_USERSCRIPT_INPUT);
+                        OutputStream os = new FileOutputStream(userPath.resolve(EXAMPLE_USERSCRIPT_OUTPUT).toFile()))
+            {
+                IOUtils.copy(is, os);
+            }
+            try (InputStream is = getClass().getResourceAsStream("/exampleconversion.xsl");
+                        OutputStream os = new FileOutputStream(userPath.resolve(XSLT_OUTPUT_NAME).toFile()))
+            {
+                IOUtils.copy(is, os);
+            }
 
-            validateWebXmlReferences(context);
-            validatePropertiesModels(context);
-            validateReports(context);
+            try (GraphContext context = createGraphContext())
+            {
+                WindupConfigurationModel cfg = GraphService.getConfigurationModel(context);
+                cfg.setUserRulesPath(userPath.toAbsolutePath().toString());
+
+                // The test-files folder in the project root dir.
+                super.runTest(context, "../test-files/src_example", true);
+
+                validateWebXmlReferences(context);
+                validatePropertiesModels(context);
+                validateReports(context);
+            }
+        }
+        finally
+        {
+            FileUtils.deleteDirectory(userPath.toFile());
         }
     }
 
@@ -142,6 +184,13 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         util.checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties");
         util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "Web XML");
         util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet", "Web Servlet");
-    }
+        util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "Container Auth");
+        util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet", "Message from XML Rule");
 
+        XsltTransformationService xsltService = new XsltTransformationService(context);
+        Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath().resolve(
+                    "web-xml-converted-example.xml")));
+        Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath().resolve(
+                    "web-xmluserscript-converted-example.xml")));
+    }
 }

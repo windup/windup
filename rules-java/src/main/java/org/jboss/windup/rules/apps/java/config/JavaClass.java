@@ -29,7 +29,6 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 /**
  * {@link GraphCondition} that matches Vertices in the graph based upon the provided parameters.
  */
-
 public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaClassBuilderAt, JavaClassBuilderInFile
 {
     private final String regex;

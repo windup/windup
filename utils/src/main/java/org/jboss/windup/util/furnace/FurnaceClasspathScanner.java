@@ -7,7 +7,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -43,6 +45,30 @@ public class FurnaceClasspathScanner implements Service
     public List<URL> scan(String fileExtension)
     {
         return scan(new FileExtensionFilter(fileExtension));
+    }
+
+    /**
+     * Scans all Forge addons for files accepted by given filter, and return them as a map (from Addon to URL list)
+     */
+    public Map<Addon, List<URL>> scanForAddonMap(Predicate<String> filter)
+    {
+        Map<Addon, List<URL>> result = new IdentityHashMap<>();
+
+        // For each Forge addon...
+        for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
+        {
+            List<String> filteredResourcePaths = filterAddonResources(addon, filter);
+
+            List<URL> discoveredURLs = new ArrayList<>();
+            for (String filePath : filteredResourcePaths)
+            {
+                URL ruleFile = addon.getClassLoader().getResource(filePath);
+                if (ruleFile != null)
+                    discoveredURLs.add(ruleFile);
+            }
+            result.put(addon, discoveredURLs);
+        }
+        return result;
     }
 
     /**

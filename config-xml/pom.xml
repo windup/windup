@@ -9,7 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.jboss.windup.ext</groupId>
+    <groupId>org.jboss.windup.config</groupId>
     <artifactId>windup-config-xml</artifactId>
 
     <name>Windup Extension - Config - XML</name>
@@ -35,6 +35,11 @@
             <artifactId>utils</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-proxy</artifactId>
             <scope>provided</scope>
         </dependency>
 
