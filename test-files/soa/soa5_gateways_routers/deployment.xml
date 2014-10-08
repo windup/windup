@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<jbossesb-deployment>
+  <jmsQueue>quickstart_helloworld_ftp_esb</jmsQueue>
+  <jmsQueue>quickstart_jms_router_routeTo</jmsQueue>
+  <depends>jboss:service=HelloworldFTPDB</depends>
+</jbossesb-deployment>

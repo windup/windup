@@ -1,0 +1,2 @@
+soa5_gateways_routers - From: https://github.com/windup/soa-migration/tree/master/labs/lab2/soa5_gateways_routers
+

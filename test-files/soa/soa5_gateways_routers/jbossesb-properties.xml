@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!-- $Id: jbossesb-unittest-properties.xml $ -->
+<!--
+  These options are described in the JBossESB manual.
+  Defaults are provided here for convenience only.
+ 
+  Please read through this file prior to using the system, and consider
+  updating the specified entries.
+-->
+<esb
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="jbossesb-1_0.xsd">
+    <properties name="core">
+		<property name="org.jboss.soa.esb.jndi.server.type" value="jboss"/>
+		<property name="org.jboss.soa.esb.jndi.server.url" value="localhost"/>
+		<property name="org.jboss.soa.esb.persistence.connection.factory" 	value="org.jboss.internal.soa.esb.persistence.format.MessageStoreFactoryImpl"/>
+        <property name="jboss.esb.invm.scope.default" value="NONE"/>
+    </properties>
+    <properties name="registry">      
+    	<property name="org.jboss.soa.esb.registry.queryManagerURI" value="org.apache.juddi.v3.client.transport.wrapper.UDDIInquiryService#inquire"/>
+    	<property name="org.jboss.soa.esb.registry.lifeCycleManagerURI" value="org.apache.juddi.v3.client.transport.wrapper.UDDIPublicationService#publish"/>
+    	<property name="org.jboss.soa.esb.registry.securityManagerURI" value="org.apache.juddi.v3.client.transport.wrapper.UDDISecurityService#secure"/>
+    	<property name="org.jboss.soa.esb.registry.implementationClass" value="org.jboss.internal.soa.esb.services.registry.JAXRRegistryImpl"/>
+    	<property name="org.jboss.soa.esb.registry.factoryClass" value="org.apache.ws.scout.registry.ConnectionFactoryImpl"/>
+    	<property name="org.jboss.soa.esb.registry.user" value="root"/>
+    	<property name="org.jboss.soa.esb.registry.password" value="root"/>
+    	<!-- the following parameter is scout specific to set the type of communication between scout and the UDDI (embedded, rmi, soap) -->
+    	<property name="org.jboss.soa.esb.scout.proxy.transportClass" value="org.apache.ws.scout.transport.LocalTransport"/>
+    	<property name="org.jboss.soa.esb.scout.proxy.uddiVersion" value="3.0"/>
+    	<property name="org.jboss.soa.esb.scout.proxy.uddiNameSpace" value="urn:uddi-org:api_v3"/>
+    	<!-- Organization Category to be used by this deployment. -->
+        <property name="org.jboss.soa.esb.registry.orgCategory" value="org.jboss.soa.esb.:category"/>
+    </properties>
+    <properties name="transports" depends="core">
+    	<property name="org.jboss.soa.esb.mail.smtp.host" value="localhost"/>
+    	<property name="org.jboss.soa.esb.mail.smtp.user" value="jbossesb"/>
+    	<property name="org.jboss.soa.esb.mail.smtp.password" value=""/>
+    	<property name="org.jboss.soa.esb.mail.smtp.port" value="25"/>
+    </properties>
+    <properties name="connection">
+    	<property name="min-pool-size" value="5"/>
+    	<property name="max-pool-size" value="10"/>
+    	<property name="blocking-timeout-millis" value="5000"/>
+    	<property name="abandoned-connection-timeout" value="10000"/>
+    	<property name="abandoned-connection-time-interval" value="30000"/>
+    </properties>
+    <properties name="dbstore">
+		<property name="org.jboss.soa.esb.persistence.db.connection.url" 	value="jdbc:hsqldb:hsql://localhost:9001/"/>
+		<property name="org.jboss.soa.esb.persistence.db.jdbc.driver" 		value="org.hsqldb.jdbcDriver"/>
+		<property name="org.jboss.soa.esb.persistence.db.user" 			value="sa"/>
+		<property name="org.jboss.soa.esb.persistence.db.pwd" 			value=""/>		
+		<property name="org.jboss.soa.esb.persistence.db.pool.initial.size"	value="2"/>
+		<property name="org.jboss.soa.esb.persistence.db.pool.min.size"	value="2"/>
+		<property name="org.jboss.soa.esb.persistence.db.pool.max.size"	value="5"/>
+		<!--table managed by pool to test for valid connections - created by pool automatically -->
+		<property name="org.jboss.soa.esb.persistence.db.pool.test.table"	value="pooltest"/>
+		<!-- # of milliseconds to timeout waiting for a connection from pool -->
+		<property name="org.jboss.soa.esb.persistence.db.pool.timeout.millis"	value="5000"/> 
+                <property name="org.jboss.soa.esb.persistence.db.conn.manager" value="org.jboss.internal.soa.esb.persistence.manager.StandaloneConnectionManager"/>
+    </properties>
+    <properties name="messagerouting">
+    	<property name="org.jboss.soa.esb.routing.cbrClass" value="org.jboss.internal.soa.esb.services.routing.cbr.JBossRulesRouter"/>
+    </properties>
+</esb>

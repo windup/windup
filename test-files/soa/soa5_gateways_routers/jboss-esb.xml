@@ -1,0 +1,95 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<jbossesb xmlns="http://anonsvn.labs.jboss.com/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.0.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://anonsvn.labs.jboss.com/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.0.xsd http://anonsvn.jboss.org/repos/labs/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.0.xsd"
+    parameterReloadSecs="5">
+    <providers>
+          <ftp-provider name="FTPprovider" hostname="localhost">
+          	<ftp-bus busid="helloFTPChannel" >
+          		<ftp-message-filter
+          			username="ftpboy"
+          			password="camel123."
+          			passive="false"
+          			directory="/tmp/ftpinput"
+          			input-suffix="ftpin.dat"
+          			work-suffix=".esbWorking"
+          			post-delete="false"
+          			post-rename="true"
+          			post-suffix=".COMPLETE"
+          			error-delete="false"
+          			error-suffix=".HAS_ERROR"
+          		/>
+          	</ftp-bus>
+          </ftp-provider>
+
+          <camel-provider name="provider1">
+              <camel-bus busid="bus1">
+                  <from uri="file:///tmp/input?delete=true"/>
+              </camel-bus>
+          </camel-provider>
+
+          <jms-provider name="JBossMQ" connection-factory="ConnectionFactory">
+              <jms-bus busid="quickstartSimpleEsbChannel">
+                  <jms-message-filter
+                      dest-type="QUEUE"
+                      dest-name="queue/quickstart_helloworld_ftp_esb"/>
+              </jms-bus>
+	  </jms-provider>
+
+	  <schedule-provider name="cronExample">
+		  <cron-schedule scheduleid="cron-schedule" cronExpression="0/5 * * * * ?"/>
+	  </schedule-provider>
+
+      </providers>
+      
+      <services>  
+	<service category="myCategory" name="SimpleService"
+        	description="SOA 5 camel and ftp listening service" invmScope="GLOBAL">
+            <listeners>
+            	<ftp-listener name="FtpGateway"
+            		busidref="helloFTPChannel"
+            		is-gateway="true"
+            		scheduleidref="cron-schedule"/>
+	        <camel-gateway name="gateway1" busidref="bus1"/>
+                <jms-listener name="router"
+                              busidref="quickstartSimpleEsbChannel"/>
+            </listeners>
+            <actions mep="OneWay">
+                <action name="action1" class="org.jboss.soa.esb.actions.SystemPrintln">
+                    <property name="printfull" value="false"/>
+                </action>
+                <action name="action2"
+                    class="org.jboss.soa.esb.samples.quickstart.helloworld.MyJMSListenerAction"
+                    process="displayMessage"/>
+                <action name="action3" class="org.jboss.soa.esb.actions.SystemPrintln">
+                    <property name="printfull" value="false"/>
+                </action>
+                <action name="action4"
+                    class="org.jboss.soa.esb.samples.quickstart.helloworld.MyJMSListenerAction"
+                    process="playWithMessage"/>
+                <action name="action5"
+                    class="org.jboss.soa.esb.samples.quickstart.helloworld.MyJMSListenerAction"
+                    process="displayMessage"/>
+
+                <action name="routeAction"  class="org.jboss.soa.esb.actions.StaticRouter">
+                        <property name="destinations">
+                                <route-to service-category="myCategory" service-name="PrintService" />
+                        </property>
+                </action>
+
+                <action name="routeToReplyQueue" class="org.jboss.soa.esb.actions.routing.JMSRouter">
+                    <property name="connection-factory" value="ConnectionFactory"/>
+                    <property name="jndiName" value="queue/quickstart_jms_router_routeTo"/>
+                    <property name="unwrap" value="true"/>
+                    <property name="security-principal" value="guest"/>
+                    <property name="security-credential" value="guest"/>
+
+                    <property name="jndi-prefixes" value="org.xyz."/>
+                    <property name="org.xyz.propertyName" value="propertyValue"/>
+
+                    <property name="java.naming.someproperty" value="propertyValue"/>
+               </action>
+            </actions> 
+        </service>
+      </services>
+</jbossesb>

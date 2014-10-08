@@ -1,0 +1,88 @@
+<project name="Quickstart_helloworld_FTP_action" default="run" basedir=".">
+	
+	<description> 
+		${ant.project.name}
+		${line.separator}
+	</description>
+
+	<property name="additional.deploys" value="ftpfile-cache-config.xml db-service.xml"/>
+	
+	<import file="../conf/base-build.xml"/>
+  
+	<target name="config" unless="readonly.mode" depends="assert-ftp-config">
+		<copy file="log4j.xml" tofile="build/log4j.xml"/>
+	</target>
+	
+	<target name="runtest" depends="compile"
+		description="will create a test file that will trigger the FTP action">
+		<tstamp>
+			<format property="timestamp" pattern="dd-MMM-yy-HH-mm-ss" />
+		</tstamp>
+		<echo>Runs Test FTP File creator</echo>
+		<java fork="yes" classname="org.jboss.soa.esb.samples.quickstart.helloworldftpaction.test.CreateTestFile" failonerror="true">
+			<sysproperty key="log4j.configuration" value="${log4j.xml}"/>
+			<arg value="${quickstart.jbossesb.ftp.hostname}"/>
+			<arg value="${quickstart.jbossesb.ftp.username}"/>
+			<arg value="${quickstart.jbossesb.ftp.password}"/>
+			<arg value="${quickstart.jbossesb.ftp.directory}/HWFtp-${timestamp}.dat"/>
+	        <arg value="Hello World In A File (for Hello World FTP Action test)"/> <!--  File Contents -->
+            <classpath refid="exec-classpath"/>
+	     </java>
+	</target>
+	
+	<target name="run-readonly" description="run the readonly version" depends="assert-jgroups">
+		<copy file="ftpfile-cache-config.xml" todir="${basedir}/build/classes"/>
+		<property name="readonly.mode" value="true"/>
+		
+		<tstamp>
+			<format property="timestamp" pattern="ss" />
+		</tstamp>
+	
+		<property name="readonly.esb.config.file" value="${basedir}/readonly-esb-${timestamp}.xml"/>
+		
+		<antcall target="run">
+			<param name="esb.config.file" value="${readonly.esb.config.file}"/>
+		</antcall>
+	</target>
+
+	<target name="deploy-readonly" description="deploy the readonly version" depends="assert-jgroups">
+		<copy file="ftpfile-cache-config.xml" todir="${basedir}/classes"/>
+        <property name="readonly.mode" value="true"/>
+
+        <antcall target="deploy"/>
+
+	</target>
+
+	
+	
+	<target name="filter_jboss-esb.xml">
+		<echo message="${file.name}"/>
+		<copy file="${file.name}" tofile="${to.file.name}" overwrite="true" filtering="true">
+				<filterset>
+					<filter token="FTP_HOSTNAME" value="${quickstart.jbossesb.ftp.hostname}"/>
+					<filter token="FTP_USERNAME" value="${quickstart.jbossesb.ftp.username}"/>
+					<filter token="FTP_PASSWORD" value="${quickstart.jbossesb.ftp.password}"/>
+					<filter token="FTP_DIRECTORY" value="${quickstart.jbossesb.ftp.directory}"/>
+			</filterset>
+		</copy>
+	</target>
+	
+	<target name="deploy-database" depends="jbossesb-dependencies-as4, jbossesb-dependencies-as5">
+		<copy tofile="${org.jboss.esb.server.deploy.dir}/${ant.project.name}-service.xml"
+			file="db-service.xml"/>
+	</target>
+
+	<target name="undeploy-database" depends="jbossesb-dependencies-as4, jbossesb-dependencies-as5">
+		<delete file="${org.jboss.esb.server.deploy.dir}/${ant.project.name}-service.xml"
+			quiet="true"/>
+	</target>
+
+    <target name="quickstart-specific-clean">
+		<delete >
+			<fileset dir="${basedir}">
+				<include name="readonly-esb*"/>
+			</fileset>
+		</delete>
+    </target>
+	
+</project>

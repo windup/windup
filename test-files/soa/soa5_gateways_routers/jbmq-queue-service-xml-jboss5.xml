@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><server>
+<mbean code="org.jboss.jms.server.destination.QueueService" name="&#10;                    jboss.messaging.destination:service=Queue,name=&#10;                    quickstart_helloworld_ftp_esb">
+<depends optional-attribute-name="ServerPeer" xmlns:exsl="http://exslt.org/common">jboss.messaging:service=ServerPeer</depends><depends xmlns:exsl="http://exslt.org/common">jboss.messaging:service=PostOffice</depends></mbean>
+<mbean code="org.jboss.jms.server.destination.QueueService" name="&#10;                    jboss.messaging.destination:service=Queue,name=&#10;                    quickstart_jms_router_routeTo">
+<depends optional-attribute-name="ServerPeer" xmlns:exsl="http://exslt.org/common">jboss.messaging:service=ServerPeer</depends><depends xmlns:exsl="http://exslt.org/common">jboss.messaging:service=PostOffice</depends></mbean>
+</server>

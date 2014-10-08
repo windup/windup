@@ -73,7 +73,7 @@
                     <excludes>
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
-                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=128m</argLine>
+                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:ReservedCodeCacheSize=128m</argLine>
                 </configuration>
             </plugin>
         </plugins>
