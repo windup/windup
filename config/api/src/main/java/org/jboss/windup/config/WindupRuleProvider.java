@@ -19,10 +19,11 @@ import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 
+
 /**
  * {@link WindupRuleProvider} provides metadata, and a list of {@link Rule} objects that are then evaluated by the
  * {@link RuleSubet} during Windup execution.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class WindupRuleProvider implements ConfigurationProvider<GraphContext>
@@ -67,7 +68,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     /**
      * Returns a list of {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this
      * {@link WindupRuleProvider}.
-     * 
+     *
      * {@link WindupRuleProvider}s can also be specified based on id ({@link #getExecuteAfterID}).
      */
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
@@ -78,11 +79,11 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     /**
      * Returns a list of the {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this
      * {@link WindupRuleProvider}.
-     * 
+     *
      * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
      * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
      * IDs.
-     * 
+     *
      * For specifying Java-based rules, getExecuteAfter is preferred.
      */
     public List<String> getExecuteAfterIDs()
@@ -93,7 +94,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     /**
      * Returns a list of {@link WindupRuleProvider} classes that should execute after the {@link Rule}s in this
      * {@link WindupRuleProvider}.
-     * 
+     *
      * {@link WindupRuleProvider}s can also be specified based on id ({@link #getExecuteBeforeID}).
      */
     public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
@@ -104,11 +105,11 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     /**
      * Returns a list of the {@link WindupRuleProvider} classes that should execute after the {@link Rule}s in this
      * {@link WindupRuleProvider}.
-     * 
+     *
      * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
      * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
      * IDs.
-     * 
+     *
      * For specifying Java-based rules, getExecuteBefore is preferred.
      */
     public List<String> getExecuteBeforeIDs()
@@ -118,7 +119,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
 
     /**
      * Convenience method for generating a list of classes based upon the passed parameters.
-     * 
+     *
      * For: generateDependencies(Foo.class, Bar.class, Baz.class) will return a List containing these three elements.
      */
     @SafeVarargs
@@ -130,7 +131,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
 
     /**
      * Convenience method for generating a list of Strings based upon the passed parameters.
-     * 
+     *
      * For: generateDependencies("Foo", "Bar", "Baz") will return a List containing these three elements.
      */
     @SafeVarargs

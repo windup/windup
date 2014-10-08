@@ -13,9 +13,9 @@
     <name>Windup Engine - UI</name>
 
     <dependencies>
-    
+
         <!-- Local Dependencies -->
-        
+
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>

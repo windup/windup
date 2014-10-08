@@ -7,6 +7,10 @@ import com.tinkerpop.frames.ClassUtilities;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.modules.MethodHandler;
 
+
+/**
+ * Returns "this", so you can do things like frame.setFoo(123).setBar(456).
+ */
 public class WindupPropertyMethodHandler implements MethodHandler<Property>
 {
     @Override
@@ -19,6 +23,7 @@ public class WindupPropertyMethodHandler implements MethodHandler<Property>
     public Object processElement(Object frame, Method method, Object[] arguments, Property annotation,
                 FramedGraph<?> framedGraph, Element element)
     {
+        // Getters
         if (ClassUtilities.isGetMethod(method))
         {
             Object value = element.getProperty(annotation.value());
@@ -27,6 +32,7 @@ public class WindupPropertyMethodHandler implements MethodHandler<Property>
             else
                 return value;
         }
+        // Setters
         else if (ClassUtilities.isSetMethod(method))
         {
             Object value = arguments[0];
@@ -37,13 +43,9 @@ public class WindupPropertyMethodHandler implements MethodHandler<Property>
             else
             {
                 if (value.getClass().isEnum())
-                {
                     element.setProperty(annotation.value(), ((Enum<?>) value).name());
-                }
                 else
-                {
                     element.setProperty(annotation.value(), value);
-                }
             }
             return frame;
         }
@@ -55,6 +57,7 @@ public class WindupPropertyMethodHandler implements MethodHandler<Property>
 
         return frame;
     }
+
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Enum<?> getValueAsEnum(final Method method, final Object value)

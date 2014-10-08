@@ -2,7 +2,7 @@ package org.jboss.windup.graph.typedgraph.map;
 
 import java.util.Map;
 
-import org.jboss.windup.graph.AdjacentMap;
+import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -11,9 +11,9 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface TestMapMainModel extends WindupVertexFrame
 {
 
-    @AdjacentMap(label = "map")
+    @MapInAdjacentVertices(label = "map")
     void setMap(Map<String, TestMapValueModel> map);
 
-    @AdjacentMap(label = "map")
+    @MapInAdjacentVertices(label = "map")
     Map<String, TestMapValueModel> getMap();
 }

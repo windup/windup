@@ -99,8 +99,6 @@ public class GraphContextImpl implements GraphContext
 
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
-        final AdjacentMapHandler frameMapHandler = new AdjacentMapHandler();
-
         final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver()
         {
             public ClassLoader resolveClassLoader(Class<?> frameType)
@@ -114,18 +112,25 @@ public class GraphContextImpl implements GraphContext
             @Override
             public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
             {
+                // Composite classloader
                 config.setFrameClassLoaderResolver(fclr);
-                config.addMethodHandler(frameMapHandler);
+
+                // Custom annotations handlers.
+                config.addMethodHandler(new MapInPropertiesHandler());
+                config.addMethodHandler(new MapInAdjacentPropertiesHandler());
+                config.addMethodHandler(new MapInAdjacentVerticesHandler());
+
+                // Returns "this" for setters, to allow things like frame.setFoo(123).setBar(456).
                 config.addMethodHandler(new WindupPropertyMethodHandler());
                 return baseGraph;
             }
         };
 
         FramedGraphFactory factory = new FramedGraphFactory(
-                    addModules, // Composite classloader
-                    new JavaHandlerModule(), // @JavaHandler
-                    graphTypeRegistry.build(), // Model classes
-                    new GremlinGroovyModule() // @Gremlin
+            addModules,                // See above
+            new JavaHandlerModule(),   // @JavaHandler
+            graphTypeRegistry.build(), // Model classes
+            new GremlinGroovyModule()  // @Gremlin
         );
 
         framed = factory.create(eventGraph);
