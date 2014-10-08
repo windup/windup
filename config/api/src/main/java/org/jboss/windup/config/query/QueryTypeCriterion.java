@@ -1,15 +1,14 @@
 package org.jboss.windup.config.query;
 
-import java.util.List;
-
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
 import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.util.List;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+
 
 class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
 {

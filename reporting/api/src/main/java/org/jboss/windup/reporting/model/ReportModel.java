@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.model;
 
 import java.util.Map;
 
-import org.jboss.windup.graph.AdjacentMap;
+import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
@@ -90,10 +90,10 @@ public interface ReportModel extends WindupVertexFrame
      * 
      * @param wvf
      */
-    @AdjacentMap(label = RELATED_RESOURCES)
+    @MapInAdjacentVertices(label = RELATED_RESOURCES)
     public void addRelatedResource(Map<String, WindupVertexFrame> wvf);
 
-    @AdjacentMap(label = RELATED_RESOURCES)
+    @MapInAdjacentVertices(label = RELATED_RESOURCES)
     public Map<String, WindupVertexFrame> getRelatedResources();
 
     /**

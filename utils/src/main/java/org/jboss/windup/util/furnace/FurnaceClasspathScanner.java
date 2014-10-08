@@ -50,7 +50,7 @@ public class FurnaceClasspathScanner implements Service
      */
     public List<URL> scan(Predicate<String> filter)
     {
-        List<URL> discoveredURLs = new ArrayList<>();
+        List<URL> discoveredURLs = new ArrayList<>(128);
 
         // For each Forge addon...
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))
@@ -69,11 +69,11 @@ public class FurnaceClasspathScanner implements Service
     /**
      * Scans all Forge addons for classes accepted by given filter.
      *
-     * TODO: Needs refactoring - scan() is almost the same.
+     * TODO: Could be refactored - scan() is almost the same.
      */
     public List<Class<?>> scanClasses(Predicate<String> filter)
     {
-        List<Class<?>> discoveredClasses = new ArrayList<>();
+        List<Class<?>> discoveredClasses = new ArrayList<>(128);
 
         // For each Forge addon...
         for (Addon addon : furnace.getAddonRegistry().getAddons(AddonFilters.allStarted()))

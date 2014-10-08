@@ -25,7 +25,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Represents a File on disk
- * 
+ *
  */
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
@@ -117,7 +117,7 @@ public interface FileModel extends ResourceModel
 
     /**
      * Files contained within this directory
-     * 
+     *
      * @return
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
@@ -174,8 +174,11 @@ public interface FileModel extends ResourceModel
     /**
      * Returns the path of this file within the parent project (format suitable for reporting)
      */
+
+    // TODO: This shouldn't be here.
     @JavaHandler
     public String getPrettyPathWithinProject();
+
 
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>
     {
@@ -218,9 +221,7 @@ public interface FileModel extends ResourceModel
             for (String path : paths)
             {
                 if (sb.length() != 0)
-                {
                     sb.append("/");
-                }
                 sb.append(path);
             }
 
@@ -232,7 +233,7 @@ public interface FileModel extends ResourceModel
          */
         private List<String> generatePathList(Path stopPath)
         {
-            List<String> paths = new ArrayList<String>();
+            List<String> paths = new ArrayList<>(16); // Average dir depth.
 
             // create list of paths from bottom to top
             appendPath(paths, stopPath, this);
@@ -244,7 +245,7 @@ public interface FileModel extends ResourceModel
         {
             try
             {
-                if (stopPath != null && Files.isSameFile(stopPath, Paths.get(fileModel.getFilePath())))
+                if( stopPath != null && Files.isSameFile(stopPath, Paths.get(fileModel.getFilePath())) )
                 {
                     return;
                 }
@@ -290,12 +291,11 @@ public interface FileModel extends ResourceModel
         {
             try
             {
-                if (this.getFilePath() != null)
-                {
-                    File file = new File(getFilePath());
-                    return new FileInputStream(file);
-                }
-                return null;
+                if (this.getFilePath() == null)
+                    return null;
+
+                File file = new File(getFilePath());
+                return new FileInputStream(file);
             }
             catch (Exception e)
             {
@@ -306,12 +306,10 @@ public interface FileModel extends ResourceModel
         @Override
         public File asFile() throws RuntimeException
         {
-            if (this.getFilePath() != null)
-            {
-                File file = new File(getFilePath());
-                return file;
-            }
-            return null;
+            if (this.getFilePath() == null)
+                return null;
+
+            return new File(getFilePath());
         }
     }
 }

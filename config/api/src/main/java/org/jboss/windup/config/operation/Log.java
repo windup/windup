@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.logging.Logger.Level;
-import org.ocpsoft.rewrite.config.ConfigurationRuleParameterBuilder;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
@@ -43,10 +42,10 @@ public class Log extends DefaultOperationBuilder implements Parameterized
      *    Log.message(Level.INFO, "Client requested path: {p}")
      * </code>
      * <p>
-     * 
+     *
      * @param level the log {@link Level} to which the message be written
      * @param message {@link ParameterizedPattern} to be written to the log.
-     * 
+     *
      * @see {@link ConfigurationRuleParameterBuilder#where(String)}
      */
     public static Log message(Level level, String message)
