@@ -17,7 +17,7 @@ import java.lang.annotation.RetentionPolicy;
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AdjacentMap
+public @interface MapInAdjacentVertices
 {
     /**
      * The edge label for this relationship.

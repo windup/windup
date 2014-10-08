@@ -25,7 +25,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Represents a File on disk
- * 
+ *
  */
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
@@ -47,15 +47,13 @@ public interface FileModel extends ResourceModel
     public static final String IS_DIRECTORY = "isDirectory";
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
-     * to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Property(FILE_NAME)
     public String getFileName();
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
-     * to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Property(FILE_NAME)
     public void setFileName(String filename);
@@ -117,7 +115,7 @@ public interface FileModel extends ResourceModel
 
     /**
      * Files contained within this directory
-     * 
+     *
      * @return
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
@@ -218,9 +216,7 @@ public interface FileModel extends ResourceModel
             for (String path : paths)
             {
                 if (sb.length() != 0)
-                {
                     sb.append("/");
-                }
                 sb.append(path);
             }
 
@@ -232,7 +228,7 @@ public interface FileModel extends ResourceModel
          */
         private List<String> generatePathList(Path stopPath)
         {
-            List<String> paths = new ArrayList<String>();
+            List<String> paths = new ArrayList<>(16); // Average dir depth.
 
             // create list of paths from bottom to top
             appendPath(paths, stopPath, this);
@@ -290,12 +286,11 @@ public interface FileModel extends ResourceModel
         {
             try
             {
-                if (this.getFilePath() != null)
-                {
-                    File file = new File(getFilePath());
-                    return new FileInputStream(file);
-                }
-                return null;
+                if (this.getFilePath() == null)
+                    return null;
+
+                File file = new File(getFilePath());
+                return new FileInputStream(file);
             }
             catch (Exception e)
             {
@@ -306,12 +301,10 @@ public interface FileModel extends ResourceModel
         @Override
         public File asFile() throws RuntimeException
         {
-            if (this.getFilePath() != null)
-            {
-                File file = new File(getFilePath());
-                return file;
-            }
-            return null;
+            if (this.getFilePath() == null)
+                return null;
+
+            return new File(getFilePath());
         }
     }
 }

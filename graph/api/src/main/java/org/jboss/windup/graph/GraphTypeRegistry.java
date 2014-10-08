@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -77,20 +76,22 @@ public class GraphTypeRegistry
             }
         };
 
+        LOG.info("Looking for *Model classes...");
         Iterable<Class<?>> classes = scanner.scanClasses(modelClassFilter);
 
         for (Class<?> clazz : classes)
         {
+            // Add those extending WindupVertexFrame.
             if (WindupVertexFrame.class.isAssignableFrom(clazz))
             {
+                LOG.fine("    Found: " + clazz);
                 @SuppressWarnings("unchecked")
                 Class<? extends WindupVertexFrame> wvf = (Class<? extends WindupVertexFrame>) clazz;
                 graphTypeManager.addTypeToRegistry(wvf);
             }
             else
             {
-                LOG.log(Level.FINE, "Not adding [" + clazz.getCanonicalName()
-                            + "] to GraphTypeRegistry");
+                LOG.fine("    Not adding [" + clazz.getCanonicalName() + "] to GraphTypeRegistry");
             }
         }
 
