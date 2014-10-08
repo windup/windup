@@ -124,7 +124,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='jms-bus']/@busid").as("1")
                                 .and(XmlFile.from("1").matchesXpath("//*[local-name()='jms-bus']/@busid").resultMatches(".*").as("2"))
-                                .and(XmlFile.matchesXpath("//*[local-name()='jms-bus']/@busid")))
+                                .and(XmlFile.matchesXpath("//*[local-name()='jms-bus']/@busid").as("3")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in jms-bus").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" A jms-bus definition can be converted to a JMS or JCA gateway\n" + 
                                             "                    binding\n" + 

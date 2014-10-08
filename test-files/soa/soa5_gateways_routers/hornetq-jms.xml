@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<configuration xmlns="urn:hornetq" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:hornetq /schema/hornetq-jms.xsd">
+  <queue name="quickstart_helloworld_ftp_esb">
+    <entry name="queue/quickstart_helloworld_ftp_esb"/>
+  </queue>
+  <queue name="quickstart_jms_router_routeTo">
+    <entry name="queue/quickstart_jms_router_routeTo"/>
+  </queue>
+</configuration>

@@ -26,7 +26,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DiscoverNonMavenProjectsRuleProvider extends WindupRuleProvider
+public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvider
 {
     @Override
     public RulePhase getPhase()

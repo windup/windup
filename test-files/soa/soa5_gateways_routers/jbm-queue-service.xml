@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+    name="jboss.esb.quickstart.destination:service=Queue,name=quickstart_helloworld_ftp_esb"
+    xmbean-dd="xmdesc/Queue-xmbean.xml">
+    <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+	<depends>jboss.messaging:service=PostOffice</depends>
+  </mbean>
+
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+    name="jboss.esb.quickstart.destination:service=Queue,name=quickstart_jms_router_routeTo"
+    xmbean-dd="xmdesc/Queue-xmbean.xml">
+        <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+        <depends>jboss.messaging:service=PostOffice</depends>
+        <attribute name="SecurityConfig">
+                <security>
+                        <role name="guest" read="true" write="true"/>
+                </security>
+        </attribute>
+  </mbean>
+
+</server>
