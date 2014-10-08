@@ -1,11 +1,12 @@
 package org.jboss.windup.graph.service;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import java.nio.file.Paths;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
 public class FileModelService extends GraphService<FileModel>
 {

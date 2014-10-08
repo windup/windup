@@ -27,7 +27,7 @@ public class MapInAdjacentVerticesHandler implements MethodHandler<MapInAdjacent
                 FramedGraph<?> framedGraph, Element element)
     {
         if (!(element instanceof Vertex))
-            throw new WindupException("@"+MapInAdjacentVertices.class.getSimpleName()+" is only supported on Vertexes.");
+            throw new WindupException("@" + MapInAdjacentVertices.class.getSimpleName() + " is only supported on Vertexes.");
 
         String methodName = method.getName();
         if (methodName.startsWith("get"))
@@ -39,11 +39,10 @@ public class MapInAdjacentVerticesHandler implements MethodHandler<MapInAdjacent
             handleSetter((Vertex) element, method, arguments, annotation, framedGraph);
             return null;
         }
-        
+
         throw new WindupException("Only get* and set* method names are supported.");
     }
 
-    
     /**
      * Getter.
      */
@@ -52,7 +51,7 @@ public class MapInAdjacentVerticesHandler implements MethodHandler<MapInAdjacent
     {
         if (arguments != null && arguments.length != 0)
             throw new WindupException("Method must take zero arguments: " + method.getName());
-        
+
         Map<String, WindupVertexFrame> result = new HashMap<>();
         Iterable<Edge> edges = vertex.getEdges(Direction.IN, annotation.label());
         for (Edge edge : edges)
@@ -65,7 +64,6 @@ public class MapInAdjacentVerticesHandler implements MethodHandler<MapInAdjacent
         return result;
     }
 
-    
     /**
      * Setter.
      */
@@ -74,7 +72,7 @@ public class MapInAdjacentVerticesHandler implements MethodHandler<MapInAdjacent
     {
         if (arguments == null || arguments.length != 1)
             throw new WindupException("Method must take only one argument: " + method.getName());
-        
+
         Iterable<Edge> edges = vertex.getEdges(Direction.OUT, annotation.label());
         for (Edge edge : edges)
         {

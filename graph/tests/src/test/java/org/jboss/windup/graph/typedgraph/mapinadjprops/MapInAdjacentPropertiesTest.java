@@ -2,6 +2,7 @@ package org.jboss.windup.graph.typedgraph.mapinadjprops;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -14,6 +15,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.Logging;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +23,6 @@ import org.junit.runner.RunWith;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import java.util.logging.Logger;
-import org.jboss.windup.util.Logging;
-
 
 @RunWith(Arquillian.class)
 public class MapInAdjacentPropertiesTest
@@ -32,20 +31,20 @@ public class MapInAdjacentPropertiesTest
 
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.utils:utils"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.utils:utils"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-            .addBeansXML()
-            .addClasses(MapMainModel.class)
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                    .addBeansXML()
+                    .addClasses(MapMainModel.class)
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
         return archive;
     }
 
@@ -73,16 +72,15 @@ public class MapInAdjacentPropertiesTest
         map2.put("keyC", "valueC");
         mainModel.setMap2(map2);
 
-
         // Query for the 1 MapMainModel's
         String typeVal = MapMainModel.class.getAnnotation(TypeValue.class).value();
         Iterable<Vertex> vertices = context.getFramed().query()
-            .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, typeVal).vertices();
+                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, typeVal).vertices();
 
         int numberFound = 0;
         for (Vertex v : vertices)
         {
-            //final Set<String> propertyKeys = v.getVertices( Direction.OUT, "map").iterator().next().getPropertyKeys();
+            // final Set<String> propertyKeys = v.getVertices( Direction.OUT, "map").iterator().next().getPropertyKeys();
 
             numberFound++;
             MapMainModel framed = (MapMainModel) context.getFramed().frame(v, WindupVertexFrame.class);

@@ -7,7 +7,6 @@ import com.tinkerpop.frames.ClassUtilities;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.modules.MethodHandler;
 
-
 /**
  * Returns "this", so you can do things like frame.setFoo(123).setBar(456).
  */
@@ -57,7 +56,6 @@ public class WindupPropertyMethodHandler implements MethodHandler<Property>
 
         return frame;
     }
-
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Enum<?> getValueAsEnum(final Method method, final Object value)

@@ -5,8 +5,6 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
-import org.apache.commons.lang.StringUtils;
-
 
 /**
  * The base {@link VertexFrame} type implemented by all model types.
@@ -16,10 +14,10 @@ public interface WindupVertexFrame extends VertexFrame
 {
     /**
      * Name of the property where vertex/frame types are stored.
+     * 
      * @see org.jboss.windup.graph.GraphTypeManager
      */
     public static final String TYPE_PROP = "w:vertextype";
-
 
     @JavaHandler
     @Override
@@ -27,7 +25,6 @@ public interface WindupVertexFrame extends VertexFrame
 
     @JavaHandler
     public String toPrettyString();
-
 
     abstract class Impl implements WindupVertexFrame, JavaHandlerContext<Vertex>
     {
@@ -53,7 +50,7 @@ public interface WindupVertexFrame extends VertexFrame
                 result.append(", ");
             }
 
-            if( hasSome )
+            if (hasSome)
             {
                 result.delete(result.length() - 2, result.length());
             }

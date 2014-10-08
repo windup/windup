@@ -13,7 +13,6 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import static org.jboss.windup.graph.model.WindupVertexFrame.TYPE_PROP;
 
 @Singleton
 public class MavenModelService extends GraphService<MavenProjectModel>

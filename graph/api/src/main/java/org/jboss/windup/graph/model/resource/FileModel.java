@@ -47,15 +47,13 @@ public interface FileModel extends ResourceModel
     public static final String IS_DIRECTORY = "isDirectory";
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
-     * to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Property(FILE_NAME)
     public String getFileName();
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
-     * to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Property(FILE_NAME)
     public void setFileName(String filename);
@@ -174,11 +172,8 @@ public interface FileModel extends ResourceModel
     /**
      * Returns the path of this file within the parent project (format suitable for reporting)
      */
-
-    // TODO: This shouldn't be here.
     @JavaHandler
     public String getPrettyPathWithinProject();
-
 
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>
     {
@@ -245,7 +240,7 @@ public interface FileModel extends ResourceModel
         {
             try
             {
-                if( stopPath != null && Files.isSameFile(stopPath, Paths.get(fileModel.getFilePath())) )
+                if (stopPath != null && Files.isSameFile(stopPath, Paths.get(fileModel.getFilePath())))
                 {
                     return;
                 }

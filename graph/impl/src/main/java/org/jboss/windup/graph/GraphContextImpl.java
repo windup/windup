@@ -127,10 +127,10 @@ public class GraphContextImpl implements GraphContext
         };
 
         FramedGraphFactory factory = new FramedGraphFactory(
-            addModules,                // See above
-            new JavaHandlerModule(),   // @JavaHandler
-            graphTypeRegistry.build(), // Model classes
-            new GremlinGroovyModule()  // @Gremlin
+                    addModules,                // See above
+                    new JavaHandlerModule(),   // @JavaHandler
+                    graphTypeRegistry.build(), // Model classes
+                    new GremlinGroovyModule()  // @Gremlin
         );
 
         framed = factory.create(eventGraph);

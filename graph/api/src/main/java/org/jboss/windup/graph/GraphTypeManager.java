@@ -1,5 +1,18 @@
 package org.jboss.windup.graph;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Singleton;
+
+import org.jboss.windup.graph.model.WindupVertexFrame;
+
 import com.thinkaurelius.titan.core.TitanProperty;
 import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
 import com.tinkerpop.blueprints.Edge;
@@ -13,22 +26,10 @@ import com.tinkerpop.frames.modules.TypeResolver;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import javax.inject.Singleton;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
 
 /**
- * Windup's implementation of extended type handling for TinkerPop Frames.
- * This allows storing multiple types based on the @TypeValue.value(),
- * also in the type property (see {@link WindupVertexFrame.TYPE_PROP}.
+ * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
+ * the type property (see {@link WindupVertexFrame.TYPE_PROP}.
  */
 @Singleton
 public class GraphTypeManager implements TypeResolver, FrameInitializer
@@ -36,12 +37,10 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     private Map<String, Class<? extends WindupVertexFrame>> registeredTypes = new HashMap<>();
     private TypeRegistry typeRegistry = new TypeRegistry();
 
-
     public Set<Class<? extends WindupVertexFrame>> getRegisteredTypes()
     {
         return Collections.unmodifiableSet(new HashSet<>(registeredTypes.values()));
     }
-
 
     public void addTypeToRegistry(Class<? extends WindupVertexFrame> wvf)
     {
@@ -126,9 +125,9 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     }
 
     /**
-     * Returns the classes which this vertex/edge represents, typically subclasses. This will only return the lowest
-     * level subclasses (no superclasses of types in the type list will be returned). This prevents Annotation
-     * resolution issues between superclasses and subclasses (see also: WINDUP-168).
+     * Returns the classes which this vertex/edge represents, typically subclasses. This will only return the lowest level subclasses (no superclasses
+     * of types in the type list will be returned). This prevents Annotation resolution issues between superclasses and subclasses (see also:
+     * WINDUP-168).
      */
     private Class<?>[] resolve(Element e, Class<?> defaultType)
     {

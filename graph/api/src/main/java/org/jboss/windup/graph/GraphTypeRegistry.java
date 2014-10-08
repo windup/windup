@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -76,8 +75,6 @@ public class GraphTypeRegistry
                 return true;
             }
         };
-
-
 
         LOG.info("Looking for *Model classes...");
         Iterable<Class<?>> classes = scanner.scanClasses(modelClassFilter);
