@@ -258,7 +258,7 @@ public class XmlFile extends GraphCondition
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("JavaClass");
+        builder.append("XmlFile");
         if (getInputVariablesName() != null)
         {
             builder.append(".inputVariable(" + getInputVariablesName() + ")");
