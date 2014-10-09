@@ -1,4 +1,5 @@
 language: java
+cache: bundler
 
 jdk:
   - openjdk7
@@ -14,6 +15,7 @@ before_script: mvn clean install -B -DskipTests -q
 #- "export JAVA_OPTS='-XX:+TieredCompilation -XX:TieredStopAtLevel=1'"
 
 script: mvn test -B | grep -v 'INFO .* org.jboss.forge.furnace'
+#script: mvn test -B -maven.test.redirectTestOutputToFile | grep -v 'INFO .* org.jboss.forge.furnace'
 
 notifications:
   irc:
