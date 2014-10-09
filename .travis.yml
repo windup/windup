@@ -3,17 +3,17 @@ language: java
 jdk:
   - openjdk7
 
-#before_script:
-#- "export PATH=`pwd`/bin:$PATH"
-#- "export JAVA_OPTS='-XX:+TieredCompilation -XX:TieredStopAtLevel=1'"
-
 os:
 - linux
 
-install: mvn clean install -B -DskipTests -q
+
+#install: 
+
+before_script: mvn clean install -B -DskipTests -q
+#- "export PATH=`pwd`/bin:$PATH"
+#- "export JAVA_OPTS='-XX:+TieredCompilation -XX:TieredStopAtLevel=1'"
 
 script: mvn test -B | grep -v 'INFO .* org.jboss.forge.furnace'
-
 
 notifications:
   irc:
@@ -27,3 +27,4 @@ notifications:
 #  webhooks:
 #    urls:
 #      - "https://rubies.travis-ci.org/rebuild/jruby-head"
+
