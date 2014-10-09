@@ -1,0 +1,29 @@
+language: java
+
+jdk:
+  - openjdk7
+
+#before_script:
+#- "export PATH=`pwd`/bin:$PATH"
+#- "export JAVA_OPTS='-XX:+TieredCompilation -XX:TieredStopAtLevel=1'"
+
+os:
+- linux
+
+install: mvn clean install -B -DskipTests -q
+
+script: mvn test -B | grep -v 'INFO .* org.jboss.forge.furnace'
+
+
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.org#windup"
+    on_success: change
+    on_failure: always
+    template:
+      - "%{repository} (%{branch}:%{commit} by %{author}): %{message} (%{build_url})"
+
+#  webhooks:
+#    urls:
+#      - "https://rubies.travis-ci.org/rebuild/jruby-head"
