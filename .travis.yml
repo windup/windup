@@ -8,14 +8,15 @@ os:
 - linux
 
 
-#install: 
+install: mvn clean install -B -DxskipTests -q
 
-before_script: mvn clean install -B -DskipTests -q
+#before_script: mvn clean install -B -DskipTests -q
 #- "export PATH=`pwd`/bin:$PATH"
 #- "export JAVA_OPTS='-XX:+TieredCompilation -XX:TieredStopAtLevel=1'"
 
-script: mvn test -B | grep -v 'INFO .* org.jboss.forge.furnace'
+#script: mvn test -B | grep -v 'INFO .* org.jboss.forge.furnace'
 #script: "mvn test -B -Dmaven.test.redirectTestOutputToFile | grep -v 'org.jboss.forge.furnace' | grep -v 'INFO: Copying /home/travis/.m2/' | grep -v 'Undeploying [' | grep -v 'Deploying ['"
+script: mvn -v
 
 notifications:
   irc:
