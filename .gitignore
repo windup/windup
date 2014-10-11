@@ -23,3 +23,5 @@ bin
 /utils/nb-configuration.xml
 /nbactions.xml
 *-test-result.html
+*~
+
