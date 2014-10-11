@@ -8,7 +8,7 @@ os:
 - linux
 
 
-install: mvn clean install -B -DxskipTests -q
+install: mvn clean install -B -DxskipTests
 
 #before_script: mvn clean install -B -DskipTests -q
 #- "export PATH=`pwd`/bin:$PATH"
