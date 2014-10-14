@@ -12,6 +12,11 @@ div.leftColumn {
     float: right;
 }
 
+div.inline-comment-body p:first-child, ul:first-child, ol:first-child {
+       padding-top:0;
+}
+
+
 div.windupHighLevel {
 	overflow: hidden;
 	margin: 0 auto;
@@ -265,13 +270,6 @@ table.archive-report tr td {
     padding: 5px;
 }
 
-a {
-    color: #527fa8;
-}
-
-a:visited {
-    color: #527fa8;
-}
 
 
 div.sausage {
@@ -474,11 +472,6 @@ div.inline-comment-body > ol > li {
 
 div.inline-comment-body p {
 	padding: 0;
-}
-
-div.inline-comment-body p:first-child, ul:first-child, ol:first-child {
-	padding-top:0;
-	margin-top:0;
 }
 
 div.inline-comment-body p:last-child, ul:last-child, ol.last-child {

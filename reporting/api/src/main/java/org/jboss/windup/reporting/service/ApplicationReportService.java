@@ -33,6 +33,9 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
 
         // check that the project for this application report is the same as the root project for the provided fileModel
         ProjectModel rootProjectModel = fileModel.getProjectModel();
+        if(rootProjectModel == null) {
+            return null;
+        }
         while (rootProjectModel.getParentProject() != null)
         {
             rootProjectModel = rootProjectModel.getParentProject();

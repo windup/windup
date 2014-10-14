@@ -102,7 +102,7 @@
           </button>
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
-	  <ol class="breadcrumb">
+	  <ol class="breadcrumb top-menu">
 		<li><a href="../index.html">All Applications</a></li>
 			<#include "include/breadcrumbs.ftl">
 	  </ol> 

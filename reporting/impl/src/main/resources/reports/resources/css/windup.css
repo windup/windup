@@ -38,10 +38,15 @@ h3.panel-title span.s {
 	font-size:4em;
 }
 
+.top-menu a:hover, a:focus{
+	color: #008CBA;
+}
+
 .breadcrumb {
   color:#ff0000;
   border-style: none;
   background-color: #333;
+  font-size: 12px;
 }
 
 .page-header h1 span.slash {
