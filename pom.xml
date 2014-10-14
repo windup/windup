@@ -74,6 +74,7 @@
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
                     <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:ReservedCodeCacheSize=128m</argLine>
+                    <forkCount>.5C</forkCount>
                 </configuration>
             </plugin>
         </plugins>
