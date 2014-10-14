@@ -25,14 +25,15 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.engine.WindupConfiguration;
-import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.exec.WindupProcessor;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
@@ -98,10 +99,7 @@ public class XMLTransformationTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-            config.setInputPath(inputPath);
-            config.setSourceMode(true);
-            config.setOutputPath(outputPath.toString());
+            WindupConfigurationModel config = WindupConfigurationService.getConfigurationModel(context);
 
             GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
                         XsltTransformationModel.class);
@@ -109,26 +107,20 @@ public class XMLTransformationTest
             pm.setRootFileModel(inputPath);
 
             Assert.assertFalse(transformationService.findAll().iterator().hasNext());
-            try
+            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
             {
-                Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+                @Override
+                public boolean accept(WindupRuleProvider provider)
                 {
-                    @Override
-                    public boolean accept(WindupRuleProvider provider)
-                    {
-                        return provider.getPhase() != RulePhase.REPORT_GENERATION;
-                    }
-                };
-                WindupConfiguration windupConfiguration = new WindupConfiguration()
-                            .setRuleProviderFilter(predicate)
-                            .setGraphContext(context);
-                processor.execute(windupConfiguration);
-            }
-            catch (Exception e)
-            {
-                if (!e.getMessage().contains("CreateMainApplicationReport"))
-                    throw e;
-            }
+                    return provider.getPhase() != RulePhase.REPORT_GENERATION;
+                }
+            };
+            WindupConfiguration windupConfiguration = new WindupConfiguration()
+                        .setRuleProviderFilter(predicate)
+                        .setGraphContext(context);
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setOutputDirectory(outputPath);
+            processor.execute(windupConfiguration);
 
             Iterator<XsltTransformationModel> iterator = transformationService.findAll().iterator();
             Assert.assertTrue(iterator.hasNext());

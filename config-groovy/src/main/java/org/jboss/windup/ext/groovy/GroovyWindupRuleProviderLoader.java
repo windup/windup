@@ -30,11 +30,19 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
+/**
+ * Loads files with the specified extension (specified in {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_EXTENSION}
+ * ), interprets them as Groovy scripts, and returns the resulting {@link WindupRuleProvider}s.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ *
+ */
 public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 {
     public static final String CURRENT_WINDUP_SCRIPT = "CURRENT_WINDUP_SCRIPT";
@@ -146,8 +154,9 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 
     private Iterable<URL> getScripts(GraphContext context)
     {
-        WindupConfigurationModel cfg = GraphService.getConfigurationModel(context);
-        String userRulesPath = cfg.getUserRulesPath();
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
+        FileModel userRulesFileModel = cfg.getUserRulesPath();
+        String userRulesPath = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
 
         List<URL> scripts = scanner.scan(GROOVY_RULES_EXTENSION);
 

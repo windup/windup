@@ -29,15 +29,16 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FileExtensionFilter;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 import org.w3c.dom.Document;
 
 /**
- * This {@link WindupRuleProviderLoader} searches for and loads {@link WindupRuleProvider}s from XML files that within
- * all addons, with filenames that end in ".windup.xml".
+ * This {@link WindupRuleProviderLoader} searches for and loads {@link WindupRuleProvider}s from XML files that within all addons, with filenames that
+ * end in ".windup.xml".
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
@@ -97,7 +98,7 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
             }
         }
 
-        WindupConfigurationModel cfg = GraphService.getConfigurationModel(context);
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
         for (URL resource : getWindupUserDirectoryXmlFiles(cfg))
         {
             try
@@ -105,7 +106,9 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
                 Document doc = dBuilder.parse(resource.toURI().toString());
                 ParserContext parser = new ParserContext(furnace);
 
-                parser.setXmlInputPath(Paths.get(cfg.getUserRulesPath()));
+                FileModel userRulesFileModel = cfg.getUserRulesPath();
+                String userRulesPath = userRulesFileModel.getFilePath();
+                parser.setXmlInputPath(Paths.get(userRulesPath));
 
                 parser.processElement(doc.getDocumentElement());
                 providers.addAll(parser.getRuleProviders());
@@ -127,7 +130,8 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
 
     private Iterable<URL> getWindupUserDirectoryXmlFiles(WindupConfigurationModel cfg)
     {
-        String userRulesPath = cfg.getUserRulesPath();
+        FileModel userRulesFileModel = cfg.getUserRulesPath();
+        String userRulesPath = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
 
         // no user dir, so just return the ones that we found in the classpath
         if (userRulesPath == null)

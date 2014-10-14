@@ -18,6 +18,7 @@ import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.junit.Assert;
@@ -97,8 +98,8 @@ public class QueryConditionTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            windupCfg.setInputPath(folder.toAbsolutePath().toString());
-            windupCfg.setSourceMode(true);
+            FileModelService fileModelService = new FileModelService(context);
+            windupCfg.setInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
 
             JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
@@ -136,8 +137,8 @@ public class QueryConditionTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            windupCfg.setInputPath(folder.toAbsolutePath().toString());
-            windupCfg.setSourceMode(true);
+            FileModelService fileModelService = new FileModelService(context);
+            windupCfg.setInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
 
             JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");

@@ -71,7 +71,7 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
         List<String> excludeList = Collections.emptyList();
         try (GraphContext context = super.createGraphContext())
         {
-            super.runTest(context, path, false, includeList, excludeList);
+            super.runTest(context, path, null, false, includeList, excludeList);
             validateHibernateFiles(context);
             validateReports(context);
         }

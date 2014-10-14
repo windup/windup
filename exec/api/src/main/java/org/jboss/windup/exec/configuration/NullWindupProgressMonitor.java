@@ -1,6 +1,6 @@
-package org.jboss.windup.engine;
+package org.jboss.windup.exec.configuration;
 
-import org.jboss.windup.engine.WindupProgressMonitor;
+import org.jboss.windup.exec.WindupProgressMonitor;
 
 /**
  * Null object pattern, presents a no-op implementation to avoid adding cyclomatic complexity to underlying

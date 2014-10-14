@@ -69,7 +69,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
 
             List<String> includeList = Collections.singletonList("nocodescanning");
             List<String> excludeList = Collections.emptyList();
-            super.runTest(context, path, false, includeList, excludeList);
+            super.runTest(context, path, null, false, includeList, excludeList);
 
             validateSpringBeans(context);
             validateReports(context);

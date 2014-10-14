@@ -1,0 +1,66 @@
+package org.jboss.windup.rules.apps.java.service;
+
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.model.PackageModel;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
+
+/**
+ * Provides methods for loading and working with {@link WindupJavaConfigurationModel} objects.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ *
+ */
+public class WindupJavaConfigurationService extends GraphService<WindupJavaConfigurationModel>
+{
+
+    public WindupJavaConfigurationService(GraphContext context)
+    {
+        super(context, WindupJavaConfigurationModel.class);
+    }
+
+    /**
+     * Loads the single {@link WindupJavaConfigurationModel} from the graph.
+     */
+    public static synchronized WindupJavaConfigurationModel getJavaConfigurationModel(GraphContext context)
+    {
+        WindupJavaConfigurationService service = new WindupJavaConfigurationService(context);
+        WindupJavaConfigurationModel config = service.getUnique();
+        if (config == null)
+            config = service.create();
+        return config;
+    }
+
+    /**
+     * Indicates whether the provided package should be scanned (based upon the inclusion/exclusion lists).
+     */
+    public boolean shouldScanPackage(String pkg)
+    {
+        WindupJavaConfigurationModel cfg = getJavaConfigurationModel(getGraphContext());
+        for (PackageModel pkgModel : cfg.getExcludeJavaPackages())
+        {
+            String excludePkg = pkgModel.getPackageName();
+            if (pkg.startsWith(excludePkg))
+            {
+                return false;
+            }
+        }
+
+        // if the list is empty, assume it is intended to just accept all packages
+        if (!cfg.getScanJavaPackages().iterator().hasNext())
+        {
+            return true;
+        }
+
+        for (PackageModel pkgModel : cfg.getScanJavaPackages())
+        {
+            String includePkg = pkgModel.getPackageName();
+            if (pkg.startsWith(includePkg))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

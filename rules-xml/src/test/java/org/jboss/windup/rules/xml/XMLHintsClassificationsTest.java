@@ -26,14 +26,16 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.engine.WindupConfiguration;
-import org.jboss.windup.engine.WindupProcessor;
+import org.jboss.windup.exec.WindupProcessor;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
@@ -101,35 +103,27 @@ public class XMLHintsClassificationsTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            WindupConfigurationModel config = GraphService.getConfigurationModel(context);
-            config.setInputPath(inputPath);
-            config.setSourceMode(true);
-            config.setOutputPath(outputPath.toString());
+            WindupConfigurationModel config = WindupConfigurationService.getConfigurationModel(context);
+            FileModelService fileModelService = new FileModelService(context);
 
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            try
+            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
             {
-                Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+                @Override
+                public boolean accept(WindupRuleProvider provider)
                 {
-                    @Override
-                    public boolean accept(WindupRuleProvider provider)
-                    {
-                        return (provider.getPhase() != RulePhase.REPORT_GENERATION) &&
-                                    (provider.getPhase() != RulePhase.MIGRATION_RULES);
-                    }
-                };
-                WindupConfiguration windupConfiguration = new WindupConfiguration()
-                            .setRuleProviderFilter(predicate)
-                            .setGraphContext(context);
-                processor.execute(windupConfiguration);
-            }
-            catch (Exception e)
-            {
-                if (!e.getMessage().contains("CreateMainApplicationReport"))
-                    throw e;
-            }
+                    return (provider.getPhase() != RulePhase.REPORT_GENERATION) &&
+                                (provider.getPhase() != RulePhase.MIGRATION_RULES);
+                }
+            };
+            WindupConfiguration windupConfiguration = new WindupConfiguration()
+                        .setRuleProviderFilter(predicate)
+                        .setGraphContext(context);
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setOutputDirectory(outputPath);
+            processor.execute(windupConfiguration);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,

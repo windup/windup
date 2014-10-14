@@ -1,6 +1,8 @@
 package org.jboss.windup.graph;
 
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.BaseConfiguration;
@@ -34,6 +36,7 @@ public class GraphContextImpl implements GraphContext
 {
     private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
 
+    private Map<String, Object> configurationOptions;
     private final GraphTypeRegistry graphTypeRegistry;
     private final EventGraph<TitanGraph> eventGraph;
     private final BatchGraph<TitanGraph> batchGraph;
@@ -187,6 +190,18 @@ public class GraphContextImpl implements GraphContext
     public Path getGraphDirectory()
     {
         return graphDir;
+    }
+
+    @Override
+    public Map<String, Object> getOptionMap()
+    {
+        return Collections.unmodifiableMap(this.configurationOptions);
+    }
+
+    @Override
+    public void setOptions(Map<String, Object> options)
+    {
+        this.configurationOptions = options;
     }
 
     @Override

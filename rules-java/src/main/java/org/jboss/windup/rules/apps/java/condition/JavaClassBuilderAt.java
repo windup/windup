@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.config;
+package org.jboss.windup.rules.apps.java.condition;
 
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.ocpsoft.rewrite.config.Condition;

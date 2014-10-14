@@ -2,6 +2,7 @@ package org.jboss.windup.graph;
 
 import java.io.Closeable;
 import java.nio.file.Path;
+import java.util.Map;
 
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 
@@ -44,5 +45,15 @@ public interface GraphContext extends Closeable
     /**
      * Clear all data from the graph (note: the graph must be closed for this operation to succeed)
      */
-    public void clear();
+    void clear();
+
+    /**
+     * Sets the global configuration options to the provided {@link Map}.
+     */
+    void setOptions(Map<String, Object> options);
+
+    /**
+     * Returns the globally configured options as an immutable {@link Map}
+     */
+    Map<String, Object> getOptionMap();
 }

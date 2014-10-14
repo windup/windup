@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.renderer.dot.VizJSHtmlWriter;
 import org.jboss.windup.reporting.renderer.gexf.SigmaJSHtmlWriter;
 import org.jboss.windup.reporting.renderer.graphlib.DagreD3JSHtmlWriter;
@@ -25,7 +25,7 @@ public class GraphExporter extends AbstractGraphRenderer
     {
         Graph graph = context.getGraph();
 
-        WindupConfigurationModel configuration = GraphService.getConfigurationModel(context);
+        WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(context);
         Path vizJSOutFile = createOutputFolder(configuration, "visjs").resolve("index.html");
         Path sigmaOutFile = createOutputFolder(configuration, "sigma").resolve("index.html");
         Path dagreD3OutFile = createOutputFolder(configuration, "dagred3").resolve("index.html");

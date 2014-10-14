@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -20,19 +20,20 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.ui.WindupWizard;
+import org.jboss.windup.ui.WindupCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupWizardTest
+public class WindupCommandTest
 {
 
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup:ui"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
     })
@@ -41,10 +42,11 @@ public class WindupWizardTest
         ForgeArchive archive = ShrinkWrap
                     .create(ForgeArchive.class)
                     .addBeansXML()
-                    .addAsResource(WindupWizardTest.class.getResource("/test.jar"), "/test.jar")
+                    .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar")
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup:ui"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                 AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
@@ -66,7 +68,7 @@ public class WindupWizardTest
         // Sets the overwrite response flag to false
         uiTestHarness.getPromptResults().put(overwritePromptMessage, "false");
 
-        try (WizardCommandController controller = uiTestHarness.createWizardController(WindupWizard.class))
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
         {
             File inputFile = File.createTempFile("windupwizardtest", "jar");
             inputFile.deleteOnExit();
@@ -106,24 +108,24 @@ public class WindupWizardTest
     public void testNewMigration() throws Exception
     {
         Assert.assertNotNull(uiTestHarness);
-        try (WizardCommandController controller = uiTestHarness.createWizardController(WindupWizard.class))
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
         {
-            File inputFile = File.createTempFile("windupwizardtest", "jar");
-            inputFile.deleteOnExit();
+            File outputFile = File.createTempFile("windupwizardtest", ".jar");
+            outputFile.deleteOnExit();
             try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
             {
-                try (OutputStream oStream = new FileOutputStream(inputFile))
+                try (OutputStream oStream = new FileOutputStream(outputFile))
                 {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
-            File reportPath = new File(inputFile.getAbsoluteFile() + "_output");
+            File reportPath = new File(outputFile.getAbsoluteFile() + "_output");
             try
             {
                 reportPath.mkdirs();
 
-                setupController(controller, inputFile, reportPath);
+                setupController(controller, outputFile, reportPath);
 
                 Result result = controller.execute();
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
@@ -131,13 +133,13 @@ public class WindupWizardTest
             }
             finally
             {
-                inputFile.delete();
+                outputFile.delete();
                 FileUtils.deleteDirectory(reportPath);
             }
         }
     }
 
-    private void setupController(WizardCommandController controller, File inputFile, File outputFile) throws Exception
+    private void setupController(CommandController controller, File inputFile, File outputFile) throws Exception
     {
         controller.initialize();
         Assert.assertTrue(controller.isEnabled());

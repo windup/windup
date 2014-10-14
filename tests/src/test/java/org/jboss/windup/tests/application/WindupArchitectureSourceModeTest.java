@@ -7,7 +7,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -20,7 +22,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
@@ -102,11 +103,10 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
 
             try (GraphContext context = createGraphContext())
             {
-                WindupConfigurationModel cfg = GraphService.getConfigurationModel(context);
-                cfg.setUserRulesPath(userPath.toAbsolutePath().toString());
-
                 // The test-files folder in the project root dir.
-                super.runTest(context, "../test-files/src_example", true);
+                List<String> includeList = Collections.emptyList();
+                List<String> excludeList = Collections.emptyList();
+                super.runTest(context, "../test-files/src_example", userPath.toString(), true, includeList, excludeList);
 
                 validateWebXmlReferences(context);
                 validatePropertiesModels(context);

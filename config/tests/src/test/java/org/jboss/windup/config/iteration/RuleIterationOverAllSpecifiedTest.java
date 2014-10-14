@@ -23,6 +23,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.FileModelService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -89,8 +90,9 @@ public class RuleIterationOverAllSpecifiedTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
-            windupCfg.setSourceMode(true);
+            FileModelService fileModelService = new FileModelService(context);
+            windupCfg.setInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
+                        .getAbsolutePath()));
 
             TestRuleIterationOverAllSpecifiedProvider provider = new TestRuleIterationOverAllSpecifiedProvider();
             Configuration configuration = provider.getConfiguration(context);
@@ -122,8 +124,9 @@ public class RuleIterationOverAllSpecifiedTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            windupCfg.setInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath());
-            windupCfg.setSourceMode(true);
+            FileModelService fileModelService = new FileModelService(context);
+            windupCfg.setInputPath(fileModelService
+                        .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleIterationOverAllSpecifiedWithExceptionProvider provider = new TestRuleIterationOverAllSpecifiedWithExceptionProvider();
             Configuration configuration = provider.getConfiguration(context);

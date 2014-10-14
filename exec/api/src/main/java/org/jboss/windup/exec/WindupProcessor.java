@@ -4,7 +4,9 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.windup.engine;
+package org.jboss.windup.exec;
+
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 /**
  * The entry point of the Windup engine.

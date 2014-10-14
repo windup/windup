@@ -1,6 +1,7 @@
 package org.jboss.windup.tests.application;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,13 +10,14 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.jboss.windup.engine.WindupConfiguration;
-import org.jboss.windup.engine.WindupProcessor;
-import org.jboss.windup.engine.WindupProgressMonitor;
+import org.jboss.windup.exec.WindupProcessor;
+import org.jboss.windup.exec.WindupProgressMonitor;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
+import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.junit.Assert;
 
 /**
@@ -54,7 +56,7 @@ public abstract class WindupArchitectureTest
     {
         List<String> includeList = Collections.emptyList();
         List<String> excludeList = Collections.emptyList();
-        runTest(createGraphContext(), inputPath, sourceMode, includeList, excludeList);
+        runTest(createGraphContext(), inputPath, null, sourceMode, includeList, excludeList);
     }
 
     void runTest(GraphContext graphContext, String inputPath, boolean sourceMode)
@@ -62,34 +64,35 @@ public abstract class WindupArchitectureTest
     {
         List<String> includeList = Collections.emptyList();
         List<String> excludeList = Collections.emptyList();
-        runTest(graphContext, inputPath, sourceMode, includeList, excludeList);
+        runTest(graphContext, inputPath, null, sourceMode, includeList, excludeList);
     }
 
     void runTest(GraphContext graphContext, String inputPath, boolean sourceMode,
                 List<String> includePackages) throws Exception
     {
         List<String> excludeList = Collections.emptyList();
-        runTest(graphContext, inputPath, sourceMode, includePackages, excludeList);
+        runTest(graphContext, inputPath, null, sourceMode, includePackages, excludeList);
     }
 
     void runTest(final GraphContext graphContext,
                 final String inputPath,
+                final String userRulesDir,
                 final boolean sourceMode,
                 final List<String> includePackages,
                 final List<String> excludePackages) throws Exception
     {
 
-        WindupConfigurationModel windupConfig = GraphService.getConfigurationModel(graphContext);
-        windupConfig.setInputPath(inputPath);
-        windupConfig.setSourceMode(sourceMode);
-        windupConfig.setScanJavaPackageList(includePackages);
-        windupConfig.setExcludeJavaPackageList(excludePackages);
-
-        if (windupConfig.getOutputPath() == null)
-            windupConfig.setOutputPath(graphContext.getGraphDirectory().toString());
-        windupConfig.setSourceMode(false);
-
         WindupConfiguration wpc = new WindupConfiguration().setGraphContext(graphContext);
+        wpc.setInputPath(Paths.get(inputPath));
+        wpc.setOutputDirectory(graphContext.getGraphDirectory());
+        if (userRulesDir != null)
+        {
+            wpc.setUserRulesDirectory(Paths.get(userRulesDir));
+        }
+        wpc.setOptionValue(SourceModeOption.NAME, sourceMode);
+        wpc.setOptionValue(ScanPackagesOption.NAME, includePackages);
+        wpc.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
+
         RecordingWindupProgressMonitor progressMonitor = new RecordingWindupProgressMonitor();
         wpc.setProgressMonitor(progressMonitor);
 

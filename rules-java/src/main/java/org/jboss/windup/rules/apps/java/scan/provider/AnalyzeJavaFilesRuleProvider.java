@@ -13,9 +13,9 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.VariableResolvingASTVisitor;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -53,9 +53,9 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     {
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
-            WindupConfigurationService windupConfigurationService = new WindupConfigurationService(
+            WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
                         event.getGraphContext());
-            if (!windupConfigurationService.shouldScanPackage(payload.getPackageName()))
+            if (!windupJavaConfigurationService.shouldScanPackage(payload.getPackageName()))
             {
                 // should not analyze this one, skip it
                 return;
