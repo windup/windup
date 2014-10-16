@@ -7,6 +7,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
@@ -21,8 +22,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for
- * them.
+ * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for them.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -134,6 +134,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
                             return "ScanAsNonMavenProject";
                         }
                     }
+                    .and(IterationProgress.monitoring("Checking for non-Maven archive: ", 1))
                 )
             .endIteration()
         );       

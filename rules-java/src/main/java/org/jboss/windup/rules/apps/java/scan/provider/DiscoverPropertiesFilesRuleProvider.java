@@ -54,7 +54,7 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     public ConditionBuilder when()
     {
         return Query.find(FileModel.class).withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX,
-                    ".*.properties$");
+                    ".*\\.properties$").withProperty(FileModel.IS_DIRECTORY, false);
     }
 
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)

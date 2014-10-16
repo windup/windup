@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -116,6 +117,7 @@ public class WindupCommand implements UICommand
             builder.add(inputComponent);
             inputOptions.add(new WindupOptionAndInput(option, inputComponent));
         }
+        builder.add(overwrite);
     }
 
     @Override
@@ -169,6 +171,7 @@ public class WindupCommand implements UICommand
             }
         }
 
+        FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
         try (GraphContext graphContext = graphContextFactory.create(graphPath))
         {
