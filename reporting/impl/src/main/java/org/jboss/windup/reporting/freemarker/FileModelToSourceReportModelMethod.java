@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportModelService;
@@ -12,8 +12,7 @@ import freemarker.template.TemplateModelException;
 
 /**
  * 
- * This FreeMarker method simply finds the SourceReport that is associated with the provided FileModel, if there is a
- * SourceReport available.
+ * This FreeMarker method simply finds the SourceReport that is associated with the provided FileModel, if there is a SourceReport available.
  * 
  * If none is available, it will return null.
  * 
@@ -30,9 +29,9 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
     private SourceReportModelService sourceReportService;
 
     @Override
-    public void setGraphContext(GraphContext context)
+    public void setContext(GraphRewrite event)
     {
-        this.sourceReportService = new SourceReportModelService(context);
+        this.sourceReportService = new SourceReportModelService(event.getGraphContext());
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.service.ApplicationReportIndexService;
@@ -29,9 +29,9 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
     private ApplicationReportIndexService service;
 
     @Override
-    public void setGraphContext(GraphContext context)
+    public void setContext(GraphRewrite event)
     {
-        this.service = new ApplicationReportIndexService(context);
+        this.service = new ApplicationReportIndexService(event.getGraphContext());
     }
 
     @Override

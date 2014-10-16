@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
@@ -21,8 +22,8 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
 
 /**
- * Renders a JavaScript block that calls <a href="http://www.flotcharts.org/">Flot</a>. This depends upon the template
- * already loading the JQuery and Flot Charting Javascript files.
+ * Renders a JavaScript block that calls <a href="http://www.flotcharts.org/">Flot</a>. This depends upon the template already loading the JQuery and
+ * Flot Charting Javascript files.
  * 
  * The chart will present a distribution of packages that have been hinted by Windup.
  * 
@@ -157,9 +158,9 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
     }
 
     @Override
-    public void setGraphContext(GraphContext context)
+    public void setContext(GraphRewrite event)
     {
-        this.context = context;
+        this.context = event.getGraphContext();
     }
 
 }

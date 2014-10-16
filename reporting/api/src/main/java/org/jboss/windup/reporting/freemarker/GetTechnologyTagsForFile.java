@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
@@ -26,9 +27,9 @@ public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
     private GraphContext context;
 
     @Override
-    public void setGraphContext(GraphContext context)
+    public void setContext(GraphRewrite event)
     {
-        this.context = context;
+        this.context = event.getGraphContext();
     }
 
     @Override

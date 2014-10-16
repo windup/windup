@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.exception.WindupException;
@@ -93,7 +93,7 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public void setGraphContext(GraphContext context)
+    public void setContext(GraphRewrite event)
     {
         // noop
     }

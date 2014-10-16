@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
 import java.util.List;
 
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -12,8 +12,8 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * Returns a pretty path for the provided file. If the File appears to represent a Java File, this will attempt to
- * determine the associated Java Class and return the name formatted as a package and class (eg, com.package.Foo).
+ * Returns a pretty path for the provided file. If the File appears to represent a Java File, this will attempt to determine the associated Java Class
+ * and return the name formatted as a package and class (eg, com.package.Foo).
  * 
  * Called as follows:
  * 
@@ -65,7 +65,7 @@ public class GetPrettyPathForFile implements WindupFreeMarkerMethod
     }
 
     @Override
-    public void setGraphContext(GraphContext context)
+    public void setContext(GraphRewrite event)
     {
         // no-op
     }

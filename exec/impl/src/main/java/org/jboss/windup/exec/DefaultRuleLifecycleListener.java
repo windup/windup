@@ -1,5 +1,7 @@
 package org.jboss.windup.exec;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -10,6 +12,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
+@Vetoed
 class DefaultRuleLifecycleListener implements RuleLifecycleListener
 {
 
@@ -23,13 +26,13 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     }
 
     @Override
-    public void beforeExecution()
+    public void beforeExecution(GraphRewrite event)
     {
         progressMonitor.beginTask("Executing Rules: ", configuration.getRules().size());
     }
 
     @Override
-    public void beforeRuleEvaluation(Rule rule, EvaluationContext context)
+    public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
     {
         progressMonitor.subTask(RuleUtils.prettyPrintRule(rule));
     }
@@ -55,7 +58,12 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     }
 
     @Override
-    public void afterExecution()
+    public void afterRuleExecutionFailed(GraphRewrite event, EvaluationContext context, Rule rule, Throwable failureCause)
+    {
+    }
+
+    @Override
+    public void afterExecution(GraphRewrite event)
     {
         progressMonitor.done();
     }

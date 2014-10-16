@@ -13,12 +13,12 @@ public interface RuleLifecycleListener
     /**
      * Called immediately before any {@link Rule} instances are executed.
      */
-    public void beforeExecution();
+    public void beforeExecution(GraphRewrite event);
 
     /**
      * Called immediately before the given {@link Rule} is executed.
      */
-    public void beforeRuleEvaluation(Rule rule, EvaluationContext context);
+    public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context);
 
     /**
      * Called immediately after execution of the each {@link Rule}.
@@ -38,7 +38,12 @@ public interface RuleLifecycleListener
     public void afterRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule);
 
     /**
+     * Called immediately after a a {@link Rule} has thrown an exception, to indicate a failure of some kind
+     */
+    public void afterRuleExecutionFailed(GraphRewrite event, EvaluationContext context, Rule rule, Throwable failureCause);
+
+    /**
      * Called immediately after any {@link Rule} instances are executed.
      */
-    public void afterExecution();
+    public void afterExecution(GraphRewrite event);
 }

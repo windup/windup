@@ -71,8 +71,8 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     }
 
     /**
-     * Create a FreeMarkerIterationOperation with the provided furnace instance, the provided iteration var, as well as
-     * any other associated variables (based upon variables in the Variables object).
+     * Create a FreeMarkerIterationOperation with the provided furnace instance, the provided iteration var, as well as any other associated variables
+     * (based upon variables in the Variables object).
      * 
      * iterationVarName will be defaulted to {@link DEFAULT_ITERATION_PAYLOAD_NAME}
      * 
@@ -124,8 +124,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             // also, extension functions (these are kept separate from vars in order to prevent them
             // from being stored in the associated data with the reportmodel)
-            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace,
-                        event.getGraphContext());
+            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);
 
             Map<String, Object> objects = new HashMap<>(vars);
             objects.putAll(freeMarkerExtensions);
