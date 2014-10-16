@@ -150,7 +150,7 @@ goto runWindup
 @REM Start Windup
 :runWindup
 
-if exist "%WINDUP_HOME%\addons" set ADDONS_DIR=--immutableAddonDir "%WINDUP_HOME%\addons" 
+if exist "%WINDUP_HOME%\addons" set ADDONS_DIR=--immutableAddonDir "%WINDUP_HOME%\addons"
 set WINDUP_MAIN_CLASS=org.jboss.forge.bootstrap.Bootstrap
 %WINDUP_JAVA_EXE% %WINDUP_DEBUG_ARGS% %WINDUP_OPTS% "-Dforge.standalone=true" "-Dforge.home=%WINDUP_HOME%" ^
    -cp ".;%WINDUP_HOME%\lib\*" %WINDUP_MAIN_CLASS% %WINDUP_CMD_LINE_ARGS% %ADDONS_DIR%
@@ -182,5 +182,3 @@ if exist "%USERHOME%\winduprc_post.bat" call "%USERHOME%\winduprc_post.bat"
 if "%WINDUP_TERMINATE_CMD%" == "on" exit %ERROR_CODE%
 
 cmd /C exit /B %ERROR_CODE%
-
-
