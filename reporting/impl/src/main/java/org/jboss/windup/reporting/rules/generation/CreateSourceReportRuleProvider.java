@@ -14,11 +14,13 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.SourceTypeResolver;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.FreeMarkerSourceReportModel;
 import org.jboss.windup.reporting.model.ReportFileModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
+import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportModelService;
 import org.ocpsoft.rewrite.config.Condition;
@@ -44,7 +46,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.REPORT_GENERATION;
+        return RulePhase.POST_REPORT_GENERATION;
     }
 
     // @formatter:off
@@ -61,24 +63,29 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         {
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {
-                SourceReportModelService sourceReportModelService = new SourceReportModelService(event.getGraphContext());
+                SourceReportModelService sourceReportModelService = new SourceReportModelService(
+                            event.getGraphContext());
                 SourceReportModel sm = sourceReportModelService.create();
                 ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
                             ReportFileModel.class);
                 sm.setSourceFileModel(reportFileModel);
                 sm.setReportName(payload.getPrettyPath());
                 sm.setSourceType(resolveSourceType(payload));
-                
+
                 sm.setReportName(payload.getFileName());
                 sm.setTemplatePath(TEMPLATE);
                 sm.setTemplateType(TemplateType.FREEMARKER);
+                ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
+                ApplicationReportModel mainAppReport = applicationReportService.getMainApplicationReportForFile(payload);
+                if (mainAppReport != null) {
+                    sm.setParentReport(mainAppReport);
+                }
                 
                 GraphService.addTypeToModel(event.getGraphContext(), sm, FreeMarkerSourceReportModel.class);
-                
                 ReportService reportService = new ReportService(event.getGraphContext());
                 reportService.setUniqueFilename(sm, payload.getFileName(), "html");
             }
-            
+
             @Override
             public String toString()
             {
@@ -87,10 +94,11 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         };
 
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when(finder)
-            .perform(addSourceReport);
+                    .addRule()
+                    .when(finder)
+                    .perform(addSourceReport);
     }
+
     // @formatter:on
 
     private String resolveSourceType(FileModel f)

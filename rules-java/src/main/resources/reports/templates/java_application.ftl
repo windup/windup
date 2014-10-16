@@ -102,15 +102,18 @@
           </button>
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="../index.html">&lt;- All Applications</a></li>
-          </ul>
+	  <ol class="breadcrumb top-menu">
+		<li><a href="../index.html">All Applications</a></li>
+			<#include "include/breadcrumbs.ftl">
+	  </ol> 
+          
         </div><!-- /.nav-collapse -->
         <div class="navbar-collapse collapse navbar-responsive-collapse">
           <ul class="nav navbar-nav">
             <#include "include/navbar.ftl">
           </ul>
         </div><!-- /.nav-collapse -->
+	
       </div>
     </div>
 </div>
