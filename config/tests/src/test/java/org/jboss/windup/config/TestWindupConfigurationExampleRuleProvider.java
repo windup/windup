@@ -22,8 +22,8 @@ import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
@@ -34,7 +34,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class TestWindupConfigurationExampleRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(TestWindupConfigurationExampleRuleProvider.class);
+    private static final Logger LOG = Logging.get(TestWindupConfigurationExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
 

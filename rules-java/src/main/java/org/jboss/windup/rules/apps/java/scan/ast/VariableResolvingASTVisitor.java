@@ -53,8 +53,8 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 
 /**
  * Runs through the source code and checks "type" uses against the blacklisted class entries.
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VariableResolvingASTVisitor extends ASTVisitor
 {
-    private static final Logger LOG = LoggerFactory.getLogger(VariableResolvingASTVisitor.class);
+    private static final Logger LOG = Logging.get(VariableResolvingASTVisitor.class);
 
     private final JavaClassService javaClassService;
     private final TypeReferenceService typeRefService;
@@ -138,7 +138,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                         TypeReferenceLocation.CONSTRUCTOR_CALL,
                         lineNumber, columnNumber, length, text);
 
-            LOG.trace("Candidate: " + typeRef);
+            LOG.finer("Candidate: " + typeRef);
         }
     }
 
@@ -151,7 +151,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                         TypeReferenceLocation.METHOD_CALL,
                         lineNumber, columnNumber, length, text);
 
-            LOG.trace("Candidate: " + typeRef);
+            LOG.finer("Candidate: " + typeRef);
         }
     }
 
@@ -166,7 +166,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                         TypeReferenceLocation.IMPORT,
                         lineNumber, columnNumber, length, interest.toString());
 
-            LOG.trace("Candidate: " + typeRef);
+            LOG.finer("Candidate: " + typeRef);
         }
     }
 
@@ -186,14 +186,14 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
                         lineNumber, columnNumber, length, sourceString);
 
-            LOG.trace("Prefix: " + referenceLocation);
+            LOG.finer("Prefix: " + referenceLocation);
             if (type instanceof SimpleType)
             {
                 SimpleType sType = (SimpleType) type;
-                LOG.trace("The type name is: " + sType.getName().getFullyQualifiedName() + " and " + sourceString);
+                LOG.finer("The type name is: " + sType.getName().getFullyQualifiedName() + " and " + sourceString);
 
             }
-            LOG.trace("Candidate: " + typeRef);
+            LOG.finer("Candidate: " + typeRef);
         }
     }
 
@@ -211,8 +211,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
                         lineNumber, columnNumber, length, sourceString);
 
-            LOG.trace("Prefix: " + referenceLocation);
-            LOG.trace("Candidate: " + typeRef);
+            LOG.finer("Prefix: " + referenceLocation);
+            LOG.finer("Candidate: " + typeRef);
         }
     }
 
@@ -357,7 +357,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                     }
                     else
                     {
-                        LOG.trace("" + clzInterface);
+                        LOG.finer("" + clzInterface);
                     }
                 }
             }
@@ -370,7 +370,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             }
             else
             {
-                LOG.trace("" + clzSuperClasses);
+                LOG.finer("" + clzSuperClasses);
             }
         }
 
@@ -456,7 +456,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(PackageDeclaration node)
     {
-        LOG.trace("Found package: " + node.getName().toString());
+        LOG.finer("Found package: " + node.getName().toString());
         return super.visit(node);
     }
 
@@ -577,7 +577,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             }
             else
             {
-                LOG.trace("Unable to determine type: " + o.getClass() + ReflectionToStringBuilder.toString(o));
+                LOG.finer("Unable to determine type: " + o.getClass() + ReflectionToStringBuilder.toString(o));
                 resolvedParams.add("Undefined");
             }
         }

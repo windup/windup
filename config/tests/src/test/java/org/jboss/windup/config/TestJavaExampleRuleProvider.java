@@ -22,19 +22,19 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class TestJavaExampleRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(TestJavaExampleRuleProvider.class);
+    private static final Logger LOG = Logging.get(TestJavaExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
 

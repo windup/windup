@@ -14,12 +14,12 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 
 public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(DiscoverMavenProjectsRuleProvider.class);
+    private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
     @Override
     public RulePhase getPhase()

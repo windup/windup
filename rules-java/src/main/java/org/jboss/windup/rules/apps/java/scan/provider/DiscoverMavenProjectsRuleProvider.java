@@ -26,15 +26,15 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
 {
-    private static final Logger LOG = LoggerFactory.getLogger(DiscoverMavenProjectsRuleProvider.class);
+    private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
     private static final Map<String, String> namespaces = new HashMap<>();
     static
@@ -321,7 +321,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
 
                 if (nodes.getLength() == 0 || nodes.item(0) == null)
                 {
-                    LOG.warn("Expected: " + property + " but it wasn't found in the POM.");
+                    LOG.warning("Expected: " + property + " but it wasn't found in the POM.");
                 }
                 else
                 {

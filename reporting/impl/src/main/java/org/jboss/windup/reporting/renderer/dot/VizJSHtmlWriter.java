@@ -15,16 +15,17 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.jboss.windup.reporting.renderer.GraphWriter;
 import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.tinkerpop.blueprints.Graph;
+import java.util.logging.Level;
 
 public class VizJSHtmlWriter implements GraphWriter
 {
-    private static Logger LOG = LoggerFactory.getLogger(VizJSHtmlWriter.class);
+    private static Logger LOG = Logging.get(VizJSHtmlWriter.class);
 
     private final GraphWriter writer;
 
@@ -50,10 +51,8 @@ public class VizJSHtmlWriter implements GraphWriter
             result = baos.toString();
         }
 
-        if (LOG.isDebugEnabled())
-        {
-            LOG.debug("DOT: " + result);
-        }
+        if (LOG.isLoggable(Level.FINE))
+            LOG.fine("DOT: " + result);
 
         // read the document.
         Document document;
