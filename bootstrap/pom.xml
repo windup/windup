@@ -7,10 +7,9 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <groupId>org.jboss.forge</groupId>
-   <artifactId>forge-bootstrap</artifactId>
-   <version>2.12.2-SNAPSHOT</version>
-   <name>Forge - Bootstrap module</name>
+   <artifactId>windup-bootstrap</artifactId>
+
+   <name>Windup - Bootstrap module</name>
 
    <dependencies>
       <dependency>

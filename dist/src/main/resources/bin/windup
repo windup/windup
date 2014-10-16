@@ -145,7 +145,7 @@ if [ -z "$JAVA_HOME" ] ; then
   echo "Warning: JAVA_HOME environment variable is not set."
 fi
 
-WINDUP_MAIN_CLASS=org.jboss.forge.bootstrap.Bootstrap
+WINDUP_MAIN_CLASS=org.jboss.windup.bootstrap.Bootstrap
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then

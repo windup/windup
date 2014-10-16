@@ -41,6 +41,7 @@ import org.jboss.windup.graph.GraphContextFactory;
  * Provides a basic forge UI for running windup from within the Forge shell.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public class WindupCommand implements UICommand
@@ -184,7 +185,7 @@ public class WindupCommand implements UICommand
 
             uiProgressMonitor.done();
 
-            return Results.success("Windup execution successful!");
+            return Results.success("Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html");
         }
     }
 
