@@ -1,10 +1,12 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -12,6 +14,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.binary.DecompileArchivesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -22,6 +25,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class IndexClassFilesRuleProvider extends WindupRuleProvider
 {
+    private static Logger LOG = Logging.get(IndexClassFilesRuleProvider.class);
+
     @Override
     public RulePhase getPhase()
     {
@@ -63,17 +68,17 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
             @Override
             public String toString()
             {
-                return "AttachClassMetadataToGraph";
+                return "CommitPeriodically";
             }
         };
-        
+
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.find(FileModel.class)
                                 .withProperty(FileModel.IS_DIRECTORY, false)
                                 .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.class")
                     )
-                    .perform(new AddClassFileMetadata().and(commitPeriodically));
+                    .perform(new AddClassFileMetadata().and(commitPeriodically).and(IterationProgress.monitoring("Indexed class file: ", 1000)));
     }
     // @formatter:on
 }

@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -44,7 +45,8 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
             .addRule()
             .when(javaSourceAvailable)
-            .perform(new ParseSourceOperation());
+            .perform(new ParseSourceOperation()
+            .and(IterationProgress.monitoring("Analyzed Java File: ", 250)));
 
     }
     // @formatter:on

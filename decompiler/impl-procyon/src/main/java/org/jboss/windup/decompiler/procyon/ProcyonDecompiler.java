@@ -107,8 +107,7 @@ public class ProcyonDecompiler implements Decompiler
     }
 
     /**
-     * Decompiles all .class files and archives in the given directory and places results in the specified output
-     * directory.
+     * Decompiles all .class files and archives in the given directory and places results in the specified output directory.
      * <p>
      * Discovered archives will be decompiled into directories matching the name of the archive, e.g.
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
@@ -226,6 +225,13 @@ public class ProcyonDecompiler implements Decompiler
         log.info("Decompiling archive '" + archive.getAbsolutePath() + "' to '" + outputDir.getAbsolutePath() + "'");
 
         JarFile jar = loadJar(archive);
+        int jarEntryCount = 0;
+        Enumeration<JarEntry> countEnum = jar.entries();
+        while (countEnum.hasMoreElements())
+        {
+            countEnum.nextElement();
+            jarEntryCount++;
+        }
 
         // MetadataSystem, TypeLoader's
         DecompilerSettings settings = getDefaultSettings(outputDir);
@@ -236,10 +242,17 @@ public class ProcyonDecompiler implements Decompiler
         DecompilationResult res = new DecompilationResult();
 
         Filter.Result filterRes = Filter.Result.ACCEPT;
+
+        int current = 0;
         final Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements())
         {
             final JarEntry entry = entries.nextElement();
+            current++;
+            if (current % 100 == 0)
+            {
+                log.info("Decompiling " + current + " / " + jarEntryCount);
+            }
 
             if (filter != null)
                 filterRes = filter.decide(entry);
@@ -257,7 +270,17 @@ public class ProcyonDecompiler implements Decompiler
 
             try
             {
-                File outputFile = this.decompileType(metadataSystem, typeName);
+                // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
+                DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
+                t.start();
+                t.join(60000L); // wait up to one minute
+                if (!t.success)
+                {
+                    t.cancelDecompilation();
+                    throw new RuntimeException("Failed to compile within one minute... attempting abort", t.e);
+                }
+
+                File outputFile = t.outputFile;
                 if (outputFile != null)
                     res.addDecompiled(name, outputFile.getAbsolutePath());
 
@@ -276,6 +299,40 @@ public class ProcyonDecompiler implements Decompiler
         }
 
         return res;
+    }
+
+    private class DecompileExecutor extends Thread
+    {
+        private MetadataSystem metadataSystem;
+        private String typeName;
+        private Exception e;
+        private File outputFile;
+        private boolean success;
+
+        public DecompileExecutor(MetadataSystem metadataSystem, String typeName)
+        {
+            this.metadataSystem = metadataSystem;
+            this.typeName = typeName;
+        }
+
+        @Override
+        public void run()
+        {
+            try
+            {
+                this.outputFile = decompileType(metadataSystem, typeName);
+                this.success = true;
+            }
+            catch (IOException e)
+            {
+                this.e = e;
+            }
+        }
+
+        public void cancelDecompilation()
+        {
+            this.stop(new NullPointerException());
+        }
     }
 
     /**

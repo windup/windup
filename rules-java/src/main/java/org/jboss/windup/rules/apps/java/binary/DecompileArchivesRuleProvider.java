@@ -1,11 +1,13 @@
 package org.jboss.windup.rules.apps.java.binary;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Log;
+import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
@@ -14,6 +16,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.logging.Logger.Level;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -24,6 +27,8 @@ import com.tinkerpop.pipes.PipeFunction;
 
 public class DecompileArchivesRuleProvider extends WindupRuleProvider
 {
+    private static Logger LOG = Logging.get(DecompileArchivesRuleProvider.class);
+
     @Override
     public RulePhase getPhase()
     {
@@ -45,14 +50,14 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
         .addRule()
         .when(Query.find(ArchiveModel.class).piped(shouldDecompileCriterion))
-        .perform(new ProcyonDecompilerOperation())
+        .perform(new ProcyonDecompilerOperation().and(IterationProgress.monitoring("Decompiled archive: ", 1)))
         .otherwise(Log.message(Level.WARN, "No archives to decompile."));
     }
     // @formatter:on
 
     /**
-     * A Gremlin criterion that only passes along Vertices with Java Classes that appear to be interesting (in the
-     * package list that we are interested in).
+     * A Gremlin criterion that only passes along Vertices with Java Classes that appear to be interesting (in the package list that we are interested
+     * in).
      */
     private class ShouldDecompileCriterion implements QueryGremlinCriterion
     {

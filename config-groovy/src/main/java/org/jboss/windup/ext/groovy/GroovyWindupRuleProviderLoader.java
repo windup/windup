@@ -37,8 +37,8 @@ import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 /**
- * Loads files with the specified extension (specified in {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_EXTENSION}
- * ), interprets them as Groovy scripts, and returns the resulting {@link WindupRuleProvider}s.
+ * Loads files with the specified extension (specified in {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_EXTENSION} ), interprets them as Groovy
+ * scripts, and returns the resulting {@link WindupRuleProvider}s.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  *

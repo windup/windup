@@ -28,4 +28,9 @@ public enum RuleMetadata
      * The default behavior (if this is not set) is to autocommit after each rule execution.
      */
     AUTO_COMMIT,
+
+    /**
+     * Whether or not all Exceptions from this Rule are to be treated as fatal. The default is non-fatal.
+     */
+    TREAT_EXCEPTIONS_AS_FATAL
 }

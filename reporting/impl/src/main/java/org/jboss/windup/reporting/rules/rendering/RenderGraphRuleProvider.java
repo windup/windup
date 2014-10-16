@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.rules.rendering;
 
+import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.services.Imported;
@@ -20,6 +21,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
+@Vetoed
 public class RenderGraphRuleProvider extends WindupRuleProvider
 {
     @Inject
