@@ -18,6 +18,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
@@ -130,6 +131,10 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
             {
                 String relativePath = StringUtils.substringAfter(file.toString(), path.toString());
+
+                // needed on windows, as for some reason the path from a zip still uses s'/' sometimes
+                relativePath = FilenameUtils.separatorsToSystem(relativePath);
+
                 relativePath = StringUtils.removeStart(relativePath, File.separator);
                 Path resultFile = resultPath.resolve(relativePath);
 
