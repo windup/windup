@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.xml.transform.Result;
@@ -36,8 +37,8 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 
 public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 {
@@ -46,7 +47,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     @Inject
     GraphApiCompositeClassLoaderProvider compositeClassLoader;
 
-    private static final Logger LOG = LoggerFactory.getLogger(XSLTTransformation.class);
+    private static final Logger LOG = Logging.get(XSLTTransformation.class);
 
     private String description;
     private String location;
@@ -70,7 +71,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
      * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type.
      * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a
      * model referencing it.
-     * 
+     *
      */
     @Override
     public void perform(GraphRewrite event, EvaluationContext context)
@@ -176,7 +177,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
                     // fetch local only, for speed reasons.
                     if (StringUtils.contains(href, "http://"))
                     {
-                        LOG.warn("Trying to fetch remote URL for XSLT.  This is not possible; for speed reasons: "
+                        LOG.warning("Trying to fetch remote URL for XSLT.  This is not possible; for speed reasons: "
                                     + href + ": " + base);
                         return null;
                     }
@@ -198,18 +199,12 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             {
                 for (String key : xsltParameters.keySet())
                 {
-                    if (LOG.isDebugEnabled())
-                    {
-                        LOG.debug("Setting property: " + key + " -> " + xsltParameters.get(key));
-                    }
+                    LOG.fine("Setting property: " + key + " -> " + xsltParameters.get(key));
                     xsltTransformer.setParameter(key, xsltParameters.get(key));
                 }
             }
 
-            if (LOG.isDebugEnabled())
-            {
-                LOG.debug("Created XSLT successfully: " + location);
-            }
+            LOG.fine("Created XSLT successfully: " + location);
         }
         catch (TransformerConfigurationException e)
         {
@@ -265,7 +260,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         }
         catch (TransformerException e)
         {
-            LOG.error("Exception transforming XML.", e);
+            LOG.log(Level.SEVERE, "Exception transforming XML.", e);
         }
     }
 

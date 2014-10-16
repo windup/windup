@@ -16,14 +16,14 @@ import javax.script.ScriptException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.jboss.windup.reporting.renderer.dot.DotWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 
 import com.tinkerpop.blueprints.Graph;
 
 public class GraphvizWriter extends DotWriter
 {
-    private static final Logger LOG = LoggerFactory.getLogger(GraphvizWriter.class);
+    private static final Logger LOG = Logging.get(GraphvizWriter.class);
 
     private final CompiledScript vizJsCompiled;
 

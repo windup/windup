@@ -14,16 +14,17 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.jboss.windup.reporting.renderer.GraphWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.tinkerpop.blueprints.Graph;
+import java.util.logging.Level;
 
 public class SigmaJSHtmlWriter implements GraphWriter
 {
-    private static final Logger LOG = LoggerFactory.getLogger(SigmaJSHtmlWriter.class);
+    private static final Logger LOG = Logging.get(SigmaJSHtmlWriter.class);
 
     private final GexfWriter gexfWriter;
 
@@ -49,10 +50,8 @@ public class SigmaJSHtmlWriter implements GraphWriter
             result = baos.toString();
         }
 
-        if (LOG.isDebugEnabled())
-        {
-            LOG.debug("GEXF: " + result);
-        }
+        if (LOG.isLoggable(Level.FINE))
+            LOG.fine("GEXF: " + result);
 
         // read the document.
         Document document;

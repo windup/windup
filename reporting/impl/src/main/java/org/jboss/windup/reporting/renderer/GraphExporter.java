@@ -12,13 +12,13 @@ import org.jboss.windup.reporting.renderer.dot.VizJSHtmlWriter;
 import org.jboss.windup.reporting.renderer.gexf.SigmaJSHtmlWriter;
 import org.jboss.windup.reporting.renderer.graphlib.DagreD3JSHtmlWriter;
 import org.jboss.windup.util.exception.WindupException;
-import org.slf4j.LoggerFactory;
+import org.jboss.windup.util.Logging;
 
 import com.tinkerpop.blueprints.Graph;
 
 public class GraphExporter extends AbstractGraphRenderer
 {
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GraphExporter.class);
+    private static final java.util.logging.Logger LOG = Logging.get(GraphExporter.class);
 
     @Override
     public void renderGraph(GraphContext context)
@@ -37,19 +37,19 @@ public class GraphExporter extends AbstractGraphRenderer
 
     public void renderVizjs(Graph graph, File output, String vertexLabelProperty, String edgeLabel)
     {
-        LOG.debug("Writing Vizjs graph to: " + output.getAbsolutePath());
+        LOG.fine("Writing Vizjs graph to: " + output.getAbsolutePath());
         render(new VizJSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
     }
 
     public void renderSigma(Graph graph, File output, String vertexLabelProperty, String edgeLabel)
     {
-        LOG.debug("Writing Sigmajs graph to: " + output.getAbsolutePath());
+        LOG.fine("Writing Sigmajs graph to: " + output.getAbsolutePath());
         render(new SigmaJSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
     }
 
     public void renderDagreD3(Graph graph, File output, String vertexLabelProperty, String edgeLabel)
     {
-        LOG.debug("Writing DagreD3 graph to: " + output.getAbsolutePath());
+        LOG.fine("Writing DagreD3 graph to: " + output.getAbsolutePath());
         render(new DagreD3JSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
     }
 

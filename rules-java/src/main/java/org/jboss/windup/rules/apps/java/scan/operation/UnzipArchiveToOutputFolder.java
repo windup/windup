@@ -18,13 +18,13 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
+import org.jboss.windup.util.Logging;
 
 public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<ArchiveModel>
 {
     private static final String ARCHIVES = "archives";
-    private static final Logger LOG = LoggerFactory.getLogger(UnzipArchiveToOutputFolder.class);
+    private static final Logger LOG = Logging.get(UnzipArchiveToOutputFolder.class);
 
     public UnzipArchiveToOutputFolder(String variableName)
     {
