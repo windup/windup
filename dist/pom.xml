@@ -73,9 +73,9 @@
 
       <!-- Build deps go here -->
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-bootstrap</artifactId>
-         <version>${version.furnace}</version>
+         <groupId>org.jboss.windup</groupId>
+         <artifactId>windup-bootstrap</artifactId>
+         <version>${project.version}</version>
       </dependency>
    </dependencies>
 
