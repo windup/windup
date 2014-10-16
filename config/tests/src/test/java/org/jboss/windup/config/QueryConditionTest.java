@@ -33,6 +33,7 @@ public class QueryConditionTest
 {
     @Deployment
     @Dependencies({
+                @AddonDependency(name = "org.jboss.windup.utils:utils"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
@@ -52,6 +53,7 @@ public class QueryConditionTest
                                 TestSomeModel.class,
                                 TestWindupConfigurationExampleRuleProvider.class)
                     .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
