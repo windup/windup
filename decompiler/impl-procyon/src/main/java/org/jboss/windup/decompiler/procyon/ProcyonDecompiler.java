@@ -1,5 +1,6 @@
 package org.jboss.windup.decompiler.procyon;
 
+import org.jboss.windup.util.Checks;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;

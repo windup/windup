@@ -18,6 +18,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.util.Checks;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
@@ -43,10 +44,9 @@ public class WindupProcessorImpl implements WindupProcessor
     @Override
     public void execute(WindupConfiguration windupConfiguration)
     {
-        Assert.notNull(windupConfiguration, "Windup configuration must not be null. (Call default execution if no configuration is required.)");
+        validateConfig(windupConfiguration);
 
         GraphContext context = windupConfiguration.getGraphContext();
-        Assert.notNull(context, "Windup GraphContext must not be null!");
 
         context.setOptions(windupConfiguration.getOptionMap());
 
@@ -93,6 +93,23 @@ public class WindupProcessorImpl implements WindupProcessor
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
         return evaluationContext;
+    }
+
+
+    private void validateConfig(WindupConfiguration windupConfiguration)
+    {
+        Assert.notNull(windupConfiguration, "Windup configuration must not be null. (Call default execution if no configuration is required.)");
+
+        GraphContext context = windupConfiguration.getGraphContext();
+        Assert.notNull(context, "Windup GraphContext must not be null!");
+
+        Path inputPath = windupConfiguration.getInputPath();
+        Assert.notNull(inputPath, "Path to the application must not be null!");
+        Checks.checkFileOrDirectoryToBeRead(inputPath.toFile(), "Application");
+
+        Path outputDirectory = windupConfiguration.getOutputDirectory();
+        Assert.notNull(outputDirectory, "Output directory must not be null!");
+        Checks.checkDirectoryToBeFilled(outputDirectory.toFile(), "Output directory");
     }
 
 }
