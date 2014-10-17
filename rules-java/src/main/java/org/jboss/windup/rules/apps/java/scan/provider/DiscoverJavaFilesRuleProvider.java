@@ -145,6 +145,8 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             }
 
             String packageName = javaSource.getPackage();
+            // set the package name to the parsed value
+            sourceFileModel.setPackageName(packageName);
             String qualifiedName = javaSource.getQualifiedName();
 
             String simpleName = qualifiedName;
