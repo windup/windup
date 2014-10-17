@@ -1,8 +1,5 @@
 package org.jboss.windup.graph;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
@@ -12,13 +9,11 @@ import javax.inject.Inject;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
+import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.rexster.RexsterInitializer;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 
 import com.thinkaurelius.titan.core.Cardinality;
@@ -43,6 +38,9 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 public class GraphContextImpl implements GraphContext
 {
     private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
+
+    @Inject
+    private Imported<AfterGraphInitializationListener> afterInitializationListeners;
 
     private Map<String, Object> configurationOptions;
     private final GraphTypeRegistry graphTypeRegistry;
@@ -138,19 +136,21 @@ public class GraphContextImpl implements GraphContext
         };
 
         FramedGraphFactory factory = new FramedGraphFactory(
-                    addModules,                // See above
-                    new JavaHandlerModule(),   // @JavaHandler
+                    addModules, // See above
+                    new JavaHandlerModule(), // @JavaHandler
                     graphTypeRegistry.build(), // Model classes
-                    new GremlinGroovyModule()  // @Gremlin
+                    new GremlinGroovyModule() // @Gremlin
         );
 
         framed = factory.create(eventGraph);
-        RexsterInitializer rexsterInitializer = new RexsterInitializer();
-        rexsterInitializer.loadConfiguration(conf);
-        rexsterInitializer.start(framed);
+        if (!afterInitializationListeners.isUnsatisfied())
+        {
+            for (AfterGraphInitializationListener listener : afterInitializationListeners)
+            {
+                listener.process(conf, framed);
+            }
+        }
     }
-    
-    
 
     @Override
     public GraphTypeRegistry getGraphTypeRegistry()

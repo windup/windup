@@ -2,34 +2,36 @@ package org.jboss.windup.graph.rexster;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
 import org.apache.commons.configuration.Configuration;
+import org.jboss.windup.graph.GraphContextImpl;
+import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 
+import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
+import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.rexster.server.DefaultRexsterApplication;
 import com.tinkerpop.rexster.server.HttpRexsterServer;
 import com.tinkerpop.rexster.server.RexsterProperties;
 
-public class RexsterInitializer
+public class RexsterInitializer implements AfterGraphInitializationListener
 {
     private String configurationString;
+    private static final Logger log = Logger.getLogger(RexsterInitializer.class.getName());
 
     public RexsterInitializer()
     {
     }
 
-    public void loadConfiguration(Configuration conf)
-    {
-        configurationString = createRexsterXmlFileString(conf);
-    }
 
     public void start(Graph graph)
     {
-        PrintWriter out = null;
-        try
+        try(PrintWriter out = new PrintWriter("rexster.xml"))
         {
-            out = new PrintWriter("rexster.xml");
             out.println(configurationString);
+            out.flush();
             RexsterProperties properties = new RexsterProperties("rexster.xml");
             HttpRexsterServer rexsterServer = new HttpRexsterServer(properties);
             rexsterServer.start(new DefaultRexsterApplication("main", graph));
@@ -37,20 +39,12 @@ public class RexsterInitializer
         }
         catch (FileNotFoundException e)
         {
-            e.printStackTrace();
+            log.warning("Rexster.xml was not found even after it should be already");
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.warning("Error while creating rexster.xml");
         }
-        finally
-        {
-            if (out != null)
-            {
-                out.close();
-            }
-        }
-
     }
 
     private String createRexsterXmlFileString(Configuration conf)
@@ -167,5 +161,12 @@ public class RexsterInitializer
                     "</rexster>";
         return fileString;
 
+    }
+
+    @Override
+    public void process(Configuration configuration, FramedGraph<EventGraph<TitanGraph>> graph)
+    {
+        configurationString = createRexsterXmlFileString(configuration);
+        start(graph);
     }
 }

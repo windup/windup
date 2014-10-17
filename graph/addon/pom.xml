@@ -25,15 +25,6 @@
             <optional>true</optional>
         </dependency>
 	
-	 <dependency>
-            <groupId>org.jboss.windup.rexster</groupId>
-            <artifactId>rexster</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
