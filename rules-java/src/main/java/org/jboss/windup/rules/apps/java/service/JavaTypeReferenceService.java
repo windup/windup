@@ -12,21 +12,28 @@ import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
+import org.ocpsoft.rewrite.config.Rule;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
+/**
+ * Manages creation, searching, and deletion of {@link TypeReferenceModel} instances.
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ *
+ */
+public class JavaTypeReferenceService extends GraphService<JavaTypeReferenceModel>
 {
-    public TypeReferenceService(GraphContext context)
+    public JavaTypeReferenceService(GraphContext context)
     {
         super(context, JavaTypeReferenceModel.class);
     }
 
     /**
-     * Returns the list of most frequently hinted packages (based upon JavaInlineHintModel references) within the given
-     * ProjectModel. If recursive is set to true, then also include child projects.
+     * Returns the list of most frequently hinted packages (based upon JavaInlineHintModel references) within the given ProjectModel. If recursive is
+     * set to true, then also include child projects.
      * 
      * nameDepth controls how many package levels to include (com.* vs com.example.* vs com.example.sub.*)
      */
@@ -115,7 +122,10 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         }
     }
 
-    public JavaTypeReferenceModel createTypeReference(FileModel fileModel, TypeReferenceLocation location,
+    /**
+     * Creates a {@link JavaTypeReferenceModel} based upon the provided information. It is acceptable for the rule parameter to be null.
+     */
+    public JavaTypeReferenceModel createTypeReference(Rule rule, FileModel fileModel, TypeReferenceLocation location,
                 int lineNumber, int columnNumber, int length, String source)
     {
         JavaTypeReferenceModel model = create();
@@ -126,6 +136,8 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         model.setLength(length);
         model.setSourceSnippit(source);
         model.setReferenceLocation(location);
+        if (rule != null)
+            model.setRuleID(rule.getId());
 
         return model;
     }

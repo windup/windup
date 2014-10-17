@@ -12,6 +12,7 @@ import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.LinkModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -68,6 +69,7 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
         hintModel.setFile(locationModel.getFile());
         hintModel.setEffort(effort);
         hintModel.setHint(hintText);
+        hintModel.setRuleID(((Rule) context.get(Rule.class)).getId());
 
         GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
         for (Link link : links)

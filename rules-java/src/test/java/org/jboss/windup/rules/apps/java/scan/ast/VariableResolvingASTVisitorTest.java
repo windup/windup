@@ -23,7 +23,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
+import org.jboss.windup.rules.apps.java.service.JavaTypeReferenceService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,8 +61,8 @@ public class VariableResolvingASTVisitorTest
         try (GraphContext context = factory.create())
         {
             Assert.assertNotNull(context);
-            VariableResolvingASTVisitor visitor = new VariableResolvingASTVisitor(context);
-            Assert.assertNotNull(visitor );
+            VariableResolvingASTVisitor visitor = new VariableResolvingASTVisitor(null, context);
+            Assert.assertNotNull(visitor);
 
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath("src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
@@ -89,7 +89,7 @@ public class VariableResolvingASTVisitorTest
             CompilationUnit cu = cu1;
             cu.accept(visitor);
 
-            TypeReferenceService typeRefService = new TypeReferenceService(context);
+            JavaTypeReferenceService typeRefService = new JavaTypeReferenceService(context);
             Iterable<JavaTypeReferenceModel> references = typeRefService.findAll();
 
             Assert.assertTrue(references.iterator().hasNext());
