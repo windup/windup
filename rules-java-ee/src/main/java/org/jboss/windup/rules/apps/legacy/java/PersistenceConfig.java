@@ -119,12 +119,12 @@ public class PersistenceConfig extends WindupRuleProvider
                                  .withEffort(0))
                                
                     .addRule()
-                    .when(JavaClass.references("net.sf.hibernate.criterion").at(TypeReferenceLocation.IMPORT))
+                    .when(JavaClass.references("net.sf.hibernate.criterion.*").at(TypeReferenceLocation.IMPORT))
                     .perform(Hint.withText("Has undergone significant refactoring, be careful during migration")
                                  .withEffort(0))
                                
                     .addRule()
-                    .when(JavaClass.references("net.sf.hibernate.mapping").at(TypeReferenceLocation.IMPORT))
+                    .when(JavaClass.references("net.sf.hibernate.mapping.*").at(TypeReferenceLocation.IMPORT))
                     .perform(Hint.withText("Has undergone significant refactoring, be careful during migration")
                                  .withEffort(0));
 
