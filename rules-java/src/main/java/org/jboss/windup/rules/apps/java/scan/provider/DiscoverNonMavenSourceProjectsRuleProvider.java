@@ -76,6 +76,11 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends WindupRuleProvid
                     projectModel.addFileModel(childFile);
                     childFile.setProjectModel(projectModel);
                 }
+                else if (childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
+                {
+                    // if the child has a project, but the project doesn't have a parent, associate it with the root project
+                    childFile.getProjectModel().setParentProject(projectModel);
+                }
                 addProjectToChildFiles(childFile, projectModel);
             }
         }
