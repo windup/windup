@@ -10,46 +10,58 @@ public interface FileLocationModel extends FileReferenceModel
 {
 
     String TYPE = "fileLocationModel";
-    String PROPERTY_LINE_NUMBER = "lineNumber";
-    String PROPERTY_LENGTH = "length";
-    String PROPERTY_COLUMN_NUMBER = "startPosition";
+    String LINE_NUMBER = "lineNumber";
+    String LENGTH = "length";
+    String COLUMN_NUMBER = "startPosition";
+    String RULE_ID = "ruleID";
 
     /**
      * Set the line number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
      */
-    @Property(PROPERTY_LINE_NUMBER)
+    @Property(LINE_NUMBER)
     public void setLineNumber(int lineNumber);
 
     /**
      * Get the line number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
      */
-    @Property(PROPERTY_LINE_NUMBER)
+    @Property(LINE_NUMBER)
     public int getLineNumber();
 
     /**
      * Set the column number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
      */
-    @Property(PROPERTY_COLUMN_NUMBER)
+    @Property(COLUMN_NUMBER)
     public void setColumnNumber(int startPosition);
 
     /**
      * Get the column number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
      */
-    @Property(PROPERTY_COLUMN_NUMBER)
+    @Property(COLUMN_NUMBER)
     public int getColumnNumber();
 
     /**
      * Set the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel}
      * .
      */
-    @Property(PROPERTY_LENGTH)
+    @Property(LENGTH)
     public void setLength(int length);
 
     /**
      * Get the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel}
      * .
      */
-    @Property(PROPERTY_LENGTH)
+    @Property(LENGTH)
     public int getLength();
 
+    /**
+     * Set the ID of the rule that triggered this particular blacklist entry
+     */
+    @Property(RULE_ID)
+    public void setRuleID(String ruleID);
+
+    /**
+     * Get the ID of the rule that triggered this particular blacklist entry
+     */
+    @Property(RULE_ID)
+    public String getRuleID();
 }

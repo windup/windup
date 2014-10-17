@@ -31,6 +31,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
     private String classificationText;
     private String description;
     private int effort;
+    private boolean proprietary;
 
     Classification(String variable)
     {
@@ -43,9 +44,8 @@ public class Classification extends AbstractIterationOperation<FileModel>
     }
 
     /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it.
-     * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a
-     * model referencing it.
+     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it. This is mainly to simplify the
+     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
      * 
      */
     @Override
@@ -99,26 +99,35 @@ public class Classification extends AbstractIterationOperation<FileModel>
     /**
      * Classify the current {@link FileModel} as the given text.
      */
-    public static Classification as(String classification)
+    public static Classification as(String classificationText)
     {
-        Assert.notNull(classification, "Classification text must not be null.");
-        Classification classif = new Classification();
-        classif.classificationText = classification;
-        return classif;
+        Assert.notNull(classificationText, "Classification text must not be null.");
+        Classification classification = new Classification();
+        classification.classificationText = classificationText;
+        return classification;
+    }
+
+    /**
+     * Classify the current {@link FileModel} as the given text, and also make sure that this indicates the inclusion of proprietary code.
+     */
+    public static Classification asProprietary(String classificationText)
+    {
+        Classification classification = as(classificationText);
+        classification.proprietary = true;
+        return classification;
     }
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
         /*
-         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't
-         * want to add another.
+         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
          */
         GraphContext graphContext = event.getGraphContext();
         GraphService<ClassificationModel> classificationService = new GraphService<ClassificationModel>(graphContext,
                     ClassificationModel.class);
         ClassificationModel classification = classificationService.getUniqueByProperty(
-                    ClassificationModel.PROPERTY_CLASSIFICATION, classificationText);
+                    ClassificationModel.CLASSIFICATION, classificationText);
 
         if (classification == null)
         {
@@ -126,8 +135,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
             classification.setEffort(effort);
             classification.setDescription(description);
             classification.setClassifiation(classificationText);
-
-            // TODO replace this with a link to a RuleModel, once that is implemented.
+            classification.setContainsProprietaryCode(proprietary);
             classification.setRuleID(((Rule) context.get(Rule.class)).getId());
 
             GraphService<LinkModel> linkService = new GraphService<>(graphContext, LinkModel.class);

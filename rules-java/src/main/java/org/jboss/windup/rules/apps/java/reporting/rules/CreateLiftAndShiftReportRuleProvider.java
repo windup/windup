@@ -10,7 +10,6 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
-import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -18,9 +17,16 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRuleProvider
+/**
+ * Generate a report on all files that have been marked as "lift & shift" (no migration effort needed).
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ *
+ */
+public class CreateLiftAndShiftReportRuleProvider extends WindupRuleProvider
 {
-    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/non_classified_files.ftl";
+    public static final String LIFT_AND_SHIFT = "Lift & Shift";
+    public static final String TEMPLATE = "/reports/templates/java_application_lift_and_shift.ftl";
 
     @Override
     public RulePhase getPhase()
@@ -51,7 +57,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
             @Override
             public String toString()
             {
-                return "CreateNonClassifiedFilesApplicationReport";
+                return "CreateLiftAndShiftReport";
             }
         };
 
@@ -65,21 +71,22 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
 
     private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
-        ApplicationReportService applicationReportService = new ApplicationReportService(context);
-        ApplicationReportModel applicationReportModel = applicationReportService.create();
-        applicationReportModel.setReportPriority(300);
+        ApplicationReportModel applicationReportModel =
+                    context.getFramed().addVertex(null, ApplicationReportModel.class);
+        applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("Unclassified Files");
+        applicationReportModel.setReportName(LIFT_AND_SHIFT);
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);
-        applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
+        applicationReportModel.setTemplatePath(TEMPLATE);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         applicationReportModel.setDisplayInApplicationList(false);
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "nonclassifiedfiles_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, projectModel.getName() + "_liftandshift", "html");
 
         return applicationReportModel;
     }
+
 }
