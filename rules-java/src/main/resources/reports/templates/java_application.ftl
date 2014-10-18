@@ -9,7 +9,7 @@
 
 <#macro fileModelRenderer fileModel>
   <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
-  <#if sourceReportModel.reportFilename??>
+  <#if !isLiftAndShift(fileModel) && sourceReportModel.reportFilename??>
 	<tr>
 	  <td>
 	     <a href="${sourceReportModel.reportFilename}">
