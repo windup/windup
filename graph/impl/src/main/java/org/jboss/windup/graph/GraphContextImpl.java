@@ -2,19 +2,20 @@ package org.jboss.windup.graph;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import javax.inject.Inject;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.service.Service;
 
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.PropertyKey;
@@ -29,7 +30,6 @@ import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
-import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
@@ -39,9 +39,7 @@ public class GraphContextImpl implements GraphContext
 {
     private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
 
-    @Inject
-    private Imported<AfterGraphInitializationListener> afterInitializationListeners;
-
+    private Furnace furnace;
     private Map<String, Object> configurationOptions;
     private final GraphTypeRegistry graphTypeRegistry;
     private final EventGraph<TitanGraph> eventGraph;
@@ -50,10 +48,10 @@ public class GraphContextImpl implements GraphContext
 
     private final Path graphDir;
 
-    public GraphContextImpl(Imported<Service<? extends VertexFrame>> graphServices,
-                GraphTypeRegistry graphTypeRegistry, GraphApiCompositeClassLoaderProvider classLoaderProvider,
+    public GraphContextImpl(Furnace furnace, GraphTypeRegistry graphTypeRegistry, GraphApiCompositeClassLoaderProvider classLoaderProvider,
                 Path graphDir)
     {
+        this.furnace = furnace;
         this.graphTypeRegistry = graphTypeRegistry;
         this.graphDir = graphDir;
 
@@ -143,11 +141,28 @@ public class GraphContextImpl implements GraphContext
         );
 
         framed = factory.create(eventGraph);
+
+        Imported<AfterGraphInitializationListener> afterInitializationListeners = furnace.getAddonRegistry().getServices(
+                    AfterGraphInitializationListener.class);
+        for (Addon addon : furnace.getAddonRegistry().getAddons())
+        {
+            System.out.println("Addon: " + addon);
+            System.out.println("Service Regsistry: " + addon.getServiceRegistry());
+        }
+        Map<String, Object> confProps = new HashMap<>();
+        Iterator<?> keyIter = conf.getKeys();
+        while (keyIter.hasNext())
+        {
+            String key = (String) keyIter.next();
+            confProps.put(key, conf.getProperty(key));
+        }
+
+        System.out.println("Properties: " + confProps);
         if (!afterInitializationListeners.isUnsatisfied())
         {
             for (AfterGraphInitializationListener listener : afterInitializationListeners)
             {
-                listener.process(conf, framed);
+                listener.process(confProps, framed);
             }
         }
     }

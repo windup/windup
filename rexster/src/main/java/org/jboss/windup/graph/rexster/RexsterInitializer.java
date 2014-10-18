@@ -2,18 +2,25 @@ package org.jboss.windup.graph.rexster;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.configuration.Configuration;
-import org.jboss.windup.graph.GraphContextImpl;
+import javax.script.ScriptEngine;
+
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 
 import com.thinkaurelius.titan.core.TitanGraph;
-import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
+import com.tinkerpop.rexster.protocol.EngineConfiguration;
+import com.tinkerpop.rexster.protocol.EngineController;
+import com.tinkerpop.rexster.protocol.EngineHolder;
 import com.tinkerpop.rexster.server.DefaultRexsterApplication;
 import com.tinkerpop.rexster.server.HttpRexsterServer;
+import com.tinkerpop.rexster.server.RexProRexsterServer;
 import com.tinkerpop.rexster.server.RexsterProperties;
 
 public class RexsterInitializer implements AfterGraphInitializationListener
@@ -25,17 +32,37 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     {
     }
 
-
-    public void start(Graph graph)
+    public void start(FramedGraph<EventGraph<TitanGraph>> graph)
     {
-        try(PrintWriter out = new PrintWriter("rexster.xml"))
+        try (PrintWriter out = new PrintWriter("rexster.xml"))
         {
+            try
+            {
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                Class<?> clazz1 = cl.loadClass("javax.annotation.PostConstruct");
+                ClassLoader clazz1CL = clazz1.getClassLoader();
+                Class<?> clazz2 = cl.loadClass("javax.annotation.PreDestroy");
+                ClassLoader clazz2CL = clazz2.getClassLoader();
+            }
+            catch (Throwable t)
+            {
+                t.printStackTrace();
+            }
             out.println(configurationString);
             out.flush();
-            RexsterProperties properties = new RexsterProperties("rexster.xml");
-            HttpRexsterServer rexsterServer = new HttpRexsterServer(properties);
-            rexsterServer.start(new DefaultRexsterApplication("main", graph));
 
+            RexsterProperties properties = new RexsterProperties("rexster.xml");
+            configureScriptEngine(properties);
+            HttpRexsterServer rexsterServer = new HttpRexsterServer(properties);
+            rexsterServer.start(new DefaultRexsterApplication("main", graph.getBaseGraph()));
+
+            RexProRexsterServer rexPro = new RexProRexsterServer(properties, true);
+            rexPro.start(new DefaultRexsterApplication("main", graph));
+
+            EngineController engineController = EngineController.getInstance();
+            List<String> availableLanguages = engineController.getAvailableEngineLanguages();
+            EngineHolder engineHolder = engineController.getEngineByLanguageName("groovy");
+            ScriptEngine engine = engineHolder.getEngine();
         }
         catch (FileNotFoundException e)
         {
@@ -47,7 +74,22 @@ public class RexsterInitializer implements AfterGraphInitializationListener
         }
     }
 
-    private String createRexsterXmlFileString(Configuration conf)
+    private void configureScriptEngine(RexsterProperties properties)
+    {
+        // the EngineController needs to be configured statically before requests start serving so that it can
+        // properly construct ScriptEngine objects with the correct reset policy. allow scriptengines to be
+        // configured so that folks can drop in different gremlin flavors.
+        final List<EngineConfiguration> configuredScriptEngines = new ArrayList<EngineConfiguration>();
+        final List<HierarchicalConfiguration> configs = properties.getScriptEngines();
+        for (HierarchicalConfiguration config : configs)
+        {
+            configuredScriptEngines.add(new EngineConfiguration(config));
+        }
+
+        EngineController.configure(configuredScriptEngines);
+    }
+
+    private String createRexsterXmlFileString(Map<String, Object> conf)
     {
         String fileString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                     "<rexster>\n" +
@@ -141,14 +183,14 @@ public class RexsterInitializer implements AfterGraphInitializationListener
                     "<graph>\n" +
                     "    <graph-name>titan</graph-name>\n" +
                     "    <graph-type>com.thinkaurelius.titan.tinkerpop.rexster.TitanGraphConfiguration</graph-type>\n" +
-                    "    <graph-location> " + conf.getProperty("storage.directory") + "</graph-location>\n" +
+                    "    <graph-location> " + conf.get("storage.directory") + "</graph-location>\n" +
                     "    <graph-read-only>false</graph-read-only>\n" +
                     "    <properties>\n" +
-                    "        <storage.backend>" + conf.getProperty("storage.backend") + "</storage.backend>\n" +
-                    "        <storage.directory>" + conf.getProperty("storage.directory") + "</storage.directory>\n" +
-                    "        <index.search.backend>" + conf.getProperty("index.search.backend")
+                    "        <storage.backend>" + conf.get("storage.backend") + "</storage.backend>\n" +
+                    "        <storage.directory>" + conf.get("storage.directory") + "</storage.directory>\n" +
+                    "        <index.search.backend>" + conf.get("index.search.backend")
                     + "</index.search.backend>\n" +
-                    "        <index.search.directory> " + conf.getProperty("index.search.directory")
+                    "        <index.search.directory> " + conf.get("index.search.directory")
                     + "</index.search.directory>\n" +
                     "    </properties>\n" +
                     "    <extensions>\n" +
@@ -164,7 +206,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     }
 
     @Override
-    public void process(Configuration configuration, FramedGraph<EventGraph<TitanGraph>> graph)
+    public void process(Map<String, Object> configuration, FramedGraph<EventGraph<TitanGraph>> graph)
     {
         configurationString = createRexsterXmlFileString(configuration);
         start(graph);

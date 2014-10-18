@@ -10,10 +10,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.jboss.forge.furnace.services.Imported;
-import org.jboss.windup.graph.service.Service;
-
-import com.tinkerpop.frames.VertexFrame;
+import org.jboss.forge.furnace.Furnace;
 
 @Singleton
 public class GraphContextFactoryImpl implements GraphContextFactory
@@ -22,7 +19,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
 
     @Inject
-    private Imported<Service<? extends VertexFrame>> graphServices;
+    private Furnace furnace;
 
     @Inject
     private GraphTypeRegistry graphTypeRegistry;
@@ -33,7 +30,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     public GraphContext create()
     {
         return new GraphContextImpl(
-                    this.graphServices,
+                    this.furnace,
                     this.graphTypeRegistry,
                     this.graphApiCompositeClassLoaderProvider, getDefaultGraphDirectory());
     }
@@ -42,7 +39,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     public GraphContext create(Path graphDir)
     {
         return new GraphContextImpl(
-                    this.graphServices,
+                    this.furnace,
                     this.graphTypeRegistry,
                     this.graphApiCompositeClassLoaderProvider, graphDir);
     }

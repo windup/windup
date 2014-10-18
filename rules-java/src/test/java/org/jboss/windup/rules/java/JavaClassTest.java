@@ -53,7 +53,6 @@ public class JavaClassTest
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.rexster:rexster"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
@@ -128,6 +127,15 @@ public class JavaClassTest
 
             Assert.assertEquals(3, provider.getFirstRuleMatchCount());
             Assert.assertEquals(1, provider.getSecondRuleMatchCount());
+
+            try
+            {
+                Thread.sleep(60000L);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
