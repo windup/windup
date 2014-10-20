@@ -16,11 +16,11 @@
     </parent>
 
     <groupId>org.jboss.windup</groupId>
-    <artifactId>windup-rulesets-bom</artifactId>
+    <artifactId>windup-bom</artifactId>
     <version>2.0.0.Beta2</version>
     <packaging>pom</packaging>
 
-    <name> Windup Rulesets BOM</name>
+    <name>Windup Rulesets BOM</name>
 
     <dependencyManagement>
         <dependencies>
