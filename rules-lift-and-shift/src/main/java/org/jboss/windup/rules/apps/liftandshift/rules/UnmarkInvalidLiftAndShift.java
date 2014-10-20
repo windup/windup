@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.rules;
+package org.jboss.windup.rules.apps.liftandshift.rules;
 
 import java.util.List;
 import java.util.logging.Logger;

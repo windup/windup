@@ -6,11 +6,8 @@ import org.jboss.windup.reporting.config.Link;
 import org.ocpsoft.rewrite.config.Rule;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.Initializer;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -21,16 +18,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ClassificationModel.TYPE)
 public interface ClassificationModel extends WindupVertexFrame
 {
-    public static final String CLASSIFICATION_LIFT_AND_SHIFT = "Lift and Shift";
-    public static final String CLASSIFICATION_LIFT_AND_SHIFT_DESCRIPTION = "(Zero Migration Required)";
-
     public static final String TYPE = "ClassificationModel";
     public static final String RULE_ID = "ruleID";
     public static final String CLASSIFICATION = "classification";
     public static final String DESCRIPTION = "description";
     public static final String EFFORT = "effort";
     public static final String LINKS = "links";
-    public static final String CONTAINS_PROPRIETARY_CODE = "containsProprietaryCode";
 
     public static final String FILE_MODEL = "classificationModelToFileModel";
 
@@ -106,24 +99,4 @@ public interface ClassificationModel extends WindupVertexFrame
     @Property(RULE_ID)
     public String getRuleID();
 
-    /**
-     * Indicates whether or not this {@link FileModel} contains references to proprietary code
-     */
-    @Property(CONTAINS_PROPRIETARY_CODE)
-    public void setContainsProprietaryCode(boolean containsProprietaryCode);
-
-    /**
-     * Indicates whether or not this {@link FileModel} contains references to proprietary code
-     */
-    @Property(CONTAINS_PROPRIETARY_CODE)
-    public boolean getContainsProprietaryCode();
-
-    public abstract class Impl implements JavaHandlerContext<Vertex>, ClassificationModel
-    {
-        @Initializer
-        public void init()
-        {
-            setContainsProprietaryCode(false);
-        }
-    }
 }
