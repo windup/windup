@@ -13,13 +13,13 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 @Vetoed
-class DefaultRuleLifecycleListener implements RuleLifecycleListener
+class ProgressMonitorRuleLifecycleListener implements RuleLifecycleListener
 {
 
     private final WindupProgressMonitor progressMonitor;
     private final Configuration configuration;
 
-    public DefaultRuleLifecycleListener(WindupProgressMonitor progressMonitor, Configuration configuration)
+    public ProgressMonitorRuleLifecycleListener(WindupProgressMonitor progressMonitor, Configuration configuration)
     {
         this.progressMonitor = progressMonitor;
         this.configuration = configuration;

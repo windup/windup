@@ -81,13 +81,20 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
+     * Returns the {@link ClassificationModel} with the specified classification text.
+     */
+    public ClassificationModel getByClassification(String classificationText)
+    {
+        return getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationText));
+    }
+
+    /**
      * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
      * exists with the provided classificationText, that one will be used instead.
      */
     public ClassificationModel attachClassification(FileModel fileModel, String classificationText, String description)
     {
-        ClassificationModel model = getUnique(getTypedQuery()
-                    .has(ClassificationModel.CLASSIFICATION, classificationText));
+        ClassificationModel model = getByClassification(classificationText);
         if (model == null)
         {
             model = create();
@@ -108,20 +115,5 @@ public class ClassificationService extends GraphService<ClassificationModel>
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
 
         return new FramedVertexIterable<>(getGraphContext().getFramed(), classificationPipeline, getType());
-    }
-
-    /**
-     * Returns true "if and only if" the {@link FileModel} has attached {@link ClassificationModel}s and all of those classifications indicate that it
-     * is a "lift and shift" file.
-     */
-    public boolean isLiftAndShift(FileModel fileModel)
-    {
-        // 1. Get all classification models
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
-        classificationPipeline.in(ClassificationModel.FILE_MODEL);
-        classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
-        classificationPipeline.has(ClassificationModel.CLASSIFICATION, ClassificationModel.CLASSIFICATION_LIFT_AND_SHIFT);
-
-        return classificationPipeline.hasNext();
     }
 }
