@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ----------------------------------------------------------------------------
 # Copyright 2012 Red Hat, Inc. and/or its affiliates.
@@ -7,6 +7,22 @@
 # http://www.eclipse.org/legal/epl-v10.html
 # ----------------------------------------------------------------------------
 
+
+function printHelp {
+  echo "--help   Prints this help and exits."
+  echo "--debug  Windup will run with JVM debugger."
+  echo "-e '...' Set Forge arguments explicitely. The other arguments will be passed to JVM instead of Forge. See project documentation for details."
+  echo
+  echo "  Any other argument will be passed to Forge, unless -e was set."
+  echo
+  echo "  If no argument except --debug was set, Windup will run interactively."
+  echo
+  echo "  Examples:"
+  echo
+  echo "    ./windup --input myapp.war --output WindupReport --packages com.mycompany"
+  echo '    ./windup -e "windup-migrate-app --input myapp.war --output WindupReport --packages com.mycompany"'
+  echo '    ./windup --debug'
+}
 
 
 # ----------------------------------------------------------------------
@@ -24,17 +40,41 @@
 ADDONS_DIR=""
 WINDUP_DEBUG_ARGS=""
 QUOTED_ARGS=""
+E_EXPLICIT=false
 
 while [ "$1" != "" ] ; do
 
   if [ "$1" = "--debug" ] ; then
     WINDUP_DEBUG_ARGS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
+
+  elif [ "$1" = "--help" ] ; then
+    printHelp;
+    exit;
+
+  ##  windup.sh -e "..."
+  elif [ "$1" = "-e" ] ; then
+    shift
+    ## For `windup --arg1 -e "..." --arg2`, we would end up with E_ARGS
+    ## filled with args that should go to QUOTED_ARGS. Let's swap it.
+    QUOTED_ARGS="$E_ARGS -e \"$1\"";
+    E_ARGS=""
+    E_EXPLICIT=true
+
+  ##  windup.sh --input ... --output ...
+  else
+    if [ "$E_EXPLICIT" = "false" ] ; then E_ARGS="$E_ARGS \"$1\"";
+    else QUOTED_ARGS="$QUOTED_ARGS \"$1\"";
+    fi
   fi
-
-  QUOTED_ARGS="$QUOTED_ARGS \"$1\""
   shift
-
 done
+
+## Add 'windup-migrate-app for non -e "..." runs.
+if [ "$E_EXPLICIT" = "false" -a "" != "$E_ARGS" ] ; then
+  E_ARGS="windup-migrate-app $E_ARGS";
+  QUOTED_ARGS="$QUOTED_ARGS -e '$E_ARGS'";
+fi
+
 
 if [ -f /etc/winduprc ] ; then
   . /etc/winduprc
