@@ -144,11 +144,6 @@ public class GraphContextImpl implements GraphContext
 
         Imported<AfterGraphInitializationListener> afterInitializationListeners = furnace.getAddonRegistry().getServices(
                     AfterGraphInitializationListener.class);
-        for (Addon addon : furnace.getAddonRegistry().getAddons())
-        {
-            System.out.println("Addon: " + addon);
-            System.out.println("Service Regsistry: " + addon.getServiceRegistry());
-        }
         Map<String, Object> confProps = new HashMap<>();
         Iterator<?> keyIter = conf.getKeys();
         while (keyIter.hasNext())

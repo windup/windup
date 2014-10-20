@@ -127,15 +127,6 @@ public class JavaClassTest
 
             Assert.assertEquals(3, provider.getFirstRuleMatchCount());
             Assert.assertEquals(1, provider.getSecondRuleMatchCount());
-
-            try
-            {
-                Thread.sleep(60000L);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
         }
     }
 

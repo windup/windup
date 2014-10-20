@@ -22,3 +22,4 @@ atlassian-ide-plugin.xml
 /utils/nb-configuration.xml
 /nbactions.xml
 *-test-result.html
+rexster.xml

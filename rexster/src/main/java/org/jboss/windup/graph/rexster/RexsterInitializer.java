@@ -36,18 +36,6 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     {
         try (PrintWriter out = new PrintWriter("rexster.xml"))
         {
-            try
-            {
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                Class<?> clazz1 = cl.loadClass("javax.annotation.PostConstruct");
-                ClassLoader clazz1CL = clazz1.getClassLoader();
-                Class<?> clazz2 = cl.loadClass("javax.annotation.PreDestroy");
-                ClassLoader clazz2CL = clazz2.getClassLoader();
-            }
-            catch (Throwable t)
-            {
-                t.printStackTrace();
-            }
             out.println(configurationString);
             out.flush();
 
@@ -59,10 +47,6 @@ public class RexsterInitializer implements AfterGraphInitializationListener
             RexProRexsterServer rexPro = new RexProRexsterServer(properties, true);
             rexPro.start(new DefaultRexsterApplication("main", graph));
 
-            EngineController engineController = EngineController.getInstance();
-            List<String> availableLanguages = engineController.getAvailableEngineLanguages();
-            EngineHolder engineHolder = engineController.getEngineByLanguageName("groovy");
-            ScriptEngine engine = engineHolder.getEngine();
         }
         catch (FileNotFoundException e)
         {
