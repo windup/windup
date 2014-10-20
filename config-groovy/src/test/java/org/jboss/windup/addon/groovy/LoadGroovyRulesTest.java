@@ -131,7 +131,7 @@ public class LoadGroovyRulesTest
                 }
 
                 FileModelService fileModelService = new FileModelService(context);
-                cfg.setUserRulesPath(fileModelService.createByFilePath(userRulesPath.toAbsolutePath().toString()));
+                cfg.addUserRulesPath(fileModelService.createByFilePath(userRulesPath.toAbsolutePath().toString()));
 
                 Imported<WindupRuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
                             WindupRuleProviderLoader.class);

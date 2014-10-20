@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,8 +155,21 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 
     private Iterable<URL> getScripts(GraphContext context)
     {
+        List<URL> results = new ArrayList<>();
+        List<URL> scripts = scanner.scan(GROOVY_RULES_EXTENSION);
+        results.addAll(scripts);
+
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        FileModel userRulesFileModel = cfg.getUserRulesPath();
+        Iterable<FileModel> userRulesFileModels = cfg.getUserRulesPaths();
+        for (FileModel fm : userRulesFileModels)
+        {
+            results.addAll(getScripts(fm));
+        }
+        return results;
+    }
+
+    private Collection<URL> getScripts(FileModel userRulesFileModel)
+    {
         String userRulesPath = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
 
         List<URL> scripts = scanner.scan(GROOVY_RULES_EXTENSION);

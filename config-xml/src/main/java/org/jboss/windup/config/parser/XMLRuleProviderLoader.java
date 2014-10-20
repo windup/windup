@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -99,24 +100,26 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
         }
 
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        for (URL resource : getWindupUserDirectoryXmlFiles(cfg))
+        for (FileModel userRulesFileModel : cfg.getUserRulesPaths())
         {
-            try
+            for (URL resource : getWindupUserDirectoryXmlFiles(userRulesFileModel))
             {
-                Document doc = dBuilder.parse(resource.toURI().toString());
-                ParserContext parser = new ParserContext(furnace);
+                try
+                {
+                    Document doc = dBuilder.parse(resource.toURI().toString());
+                    ParserContext parser = new ParserContext(furnace);
 
-                FileModel userRulesFileModel = cfg.getUserRulesPath();
-                String userRulesPath = userRulesFileModel.getFilePath();
-                parser.setXmlInputPath(Paths.get(userRulesPath));
+                    String userRulesPath = userRulesFileModel.getFilePath();
+                    parser.setXmlInputPath(Paths.get(userRulesPath));
 
-                parser.processElement(doc.getDocumentElement());
-                providers.addAll(parser.getRuleProviders());
-            }
-            catch (Exception e)
-            {
-                throw new WindupException("Failed to parse XML configuration at: " + resource.toString() + " due to: "
-                            + e.getMessage(), e);
+                    parser.processElement(doc.getDocumentElement());
+                    providers.addAll(parser.getRuleProviders());
+                }
+                catch (Exception e)
+                {
+                    throw new WindupException("Failed to parse XML configuration at: " + resource.toString() + " due to: "
+                                + e.getMessage(), e);
+                }
             }
         }
 
@@ -128,9 +131,8 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
         return scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_EXTENSION));
     }
 
-    private Iterable<URL> getWindupUserDirectoryXmlFiles(WindupConfigurationModel cfg)
+    private Collection<URL> getWindupUserDirectoryXmlFiles(FileModel userRulesFileModel)
     {
-        FileModel userRulesFileModel = cfg.getUserRulesPath();
         String userRulesPath = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
 
         // no user dir, so just return the ones that we found in the classpath

@@ -76,7 +76,7 @@ public abstract class WindupArchitectureTest
 
     void runTest(final GraphContext graphContext,
                 final String inputPath,
-                final String userRulesDir,
+                final List<Path> userRulesDirs,
                 final boolean sourceMode,
                 final List<String> includePackages,
                 final List<String> excludePackages) throws Exception
@@ -85,9 +85,9 @@ public abstract class WindupArchitectureTest
         WindupConfiguration wpc = new WindupConfiguration().setGraphContext(graphContext);
         wpc.setInputPath(Paths.get(inputPath));
         wpc.setOutputDirectory(graphContext.getGraphDirectory());
-        if (userRulesDir != null)
+        if (userRulesDirs != null)
         {
-            wpc.setUserRulesDirectory(Paths.get(userRulesDir));
+            wpc.setUserRulesDirectories(userRulesDirs);
         }
         wpc.setOptionValue(SourceModeOption.NAME, sourceMode);
         wpc.setOptionValue(ScanPackagesOption.NAME, includePackages);

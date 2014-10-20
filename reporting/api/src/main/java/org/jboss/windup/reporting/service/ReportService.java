@@ -12,7 +12,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ReportModel;
-import org.jboss.windup.util.FilenameUtil;
+import org.jboss.windup.util.WindupPathUtil;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
@@ -63,12 +63,12 @@ public class ReportService extends GraphService<ReportModel>
      */
     public void setUniqueFilename(ReportModel model, String baseFilename, String extension)
     {
-        String filename = FilenameUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
+        String filename = WindupPathUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
 
         // FIXME this looks nasty
         for (int i = 1; usedFilenames.contains(filename.toString()); i++)
         {
-            filename = FilenameUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
+            filename = WindupPathUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
         }
         usedFilenames.add(filename);
 

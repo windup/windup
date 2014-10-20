@@ -33,16 +33,16 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     void setInputPath(FileModel inputPath);
 
     /**
-     * The location for a user provided rules directory (typically Groovy Rules)
+     * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
-    void setUserRulesPath(FileModel userRulesPath);
+    void addUserRulesPath(FileModel userRulesPath);
 
     /**
-     * The location for a user provided rules directory (typically Groovy Rules)
+     * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
-    FileModel getUserRulesPath();
+    Iterable<FileModel> getUserRulesPaths();
 
     /**
      * Where to put the report and other files produced during Windup execution.

@@ -149,20 +149,51 @@ public class WindupConfiguration
     }
 
     /**
-     * Contains a {@link Path} with the directory that contains user provided rules.
+     * Contains a list of {@link Path}s with the directory that contains user provided rules.
      */
-    public Path getUserRulesDirectory()
+    public List<Path> getUserRulesDirectories()
     {
-        File file = getOptionValue(UserRulesDirectoryOption.NAME);
-        return file == null ? null : file.toPath();
+        List<Path> paths = getOptionValue(UserRulesDirectoryOption.NAME);
+        if (paths == null)
+        {
+            return Collections.emptyList();
+        }
+        return paths;
     }
 
     /**
-     * Contains a {@link Path} with the directory that contains user provided rules.
+     * Contains a list of {@link Path}s with the directory that contains user provided rules.
      */
-    public WindupConfiguration setUserRulesDirectory(Path userRulesDirectory)
+    public WindupConfiguration setUserRulesDirectories(List<Path> userRulesDirectories)
     {
-        setOptionValue(UserRulesDirectoryOption.NAME, userRulesDirectory.toFile());
+        setOptionValue(UserRulesDirectoryOption.NAME, userRulesDirectories);
+        return this;
+    }
+
+    /**
+     * Contains a list of {@link Path}s with the directory that contains user provided rules.
+     * 
+     * This method does guard against duplicate directories.
+     */
+    public WindupConfiguration addUserRulesDirectory(Path path)
+    {
+        List<Path> paths = getOptionValue(UserRulesDirectoryOption.NAME);
+        if (paths == null)
+        {
+            paths = new ArrayList<>();
+            paths.add(path);
+            return this;
+        }
+
+        for (Path existingPath : paths)
+        {
+            if (existingPath.equals(path))
+            {
+                return this;
+            }
+        }
+        paths.add(path);
+
         return this;
     }
 

@@ -36,6 +36,7 @@ import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.util.WindupPathUtil;
 
 /**
  * Provides a basic forge UI for running windup from within the Forge shell.
@@ -160,6 +161,13 @@ public class WindupCommand implements UICommand
             Object value = getValueForInput(pair.input);
             windupConfiguration.setOptionValue(key, value);
         }
+
+        // add dist/rules/ and ${forge.home}/rules/ to the user rules directory list
+        Path userRulesDir = WindupPathUtil.getWindupUserRulesDir();
+        windupConfiguration.addUserRulesDirectory(userRulesDir);
+
+        Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
+        windupConfiguration.addUserRulesDirectory(windupHomeRulesDir);
 
         boolean overwrite = this.overwrite.getValue();
         if (!overwrite && pathNotEmpty(windupConfiguration.getOutputDirectory().toFile()))
