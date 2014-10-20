@@ -106,7 +106,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                 // The test-files folder in the project root dir.
                 List<String> includeList = Collections.emptyList();
                 List<String> excludeList = Collections.emptyList();
-                super.runTest(context, "../test-files/src_example", userPath.toString(), true, includeList, excludeList);
+                super.runTest(context, "../test-files/src_example", Collections.singletonList(userPath), true, includeList, excludeList);
 
                 validateWebXmlReferences(context);
                 validatePropertiesModels(context);

@@ -15,7 +15,7 @@ import javax.inject.Singleton;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.util.FilenameUtil;
+import org.jboss.windup.util.WindupPathUtil;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 import com.tinkerpop.blueprints.Element;
@@ -67,7 +67,7 @@ public class GraphTypeRegistry
                 if (!path.endsWith("Model.class"))
                     return false;
 
-                final String clsName = FilenameUtil.classFilePathToClassname(path);
+                final String clsName = WindupPathUtil.classFilePathToClassname(path);
                 for (String pkg : this.skipPackages)
                     if (clsName.startsWith(pkg))
                         return false;

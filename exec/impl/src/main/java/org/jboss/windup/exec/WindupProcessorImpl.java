@@ -55,9 +55,9 @@ public class WindupProcessorImpl implements WindupProcessor
         configModel.setInputPath(getFileModel(context, windupConfiguration.getInputPath()));
         configModel.setOutputPath(getFileModel(context, windupConfiguration.getOutputDirectory()));
         configModel.setOfflineMode(windupConfiguration.isOffline());
-        if (windupConfiguration.getUserRulesDirectory() != null)
+        for (Path path : windupConfiguration.getUserRulesDirectories())
         {
-            configModel.setUserRulesPath(getFileModel(context, windupConfiguration.getUserRulesDirectory()));
+            configModel.addUserRulesPath(getFileModel(context, path));
         }
 
         GraphRewrite event = new GraphRewrite(context);
@@ -94,7 +94,6 @@ public class WindupProcessorImpl implements WindupProcessor
         evaluationContext.put(ParameterValueStore.class, values);
         return evaluationContext;
     }
-
 
     private void validateConfig(WindupConfiguration windupConfiguration)
     {
