@@ -8,59 +8,33 @@
 </#macro>
 
 <#macro fileModelRenderer fileModel>
-  <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
-  <#if !isLiftAndShift(fileModel) && sourceReportModel.reportFilename??>
-	<tr>
-	  <td>
-	     <a href="${sourceReportModel.reportFilename}">
-	       ${getPrettyPathForFile(fileModel)}
-	     </a>
-	  </td>
-		<td>
+  <#if isLiftAndShift(fileModel)>
+    <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
+    <#if sourceReportModel.reportFilename??>
+    	<tr>
+	      <td>  	
+	         <a href="${sourceReportModel.reportFilename}">
+	           ${getPrettyPathForFile(fileModel)}
+	         </a>
+	      </td>
+		  <td>
 			<#list getTechnologyTagsForFile(fileModel).iterator() as tag>
-		    <@tagRenderer tag>${tag.name}</@tagRenderer>
-		  </#list>
-		</td>
-		<td>
-		  <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content>
-  		  <b>Warnings: ${sourceReportModel.sourceFileModel.inlineHintCount} items</b>
-          <ul class='notifications'>
-            <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
-              <#if hintLine.hint?has_content>
-                <li class='warning'>${hintLine.hint}</li>
-              </#if>
-            </#list>
-          </ul>
-      </#if>
-		</td>
-		<td>
-		  <#assign fileEffort = getMigrationEffortPointsForFile(sourceReportModel.sourceFileModel)>
-	    ${fileEffort}
-		</td>
-	</tr>
-	</#if>
+		    	<@tagRenderer tag>${tag.name}</@tagRenderer>
+		      </#list>
+		  </td>
+	  </tr>
+    </#if>
+  </#if>
 </#macro>
 
 <#macro projectModelRenderer projectModel>
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
-            
-            <div class='col-md-3 text-right totalSummary'>
-                <div class='totalLoe'>
-                    ${getMigrationEffortPoints(projectModel, false)}
-                </div>
-                <div class='totalDesc'>Story Points</div>
-            </div>
-            
-            <div class='col-md-6 pull-right windupPieGraph archiveGraphContainer'>
-                <div id="project_${projectModel.asVertex().getId()?string("0")}_pie" class='windupPieGraph'></div>
-            </div>
-            
         </div>
         <table class="table table-striped table-bordered">
           <tr>
-            <th>Name</th><th>Technology</th><th>Issues</th><th>Estimated Story Points</th>
+            <th>Name</th><th>Technology</th>
           </tr>
           <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
              <@fileModelRenderer fileModel/>
@@ -118,46 +92,16 @@
     </div>
 </div>
 
-  <div class='container mainGraphContainer'>
-    <div class='col-md-3 text-right totalSummary'>
-      <div class='totalLoe'>
-        ${getMigrationEffortPoints(reportModel.projectModel, true)}
-      </div>
-      <div class='totalDesc'>Story Points</div>
-    </div>
-    <div class='col-md-6 pull-right windupPieGraph'>
-      <div id='application_pie' class='windupPieGraph'>
-      </div>
-    </div>
-  </div>
-
     <div class="container theme-showcase" role="main">
 
 
 
-	     <@projectModelRenderer reportModel.projectModel />
+    <@projectModelRenderer reportModel.projectModel />
     </div> <!-- /container -->
 
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     
-    <script src="resources/libraries/flot/jquery.flot.min.js"></script>
-    <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
-    
     <script src="resources/js/bootstrap.min.js"></script>
-
-    <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie"/>
-    
-    
-    <#macro projectPieRenderer projectModel>
-      <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie"/>
-    
-      <#list projectModel.childProjects.iterator() as childProject>
-        <@projectPieRenderer childProject />
-      </#list>
-    </#macro>
-    
-    <@projectPieRenderer reportModel.projectModel />
-
   </body>
 </html>

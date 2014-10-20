@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -52,9 +53,9 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
-import java.util.logging.Logger;
+import org.jboss.windup.rules.apps.java.service.JavaTypeReferenceService;
 import org.jboss.windup.util.Logging;
+import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Runs through the source code and checks "type" uses against the blacklisted class entries.
@@ -65,13 +66,15 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 {
     private static final Logger LOG = Logging.get(VariableResolvingASTVisitor.class);
 
+    private final Rule rule;
     private final JavaClassService javaClassService;
-    private final TypeReferenceService typeRefService;
+    private final JavaTypeReferenceService typeRefService;
 
-    public VariableResolvingASTVisitor(GraphContext context)
+    public VariableResolvingASTVisitor(Rule rule, GraphContext context)
     {
+        this.rule = rule;
         this.javaClassService = new JavaClassService(context);
-        this.typeRefService = new TypeReferenceService(context);
+        this.typeRefService = new JavaTypeReferenceService(context);
     }
 
     private CompilationUnit cu;
@@ -84,8 +87,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private final List<String> wildcardImports = new ArrayList<>();
 
     /**
-     * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will
-     * exist here even if no results were found.
+     * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will exist here even if no results
+     * were found.
      */
     private final Set<String> classNameLookedUp = new HashSet<>();
     /**
@@ -134,9 +137,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         String text = interest.toString();
         if (TypeInterestFactory.matchesAny(text))
         {
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
-                        TypeReferenceLocation.CONSTRUCTOR_CALL,
-                        lineNumber, columnNumber, length, text);
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(rule, fileModel, TypeReferenceLocation.CONSTRUCTOR_CALL, lineNumber,
+                        columnNumber, length, text);
 
             LOG.finer("Candidate: " + typeRef);
         }
@@ -147,9 +149,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         String text = interest.toString();
         if (TypeInterestFactory.matchesAny(text))
         {
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
-                        TypeReferenceLocation.METHOD_CALL,
-                        lineNumber, columnNumber, length, text);
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(rule, fileModel, TypeReferenceLocation.METHOD_CALL, lineNumber,
+                        columnNumber, length, text);
 
             LOG.finer("Candidate: " + typeRef);
         }
@@ -162,9 +163,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             sourceString = resolveClassname(sourceString);
 
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
-                        TypeReferenceLocation.IMPORT,
-                        lineNumber, columnNumber, length, interest.toString());
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(rule, fileModel, TypeReferenceLocation.IMPORT, lineNumber,
+                        columnNumber, length, interest.toString());
 
             LOG.finer("Candidate: " + typeRef);
         }
@@ -183,8 +183,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             int columnNumber = cu.getColumnNumber(type.getStartPosition());
             int length = type.getLength();
 
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
-                        lineNumber, columnNumber, length, sourceString);
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(rule, fileModel, referenceLocation, lineNumber, columnNumber, length,
+                        sourceString);
 
             LOG.finer("Prefix: " + referenceLocation);
             if (type instanceof SimpleType)
@@ -208,8 +208,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             sourceString = resolveClassname(sourceString);
 
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
-                        lineNumber, columnNumber, length, sourceString);
+            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(rule, fileModel, referenceLocation, lineNumber, columnNumber, length,
+                        sourceString);
 
             LOG.finer("Prefix: " + referenceLocation);
             LOG.finer("Candidate: " + typeRef);

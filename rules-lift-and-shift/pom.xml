@@ -10,68 +10,15 @@
     </parent>
 
     <groupId>org.jboss.windup.rules.apps</groupId>
-    <artifactId>rules-java</artifactId>
+    <artifactId>rules-lift-and-shift</artifactId>
 
-    <name>Windup Rules - Java - Basic</name>
+    <name>Windup Rules - Lift and Shift</name>
 
     <dependencies>
     
         <!-- Local Dependencies -->
-        <dependency>
-            <groupId>org.sonatype.tycho</groupId>
-            <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.5.1.v_972_R35x</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.core</groupId>
-            <artifactId>org.eclipse.core.runtime</artifactId>
-            <version>3.6.0.v20100505</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.core</groupId>
-            <artifactId>org.eclipse.core.resources</artifactId>
-            <version>3.6.0.v20100526-0737</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.roaster</groupId>
-            <artifactId>roaster-jdt</artifactId>
-            <version>2.6.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-            <version>5.2</version>
-        </dependency>
 
         <!-- Addon Dependencies -->
-        <dependency>
-            <groupId>org.jboss.windup.decompiler</groupId>
-            <artifactId>decompiler-procyon</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-lift-and-shift</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-xml</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config</artifactId>
@@ -82,13 +29,6 @@
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-xml</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.ext</groupId>
-            <artifactId>windup-config-groovy</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -116,7 +56,7 @@
             <scope>provided</scope>
         </dependency>
 
-		<!-- Test Dependencies -->
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>furnace-test-harness</artifactId>
@@ -138,15 +78,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/groovy</directory>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>

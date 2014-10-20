@@ -193,6 +193,7 @@ public class XmlFile extends GraphCondition
                             fileLocation.setLength(lineLength);
                             fileLocation.setFile(xml);
                             fileLocation.setXpath(xpath);
+                            fileLocation.setRuleID(((Rule) context.get(Rule.class)).getId());
                             GraphService<NamespaceMetaModel> metaModelService = new GraphService<NamespaceMetaModel>(
                                         graphContext,
                                         NamespaceMetaModel.class);
@@ -214,7 +215,7 @@ public class XmlFile extends GraphCondition
                                 event.getGraphContext(), ClassificationModel.class);
 
                     ClassificationModel classification = classificationService.getUniqueByProperty(
-                                ClassificationModel.PROPERTY_CLASSIFICATION, XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
+                                ClassificationModel.CLASSIFICATION, XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
 
                     if (classification == null)
                     {
