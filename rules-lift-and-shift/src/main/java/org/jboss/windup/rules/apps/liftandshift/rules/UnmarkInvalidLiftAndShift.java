@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.liftandshift.rules;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
@@ -14,6 +13,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.rules.apps.liftandshift.constants.ClassificationConstants;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -36,12 +36,6 @@ public class UnmarkInvalidLiftAndShift extends WindupRuleProvider
     }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(MarkJavaFilesAsLiftAndShiftRuleProvider.class);
-    }
-
-    @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
@@ -61,7 +55,7 @@ public class UnmarkInvalidLiftAndShift extends WindupRuleProvider
             ClassificationModel liftAndShiftModel = null;
             for (ClassificationModel classificationModel : classificationService.getClassificationModelsForFile(payload))
             {
-                if (ClassificationModel.CLASSIFICATION_LIFT_AND_SHIFT.equals(classificationModel.getClassification()))
+                if (ClassificationConstants.CLASSIFICATION_LIFT_AND_SHIFT.equals(classificationModel.getClassification()))
                 {
                     liftAndShiftModel = classificationModel;
                     break;

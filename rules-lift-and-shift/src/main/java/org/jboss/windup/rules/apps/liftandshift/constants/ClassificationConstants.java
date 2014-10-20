@@ -17,7 +17,7 @@ public class ClassificationConstants
      * Returns true "if and only if" the {@link FileModel} has attached {@link ClassificationModel}s and all of those classifications indicate that it
      * is a "lift and shift" file.
      */
-    public boolean isLiftAndShift(GraphRewrite event, FileModel fileModel)
+    public static boolean isLiftAndShift(GraphRewrite event, FileModel fileModel)
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
 

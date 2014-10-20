@@ -1,11 +1,11 @@
-package org.jboss.windup.reporting.freemarker;
+package org.jboss.windup.rules.apps.liftandshift.reporting;
 
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
+import org.jboss.windup.rules.apps.liftandshift.constants.ClassificationConstants;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -23,7 +23,7 @@ public class IsLiftAndShift implements WindupFreeMarkerMethod
 {
     private static final String NAME = "isLiftAndShift";
 
-    private GraphContext context;
+    private GraphRewrite event;
 
     @Override
     public String getMethodName()
@@ -34,7 +34,7 @@ public class IsLiftAndShift implements WindupFreeMarkerMethod
     @Override
     public void setContext(GraphRewrite event)
     {
-        this.context = event.getGraphContext();
+        this.event = event;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class IsLiftAndShift implements WindupFreeMarkerMethod
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
-        return new ClassificationService(context).isLiftAndShift(fileModel);
+        return ClassificationConstants.isLiftAndShift(this.event, fileModel);
     }
 
 }

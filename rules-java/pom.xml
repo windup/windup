@@ -53,6 +53,13 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>rules-lift-and-shift</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>rules-xml</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
