@@ -1,5 +1,6 @@
-package org.jboss.windup.rules.apps.liftandshift.rules;
+package org.jboss.windup.rules.apps.java.scan.provider;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
@@ -12,7 +13,10 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.liftandshift.constants.ClassificationConstants;
+import org.jboss.windup.rules.apps.liftandshift.rules.UnmarkInvalidLiftAndShift;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -32,6 +36,12 @@ public class MarkJavaFilesAsLiftAndShiftRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.POST_MIGRATION_RULES;
+    }
+
+    @Override
+    public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
+    {
+        return asClassList(UnmarkInvalidLiftAndShift.class);
     }
 
     @Override
@@ -63,7 +73,7 @@ public class MarkJavaFilesAsLiftAndShiftRuleProvider extends WindupRuleProvider
                     markedLiftAndShift = true;
                 }
 
-                if (classificationModel.getContainsProprietaryCode())
+                if (ClassificationConstants.CLASSIFICATION_CONTAINS_PROPRIETARY.equals(classificationModel.getClassification()))
                 {
                     containsProprietary = true;
                     break;
