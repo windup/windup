@@ -79,8 +79,9 @@
         <module>utils</module>
         <module>tests</module>
         <module>test-util</module>
-	<module>bootstrap</module>
+        <module>bootstrap</module>
         <module>dist</module>
+        <module>build/rulesets-bom</module>
     </modules>
 
     <build>
