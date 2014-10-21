@@ -82,10 +82,13 @@ public class HintHandler implements ElementHandler<Hint>
         List<Element> children = $(element).children().get();
         for (Element child : children)
         {
-            Link link = handlerManager.processElement(child);
-            hint.with(link);
+            if (child.getNodeName().equals("link"))
+            {
+                Link link = handlerManager.processElement(child);
+                hint.with(link);
+            }
         }
-        
+
         return hint;
     }
 }
