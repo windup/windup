@@ -1,5 +1,6 @@
 package org.jboss.windup.tests.application;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
@@ -76,7 +78,7 @@ public abstract class WindupArchitectureTest
 
     void runTest(final GraphContext graphContext,
                 final String inputPath,
-                final List<Path> userRulesDirs,
+                final File userRulesDir,
                 final boolean sourceMode,
                 final List<String> includePackages,
                 final List<String> excludePackages) throws Exception
@@ -85,9 +87,9 @@ public abstract class WindupArchitectureTest
         WindupConfiguration wpc = new WindupConfiguration().setGraphContext(graphContext);
         wpc.setInputPath(Paths.get(inputPath));
         wpc.setOutputDirectory(graphContext.getGraphDirectory());
-        if (userRulesDirs != null)
+        if (userRulesDir != null)
         {
-            wpc.setUserRulesDirectories(userRulesDirs);
+            wpc.setOptionValue(UserRulesDirectoryOption.NAME, userRulesDir);
         }
         wpc.setOptionValue(SourceModeOption.NAME, sourceMode);
         wpc.setOptionValue(ScanPackagesOption.NAME, includePackages);

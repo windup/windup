@@ -1,6 +1,7 @@
 package org.jboss.windup.ui;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -164,10 +165,18 @@ public class WindupCommand implements UICommand
 
         // add dist/rules/ and ${forge.home}/rules/ to the user rules directory list
         Path userRulesDir = WindupPathUtil.getWindupUserRulesDir();
-        windupConfiguration.addUserRulesDirectory(userRulesDir);
+        if (!Files.isDirectory(userRulesDir))
+        {
+            Files.createDirectories(userRulesDir);
+        }
+        windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
 
         Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
-        windupConfiguration.addUserRulesDirectory(windupHomeRulesDir);
+        if (!Files.isDirectory(windupHomeRulesDir))
+        {
+            Files.createDirectories(windupHomeRulesDir);
+        }
+        windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
 
         boolean overwrite = this.overwrite.getValue();
         if (!overwrite && pathNotEmpty(windupConfiguration.getOutputDirectory().toFile()))
@@ -179,6 +188,9 @@ public class WindupCommand implements UICommand
                 return Results.fail("Windup execution aborted!");
             }
         }
+
+        // put this in the context for debugging, and unit tests (or anything else that needs it)
+        context.getUIContext().getAttributeMap().put(WindupConfiguration.class, windupConfiguration);
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");

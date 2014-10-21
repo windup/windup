@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
@@ -32,6 +34,8 @@ import org.jboss.windup.graph.GraphContext;
  */
 public class WindupConfiguration
 {
+    private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
+
     private Predicate<WindupRuleProvider> ruleProviderFilter;
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
     private Map<String, Object> configurationOptions = new HashMap<>();
@@ -149,25 +153,32 @@ public class WindupConfiguration
     }
 
     /**
-     * Contains a list of {@link Path}s with the directory that contains user provided rules.
+     * Gets all user rule directories. This includes both the ones that they specify (eg, /path/to/rules) as well as ones that Windup provides by
+     * default (eg, WINDUP_HOME/rules and ~/.windup/rules).
      */
-    public List<Path> getUserRulesDirectories()
+    public Iterable<Path> getAllUserRulesDirectories()
     {
-        List<Path> paths = getOptionValue(UserRulesDirectoryOption.NAME);
+        Set<Path> results = new HashSet<>();
+        results.addAll(getDefaultUserRulesDirectories());
+        File userSpecifiedFile = getOptionValue(UserRulesDirectoryOption.NAME);
+        if (userSpecifiedFile != null)
+        {
+            results.add(userSpecifiedFile.toPath());
+        }
+        return results;
+    }
+
+    /**
+     * Contains a list of {@link Path}s with directories that contains user provided rules.
+     */
+    public List<Path> getDefaultUserRulesDirectories()
+    {
+        List<Path> paths = getOptionValue(DEFAULT_USER_RULES_DIRECTORIES_OPTION);
         if (paths == null)
         {
             return Collections.emptyList();
         }
-        return paths;
-    }
-
-    /**
-     * Contains a list of {@link Path}s with the directory that contains user provided rules.
-     */
-    public WindupConfiguration setUserRulesDirectories(List<Path> userRulesDirectories)
-    {
-        setOptionValue(UserRulesDirectoryOption.NAME, userRulesDirectories);
-        return this;
+        return Collections.unmodifiableList(paths);
     }
 
     /**
@@ -175,13 +186,18 @@ public class WindupConfiguration
      * 
      * This method does guard against duplicate directories.
      */
-    public WindupConfiguration addUserRulesDirectory(Path path)
+    public WindupConfiguration addDefaultUserRulesDirectory(Path path)
     {
-        List<Path> paths = getOptionValue(UserRulesDirectoryOption.NAME);
+        List<Path> paths = getOptionValue(DEFAULT_USER_RULES_DIRECTORIES_OPTION);
         if (paths == null)
         {
             paths = new ArrayList<>();
-            paths.add(path);
+            setOptionValue(DEFAULT_USER_RULES_DIRECTORIES_OPTION, paths);
+        }
+
+        File userSpecifiedRulePath = getOptionValue(UserRulesDirectoryOption.NAME);
+        if (userSpecifiedRulePath != null && userSpecifiedRulePath.toPath().equals(path))
+        {
             return this;
         }
 
@@ -193,7 +209,6 @@ public class WindupConfiguration
             }
         }
         paths.add(path);
-
         return this;
     }
 
