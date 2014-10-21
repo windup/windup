@@ -112,6 +112,7 @@
             <dependency>
                 <groupId>org.jboss.windup.decompiler</groupId>
                 <artifactId>decompiler-procyon</artifactId>
+                <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
 
