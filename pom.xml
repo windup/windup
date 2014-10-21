@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>14</version>
+        <version>16</version>
     </parent>
 
     <groupId>org.jboss.windup</groupId>
@@ -41,6 +41,23 @@
         <url>${windup.scm.url}</url>
     </scm>
 
+    <issueManagement>
+        <system>JBoss Jira</system>
+        <url>https://issues.jboss.org/browse/WINDUP</url>
+    </issueManagement>
+    <mailingLists>
+        <mailingList>
+            <name>Windup Rules Development and Usage</name>
+            <post>windup-users@lists.jboss.org</post>
+            <archive>http://lists.jboss.org/pipermail/windup-users/</archive>
+        </mailingList>
+        <mailingList>
+            <name>Windup Core Development</name>
+            <post>windup-dev@lists.jboss.org</post>
+            <archive>http://lists.jboss.org/pipermail/windup-dev/</archive>
+        </mailingList>
+    </mailingLists>
+
     <modules>
         <module>frames</module>
         <module>graph</module>
@@ -62,8 +79,9 @@
         <module>utils</module>
         <module>tests</module>
         <module>test-util</module>
-	<module>bootstrap</module>
+        <module>bootstrap</module>
         <module>dist</module>
+        <module>bom</module>
     </modules>
 
     <build>
@@ -152,7 +170,7 @@
                                     <debug>true</debug>
                                     <verbose>true</verbose>
                                     <maxmemory>2400m</maxmemory>
-                                    <encoding>ISO-8859-1</encoding>
+                                    <encoding>ISO-8859-1</encoding> <!-- Workaround for non-UTF-8 javadoc comments. -->
                                     <windowtitle>${javadoc.branding} API</windowtitle>
                                     <doctitle>${javadoc.branding} API</doctitle>
                                     <header>${javadoc.branding}</header>
@@ -191,7 +209,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
 
         </dependencies>
     </dependencyManagement>
