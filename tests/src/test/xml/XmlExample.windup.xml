@@ -10,7 +10,9 @@
         </javaclass>
       </when>
       <perform>
-        <hint message="Message from XML Rule"></hint>
+        <hint message="Message from XML Rule">
+            <link href="http://example.com" description="Description from XML Hint Link" />
+        </hint>
       </perform>
     </rule>
     
