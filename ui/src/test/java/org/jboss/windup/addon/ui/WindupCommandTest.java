@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.CommandController;
@@ -19,9 +21,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ui.WindupCommand;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,6 +61,17 @@ public class WindupCommandTest
 
     @Inject
     private UITestHarness uiTestHarness;
+
+    @Before
+    public void beforeTest()
+    {
+        if (System.getProperty("forge.home") == null)
+        {
+            String defaultForgeHomePath = Paths.get(OperatingSystemUtils.getTempDirectory().getAbsolutePath()).resolve("Windup")
+                        .resolve("fakeforgehome_" + RandomStringUtils.randomAlphanumeric(6)).toString();
+            System.setProperty("forge.home", defaultForgeHomePath);
+        }
+    }
 
     @Test
     public void testOverwriteConfirmation() throws Exception
