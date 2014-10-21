@@ -67,7 +67,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
     {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
-        applicationReportModel.setReportPriority(200);
+        applicationReportModel.setReportPriority(300);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Unclassified Files");
         applicationReportModel.setMainApplicationReport(false);

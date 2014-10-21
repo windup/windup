@@ -16,10 +16,16 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleProvider
+/**
+ * Generate a report on all files that have been marked as "lift & shift" (no migration effort needed).
+ * 
+ * @author jsightler <jesse.sightler@gmail.com>
+ *
+ */
+public class CreateJavaLiftAndShiftReportRuleProvider extends WindupRuleProvider
 {
-    public static final String OVERVIEW = "Overview";
-    public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
+    public static final String LIFT_AND_SHIFT = "Lift & Shift";
+    public static final String TEMPLATE = "/reports/templates/java_application_lift_and_shift.ftl";
 
     @Override
     public RulePhase getPhase()
@@ -48,13 +54,14 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
             @Override
             public String toString()
             {
-                return "CreateJavaApplicationOverviewReport";
+                return "CreateJavaLiftAndShiftReport";
             }
         };
 
         return ConfigurationBuilder.begin()
                     .addRule()
                     .perform(createReport);
+
     }
     // @formatter:on
 
@@ -62,19 +69,20 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
     {
         ApplicationReportModel applicationReportModel =
                     context.getFramed().addVertex(null, ApplicationReportModel.class);
-        applicationReportModel.setReportPriority(100);
+        applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName(OVERVIEW);
-        applicationReportModel.setMainApplicationReport(true);
+        applicationReportModel.setReportName(LIFT_AND_SHIFT);
+        applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);
-        applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
+        applicationReportModel.setTemplatePath(TEMPLATE);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-        applicationReportModel.setDisplayInApplicationList(true);
+        applicationReportModel.setDisplayInApplicationList(false);
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, projectModel.getName() + "_liftandshift", "html");
 
         return applicationReportModel;
     }
+
 }

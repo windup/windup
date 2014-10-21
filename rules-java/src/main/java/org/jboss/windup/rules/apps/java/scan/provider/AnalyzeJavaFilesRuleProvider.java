@@ -21,6 +21,7 @@ import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -79,7 +80,8 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
             }
             parser.setKind(ASTParser.K_COMPILATION_UNIT);
             final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-            VariableResolvingASTVisitor visitor = new VariableResolvingASTVisitor(event.getGraphContext());
+            Rule currentRule = (Rule) context.get(Rule.class);
+            VariableResolvingASTVisitor visitor = new VariableResolvingASTVisitor(currentRule, event.getGraphContext());
             visitor.init(cu, payload);
             cu.accept(visitor);
         }

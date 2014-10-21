@@ -17,8 +17,8 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +59,7 @@ public class TypeReferenceServiceTest
         {
             Assert.assertNotNull(context);
 
-            TypeReferenceService typeReferenceService = new TypeReferenceService(context);
+            JavaTypeReferenceService typeReferenceService = new JavaTypeReferenceService(context);
 
             ProjectModel projectModel = fillData(context);
 
@@ -73,15 +73,15 @@ public class TypeReferenceServiceTest
     private ProjectModel fillData(GraphContext context)
     {
         InlineHintService inlineHintService = new InlineHintService(context);
-        TypeReferenceService typeReferenceService = new TypeReferenceService(context);
+        JavaTypeReferenceService typeReferenceService = new JavaTypeReferenceService(context);
         FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
         f1.setFilePath("/f1");
         FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
         f2.setFilePath("/f2");
 
-        JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
+        JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(null, f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
                     "com.example.Class1");
-        JavaTypeReferenceModel t2 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
+        JavaTypeReferenceModel t2 = typeReferenceService.createTypeReference(null, f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
                     "com.example.Class1");
 
         InlineHintModel b1 = inlineHintService.create();

@@ -17,7 +17,6 @@ public interface InlineHintModel extends FileLocationModel
 {
     public static final String TYPE = "BlackListModel";
     public static final String HINT = "hint";
-    public static final String RULE_ID = "ruleID";
     public static final String EFFORT = "effort";
     public static final String LINKS = "links";
     public static final String FILE_LOCATION_REFERENCE = "fileLocationReference";
@@ -57,18 +56,6 @@ public interface InlineHintModel extends FileLocationModel
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
     public Iterable<LinkModel> getLinks();
-
-    /**
-     * Set the ID of the rule that triggered this particular blacklist entry
-     */
-    @Property(RULE_ID)
-    public void setRuleID(String ruleID);
-
-    /**
-     * Get the ID of the rule that triggered this particular blacklist entry
-     */
-    @Property(RULE_ID)
-    public String getRuleID();
 
     /**
      * Set the text to be displayed within this {@link InlineHintModel} in the designated {@link FileModel}.

@@ -69,7 +69,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
         if (windupConfiguration.getProgressMonitor() != null)
-            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(), rules));
+            ruleSubset.addLifecycleListener(new ProgressMonitorRuleLifecycleListener(windupConfiguration.getProgressMonitor(), rules));
 
         for (RuleLifecycleListener listener : listeners)
         {

@@ -11,7 +11,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
-import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
+import org.jboss.windup.rules.apps.java.service.JavaTypeReferenceService;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.StringModel;
@@ -48,7 +48,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
         SimpleScalar elementIDStringModel = (SimpleScalar) params.get("elementID");
         String elementID = elementIDStringModel.getAsString();
 
-        TypeReferenceService typeReferenceService = new TypeReferenceService(context);
+        JavaTypeReferenceService typeReferenceService = new JavaTypeReferenceService(context);
         Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, 2, recursive);
         if (data.keySet().size() > 0)
         {
