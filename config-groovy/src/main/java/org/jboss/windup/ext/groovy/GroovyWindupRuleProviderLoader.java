@@ -16,9 +16,11 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -34,6 +36,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
@@ -46,6 +49,8 @@ import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
  */
 public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 {
+    private static final Logger LOG = Logging.get(GroovyWindupRuleProviderLoader.class);
+
     public static final String CURRENT_WINDUP_SCRIPT = "CURRENT_WINDUP_SCRIPT";
 
     private static final String GROOVY_RULES_EXTENSION = "windup.groovy";
@@ -170,14 +175,26 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 
     private Collection<URL> getScripts(FileModel userRulesFileModel)
     {
-        String userRulesPath = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
+        String userRulesDirectory = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
 
         List<URL> scripts = scanner.scan(GROOVY_RULES_EXTENSION);
 
         // no user dir, so just return the ones that we found in the classpath
-        if (userRulesPath == null)
+        if (userRulesDirectory == null)
         {
             return scripts;
+        }
+        Path userRulesPath = Paths.get(userRulesDirectory);
+
+        if (!Files.isDirectory(userRulesPath))
+        {
+            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
+            return Collections.emptyList();
+        }
+        if (!Files.isDirectory(userRulesPath))
+        {
+            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be read!");
+            return Collections.emptyList();
         }
 
         // create the results as a copy (as we will be adding user groovy files to them)
@@ -185,7 +202,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 
         try
         {
-            Files.walkFileTree(Paths.get(userRulesPath), new SimpleFileVisitor<Path>()
+            Files.walkFileTree(userRulesPath, new SimpleFileVisitor<Path>()
             {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException

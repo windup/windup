@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
@@ -32,6 +33,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FileExtensionFilter;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
@@ -46,6 +48,7 @@ import org.w3c.dom.Document;
  */
 public class XMLRuleProviderLoader implements WindupRuleProviderLoader
 {
+    private static final Logger LOG = Logging.get(XMLRuleProviderLoader.class);
 
     public static final String CURRENT_WINDUP_SCRIPT = "CURRENT_WINDUP_SCRIPT";
 
@@ -133,11 +136,22 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
 
     private Collection<URL> getWindupUserDirectoryXmlFiles(FileModel userRulesFileModel)
     {
-        String userRulesPath = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
+        String userRulesDirectory = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
 
         // no user dir, so just return the ones that we found in the classpath
-        if (userRulesPath == null)
+        if (userRulesDirectory == null)
         {
+            return Collections.emptyList();
+        }
+        Path userRulesPath = Paths.get(userRulesDirectory);
+        if (!Files.isDirectory(userRulesPath))
+        {
+            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
+            return Collections.emptyList();
+        }
+        if (!Files.isDirectory(userRulesPath))
+        {
+            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be read!");
             return Collections.emptyList();
         }
 
@@ -146,7 +160,7 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
 
         try
         {
-            Files.walkFileTree(Paths.get(userRulesPath), new SimpleFileVisitor<Path>()
+            Files.walkFileTree(userRulesPath, new SimpleFileVisitor<Path>()
             {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
@@ -161,7 +175,7 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
         }
         catch (IOException e)
         {
-            throw new WindupException("Failed to search userdir: \"" + userRulesPath + "\" for groovy rules due to: "
+            throw new WindupException("Failed to search userdir: \"" + userRulesDirectory + "\" for groovy rules due to: "
                         + e.getMessage(), e);
         }
 

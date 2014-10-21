@@ -55,7 +55,7 @@ public class WindupProcessorImpl implements WindupProcessor
         configModel.setInputPath(getFileModel(context, windupConfiguration.getInputPath()));
         configModel.setOutputPath(getFileModel(context, windupConfiguration.getOutputDirectory()));
         configModel.setOfflineMode(windupConfiguration.isOffline());
-        for (Path path : windupConfiguration.getUserRulesDirectories())
+        for (Path path : windupConfiguration.getAllUserRulesDirectories())
         {
             configModel.addUserRulesPath(getFileModel(context, path));
         }
