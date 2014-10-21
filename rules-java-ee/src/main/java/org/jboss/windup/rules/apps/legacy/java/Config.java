@@ -27,11 +27,11 @@ public class Config extends WindupRuleProvider
         Configuration configuration = ConfigurationBuilder
                     .begin()
                     .addRule()
-                    .when(JavaClass.references("edu.oswego.cs.dl.util.concurrent"))
+                    .when(JavaClass.references("edu.oswego.cs.dl.util.concurrent.*"))
                     .perform(Hint.withText("Upgrade to javax.util.concurrent in Java 5+").withEffort(0))
 
                     .addRule()
-                    .when(JavaClass.references("edu.emory.mathcs.backport.java.util"))
+                    .when(JavaClass.references("edu.emory.mathcs.backport.java.util.*"))
                     .perform(Hint.withText("Upgrade to javax.util.concurrent in Java 5+").withEffort(0))
 
                     .addRule()
