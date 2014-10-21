@@ -116,4 +116,17 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         return new FramedVertexIterable<>(getGraphContext().getFramed(), classificationPipeline, getType());
     }
+
+    /**
+     * Returns all {@link ClassificationModel}s for the given {@link FileModel} with the specified Classification text.
+     */
+    public Iterable<ClassificationModel> getClassificationModelsForFile(FileModel fileModel, String classification)
+    {
+        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
+        classificationPipeline.in(ClassificationModel.FILE_MODEL);
+        classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+        classificationPipeline.has(ClassificationModel.CLASSIFICATION, classification);
+
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), classificationPipeline, getType());
+    }
 }

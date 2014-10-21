@@ -15,8 +15,8 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
-import org.jboss.windup.rules.apps.liftandshift.constants.ClassificationConstants;
 import org.jboss.windup.rules.apps.liftandshift.rules.UnmarkInvalidLiftAndShift;
+import org.jboss.windup.rules.apps.liftandshift.service.LiftAndShiftService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -68,12 +68,12 @@ public class MarkJavaFilesAsLiftAndShiftRuleProvider extends WindupRuleProvider
             boolean containsProprietary = false;
             for (ClassificationModel classificationModel : classificationService.getClassificationModelsForFile(payload))
             {
-                if (ClassificationConstants.CLASSIFICATION_LIFT_AND_SHIFT.equals(classificationModel.getClassification()))
+                if (LiftAndShiftService.CLASSIFICATION_LIFT_AND_SHIFT.equals(classificationModel.getClassification()))
                 {
                     markedLiftAndShift = true;
                 }
 
-                if (ClassificationConstants.CLASSIFICATION_CONTAINS_PROPRIETARY.equals(classificationModel.getClassification()))
+                if (LiftAndShiftService.CLASSIFICATION_CONTAINS_PROPRIETARY.equals(classificationModel.getClassification()))
                 {
                     containsProprietary = true;
                     break;
@@ -86,8 +86,8 @@ public class MarkJavaFilesAsLiftAndShiftRuleProvider extends WindupRuleProvider
             if (!markedLiftAndShift && !containsProprietary && zeroEffort)
             {
                 LOG.info("Marking Java File as Lift & Shift: " + payload.getFilePath());
-                classificationService.attachClassification(payload, ClassificationConstants.CLASSIFICATION_LIFT_AND_SHIFT,
-                            ClassificationConstants.CLASSIFICATION_LIFT_AND_SHIFT_DESCRIPTION);
+                classificationService.attachClassification(payload, LiftAndShiftService.CLASSIFICATION_LIFT_AND_SHIFT,
+                            LiftAndShiftService.CLASSIFICATION_LIFT_AND_SHIFT_DESCRIPTION);
             }
         }
     }

@@ -13,7 +13,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
-import org.jboss.windup.rules.apps.liftandshift.constants.ClassificationConstants;
+import org.jboss.windup.rules.apps.liftandshift.service.LiftAndShiftService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -55,7 +55,7 @@ public class UnmarkInvalidLiftAndShift extends WindupRuleProvider
             ClassificationModel liftAndShiftModel = null;
             for (ClassificationModel classificationModel : classificationService.getClassificationModelsForFile(payload))
             {
-                if (ClassificationConstants.CLASSIFICATION_LIFT_AND_SHIFT.equals(classificationModel.getClassification()))
+                if (LiftAndShiftService.CLASSIFICATION_LIFT_AND_SHIFT.equals(classificationModel.getClassification()))
                 {
                     liftAndShiftModel = classificationModel;
                     break;
