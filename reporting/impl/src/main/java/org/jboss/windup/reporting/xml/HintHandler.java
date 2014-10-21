@@ -11,6 +11,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -77,6 +78,14 @@ public class HintHandler implements ElementHandler<Hint>
                 throw new WindupException("Could not parse effort level: " + effortStr + " as an integer!");
             }
         }
+
+        List<Element> children = $(element).children().get();
+        for (Element child : children)
+        {
+            Link link = handlerManager.processElement(child);
+            hint.with(link);
+        }
+        
         return hint;
     }
 }
