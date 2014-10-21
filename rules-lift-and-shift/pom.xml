@@ -112,17 +112,13 @@
 
 	<dependencyManagement>
 		<dependencies>
-
-			<!-- Forge BOM -->
 			<dependency>
-				<groupId>org.jboss.forge</groupId>
-				<artifactId>forge-bom</artifactId>
-				<version>${version.furnace}</version>
+				<groupId>org.jboss.windup</groupId>
+				<artifactId>windup-bom</artifactId>
+				<version>${project.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
-
 		</dependencies>
 	</dependencyManagement>
 
