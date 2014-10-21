@@ -68,6 +68,7 @@
 
         <module>decompiler</module>
 
+        <module>rules-lift-and-shift</module>
         <module>rules-java</module>
         <module>rules-java-ee</module>
         <module>rules-xml</module>

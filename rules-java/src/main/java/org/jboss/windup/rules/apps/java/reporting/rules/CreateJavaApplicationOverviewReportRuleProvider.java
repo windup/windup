@@ -3,16 +3,15 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -32,18 +31,16 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .find(WindupConfigurationModel.class);
-
-        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
-        {
+        GraphOperation createReport = new GraphOperation()
+        {   
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
+            public void perform(GraphRewrite event, EvaluationContext context)
             {
-                ProjectModel projectModel = payload.getInputPath().getProjectModel();
+                WindupConfigurationModel wcm = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                ProjectModel projectModel = wcm.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + wcm.getInputPath().getFilePath());
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
@@ -57,9 +54,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(applicationProjectModelsFound)
-                    .perform(addApplicationReport);
-
+                    .perform(createReport);
     }
     // @formatter:on
 

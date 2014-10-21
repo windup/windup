@@ -3,7 +3,7 @@ package org.jboss.windup.config;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public abstract class RuleLifecycleListenerAdapter implements RuleLifecycleListener
+public abstract class AbstractRuleLifecycleListener implements RuleLifecycleListener
 {
 
     @Override

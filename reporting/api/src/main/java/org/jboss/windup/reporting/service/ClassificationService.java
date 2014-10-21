@@ -101,6 +101,17 @@ public class ClassificationService extends GraphService<ClassificationModel>
             model.setClassifiation(classificationText);
             model.setDescription(description);
         }
+        else
+        {
+            for (FileModel alreadyAddedFileModel : model.getFileModels())
+            {
+                if (alreadyAddedFileModel.equals(fileModel))
+                {
+                    // Make sure we don't add it again
+                    return model;
+                }
+            }
+        }
         model.addFileModel(fileModel);
         return model;
     }
