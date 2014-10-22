@@ -19,6 +19,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Checks;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
@@ -109,6 +110,13 @@ public class WindupProcessorImpl implements WindupProcessor
         Path outputDirectory = windupConfiguration.getOutputDirectory();
         Assert.notNull(outputDirectory, "Output directory must not be null!");
         Checks.checkDirectoryToBeFilled(outputDirectory.toFile(), "Output directory");
+
+
+        if (inputPath.toAbsolutePath().startsWith(outputDirectory.toAbsolutePath())){
+            throw new WindupException("The input directory can't be under the output directory, they would interfere."
+                    + "\n    Input:  " + inputPath.toAbsolutePath().toString()
+                    + "\n    Output: " + outputDirectory.toAbsolutePath().toString());
+        }
     }
 
 }
