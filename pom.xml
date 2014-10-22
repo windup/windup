@@ -159,6 +159,30 @@
             </properties>
             <build>
                 <plugins>
+                    <!-- Create overview.html from README.asciidoc. -->
+                    <plugin>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>render-asciidoc</id>
+                                <phase>validate</phase>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>process-asciidoc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <sourceDirectory>${basedir}</sourceDirectory>
+                            <sourceDocumentName>README.asciidoc</sourceDocumentName>
+                            <outputDirectory>${basedir}/build/target/</outputDirectory>
+                            <backend>html5</backend>
+                        </configuration>
+                    </plugin>
+
+                    <!-- Aggregate Javadoc. -->
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>2.10.1</version>
@@ -174,12 +198,14 @@
                                     <verbose>true</verbose>
                                     <maxmemory>2400m</maxmemory>
                                     <encoding>ISO-8859-1</encoding> <!-- Workaround for non-UTF-8 javadoc comments. -->
+
+                                    <overview>build/target/README.html</overview>
                                     <windowtitle>${javadoc.branding} API</windowtitle>
                                     <doctitle>${javadoc.branding} API</doctitle>
                                     <header>${javadoc.branding}</header>
                                     <footer>${javadoc.branding}</footer>
-                                    <includeDependencySources>true</includeDependencySources>
 
+                                    <includeDependencySources>true</includeDependencySources>
                                     <dependencySourceExcludes>
                                         <dependencySourceExclude>com.tinkerpop.frames:frames</dependencySourceExclude>
                                     </dependencySourceExcludes>
