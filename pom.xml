@@ -31,7 +31,7 @@
 
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
 
-	<forkCount>.5C</forkCount>
+        <forkCount>.5C</forkCount>
     </properties>
 
     <scm>
@@ -154,11 +154,14 @@
 
         <profile>
             <id>javadocDist</id>
+            <properties>
+                <javadoc.branding>Windup ${project.version} javadoc</javadoc.branding>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
+                        <version>2.10.1</version>
                         <executions>
                             <execution>
                                 <id>javadocs-dist</id>
@@ -176,15 +179,30 @@
                                     <header>${javadoc.branding}</header>
                                     <footer>${javadoc.branding}</footer>
                                     <includeDependencySources>true</includeDependencySources>
+
+                                    <dependencySourceExcludes>
+                                        <dependencySourceExclude>com.tinkerpop.frames:frames</dependencySourceExclude>
+                                    </dependencySourceExcludes>
+                                    <excludePackageNames>
+                                        <excludePackageName>com.tinkerpop.frames.*</excludePackageName>
+                                    </excludePackageNames>
+
+                                    <groups>
+                                        <group>
+                                            <title>Windup Rules</title>
+                                            <packages>org.jboss.windup.rules.*</packages>
+                                        </group>
+                                        <group>
+                                            <title>Windup Core</title>
+                                            <packages>org.jboss.windup.*</packages>
+                                        </group>
+                                    </groups>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
-            <properties>
-                <javadoc.branding>Windup ${project.version}</javadoc.branding>
-            </properties>
         </profile>
     </profiles>
 
