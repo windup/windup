@@ -50,6 +50,14 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
         return new JavaClass(regex);
     }
 
+    /**
+     * Create a new {@link JavaClass} {@link Condition} based upon the provided Java regular expression.
+     */
+    public static JavaClassBuilderReferences from(String inputVarName)
+    {
+        return new JavaClassBuilderReferences(inputVarName);
+    }
+
     public JavaClassBuilderInFile inFile(String regex)
     {
         this.fileRegex = regex;
@@ -139,5 +147,4 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
         builder.append(".as(" + variable + ")");
         return builder.toString();
     }
-
 }
