@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,6 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -198,6 +206,7 @@ public class XmlFile extends GraphCondition
                                         graphContext,
                                         XmlTypeReferenceModel.class);
                             XmlTypeReferenceModel fileLocation = fileLocationService.create();
+                            fileLocation.setSourceSnippit(nodeToString(node));
                             fileLocation.setLineNumber(lineNumber);
                             fileLocation.setColumnNumber(columnNumber);
                             fileLocation.setLength(lineLength);
@@ -238,6 +247,23 @@ public class XmlFile extends GraphCondition
     public void setPublicId(String publicId)
     {
         this.publicId = publicId;
+    }
+
+    private static String nodeToString(Node node)
+    {
+        StringWriter sw = new StringWriter();
+        try
+        {
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            t.setOutputProperty(OutputKeys.INDENT, "yes");
+            t.transform(new DOMSource(node), new StreamResult(sw));
+        }
+        catch (TransformerException te)
+        {
+            System.out.println("nodeToString Transformer Exception");
+        }
+        return sw.toString();
     }
 
     public String toString()

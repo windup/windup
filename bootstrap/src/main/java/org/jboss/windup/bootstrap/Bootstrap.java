@@ -80,6 +80,13 @@ public class Bootstrap
                 bootstrapArgs.add(arg);
             }
         }
+        
+        // Ensure user rules directory is created
+        File rulesDir = new File(getUserWindupDir(), "rules");
+        if(!rulesDir.exists())
+        {
+            rulesDir.mkdirs();
+        }
 
         // Check for the forge log directory
         final String logDir = systemProperties.getProperty("org.jboss.forge.log.file",
