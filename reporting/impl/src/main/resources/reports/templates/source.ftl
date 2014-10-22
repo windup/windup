@@ -149,8 +149,8 @@
 							<div class='inline-comment-heading'><#t>
 								<strong class='notification ${hintLine.effort}'>${hintLine.hint?js_string}</strong><#t>
 							</div><#t>
-							<div class='inline-comment-body'><#t>
-								<#if hintLine.links??>
+							<#if hintLine.links?? && hintLine.links.iterator()?has_content>
+								<div class='inline-comment-body'><#t>
 									<ul><#t>
 										<#list hintLine.links.iterator() as link>
 											<li><#t>
@@ -158,8 +158,8 @@
 											</li><#t>
 										</#list>
 									</ul><#t>
-								</#if>
-							</div><#t>
+								</div><#t>
+							</#if>
 						</div><#t>
 					</#if>
 				</div><#t>
