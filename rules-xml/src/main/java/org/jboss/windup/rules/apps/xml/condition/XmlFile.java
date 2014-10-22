@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -17,18 +18,17 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
-import org.jboss.windup.util.exception.MarshallingException;
+import org.jboss.windup.rules.apps.xml.service.XmlFileService;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
-import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,6 +36,8 @@ import org.w3c.dom.NodeList;
 
 public class XmlFile extends GraphCondition
 {
+    private static final Logger LOG = Logging.get(XmlFile.class);
+
     protected static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
     protected static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed via XPath";
     private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;
@@ -158,12 +160,20 @@ public class XmlFile extends GraphCondition
             }
             if (xpath != null)
             {
-                try
+                XmlFileService xmlFileService = new XmlFileService(graphContext);
+                Document document = xmlFileService.loadDocumentQuiet(xml);
+                if (document != null)
                 {
-
-                    Document document = xml.asDocument();
                     NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
-                    List<String> lines = Files.readAllLines(Paths.get(xml.getFilePath()), Charset.defaultCharset());
+                    List<String> lines = null;
+                    try
+                    {
+                        lines = Files.readAllLines(Paths.get(xml.getFilePath()), Charset.defaultCharset());
+                    }
+                    catch (Exception e)
+                    {
+                        LOG.log(Level.WARNING, "Could not read lines from: " + xml.getFilePath() + ", due to: " + e.getMessage(), e);
+                    }
                     if (result != null && (result.getLength() != 0))
                     {
                         for (int i = 0; i < result.getLength(); i++)
@@ -182,7 +192,7 @@ public class XmlFile extends GraphCondition
                             int columnNumber = (int) node.getUserData(
                                         LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
 
-                            int lineLength = lines.get(lineNumber - 1).length();
+                            int lineLength = lines == null ? 0 : lines.get(lineNumber - 1).length();
                             graphContext = event.getGraphContext();
                             GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<XmlTypeReferenceModel>(
                                         graphContext,
@@ -208,32 +218,7 @@ public class XmlFile extends GraphCondition
                         }
                     }
                 }
-                catch (MarshallingException e)
-                {
-                    GraphService<ClassificationModel> classificationService = new GraphService<>(
-                                event.getGraphContext(), ClassificationModel.class);
-
-                    ClassificationModel classification = classificationService.getUniqueByProperty(
-                                ClassificationModel.PROPERTY_CLASSIFICATION, XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
-
-                    if (classification == null)
-                    {
-                        classification = classificationService.create();
-                        classification.setDescription(XmlFile.UNPARSEABLE_XML_DESCRIPTION);
-                        classification.setClassifiation(XmlFile.UNPARSEABLE_XML_CLASSIFICATION);
-
-                        // TODO replace this with a link to a RuleModel, if that gets implemented.
-                        classification.setRuleID(((Rule) context.get(Rule.class)).getId());
-                    }
-                    classification.addFileModel(xml);
-                }
-                catch (IOException e)
-                {
-                    throw new WindupException("Error while processing xml file in the file system", e);
-                }
-
             }
-
         }
         Variables.instance(event).setVariable(variable, resultLocations);
         return !resultLocations.isEmpty();
