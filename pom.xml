@@ -31,7 +31,7 @@
 
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
 
-	<forkCount>.5C</forkCount>
+        <forkCount>.5C</forkCount>
     </properties>
 
     <scm>
@@ -154,11 +154,38 @@
 
         <profile>
             <id>javadocDist</id>
+            <properties>
+                <javadoc.branding>Windup ${project.version} javadoc</javadoc.branding>
+            </properties>
             <build>
                 <plugins>
+                    <!-- Create overview.html from README.asciidoc. -->
+                    <plugin>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>render-asciidoc</id>
+                                <phase>validate</phase>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>process-asciidoc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <sourceDirectory>${basedir}</sourceDirectory>
+                            <sourceDocumentName>README.asciidoc</sourceDocumentName>
+                            <outputDirectory>${basedir}/build/target/</outputDirectory>
+                            <backend>html5</backend>
+                        </configuration>
+                    </plugin>
+
+                    <!-- Aggregate Javadoc. -->
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
+                        <version>2.10.1</version>
                         <executions>
                             <execution>
                                 <id>javadocs-dist</id>
@@ -171,20 +198,35 @@
                                     <verbose>true</verbose>
                                     <maxmemory>2400m</maxmemory>
                                     <encoding>ISO-8859-1</encoding> <!-- Workaround for non-UTF-8 javadoc comments. -->
+
+                                    <overview>build/target/README.html</overview>
                                     <windowtitle>${javadoc.branding} API</windowtitle>
                                     <doctitle>${javadoc.branding} API</doctitle>
                                     <header>${javadoc.branding}</header>
                                     <footer>${javadoc.branding}</footer>
+
                                     <includeDependencySources>true</includeDependencySources>
+                                    <dependencySourceExcludes>
+                                        <dependencySourceExclude>com.tinkerpop.frames:frames</dependencySourceExclude>
+                                    </dependencySourceExcludes>
+                                    <excludePackageNames>com.tinkerpop.frames:com.tinkerpop.frames.*</excludePackageNames>
+
+                                    <groups>
+                                        <group>
+                                            <title>Windup Rules</title>
+                                            <packages>org.jboss.windup.rules.*</packages>
+                                        </group>
+                                        <group>
+                                            <title>Windup Core</title>
+                                            <packages>org.jboss.windup.*</packages>
+                                        </group>
+                                    </groups>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
-            <properties>
-                <javadoc.branding>Windup ${project.version}</javadoc.branding>
-            </properties>
         </profile>
     </profiles>
 
