@@ -6,6 +6,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.metadata.RuleMetadata
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.rules.apps.java.condition.JavaClass
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
@@ -15,7 +16,13 @@ ruleSet("Example Servlet Rule")
     .withMetadata(RuleMetadata.CATEGORY, "Java")
     .addRule()
     .when(JavaClass.references("javax.servlet.annotation.WebServlet").at(TypeReferenceLocation.ANNOTATION))
-    .perform(Hint.withText("Web Servlet").withEffort(8))
+    .perform(
+    	Hint
+    		.withText("Web Servlet")
+    		.withEffort(8)
+    		.with(Link.to("Example Link", "https://www.exampleservletlink.com/"))
+    		.withEffort(0)
+    )
     
     .addRule()
     .when(JavaClass.references("java.lang.StringBuilder.*"))

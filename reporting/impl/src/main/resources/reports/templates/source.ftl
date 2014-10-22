@@ -145,7 +145,21 @@
 			$("<a name='${hintLine.hashCode()?c}'></a><#t>
 				<div class='inline-source-comment green'><#t>
 					<#if hintLine.hint?has_content>
-						<div class='inline-comment'><div class='inline-comment-heading'><strong class='notification ${hintLine.effort}'>${hintLine.hint?js_string}</strong></div><#t>
+						<div class='inline-comment'><#t>
+							<div class='inline-comment-heading'><#t>
+								<strong class='notification ${hintLine.effort}'>${hintLine.hint?js_string}</strong><#t>
+							</div><#t>
+							<div class='inline-comment-body'><#t>
+								<#if hintLine.links??>
+									<ul><#t>
+										<#list hintLine.links.iterator() as link>
+											<li><#t>
+												<a href='${link.link}'>${link.description}</a><#t>
+											</li><#t>
+										</#list>
+									</ul><#t>
+								</#if>
+							</div><#t>
 						</div><#t>
 					</#if>
 				</div><#t>
