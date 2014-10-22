@@ -183,9 +183,7 @@
                                     <dependencySourceExcludes>
                                         <dependencySourceExclude>com.tinkerpop.frames:frames</dependencySourceExclude>
                                     </dependencySourceExcludes>
-                                    <excludePackageNames>
-                                        <excludePackageName>com.tinkerpop.frames.*</excludePackageName>
-                                    </excludePackageNames>
+                                    <excludePackageNames>com.tinkerpop.frames:com.tinkerpop.frames.*</excludePackageNames>
 
                                     <groups>
                                         <group>
