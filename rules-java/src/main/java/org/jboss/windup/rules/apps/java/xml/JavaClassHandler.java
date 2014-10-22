@@ -11,6 +11,7 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
+import org.jboss.windup.rules.apps.java.condition.JavaClassBuilder;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderAt;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.util.exception.WindupException;
@@ -53,7 +54,14 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
             locations.add(location);
         }
 
-        JavaClassBuilderAt javaClass = JavaClass.references(type).at(
+        JavaClassBuilder javaClassReferences = JavaClass.references(type);
+        String namePattern = $(element).attr("name-regex");
+        if (!StringUtils.isBlank(namePattern))
+        {
+            javaClassReferences.inFile(namePattern);
+        }
+        
+        JavaClassBuilderAt javaClass = javaClassReferences.at(
                     locations.toArray(new TypeReferenceLocation[locations.size()]));
         return javaClass;
     }
