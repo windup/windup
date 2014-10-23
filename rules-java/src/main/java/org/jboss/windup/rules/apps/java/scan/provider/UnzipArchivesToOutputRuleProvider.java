@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -41,6 +42,7 @@ public class UnzipArchivesToOutputRuleProvider extends WindupRuleProvider
             .when(Query.find(ArchiveModel.class))
             .perform(UnzipArchiveToOutputFolder.unzip()
             .and(IterationProgress.monitoring("Unzipped archive: ", 1))
+            .and(Commit.every(1))
             );
     }
     // @formatter:on
