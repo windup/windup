@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
@@ -46,7 +47,8 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
             .addRule()
             .when(javaSourceAvailable)
             .perform(new ParseSourceOperation()
-            .and(IterationProgress.monitoring("Analyzed Java File: ", 250)));
+            .and(IterationProgress.monitoring("Analyzed Java File: ", 250))
+            .and(Commit.every(10)));
 
     }
     // @formatter:on
