@@ -157,7 +157,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
 
             JavaClassService javaClassService = new JavaClassService(context);
             JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
-
+            javaClassModel.setOriginalSource(sourceFileModel);
             javaClassModel.setSimpleName(simpleName);
             javaClassModel.setPackageName(packageName);
             javaClassModel.setQualifiedName(qualifiedName);
