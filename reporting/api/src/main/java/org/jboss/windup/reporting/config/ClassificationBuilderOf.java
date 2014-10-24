@@ -11,7 +11,8 @@ public class ClassificationBuilderOf
 
     ClassificationBuilderOf(String variable)
     {
-        this.classification = new Classification(variable);
+        this.classification = new Classification();
+        this.classification.setInputVariableName(variable);
     }
 
     /**

@@ -51,6 +51,6 @@ public class TypeOperation extends AbstractIterationOperation<WindupVertexFrame>
     {
         Variables varStack = Variables.instance(event);
         WindupVertexFrame newFrame = GraphService.addTypeToModel(event.getGraphContext(), payload, newType);
-        Iteration.setCurrentPayload(varStack, getVariableName(), newFrame);
+        Iteration.setCurrentPayload(varStack, getPayloadVariableName(), newFrame);
     }
 }

@@ -83,7 +83,7 @@ public class BaseConfig extends WindupRuleProvider
                         JavaClass.references("org.mule.umo.UMOFilter$").at(TypeReferenceLocation.EXTENDS_TYPE)
                      )
                      .perform(
-                           Classification.of("#{ref.file}").as("Mule ESB Message Filter")
+                           Classification.as("Mule ESB Message Filter")
                               .with(Link.to("Camel Message Filter", "http://camel.apache.org/message-filter.html"))
                               .with(Link.to("Camel Message Bean Filter", "http://camel.apache.org/bean-language.html"))
                               .withEffort(0)

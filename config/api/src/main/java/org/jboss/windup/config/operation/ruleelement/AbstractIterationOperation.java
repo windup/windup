@@ -20,11 +20,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public abstract class AbstractIterationOperation<T extends WindupVertexFrame> extends GraphOperation
 {
+    private String inputVariableName;
+    private String payloadVariableName;
 
     /**
      * When the variable name is not specified, let the Iteration to set the current payload variable name.
-     * 
-     * @param variableName
      */
     public AbstractIterationOperation()
     {
@@ -33,28 +33,36 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
 
     public AbstractIterationOperation(String variableName)
     {
-        this.variableName = variableName;
+        this.payloadVariableName = variableName;
     }
 
-    private String variableName;
-
-    public String getVariableName()
+    public String getInputVariableName()
     {
-        if (variableName == null)
+        return inputVariableName;
+    }
+
+    public void setInputVariableName(String inputVariableName)
+    {
+        this.inputVariableName = inputVariableName;
+    }
+
+    public String getPayloadVariableName()
+    {
+        if (payloadVariableName == null)
         {
             return null;
         }
-        return new VariableNameIterator(variableName).next();
+        return new VariableNameIterator(payloadVariableName).next();
     }
 
-    public void setVariableName(String variableName)
+    protected void setPayloadVariableName(String payloadVariableName)
     {
-        this.variableName = variableName;
-    };
+        this.payloadVariableName = payloadVariableName;
+    }
 
     public boolean hasVariableNameSet()
     {
-        return getVariableName() != null;
+        return getPayloadVariableName() != null;
     }
 
     @Override
@@ -62,7 +70,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
     public void perform(GraphRewrite event, EvaluationContext context)
     {
         checkVariableName(event, context);
-        WindupVertexFrame payload = resolveVariable(event, variableName);
+        WindupVertexFrame payload = resolveVariable(event, payloadVariableName);
         perform(event, context, (T) payload);
     }
 
@@ -71,17 +79,16 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      */
     protected void checkVariableName(GraphRewrite event, EvaluationContext context)
     {
-        if (variableName == null)
+        if (payloadVariableName == null)
         {
-            setVariableName(Iteration.getPayloadVariableName(event, context));
+            setPayloadVariableName(Iteration.getPayloadVariableName(event, context));
         }
     }
 
     /**
-     * Resolves variable/property name expressions of the form `
-     * <code>#{initialModelVar.customProperty.anotherProp}</code>`, where the `initialModelVar` has a {@link Property}
-     * method of the form `<code>@Property public X getCustomProperty()</code>` and `X` has a {@link Property} method of
-     * the form `<code>@Property public X getAnotherProp()</code>`
+     * Resolves variable/property name expressions of the form ` <code>#{initialModelVar.customProperty.anotherProp}</code>`, where the
+     * `initialModelVar` has a {@link Property} method of the form `<code>@Property public X getCustomProperty()</code>` and `X` has a
+     * {@link Property} method of the form `<code>@Property public X getAnotherProp()</code>`
      */
     protected WindupVertexFrame resolveVariable(GraphRewrite event, String variableName)
     {
@@ -155,9 +162,8 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
     }
 
     /**
-     * By default, this method converts strings to UpperCamelCase. If the <code>uppercaseFirstLetter</code> argument to
-     * false, then this method produces lowerCamelCase. This method will also use any extra delimiter characters to
-     * identify word boundaries.
+     * By default, this method converts strings to UpperCamelCase. If the <code>uppercaseFirstLetter</code> argument to false, then this method
+     * produces lowerCamelCase. This method will also use any extra delimiter characters to identify word boundaries.
      * <p>
      * Examples:
      * 
@@ -173,8 +179,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      * </p>
      * 
      * @param lowerCaseAndUnderscoredWord the word that is to be converted to camel case
-     * @param uppercaseFirstLetter true if the first character is to be uppercased, or false if the first character is
-     *            to be lowercased
+     * @param uppercaseFirstLetter true if the first character is to be uppercased, or false if the first character is to be lowercased
      * @param delimiterChars optional characters that are used to delimit word boundaries
      * @return the camel case version of the word
      * @see #underscore(String, char[])
@@ -212,13 +217,12 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
     }
 
     /**
-     * Utility method to replace all occurrences given by the specific backreference with its uppercased form, and
-     * remove all other backreferences.
+     * Utility method to replace all occurrences given by the specific backreference with its uppercased form, and remove all other backreferences.
      * <p>
-     * The Java {@link Pattern regular expression processing} does not use the preprocessing directives <code>\l</code>,
-     * <code>&#92;u</code>, <code>\L</code>, and <code>\U</code>. If so, such directives could be used in the
-     * replacement string to uppercase or lowercase the backreferences. For example, <code>\L1</code> would lowercase
-     * the first backreference, and <code>&#92;u3</code> would uppercase the 3rd backreference.
+     * The Java {@link Pattern regular expression processing} does not use the preprocessing directives <code>\l</code>, <code>&#92;u</code>,
+     * <code>\L</code>, and <code>\U</code>. If so, such directives could be used in the replacement string to uppercase or lowercase the
+     * backreferences. For example, <code>\L1</code> would lowercase the first backreference, and <code>&#92;u3</code> would uppercase the 3rd
+     * backreference.
      * </p>
      * 
      * @param input

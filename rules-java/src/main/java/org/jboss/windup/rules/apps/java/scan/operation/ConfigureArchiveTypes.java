@@ -65,7 +65,7 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
 
         if (newFrame != null)
         {
-            Iteration.setCurrentPayload(Variables.instance(event), getVariableName(), newFrame);
+            Iteration.setCurrentPayload(Variables.instance(event), getPayloadVariableName(), newFrame);
         }
     }
 

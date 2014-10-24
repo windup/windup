@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.xml.transform.Result;
@@ -36,11 +37,11 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
-import org.ocpsoft.rewrite.context.EvaluationContext;
-import java.util.logging.Logger;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.exception.WindupException;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
+public class XSLTTransformation extends AbstractIterationOperation<WindupVertexFrame>
 {
     private ClassLoader contextClassLoader;
 
@@ -65,29 +66,6 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     XSLTTransformation()
     {
         super();
-    }
-
-    /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type.
-     * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a
-     * model referencing it.
-     *
-     */
-    @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
-        checkVariableName(event, context);
-        WindupVertexFrame payload = resolveVariable(event, getVariableName());
-        if (payload instanceof FileReferenceModel)
-        {
-            FileModel file = ((FileReferenceModel) payload).getFile();
-            perform(event, context, (XmlFileModel) file);
-        }
-        else
-        {
-            super.perform(event, context);
-        }
-
     }
 
     /**
@@ -218,8 +196,25 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payloadIn)
     {
+        XmlFileModel payload;
+        if (payloadIn instanceof FileReferenceModel)
+        {
+            FileModel file = ((FileReferenceModel) payloadIn).getFile();
+            payload = (XmlFileModel) file;
+        }
+        else if (payloadIn instanceof XmlFileModel)
+        {
+            payload = (XmlFileModel) payloadIn;
+        }
+        else
+        {
+            throw new WindupException(
+                        "XSLTTransformation attempting to iterate on an item that is neither a FileReferenceModel nor an XmlFileModel... input variable is: "
+                                    + getPayloadVariableName());
+        }
+
         setup();
         GraphContext graphContext = event.getGraphContext();
         GraphService<XsltTransformationModel> transformationService = new GraphService<>(
@@ -263,5 +258,4 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             LOG.log(Level.SEVERE, "Exception transforming XML.", e);
         }
     }
-
 }

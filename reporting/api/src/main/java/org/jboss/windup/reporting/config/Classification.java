@@ -15,6 +15,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.reporting.model.LinkModel;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -23,7 +24,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class Classification extends AbstractIterationOperation<FileModel>
+public class Classification extends AbstractIterationOperation<WindupVertexFrame>
 {
     private static final Logger log = Logger.getLogger(Classification.class.getName());
 
@@ -32,44 +33,17 @@ public class Classification extends AbstractIterationOperation<FileModel>
     private String description;
     private int effort;
 
-    Classification(String variable)
-    {
-        super(variable);
-    }
-
     Classification()
     {
         super();
     }
 
     /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it.
-     * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a
-     * model referencing it.
-     * 
-     */
-    @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
-        checkVariableName(event, context);
-        WindupVertexFrame payload = resolveVariable(event, getVariableName());
-        if (payload instanceof FileReferenceModel)
-        {
-            perform(event, context, ((FileReferenceModel) payload).getFile());
-        }
-        else
-        {
-            super.perform(event, context);
-        }
-
-    }
-
-    /**
      * Create a new classification for the given ref.
      */
-    public static ClassificationBuilderOf of(String variable)
+    public static ClassificationBuilderOf of(String inputVariable)
     {
-        return new ClassificationBuilderOf(variable);
+        return new ClassificationBuilderOf(inputVariable);
     }
 
     /**
@@ -108,11 +82,26 @@ public class Classification extends AbstractIterationOperation<FileModel>
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payloadIn)
     {
+        FileModel payload;
+        if (payloadIn instanceof FileReferenceModel)
+        {
+            payload = ((FileReferenceModel) payloadIn).getFile();
+        }
+        else if (payloadIn instanceof FileModel)
+        {
+            payload = (FileModel) payloadIn;
+        }
+        else
+        {
+            throw new WindupException(
+                        "Classification attempting to iterate on an item that is neither a FileReferenceModel nor an FileModel... input variable is: "
+                                    + getPayloadVariableName());
+        }
+
         /*
-         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't
-         * want to add another.
+         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
          */
         GraphContext graphContext = event.getGraphContext();
         GraphService<ClassificationModel> classificationService = new GraphService<ClassificationModel>(graphContext,
