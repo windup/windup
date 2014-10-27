@@ -2,6 +2,7 @@ package org.jboss.windup.config.operation;
 
 import java.util.logging.Logger;
 
+import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -40,12 +41,9 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
         if (totalIterations == -1)
         {
             @SuppressWarnings("unchecked")
-            Iterable<WindupVertexFrame> frames = (Iterable<WindupVertexFrame>) event.getRewriteContext().get(Iteration.DEFAULT_VARIABLE_LIST_STRING);
-            totalIterations = 0;
-            for (WindupVertexFrame f : frames)
-            {
-                totalIterations++;
-            }
+            Iterable<WindupVertexFrame> frames = (Iterable<WindupVertexFrame>) event.getRewriteContext().get(
+                        Iteration.DEFAULT_VARIABLE_LIST_STRING);
+            totalIterations = Iterators.asList(frames).size();
         }
         currentIteration++;
         if (currentIteration % interval == 0)

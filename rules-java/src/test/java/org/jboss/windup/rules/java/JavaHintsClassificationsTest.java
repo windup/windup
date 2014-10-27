@@ -147,11 +147,23 @@ public class JavaHintsClassificationsTest
                 Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
 
-                Assert.assertEquals(3, provider.getTypeReferences().size());
+                Assert.assertEquals(4, provider.getTypeReferences().size());
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-                Assert.assertEquals(3, hints.size());
+                Assert.assertEquals(4, hints.size());
+
+                boolean found = false;
+                for (InlineHintModel hint : hints)
+                {
+                    if (hint.getHint().contains("AddonDependencyEntry"))
+                    {
+                        found = true;
+                    }
+                }
+                Assert.assertTrue(found);
+
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
                 Assert.assertEquals(1, classifications.size());
+                classifications.get(0).getDescription().contains("JavaClassTestFile");
 
                 Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
                 Assert.assertEquals(2, Iterators.asList(fileModels).size());
@@ -196,13 +208,14 @@ public class JavaHintsClassificationsTest
             
             return ConfigurationBuilder.begin()
             .addRule()
-            .when(JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT))
+            .when(JavaClass.references("org.jboss.forge.furnace.{name}").inType("{file}{suffix}").at(TypeReferenceLocation.IMPORT))
             .perform(
-                Classification.as("Furnace Service").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
-                    .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
+                Classification.as("Furnace Service {file}").withDescription("Described by {file}").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
+                    .and(Hint.withText("Furnace type references (such as {name}) imply that the client code must be run within a Furnace container.")
                              .withEffort(8)
                     .and(addTypeRefToList))
-            );
+            )
+            .where("suffix").matches("\\d");
 
         }
         // @formatter:on

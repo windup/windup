@@ -27,7 +27,17 @@ public class NamedFramesSelector implements FramesSelector
 
     @Override
     public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
+                throws IllegalStateException
     {
-        return Variables.instance(event).findVariable(varName);
+        java.lang.Iterable<? extends WindupVertexFrame> result = Variables.instance(event).findVariable(varName);
+        if (result == null)
+            throw new IllegalStateException("No such variable [" + varName + "] was found in Variables stack.");
+        return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        return getClass().getName() + " [" + varName + "]";
     }
 }

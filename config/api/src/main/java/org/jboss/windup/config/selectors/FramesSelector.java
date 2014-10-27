@@ -20,6 +20,8 @@ public interface FramesSelector
 {
     /**
      * Get the currently selected {@link WindupVertexFrame} instances for this {@link Iteration}.
+     * 
+     * @throws IllegalStateException upon failure to locate frames
      */
     Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context);
 }

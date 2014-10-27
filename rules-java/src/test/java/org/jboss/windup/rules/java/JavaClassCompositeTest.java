@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,7 +20,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -46,7 +44,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class JavaClassTest
+public class JavaClassCompositeTest
 {
     @Deployment
     @Dependencies({
@@ -60,8 +58,8 @@ public class JavaClassTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(JavaClassTestRuleProvider.class)
-                    .addClass(JavaClassTest.class)
+                    .addClass(JavaCompositeClassTestRuleProvider.class)
+                    .addClass(JavaClassCompositeTest.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -74,7 +72,7 @@ public class JavaClassTest
     }
 
     @Inject
-    JavaClassTestRuleProvider provider;
+    JavaCompositeClassTestRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -118,7 +116,7 @@ public class JavaClassTest
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                        JavaClassTestRuleProvider.class));
+                        JavaCompositeClassTestRuleProvider.class));
             processorConfig.setGraphContext(context);
             processorConfig.setInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
@@ -131,8 +129,8 @@ public class JavaClassTest
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
-            Assert.assertEquals(4, provider.getFirstRuleMatchCount());
-            Assert.assertEquals(2, provider.getSecondRuleMatchCount());
+            Assert.assertEquals(2, provider.getFirstRuleMatchCount());
+            Assert.assertEquals(1, provider.getSecondRuleMatchCount());
         }
     }
 
@@ -143,10 +141,8 @@ public class JavaClassTest
     }
 
     @Singleton
-    public static class JavaClassTestRuleProvider extends WindupRuleProvider
+    public static class JavaCompositeClassTestRuleProvider extends WindupRuleProvider
     {
-        private static Logger log = Logger.getLogger(RuleSubset.class.getName());
-
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
 
@@ -155,24 +151,26 @@ public class JavaClassTest
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()
+            
             .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT)
+                JavaClass.references("org.apache.commons.{*}").inType("{type}2").at(TypeReferenceLocation.IMPORT)
+                .and(JavaClass.references("org.ocpsoft.rewrite.{*}").inType("{type}1").at(TypeReferenceLocation.IMPORT).as("2"))
             ).perform(
-                Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                 {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
                         firstRuleMatchCount++;
-                        log.info("First rule matched: " + payload.getFile().getFilePath());
                     }
                 }).endIteration()
             )
-                    
+            
             .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}JavaClassTestFile1").at(TypeReferenceLocation.IMPORT)
+                JavaClass.references("{type}").inType("{*}1").at(TypeReferenceLocation.IMPORT)
+                .and(JavaClass.references("{type}").inType("{*}2").at(TypeReferenceLocation.IMPORT).as("2"))
             ).perform(
-                Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                 {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
@@ -180,7 +178,8 @@ public class JavaClassTest
                         secondRuleMatchCount++;
                     }
                 }).endIteration()
-            );
+            )
+            .where("type").matches("org\\.jboss\\.forge\\.furnace\\.repositories\\.AddonDependencyEntry");
         }
         // @formatter:on
 
@@ -188,7 +187,7 @@ public class JavaClassTest
         {
             return firstRuleMatchCount;
         }
-
+        
         public int getSecondRuleMatchCount()
         {
             return secondRuleMatchCount;

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -52,10 +53,19 @@ public final class TypeInterestFactory
         ignorePatternSet.add("java.lang.Float");
     }
 
-    // cache these lookups in an LRU cache, as there are frequent duplicates (and the regex comparisons are much slower than a cache lookup)
+    // cache these lookups in an LRU cache, as there are frequent duplicates (and the regex comparisons are much slower
+    // than a cache lookup)
     private static LRUMap resultsCache = new LRUMap(8000);
     private static AtomicLong cacheLookupCount = new AtomicLong(0);
     private static AtomicLong cacheHitCount = new AtomicLong(0);
+
+    /**
+     * Register a regex pattern to filter interest in certain Java types.
+     */
+    public static void registerInterest(String sourceKey, String regex, List<TypeReferenceLocation> locations)
+    {
+        registerInterest(sourceKey, regex, locations.toArray(new TypeReferenceLocation[locations.size()]));
+    }
 
     /**
      * Register a regex pattern to filter interest in certain Java types.
@@ -83,7 +93,8 @@ public final class TypeInterestFactory
         if (lookupCount % 100000L == 0)
         {
             long hitPercentage = Math.round(((double) hitCount / (double) lookupCount) * 100);
-            LOG.info("There have been " + lookupCount + " lookups with " + hitCount + " hits, for a hit percentage of: " + hitPercentage);
+            LOG.info("There have been " + lookupCount + " lookups with " + hitCount
+                        + " hits, for a hit percentage of: " + hitPercentage);
         }
         return cachedResult;
     }
@@ -123,7 +134,8 @@ public final class TypeInterestFactory
                 if (shouldAdd)
                 {
                     /*
-                     * For now, surround with .* to ensure that regexes will match some of the messier references that the type visitor report.
+                     * For now, surround with .* to ensure that regexes will match some of the messier references that
+                     * the type visitor report.
                      */
                     result.put(entryPattern, Pattern.compile(".*" + entryPattern + ".*"));
                 }

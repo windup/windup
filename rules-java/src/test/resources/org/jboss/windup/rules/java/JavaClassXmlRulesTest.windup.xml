@@ -3,7 +3,7 @@
     <rules>
         <rule>
             <when>
-                <javaclass references="org\.apache\.commons.*" in=".*File2" as="testVariable">
+                <javaclass references="org.apache.commons.{*}" in="{*}File2" as="testVariable">
                     <location>IMPORT</location>
                 </javaclass>
             </when>
@@ -18,7 +18,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="org\.apache\.commons.*" in=".*File1">
+                <javaclass references="org.apache.commons.{*}" in="{*}File1">
                     <location>METHOD_CALL</location>
                 </javaclass>
             </when>

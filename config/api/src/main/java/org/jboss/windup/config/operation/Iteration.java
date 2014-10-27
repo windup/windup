@@ -43,8 +43,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
- * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
- * the current rule.
+ * Used to iterate over an implicit or explicit variable defined within the corresponding
+ * {@link ConfigurationRuleBuilder#when(Condition)} clause in the current rule.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -82,8 +82,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the named selection of the given type. Also sets the name and type of the variable for this iteration's
-     * "current element". The type server for automatic type check.
+     * Begin an {@link Iteration} over the named selection of the given type. Also sets the name and type of the
+     * variable for this iteration's "current element". The type server for automatic type check.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
@@ -94,7 +94,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's "current element".
+     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's
+     * "current element".
      */
     public static IterationBuilderOver over(String source)
     {
@@ -104,8 +105,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name of the variable for this
-     * iteration's "current element" to have the default value.
+     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name
+     * of the variable for this iteration's "current element" to have the default value.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType)
     {
@@ -116,8 +117,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection that is placed on the top of the {@link Variables}. Also sets the name of the variable for this
-     * iteration's "current element" (i.e payload) to have the default value.
+     * Begin an {@link Iteration} over the selection that is placed on the top of the {@link Variables}. Also sets the
+     * name of the variable for this iteration's "current element" (i.e payload) to have the default value.
      */
     public static IterationBuilderOver over()
     {
@@ -127,8 +128,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Change the name of the single variable of the given type. If this method is not called, the name is calculated using the {@link
-     * Iteration.singleVariableIterationName()} method.
+     * Change the name of the single variable of the given type. If this method is not called, the name is calculated
+     * using the {@link Iteration.singleVariableIterationName()} method.
      */
     @Override
     public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var)
@@ -201,8 +202,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Called internally to actually process the Iteration. Loops over the frames to iterate, and performs their .perform( ... ) or .otherwise( ... )
-     * parts.
+     * Called internally to actually process the Iteration. Loops over the frames to iterate, and performs their
+     * .perform( ... ) or .otherwise( ... ) parts.
      */
     public void perform(GraphRewrite event, EvaluationContext context)
     {
@@ -223,8 +224,8 @@ public class Iteration extends DefaultOperationBuilder
                 }
                 conditionResult = condition.evaluate(event, context);
                 /*
-                 * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
-                 * variables is ignored.
+                 * Add special clear layer for perform, because condition used one and could have added new variables.
+                 * The condition result put into variables is ignored.
                  */
                 variables.push();
                 getPayloadManager().setCurrentPayload(variables, frame);
@@ -261,14 +262,20 @@ public class Iteration extends DefaultOperationBuilder
         return Arrays.asList(operationPerform, operationOtherwise);
     }
 
-    public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx)
+    /**
+     * Return the current {@link Iteration} payload variable name.
+     * 
+     * @throws IllegalStateException if there is more than one variable in the {@link Variables} stack, and the payload
+     *             name cannot be determined.
+     */
+    public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx) throws IllegalStateException
     {
         Variables variables = Variables.instance(event);
         Map<String, Iterable<? extends WindupVertexFrame>> topLayer = variables.peek();
         if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
         {
-            throw new IllegalArgumentException(
-                        "Cannot return the top layer name because the top layer of varstack is not a singleton.");
+            throw new IllegalStateException("Cannot determined Iteration payload variable name because the top "
+                        + "layer of Variables stack contains multiple variables [" + topLayer.keySet() + ".");
         }
         String name = topLayer.keySet().iterator().next();
         return name;

@@ -1,13 +1,15 @@
 package org.jboss.windup.reporting.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -17,19 +19,21 @@ import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.reporting.model.LinkModel;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.param.ParameterStore;
+import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
 /**
  * Classifies a {@link FileModel} {@link Iteration} payload.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class Classification extends AbstractIterationOperation<FileModel>
+public class Classification extends ParameterizedIterationOperation<FileModel>
 {
     private static final Logger log = Logger.getLogger(Classification.class.getName());
 
     private List<Link> links = new ArrayList<>();
-    private String classificationText;
-    private String description;
+    private RegexParameterizedPatternParser classificationPattern;
+    private RegexParameterizedPatternParser descriptionPattern;
     private int effort;
 
     Classification(String variable)
@@ -49,19 +53,18 @@ public class Classification extends AbstractIterationOperation<FileModel>
      * 
      */
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
+    public FileModel resolvePayload(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
         checkVariableName(event, context);
-        WindupVertexFrame payload = resolveVariable(event, getVariableName());
         if (payload instanceof FileReferenceModel)
         {
-            perform(event, context, ((FileReferenceModel) payload).getFile());
+            return ((FileReferenceModel) payload).getFile();
         }
-        else
+        if (payload instanceof FileModel)
         {
-            super.perform(event, context);
+            return (FileModel) payload;
         }
-
+        return null;
     }
 
     /**
@@ -77,7 +80,7 @@ public class Classification extends AbstractIterationOperation<FileModel>
      */
     public Classification withDescription(String description)
     {
-        this.description = description;
+        this.descriptionPattern = new RegexParameterizedPatternParser(description);
         return this;
     }
 
@@ -102,30 +105,35 @@ public class Classification extends AbstractIterationOperation<FileModel>
     public static Classification as(String classification)
     {
         Assert.notNull(classification, "Classification text must not be null.");
-        Classification classif = new Classification();
-        classif.classificationText = classification;
-        return classif;
+        Classification result = new Classification();
+        result.classificationPattern = new RegexParameterizedPatternParser(classification);
+        return result;
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+    public void performParameterized(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
         /*
          * Check for duplicate classifications before we do anything. If a classification already exists, then we don't
          * want to add another.
          */
+        String description = null;
+        if (descriptionPattern != null)
+            description = descriptionPattern.getBuilder().build(event, context);
+        String text = classificationPattern.getBuilder().build(event, context);
+
         GraphContext graphContext = event.getGraphContext();
         GraphService<ClassificationModel> classificationService = new GraphService<ClassificationModel>(graphContext,
                     ClassificationModel.class);
         ClassificationModel classification = classificationService.getUniqueByProperty(
-                    ClassificationModel.PROPERTY_CLASSIFICATION, classificationText);
+                    ClassificationModel.PROPERTY_CLASSIFICATION, text);
 
         if (classification == null)
         {
             classification = classificationService.create();
             classification.setEffort(effort);
             classification.setDescription(description);
-            classification.setClassifiation(classificationText);
+            classification.setClassifiation(text);
 
             // TODO replace this with a link to a RuleModel, once that is implemented.
             classification.setRuleID(((Rule) context.get(Rule.class)).getId());
@@ -156,21 +164,38 @@ public class Classification extends AbstractIterationOperation<FileModel>
 
     protected void setClassificationText(String classification)
     {
-        this.classificationText = classification;
+        this.classificationPattern = new RegexParameterizedPatternParser(classification);
     }
 
     @Override
     public String toString()
     {
         StringBuilder result = new StringBuilder();
-        result.append("Classification.as(" + classificationText + ")");
-        if (description != null && !description.trim().isEmpty())
-            result.append(".withDescription(" + description + ")");
+        result.append("Classification.as(" + classificationPattern.getPattern() + ")");
+        if (descriptionPattern != null && !descriptionPattern.getPattern().trim().isEmpty())
+            result.append(".withDescription(" + descriptionPattern + ")");
         if (effort != 0)
             result.append(".withEffort(" + effort + ")");
         if (links != null && !links.isEmpty())
             result.append(".with(" + links + ")");
         return result.toString();
+    }
+
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        Set<String> result = new HashSet<>(classificationPattern.getRequiredParameterNames());
+        if (descriptionPattern != null)
+            result.addAll(descriptionPattern.getRequiredParameterNames());
+        return result;
+    }
+
+    @Override
+    public void setParameterStore(ParameterStore store)
+    {
+        classificationPattern.setParameterStore(store);
+        if (descriptionPattern != null)
+            descriptionPattern.setParameterStore(store);
     }
 
 }

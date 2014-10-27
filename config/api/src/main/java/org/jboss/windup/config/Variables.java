@@ -20,7 +20,8 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
- * A variables stack - keeps few layers of "key"->[vertices] maps, one per rule execution level, {@link Iteration} and {@link RuleSubset}.
+ * A variables stack - keeps few layers of "key"->[vertices] maps, one per rule execution level, {@link Iteration} and
+ * {@link RuleSubset}.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -34,7 +35,7 @@ public class Variables
     }
 
     /**
-     * Gets an instance from a OCP rewrite context.
+     * Get an instance of the {@link Variables} stack from the given {@link GraphRewrite} event context.
      */
     public static Variables instance(GraphRewrite event)
     {
@@ -69,7 +70,8 @@ public class Variables
      */
     public Map<String, Iterable<? extends WindupVertexFrame>> pop()
     {
-        return deque.pop();
+        Map<String, Iterable<? extends WindupVertexFrame>> frame = deque.pop();
+        return frame;
     }
 
     /**
@@ -83,13 +85,14 @@ public class Variables
     /**
      * Type-safe wrapper around setVariable which sets only one framed vertex.
      */
-    public void setSingletonVariable(String string, WindupVertexFrame frame)
+    public void setSingletonVariable(String name, WindupVertexFrame frame)
     {
-        setVariable(string, Collections.singletonList(frame));
+        setVariable(name, Collections.singletonList(frame));
     }
 
     /**
-     * Set a variable in the top variables layer to given "collection" of the vertex frames. Can't be reassigned - throws on attempt to reassign.
+     * Set a variable in the top variables layer to given "collection" of the vertex frames. Can't be reassigned -
+     * throws on attempt to reassign.
      */
     public void setVariable(String name, Iterable<? extends WindupVertexFrame> frames)
     {
@@ -113,7 +116,8 @@ public class Variables
     }
 
     /**
-     * Wrapper around {@link #findVariable(String)} which gives only one framed vertex, and checks if there is 0 or 1; throws otherwise.
+     * Wrapper around {@link #findVariable(String)} which gives only one framed vertex, and checks if there is 0 or 1;
+     * throws otherwise.
      */
     @SuppressWarnings("unchecked")
     public <T extends WindupVertexFrame> T findSingletonVariable(String name)
@@ -176,7 +180,8 @@ public class Variables
     }
 
     /**
-     * Searches the variables layers, top to bottom, for the iterable having all of it's items of the given type. Return null if not found.
+     * Searches the variables layers, top to bottom, for the iterable having all of it's items of the given type. Return
+     * null if not found.
      */
     public Iterable<? extends WindupVertexFrame> findVariableOfType(Class<?> type)
     {
@@ -196,5 +201,11 @@ public class Variables
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Variables [depth=" + deque.size() + "]";
     }
 }

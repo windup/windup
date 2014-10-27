@@ -106,7 +106,6 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                             filtered.add(frame);
                         }
                     }
-
                     result = filtered;
                 }
 

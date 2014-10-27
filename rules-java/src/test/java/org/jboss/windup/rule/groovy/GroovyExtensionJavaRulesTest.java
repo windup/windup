@@ -153,7 +153,7 @@ public class GroovyExtensionJavaRulesTest
                 Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-                Assert.assertEquals(3, hints.size());
+                Assert.assertEquals(4, hints.size());
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
                 Assert.assertEquals(1, classifications.size());
 
