@@ -15,7 +15,7 @@ import org.ocpsoft.rewrite.context.Context;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briškár</a>
  * 
  */
-public class EjbConfig extends WindupRuleProvider
+public class XmlEjbConfig extends WindupRuleProvider
 {
     @Override
     public void enhanceMetadata(Context context)
@@ -32,12 +32,12 @@ public class EjbConfig extends WindupRuleProvider
                     .begin()
                     .addRule()
                     .when(XmlFile.matchesXpath("/j2e:ejb-jar | /jee:ejb-jar | /ejb-jar").namespace("jee", "http://java.sun.com/xml/ns/javaee").namespace("j2e", "http://java.sun.com/xml/ns/j2ee").as("ejb")
-                                .and(XmlFile.from("ejb").matchesXpath("/ejb-jar//message-driven//ejb-name | /j2e:ejb-jar//j2e:message-driven//j2e:ejb-name | /jee:ejb-jar//jee:message-driven//jee:ejb-name").namespace("jee", "http://java.sun.com/xml/ns/javaee").namespace("j2e", "http://java.sun.com/xml/ns/j2ee").as("MDB"))
-                                .and(XmlFile.from("ejb").matchesXpath("/ejb-jar//session//ejb-name | /j2e:ejb-jar//j2e:session//j2e:ejb-name | /jee:ejb-jar//jee:session//jee:ejb-name").namespace("jee", "http://java.sun.com/xml/ns/javaee").namespace("j2e", "http://java.sun.com/xml/ns/j2ee").as("sessionEJB"))
-                                .and(XmlFile.from("ejb").matchesXpath("/ejb-jar//entity//ejb-name | /j2e:ejb-jar//j2e:entity//j2e:ejb-name | /jee:ejb-jar//jee:entity//jee:ejb-name").namespace("jee", "http://java.sun.com/xml/ns/javaee").namespace("j2e", "http://java.sun.com/xml/ns/j2ee").as("entityEJB"))
-                                .and(XmlFile.from("ejb").matchesXpath("//*[local-name()='ejb-relation']/*[local-name()='ejb-relationship-role'][2]/*[local-name()='ejb-relationship-role-name']").as("ejbRelationship"))
-                                .and(XmlFile.from("ejb").withDTDPublicId("Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2..").as("ejb2"))
-                                .and(XmlFile.from("ejb").withDTDPublicId("Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1..").as("ejb1")))
+                                .or(XmlFile.from("ejb").matchesXpath("/ejb-jar//message-driven//ejb-name | /j2e:ejb-jar//j2e:message-driven//j2e:ejb-name | /jee:ejb-jar//jee:message-driven//jee:ejb-name").namespace("jee", "http://java.sun.com/xml/ns/javaee").namespace("j2e", "http://java.sun.com/xml/ns/j2ee").as("MDB"))
+                                .or(XmlFile.from("ejb").matchesXpath("/ejb-jar//session//ejb-name | /j2e:ejb-jar//j2e:session//j2e:ejb-name | /jee:ejb-jar//jee:session//jee:ejb-name").namespace("jee", "http://java.sun.com/xml/ns/javaee").namespace("j2e", "http://java.sun.com/xml/ns/j2ee").as("sessionEJB"))
+                                .or(XmlFile.from("ejb").matchesXpath("/ejb-jar//entity//ejb-name | /j2e:ejb-jar//j2e:entity//j2e:ejb-name | /jee:ejb-jar//jee:entity//jee:ejb-name").namespace("jee", "http://java.sun.com/xml/ns/javaee").namespace("j2e", "http://java.sun.com/xml/ns/j2ee").as("entityEJB"))
+                                .or(XmlFile.from("ejb").matchesXpath("//*[local-name()='ejb-relation']/*[local-name()='ejb-relationship-role'][2]/*[local-name()='ejb-relationship-role-name']").as("ejbRelationship"))
+                                .or(XmlFile.from("ejb").withDTDPublicId("Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2..").as("ejb2"))
+                                .or(XmlFile.from("ejb").withDTDPublicId("Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1..").as("ejb1")))
                     .perform(Iteration.over("ejb").perform(Classification.as("EJB XML")).endIteration()
                              .and(Iteration.over("MDB").perform(Classification.as("EJB - MDB")).endIteration())
                              .and(Iteration.over("sessionEJB").perform(Hint.withText("EJB - Session")).endIteration())

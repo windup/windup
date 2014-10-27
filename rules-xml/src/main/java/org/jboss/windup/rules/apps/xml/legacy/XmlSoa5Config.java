@@ -53,7 +53,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and not(starts-with(@class, 'org.jboss.soa.esb.actions'))]/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and not(starts-with(@class, 'org.jboss.soa.esb.actions'))]/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and not(starts-with(@class, 'org.jboss.soa.esb.actions'))]/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert action class").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" Custom action classes should be migrated to CDI Beans in SOA\n" + 
                                             "                    6. These beans\n" + 
@@ -65,7 +65,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;action class microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='actions']").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='actions']").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='actions']").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Classification.as("Action : create component service for action processing pipeline")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("The logic and execution flow of a service in SOA 5 is defined\n" + 
                                             "                    in an\n" + 
@@ -80,8 +80,8 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;action pipeline microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='service']/@name").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='service']/@name").resultMatches(".*").as("2"))
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='jms-listener']/@name").as("3")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='service']/@name").resultMatches(".*").as("2"))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='jms-listener']/@name").as("3")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : composite service required for service").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" Each &lt;service&gt; definition in SOA 5 represents a service\n" + 
                                             "                    which can be\n" + 
@@ -96,7 +96,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                  .and(Iteration.over("3").perform(Hint.withText("value : jms Listener name").withEffort(1)).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='jms-listener' and @is-gateway='true']/@name").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='jms-listener' and @is-gateway='true']/@name").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='jms-listener' and @is-gateway='true']/@name").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : composite service binding required for listener")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("This listener requires a composite service binding in\n" + 
                                             "                    SwitchYard. The\n" + 
@@ -109,7 +109,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;gateway listener microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='hibernate-bus']/@busid").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='hibernate-bus']/@busid").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='hibernate-bus']/@busid").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in hibernate-bus")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText(" Although Camel has both hibernate and jpa components that are\n" + 
                                             "                    useful\n" + 
@@ -123,8 +123,8 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    this area.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='jms-bus']/@busid").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='jms-bus']/@busid").resultMatches(".*").as("2"))
-                                .and(XmlFile.matchesXpath("//*[local-name()='jms-bus']/@busid").as("3")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='jms-bus']/@busid").resultMatches(".*").as("2"))
+                                .or(XmlFile.matchesXpath("//*[local-name()='jms-bus']/@busid").as("3")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in jms-bus").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" A jms-bus definition can be converted to a JMS or JCA gateway\n" + 
                                             "                    binding\n" + 
@@ -138,7 +138,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                 .and(Iteration.over("3").perform(Hint.withText("Value : Composite-service-name").withEffort(1)).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='ftp-bus']/@busid").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='ftp-bus']/@busid").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='ftp-bus']/@busid").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in ftp-bus").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("A ftp-bus definition can be converted to a FTP gateway\n" + 
                                             "                    binding\n" + 
@@ -150,7 +150,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;ftp-bus migration microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='camel-bus']/@busid").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='camel-bus']/@busid").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='camel-bus']/@busid").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in ftp-bus").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("A camel-bus definition can be converted to a Camel gateway\n" + 
                                             "                    binding\n" + 
@@ -162,21 +162,21 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;camel-bus migration microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='udp-listener']/@busid").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='udp-listener']/@busid").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='udp-listener']/@busid").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in udp-listener")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("A udp-listener definition can be converted to a TCP/UDP\n" + 
                                             "                    gateway binding\n" + 
                                             "                    on a composite service in SwitchYard.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='jms-jca-provider']/@busidref").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='jms-jca-provider']/@busidref").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='jms-jca-provider']/@busidref").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : composite service binding required for listener")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("A jms-jca-provider definition can be converted to a JCA\n" + 
                                             "                    gateway binding\n" + 
                                             "                    on a composite service in SwitchYard.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='http-provider']/@busidref").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='http-provider']/@busidref").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='http-provider']/@busidref").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : composite service binding required for listener")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText(" A http-provider definition can be converted to a HTTP gateway\n" + 
                                             "                    binding\n" + 
@@ -187,7 +187,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;gateway listener microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='cron-schedule']/@scheduleid").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='cron-schedule']/@scheduleid").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='cron-schedule']/@scheduleid").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in ftp-bus").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" A cron-schedule definition can be converted to a Quartz\n" + 
                                             "                    gateway binding\n" + 
@@ -199,7 +199,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;cron-schedule migration microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='ftp-listener' and @is-gateway='true']/@name").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='ftp-listener' and @is-gateway='true']/@name").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='ftp-listener' and @is-gateway='true']/@name").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : composite service binding required for listener")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("This listener requires a composite service binding in\n" + 
                                             "                    SwitchYard. The\n" + 
@@ -212,7 +212,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;gateway listener microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='camel-gateway']/@busidref").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='camel-gateway']/@busidref").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='camel-gateway']/@busidref").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : composite service binding required for listener")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("This gateway requires a composite service binding in\n" + 
                                             "                    SwitchYard. The\n" + 
@@ -225,7 +225,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;gateway listener microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='http-gateway']/@name").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='http-gateway']/@name").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='http-gateway']/@name").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : replace with HTTP binding").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" A &lt;http-gateway&gt; can be replaced in SwitchYard by a\n" + 
                                             "                    http\n" + 
@@ -238,7 +238,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert SmooksAction to Transform").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("SwitchYard uses a &lt;transform&gt; to replace the invocation\n" + 
                                             "                    of as SmooksAction\n" + 
@@ -251,7 +251,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;transformation microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//property[@name='smooksConfig']/@name").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//property[@name='smooksConfig']/@name").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//property[@name='smooksConfig']/@name").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : Smooks config conversion").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In a SwitchYard Smooks transform, you can specify your Smooks\n" + 
                                             "                    configuration with the \"config\" attribute.\n" + 
@@ -263,7 +263,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/*[local-name()='property' and @name='resultType']")
-                                .as("1").and(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/*[local-name()='property' and @name='resultType']").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/*[local-name()='property' and @name='resultType']").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert SmooksAction to Transform").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("SwitchYard uses a &lt;transform&gt; to replace the invocation\n" + 
                                             "                    of as SmooksAction\n" + 
@@ -278,7 +278,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.proxy.SOAPProxy']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.proxy.SOAPProxy']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.proxy.SOAPProxy']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert SOAPProxy").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("Instead of the JBoss ESB SOAPProxy action which transforms a\n" + 
                                             "                    specified\n" + 
@@ -298,7 +298,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.SystemPrintln']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.SystemPrintln']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.SystemPrintln']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert SystemPrintln").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to log your message (or a static logging message),\n" + 
                                             "                    you\n" + 
@@ -314,7 +314,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert StaticRouter to Camel routing").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to configure static routes for your message in\n" + 
                                             "                    SwitchYard, you\n" + 
@@ -328,7 +328,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.JMSRouter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.JMSRouter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.JMSRouter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert JMSRouter").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the JMSRouter in SwitchYard,\n" + 
                                             "                    you should use a JMS binding.\n" + 
@@ -343,7 +343,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.TestMessageStore']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.TestMessageStore']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.TestMessageStore']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : remove TestMessageStore").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("TestMessageStore is a out-of-the-box ESB action that is used\n" + 
                                             "                    in JBoss AS container tests to store a message with some form\n" + 
@@ -360,7 +360,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.GroovyActionProcessor']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.GroovyActionProcessor']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.GroovyActionProcessor']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : replace GroovyActionProcessor with Camel").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" The GroovyActionProcessor action executes a Groovy script.\n" + 
                                             "                    You can duplicate this functionality in SwitchYard through Camel\n" + 
@@ -374,7 +374,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.services.jbpm.actions.BpmProcessor']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.services.jbpm.actions.BpmProcessor']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.services.jbpm.actions.BpmProcessor']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : Replace BpmProcessor").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("The BpmProcessor makes calls to jBPM 3 through the jBPM\n" + 
                                             "                    command API.\n" + 
@@ -388,7 +388,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;BPM microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='fs-bus']/@busid").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='fs-bus']/@busid").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='fs-bus']/@busid").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in fs-bus").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("A fs-bus definition can be converted to a Camel binding\n" + 
                                             "                    on a\n" + 
@@ -400,7 +400,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                                             "                    target=\"_blank\"&gt;gateway migration microsite&lt;/a&gt;.")).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[local-name()='fs-bus']/@busid").as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[local-name()='fs-bus']/@busid").resultMatches(".*").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("//*[local-name()='fs-bus']/@busid").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : service binding configuration in fs-bus").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" A fs-bus definition can be converted to a Camel binding\n" + 
                                             "                    on a\n" + 
@@ -414,7 +414,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Notifier']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Notifier']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Notifier']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert Notifiers to bindings").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses notifiers to transform ESB aware messages to a\n" + 
                                             "                    format that ESB-unaware services can handle. SwitchYard uses\n" + 
@@ -424,7 +424,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ByteArrayToString']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ByteArrayToString']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ByteArrayToString']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert ByteArrayToString to bindings").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText(" JBoss ESB uses a ByteArrayToString action to do conversion on\n" + 
                                             "                    a message body.\n" + 
@@ -433,7 +433,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert LongToDateConverter to a Camel type conversion")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses the LongToDateConverter action to do\n" + 
                                             "                    conversion on a message body.\n" + 
@@ -442,7 +442,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert LongToDateConverter to a Camel type conversion")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses the LongToDateConverter action to do\n" + 
                                             "                    conversion on a message body.\n" + 
@@ -451,7 +451,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToCSVString']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToCSVString']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToCSVString']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert ObjectToCSVString to a Camel type conversion")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText(" JBoss ESB uses the ObjectToCSVString action to do conversion\n" + 
                                             "                    on a message body.\n" + 
@@ -465,7 +465,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectInvoke']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectInvoke']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectInvoke']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert ObjectInvoke to a bean service").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses a ObjectInvoke action to do invoke a processor\n" + 
                                             "                    on a message.\n" + 
@@ -474,7 +474,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToXStream']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToXStream']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToXStream']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert ObjectToXStream to a transform").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses a ObjectToXStream action to do convert an\n" + 
                                             "                    Object payload to XML using the XStream\n" + 
@@ -488,7 +488,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.XStreamToObject']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.XStreamToObject']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.XStreamToObject']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert XStreamToObject to a transform").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses a XStreamToObject action to convert XML in a\n" + 
                                             "                    payload to an object using the\n" + 
@@ -502,7 +502,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert XsltAction to a transform").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses a XStreamToObject action to convert XML in a\n" + 
                                             "                    payload to an object using the\n" + 
@@ -516,7 +516,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert XsltAction to a transform").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses the XsltAction action to transform documents\n" + 
                                             "                    in a payload. SwitchYard would use\n" + 
@@ -530,7 +530,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.SmooksTransformer']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.SmooksTransformer']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.SmooksTransformer']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert SmooksTransformer to Transform").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("SwitchYard uses a &lt;transform&gt; to replace the invocation\n" + 
                                             "                    of a SmooksTransformer\n" + 
@@ -546,7 +546,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.MessagePersister']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.MessagePersister']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.MessagePersister']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert MessagePersister to SQL binding").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("SwitchYard uses the MessagePersister action to persist a\n" + 
                                             "                    message. SwitchYard would uses\n" + 
@@ -555,7 +555,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.EJBProcessor']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.EJBProcessor']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.EJBProcessor']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : replace EJBProcessor with a bean service").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses the EJBProcessor action to invoke a stateless\n" + 
                                             "                    session bean with the\n" + 
@@ -566,7 +566,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.ScriptingAction']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.ScriptingAction']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.ScriptingAction']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : replace ScriptingAction with Camel").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("The ScriptingAction executes a script using the\n" + 
                                             "                    BeanScriptingFramework.\n" + 
@@ -581,7 +581,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Aggregator']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Aggregator']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Aggregator']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : replace Aggregator with Camel Aggregator").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses the Aggregator action to aggregate a message\n" + 
                                             "                    sequence into a single\n" + 
@@ -596,7 +596,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StreamingAggregator']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StreamingAggregator']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StreamingAggregator']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : replace Streaming Aggregator with Camel Aggregator")
                                 .withEffort(1)).endIteration().and(Iteration.over("2").perform(Hint.withText("JBoss ESB uses the StreamingAggregator action to aggregate a\n" + 
                                             "                    message sequence into a single\n" + 
@@ -612,7 +612,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.http.HttpRouter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.http.HttpRouter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.http.HttpRouter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert HttpRouter").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the HttpRouter in SwitchYard,\n" + 
                                             "                    you should use a http reference binding.\n" + 
@@ -622,7 +622,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.email.EmailRouter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.email.EmailRouter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.email.EmailRouter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert EmailRouter").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the EmailRouter in SwitchYard,\n" + 
                                             "                    you should use a mail reference binding.\n" + 
@@ -632,7 +632,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.ContentBasedRouter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.ContentBasedRouter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.ContentBasedRouter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert ContentBasedRouter").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the ContentBasedRouter in\n" + 
                                             "                    SwitchYard, you should use Camel to route\n" + 
@@ -645,7 +645,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticWiretap']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticWiretap']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticWiretap']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert StaticWiretap").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the StaticWiretap in\n" + 
                                             "                    SwitchYard, you should use Camel to route\n" + 
@@ -654,7 +654,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert StaticRouter").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the StaticRouter in\n" + 
                                             "                    SwitchYard, you should use Camel to route\n" + 
@@ -663,7 +663,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert StaticRouter").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the StaticRouter in\n" + 
                                             "                    SwitchYard, you should use Camel to route\n" + 
@@ -672,7 +672,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPProcessor']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPProcessor']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath( "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPProcessor']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert SOAPProcessor").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the StaticRouter in\n" + 
                                             "                    SwitchYard, you should use a SOAP reference\n" + 
@@ -685,7 +685,7 @@ public class XmlSoa5Config extends WindupRuleProvider
                     .when(XmlFile
                                 .matchesXpath(
                                             "//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPClient']/@class")
-                                .as("1").and(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPClient']/@class").resultMatches(".*").as("2")))
+                                .as("1").or(XmlFile.from("1").matchesXpath("//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPClient']/@class").resultMatches(".*").as("2")))
                     .perform(Iteration.over("1").perform(Hint.withText("Action : convert SOAPClient").withEffort(1)).endIteration()
                                 .and(Iteration.over("2").perform(Hint.withText("In order to replace the use of the SOAPClient in SwitchYard,\n" + 
                                             "                    you should use a SOAP reference\n" + 
