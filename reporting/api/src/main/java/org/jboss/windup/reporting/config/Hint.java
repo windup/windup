@@ -25,11 +25,6 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     private int effort;
     private List<Link> links = new ArrayList<>();
 
-    protected Hint(String variable)
-    {
-        super(variable);
-    }
-
     protected Hint()
     {
         super();
@@ -38,14 +33,13 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     /**
      * Create a new {@link Hint} in the {@link FileLocationModel} resolved by the given variable.
      */
-    public static HintBuilderIn in(String fileVariable)
+    public static HintBuilderIn in(String inputVariable)
     {
-        return new HintBuilderIn(fileVariable);
+        return new HintBuilderIn(inputVariable);
     }
 
     /**
-     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be
-     * displayed in the report.
+     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be displayed in the report.
      */
     public static Hint withText(String text)
     {

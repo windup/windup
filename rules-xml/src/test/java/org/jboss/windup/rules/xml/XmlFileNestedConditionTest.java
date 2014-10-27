@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -51,6 +52,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RunWith(Arquillian.class)
 public class XmlFileNestedConditionTest
 {
+    private static Logger LOG = Logger.getLogger(XmlFileNestedConditionTest.class.getName());
+
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -161,22 +164,25 @@ public class XmlFileNestedConditionTest
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
                 {
+                    LOG.info("addTypeRefToList payload added with path: " + payload.getFile().getFilePath() + " vertex: " + payload.asVertex());
                     xmlFiles.add(payload);
                 }
             };
 
-            return ConfigurationBuilder
+            Configuration config = ConfigurationBuilder
                         .begin()
                         .addRule()
                         .when(XmlFile.matchesXpath("/abc:beans")
                                     .namespace("abc", "http://www.springframework.org/schema/beans").as("first"))
                         .perform(Classification.as("Spring File")
                                                .and(
-                                                           Iteration.over("first")
-                                                           .when(XmlFile.from(Iteration.singleVariableIterationName("first")).matchesXpath("//windup:file-gate").namespace("windup", "http://www.jboss.org/schema/windup"))
-                                                           .perform(addTypeRefToList).endIteration()
-                                                           )
+                                                   Iteration.over("first")
+                                                       .when(XmlFile.from(Iteration.singleVariableIterationName("first")).matchesXpath("//windup:file-gate").namespace("windup", "http://www.jboss.org/schema/windup"))
+                                                       .perform(addTypeRefToList).endIteration()
+                                               )
                                 );
+            LOG.info("Test rules: " + config.getRules());
+            return config;
         }
         // @formatter:on
 

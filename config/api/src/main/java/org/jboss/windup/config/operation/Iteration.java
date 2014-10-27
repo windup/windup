@@ -366,18 +366,18 @@ public class Iteration extends DefaultOperationBuilder
         return payload;
     }
 
-    public void setPayloadManager(IterationPayloadManager payloadManager)
+    protected void setPayloadManager(IterationPayloadManager payloadManager)
     {
         Assert.notNull(payloadManager, "Payload manager must not be null.");
         this.payloadManager = payloadManager;
     }
 
-    public FramesSelector getSelectionManager()
+    protected FramesSelector getSelectionManager()
     {
         return selectionManager;
     }
 
-    public IterationPayloadManager getPayloadManager()
+    protected IterationPayloadManager getPayloadManager()
     {
         return payloadManager;
     }

@@ -1,13 +1,17 @@
 package org.jboss.windup.config;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.ocpsoft.rewrite.config.CompositeOperation;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Operation;
+import org.ocpsoft.rewrite.config.Perform;
 import org.ocpsoft.rewrite.spi.ConfigurationRuleBuilderInterceptor;
 
 public class SimpleIterationConfigurationRuleBuilderInterceptor implements ConfigurationRuleBuilderInterceptor
@@ -55,7 +59,7 @@ public class SimpleIterationConfigurationRuleBuilderInterceptor implements Confi
 
             if (requiresIteration)
             {
-                result.add(Iteration.over().perform(list.toArray(new Operation[list.size()])).endIteration());
+                return operationsToIterationOperations(list);
             }
             else
             {
@@ -70,10 +74,49 @@ public class SimpleIterationConfigurationRuleBuilderInterceptor implements Confi
     {
         if (requiresIteration(operation))
         {
-            return Iteration.over().perform(operation).endIteration();
+            final List<Operation> allOperations = flattenOperations(Collections.singletonList(operation));
+            final List<Operation> operationsWrappedInIterators = operationsToIterationOperations(allOperations);
+
+            return Perform.all(operationsWrappedInIterators.toArray(new Operation[operationsWrappedInIterators.size()]));
         }
 
         return operation;
+    }
+
+    private List<Operation> operationsToIterationOperations(List<Operation> operations)
+    {
+        List<Operation> results = new ArrayList<>();
+
+        LinkedHashMap<String, List<Operation>> operationMap = new LinkedHashMap<>();
+        for (Operation operation : operations)
+        {
+            String expectedInputVarName = null;
+            if (operation instanceof AbstractIterationOperation)
+            {
+                expectedInputVarName = ((AbstractIterationOperation<?>) operation).getInputVariableName();
+            }
+            List<Operation> operationsForInputVar = operationMap.get(expectedInputVarName);
+            if (operationsForInputVar == null)
+            {
+                operationsForInputVar = new ArrayList<>();
+                operationMap.put(expectedInputVarName, operationsForInputVar);
+            }
+            operationsForInputVar.add(operation);
+        }
+        for (Map.Entry<String, List<Operation>> operationMapEntry : operationMap.entrySet())
+        {
+            String inputVarName = operationMapEntry.getKey();
+            List<Operation> ops = operationMapEntry.getValue();
+            if (inputVarName == null)
+            {
+                results.add(Iteration.over().perform(ops.toArray(new Operation[ops.size()])).endIteration());
+            }
+            else
+            {
+                results.add(Iteration.over(inputVarName).perform(ops.toArray(new Operation[ops.size()])).endIteration());
+            }
+        }
+        return results;
     }
 
     private boolean requiresIteration(Operation operation)
@@ -101,10 +144,31 @@ public class SimpleIterationConfigurationRuleBuilderInterceptor implements Confi
         return false;
     }
 
+    private static List<Operation> flattenOperations(List<Operation> operations)
+    {
+        List<Operation> result = new ArrayList<>();
+        for (Operation operation : operations)
+        {
+            if (operation instanceof Iteration)
+            {
+                result.add(operation);
+            }
+            else if (operation instanceof CompositeOperation)
+            {
+                List<Operation> compositeOperations = ((CompositeOperation) operation).getOperations();
+                result.addAll(flattenOperations(compositeOperations));
+            }
+            else
+            {
+                result.add(operation);
+            }
+        }
+        return result;
+    }
+
     /*
      * Things we don't care about for this interceptor
      */
-
     @Override
     public Condition when(Condition condition)
     {

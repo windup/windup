@@ -9,9 +9,10 @@ public class HintBuilderIn
 {
     private Hint hint;
 
-    public HintBuilderIn(String fileVariable)
+    public HintBuilderIn(String inputVariable)
     {
-        this.hint = new Hint(fileVariable);
+        this.hint = new Hint();
+        this.hint.setInputVariableName(inputVariable);
     }
 
     /**
