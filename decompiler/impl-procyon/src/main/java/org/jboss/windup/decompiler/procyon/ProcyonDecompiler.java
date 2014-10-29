@@ -4,9 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -49,6 +55,7 @@ import com.strobel.io.PathHelper;
  */
 public class ProcyonDecompiler implements Decompiler
 {
+    private ExecutorService exService = Executors.newSingleThreadExecutor();
     private static final Logger log = Logger.getLogger(ProcyonDecompiler.class.getName());
     private final ProcyonConfiguration procyonConf;
 
@@ -63,6 +70,19 @@ public class ProcyonDecompiler implements Decompiler
             throw new IllegalArgumentException("Configuration must not be null.");
 
         this.procyonConf = configuration;
+    }
+
+    public void close()
+    {
+        this.exService.shutdown();
+        try
+        {
+            exService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            throw new IllegalStateException("Was not able to decompile in the given time limit.");
+        }
     }
 
     /**
@@ -109,7 +129,8 @@ public class ProcyonDecompiler implements Decompiler
     }
 
     /**
-     * Decompiles all .class files and archives in the given directory and places results in the specified output directory.
+     * Decompiles all .class files and archives in the given directory and places results in the specified output
+     * directory.
      * <p>
      * Discovered archives will be decompiled into directories matching the name of the archive, e.g.
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
@@ -130,7 +151,21 @@ public class ProcyonDecompiler implements Decompiler
         return result;
     }
 
-    private void decompileDirectory(File rootDir, File outputDir, Path subPath, DecompilationResult result)
+    public void setExecutorService(ExecutorService service)
+    {
+        this.exService.shutdown();
+        try
+        {
+            exService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            throw new IllegalStateException("Was not able to decompile in the given time limit.");
+        }
+        this.exService = service;
+    }
+
+    private void decompileDirectory(final File rootDir, File outputDir, Path subPath, final DecompilationResult result)
                 throws DecompilationException
     {
         Checks.checkDirectoryToBeRead(rootDir, "Directory to decompile");
@@ -141,13 +176,15 @@ public class ProcyonDecompiler implements Decompiler
         DecompilerSettings settings = getDefaultSettings(outputDir);
         // MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
         // MetadataSystem metadataSystem = new NoRetryMetadataSystem(rootDir.getPath());
-        MetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());
+        
 
         // TODO: Rewrite with Commons IO's DirectoryWalker.
         File curDirFull = rootDir.toPath().resolve(subPath).toFile();
         final List<File> files = Arrays.asList(curDirFull.listFiles());
+        Collection<Callable<File>> tasks = new ArrayList<Callable<File>>();
         for (File file : files)
         {
+            final MetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());
             // Directory...
             if (file.isDirectory())
             {
@@ -165,23 +202,45 @@ public class ProcyonDecompiler implements Decompiler
             if (file.getName().contains("$"))
                 continue;
 
-            String fileSubPath = subPath.resolve(file.getName()).toString();
-            String fqcn = StringUtils.removeEnd(fileSubPath, ".class").replace('/', '.');
-            try
+            final String fileSubPath = subPath.resolve(file.getName()).toString();
+            final String fqcn = StringUtils.removeEnd(fileSubPath, ".class").replace('/', '.');
+            final String fileAbsolutePath = file.getAbsolutePath();
+
+            Callable<File> callable = new Callable<File>()
             {
-                File outputFile = this.decompileType(metadataSystem, fqcn);
-                if (null == outputFile)
-                    throw new IllegalStateException("Unknown Procyon error, type not found.");
-                result.addDecompiled(file.getAbsolutePath(), outputFile.getAbsolutePath());
-            }
-            catch (Throwable ex)
-            {
-                DecompilationFailure failure = new DecompilationFailure("Error during decompilation of "
-                            + rootDir.getPath() + " / " + fileSubPath + ":\n    " + ex.getMessage(),
-                            fileSubPath.toString(), ex);
-                log.log(Level.SEVERE, failure.getMessage(), failure);
-                result.addFailure(failure);
-            }
+                @Override
+                public File call() throws Exception
+                {
+                    File outputFile;
+                    try
+                    {
+                        outputFile = decompileType(metadataSystem, fqcn);
+                        if (null == outputFile)
+                            throw new IllegalStateException("Unknown Procyon error, type not found.");
+                        result.addDecompiled(fileAbsolutePath, outputFile.getAbsolutePath());
+                        return outputFile;
+                    }
+                    catch (Exception e)
+                    {
+                        DecompilationFailure failure = new DecompilationFailure("Error during decompilation of "
+                                    + rootDir.getPath() + " / " + fileSubPath + ":\n    " + e.getMessage(),
+                                    fileSubPath.toString(), e);
+                        log.log(Level.SEVERE, failure.getMessage(), failure);
+                        result.addFailure(failure);
+                    }
+                    return null;
+                }
+
+            };
+            tasks.add(callable);
+        }
+        try
+        {
+            exService.invokeAll(tasks);
+        }
+        catch (InterruptedException e)
+        {
+            throw new IllegalStateException("Was not able to decompile in the given time limit.");
         }
     }
 
@@ -218,7 +277,7 @@ public class ProcyonDecompiler implements Decompiler
      * 
      * @returns Result with all decompilation failures. Never throws.
      */
-    public DecompilationResult decompileArchive(File archive, File outputDir, Filter<ZipEntry> filter)
+    public DecompilationResult decompileArchive(final File archive, File outputDir, Filter<ZipEntry> filter)
                 throws DecompilationException
     {
         Checks.checkFileToBeRead(archive, "Archive to decompile");
@@ -241,12 +300,13 @@ public class ProcyonDecompiler implements Decompiler
         MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
 
         int classesDecompiled = 0;
-        DecompilationResult res = new DecompilationResult();
+        final DecompilationResult res = new DecompilationResult();
 
         Filter.Result filterRes = Filter.Result.ACCEPT;
 
         int current = 0;
         final Enumeration<JarEntry> entries = jar.entries();
+        Collection<Callable<File>> tasks = new ArrayList<Callable<File>>();
         while (entries.hasMoreElements())
         {
             final JarEntry entry = entries.nextElement();
@@ -270,41 +330,56 @@ public class ProcyonDecompiler implements Decompiler
 
             final String typeName = StringUtils.removeEnd(name, ".class");
 
-            try
+            // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
+            metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
+            final DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
+            Callable<File> callable = new Callable<File>()
             {
-                ExecutionStatistics.get().begin("ProcyonDecompiler.decompileIndividualItem");
-                // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
-                DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
-                t.start();
-                t.join(60000L); // wait up to one minute
-                if (!t.success)
+                @Override
+                public File call() throws Exception
                 {
-                    t.cancelDecompilation();
-                    throw new RuntimeException("Failed to compile within one minute... attempting abort", t.e);
+                    try
+                    {
+                        ExecutionStatistics.get().begin("ProcyonDecompiler.decompileIndividualItem");
+                        // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
+                        t.start();
+                        t.join(60000L); // wait up to one minute
+                        if (!t.success)
+                        {
+                            t.cancelDecompilation();
+                            throw new RuntimeException("Failed to compile within one minute... attempting abort", t.e);
+                        }
+
+                        File outputFile = t.outputFile;
+                        if (outputFile != null)
+                            res.addDecompiled(name, outputFile.getAbsolutePath());
+                        return outputFile;
+                    }
+                    catch (Throwable th)
+                    {
+                        String msg = "Error during decompilation of " + archive.getPath() + "!" + name + ":\n    "
+                                    + th.getMessage();
+                        DecompilationFailure ex = new DecompilationFailure(msg, name, th);
+                        log.log(Level.SEVERE, msg, ex);
+                        res.addFailure(ex);
+                    }
+                    finally
+                    {
+                        ExecutionStatistics.get().end("ProcyonDecompiler.decompileIndividualItem");
+                    }
+                    return null;
                 }
-
-                File outputFile = t.outputFile;
-                if (outputFile != null)
-                    res.addDecompiled(name, outputFile.getAbsolutePath());
-
-                // Taken from mstrobel's, not sure what's the purpose.
-                if (++classesDecompiled % 100 == 0)
-                    metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
-            }
-            catch (Throwable th)
-            {
-                String msg = "Error during decompilation of " + archive.getPath() + "!" + name + ":\n    "
-                            + th.getMessage();
-                DecompilationFailure ex = new DecompilationFailure(msg, name, th);
-                log.log(Level.SEVERE, msg, ex);
-                res.addFailure(ex);
-            }
-            finally
-            {
-                ExecutionStatistics.get().end("ProcyonDecompiler.decompileIndividualItem");
-            }
+            };
+            tasks.add(callable);
         }
-
+        try
+        {
+            exService.invokeAll(tasks);
+        }
+        catch (InterruptedException e)
+        {
+            throw new IllegalStateException("Decompilation was interrupted.");
+        }
         return res;
     }
 
