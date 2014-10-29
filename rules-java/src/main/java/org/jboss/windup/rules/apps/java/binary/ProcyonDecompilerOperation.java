@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -53,7 +54,8 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
         ExecutionStatistics.get().begin("ProcyonDecompilationOperation.perform");
         if (payload.getUnzippedDirectory() != null)
         {
-            Decompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
+            ProcyonDecompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
+            decompiler.setExecutorService(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1));
             String archivePath = ((FileModel) payload).getFilePath();
             File archive = new File(archivePath);
             File outputDir = new File(payload.getUnzippedDirectory().getFilePath());
