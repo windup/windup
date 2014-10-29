@@ -78,7 +78,7 @@ public class XmlJppConfig extends WindupRuleProvider
                                 .namespace("jee", "http://java.sun.com/xml/ns/javaee")
                                 .namespace("je", "http://java.sun.com/JSF/Configuration")
                                 .as("1")
-                                .and(XmlFile.from("1").matchesXpath("/jee:faces-config/jee:application/jee:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /je:faces-config/je:application/je:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /faces-config/application/view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')]")
+                                .or(XmlFile.from("1").matchesXpath("/jee:faces-config/jee:application/jee:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /je:faces-config/je:application/je:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /faces-config/application/view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')]")
                                             .namespace("jee", "http://java.sun.com/xml/ns/javaee")
                                             .namespace("je", "http://java.sun.com/JSF/Configuration")
                                             .resultMatches("org.jboss.portletbridge.application.PortletViewHandler")
@@ -94,7 +94,7 @@ public class XmlJppConfig extends WindupRuleProvider
                                 .namespace("jee", "http://java.sun.com/xml/ns/javaee")
                                 .namespace("je", "http://java.sun.com/JSF/Configuration")
                                 .as("1")
-                                .and(XmlFile.from("1").matchesXpath(
+                                .or(XmlFile.from("1").matchesXpath(
                                             "/jee:faces-config/jee:application/jee:state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')] | /je:faces-config/je:application/je:state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')] | /faces-config/application/state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')]")
                                 .namespace("jee", "http://java.sun.com/xml/ns/javaee")
                                 .namespace("je", "http://java.sun.com/JSF/Configuration")
@@ -107,7 +107,7 @@ public class XmlJppConfig extends WindupRuleProvider
                                             .withEffort(1)).endIteration()))
                     .addRule()
                     .when(XmlFile.matchesXpath("/application/module/java/text()").as("1")
-                                .and(XmlFile.from("1").matchesXpath("/application/module/java/text()").resultMatches(".*jar$").as("2")))
+                                .or(XmlFile.from("1").matchesXpath("/application/module/java/text()").resultMatches(".*jar$").as("2")))
                     .perform(Iteration.over("1").perform(Hint
                                 .withText("Portal library")
                                 .withEffort(1)).endIteration()
@@ -118,7 +118,7 @@ public class XmlJppConfig extends WindupRuleProvider
                     .when(XmlFile.matchesXpath(
                                             "//*[starts-with(., 'org.jboss.portal.portlet.impl.jsr168.taglib')]/text()")
                                 .as("1")
-                                .and(XmlFile.from("1").matchesXpath(
+                                .or(XmlFile.from("1").matchesXpath(
                                             "//*[starts-with(., 'org.jboss.portal.portlet.impl.jsr168.taglib')]/text()")
                                             .resultMatches("org.jboss.portal.portlet.impl.jsr168.taglib.*")
                                             .as("2")))
@@ -131,7 +131,7 @@ public class XmlJppConfig extends WindupRuleProvider
                     .when(XmlFile.matchesXpath(
                                             "//*[starts-with(., 'org.exoplatform.web.login.InitiateLoginServlet')]/text()")
                                 .as("1")
-                                .and(XmlFile.from("1").matchesXpath(
+                                .or(XmlFile.from("1").matchesXpath(
                                             "//*[starts-with(., 'org.exoplatform.web.login.InitiateLoginServlet')]/text()").resultMatches("org.exoplatform.web.login.InitiateLoginServlet")
                                             .as("2")))
                     .perform(Iteration.over("1").perform(Hint
@@ -142,7 +142,7 @@ public class XmlJppConfig extends WindupRuleProvider
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[starts-with(., 'org.exoplatform.web.login.DoLoginServlet')]/text()")
                                 .as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[starts-with(., 'org.exoplatform.web.login.DoLoginServlet')]/text()").resultMatches("org.exoplatform.web.login.DoLoginServlet")
+                                .or(XmlFile.from("1").matchesXpath("//*[starts-with(., 'org.exoplatform.web.login.DoLoginServlet')]/text()").resultMatches("org.exoplatform.web.login.DoLoginServlet")
                                             .as("2")))
                     .perform(Iteration.over("1").perform(Hint
                                 .withText("Class org.exoplatform.web.login.DoLoginServlet moved")).endIteration()
@@ -152,7 +152,7 @@ public class XmlJppConfig extends WindupRuleProvider
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[starts-with(., 'org.exoplatform.web.login.ErrorLoginServlet')]/text()")
                                 .as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[starts-with(., 'org.exoplatform.web.login.ErrorLoginServlet')]/text()").resultMatches("org.exoplatform.web.login.ErrorLoginServlet")
+                                .or(XmlFile.from("1").matchesXpath("//*[starts-with(., 'org.exoplatform.web.login.ErrorLoginServlet')]/text()").resultMatches("org.exoplatform.web.login.ErrorLoginServlet")
                                             .as("2")))
                     .perform(Iteration.over("1").perform(Hint
                                 .withText("Class org.exoplatform.web.login.ErrorLoginServlet moved")).endIteration()
@@ -162,7 +162,7 @@ public class XmlJppConfig extends WindupRuleProvider
                     .addRule()
                     .when(XmlFile.matchesXpath("//*[starts-with(., 'org.exoplatform.web.security.PortalLoginController')]/text()")
                                 .as("1")
-                                .and(XmlFile.from("1").matchesXpath("//*[starts-with(., 'org.exoplatform.web.security.PortalLoginController')]/text()")
+                                .or(XmlFile.from("1").matchesXpath("//*[starts-with(., 'org.exoplatform.web.security.PortalLoginController')]/text()")
                                             .resultMatches("org.exoplatform.web.security.PortalLoginController")
                                             .as("2")))
                     .perform(Iteration.over("1").perform(Hint

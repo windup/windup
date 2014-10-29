@@ -97,7 +97,7 @@ public class XmlJbossConfig extends WindupRuleProvider
                     .when(XmlFile.matchesXpath("/page").inFile(".+.page.xml"))
                     .perform(Classification.as("JBoss Seam Page"))
                     .addRule()
-                    .when(XmlFile.matchesXpath("jboss-app").as("jboss-app").and(XmlFile.matchesXpath("jboss-app").withDTDPublicId("").as("jboss-app-no-DTD")))
+                    .when(XmlFile.matchesXpath("jboss-app").as("jboss-app").or(XmlFile.matchesXpath("jboss-app").withDTDPublicId("").as("jboss-app-no-DTD")))
                     .perform(Iteration.over("jboss-app").perform(Classification.as("Jboss App Descriptor")).endIteration()
                                 .and(Iteration.over("jboss-app-no-DTD").perform(Classification.as("Jboss App XML with missing DTD detect").withEffort(1)).endIteration())
                                 .and(Iteration.over("jboss-app-no-DTD").perform(XSLTTransformation.using("transformations/xslt/jboss-app-to-jboss5.xsl").withDescription("JBoss APP Descriptor - JBoss 5 (Windup-Generated)").withExtension("-jboss5.xml")).endIteration()))

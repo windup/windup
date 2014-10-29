@@ -2,9 +2,11 @@
 .project
 .settings
 .DS_Store
+.metadata
 dependency-reduced-pom.xml
 target/
 *.iml
+*~
 *.ipr
 *.iws
 *.swp
