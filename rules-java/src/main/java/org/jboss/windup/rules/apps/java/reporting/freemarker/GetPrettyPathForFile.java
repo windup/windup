@@ -7,6 +7,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -24,44 +25,53 @@ import freemarker.template.TemplateModelException;
  */
 public class GetPrettyPathForFile implements WindupFreeMarkerMethod
 {
+    private static final String NAME = "getPrettyPathForFile";
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
-        if (arguments.size() != 1)
+        ExecutionStatistics.get().begin(NAME);
+        try
         {
-            throw new TemplateModelException("Error, method expects one argument (FileModel)");
-        }
-        StringModel stringModelArg = (StringModel) arguments.get(0);
-        FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
-        if (fileModel instanceof JavaClassFileModel)
-        {
-            JavaClassFileModel jcfm = (JavaClassFileModel) fileModel;
-            return jcfm.getJavaClass().getQualifiedName();
-        }
-        else if (fileModel instanceof JavaSourceFileModel)
-        {
-            JavaSourceFileModel javaSourceModel = (JavaSourceFileModel) fileModel;
-            String filename = fileModel.getFileName();
-            String packageName = javaSourceModel.getPackageName();
-
-            if (filename.endsWith(".java"))
+            if (arguments.size() != 1)
             {
-                filename = filename.substring(0, filename.length() - 5);
+                throw new TemplateModelException("Error, method expects one argument (FileModel)");
             }
+            StringModel stringModelArg = (StringModel) arguments.get(0);
+            FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
+            if (fileModel instanceof JavaClassFileModel)
+            {
+                JavaClassFileModel jcfm = (JavaClassFileModel) fileModel;
+                return jcfm.getJavaClass().getQualifiedName();
+            }
+            else if (fileModel instanceof JavaSourceFileModel)
+            {
+                JavaSourceFileModel javaSourceModel = (JavaSourceFileModel) fileModel;
+                String filename = fileModel.getFileName();
+                String packageName = javaSourceModel.getPackageName();
 
-            return packageName == null || packageName.equals("") ? filename : packageName + "." + filename;
+                if (filename.endsWith(".java"))
+                {
+                    filename = filename.substring(0, filename.length() - 5);
+                }
+
+                return packageName == null || packageName.equals("") ? filename : packageName + "." + filename;
+            }
+            else
+            {
+                return fileModel.getPrettyPathWithinProject();
+            }
         }
-        else
+        finally
         {
-            return fileModel.getPrettyPathWithinProject();
+            ExecutionStatistics.get().end(NAME);
         }
     }
 
     @Override
     public String getMethodName()
     {
-        return "getPrettyPathForFile";
+        return NAME;
     }
 
     @Override

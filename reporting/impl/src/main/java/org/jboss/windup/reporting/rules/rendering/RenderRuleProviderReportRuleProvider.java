@@ -35,7 +35,7 @@ public class RenderRuleProviderReportRuleProvider extends WindupRuleProvider
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(RuleExecutionTimeReportRuleProvider.class);
+        return asClassList(ExecutionTimeReportRuleProvider.class);
     }
 
     @Override

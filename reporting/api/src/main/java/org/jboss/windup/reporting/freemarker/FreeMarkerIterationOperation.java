@@ -18,6 +18,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -85,12 +86,13 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ReportModel payload)
     {
+        String templatePath = payload.getTemplatePath();
+        String outputFilename = payload.getReportFilename();
+
+        ExecutionStatistics.get().begin("FreeMarkerIterationOperation.render(" + templatePath + ", " + outputFilename + ")");
         try
         {
             ReportService reportService = new ReportService(event.getGraphContext());
-
-            String templatePath = payload.getTemplatePath();
-            String outputFilename = payload.getReportFilename();
 
             Path outputDir = Paths.get(reportService.getReportDirectory());
 
@@ -143,6 +145,10 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         catch (TemplateException e)
         {
             throw new WindupException("FreeMarkerOperation TemplateException: " + e.getMessage(), e);
+        }
+        finally
+        {
+            ExecutionStatistics.get().end("FreeMarkerIterationOperation.render(" + templatePath + ", " + outputFilename + ")");
         }
     }
 

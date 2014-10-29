@@ -6,6 +6,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateBooleanModel;
@@ -25,6 +26,7 @@ import freemarker.template.TemplateModelException;
  */
 public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
 {
+    private static final String NAME = "getMigrationEffortPoints";
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;
 
@@ -38,12 +40,13 @@ public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
     @Override
     public String getMethodName()
     {
-        return "getMigrationEffortPoints";
+        return NAME;
     }
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 2)
         {
             throw new TemplateModelException(
@@ -55,7 +58,9 @@ public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(1);
         boolean recursive = recursiveBooleanModel.getAsBoolean();
 
-        return classificationService.getMigrationEffortPoints(projectModel, recursive)
+        Object result = classificationService.getMigrationEffortPoints(projectModel, recursive)
                     + inlineHintService.getMigrationEffortPoints(projectModel, recursive);
+        ExecutionStatistics.get().end(NAME);
+        return result;
     }
 }

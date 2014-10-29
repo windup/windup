@@ -1,6 +1,7 @@
 package org.jboss.windup.exec;
 
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -19,6 +20,8 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Checks;
+import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
@@ -29,6 +32,8 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
  */
 public class WindupProcessorImpl implements WindupProcessor
 {
+    private static Logger LOG = Logging.get(WindupProcessorImpl.class);
+
     @Inject
     private WindupRuleLoader windupConfigurationLoader;
 
@@ -44,6 +49,8 @@ public class WindupProcessorImpl implements WindupProcessor
     @Override
     public void execute(WindupConfiguration windupConfiguration)
     {
+        long startTime = System.currentTimeMillis();
+
         validateConfig(windupConfiguration);
 
         GraphContext context = windupConfiguration.getGraphContext();
@@ -77,6 +84,12 @@ public class WindupProcessorImpl implements WindupProcessor
         }
 
         ruleSubset.perform(event, createEvaluationContext());
+
+        long endTime = System.currentTimeMillis();
+        long seconds = (endTime - startTime) / 1000L;
+        LOG.info("Windup execution took " + seconds + " seconds to execute on input: " + windupConfiguration.getInputPath() + "!");
+
+        ExecutionStatistics.get().reset();
     }
 
     private FileModel getFileModel(GraphContext context, Path path)

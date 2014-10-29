@@ -6,6 +6,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.service.ApplicationReportIndexService;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -24,7 +25,7 @@ import freemarker.template.TemplateModelException;
 public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMethod
 {
 
-    private static final String PROJECT_MODEL_TO_APPLICATION_INDEX = "projectModelToApplicationIndex";
+    private static final String NAME = "projectModelToApplicationIndex";
 
     private ApplicationReportIndexService service;
 
@@ -37,12 +38,13 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
     @Override
     public String getMethodName()
     {
-        return PROJECT_MODEL_TO_APPLICATION_INDEX;
+        return NAME;
     }
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
             throw new TemplateModelException("Error, method expects one argument (ProjectModel)");
@@ -50,6 +52,7 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
         StringModel stringModelArg = (StringModel) arguments.get(0);
         ProjectModel projectModel = (ProjectModel) stringModelArg.getWrappedObject();
         ApplicationReportIndexModel index = service.getApplicationReportIndexForProjectModel(projectModel);
+        ExecutionStatistics.get().end(NAME);
         return index;
     }
 }

@@ -1,6 +1,5 @@
 package org.jboss.windup.decompiler.procyon;
 
-import org.jboss.windup.util.Checks;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,6 +19,8 @@ import org.jboss.windup.decompiler.api.DecompilationFailure;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.util.Filter;
+import org.jboss.windup.util.Checks;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import com.strobel.assembler.InputTypeLoader;
 import com.strobel.assembler.metadata.ClasspathTypeLoader;
@@ -271,6 +272,7 @@ public class ProcyonDecompiler implements Decompiler
 
             try
             {
+                ExecutionStatistics.get().begin("ProcyonDecompiler.decompileIndividualItem");
                 // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
                 DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
                 t.start();
@@ -296,6 +298,10 @@ public class ProcyonDecompiler implements Decompiler
                 DecompilationFailure ex = new DecompilationFailure(msg, name, th);
                 log.log(Level.SEVERE, msg, ex);
                 res.addFailure(ex);
+            }
+            finally
+            {
+                ExecutionStatistics.get().end("ProcyonDecompiler.decompileIndividualItem");
             }
         }
 

@@ -35,16 +35,10 @@ public interface Service<FRAMETYPE extends VertexFrame>
     FRAMETYPE createInMemory();
 
     /**
-     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned
-     * instance will already be persisted in the graph.
+     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned instance will already be
+     * persisted in the graph.
      */
     FRAMETYPE create();
-
-    /**
-     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
-     * id. The returned instance will already be persisted in the graph.
-     */
-    FRAMETYPE create(Object id);
 
     /**
      * Adds the type of this service to the provided {@link WindupVertexFrame}, and returns the result
@@ -62,20 +56,18 @@ public interface Service<FRAMETYPE extends VertexFrame>
     Iterable<FRAMETYPE> findAll();
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
-     * properties.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given properties.
      */
     Iterable<FRAMETYPE> findAllByProperties(String[] keys, String[] vals);
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
-     * property.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given property.
      */
     Iterable<FRAMETYPE> findAllByProperty(String key, Object value);
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the
-     * specified property matching the given regexes.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the specified property matching the given
+     * regexes.
      */
     Iterable<FRAMETYPE> findAllByPropertyMatchingRegex(String key, String... regex);
 
@@ -90,8 +82,7 @@ public interface Service<FRAMETYPE extends VertexFrame>
     FRAMETYPE getUnique() throws NonUniqueResultException;
 
     /**
-     * Search the graph for a model of the appropriate type with the given property name and value. Return
-     * <code>null</code> if not found.
+     * Search the graph for a model of the appropriate type with the given property name and value. Return <code>null</code> if not found.
      */
     FRAMETYPE getUniqueByProperty(String property, Object value) throws NonUniqueResultException;
 

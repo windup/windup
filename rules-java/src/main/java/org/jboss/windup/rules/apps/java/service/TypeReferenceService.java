@@ -12,6 +12,7 @@ import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
@@ -25,21 +26,24 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     }
 
     /**
-     * Returns the list of most frequently hinted packages (based upon JavaInlineHintModel references) within the given
-     * ProjectModel. If recursive is set to true, then also include child projects.
+     * Returns the list of most frequently hinted packages (based upon JavaInlineHintModel references) within the given ProjectModel. If recursive is
+     * set to true, then also include child projects.
      * 
      * nameDepth controls how many package levels to include (com.* vs com.example.* vs com.example.sub.*)
      */
     public Map<String, Integer> getPackageUseFrequencies(ProjectModel projectModel, int nameDepth, boolean recursive)
     {
+        ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(projectModel,nameDepth,recursive)");
         Map<String, Integer> packageUseCount = new HashMap<>();
         getPackageUseFrequencies(packageUseCount, projectModel, nameDepth, recursive);
+        ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(projectModel,nameDepth,recursive)");
         return packageUseCount;
     }
 
     private void getPackageUseFrequencies(Map<String, Integer> data, ProjectModel projectModel, int nameDepth,
                 boolean recursive)
     {
+        ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
         // 1. Get all JavaHints for the given project
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
         pipeline.in(FileModel.FILE_TO_PROJECT_MODEL).in(InlineHintModel.FILE_MODEL);
@@ -110,14 +114,18 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         {
             for (ProjectModel childProject : projectModel.getChildProjects())
             {
+                ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
                 getPackageUseFrequencies(data, childProject, nameDepth, recursive);
+                ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
             }
         }
+        ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
     }
 
     public JavaTypeReferenceModel createTypeReference(FileModel fileModel, TypeReferenceLocation location,
                 int lineNumber, int columnNumber, int length, String source)
     {
+        ExecutionStatistics.get().begin("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");
         JavaTypeReferenceModel model = create();
 
         model.setFile(fileModel);
@@ -127,6 +135,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         model.setSourceSnippit(source);
         model.setReferenceLocation(location);
 
+        ExecutionStatistics.get().end("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");
         return model;
     }
 

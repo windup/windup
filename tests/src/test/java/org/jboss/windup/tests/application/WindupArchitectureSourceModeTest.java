@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -151,7 +152,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     /**
      * Validate that the expected Properties Models were found
      */
-    private void validatePropertiesModels(GraphContext context)
+    private void validatePropertiesModels(GraphContext context) throws Exception
     {
         GraphService<PropertiesModel> service = new GraphService<>(context, PropertiesModel.class);
 
@@ -160,9 +161,10 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         {
             numberFound++;
 
-            Assert.assertEquals("value1", model.getProperty("example1"));
-            Assert.assertEquals("anothervalue", model.getProperty("anotherproperty"));
-            Assert.assertEquals("1234", model.getProperty("timetaken"));
+            Properties props = model.getProperties();
+            Assert.assertEquals("value1", props.getProperty("example1"));
+            Assert.assertEquals("anothervalue", props.getProperty("anotherproperty"));
+            Assert.assertEquals("1234", props.getProperty("timetaken"));
         }
 
         Assert.assertEquals(1, numberFound);

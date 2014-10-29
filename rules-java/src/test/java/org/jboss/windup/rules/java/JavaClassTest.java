@@ -71,9 +71,8 @@ public class JavaClassTest
     @Test
     public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(getDefaultPath()))
         {
-
             final String inputDir = "src/test/java/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
@@ -129,4 +128,9 @@ public class JavaClassTest
         }
     }
 
+    private Path getDefaultPath()
+    {
+        return FileUtils.getTempDirectory().toPath().resolve("Windup")
+                    .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
+    }
 }

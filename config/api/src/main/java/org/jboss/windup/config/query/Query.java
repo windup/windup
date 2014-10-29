@@ -16,6 +16,8 @@ import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Task;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -83,34 +85,41 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
      */
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
+    public boolean evaluate(final GraphRewrite event, final EvaluationContext context)
     {
-        this.setInitialFramesSelector(createInitialFramesSelector(this));
-        Iterable<WindupVertexFrame> resultIterable = framesSelector.getFrames(event, context);
-        Iterator<WindupVertexFrame> iterator = resultIterable.iterator();
-        List<WindupVertexFrame> result = new ArrayList<WindupVertexFrame>();
-        while (iterator.hasNext())
+        final String queryStr = toString();
+        return ExecutionStatistics.performBenchmarked(queryStr, new Task<Boolean>()
         {
-            result.add(iterator.next());
-        }
-
-        if (resultFilter != null)
-        {
-            List<WindupVertexFrame> filtered = new LinkedList<>();
-            for (WindupVertexFrame frame : result)
+            public Boolean execute()
             {
-                if (resultFilter.accept(frame))
+                Query.this.setInitialFramesSelector(createInitialFramesSelector(Query.this));
+                Iterable<WindupVertexFrame> resultIterable = framesSelector.getFrames(event, context);
+                Iterator<WindupVertexFrame> iterator = resultIterable.iterator();
+                List<WindupVertexFrame> result = new ArrayList<WindupVertexFrame>();
+                while (iterator.hasNext())
                 {
-                    filtered.add(frame);
+                    result.add(iterator.next());
                 }
+
+                if (resultFilter != null)
+                {
+                    List<WindupVertexFrame> filtered = new LinkedList<>();
+                    for (WindupVertexFrame frame : result)
+                    {
+                        if (resultFilter.accept(frame))
+                        {
+                            filtered.add(frame);
+                        }
+                    }
+                    result.retainAll(filtered);
+                }
+
+                Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
+                variables.setVariable(outputVar, result);
+
+                return result.iterator().hasNext();
             }
-            result.retainAll(filtered);
-        }
-
-        Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
-        variables.setVariable(outputVar, result);
-
-        return result.iterator().hasNext();
+        });
     }
 
     /*

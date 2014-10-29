@@ -1,20 +1,14 @@
 package org.jboss.windup.rules.apps.java.service;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.model.JavaParameterModel;
+import org.jboss.windup.util.ExecutionStatistics;
 
 /**
  * Contains methods for searching, updating, and deleting {@link JavaClassModel} frames.
@@ -33,11 +27,15 @@ public class JavaClassService extends GraphService<JavaClassModel>
      */
     public JavaClassModel getUniqueByName(String qualifiedName) throws NonUniqueResultException
     {
-        return getUniqueByProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME, qualifiedName);
+        ExecutionStatistics.get().begin("getUniqueByName(qualifiedName)");
+        JavaClassModel result = getUniqueByProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME, qualifiedName);
+        ExecutionStatistics.get().end("getUniqueByName(qualifiedName)");
+        return result;
     }
 
     public synchronized JavaClassModel getOrCreate(String qualifiedName) throws NonUniqueResultException
     {
+        ExecutionStatistics.get().begin("JavaClassService.getOrCreate(qualifiedName)");
         JavaClassModel clz = resolveByQualifiedName(qualifiedName);
 
         if (clz == null)
@@ -48,38 +46,49 @@ public class JavaClassService extends GraphService<JavaClassModel>
             clz.setPackageName(Types.getPackage(qualifiedName));
         }
 
+        ExecutionStatistics.get().end("JavaClassService.getOrCreate(qualifiedName)");
         return clz;
     }
 
     public Iterable<JavaClassModel> findByJavaClassPattern(String regex)
     {
-        return super.findAllByPropertyMatchingRegex("qualifiedName", regex);
+        ExecutionStatistics.get().begin("JavaClassService.findByJavaClassPattern(regex)");
+        Iterable<JavaClassModel> result = super.findAllByPropertyMatchingRegex("qualifiedName", regex);
+        ExecutionStatistics.get().end("JavaClassService.findByJavaClassPattern(regex)");
+        return result;
     }
 
     public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
-        return getGraphContext().getQuery().type(JavaClassModel.class)
-                    .has("packageName", packageName).vertices(getType());
+        ExecutionStatistics.get().begin("JavaClassService.findByJavaPackage(packageName)");
+        Iterable<JavaClassModel> result = getGraphContext().getQuery().type(JavaClassModel.class)
+                    .has(JavaClassModel.PACKAGE_NAME, packageName).vertices(getType());
+        ExecutionStatistics.get().end("JavaClassService.findByJavaPackage(packageName)");
+        return result;
+
     }
 
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
-        return getGraphContext().getQuery().type(JavaClassModel.class)
+        ExecutionStatistics.get().begin("JavaClassService.findByJavaVersion(version)");
+        Iterable<JavaClassModel> result = getGraphContext().getQuery().type(JavaClassModel.class)
                     .has(JavaClassModel.MAJOR_VERSION, version.getMajor())
                     .has(JavaClassModel.MINOR_VERSION, version.getMinor()).vertices(getType());
+        ExecutionStatistics.get().end("JavaClassService.findByJavaVersion(version)");
+        return result;
     }
 
     /**
-     * Since {@link JavaClassModel} may actually be ambiguous if multiple copies of the class have been defined, attempt
-     * to resolve the unique instance, or return an {@link AmbiguousJavaClassModel} if multiple types exist.
+     * Since {@link JavaClassModel} may actually be ambiguous if multiple copies of the class have been defined, attempt to resolve the unique
+     * instance, or return an {@link AmbiguousJavaClassModel} if multiple types exist.
      */
     public JavaClassModel resolveByQualifiedName(String qualifiedClassName)
     {
+        ExecutionStatistics.get().begin("JavaClassService.resolveByQualifiedName(qualifiedClassName)");
         try
         {
             JavaClassModel model = getUniqueByProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME,
                         qualifiedClassName);
-
             return model;
         }
         catch (NonUniqueResultException e)
@@ -104,13 +113,17 @@ public class JavaClassService extends GraphService<JavaClassModel>
                 ambiguousModel.setQualifiedName(qualifiedClassName);
                 ambiguousModel.addReference(candidate);
             }
-
             return ambiguousModel;
+        }
+        finally
+        {
+            ExecutionStatistics.get().end("JavaClassService.resolveByQualifiedName(qualifiedClassName)");
         }
     }
 
     public JavaMethodModel addJavaMethod(JavaClassModel jcm, String methodName, JavaClassModel[] params)
     {
+        ExecutionStatistics.get().begin("JavaClassService.addJavaMethod(jcm, methodName, params)");
         JavaMethodModel javaMethodModel = getGraphContext().getFramed().addVertex(null, JavaMethodModel.class);
         javaMethodModel.setMethodName(methodName);
 
@@ -123,6 +136,7 @@ public class JavaClassService extends GraphService<JavaClassModel>
             javaMethodModel.addMethodParameter(paramModel);
         }
         jcm.addJavaMethod(javaMethodModel);
+        ExecutionStatistics.get().end("JavaClassService.addJavaMethod(jcm, methodName, params)");
         return javaMethodModel;
     }
 

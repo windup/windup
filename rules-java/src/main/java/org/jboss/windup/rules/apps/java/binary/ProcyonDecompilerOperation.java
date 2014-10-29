@@ -22,6 +22,7 @@ import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -49,6 +50,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
     @Override
     public void perform(final GraphRewrite event, final EvaluationContext context, final ArchiveModel payload)
     {
+        ExecutionStatistics.get().begin("ProcyonDecompilationOperation.perform");
         if (payload.getUnzippedDirectory() != null)
         {
             Decompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
@@ -129,6 +131,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                             exc);
             }
         }
+        ExecutionStatistics.get().end("ProcyonDecompilationOperation.perform");
     }
 
     @Override

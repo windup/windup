@@ -8,6 +8,7 @@ import java.util.List;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 
 import freemarker.ext.beans.BeanModel;
@@ -38,16 +39,18 @@ import freemarker.template.TemplateModelException;
  */
 public class SortFilesByPathMethod implements WindupFreeMarkerMethod
 {
+    private static final String NAME = "sortFilesByPathAscending";
 
     @Override
     public String getMethodName()
     {
-        return "sortFilesByPathAscending";
+        return NAME;
     }
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
@@ -69,6 +72,7 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
             }
         });
 
+        ExecutionStatistics.get().end(NAME);
         return fileModelList;
     }
 

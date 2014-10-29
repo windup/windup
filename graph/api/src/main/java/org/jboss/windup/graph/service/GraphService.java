@@ -1,15 +1,17 @@
 package org.jboss.windup.graph.service;
 
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
+import org.apache.tools.ant.BuildException;
 import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
+import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Task;
 
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -35,14 +37,30 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public void commit()
     {
-        this.context.getGraph().getBaseGraph().commit();
+        ExecutionStatistics.performBenchmarked("GraphService.commit", new Task<Void>()
+        {
+            @Override
+            public Void execute()
+            {
+                getGraphContext().getGraph().getBaseGraph().commit();
+                return null;
+            }
+        });
     }
 
     @Override
-    public long count(Iterable<?> obj)
+    public long count(final Iterable<?> obj)
     {
-        GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<Iterable<?>, Object>();
-        return pipe.start(obj).count();
+        return ExecutionStatistics.performBenchmarked("GraphService.count", new Task<Long>()
+        {
+            @Override
+            public Long execute() throws BuildException
+            {
+                GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<Iterable<?>, Object>();
+                long result = pipe.start(obj).count();
+                return result;
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -60,27 +78,27 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public T create()
     {
-        return context.getFramed().addVertex(null, this.type);
-    }
-
-    /**
-     * Create a new instance of the given {@link WindupVertexFrame} type with given ID.
-     */
-    @Override
-    public T create(Object id)
-    {
-        return context.getFramed().addVertex(id, this.type);
-    }
-
-    public void delete(T frame)
-    {
-        context.getFramed().removeVertex(frame.asVertex());
+        return ExecutionStatistics.performBenchmarked("GraphService.create", new Task<T>()
+        {
+            @Override
+            public T execute() throws BuildException
+            {
+                return context.getFramed().addVertex(null, type);
+            }
+        });
     }
 
     @Override
-    public T addTypeToModel(WindupVertexFrame model)
+    public T addTypeToModel(final WindupVertexFrame model)
     {
-        return GraphService.addTypeToModel(getGraphContext(), model, type);
+        return ExecutionStatistics.performBenchmarked("GraphService.addTypeToModel", new Task<T>()
+        {
+            @Override
+            public T execute() throws BuildException
+            {
+                return GraphService.addTypeToModel(getGraphContext(), model, type);
+            }
+        });
     }
 
     protected FramedGraphQuery findAllQuery()
@@ -95,54 +113,75 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
-    public Iterable<T> findAllByProperties(String[] keys, String[] vals)
+    public Iterable<T> findAllByProperties(final String[] keys, final String[] vals)
     {
-        FramedGraphQuery fgq = findAllQuery();
-
-        for (int i = 0, j = keys.length; i < j; i++)
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperties(" + Arrays.asList(keys) + ")", new Task<Iterable<T>>()
         {
-            String key = keys[i];
-            String val = vals[i];
-
-            fgq = fgq.has(key, val);
-        }
-
-        return fgq.vertices(this.type);
-    }
-
-    @Override
-    public Iterable<T> findAllByProperty(String key, Object value)
-    {
-        return context.getFramed().getVertices(key, value, this.type);
-    }
-
-    @Override
-    public Iterable<T> findAllByPropertyMatchingRegex(String key, String... regex)
-    {
-        if (regex.length == 0)
-            return IterablesUtil.emptyIterable();
-
-        final String regexFinal;
-        if (regex.length == 1)
-        {
-            regexFinal = regex[0];
-        }
-        else
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.append("\\b(");
-            int i = 0;
-            for (String value : regex)
+            @Override
+            public Iterable<T> execute() throws BuildException
             {
-                if (i > 0)
-                    builder.append("|");
-                builder.append(value);
-                i++;
+                FramedGraphQuery fgq = findAllQuery();
+
+                for (int i = 0, j = keys.length; i < j; i++)
+                {
+                    String key = keys[i];
+                    String val = vals[i];
+
+                    fgq = fgq.has(key, val);
+                }
+
+                return fgq.vertices(type);
             }
-            builder.append(")\\b");
-            regexFinal = builder.toString();
-        }
-        return findAllQuery().has(key, Text.REGEX, regexFinal).vertices(type);
+        });
+    }
+
+    @Override
+    public Iterable<T> findAllByProperty(final String key, final Object value)
+    {
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperty(" + key + ")", new Task<Iterable<T>>()
+        {
+            @Override
+            public Iterable<T> execute() throws BuildException
+            {
+                return context.getFramed().getVertices(key, value, type);
+            }
+        });
+    }
+
+    @Override
+    public Iterable<T> findAllByPropertyMatchingRegex(final String key, final String... regex)
+    {
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyMatchingRegex(" + key + ")", new Task<Iterable<T>>()
+        {
+            @Override
+            public Iterable<T> execute() throws BuildException
+            {
+                if (regex.length == 0)
+                    return IterablesUtil.emptyIterable();
+
+                final String regexFinal;
+                if (regex.length == 1)
+                {
+                    regexFinal = regex[0];
+                }
+                else
+                {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("\\b(");
+                    int i = 0;
+                    for (String value : regex)
+                    {
+                        if (i > 0)
+                            builder.append("|");
+                        builder.append(value);
+                        i++;
+                    }
+                    builder.append(")\\b");
+                    regexFinal = builder.toString();
+                }
+                return findAllQuery().has(key, Text.REGEX, regexFinal).vertices(type);
+            }
+        });
     }
 
     /**
@@ -254,34 +293,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return context.getGraph().getBaseGraph().newTransaction();
     }
 
-    public static List<WindupVertexFrame> toVertexFrames(GraphContext graphContext, Iterable<Vertex> vertices)
-    {
-        List<WindupVertexFrame> results = new ArrayList<>();
-        for (Vertex v : vertices)
-        {
-            WindupVertexFrame frame = graphContext.getFramed().frame(v, WindupVertexFrame.class);
-            results.add(frame);
-        }
-        return results;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T extends WindupVertexFrame> List<T> toVertexFrames(GraphContext graphContext,
-                Iterable<Vertex> vertices, Class<T> frameType)
-    {
-        List<T> results = new ArrayList<>();
-        for (Vertex v : vertices)
-        {
-            WindupVertexFrame frame = graphContext.getFramed().frame(v, WindupVertexFrame.class);
-            if (frameType.isAssignableFrom(frame.getClass()))
-                results.add((T) frame);
-            else
-                throw new IllegalStateException("Expected frame type [" + frameType.getName() + "] but was "
-                            + frame.getClass().getInterfaces() + ".");
-        }
-        return results;
-    }
-
     /**
      * Adds the specified type to this frame, and returns a new object that implements this type.
      *
@@ -296,9 +307,16 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
-    public void remove(T model)
+    public void remove(final T model)
     {
-        model.asVertex().remove();
+        ExecutionStatistics.performBenchmarked("GraphService.commit", new Task<Void>()
+        {
+            @Override
+            public Void execute()
+            {
+                model.asVertex().remove();
+                return null;
+            }
+        });
     }
-
 }

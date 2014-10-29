@@ -6,6 +6,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.WindupRuleMetadata;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.template.TemplateModelException;
 
@@ -40,7 +41,10 @@ public class GetAllRuleProviders implements WindupFreeMarkerMethod
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
-        return WindupRuleMetadata.instance(this.event).getProviders();
+        ExecutionStatistics.get().begin(NAME);
+        Object result = WindupRuleMetadata.instance(this.event).getProviders();
+        ExecutionStatistics.get().end(NAME);
+        return result;
     }
 
 }

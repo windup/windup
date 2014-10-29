@@ -80,10 +80,9 @@ public class GraphContextImpl implements GraphContext
             PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
                         .make();
             mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
-            // titanGraph.makeKey(key).dataType(String.class).indexed(Vertex.class).make();
         }
 
-        for (String key : new String[] { "archiveEntry" })
+        for (String key : new String[] { "referenceSourceSnippit" })
         {
             PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
                         .make();

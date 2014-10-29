@@ -7,6 +7,7 @@ import java.util.List;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.comparator.ProjectModelByRootFileComparator;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -33,15 +34,18 @@ import freemarker.template.TemplateModelException;
  */
 public class SortProjectsByPathMethod implements WindupFreeMarkerMethod
 {
+    private static final String NAME = "sortProjectsByPathAscending";
+
     @Override
     public String getMethodName()
     {
-        return "sortProjectsByPathAscending";
+        return NAME;
     }
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<ProjectModel>)");
@@ -55,6 +59,7 @@ public class SortProjectsByPathMethod implements WindupFreeMarkerMethod
             projectModelList.add(pm);
         }
         Collections.sort(projectModelList, new ProjectModelByRootFileComparator());
+        ExecutionStatistics.get().end(NAME);
         return projectModelList;
     }
 
