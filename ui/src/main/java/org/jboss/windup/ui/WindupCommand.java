@@ -12,6 +12,8 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -62,6 +64,9 @@ public class WindupCommand implements UICommand
 
     @Inject
     private WindupProcessor processor;
+
+    @Inject
+    private ResourceFactory resourceFactory;
 
     private List<WindupOptionAndInput> inputOptions = new ArrayList<>();
 
@@ -147,9 +152,16 @@ public class WindupCommand implements UICommand
 
         if (value instanceof Resource<?>)
         {
-            return ((Resource<?>) value).getUnderlyingResourceObject();
+            Resource<?> resourceResolved = getResourceResolved((Resource<?>) value);
+            return resourceResolved.getUnderlyingResourceObject();
         }
         return value;
+    }
+
+    private Resource<?> getResourceResolved(Resource<?> value) {
+        Resource<?> resource = (Resource<?>) value;
+        File file = (File) resource.getUnderlyingResourceObject();
+        return new ResourcePathResolver(resourceFactory, resource, file.getPath()).resolve().get(0);
     }
 
     @Override
