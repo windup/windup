@@ -55,7 +55,11 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
         if (payload.getUnzippedDirectory() != null)
         {
             ProcyonDecompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
-            decompiler.setExecutorService(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1));
+            int cores =Runtime.getRuntime().availableProcessors()/2;
+            if(cores < 1){
+                cores = 1;
+            }
+           // decompiler.setExecutorService(Executors.newFixedThreadPool(cores));
             String archivePath = ((FileModel) payload).getFilePath();
             File archive = new File(archivePath);
             File outputDir = new File(payload.getUnzippedDirectory().getFilePath());
