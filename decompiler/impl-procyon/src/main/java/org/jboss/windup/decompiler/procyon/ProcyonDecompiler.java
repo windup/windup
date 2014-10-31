@@ -319,8 +319,9 @@ public class ProcyonDecompiler implements Decompiler
             final String typeName = StringUtils.removeEnd(name, ".class");
 
             // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
+            metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
             final DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
-            Callable callable = new Callable<File>()
+            Callable<File> callable = new Callable<File>()
             {
 <<<<<<< HEAD
                 ExecutionStatistics.get().begin("ProcyonDecompiler.decompileIndividualItem");
@@ -387,9 +388,6 @@ public class ProcyonDecompiler implements Decompiler
                 
 
             };
-            
-            if (++classesDecompiled % 100 == 0)
-                metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
             tasks.add(callable);
         }
         try
