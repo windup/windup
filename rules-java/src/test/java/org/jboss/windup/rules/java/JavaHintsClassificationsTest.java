@@ -146,7 +146,7 @@ public class JavaHintsClassificationsTest
                 Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
 
-                Assert.assertEquals(3, provider.getTypeReferences().size());
+                Assert.assertEquals(5, provider.getTypeReferences().size());
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
                 Assert.assertEquals(3, hints.size());
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());

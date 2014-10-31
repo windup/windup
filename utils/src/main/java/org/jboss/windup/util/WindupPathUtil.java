@@ -21,6 +21,11 @@ public class WindupPathUtil
     {
         return getWindupUserDir().resolve("rules");
     }
+    
+    public static Path getWindupIgnoreListDir()
+    {
+        return getWindupUserDir().resolve("ignore");
+    }
 
     public static Path getWindupHome()
     {
@@ -30,6 +35,11 @@ public class WindupPathUtil
     public static Path getWindupHomeRules()
     {
         return getWindupHome().resolve("rules");
+    }
+    
+    public static Path getWindupHomeIgnoreListDir()
+    {
+        return getWindupHome().resolve("ignore");
     }
 
     /**

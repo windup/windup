@@ -24,6 +24,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
     public static final String SOURCE_MODE = "sourceMode";
     public static final String EXCLUDE_JAVA_PACKAGES = "excludeJavaPackages";
     public static final String SCAN_JAVA_PACKAGES = "scanJavaPackages";
+    public static final String IGNORED_FILES = "ignoredFiles";
 
     /**
      * Specifies which Java packages should be scanned by windup
@@ -36,6 +37,16 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = SCAN_JAVA_PACKAGES, direction = Direction.OUT)
     Iterable<PackageModel> getScanJavaPackages();
+    
+    /**
+     * Add a file that will be ignored during the migration.
+     * @param ignoredFile
+     */
+    @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
+    void addIgnoredFileRegex(IgnoredFileRegexModel ignoredFile);
+
+    @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
+    Iterable<IgnoredFileRegexModel> getIgnoredFileRegexes();
 
     /**
      * Specifies which Java packages should be scanned by windup

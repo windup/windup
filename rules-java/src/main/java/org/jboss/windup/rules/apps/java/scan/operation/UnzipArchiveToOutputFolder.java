@@ -15,10 +15,15 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
 import org.jboss.windup.util.Logging;
 
 public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<ArchiveModel>
@@ -147,7 +152,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 FileModel parentFileModel)
     {
         File fileReference = parentFileModel.asFile();
-
+        WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
+                    context);
         if (fileReference.isDirectory())
         {
             File[] subFiles = fileReference.listFiles();
@@ -157,9 +163,15 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 {
                     FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
                     subFileModel.setParentArchive(archiveModel);
-
+                    //check if this file should not be ignored
+                    if(checkIfIgnored(subFile.getName(),windupJavaConfigurationService.getIgnoredFileRegexes())) {
+                        LOG.info("File/Directory placed in " + subFile.getAbsolutePath() + " was ignored, because matched some of the ignore regex.");
+                        continue;
+                    }
+                    
                     if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
                     {
+
                         File newZipFile = subFileModel.asFile();
                         ArchiveModel newArchiveModel = GraphService.addTypeToModel(context, subFileModel,
                                     ArchiveModel.class);
@@ -167,6 +179,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                         newArchiveModel.setArchiveName(newZipFile.getName());
                         archiveModel.addChildArchive(newArchiveModel);
                         unzipToTempDirectory(context, tempFolder, newZipFile, newArchiveModel);
+
                     }
 
                     if (subFile.isDirectory())
@@ -176,6 +189,22 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 }
             }
         }
+    }
+    
+    private boolean checkIfIgnored(String fileName,List<String> regexes) {
+        boolean ignored = false;
+        if (regexes != null && regexes.size()!=0)
+        {
+            for (String r : regexes)
+            {
+                if (Pattern.matches(r, fileName))
+                {
+                    ignored = true;
+                    continue;
+                }
+            }
+        }
+        return ignored;
     }
 
     @Override

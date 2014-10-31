@@ -53,6 +53,7 @@ public class JavaClassTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rexster:rexster", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
@@ -131,7 +132,7 @@ public class JavaClassTest
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
-            Assert.assertEquals(3, provider.getFirstRuleMatchCount());
+            Assert.assertEquals(5, provider.getFirstRuleMatchCount());
             Assert.assertEquals(1, provider.getSecondRuleMatchCount());
         }
     }

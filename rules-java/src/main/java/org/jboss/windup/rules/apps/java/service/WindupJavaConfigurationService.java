@@ -1,7 +1,11 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.model.IgnoredFileRegexModel;
 import org.jboss.windup.rules.apps.java.model.PackageModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 
@@ -9,10 +13,12 @@ import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
  * Provides methods for loading and working with {@link WindupJavaConfigurationModel} objects.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
- *
+ * 
  */
 public class WindupJavaConfigurationService extends GraphService<WindupJavaConfigurationModel>
 {
+
+    private List<String> ignoredRegexes;
 
     public WindupJavaConfigurationService(GraphContext context)
     {
@@ -29,6 +35,21 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
         if (config == null)
             config = service.create();
         return config;
+    }
+
+    public List<String> getIgnoredFileRegexes()
+    {
+        if (ignoredRegexes == null)
+        {
+            ignoredRegexes = new ArrayList<String>();
+
+            WindupJavaConfigurationModel cfg = getJavaConfigurationModel(getGraphContext());
+            for (IgnoredFileRegexModel ignored : cfg.getIgnoredFileRegexes())
+            {
+                ignoredRegexes.add(ignored.getRegex());
+            }
+        }
+        return ignoredRegexes;
     }
 
     /**

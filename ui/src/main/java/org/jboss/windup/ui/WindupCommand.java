@@ -182,13 +182,27 @@ public class WindupCommand implements UICommand
             Files.createDirectories(userRulesDir);
         }
         windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
-
+        
+        Path userIgnoreDir = WindupPathUtil.getWindupIgnoreListDir();
+        if (!Files.isDirectory(userIgnoreDir))
+        {
+            Files.createDirectories(userIgnoreDir);
+        }
+        windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
+        
         Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
         if (!Files.isDirectory(windupHomeRulesDir))
         {
             Files.createDirectories(windupHomeRulesDir);
         }
         windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
+        
+        Path windupHomeIgnoreDir = WindupPathUtil.getWindupHomeIgnoreListDir();
+        if (!Files.isDirectory(windupHomeIgnoreDir))
+        {
+            Files.createDirectories(windupHomeIgnoreDir);
+        }
+        windupConfiguration.addDefaultUserIgnorePath(windupHomeIgnoreDir);
 
         boolean overwrite = this.overwrite.getValue();
         if (!overwrite && pathNotEmpty(windupConfiguration.getOutputDirectory().toFile()))

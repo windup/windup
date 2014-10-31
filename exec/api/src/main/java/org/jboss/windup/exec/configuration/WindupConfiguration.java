@@ -23,6 +23,7 @@ import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OfflineModeOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
+import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 
@@ -35,6 +36,7 @@ import org.jboss.windup.graph.GraphContext;
 public class WindupConfiguration
 {
     private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
+    private static final String DEFAULT_USER_IGNORE_DIRECTORIES_OPTION = "defaultUserIgnorePaths";
 
     private Predicate<WindupRuleProvider> ruleProviderFilter;
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
@@ -167,6 +169,19 @@ public class WindupConfiguration
         }
         return results;
     }
+    
+    public Iterable<Path> getAllIgnoreDirectories()
+    {
+        Set<Path> results = new HashSet<>();
+        results.addAll(getDefaultUserIgnoreDirectories());
+        File userSpecifiedFile = getOptionValue(UserIgnorePathOption.NAME);
+        if (userSpecifiedFile != null)
+        {
+            results.add(userSpecifiedFile.toPath());
+        }
+        return results;
+    }
+
 
     /**
      * Contains a list of {@link Path}s with directories that contains user provided rules.
@@ -174,6 +189,16 @@ public class WindupConfiguration
     public List<Path> getDefaultUserRulesDirectories()
     {
         List<Path> paths = getOptionValue(DEFAULT_USER_RULES_DIRECTORIES_OPTION);
+        if (paths == null)
+        {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(paths);
+    }
+    
+    public List<Path> getDefaultUserIgnoreDirectories()
+    {
+        List<Path> paths = getOptionValue(DEFAULT_USER_IGNORE_DIRECTORIES_OPTION);
         if (paths == null)
         {
             return Collections.emptyList();
@@ -197,6 +222,32 @@ public class WindupConfiguration
 
         File userSpecifiedRulePath = getOptionValue(UserRulesDirectoryOption.NAME);
         if (userSpecifiedRulePath != null && userSpecifiedRulePath.toPath().equals(path))
+        {
+            return this;
+        }
+
+        for (Path existingPath : paths)
+        {
+            if (existingPath.equals(path))
+            {
+                return this;
+            }
+        }
+        paths.add(path);
+        return this;
+    }
+    
+    public WindupConfiguration addDefaultUserIgnorePath(Path path)
+    {
+        List<Path> paths = getOptionValue(DEFAULT_USER_IGNORE_DIRECTORIES_OPTION);
+        if (paths == null)
+        {
+            paths = new ArrayList<>();
+            setOptionValue(DEFAULT_USER_IGNORE_DIRECTORIES_OPTION, paths);
+        }
+
+        File userSpecifiedIgnorePath = getOptionValue(UserIgnorePathOption.NAME);
+        if (userSpecifiedIgnorePath != null && userSpecifiedIgnorePath.toPath().equals(path))
         {
             return this;
         }

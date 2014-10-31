@@ -66,6 +66,11 @@ public class WindupProcessorImpl implements WindupProcessor
         {
             configModel.addUserRulesPath(getFileModel(context, path));
         }
+        
+        for (Path path : windupConfiguration.getAllIgnoreDirectories())
+        {
+            configModel.addUserIgnorePath(getFileModel(context, path));
+        }
 
         GraphRewrite event = new GraphRewrite(context);
 
