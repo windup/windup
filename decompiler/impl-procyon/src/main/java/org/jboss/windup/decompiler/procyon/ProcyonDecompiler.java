@@ -318,6 +318,7 @@ public class ProcyonDecompiler implements Decompiler
 
         public DecompileExecutor(MetadataSystem metadataSystem, String typeName)
         {
+            setDaemon(true);
             this.metadataSystem = metadataSystem;
             this.typeName = typeName;
         }

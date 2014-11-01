@@ -1,6 +1,8 @@
 package org.jboss.windup.exec.configuration;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +13,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
@@ -27,6 +30,7 @@ import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.WindupPathUtil;
 
 /**
  * Configuration of WindupProcessor.
@@ -36,6 +40,9 @@ import org.jboss.windup.graph.GraphContext;
  */
 public class WindupConfiguration
 {
+    // this needs to use Logger.getLogger (instead of the one in windup-util) to avoid classpath issues in Bootstrap
+    private static final Logger LOG = Logger.getLogger(WindupConfiguration.class.getCanonicalName());
+
     private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
     private static final String DEFAULT_USER_IGNORE_DIRECTORIES_OPTION = "defaultUserIgnorePaths";
 
@@ -44,6 +51,57 @@ public class WindupConfiguration
     private Map<String, Object> configurationOptions = new HashMap<>();
 
     private GraphContext context;
+
+    public WindupConfiguration()
+    {
+        addDefaultDirectories();
+    }
+
+    private void addDefaultDirectories()
+    {
+        // add dist/rules/ and ${forge.home}/rules/ to the user rules directory list
+        try
+        {
+            Path userRulesDir = WindupPathUtil.getWindupUserRulesDir();
+            if (!Files.isDirectory(userRulesDir))
+            {
+                try
+                {
+                    Files.createDirectories(userRulesDir);
+                }
+                catch (IOException e)
+                {
+                    LOG.warning("Failed to create a folder for user rules at: " + userRulesDir);
+                }
+            }
+            addDefaultUserRulesDirectory(userRulesDir);
+        }
+        catch (Exception e)
+        {
+            LOG.warning("Unable to create user rules directory in user's home");
+        }
+
+        try
+        {
+            Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
+            if (!Files.isDirectory(windupHomeRulesDir))
+            {
+                try
+                {
+                    Files.createDirectories(windupHomeRulesDir);
+                }
+                catch (IOException e)
+                {
+                    LOG.warning("Failed to create a folder for user rules at: " + windupHomeRulesDir);
+                }
+            }
+            addDefaultUserRulesDirectory(windupHomeRulesDir);
+        }
+        catch (Exception e)
+        {
+            LOG.warning("Unable to create user rules directory in forge home");
+        }
+    }
 
     /**
      * Sets a configuration option to the specified value.

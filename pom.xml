@@ -76,6 +76,7 @@
         <module>exec</module>
         <module>reporting</module>
         <module>ui</module>
+        <module>gui</module>
 
         <module>utils</module>
         <module>tests</module>

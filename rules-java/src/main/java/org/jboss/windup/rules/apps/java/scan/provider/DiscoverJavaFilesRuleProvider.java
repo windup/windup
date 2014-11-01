@@ -32,6 +32,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.WindupPathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -104,14 +105,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
                         classFilePath.length() - JAVA_SUFFIX_LEN);
 
-            String packageName = "";
-            if (qualifiedName.contains("."))
-                packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
-
-            if (packageName.startsWith("src.main.java."))
-            {
-                packageName = packageName.substring("src.main.java.".length());
-            }
+            String packageName = WindupPathUtil.pathToPackagename(classFilePath);
 
             // make sure we mark this as a Java file
             JavaSourceFileModel javaFileModel = GraphService.addTypeToModel(graphContext, payload,
