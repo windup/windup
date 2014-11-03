@@ -6,6 +6,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -22,6 +23,7 @@ import freemarker.template.TemplateModelException;
  */
 public class GetEffortForFile implements WindupFreeMarkerMethod
 {
+    private static final String NAME = "getMigrationEffortPointsForFile";
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;
 
@@ -35,12 +37,13 @@ public class GetEffortForFile implements WindupFreeMarkerMethod
     @Override
     public String getMethodName()
     {
-        return "getMigrationEffortPointsForFile";
+        return NAME;
     }
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
             throw new TemplateModelException(
@@ -49,7 +52,8 @@ public class GetEffortForFile implements WindupFreeMarkerMethod
         StringModel fileModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) fileModelArg.getWrappedObject();
 
-        return classificationService.getMigrationEffortPoints(fileModel)
-                    + inlineHintService.getMigrationEffortPoints(fileModel);
+        Object result = classificationService.getMigrationEffortPoints(fileModel) + inlineHintService.getMigrationEffortPoints(fileModel);
+        ExecutionStatistics.get().end(NAME);
+        return result;
     }
 }

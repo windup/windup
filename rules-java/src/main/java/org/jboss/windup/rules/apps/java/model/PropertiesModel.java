@@ -1,10 +1,9 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import java.util.HashSet;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
-import java.util.Set;
 
-import org.apache.commons.codec.binary.Base64;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
@@ -40,56 +39,21 @@ public interface PropertiesModel extends WindupVertexFrame
     public void setFileResource(FileModel resource);
 
     /**
-     * Sets a Property value. This is implemented by a {@link JavaHandler} as the key needs to be encoded to avoid the
-     * use of reserved characters.
+     * Gets the contents of the file as a {@link Properties} object.
      */
     @JavaHandler
-    public void setProperty(String key, String value);
-
-    /**
-     * Gets a Property value. This is implemented by a {@link JavaHandler} as the key needs to be encoded to avoid the
-     * use of reserved characters.
-     */
-    @JavaHandler
-    public String getProperty(String key);
-
-    /**
-     * Gets a Set containing all of the Property keys. This is implemented by a {@link JavaHandler} as the key needs to
-     * be encoded to avoid the use of reserved characters.
-     */
-    @JavaHandler
-    public Set<String> keySet();
+    public Properties getProperties() throws IOException;
 
     abstract class Impl implements PropertiesModel, JavaHandlerContext<Vertex>
     {
-        private static final String PREFIX = "P:";
-
-        public void setProperty(String key, String value)
+        public Properties getProperties() throws IOException
         {
-            String encodedKey = Base64.encodeBase64URLSafeString(key.getBytes());
-            String encodedValue = Base64.encodeBase64String(value.getBytes());
-            it().setProperty(PREFIX + encodedKey, encodedValue);
-        }
-
-        public String getProperty(String key)
-        {
-            String encodedKey = Base64.encodeBase64URLSafeString(key.getBytes());
-            String encodedValue = it().getProperty(PREFIX + encodedKey);
-            return new String(Base64.decodeBase64(encodedValue));
-        }
-
-        public Set<String> keySet()
-        {
-            Set<String> keySet = new HashSet<>();
-            for (String key : it().getPropertyKeys())
+            try (InputStream is = getFileResource().asInputStream())
             {
-                if (key.startsWith(PREFIX))
-                {
-                    String decodedKey = new String(Base64.decodeBase64(key.substring(PREFIX.length())));
-                    keySet.add(decodedKey);
-                }
+                Properties props = new Properties();
+                props.load(is);
+                return props;
             }
-            return keySet;
         }
     }
 }

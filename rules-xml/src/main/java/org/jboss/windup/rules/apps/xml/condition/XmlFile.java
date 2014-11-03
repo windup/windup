@@ -31,6 +31,7 @@ import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
@@ -118,6 +119,7 @@ public class XmlFile extends GraphCondition
     @Override
     public boolean evaluate(final GraphRewrite event, final EvaluationContext context)
     {
+        ExecutionStatistics.get().begin("XmlFile.evaluate");
         // list will cache all the created xpath matches for this given condition running
         List<WindupVertexFrame> resultLocations = new ArrayList<WindupVertexFrame>();
         GraphContext graphContext = event.getGraphContext();
@@ -230,6 +232,7 @@ public class XmlFile extends GraphCondition
             }
         }
         Variables.instance(event).setVariable(variable, resultLocations);
+        ExecutionStatistics.get().end("XmlFile.evaluate");
         return !resultLocations.isEmpty();
     }
 

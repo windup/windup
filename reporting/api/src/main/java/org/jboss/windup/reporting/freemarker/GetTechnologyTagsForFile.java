@@ -7,6 +7,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -24,6 +25,7 @@ import freemarker.template.TemplateModelException;
  */
 public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
 {
+    private static final String NAME = "getTechnologyTagsForFile";
     private GraphContext context;
 
     @Override
@@ -35,18 +37,21 @@ public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
             throw new TemplateModelException("Error, method expects one argument (FileModel)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
-        return new TechnologyTagService(this.context).findTechnologyTagsForFile(fileModel);
+        Iterable<TechnologyTagModel> result = new TechnologyTagService(this.context).findTechnologyTagsForFile(fileModel);
+        ExecutionStatistics.get().end(NAME);
+        return result;
     }
 
     @Override
     public String getMethodName()
     {
-        return "getTechnologyTagsForFile";
+        return NAME;
     }
 }

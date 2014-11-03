@@ -1,11 +1,7 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
@@ -18,7 +14,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
-import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -53,12 +49,14 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     @Override
     public ConditionBuilder when()
     {
-        return Query.find(FileModel.class).withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX,
-                    ".*\\.properties$").withProperty(FileModel.IS_DIRECTORY, false);
+        return Query.find(FileModel.class).withProperty(FileModel.IS_DIRECTORY, false)
+                    .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX,
+                                ".*\\.properties$");
     }
 
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
+        ExecutionStatistics.get().begin("DiscoverPropertiesFilesRuleProvider.perform");
         GraphService<PropertiesModel> service = new GraphService<>(event.getGraphContext(), PropertiesModel.class);
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         PropertiesModel properties = service.create();
@@ -68,22 +66,6 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
 
         technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
 
-        try (InputStream is = payload.asInputStream())
-        {
-            Properties props = new Properties();
-            props.load(is);
-
-            for (Object key : props.keySet())
-            {
-                String property = StringUtils.trim(key.toString());
-                String propertyValue = StringUtils.trim(props.get(key).toString());
-                properties.setProperty(property, propertyValue);
-            }
-        }
-        catch (IOException e)
-        {
-            throw new WindupException("Failed to load properties file: " + payload.getFilePath() + " due to: "
-                        + e.getMessage());
-        }
+        ExecutionStatistics.get().end("DiscoverPropertiesFilesRuleProvider.perform");
     }
 }

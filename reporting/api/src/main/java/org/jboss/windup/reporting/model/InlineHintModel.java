@@ -9,13 +9,13 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * This is used to classify lines within application source {@link FileModel} instances, and to provide hints and
- * related data regarding specific positions within those files.
+ * This is used to classify lines within application source {@link FileModel} instances, and to provide hints and related data regarding specific
+ * positions within those files.
  */
 @TypeValue(InlineHintModel.TYPE)
 public interface InlineHintModel extends FileLocationModel
 {
-    public static final String TYPE = "BlackListModel";
+    public static final String TYPE = "Inlinehintmodel";
     public static final String HINT = "hint";
     public static final String RULE_ID = "ruleID";
     public static final String EFFORT = "effort";

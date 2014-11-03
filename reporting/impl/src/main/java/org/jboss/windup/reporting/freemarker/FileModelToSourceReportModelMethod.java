@@ -6,6 +6,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportModelService;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -25,7 +26,7 @@ import freemarker.template.TemplateModelException;
  */
 public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMethod
 {
-    public static final String METHOD_NAME = "fileModelToSourceReport";
+    public static final String NAME = "fileModelToSourceReport";
     private SourceReportModelService sourceReportService;
 
     @Override
@@ -37,12 +38,13 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
     @Override
     public String getMethodName()
     {
-        return METHOD_NAME;
+        return NAME;
     }
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
             throw new TemplateModelException("Error, method expects one argument (FileModel)");
@@ -51,6 +53,7 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
         FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
         SourceReportModel result = sourceReportService
                     .getSourceReportForFileModel(fileModel);
+        ExecutionStatistics.get().end(NAME);
         return result;
     }
 

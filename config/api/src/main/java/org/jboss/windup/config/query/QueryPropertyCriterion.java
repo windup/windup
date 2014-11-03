@@ -5,7 +5,6 @@ import org.jboss.windup.config.GraphRewrite;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 class QueryPropertyCriterion implements QueryGremlinCriterion
@@ -102,8 +101,9 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
             return true;
         }
     }
-    
-    public String toString() {
-        return ".has(" +propertyName + ","+searchType+ "," +searchValue+ ")";
+
+    public String toString()
+    {
+        return ".has(" + propertyName + "," + searchType + "," + searchValue + ")";
     }
 }

@@ -22,19 +22,20 @@ import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsM
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.RuleProviderExecutionStatisticsService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Produces a simple text report of how long each RuleProvider's rule took to execute, as well as the amount of time
- * spent in each phase.
+ * Produces a simple text report of how long each RuleProvider's rule took to execute, the time spent in each phase, and any other timing data that
+ * was been stored in {@link ExecutionStatistics}.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class RuleExecutionTimeReportRuleProvider extends WindupRuleProvider
+public class ExecutionTimeReportRuleProvider extends WindupRuleProvider
 {
     @Override
     public RulePhase getPhase()
@@ -71,8 +72,11 @@ public class RuleExecutionTimeReportRuleProvider extends WindupRuleProvider
                                             + e.getMessage(), e);
                             }
 
-                            Path outputPath = statsDir.resolve("timing.txt");
-                            try (FileWriter fw = new FileWriter(outputPath.toFile()))
+                            Path detailedExecutionStatsOutputPath = statsDir.resolve("detailed_stats.csv");
+                            ExecutionStatistics.get().serializeTimingData(detailedExecutionStatsOutputPath);
+
+                            Path ruleTimingOutputPath = statsDir.resolve("timing.txt");
+                            try (FileWriter fw = new FileWriter(ruleTimingOutputPath.toFile()))
                             {
 
                                 RuleProviderExecutionStatisticsService statsByRuleProviderService = new RuleProviderExecutionStatisticsService(
@@ -135,7 +139,7 @@ public class RuleExecutionTimeReportRuleProvider extends WindupRuleProvider
                             }
                             catch (IOException e)
                             {
-                                throw new WindupException("Error creating output file: " + outputPath.toString()
+                                throw new WindupException("Error creating output file: " + ruleTimingOutputPath.toString()
                                             + " due to: " + e.getMessage(), e);
                             }
 

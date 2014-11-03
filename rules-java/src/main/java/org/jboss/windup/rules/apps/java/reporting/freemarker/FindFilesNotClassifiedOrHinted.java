@@ -12,6 +12,7 @@ import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.util.ExecutionStatistics;
 
 import com.tinkerpop.blueprints.Vertex;
 
@@ -31,6 +32,7 @@ import freemarker.template.TemplateModelException;
  */
 public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
 {
+    private static final String NAME = "findFilesNotClassifiedOrHinted";
     private GraphContext context;
 
     @Override
@@ -42,6 +44,7 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
@@ -68,13 +71,14 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
             }
         }
 
+        ExecutionStatistics.get().end(NAME);
         return resultModels;
     }
 
     @Override
     public String getMethodName()
     {
-        return "findFilesNotClassifiedOrHinted";
+        return NAME;
     }
 
 }

@@ -18,6 +18,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.VariableResolvingASTVisitor;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -57,33 +58,53 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     {
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
-            WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
-                        event.getGraphContext());
-            if (!windupJavaConfigurationService.shouldScanPackage(payload.getPackageName()))
-            {
-                // should not analyze this one, skip it
-                return;
-            }
-
-            ASTParser parser = ASTParser.newParser(AST.JLS3);
-            parser.setBindingsRecovery(true);
-            parser.setResolveBindings(true);
-            File sourceFile = payload.asFile();
+            ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.analyzeFile");
             try
             {
-                parser.setSource(FileUtils.readFileToString(sourceFile).toCharArray());
+                WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
+                            event.getGraphContext());
+                if (!windupJavaConfigurationService.shouldScanPackage(payload.getPackageName()))
+                {
+                    // should not analyze this one, skip it
+                    return;
+                }
+
+                ASTParser parser = ASTParser.newParser(AST.JLS3);
+                parser.setBindingsRecovery(true);
+                parser.setResolveBindings(true);
+                File sourceFile = payload.asFile();
+                try
+                {
+                    parser.setSource(FileUtils.readFileToString(sourceFile).toCharArray());
+                }
+                catch (IOException e)
+                {
+                    throw new WindupException("Failed to get source for file: " + payload.getFilePath()
+                                + " due to: "
+                                + e.getMessage(), e);
+                }
+                parser.setKind(ASTParser.K_COMPILATION_UNIT);
+
+                ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFile");
+                final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+                ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.parseFile");
+
+                ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.visitorConstruct");
+                VariableResolvingASTVisitor visitor = new VariableResolvingASTVisitor(event.getGraphContext());
+                ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.visitorConstruct");
+
+                ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.visitorInit");
+                visitor.init(cu, payload);
+                ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.visitorInit");
+
+                ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.accept");
+                cu.accept(visitor);
+                ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.accept");
             }
-            catch (IOException e)
+            finally
             {
-                throw new WindupException("Failed to get source for file: " + payload.getFilePath()
-                            + " due to: "
-                            + e.getMessage(), e);
+                ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.analyzeFile");
             }
-            parser.setKind(ASTParser.K_COMPILATION_UNIT);
-            final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-            VariableResolvingASTVisitor visitor = new VariableResolvingASTVisitor(event.getGraphContext());
-            visitor.init(cu, payload);
-            cu.accept(visitor);
         }
 
         @Override

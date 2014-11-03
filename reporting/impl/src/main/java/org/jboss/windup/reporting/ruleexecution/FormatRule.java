@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.SystemUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Operation;
@@ -42,6 +43,7 @@ public class FormatRule implements WindupFreeMarkerMethod
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
             throw new TemplateModelException("Error, method expects one argument (Rule)");
@@ -49,6 +51,7 @@ public class FormatRule implements WindupFreeMarkerMethod
         StringModel stringModelArg = (StringModel) arguments.get(0);
         Rule rule = (Rule) stringModelArg.getWrappedObject();
 
+        ExecutionStatistics.get().end(NAME);
         return "addRule()" + serializeRule(rule, 0);
     }
 

@@ -18,12 +18,11 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
-import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -48,6 +47,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
+        ExecutionStatistics.get().begin("AddClassFileMetadata.perform()");
         try
         {
             try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
@@ -137,6 +137,10 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             classificationService.attachClassification(payload, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
                         JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
+        }
+        finally
+        {
+            ExecutionStatistics.get().end("AddClassFileMetadata.perform()");
         }
     }
 
