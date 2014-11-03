@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jboss.windup</groupId>
+		<artifactId>windup-parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+	</parent>
+	<build>
+		<plugins>
+			<!-- Forge addon creation -->
+			<plugin>
+				<groupId>org.jboss.forge.furnace</groupId>
+				<artifactId>furnace-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-dot</id>
+						<phase>prepare-package</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>create-forge-addon</id>
+                        			<phase>package</phase>
+                        			<goals>
+                         			   <goal>jar</goal>
+                       			 </goals>
+                       			 <configuration>
+                        		    <classifier>forge-addon</classifier>
+                      		         </configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<groupId>org.jboss.windup.rexster</groupId>
+	<artifactId>rexster</artifactId>
+
+	<name>Windup Engine - Rexster</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.tinkerpop.rexster</groupId>
+			<artifactId>rexster-server</artifactId>
+			<version>2.5.0</version>
+			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>com.tinkerpop.blueprints</groupId>
+					<artifactId>blueprints-core	</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.googlecode.json-simple</groupId>
+					<artifactId>json-simple</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jettison</groupId>
+					<artifactId>jettison</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.furnace.container</groupId>
+			<artifactId>simple</artifactId>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.graph</groupId>
+			<artifactId>windup-graph</artifactId>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+	<groupId>commons-io</groupId>
+	<artifactId>commons-io</artifactId>
+	<version>2.4</version>
+<optional>true</optional>
+</dependency>
+
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+			<optional>true</optional>
+		</dependency>
+
+	</dependencies>
+</project>

@@ -61,6 +61,7 @@
 
     <modules>
         <module>frames</module>
+	<module>rexster</module>
         <module>graph</module>
 
         <module>config</module>
@@ -254,6 +255,77 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- Furnace CDI -->
+            <dependency>
+                <groupId>org.jboss.forge.furnace.container</groupId>
+                <artifactId>cdi</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${version.furnace}</version>
+                <scope>provided</scope>
+                <!-- Not propagated to submodules :/ -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- Furnace CDI impl -->
+            <dependency>
+                <groupId>org.jboss.forge.furnace.container</groupId>
+                <artifactId>cdi-impl</artifactId>
+                <version>${version.furnace}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+	    
+            <dependency>
+                <groupId>org.jboss.forge.furnace.test</groupId>
+                <artifactId>furnace-test-harness</artifactId>
+                <version>${version.furnace}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.forge.furnace.test</groupId>
+                <artifactId>arquillian-furnace-classpath</artifactId>
+                <version>${version.furnace}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.7.7</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+            </dependency>
+
+            <!-- Commons -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>

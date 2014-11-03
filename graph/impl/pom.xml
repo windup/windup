@@ -20,6 +20,7 @@
             <artifactId>windup-graph-api</artifactId>
             <scope>provided</scope>
         </dependency>
+		
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-berkeleyje</artifactId>
