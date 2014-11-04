@@ -25,6 +25,11 @@ public interface Decompiler
     public DecompilationResult decompileClassFile(File rootDir, Path classFilePath, File outputDir)
                 throws DecompilationException;
     
+    /**
+     * Close all the resources
+     */
+    public void close();
+    
 
     /**
      * Decompiles all .class files and archives in the given directory and places results in the specified output

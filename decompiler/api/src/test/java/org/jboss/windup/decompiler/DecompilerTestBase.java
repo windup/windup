@@ -99,6 +99,7 @@ public abstract class DecompilerTestBase
 
         final File sampleFile = new File(decompDir, "org/apache/wicket/ajax/AbstractAjaxResponse.java");
         Assert.assertTrue("Decompiled class did not exist in: " + sampleFile.getAbsolutePath(), sampleFile.exists());
+        dec.close();
     }
 
     /**
@@ -134,6 +135,7 @@ public abstract class DecompilerTestBase
 
         final File sampleFile = new File(decompDir, "org/apache/wicket/ajax/AbstractAjaxResponse.java");
         Assert.assertTrue("Decompiled class files exist:\n    " + sampleFile.getAbsolutePath(), sampleFile.exists());
+        dec.close();
     }
 
     @Test
@@ -171,6 +173,7 @@ public abstract class DecompilerTestBase
 
         final File sampleFile = new File(decompDir, "org/apache/wicket/ajax/AbstractAjaxResponse.java");
         Assert.assertTrue("Decompiled class did not exist in: " + sampleFile.getAbsolutePath(), sampleFile.exists());
+        dec.close();
     }
 
 }
