@@ -26,10 +26,7 @@ import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.util.Filter;
 import org.jboss.windup.util.Checks;
-<<<<<<< HEAD
 import org.jboss.windup.util.ExecutionStatistics;
-=======
->>>>>>> WINDUP-336: Decompilation multithreaded
 
 import com.strobel.assembler.InputTypeLoader;
 import com.strobel.assembler.metadata.ClasspathTypeLoader;
@@ -73,6 +70,19 @@ public class ProcyonDecompiler implements Decompiler
             throw new IllegalArgumentException("Configuration must not be null.");
 
         this.procyonConf = configuration;
+    }
+
+    public void close()
+    {
+        this.exService.shutdown();
+        try
+        {
+            exService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            throw new IllegalStateException("Was not able to decompile in the given time limit.");
+        }
     }
 
     /**
@@ -140,8 +150,9 @@ public class ProcyonDecompiler implements Decompiler
         decompileDirectory(rootDir, outputDir, subPath, result);
         return result;
     }
-    
-    public void setExecutorService(ExecutorService service) {
+
+    public void setExecutorService(ExecutorService service)
+    {
         this.exService.shutdown();
         try
         {
@@ -151,7 +162,7 @@ public class ProcyonDecompiler implements Decompiler
         {
             throw new IllegalStateException("Was not able to decompile in the given time limit.");
         }
-        this.exService=service;
+        this.exService = service;
     }
 
     private void decompileDirectory(final File rootDir, File outputDir, Path subPath, final DecompilationResult result)
@@ -323,21 +334,13 @@ public class ProcyonDecompiler implements Decompiler
             final DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
             Callable<File> callable = new Callable<File>()
             {
-<<<<<<< HEAD
-                ExecutionStatistics.get().begin("ProcyonDecompiler.decompileIndividualItem");
-                // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
-                DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
-                t.start();
-                t.join(60000L); // wait up to one minute
-                if (!t.success)
-=======
-
                 @Override
                 public File call() throws Exception
->>>>>>> WINDUP-336: Decompilation multithreaded
                 {
                     try
                     {
+                        ExecutionStatistics.get().begin("ProcyonDecompiler.decompileIndividualItem");
+                        // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
                         t.start();
                         t.join(60000L); // wait up to one minute
                         if (!t.success)
@@ -359,34 +362,12 @@ public class ProcyonDecompiler implements Decompiler
                         log.log(Level.SEVERE, msg, ex);
                         res.addFailure(ex);
                     }
+                    finally
+                    {
+                        ExecutionStatistics.get().end("ProcyonDecompiler.decompileIndividualItem");
+                    }
                     return null;
                 }
-<<<<<<< HEAD
-
-                File outputFile = t.outputFile;
-                if (outputFile != null)
-                    res.addDecompiled(name, outputFile.getAbsolutePath());
-
-                // Taken from mstrobel's, not sure what's the purpose.
-                if (++classesDecompiled % 100 == 0)
-                    metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
-            }
-            catch (Throwable th)
-            {
-                String msg = "Error during decompilation of " + archive.getPath() + "!" + name + ":\n    "
-                            + th.getMessage();
-                DecompilationFailure ex = new DecompilationFailure(msg, name, th);
-                log.log(Level.SEVERE, msg, ex);
-                res.addFailure(ex);
-            }
-            finally
-            {
-                ExecutionStatistics.get().end("ProcyonDecompiler.decompileIndividualItem");
-            }
-=======
-                
-                
-
             };
             tasks.add(callable);
         }
@@ -397,7 +378,6 @@ public class ProcyonDecompiler implements Decompiler
         catch (InterruptedException e)
         {
             throw new IllegalStateException("Decompilation was interrupted.");
->>>>>>> WINDUP-336: Decompilation multithreaded
         }
         return res;
     }
