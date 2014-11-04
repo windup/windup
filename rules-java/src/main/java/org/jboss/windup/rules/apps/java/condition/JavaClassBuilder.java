@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.condition;
 
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.ocpsoft.rewrite.config.Condition;
@@ -18,14 +19,14 @@ public interface JavaClassBuilder extends ConditionBuilder
     JavaClassBuilderAt at(TypeReferenceLocation... locations);
 
     /**
-     * Specify the the variable in which to store matching {@link JavaTypeReferenceModel} results, and complete the builder,
-     * returning a fully configured {@link Condition} object.
+     * Specify the the variable in which to store matching {@link JavaTypeReferenceModel} results, and complete the
+     * builder, returning a fully configured {@link Condition} object.
      */
     ConditionBuilder as(String variable);
-    
+
     /**
-     * File name/path in which the java class is located.
-     * @param regex
+     * Specify a regex that filters against {@link JavaSourceFileModel#getPrettyPathWithinProject()}. (E.g. The fully
+     * qualified type name.)
      */
-    JavaClassBuilderInFile inFile(String regex);
+    JavaClassBuilderInFile inType(String regex);
 }

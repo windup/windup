@@ -5,11 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -20,11 +17,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -33,20 +25,14 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
-import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class JavaClassTest
+public class JavaClassTestFile1
 {
     @Deployment
     @Dependencies({
@@ -60,7 +46,7 @@ public class JavaClassTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(JavaClassTestRuleProvider.class)
+                    .addClass(TestJavaClassTestRuleProvider.class)
                     .addClass(JavaClassTest.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -74,7 +60,7 @@ public class JavaClassTest
     }
 
     @Inject
-    JavaClassTestRuleProvider provider;
+    TestJavaClassTestRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -94,23 +80,28 @@ public class JavaClassTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
+            // Fill the graph with test data.
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
 
+            // Create FileModel for $inputDir
             FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
             inputPathFrame.setFilePath(inputDir);
             inputPathFrame.setProjectModel(pm);
             pm.addFileModel(inputPathFrame);
 
+            // Set project.rootFileModel to inputPath
             pm.setRootFileModel(inputPathFrame);
 
+            // Create FileModel for $inputDir/HintsClassificationsTest.java
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTestFile1.java");
+            fileModel.setFilePath(inputDir + "/JavaHintsClassificationsTest.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
+            // Create FileModel for $inputDir/JavaClassTest.java
             fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTestFile2.java");
+            fileModel.setFilePath(inputDir + "/JavaClassTest.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
@@ -118,8 +109,9 @@ public class JavaClassTest
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                        JavaClassTestRuleProvider.class));
-            processorConfig.setGraphContext(context);
+                        TestJavaClassTestRuleProvider.class));
+            processorConfig.setGraphContext(context).setRuleProviderFilter(
+                        new RuleProviderWithDependenciesPredicate(TestJavaClassTestRuleProvider.class));
             processorConfig.setInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
@@ -140,64 +132,5 @@ public class JavaClassTest
     {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
                     .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
-    }
-
-    @Singleton
-    public static class JavaClassTestRuleProvider extends WindupRuleProvider
-    {
-        private static Logger log = Logger.getLogger(RuleSubset.class.getName());
-
-        private int firstRuleMatchCount = 0;
-        private int secondRuleMatchCount = 0;
-
-        // @formatter:off
-        @Override
-        public Configuration getConfiguration(GraphContext context)
-        {
-            return ConfigurationBuilder.begin()
-            .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.*").inType(".*").at(TypeReferenceLocation.IMPORT)
-            ).perform(
-                Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        firstRuleMatchCount++;
-                        log.info("First rule matched: " + payload.getFile().getFilePath());
-                    }
-                }).endIteration()
-            )
-                    
-            .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.*").inType(".*JavaClassTestFile1").at(TypeReferenceLocation.IMPORT)
-            ).perform(
-                Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        secondRuleMatchCount++;
-                    }
-                }).endIteration()
-            );
-        }
-        // @formatter:on
-
-        public int getFirstRuleMatchCount()
-        {
-            return firstRuleMatchCount;
-        }
-
-        public int getSecondRuleMatchCount()
-        {
-            return secondRuleMatchCount;
-        }
-
-        @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-        {
-            return asClassList(AnalyzeJavaFilesRuleProvider.class);
-        }
     }
 }

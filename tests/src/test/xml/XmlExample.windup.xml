@@ -5,7 +5,7 @@
   <rules>
     <rule>
       <when>
-        <javaclass type="javax.servlet.http.HttpServletRequest">
+        <javaclass references="javax.servlet.http.HttpServletRequest">
           <location>METHOD_PARAMETER</location>
         </javaclass>
       </when>
