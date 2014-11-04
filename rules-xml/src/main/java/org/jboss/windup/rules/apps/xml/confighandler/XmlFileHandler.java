@@ -37,7 +37,7 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
     public XmlFile processElement(ParserContext handlerManager, Element element)
                 throws ConfigurationException
     {
-        String xpath = $(element).attr("xpath");
+        String xpath = $(element).attr("matches");
         String publicId = $(element).attr("public-id");
         Map<String, String> namespaceMappings = new HashMap<>();
 

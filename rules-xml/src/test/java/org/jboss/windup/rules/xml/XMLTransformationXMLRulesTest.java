@@ -1,17 +1,15 @@
 package org.jboss.windup.rules.xml;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -20,41 +18,38 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.reporting.config.Classification;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.FileLocationModel;
-import org.jboss.windup.rules.apps.xml.condition.XmlFile;
+import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
+import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class XmlFileNestedConditionTest
+public class XMLTransformationXMLRulesTest
 {
+
+    private static final String SIMPLE_XSLT_XSL = "simpleXSLT.xsl";
+    private static final String XSLT_EXTENSION = "-test-result.html";
+
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                /*
+                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded
+                 * version
+                 */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
@@ -64,7 +59,8 @@ public class XmlFileNestedConditionTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(TestXMLNestedXmlFileRuleProvider.class)
+                    .addAsResource("simpleXSLT.xsl")
+                    .addAsResource("simpleRule.windup.xml")
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -73,12 +69,8 @@ public class XmlFileNestedConditionTest
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
-
         return archive;
     }
-
-    @Inject
-    private TestXMLNestedXmlFileRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -87,7 +79,7 @@ public class XmlFileNestedConditionTest
     private GraphContextFactory factory;
 
     @Test
-    public void testNestedCondition() throws IOException
+    public void testXSLTTransformation() throws IOException
     {
         try (GraphContext context = factory.create())
         {
@@ -101,18 +93,18 @@ public class XmlFileNestedConditionTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            WindupConfigurationModel config = WindupConfigurationService.getConfigurationModel(context);
-
+            GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
+                        XsltTransformationModel.class);
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
+            Assert.assertFalse(transformationService.findAll().iterator().hasNext());
             Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
             {
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return (provider.getPhase() != RulePhase.REPORT_GENERATION) &&
-                                (provider.getPhase() != RulePhase.MIGRATION_RULES);
+                    return provider.getPhase() != RulePhase.REPORT_GENERATION;
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -122,68 +114,29 @@ public class XmlFileNestedConditionTest
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
-            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
+            Iterator<XsltTransformationModel> iterator = transformationService.findAll().iterator();
+            Assert.assertTrue(iterator.hasNext());
+            XsltTransformationModel xsltTransformation = iterator.next();
+            Assert.assertEquals(SIMPLE_XSLT_XSL, xsltTransformation.getSourceLocation());
+            Assert.assertEquals(XSLT_EXTENSION, xsltTransformation.getExtension());
+            XsltTransformationService xsltTransformationService = new XsltTransformationService(context);
+            Path transformedPath = xsltTransformationService.getTransformedXSLTPath().resolve(
+                        xsltTransformation.getResult());
 
-            Assert.assertEquals(1, provider.getXmlFileMatches().size());
-            List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-            for (ClassificationModel model : classifications)
+            int lineFound = 0;
+            try (BufferedReader br = new BufferedReader(new FileReader(transformedPath.toFile())))
             {
-                String classification = model.getClassification();
-                String classificationString = classification.toString();
-                Assert.assertEquals("Spring File", classificationString);
-            }
-            Assert.assertEquals(1, classifications.size());
-            Iterator<FileModel> iterator = classifications.get(0).getFileModels().iterator();
-            Assert.assertNotNull(iterator.next());
-            Assert.assertNotNull(iterator.next());
-            Assert.assertFalse(iterator.hasNext());
-        }
-    }
-
-    @Singleton
-    public static class TestXMLNestedXmlFileRuleProvider extends WindupRuleProvider
-    {
-        private Set<FileLocationModel> xmlFiles = new HashSet<>();
-
-        @Override
-        public RulePhase getPhase()
-        {
-            return RulePhase.POST_MIGRATION_RULES;
-        }
-
-        // @formatter:off
-        @Override
-        public Configuration getConfiguration(GraphContext context)
-        {
-            AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
+                String line = br.readLine();
+                while (line != null)
                 {
-                    xmlFiles.add(payload);
+                    if (line.contains("found GroupId"))
+                    {
+                        lineFound++;
+                    }
+                    line = br.readLine();
                 }
-            };
-
-            return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(XmlFile.matchesXpath("/abc:beans")
-                                    .namespace("abc", "http://www.springframework.org/schema/beans").as("first"))
-                        .perform(Classification.as("Spring File")
-                                               .and(
-                                                           Iteration.over("first")
-                                                           .when(XmlFile.from(Iteration.singleVariableIterationName("first")).matchesXpath("//windup:file-gate").namespace("windup", "http://www.jboss.org/schema/windup"))
-                                                           .perform(addTypeRefToList).endIteration()
-                                                           )
-                                );
-        }
-        // @formatter:on
-
-        public Set<FileLocationModel> getXmlFileMatches()
-        {
-            return xmlFiles;
+            }
+            Assert.assertEquals(19, lineFound);
         }
     }
-
 }

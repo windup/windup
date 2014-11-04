@@ -30,10 +30,8 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
@@ -56,6 +54,10 @@ public class XMLTransformationTest
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                /*
+                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded
+                 * version
+                 */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
@@ -98,8 +100,6 @@ public class XMLTransformationTest
                         + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
-
-            WindupConfigurationModel config = WindupConfigurationService.getConfigurationModel(context);
 
             GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
                         XsltTransformationModel.class);

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id="xmltestrules_1">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile matches="/abc:project">
+                    <namespace prefix="abc" uri="http://maven.apache.org/POM/4.0.0" />
+                </xmlfile>
+            </when>
+            <perform>
+                <xslt description="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl" />
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

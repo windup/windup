@@ -34,7 +34,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
     {
         String description = $(element).attr("description");
         String extension = $(element).attr("extension");
-        String xsltFile = $(element).attr("xsltFile");
+        String xsltFile = $(element).attr("template");
 
         Path pathContainingXml = handlerManager.getXmlInputPath();
         if (pathContainingXml != null)
