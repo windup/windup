@@ -40,7 +40,7 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
     public JavaClassBuilderAt processElement(ParserContext handlerManager, Element element)
                 throws ConfigurationException
     {
-        String type = $(element).attr("type");
+        String type = $(element).attr("references");
         if (StringUtils.isBlank(type))
         {
             throw new WindupException("Error, 'javaclass' element must have a non-empty 'type' attribute");
@@ -55,10 +55,10 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         }
 
         JavaClassBuilder javaClassReferences = JavaClass.references(type);
-        String namePattern = $(element).attr("name-regex");
+        String namePattern = $(element).attr("in");
         if (!StringUtils.isBlank(namePattern))
         {
-            javaClassReferences.inFile(namePattern);
+            javaClassReferences.inType(namePattern);
         }
         
         JavaClassBuilderAt javaClass = javaClassReferences.at(

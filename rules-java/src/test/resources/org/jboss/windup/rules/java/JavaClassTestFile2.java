@@ -52,7 +52,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class JavaHintsClassificationsTest
+public class JavaClassTestFile2
 {
     @Deployment
     @Dependencies({
@@ -101,7 +101,7 @@ public class JavaHintsClassificationsTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            String inputPath = "src/test/resources/org/jboss/windup/rules/java";
+            String inputPath = "src/test/java/org/jboss/windup/rules/java";
 
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
@@ -112,13 +112,13 @@ public class JavaHintsClassificationsTest
             pm.setRootFileModel(inputPathFrame);
 
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputPath + "/JavaClassTestFile1.java");
+            fileModel.setFilePath(inputPath + "/JavaHintsClassificationsTest.java");
             fileModel.setProjectModel(pm);
 
             pm.addFileModel(inputPathFrame);
             pm.addFileModel(fileModel);
             fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputPath + "/JavaClassTestFile2.java");
+            fileModel.setFilePath(inputPath + "/JavaClassTest.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
