@@ -34,7 +34,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     private final String regex;
     private List<TypeReferenceLocation> locations = Collections.emptyList();
     private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;
-    private String fileRegex;
+    private String typeFilterRegex;
 
     private JavaClass(String regex)
     {
@@ -58,9 +58,12 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
         return new JavaClassBuilderReferences(inputVarName);
     }
 
-    public JavaClassBuilderInFile inFile(String regex)
+    /**
+     * Specify a Java type pattern regex for which this condition should match.
+     */
+    public JavaClassBuilderInFile inType(String regex)
     {
-        this.fileRegex = regex;
+        this.typeFilterRegex = regex;
         return this;
     }
 
@@ -99,7 +102,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
             query = Query.find(JavaTypeReferenceModel.class);
         }
         query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, regex);
-        if (fileRegex != null)
+        if (typeFilterRegex != null)
         {
             QueryGremlinCriterion inFileWithName = new QueryGremlinCriterion()
             {
@@ -108,7 +111,6 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
                 {
                     Predicate regexPredicate = new Predicate()
                     {
-
                         @Override
                         public boolean evaluate(Object first, Object second)
                         {
@@ -118,7 +120,8 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
                     };
                     pipeline.as("result").out(FileReferenceModel.FILE_MODEL)
                                 .out(JavaSourceFileModel.JAVA_CLASS_MODEL)
-                                .has(JavaClassModel.PROPERTY_QUALIFIED_NAME, regexPredicate, fileRegex).back("result");
+                                .has(JavaClassModel.PROPERTY_QUALIFIED_NAME, regexPredicate, typeFilterRegex)
+                                .back("result");
                 }
             };
             query.piped(inFileWithName);
@@ -132,9 +135,9 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     {
         StringBuilder builder = new StringBuilder();
         builder.append("JavaClass");
-        if (fileRegex != null)
+        if (typeFilterRegex != null)
         {
-            builder.append(".inFile(" + fileRegex + ")");
+            builder.append(".inType(" + typeFilterRegex + ")");
         }
         if (regex != null)
         {
