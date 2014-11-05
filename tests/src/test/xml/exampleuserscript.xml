@@ -5,7 +5,7 @@
   <rules>
     <rule>
       <when>
-        <xmlfile xpath="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']">
+        <xmlfile matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']">
         	<namespace prefix="w" uri="http://java.sun.com/xml/ns/javaee"/>
         </xmlfile>
       </when>
@@ -13,7 +13,7 @@
         <hint>
         	<message>User script Container Auth</message>
         </hint>
-        <xslt description="User script XSLT Conversion" extension="userscript-converted-example.xml" xsltFile="exampleconversion_userdir.xslt"/>
+        <xslt description="User script XSLT Conversion" extension="userscript-converted-example.xml" template="exampleconversion_userdir.xslt"/>
       </perform>
     </rule>
   </rules>
