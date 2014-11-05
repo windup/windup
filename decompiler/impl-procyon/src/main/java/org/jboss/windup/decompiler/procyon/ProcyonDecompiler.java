@@ -176,7 +176,7 @@ public class ProcyonDecompiler implements Decompiler
         DecompilerSettings settings = getDefaultSettings(outputDir);
         // MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
         // MetadataSystem metadataSystem = new NoRetryMetadataSystem(rootDir.getPath());
-        final MetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());
+        
 
         // TODO: Rewrite with Commons IO's DirectoryWalker.
         File curDirFull = rootDir.toPath().resolve(subPath).toFile();
@@ -184,6 +184,7 @@ public class ProcyonDecompiler implements Decompiler
         Collection<Callable<File>> tasks = new ArrayList<Callable<File>>();
         for (File file : files)
         {
+            final MetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());
             // Directory...
             if (file.isDirectory())
             {
