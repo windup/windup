@@ -113,6 +113,10 @@
                         <encoding>UTF-8</encoding>
                         <meminitial>128m</meminitial>
                         <maxmem>512m</maxmem>
+                        <fork>true</fork>
+                        <compilerArgs>
+		            <arg>-J-Xss4m</arg>
+			</compilerArgs>
                     </configuration>
                 </plugin>
             </plugins>
