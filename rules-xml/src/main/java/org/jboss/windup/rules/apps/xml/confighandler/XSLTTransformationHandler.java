@@ -4,11 +4,13 @@ import static org.joox.JOOX.$;
 
 import java.nio.file.Path;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
 
@@ -34,19 +36,32 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
     {
         String description = $(element).attr("description");
         String extension = $(element).attr("extension");
-        String xsltFile = $(element).attr("xsltFile");
+        String template = $(element).attr("template");
+
+        if (StringUtils.isBlank(description))
+        {
+            throw new WindupException("Error, 'xslt' element must have a non-empty 'description' attribute");
+        }
+        if (StringUtils.isBlank(template))
+        {
+            throw new WindupException("Error, 'xslt' element must have a non-empty 'template' attribute");
+        }
+        if (StringUtils.isBlank(extension))
+        {
+            throw new WindupException("Error, 'xslt' element must have a non-empty 'extension' attribute");
+        }
 
         Path pathContainingXml = handlerManager.getXmlInputPath();
         if (pathContainingXml != null)
         {
             String fullPath;
-            if (xsltFile.startsWith("/") || xsltFile.startsWith("\\"))
+            if (template.startsWith("/") || template.startsWith("\\"))
             {
-                fullPath = xsltFile;
+                fullPath = template;
             }
             else
             {
-                fullPath = pathContainingXml.resolve(xsltFile).toAbsolutePath().toString();
+                fullPath = pathContainingXml.resolve(template).toAbsolutePath().toString();
             }
             return XSLTTransformation
                         .usingFilesystem(fullPath)
@@ -57,7 +72,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
         {
             ClassLoader xmlFileAddonClassLoader = handlerManager.getAddonContainingInputXML().getClassLoader();
             return XSLTTransformation
-                        .using(xsltFile, xmlFileAddonClassLoader)
+                        .using(template, xmlFileAddonClassLoader)
                         .withDescription(description)
                         .withExtension(extension);
         }

@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -34,11 +36,8 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Classification;
-import org.jboss.windup.reporting.config.Hint;
-import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileLocationModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.junit.Assert;
 import org.junit.Test;
@@ -48,7 +47,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class XMLHintsClassificationsTest
+public class XMLFileNestedConditionTest
 {
     @Deployment
     @Dependencies({
@@ -67,7 +66,7 @@ public class XMLHintsClassificationsTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(TestXMLHintsClassificationsRuleProvider.class)
+                    .addClass(TestXMLNestedXmlFileRuleProvider.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -81,7 +80,7 @@ public class XMLHintsClassificationsTest
     }
 
     @Inject
-    private TestXMLHintsClassificationsRuleProvider provider;
+    private TestXMLNestedXmlFileRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -90,7 +89,7 @@ public class XMLHintsClassificationsTest
     private GraphContextFactory factory;
 
     @Test
-    public void testHintAndClassificationOperation() throws IOException
+    public void testNestedCondition() throws IOException
     {
         try (GraphContext context = factory.create())
         {
@@ -123,27 +122,27 @@ public class XMLHintsClassificationsTest
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
-            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
                         ClassificationModel.class);
 
-            Assert.assertEquals(2, provider.getXmlFileMatches().size());
-            List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-            Assert.assertEquals(2, hints.size());
+            Assert.assertEquals(1, provider.getXmlFileMatches().size());
             List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
             for (ClassificationModel model : classifications)
             {
                 String classification = model.getClassification();
-                String string = classification.toString();
-                Assert.assertNotNull(string);
+                String classificationString = classification.toString();
+                Assert.assertEquals("Spring File", classificationString);
             }
             Assert.assertEquals(1, classifications.size());
-
+            Iterator<FileModel> iterator = classifications.get(0).getFileModels().iterator();
+            Assert.assertNotNull(iterator.next());
+            Assert.assertNotNull(iterator.next());
+            Assert.assertFalse(iterator.hasNext());
         }
     }
 
     @Singleton
-    public static class TestXMLHintsClassificationsRuleProvider extends WindupRuleProvider
+    public static class TestXMLNestedXmlFileRuleProvider extends WindupRuleProvider
     {
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
@@ -169,15 +168,16 @@ public class XMLHintsClassificationsTest
             return ConfigurationBuilder
                         .begin()
                         .addRule()
-                        .when(XmlFile.matchesXpath("/abc:ejb-jar")
-                                    .namespace("abc", "http://java.sun.com/xml/ns/javaee"))
-                        .perform(Classification.as("Maven POM File")
-                                               .with(Link.to("Apache Maven POM Reference",
-                                                            "http://maven.apache.org/pom.html")).withEffort(0)
-                                               .and(Hint.withText("simple text").withEffort(2))
-                                               .and(addTypeRefToList));
+                        .when(XmlFile.matchesXpath("/abc:beans")
+                                    .namespace("abc", "http://www.springframework.org/schema/beans").as("first"))
+                        .perform(Classification.as("Spring File")
+                                               .and(
+                                                           Iteration.over("first")
+                                                           .when(XmlFile.from(Iteration.singleVariableIterationName("first")).matchesXpath("//windup:file-gate").namespace("windup", "http://www.jboss.org/schema/windup"))
+                                                           .perform(addTypeRefToList).endIteration()
+                                                           )
+                                );
         }
-
         // @formatter:on
 
         public Set<FileLocationModel> getXmlFileMatches()
