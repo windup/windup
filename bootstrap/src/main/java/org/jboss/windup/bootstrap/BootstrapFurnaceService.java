@@ -250,4 +250,10 @@ public class BootstrapFurnaceService {
         return true;
     }
 
+
+    Furnace getFurnace()
+    {
+        return this.furnace;
+    }
+
 }// class

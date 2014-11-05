@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
@@ -25,6 +26,7 @@ import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.furnace.versions.EmptyVersion;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
@@ -39,7 +41,9 @@ import org.jboss.forge.furnace.versions.Version;
  */
 public class Bootstrap
 {
-    private final BootstrapFurnaceService furnaceService;
+    private static final Logger log = Logger.getLogger(Bootstrap.class.getName());
+
+    private BootstrapFurnaceService furnaceService = null;
 
     private boolean exitAfter = false;
     private boolean batchMode = false;
@@ -104,95 +108,173 @@ public class Bootstrap
 
 
     /**
-     *
+     * Process some of arguments.
      */
-    private Bootstrap(String[] args)
+    private String[] processArguments(String[] args, BootstrapFurnaceService furnaceService)
     {
-        boolean listInstalled = false;
-        String installAddon = null;
-        String removeAddon = null;
-        Furnace furnace = ServiceLoader.load(Furnace.class).iterator().next();
-        furnaceService = new BootstrapFurnaceService(furnace);
-
-        furnace.setArgs(args);
+        final Furnace furnace = furnaceService.getFurnace();
 
         // --help
         List<String> listArgs = Arrays.asList(args);
-        if (listArgs.contains("--help") || listArgs.contains("-h"))
+        if (listArgs.contains("--help") || listArgs.contains("-h") || listArgs.contains("/?"))
         {
             System.out.println(help());
             exitAfter = true;
-            return;
+            return args;
         }
+
+
+        boolean listInstalled = false;
+        String installAddon = null;
+        String removeAddon = null;
+
+        List<String> knownWindupArgs = getKnownWindupArgs();
+        List<String> windupArgs  = new ArrayList();
+        List<String> unknownArgs = new ArrayList();
+        boolean isEvaluate = false;
 
         // The rest...
         for (int i = 0; i < args.length; i++)
         {
-            if ("--install".equals(args[i]) || "-i".equals(args[i]))
+            final String arg = args[i];
+
+            // Put Windup arguments aside.
+            if (knownWindupArgs.contains(arg))
+            {
+                // Add all values of this argument (they are in this format: --foo bar baz | --otherArg)
+                do{
+                    windupArgs.add(args[i]);
+                    args[i] = null;
+                }
+                while(++i < args.length && !args[i].startsWith("--"));
+                i--;
+            }
+
+            // Forge-related args.
+            else if ("--install".equals(arg) || "-i".equals(arg))
             {
                 installAddon = args[++i];
             }
-            else if ("--remove".equals(args[i]) || "-r".equals(args[i]))
+            else if ("--remove".equals(arg) || "-r".equals(arg))
             {
                 removeAddon = args[++i];
             }
-            else if ("--list".equals(args[i]) || "-l".equals(args[i]))
+            else if ("--list".equals(arg) || "-l".equals(arg))
             {
                 listInstalled = true;
             }
-            else if ("--addonDir".equals(args[i]) || "-a".equals(args[i]))
+            else if ("--addonDir".equals(arg) || "-a".equals(arg))
             {
                 furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(args[++i]));
             }
-            else if ("--immutableAddonDir".equals(args[i]) || "-m".equals(args[i]))
+            else if ("--immutableAddonDir".equals(arg) || "-m".equals(arg))
             {
                 furnace.addRepository(AddonRepositoryMode.IMMUTABLE, new File(args[++i]));
             }
-            else if ("--batchMode".equals(args[i]) || "-b".equals(args[i]))
+            else if ("--batchMode".equals(arg) || "-b".equals(arg))
             {
                 batchMode = true;
                 furnace.setServerMode(false);
             }
-            else if ("--evaluate".equals(args[i]) || "-e".equals(args[i]))
+            else if ("--evaluate".equals(arg) || "-e".equals(arg))
             {
-                furnace.setServerMode(true);
-                System.setProperty("INTERACTIVE", "false");
-                System.setProperty("forge.shell.evaluate", "true");
+                isEvaluate = true;
+                setupNonInteractive(furnace);
                 i++;
             }
-            else if ("--debug".equals(args[i]) || "-d".equals(args[i]))
+            else if ("--debug".equals(arg) || "-d".equals(arg))
             {
-                // This is just to avoid the Unknown option: --debug message below
+                // This is just to avoid the "Unknown option: --debug" message below
             }
-            else if ("--version".equals(args[i]) || "-v".equals(args[i]))
+            else if ("--version".equals(arg) || "-v".equals(arg))
             {
                 System.out.println(getVersionString());
                 this.exitAfter = true;
             }
             else
             {
-                System.out.println("Windup: unrecognized option: '" + args[i] + "'");
-                System.out.println("Try 'windup --help' for more information.");
+                unknownArgs.add(arg);
+            }
+        }
+
+        // Make it a List, Get rid of nulls.
+        List<String> argsList = new ArrayList(args.length+2);
+        for (String arg : args)
+        {
+            if(arg != null)
+                argsList.add(arg);
+        }
+
+        // Move Windup agruments to --evaluate '...'
+        if (!windupArgs.isEmpty())
+        {
+            setupNonInteractive(furnace);
+
+            // Pass unknown arguments to Windup (Forge).
+            windupArgs.addAll(unknownArgs);
+            unknownArgs.clear();
+
+            if (isEvaluate)
+                System.out.println("Both --evaluate (-e) and Windup options were found, may lead to unexpected behavior.");
+
+            StringBuilder sb = new StringBuilder("windup-migrate-app");
+            for (String windupArg : windupArgs)
+                sb.append(" ").append(windupArg);
+            argsList.add("-e");
+            argsList.add(sb.toString());
+        }
+        else
+        {
+            if (!unknownArgs.isEmpty()){
+                System.out.println("Windup: unrecognized options: " + Strings.join(unknownArgs.toArray(), ", "));
+                System.out.println("Run 'windup --help' for more information.");
                 this.exitAfter = true;
             }
         }
 
+        args = (String[]) argsList.toArray(new String[argsList.size()]);
+
+        // Process Furnace commands.
         if (!containsMutableRepository(furnace.getRepositories()))
         {
-            furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(getUserWindupDir(), "addons"));
+            furnaceService.getFurnace().addRepository(AddonRepositoryMode.MUTABLE, new File(getUserWindupDir(), "addons"));
         }
         if (listInstalled)
         {
             this.exitAfter = furnaceService.list();
         }
-        if (installAddon != null)
-        {
-            furnaceService.install(installAddon, this.exitAfter);
-        }
         if (removeAddon != null)
         {
-            furnaceService.remove(removeAddon, this.exitAfter);
+            this.exitAfter = furnaceService.remove(removeAddon, this.exitAfter);
         }
+        if (installAddon != null)
+        {
+            this.exitAfter = furnaceService.install(installAddon, this.exitAfter);
+        }
+
+        return args;
+    }
+
+
+    private static void setupNonInteractive(final Furnace furnace)
+    {
+        furnace.setServerMode(true);
+        System.setProperty("INTERACTIVE", "false");
+        System.setProperty("forge.shell.evaluate", "true");
+    }
+
+    /**
+     * Initialize Furnace and process some of arguments.
+     */
+    private Bootstrap(String[] args)
+    {
+
+        Furnace furnace = ServiceLoader.load(Furnace.class).iterator().next();
+        furnaceService = new BootstrapFurnaceService(furnace);
+
+        args = processArguments(args, furnaceService);
+        log.fine("Arguments after pre-processing: " + Strings.join(args, " "));
+        furnace.setArgs(args);
     }
 
     private String help()
@@ -273,10 +355,6 @@ public class Bootstrap
                     return line;
                 }
             }
-            catch (IOException e)
-            {
-                // ignore
-            }
         }
         catch (IOException e)
         {
@@ -316,4 +394,26 @@ public class Bootstrap
     {
         furnaceService.start(exitAfter, batchMode);
     }
+
+
+    private List<String> getKnownWindupArgs()
+    {
+        // TODO: Get this dynamically.
+        // WindupConfiguration.getWindupConfigurationOptions()
+        // or get the CommandControllerFactory -> WindupCommand Controler -> controller.getInputs()
+        // However, to do it dynamically, we would have to have Forge already booted...
+
+        final ArrayList<String> args = new ArrayList<>();
+        args.add("--input");
+        args.add("--output");
+        args.add("--offline");
+
+        // Java
+        args.add("--packages");
+        args.add("--sourceMode");
+
+        return args;
+    }
+
+
 }
