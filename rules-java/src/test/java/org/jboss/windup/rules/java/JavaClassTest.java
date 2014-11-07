@@ -23,6 +23,10 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.gremlinquery.GremlinProgrammaticFilter;
+import org.jboss.windup.config.gremlinquery.GremlinQuery;
+import org.jboss.windup.config.gremlinquery.GremlinQueryFilter;
+import org.jboss.windup.config.gremlinquery.GremlinTransform;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
@@ -31,6 +35,7 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
@@ -44,6 +49,9 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 @RunWith(Arquillian.class)
 public class JavaClassTest
@@ -82,6 +90,67 @@ public class JavaClassTest
 
     @Inject
     private GraphContextFactory factory;
+
+    @Test
+    public void testStuff() throws Exception
+    {
+        try (final GraphContext context = factory.create(getDefaultPath()))
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+                f1.setFileName("file." + i);
+                f1.setSHA1Hash("sha1." + i);
+
+            }
+            context.getGraph().getBaseGraph().commit();
+
+            GremlinQuery query = new GremlinQuery();
+            query.step(new GremlinQueryFilter<Vertex, Vertex>()
+            {
+                @Override
+                public GremlinPipeline<Vertex, Vertex> process(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipe)
+                {
+                    pipe.has(WindupVertexFrame.TYPE_PROP, FileModel.TYPE);
+                    return pipe;
+                }
+            });
+            query.step(new GremlinProgrammaticFilter<Vertex>()
+            {
+                @Override
+                public boolean filter(GraphRewrite event, Vertex value)
+                {
+                    return value.getProperty("fileName").equals("file.5");
+                }
+
+            });
+            query.step(new GremlinTransform<Vertex, Iterable<Vertex>>()
+            {
+                @Override
+                public Iterable<Vertex> transform(GraphRewrite event, Vertex input)
+                {
+                    return new GremlinPipeline<>(input);
+                }
+            });
+
+            GraphRewrite rewrite = new GraphRewrite(context);
+            Iterable<?> p = query.query(rewrite);
+
+            System.out.println("P: " + p);
+            for (Object obj : p)
+            {
+                if (obj instanceof Vertex)
+                {
+                    FileModel f = context.getFramed().frame((Vertex) obj, FileModel.class);
+                    System.out.println("F: " + f);
+                }
+                else
+                {
+                    System.out.println("Obj: " + obj);
+                }
+            }
+        }
+    }
 
     @Test
     public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException

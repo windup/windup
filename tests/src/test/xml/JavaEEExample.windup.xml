@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml"
+  id="javaee_xml_example_rules_1"
+>
+  <rules>
+    <rule>
+      <when>
+      	<query>
+      		<xmlfile matches="/ejb:ejb-jar//ejb:remote/text()">
+        		<namespace prefix="ejb" uri="http://java.sun.com/xml/ns/j2ee"/>
+        	</xmlfile>
+        	<debug/>
+        	<javaclass in="#{it.referenceSourceSnippit}">
+          		<location>TYPE</location>
+        	</javaclass>
+      	</query>
+      </when>
+      <perform>
+      	<classification classification="EJB 2.x Remote Interface"/>
+        <hint>
+        	<message>Remote EJB from XML Rule with Gremlin Query</message>
+        </hint>
+      </perform>
+    </rule>
+    
+    <rule>
+      <when>
+      	<query to="xmlfiles">
+      		<xmlfile matches="/ejb:ejb-jar//ejb:remote/text()">
+        		<namespace prefix="ejb" uri="http://java.sun.com/xml/ns/j2ee"/>
+        	</xmlfile>
+       	</query>
+       	<query from="xmlfiles" to="javareferences">
+        	<javaclass in="#{it.referenceSourceSnippit}">
+          		<location>TYPE</location>
+        	</javaclass>
+      	</query>
+      </when>
+      <perform>
+      	<iteration over="javareferences">
+	      	<classification classification="Classified by out/in example"/>
+	        <hint>
+	        	<message>Ouput/Input Using Example</message>
+	        </hint>
+	    </iteration>
+      </perform>
+    </rule>
+  </rules>
+</ruleset>

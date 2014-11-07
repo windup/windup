@@ -47,6 +47,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                     .addBeansXML()
                     .addClass(WindupArchitectureTest.class)
                     .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
+                    .addAsResource(new File("src/test/xml/JavaEEExample.windup.xml"))
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -154,5 +155,15 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("jee-example-app-1.0.0.ear/jee-example-services.jar", "META-INF/ejb-jar.xml",
                     "EJB XML");
+
+        util.checkFilePathAndIssues("jee-example-app-1.0.0.ear/jee-example-services.jar", "com.acme.anvil.service.ProductCatalog",
+                    "Remote EJB from XML Rule with Gremlin Query");
+        util.checkFilePathAndIssues("jee-example-app-1.0.0.ear/jee-example-services.jar", "com.acme.anvil.service.ItemLookup",
+                    "Remote EJB from XML Rule with Gremlin Query");
+
+        util.checkFilePathAndIssues("jee-example-app-1.0.0.ear/jee-example-services.jar", "com.acme.anvil.service.ProductCatalog",
+                    "Ouput/Input Using Example");
+        util.checkFilePathAndIssues("jee-example-app-1.0.0.ear/jee-example-services.jar", "com.acme.anvil.service.ItemLookup",
+                    "Ouput/Input Using Example");
     }
 }

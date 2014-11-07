@@ -26,7 +26,7 @@ public class NamedFramesSelector implements FramesSelector
     }
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
+    public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
     {
         return Variables.instance(event).findVariable(varName);
     }

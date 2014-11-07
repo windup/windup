@@ -21,5 +21,5 @@ public interface FramesSelector
     /**
      * Get the currently selected {@link WindupVertexFrame} instances for this {@link Iteration}.
      */
-    Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context);
+    Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context);
 }
