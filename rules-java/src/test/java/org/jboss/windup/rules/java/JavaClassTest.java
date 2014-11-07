@@ -132,7 +132,7 @@ public class JavaClassTest
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
-            Assert.assertEquals(5, provider.getFirstRuleMatchCount());
+            Assert.assertEquals(3, provider.getFirstRuleMatchCount());
             Assert.assertEquals(1, provider.getSecondRuleMatchCount());
         }
     }

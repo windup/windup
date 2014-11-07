@@ -15,6 +15,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.rules.apps.java.model.IgnoredJavaFileModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -165,6 +166,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                     subFileModel.setParentArchive(archiveModel);
                     //check if this file should not be ignored
                     if(checkIfIgnored(subFile.getName(),windupJavaConfigurationService.getIgnoredFileRegexes())) {
+                        GraphService.addTypeToModel(context, subFileModel, IgnoredJavaFileModel.class);
                         LOG.info("File/Directory placed in " + subFile.getAbsolutePath() + " was ignored, because matched some of the ignore regex.");
                         continue;
                     }

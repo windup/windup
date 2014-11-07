@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.model;
 import java.util.ArrayList;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;

@@ -3,6 +3,11 @@ package org.jboss.windup.exec.configuration.options;
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
 
+/**
+ * An option to specify file/directory that contain the regexes of file names to be ignored.
+ * @author mbriskar
+ *
+ */
 public class UserIgnorePathOption extends AbstractPathConfigurationOption
 {
 

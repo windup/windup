@@ -47,7 +47,6 @@ public class GatherIgnoredFilesTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(TestJavaClassTestRuleProvider.class)
                     .addClass(JavaClassTest.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -59,9 +58,6 @@ public class GatherIgnoredFilesTest
 
         return archive;
     }
-
-    @Inject
-    TestJavaClassTestRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;

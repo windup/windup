@@ -170,6 +170,11 @@ public class WindupConfiguration
         return results;
     }
     
+    /**
+     * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the file/directory specified by the user and the default
+     * paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
+     * @return
+     */
     public Iterable<Path> getAllIgnoreDirectories()
     {
         Set<Path> results = new HashSet<>();
@@ -196,6 +201,9 @@ public class WindupConfiguration
         return Collections.unmodifiableList(paths);
     }
     
+    /**
+     * Contains a default list of {@link Path}s with directories/files that contains files having regexes of file names to be ignored. 
+     */
     public List<Path> getDefaultUserIgnoreDirectories()
     {
         List<Path> paths = getOptionValue(DEFAULT_USER_IGNORE_DIRECTORIES_OPTION);
@@ -237,6 +245,11 @@ public class WindupConfiguration
         return this;
     }
     
+    /**
+     * Adds a path to the list of default {@link Path}s with directories/files that contain files with regexes of file names to be ignored.
+     * 
+     * This method does guard against duplicate directories.
+     */
     public WindupConfiguration addDefaultUserIgnorePath(Path path)
     {
         List<Path> paths = getOptionValue(DEFAULT_USER_IGNORE_DIRECTORIES_OPTION);

@@ -23,14 +23,20 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.model.IgnoredFileRegexModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+
+/**
+ * Read and add all the ignore regexes (when a file matches the regex, it will not be scanned by windup) that are present in the windup runtime.
+ * @author mbriskar
+ *
+ */
 public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<WindupConfigurationModel>
 {
 
