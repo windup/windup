@@ -3,6 +3,8 @@ package org.jboss.windup.rules.apps.java.binary;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
@@ -89,6 +91,30 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                         FileModel parentFileModel = fileService.findByPath(Paths.get(decompiledOutputFile)
                                     .getParent()
                                     .toString());
+
+                        // make sure parent files already exist
+                        // (it can happen that it does not if procyon puts the decompiled .java file in an unexpected place, for example in the case
+                        // of war files)
+                        if (parentFileModel == null)
+                        {
+                            List<Path> lineage = new LinkedList<>();
+                            Path parentPath = Paths.get(decompiledOutputFile).getParent();
+                            FileModel existingParentFM = parentFileModel;
+                            while (existingParentFM == null)
+                            {
+                                lineage.add(0, parentPath);
+                                parentPath = parentPath.getParent();
+                                existingParentFM = fileService.findByPath(parentPath.toString());
+                            }
+
+                            FileModel currentParent = existingParentFM;
+                            for (Path p : lineage)
+                            {
+                                currentParent = fileService.createByFilePath(currentParent, p.toString());
+                            }
+                            parentFileModel = currentParent;
+                        }
+
                         decompiledFileModel = fileService.createByFilePath(parentFileModel, decompiledOutputFile);
                         decompiledFileModel.setParentArchive(payload);
                     }

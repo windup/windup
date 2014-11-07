@@ -25,6 +25,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.gremlinquery.GremlinQuery;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -40,6 +41,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,13 +52,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RunWith(Arquillian.class)
 public class XMLHintsClassificationsTest
 {
+    private static final String TEST_CLASSIFICATION_FROM_GREMLIN_QUERY = "Test Classification from GremlinQuery";
+
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 /*
-                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded
-                 * version
+                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded version
                  */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
@@ -81,13 +84,69 @@ public class XMLHintsClassificationsTest
     }
 
     @Inject
-    private TestXMLHintsClassificationsRuleProvider provider;
+    private TestXMLHintsClassificationsRuleProvider providerBasicQuery;
+
+    @Inject
+    private TestXMLHintsClassificationsGremlinRuleProvider providerGremlinQuery;
 
     @Inject
     private WindupProcessor processor;
 
     @Inject
     private GraphContextFactory factory;
+
+    @Test
+    public void testGremlinQuery() throws IOException
+    {
+        try (GraphContext context = factory.create())
+        {
+            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            pm.setName("Main Project");
+            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            inputPath.setFilePath("src/test/resources/");
+
+            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
+                        + UUID.randomUUID().toString());
+            FileUtils.deleteDirectory(outputPath.toFile());
+            Files.createDirectories(outputPath);
+
+            inputPath.setProjectModel(pm);
+            pm.setRootFileModel(inputPath);
+
+            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+            {
+                @Override
+                public boolean accept(WindupRuleProvider provider)
+                {
+                    return (provider.getPhase() != RulePhase.REPORT_GENERATION) &&
+                                (provider.getPhase() != RulePhase.MIGRATION_RULES) &&
+                                !(provider instanceof TestXMLHintsClassificationsRuleProvider);
+                }
+            };
+            WindupConfiguration windupConfiguration = new WindupConfiguration()
+                        .setRuleProviderFilter(predicate)
+                        .setGraphContext(context);
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setOutputDirectory(outputPath);
+            processor.execute(windupConfiguration);
+
+            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
+                        ClassificationModel.class);
+
+            Assert.assertEquals(2, providerGremlinQuery.getXmlFileMatches().size());
+            List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
+            for (ClassificationModel model : classifications)
+            {
+                String classification = model.getClassification();
+                String string = classification.toString();
+                Assert.assertNotNull(string);
+
+                // Assert.assertEquals(TEST_CLASSIFICATION_FROM_GREMLIN_QUERY, string);
+            }
+            Assert.assertEquals(1, classifications.size());
+
+        }
+    }
 
     @Test
     public void testHintAndClassificationOperation() throws IOException
@@ -113,7 +172,8 @@ public class XMLHintsClassificationsTest
                 public boolean accept(WindupRuleProvider provider)
                 {
                     return (provider.getPhase() != RulePhase.REPORT_GENERATION) &&
-                                (provider.getPhase() != RulePhase.MIGRATION_RULES);
+                                (provider.getPhase() != RulePhase.MIGRATION_RULES) &&
+                                !(provider instanceof TestXMLHintsClassificationsGremlinRuleProvider);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -127,7 +187,7 @@ public class XMLHintsClassificationsTest
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
                         ClassificationModel.class);
 
-            Assert.assertEquals(2, provider.getXmlFileMatches().size());
+            Assert.assertEquals(2, providerBasicQuery.getXmlFileMatches().size());
             List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
             Assert.assertEquals(2, hints.size());
             List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
@@ -145,6 +205,7 @@ public class XMLHintsClassificationsTest
     @Singleton
     public static class TestXMLHintsClassificationsRuleProvider extends WindupRuleProvider
     {
+        private static final String MAVEN_POM_FILE = "Maven POM File";
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
         @Override
@@ -171,7 +232,7 @@ public class XMLHintsClassificationsTest
                         .addRule()
                         .when(XmlFile.matchesXpath("/abc:ejb-jar")
                                     .namespace("abc", "http://java.sun.com/xml/ns/javaee"))
-                        .perform(Classification.as("Maven POM File")
+                        .perform(Classification.as(MAVEN_POM_FILE)
                                                .with(Link.to("Apache Maven POM Reference",
                                                             "http://maven.apache.org/pom.html")).withEffort(0)
                                                .and(Hint.withText("simple text").withEffort(2))
@@ -186,4 +247,49 @@ public class XMLHintsClassificationsTest
         }
     }
 
+    @Singleton
+    public static class TestXMLHintsClassificationsGremlinRuleProvider extends WindupRuleProvider
+    {
+        private Set<FileLocationModel> xmlFiles = new HashSet<>();
+
+        @Override
+        public RulePhase getPhase()
+        {
+            return RulePhase.POST_MIGRATION_RULES;
+        }
+
+        // @formatter:off
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>()
+            {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
+                {
+                    xmlFiles.add(payload);
+                }
+            };
+
+            return ConfigurationBuilder
+                        .begin()
+                        .addRule()
+                        .when(
+                                GremlinQuery.fromType(XmlFileModel.class)
+                                    .step(
+                                        XmlFile.matchesXpath("/abc:ejb-jar")
+                                               .namespace("abc", "http://java.sun.com/xml/ns/javaee")
+                                    )
+                        )
+                        .perform(Classification.as(TEST_CLASSIFICATION_FROM_GREMLIN_QUERY)
+                                               .and(addTypeRefToList));
+        }
+
+        // @formatter:on
+
+        public Set<FileLocationModel> getXmlFileMatches()
+        {
+            return xmlFiles;
+        }
+    }
 }

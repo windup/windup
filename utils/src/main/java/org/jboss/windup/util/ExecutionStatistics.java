@@ -65,6 +65,7 @@ public class ExecutionStatistics
     {
         try (FileWriter fw = new FileWriter(outputPath.toFile()))
         {
+            fw.write("Type~Number Of Executions~Total Milliseconds~Milliseconds per execution\n");
             for (Map.Entry<String, TimingData> timing : executionInfo.entrySet())
             {
                 TimingData data = timing.getValue();
