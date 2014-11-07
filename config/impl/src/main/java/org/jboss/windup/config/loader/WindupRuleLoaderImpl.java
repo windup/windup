@@ -36,14 +36,14 @@ import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
 
-public class WindupConfigurationLoaderImpl implements WindupRuleLoader
+public class WindupRuleLoaderImpl implements WindupRuleLoader
 {
-    public static Logger LOG = Logger.getLogger(WindupConfigurationLoaderImpl.class.getName());
+    public static Logger LOG = Logger.getLogger(WindupRuleLoaderImpl.class.getName());
 
     @Inject
     private Imported<WindupRuleProviderLoader> loaders;
 
-    public WindupConfigurationLoaderImpl()
+    public WindupRuleLoaderImpl()
     {
     }
 

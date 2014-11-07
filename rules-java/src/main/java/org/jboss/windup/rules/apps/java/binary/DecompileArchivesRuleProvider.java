@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.java.binary;
 
-import java.util.List;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -14,7 +12,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
-import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.logging.Logger.Level;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -30,12 +27,6 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.INITIAL_ANALYSIS;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
-    {
-        return asClassList(AnalyzeJavaFilesRuleProvider.class);
     }
 
     // @formatter:off
