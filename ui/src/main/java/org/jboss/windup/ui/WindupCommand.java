@@ -158,7 +158,8 @@ public class WindupCommand implements UICommand
         return value;
     }
 
-    private Resource<?> getResourceResolved(Resource<?> value) {
+    private Resource<?> getResourceResolved(Resource<?> value)
+    {
         Resource<?> resource = (Resource<?>) value;
         File file = (File) resource.getUnderlyingResourceObject();
         return new ResourcePathResolver(resourceFactory, resource, file.getPath()).resolve().get(0);
@@ -195,9 +196,10 @@ public class WindupCommand implements UICommand
         {
             String promptMsg = "Overwrite all contents of \"" + windupConfiguration.getOutputDirectory().toString()
                         + "\" (anything already in the directory will be deleted)?";
-            if (!context.getPrompt().promptBoolean(promptMsg))
+            if (!context.getPrompt().promptBoolean(promptMsg, false))
             {
-                return Results.fail("Windup execution aborted!");
+                String outputPath = windupConfiguration.getOutputDirectory().toString();
+                return Results.fail("Files exist in " + outputPath + ", but --overwrite not specified. Aborting!");
             }
         }
 

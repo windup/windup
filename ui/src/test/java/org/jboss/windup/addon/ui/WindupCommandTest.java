@@ -122,7 +122,7 @@ public class WindupCommandTest
 
                 // make sure that it failed to run (since the user's response to the overwrite question is false)
                 Assert.assertTrue(result instanceof Failed);
-                Assert.assertTrue(result.getMessage().contains("Windup execution aborted"));
+                Assert.assertTrue(result.getMessage().contains("overwrite not specified"));
             }
             finally
             {
