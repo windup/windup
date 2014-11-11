@@ -16,7 +16,7 @@ import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.rules.apps.java.model.IgnoredJavaFileModel;
+import org.jboss.windup.rules.apps.java.model.IgnoredFileModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.reporting.model.IgnoredFilesReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -94,11 +94,11 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
         ignoredFilesReportModel.setTemplateType(TemplateType.FREEMARKER);
         ignoredFilesReportModel.setDisplayInApplicationList(false);
 
-        GraphService<IgnoredJavaFileModel> ignoredFilesModelService = new GraphService<IgnoredJavaFileModel>(context,
-                    IgnoredJavaFileModel.class);
-        Iterable<IgnoredJavaFileModel> allIgnoredFiles = ignoredFilesModelService.findAll();
-        List<IgnoredJavaFileModel> returnIgnoredFiles = new ArrayList<>();
-        for (IgnoredJavaFileModel file : allIgnoredFiles)
+        GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<IgnoredFileModel>(context,
+                    IgnoredFileModel.class);
+        Iterable<IgnoredFileModel> allIgnoredFiles = ignoredFilesModelService.findAll();
+        List<IgnoredFileModel> returnIgnoredFiles = new ArrayList<>();
+        for (IgnoredFileModel file : allIgnoredFiles)
         {
             List<String> allProjectPaths = getAllFatherProjectPaths(file.getProjectModel());
             if (allProjectPaths.contains(rootProjectModel.getRootFileModel().getFilePath()))
@@ -106,7 +106,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
                 returnIgnoredFiles.add(file);
             }
         }
-        for (IgnoredJavaFileModel ignored : returnIgnoredFiles)
+        for (IgnoredFileModel ignored : returnIgnoredFiles)
         {
             ignoredFilesReportModel.addIgnoredFile(ignored);
         }

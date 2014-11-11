@@ -38,14 +38,16 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = SCAN_JAVA_PACKAGES, direction = Direction.OUT)
     Iterable<PackageModel> getScanJavaPackages();
-    
+
     /**
      * Add a file that will be ignored during the migration.
-     * @param ignoredFile
      */
     @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
     void addIgnoredFileRegex(IgnoredFileRegexModel ignoredFile);
 
+    /**
+     * Gets the files that will be ignored during the migration.
+     */
     @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
     Iterable<IgnoredFileRegexModel> getIgnoredFileRegexes();
 
