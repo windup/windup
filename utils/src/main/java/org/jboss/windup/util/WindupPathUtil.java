@@ -12,24 +12,58 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  */
 public class WindupPathUtil
 {
+    /**
+     * The path ~/.windup
+     * @return
+     */
     public static Path getWindupUserDir()
     {
         return OperatingSystemUtils.getUserHomeDir().toPath().resolve(".windup");
     }
 
+    /**
+     *  The path ~/.windup/rules
+     * @return
+     */
     public static Path getWindupUserRulesDir()
     {
         return getWindupUserDir().resolve("rules");
     }
+    
+    /**
+     *  The path ~/.windup/ignore
+     * @return
+     */
+    public static Path getWindupIgnoreListDir()
+    {
+        return getWindupUserDir().resolve("ignore");
+    }
 
+    /**
+     * The path WINDUP_HOME (== FORGE_HOME)
+     * @return
+     */
     public static Path getWindupHome()
     {
         return Paths.get(System.getProperty("forge.home"));
     }
 
+    /**
+     * The path WINDUP_HOME/rules
+     * @return
+     */
     public static Path getWindupHomeRules()
     {
         return getWindupHome().resolve("rules");
+    }
+    
+    /**
+     * The path WINDUP_HOME/ignore
+     * @return
+     */
+    public static Path getWindupHomeIgnoreListDir()
+    {
+        return getWindupHome().resolve("ignore");
     }
 
     /**
