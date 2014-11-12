@@ -28,6 +28,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.binary.DecompileArchivesRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -51,9 +52,15 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
+    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    {
+        return asClassList(DecompileArchivesRuleProvider.class);
+    }
+
+    @Override
     public RulePhase getPhase()
     {
-        return RulePhase.POST_DISCOVERY;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     // @formatter:off
@@ -95,12 +102,15 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             String filepath = payload.getFilePath();
             filepath = Paths.get(filepath).toAbsolutePath().toString();
 
-            if (!filepath.startsWith(inputDir))
+            String classFilePath;
+            if (filepath.startsWith(inputDir))
             {
-                return;
+                classFilePath = filepath.substring(inputDir.length() + 1);
             }
-
-            String classFilePath = filepath.substring(inputDir.length() + 1);
+            else
+            {
+                classFilePath = payload.getPrettyPathWithinProject();
+            }
             String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
                         classFilePath.length() - JAVA_SUFFIX_LEN);
 

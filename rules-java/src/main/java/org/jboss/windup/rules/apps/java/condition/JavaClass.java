@@ -4,14 +4,23 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
+import org.jboss.windup.config.gremlinquery.GremlinTransform;
+import org.jboss.windup.config.gremlinquery.HasExpectedType;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.query.MultipleValueTitanPredicate;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryBuilderWith;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
+import org.jboss.windup.graph.GremlinGroovyHelper;
+import org.jboss.windup.graph.frames.VertexFromFramedIterable;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -22,14 +31,17 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * {@link GraphCondition} that matches Vertices in the graph based upon the provided parameters.
  */
-public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaClassBuilderAt, JavaClassBuilderInFile
+public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaClassBuilderAt, JavaClassBuilderInFile,
+            GremlinTransform<Vertex, Iterable<Vertex>>, HasExpectedType
 {
     private final String regex;
     private List<TypeReferenceLocation> locations = Collections.emptyList();
@@ -87,6 +99,68 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
         Assert.notNull(variable, "Variable name must not be null.");
         this.variable = variable;
         return this;
+    }
+
+    @Override
+    public Class<? extends WindupVertexFrame> getExpectedTypeHint()
+    {
+        return JavaTypeReferenceModel.class;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Iterable<Vertex> transform(GraphRewrite event, Vertex input)
+    {
+        String inType = GremlinGroovyHelper.evaluateEmbeddedScripts(event.getGraphContext(), input, this.typeFilterRegex);
+        String regex = GremlinGroovyHelper.evaluateEmbeddedScripts(event.getGraphContext(), input, this.regex);
+
+        WindupVertexFrame framed = event.getGraphContext().getFramed().frame(input, WindupVertexFrame.class);
+        Iterable<JavaTypeReferenceModel> inputModels;
+        if (!StringUtils.isBlank(getInputVariablesName()))
+        {
+            inputModels = (Iterable<JavaTypeReferenceModel>) Variables.instance(event).findVariable(getInputVariablesName());
+        }
+        else if (framed instanceof JavaTypeReferenceModel)
+        {
+            inputModels = Collections.singletonList((JavaTypeReferenceModel) framed);
+        }
+        else if (framed instanceof JavaClassModel)
+        {
+            GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<>(input);
+            pipe.in(JavaSourceFileModel.JAVA_CLASS_MODEL);
+            pipe.in(FileReferenceModel.FILE_MODEL);
+            pipe.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, JavaTypeReferenceModel.TYPE);
+
+            inputModels = new FramedVertexIterable<>(event.getGraphContext().getFramed(), pipe, JavaTypeReferenceModel.class);
+        }
+        else
+        {
+            GraphService<JavaTypeReferenceModel> service = new GraphService<>(event.getGraphContext(), JavaTypeReferenceModel.class);
+            inputModels = service.findAll();
+        }
+
+        GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<>(new VertexFromFramedIterable(inputModels));
+        pipe.has(JavaTypeReferenceModel.SOURCE_SNIPPIT, Text.REGEX, regex);
+        if (typeFilterRegex != null)
+        {
+            Predicate regexPredicate = new Predicate()
+            {
+                @Override
+                public boolean evaluate(Object first, Object second)
+                {
+                    return ((String) first).matches((String) second);
+                }
+            };
+
+            pipe.as("result").out(FileReferenceModel.FILE_MODEL)
+                        .out(JavaSourceFileModel.JAVA_CLASS_MODEL)
+                        .has(JavaClassModel.PROPERTY_QUALIFIED_NAME, regexPredicate, inType)
+                        .back("result");
+        }
+        if (!locations.isEmpty())
+            pipe.has(JavaTypeReferenceModel.REFERENCE_TYPE, new MultipleValueTitanPredicate(), locations);
+
+        return pipe;
     }
 
     @Override

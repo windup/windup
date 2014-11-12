@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -53,7 +54,6 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
-import java.util.logging.Logger;
 import org.jboss.windup.util.Logging;
 
 /**
@@ -75,6 +75,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     }
 
     private CompilationUnit cu;
+    private String fqcn;
 
     /**
      * Contains all wildcard imports (import com.example.*) lines from the source file.
@@ -84,8 +85,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private final List<String> wildcardImports = new ArrayList<>();
 
     /**
-     * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will
-     * exist here even if no results were found.
+     * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will exist here even if no results
+     * were found.
      */
     private final Set<String> classNameLookedUp = new HashSet<>();
     /**
@@ -123,7 +124,17 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             TypeDeclaration typeDeclaration = (TypeDeclaration) types.get(0);
             String className = typeDeclaration.getName().getFullyQualifiedName();
-            String fqcn = packageName + "." + className;
+            if (packageName.equals(""))
+            {
+                this.fqcn = className;
+            }
+            else
+            {
+                this.fqcn = packageName + "." + className;
+            }
+            typeRefService.createTypeReference(fileModel, TypeReferenceLocation.TYPE, cu.getLineNumber(typeDeclaration.getStartPosition()),
+                        cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), this.fqcn);
+
             this.names.add("this");
             this.nameInstance.put("this", fqcn);
         }
@@ -198,13 +209,19 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     }
 
     private void processName(Name name, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
-                int length)
+                int lengthCreation)
+    {
+        processName(name, referenceLocation, lineNumber, columnNumber, lengthCreation, false);
+    }
+
+    private void processName(Name name, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
+                int length, boolean forceCreation)
     {
         if (name == null)
             return;
 
         String sourceString = resolveClassname(name.toString());
-        if (TypeInterestFactory.matchesAny(sourceString))
+        if (forceCreation || TypeInterestFactory.matchesAny(sourceString))
         {
             sourceString = resolveClassname(sourceString);
 

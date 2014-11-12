@@ -1,6 +1,9 @@
 package org.jboss.windup.engine.predicates;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -13,46 +16,68 @@ import org.jboss.windup.config.WindupRuleProvider;
  */
 public class RuleProviderWithDependenciesPredicate implements Predicate<WindupRuleProvider>
 {
+    private static Logger LOG = Logger.getLogger(RuleProviderWithDependenciesPredicate.class.getName());
 
-    private WindupRuleProvider ruleProvider;
+    private List<WindupRuleProvider> ruleProviders;
 
+    @SuppressWarnings("unchecked")
     public RuleProviderWithDependenciesPredicate(Class<? extends WindupRuleProvider> ruleProviderClass)
                 throws InstantiationException, IllegalAccessException
     {
-        ruleProvider = ruleProviderClass.newInstance();
+        ruleProviders = (List<WindupRuleProvider>) Collections.singletonList(ruleProviderClass.newInstance());
+    }
+
+    @SafeVarargs
+    public RuleProviderWithDependenciesPredicate(Class<? extends WindupRuleProvider>... ruleProviderClass)
+                throws InstantiationException, IllegalAccessException
+    {
+        ruleProviders = new ArrayList<>(ruleProviderClass.length);
+        for (Class<? extends WindupRuleProvider> clz : ruleProviderClass)
+        {
+            ruleProviders.add(clz.newInstance());
+        }
+
     }
 
     @Override
     public boolean accept(WindupRuleProvider type)
     {
-        int compareTo = type.getPhase().compareTo(ruleProvider.getPhase());
-        if (compareTo < 0)
+        for (WindupRuleProvider ruleProvider : this.ruleProviders)
         {
-            // is in the pre-phase
-            return true;
-        }
-        else if (compareTo == 0)
-        {
-            List<Class<? extends WindupRuleProvider>> executeAfter = ruleProvider.getExecuteAfter();
-            List<String> executeAfterIDs = ruleProvider.getExecuteAfterIDs();
-            if ((executeAfter.contains(type.getClass())) || executeAfterIDs.contains(type.getID()))
+            int compareTo = type.getPhase().compareTo(ruleProvider.getPhase());
+            if (compareTo < 0)
             {
-                // is a dependency and are in the same phase
+                LOG.info("Accepting provider: " + type.getID());
+                // is in the pre-phase
                 return true;
             }
-            for (Class<? extends WindupRuleProvider> ruleProviderClassAfter : executeAfter)
+            else if (compareTo == 0)
             {
-                if (ruleProviderClassAfter.isAssignableFrom(type.getClass()))
+                List<Class<? extends WindupRuleProvider>> executeAfter = ruleProvider.getExecuteAfter();
+                List<String> executeAfterIDs = ruleProvider.getExecuteAfterIDs();
+                if ((executeAfter.contains(type.getClass())) || executeAfterIDs.contains(type.getID()))
                 {
+                    LOG.info("Accepting provider: " + type.getID());
+                    // is a dependency and are in the same phase
+                    return true;
+                }
+                for (Class<? extends WindupRuleProvider> ruleProviderClassAfter : executeAfter)
+                {
+                    if (ruleProviderClassAfter.isAssignableFrom(type.getClass()))
+                    {
+                        LOG.info("Accepting provider: " + type.getID());
+                        return true;
+                    }
+                }
+                if (ruleProvider.getClass().isAssignableFrom(type.getClass()))
+                {
+                    LOG.info("Accepting provider: " + type.getID());
+                    // is the given rule provider
                     return true;
                 }
             }
-            if (ruleProvider.getClass().isAssignableFrom(type.getClass()))
-            {
-                // is the given rule provider
-                return true;
-            }
         }
+        LOG.info("Skipping provider: " + type.getID());
         return false;
     }
 
