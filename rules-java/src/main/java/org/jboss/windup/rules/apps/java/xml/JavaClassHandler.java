@@ -11,7 +11,6 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.condition.JavaClassBuilder;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderAt;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.util.exception.WindupException;
@@ -40,10 +39,13 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
     public JavaClassBuilderAt processElement(ParserContext handlerManager, Element element)
                 throws ConfigurationException
     {
-        String type = $(element).attr("references");
-        if (StringUtils.isBlank(type))
+        String referencesRegex = $(element).attr("references");
+        String typeNamePattern = $(element).attr("in");
+
+        if (StringUtils.isBlank(referencesRegex) && StringUtils.isBlank(typeNamePattern))
         {
-            throw new WindupException("Error, 'javaclass' element must have a non-empty 'type' attribute");
+            throw new WindupException(
+                        "Error, 'javaclass' element is lacking both 'references' and 'in' attributes (at least one of these is required)");
         }
 
         List<TypeReferenceLocation> locations = new ArrayList<TypeReferenceLocation>();
@@ -54,15 +56,15 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
             locations.add(location);
         }
 
-        JavaClassBuilder javaClassReferences = JavaClass.references(type);
-        String namePattern = $(element).attr("in");
-        if (!StringUtils.isBlank(namePattern))
+        JavaClass javaClass = new JavaClass();
+        if (!StringUtils.isBlank(referencesRegex))
+            javaClass.setRegex(referencesRegex);
+
+        if (!StringUtils.isBlank(typeNamePattern))
         {
-            javaClassReferences.inType(namePattern);
+            javaClass.setTypeFilterRegex(typeNamePattern);
         }
-        
-        JavaClassBuilderAt javaClass = javaClassReferences.at(
-                    locations.toArray(new TypeReferenceLocation[locations.size()]));
-        return javaClass;
+
+        return javaClass.at(locations.toArray(new TypeReferenceLocation[locations.size()]));
     }
 }

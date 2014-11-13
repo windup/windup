@@ -31,11 +31,11 @@ public class TypedNamedFramesSelector implements FramesSelector
     }
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
+    public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
     {
-        final Iterable<WindupVertexFrame> frames = Variables.instance(event).findVariable(varName);
+        final Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariable(varName);
 
-        final Iterator<WindupVertexFrame> it = frames.iterator();
+        final Iterator<? extends WindupVertexFrame> it = frames.iterator();
         if (it.hasNext())
         {
             final Class<? extends WindupVertexFrame> actualType = it.next().getClass();
