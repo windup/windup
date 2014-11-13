@@ -1,8 +1,11 @@
 package org.jboss.windup.bootstrap;
 
+import static org.jboss.windup.bootstrap.Bootstrap.getVersionString;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
@@ -16,26 +19,22 @@ import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
-import static org.jboss.windup.bootstrap.Bootstrap.getVersionString;
-
 
 /**
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class BootstrapFurnaceService {
+public class BootstrapFurnaceService
+{
 
     private static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
 
-
     private final Furnace furnace;
-
 
     public BootstrapFurnaceService(Furnace furnace)
     {
         this.furnace = furnace;
     }
-
 
     boolean list()
     {
@@ -182,9 +181,8 @@ public class BootstrapFurnaceService {
         return true;
     }
 
-
     /**
-     * @return  Exit after execution of this.
+     * @return Exit after execution of this.
      */
     boolean remove(String addonCoordinates, boolean batchMode)
     {
@@ -250,10 +248,9 @@ public class BootstrapFurnaceService {
         return true;
     }
 
-
     Furnace getFurnace()
     {
         return this.furnace;
     }
 
-}// class
+}
