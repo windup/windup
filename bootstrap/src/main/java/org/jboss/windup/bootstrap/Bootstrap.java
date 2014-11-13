@@ -18,26 +18,21 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
-import org.jboss.forge.furnace.manager.impl.AddonManagerImpl;
-import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
-import org.jboss.forge.furnace.manager.request.AddonActionRequest;
-import org.jboss.forge.furnace.manager.request.RemoveRequest;
-import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.furnace.versions.EmptyVersion;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
-import org.jboss.forge.furnace.versions.Versions;
 
 /**
- * A class with a main method to bootstrap Furnace.
+ * A class with a main method to bootstrap Windup.
  *
  * You can deploy addons by calling {@link Bootstrap#install(String)}
  *
@@ -46,18 +41,24 @@ import org.jboss.forge.furnace.versions.Versions;
  */
 public class Bootstrap
 {
-    private static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
-    private final Furnace furnace;
+    private static final Logger log = Logger.getLogger(Bootstrap.class.getName());
+
+    private BootstrapFurnaceService furnaceService = null;
+
     private boolean exitAfter = false;
     private boolean batchMode = false;
+
 
     public static void main(final String[] args) throws InterruptedException, ExecutionException
     {
         final List<String> bootstrapArgs = new ArrayList<>();
         final Properties systemProperties = System.getProperties();
-        // Set system properties
+
+
+        // For all arguments...
         for (String arg : args)
         {
+            // Turn -D...[=...] into system properties
             if (arg.startsWith("-D"))
             {
                 final String name;
@@ -80,7 +81,7 @@ public class Bootstrap
                 bootstrapArgs.add(arg);
             }
         }
-        
+
         // Ensure user rules directory is created
         File rulesDir = new File(getUserWindupDir(), "rules");
         if(!rulesDir.exists())
@@ -89,8 +90,9 @@ public class Bootstrap
         }
 
         // Check for the forge log directory
-        final String logDir = systemProperties.getProperty("org.jboss.forge.log.file",
-                    new File(getUserWindupDir(), "log/windup.log").getAbsolutePath());
+        final String defaultLog = new File(getUserWindupDir(), "log/windup.log").getAbsolutePath();
+        final String logDir = systemProperties.getProperty("org.jboss.forge.log.file", defaultLog);
+
         // Ensure this value is always set
         systemProperties.setProperty("org.jboss.forge.log.file", logDir);
 
@@ -104,92 +106,175 @@ public class Bootstrap
         bootstrap.start();
     }
 
-    private Bootstrap(String[] args)
+
+    /**
+     * Process some of arguments.
+     */
+    private String[] processArguments(String[] args, BootstrapFurnaceService furnaceService)
     {
+        final Furnace furnace = furnaceService.getFurnace();
+
+        // --help
+        List<String> listArgs = Arrays.asList(args);
+        if (listArgs.contains("--help") || listArgs.contains("-h") || listArgs.contains("/?"))
+        {
+            System.out.println(help());
+            exitAfter = true;
+            return args;
+        }
+
+
         boolean listInstalled = false;
         String installAddon = null;
         String removeAddon = null;
-        furnace = ServiceLoader.load(Furnace.class).iterator().next();
 
-        furnace.setArgs(args);
+        List<String> knownWindupArgs = getKnownWindupArgs();
+        List<String> windupArgs  = new ArrayList();
+        List<String> unknownArgs = new ArrayList();
+        boolean isEvaluate = false;
 
-        if (args.length > 0)
+        // The rest...
+        for (int i = 0; i < args.length; i++)
         {
-            List<String> listArgs = Arrays.asList(args);
-            if (listArgs.contains("--help") || listArgs.contains("-h"))
+            final String arg = args[i];
+
+            // Put Windup arguments aside.
+            if (knownWindupArgs.contains(arg))
             {
-                System.out.println(help());
-                exitAfter = true;
-                return;
+                // Add all values of this argument (they are in this format: --foo bar baz | --otherArg)
+                do{
+                    windupArgs.add(args[i]);
+                    args[i] = null;
+                }
+                while(++i < args.length && !args[i].startsWith("--"));
+                i--;
             }
-            for (int i = 0; i < args.length; i++)
+
+            // Forge-related args.
+            else if ("--install".equals(arg) || "-i".equals(arg))
             {
-                if ("--install".equals(args[i]) || "-i".equals(args[i]))
-                {
-                    installAddon = args[++i];
-                }
-                else if ("--remove".equals(args[i]) || "-r".equals(args[i]))
-                {
-                    removeAddon = args[++i];
-                }
-                else if ("--list".equals(args[i]) || "-l".equals(args[i]))
-                {
-                    listInstalled = true;
-                }
-                else if ("--addonDir".equals(args[i]) || "-a".equals(args[i]))
-                {
-                    furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(args[++i]));
-                }
-                else if ("--immutableAddonDir".equals(args[i]) || "-m".equals(args[i]))
-                {
-                    furnace.addRepository(AddonRepositoryMode.IMMUTABLE, new File(args[++i]));
-                }
-                else if ("--batchMode".equals(args[i]) || "-b".equals(args[i]))
-                {
-                    batchMode = true;
-                    furnace.setServerMode(false);
-                }
-                else if ("--evaluate".equals(args[i]) || "-e".equals(args[i]))
-                {
-                    furnace.setServerMode(true);
-                    System.setProperty("INTERACTIVE", "false");
-                    System.setProperty("forge.shell.evaluate", "true");
-                    i++;
-                }
-                else if ("--debug".equals(args[i]) || "-d".equals(args[i]))
-                {
-                    // This is just to avoid the Unknown option: --debug message below
-                }
-                else if ("--version".equals(args[i]) || "-v".equals(args[i]))
-                {
-                    System.out.println(getVersionString());
-                    exitAfter = true;
-                }
-                else
-                {
-                    System.out.println("windup: unrecognized option: '" + args[i] + "'");
-                    System.out.println("Try 'windup --help' for more information.");
-                    exitAfter = true;
-                }
+                installAddon = args[++i];
+            }
+            else if ("--remove".equals(arg) || "-r".equals(arg))
+            {
+                removeAddon = args[++i];
+            }
+            else if ("--list".equals(arg) || "-l".equals(arg))
+            {
+                listInstalled = true;
+            }
+            else if ("--addonDir".equals(arg) || "-a".equals(arg))
+            {
+                furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(args[++i]));
+            }
+            else if ("--immutableAddonDir".equals(arg) || "-m".equals(arg))
+            {
+                furnace.addRepository(AddonRepositoryMode.IMMUTABLE, new File(args[++i]));
+            }
+            else if ("--batchMode".equals(arg) || "-b".equals(arg))
+            {
+                batchMode = true;
+                furnace.setServerMode(false);
+            }
+            else if ("--evaluate".equals(arg) || "-e".equals(arg))
+            {
+                isEvaluate = true;
+                setupNonInteractive(furnace);
+                i++;
+            }
+            else if ("--debug".equals(arg) || "-d".equals(arg))
+            {
+                // This is just to avoid the "Unknown option: --debug" message below
+            }
+            else if ("--version".equals(arg) || "-v".equals(arg))
+            {
+                System.out.println(getVersionString());
+                this.exitAfter = true;
+            }
+            else
+            {
+                unknownArgs.add(arg);
             }
         }
 
+        // Make it a List, Get rid of nulls.
+        List<String> argsList = new ArrayList(args.length+2);
+        for (String arg : args)
+        {
+            if(arg != null)
+                argsList.add(arg);
+        }
+
+        // Move Windup agruments to --evaluate '...'
+        if (!windupArgs.isEmpty())
+        {
+            setupNonInteractive(furnace);
+
+            // Pass unknown arguments to Windup (Forge).
+            windupArgs.addAll(unknownArgs);
+            unknownArgs.clear();
+
+            if (isEvaluate)
+                System.out.println("Both --evaluate (-e) and Windup options were found, may lead to unexpected behavior.");
+
+            StringBuilder sb = new StringBuilder("windup-migrate-app");
+            for (String windupArg : windupArgs)
+                sb.append(" ").append(windupArg);
+            argsList.add("-e");
+            argsList.add(sb.toString());
+        }
+        else
+        {
+            if (!unknownArgs.isEmpty()){
+                System.out.println("Windup: unrecognized options: " + Strings.join(unknownArgs.toArray(), ", "));
+                System.out.println("Run 'windup --help' for more information.");
+                this.exitAfter = true;
+            }
+        }
+
+        args = (String[]) argsList.toArray(new String[argsList.size()]);
+
+        // Process Furnace commands.
         if (!containsMutableRepository(furnace.getRepositories()))
         {
-            furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(getUserWindupDir(), "addons"));
+            furnaceService.getFurnace().addRepository(AddonRepositoryMode.MUTABLE, new File(getUserWindupDir(), "addons"));
         }
         if (listInstalled)
         {
-            list();
-        }
-        if (installAddon != null)
-        {
-            install(installAddon);
+            this.exitAfter = furnaceService.list();
         }
         if (removeAddon != null)
         {
-            remove(removeAddon);
+            this.exitAfter = furnaceService.remove(removeAddon, this.exitAfter);
         }
+        if (installAddon != null)
+        {
+            this.exitAfter = furnaceService.install(installAddon, this.exitAfter);
+        }
+
+        return args;
+    }
+
+
+    private static void setupNonInteractive(final Furnace furnace)
+    {
+        furnace.setServerMode(true);
+        System.setProperty("INTERACTIVE", "false");
+        System.setProperty("forge.shell.evaluate", "true");
+    }
+
+    /**
+     * Initialize Furnace and process some of arguments.
+     */
+    private Bootstrap(String[] args)
+    {
+
+        Furnace furnace = ServiceLoader.load(Furnace.class).iterator().next();
+        furnaceService = new BootstrapFurnaceService(furnace);
+
+        args = processArguments(args, furnaceService);
+        log.fine("Arguments after pre-processing: " + Strings.join(args, " "));
+        furnace.setArgs(args);
     }
 
     private String help()
@@ -198,6 +283,7 @@ public class Bootstrap
         sb.append("Usage: windup [OPTION]... PARAMETER ... \n");
         sb.append("Extendable migration analysis, at your fingertips. \n");
         sb.append("\n");
+
         sb.append("-i, --install [[groupId:]addon[,version]]\n");
         sb.append("\t install the required addons and exit. ex: `windup -i core-addon-x` or `windup -i org.example.addon:example,1.0.0` \n");
 
@@ -230,7 +316,7 @@ public class Bootstrap
         return sb.toString();
     }
 
-    private boolean containsMutableRepository(List<AddonRepository> repositories)
+    private static boolean containsMutableRepository(List<AddonRepository> repositories)
     {
         boolean result = false;
         for (AddonRepository repository : repositories)
@@ -244,255 +330,29 @@ public class Bootstrap
         return result;
     }
 
-    private void list()
-    {
-        try
-        {
-            for (AddonRepository repository : furnace.getRepositories())
-            {
-                System.out.println(repository.getRootDirectory().getCanonicalPath() + ":");
-                List<AddonId> addons = repository.listEnabled();
-                for (AddonId addon : addons)
-                {
-                    System.out.println(addon.toCoordinates());
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            System.out.println("> Forge version [" + AddonRepositoryImpl.getRuntimeAPIVersion() + "]");
-        }
-        finally
-        {
-            exitAfter = true;
-        }
-    }
-
-    private List<AddonId> getEnabledAddonIds()
-    {
-        List<AddonId> result = new ArrayList<>();
-        for (AddonRepository repository : furnace.getRepositories())
-        {
-            List<AddonId> addons = repository.listEnabled();
-            result.addAll(addons);
-        }
-        return result;
-    }
-
-    private void start() throws InterruptedException, ExecutionException
-    {
-        if (!exitAfter)
-        {
-            if (!batchMode)
-            {
-                List<AddonId> addonIds = getEnabledAddonIds();
-                if (addonIds.isEmpty())
-                {
-                    String result = System.console().readLine(
-                                "There are no addons installed; install core addons now? [Y,n] ");
-                    if (!"n".equalsIgnoreCase(result.trim()))
-                    {
-                        install("core");
-                    }
-                }
-            }
-
-            furnace.start();
-        }
-    }
-
-    private void install(String addonCoordinates)
-    {
-        Version runtimeAPIVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
-        try
-        {
-            AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
-            AddonManagerImpl addonManager = new AddonManagerImpl(furnace, resolver);
-
-            AddonId addon;
-            // This allows windup --install maven
-            if (addonCoordinates.contains(","))
-            {
-                if (addonCoordinates.contains(":"))
-                {
-                    addon = AddonId.fromCoordinates(addonCoordinates);
-                }
-                else
-                {
-                    addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
-                }
-            }
-            else
-            {
-                AddonId[] versions;
-                String coordinate;
-                if (addonCoordinates.contains(":"))
-                {
-                    coordinate = addonCoordinates;
-                    versions = resolver.resolveVersions(addonCoordinates).get();
-                }
-                else
-                {
-                    coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
-                    versions = resolver.resolveVersions(coordinate).get();
-                }
-
-                if (versions.length == 0)
-                {
-                    throw new IllegalArgumentException("No Artifact version found for " + coordinate);
-                }
-                else
-                {
-                    AddonId selected = null;
-                    for (int i = versions.length - 1; selected == null && i >= 0; i--)
-                    {
-                        String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
-                        if (apiVersion != null
-                                    && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
-                        {
-                            selected = versions[i];
-                        }
-                    }
-                    if (selected == null)
-                    {
-                        throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
-                                    + " for API " + runtimeAPIVersion);
-                    }
-
-                    addon = selected;
-                }
-            }
-
-            AddonActionRequest request = addonManager.install(addon);
-            System.out.println(request);
-            if (!batchMode)
-            {
-                String result = System.console().readLine("Confirm installation [Y/n]? ");
-                if ("n".equalsIgnoreCase(result.trim()))
-                {
-                    System.out.println("Installation aborted.");
-                    return;
-                }
-            }
-            request.perform();
-            System.out.println("Installation completed successfully.");
-            System.out.println();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            System.out.println("> Forge version [" + runtimeAPIVersion + "]");
-        }
-        finally
-        {
-            exitAfter = true;
-        }
-    }
-
-    private void remove(String addonCoordinates)
-    {
-        try
-        {
-            AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
-            AddonManagerImpl addonManager = new AddonManagerImpl(furnace, resolver);
-            AddonId addon = null;
-            String coordinates;
-            // This allows windup --remove maven
-            if (addonCoordinates.contains(","))
-            {
-                if (addonCoordinates.contains(":"))
-                {
-                    addon = AddonId.fromCoordinates(addonCoordinates);
-                }
-                else
-                {
-                    addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
-                }
-                coordinates = addon.getName();
-            }
-            else
-            {
-                if (addonCoordinates.contains(":"))
-                {
-                    coordinates = addonCoordinates;
-                }
-                else
-                {
-                    coordinates = FORGE_ADDON_GROUP_ID + addonCoordinates;
-                }
-            }
-            REPOS: for (AddonRepository repository : furnace.getRepositories())
-            {
-                for (AddonId id : repository.listEnabled())
-                {
-                    if (coordinates.equals(id.getName()))
-                    {
-                        addon = id;
-                        if (repository instanceof MutableAddonRepository)
-                        {
-                            RemoveRequest request = addonManager.remove(id, (repository));
-                            System.out.println(request);
-                            if (!batchMode)
-                            {
-                                String result = System.console().readLine("Confirm uninstallation [Y/n]? ");
-                                if ("n".equalsIgnoreCase(result.trim()))
-                                {
-                                    System.out.println("Uninstallation aborted.");
-                                    return;
-                                }
-                            }
-                            request.perform();
-                            System.out.println("Uninstallation completed successfully.");
-                            System.out.println();
-                        }
-                        break REPOS;
-                    }
-                }
-            }
-            if (addon == null)
-            {
-                throw new IllegalArgumentException("No addon exists with id " + coordinates);
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            System.out.println(getVersionString());
-        }
-        finally
-        {
-            exitAfter = true;
-        }
-    }
 
     private static String getServiceName(final ClassLoader classLoader, final String className)
     {
         try (final InputStream stream = classLoader.getResourceAsStream("META-INF/services/" + className))
         {
-            if (stream != null)
+            if (stream == null)
+                return null;
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream)))
             {
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream)))
+                String line;
+                while ((line = reader.readLine()) != null)
                 {
-                    String line;
-                    while ((line = reader.readLine()) != null)
-                    {
-                        final int i = line.indexOf('#');
-                        if (i != -1)
-                        {
-                            line = line.substring(0, i);
-                        }
-                        line = line.trim();
-                        if (line.length() == 0)
-                        {
-                            continue;
-                        }
-                        return line;
-                    }
-                }
-                catch (IOException e)
-                {
-                    // ignore
+                    // Cut off commennt.
+                    final int i = line.indexOf('#');
+                    if (i != -1)
+                        line = line.substring(0, i);
+
+                    line = line.trim();
+                    if (line.length() == 0)
+                        continue;
+
+                    return line;
                 }
             }
         }
@@ -521,12 +381,39 @@ public class Bootstrap
 
     public static Version getRuntimeAPIVersion()
     {
-        String version = Bootstrap.class.getPackage()
-                    .getImplementationVersion();
+        String version = Bootstrap.class.getPackage().getImplementationVersion();
         if (version != null)
         {
             return new SingleVersion(version);
         }
         return EmptyVersion.getInstance();
     }
+
+
+    private void start() throws InterruptedException, ExecutionException
+    {
+        furnaceService.start(exitAfter, batchMode);
+    }
+
+
+    private List<String> getKnownWindupArgs()
+    {
+        // TODO: Get this dynamically.
+        // WindupConfiguration.getWindupConfigurationOptions()
+        // or get the CommandControllerFactory -> WindupCommand Controler -> controller.getInputs()
+        // However, to do it dynamically, we would have to have Forge already booted...
+
+        final ArrayList<String> args = new ArrayList<>();
+        args.add("--input");
+        args.add("--output");
+        args.add("--offline");
+
+        // Java
+        args.add("--packages");
+        args.add("--sourceMode");
+
+        return args;
+    }
+
+
 }
