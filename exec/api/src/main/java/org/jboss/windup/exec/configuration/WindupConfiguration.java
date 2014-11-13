@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
@@ -75,9 +76,16 @@ public class WindupConfiguration
      */
     public static Iterable<WindupConfigurationOption> getWindupConfigurationOptions()
     {
+        return getWindupConfigurationOptions(FurnaceHolder.getFurnace());
+    }
+
+    /**
+     * Returns all of the {@link WindupConfigurationOption} in all currently available {@link Addon}s.
+     */
+    public static Iterable<WindupConfigurationOption> getWindupConfigurationOptions(Furnace furnace)
+    {
         List<WindupConfigurationOption> results = new ArrayList<>();
-        for (WindupConfigurationOption option : FurnaceHolder.getFurnace().getAddonRegistry()
-                    .getServices(WindupConfigurationOption.class))
+        for (WindupConfigurationOption option : furnace.getAddonRegistry().getServices(WindupConfigurationOption.class))
         {
             results.add(option);
         }
@@ -169,10 +177,11 @@ public class WindupConfiguration
         }
         return results;
     }
-    
+
     /**
-     * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the file/directory specified by the user and the default
-     * paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
+     * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the file/directory specified by the user
+     * and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
+     * 
      * @return
      */
     public Iterable<Path> getAllIgnoreDirectories()
@@ -187,7 +196,6 @@ public class WindupConfiguration
         return results;
     }
 
-
     /**
      * Contains a list of {@link Path}s with directories that contains user provided rules.
      */
@@ -200,9 +208,9 @@ public class WindupConfiguration
         }
         return Collections.unmodifiableList(paths);
     }
-    
+
     /**
-     * Contains a default list of {@link Path}s with directories/files that contains files having regexes of file names to be ignored. 
+     * Contains a default list of {@link Path}s with directories/files that contains files having regexes of file names to be ignored.
      */
     public List<Path> getDefaultUserIgnoreDirectories()
     {
@@ -244,7 +252,7 @@ public class WindupConfiguration
         paths.add(path);
         return this;
     }
-    
+
     /**
      * Adds a path to the list of default {@link Path}s with directories/files that contain files with regexes of file names to be ignored.
      * 

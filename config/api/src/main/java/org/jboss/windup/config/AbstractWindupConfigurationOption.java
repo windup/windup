@@ -11,6 +11,6 @@ public abstract class AbstractWindupConfigurationOption implements WindupConfigu
     @Override
     public int getPriority()
     {
-        return Integer.MIN_VALUE;
+        return 0;
     }
 }
