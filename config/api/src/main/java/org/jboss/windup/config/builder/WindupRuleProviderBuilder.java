@@ -164,4 +164,9 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     {
         return executeBeforeIDs;
     }
+    
+    @Override
+    public String toString() {
+        return this.getID();
+    }
 }
