@@ -15,6 +15,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileModelService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.IgnoredFileModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ZipUtil;
@@ -128,8 +129,11 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         }
         catch (Throwable e)
         {
-            throw new WindupException("Unzipping archive: " + inputZipFile.getAbsolutePath() + " failed due to: "
-                        + e.getMessage(), e);
+            ClassificationService classificationService = new ClassificationService(context);
+            classificationService.attachClassification(archiveModel, ArchiveModel.MALFORMED_ARCHIVE, "Cannot unzip the file");
+            LOG.warning("Cannot unzip the file " + inputZipFile.getPath() + " to " + appArchiveFolder.toString() + 
+                        ". The ArchiveModel was classified as malformed.");
+            return;
         }
 
         FileModel newFileModel = fileService.createByFilePath(appArchiveFolder.toString());
