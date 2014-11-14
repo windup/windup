@@ -79,6 +79,7 @@ public class WindupConfigurationLoaderImpl implements WindupRuleLoader
             if (ruleProviderFilter != null && !ruleProviderFilter.accept(provider))
             {
                 // if there is a filter, and it rejects the ruleProvider, then skip this rule provider
+                LOG.info(provider + " didn't pass the filter so is ignored.");
                 continue;
             }
 

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -59,7 +61,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
     private FurnaceClasspathScanner scanner;
     @Inject
     private Furnace furnace;
-
+    
     @Inject
     private Imported<GroovyConfigMethod> methods;
 
@@ -100,6 +102,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         ClassLoader loader = getCompositeClassloader();
         GroovyShell shell = new GroovyShell(loader, binding, config);
 
+        //import all the support functions defined in a separate groovy file
         try (InputStream supportFuncsIS = getClass().getResourceAsStream(
                     "/org/jboss/windup/addon/groovy/WindupGroovySupportFunctions.groovy"))
         {
@@ -145,8 +148,16 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
             @Override
             public boolean accept(Addon addon)
             {
-                // TODO this should only accept addons that depend on windup-config-groovy or whatever we call that
-                return true;
+                Set<AddonDependency> dependencies = addon.getDependencies();
+                boolean found=false;
+                for(AddonDependency dependency : dependencies) {
+                 // TODO this should only accept addons that depend on windup-config-groovy or whatever we call that
+                    if (dependency.getDependency().getId().getName().contains("groovy")) {
+                        return true;
+                    }
+                }
+                return false;
+                
             }
         };
 
@@ -177,13 +188,6 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
     {
         String userRulesDirectory = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
 
-        List<URL> scripts = scanner.scan(GROOVY_RULES_EXTENSION);
-
-        // no user dir, so just return the ones that we found in the classpath
-        if (userRulesDirectory == null)
-        {
-            return scripts;
-        }
         Path userRulesPath = Paths.get(userRulesDirectory);
 
         if (!Files.isDirectory(userRulesPath))
@@ -197,9 +201,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
             return Collections.emptyList();
         }
 
-        // create the results as a copy (as we will be adding user groovy files to them)
-        final List<URL> results = new ArrayList<>(scripts);
-
+        final List<URL> results = new ArrayList<>();
         try
         {
             Files.walkFileTree(userRulesPath, new SimpleFileVisitor<Path>()
