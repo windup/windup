@@ -24,6 +24,12 @@ public interface Decompiler
      */
     public DecompilationResult decompileClassFile(File rootDir, Path classFilePath, File outputDir)
                 throws DecompilationException;
+    
+    /**
+     * Close all the resources
+     */
+    public void close();
+    
 
     /**
      * Decompiles all .class files and archives in the given directory and places results in the specified output
@@ -51,6 +57,7 @@ public interface Decompiler
      * @param outputDir The directory where decompiled .java files will be placed.
      */
     public DecompilationResult decompileArchive(File archive, File outputDir) throws DecompilationException;
+    
 
     /**
      * Decompiles all .class files and nested archives in the given archive.
