@@ -53,8 +53,9 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
         if (payload.getUnzippedDirectory() != null)
         {
             ProcyonDecompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
-            int cores =Runtime.getRuntime().availableProcessors()/2;
-            if(cores < 1){
+            int cores = Runtime.getRuntime().availableProcessors() / 2;
+            if (cores < 1)
+            {
                 cores = 1;
             }
             // decompiler.setExecutorService(Executors.newFixedThreadPool(cores));
@@ -87,13 +88,13 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
 
                     String decompiledOutputFile = decompiledEntry.getValue();
                     FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
-                            decompiledOutputFile);
+                                decompiledOutputFile);
 
                     if (decompiledFileModel == null)
                     {
                         FileModel parentFileModel = fileService.findByPath(Paths.get(decompiledOutputFile)
-                                .getParent()
-                                .toString());
+                                    .getParent()
+                                    .toString());
                         decompiledFileModel = fileService.createByFilePath(parentFileModel, decompiledOutputFile);
                         decompiledFileModel.setParentArchive(payload);
                     }
@@ -106,14 +107,14 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                         if (!(decompiledFileModel instanceof JavaSourceFileModel))
                         {
                             decompiledFileModel = GraphService.addTypeToModel(event.getGraphContext(),
-                                    decompiledFileModel, JavaSourceFileModel.class);
+                                        decompiledFileModel, JavaSourceFileModel.class);
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
                         TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
                         techTagService.addTagToFileModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
                         FileModel classFileModel = fileService.getUniqueByProperty(
-                                FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
+                                    FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
                         if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
                         {
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
@@ -123,8 +124,8 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                         else
                         {
                             throw new WindupException(
-                                    "Failed to find original JavaClassFileModel for decompiled Java file: "
-                                            + decompiledOutputFile + " at: " + classFilePath.toString());
+                                        "Failed to find original JavaClassFileModel for decompiled Java file: "
+                                                    + decompiledOutputFile + " at: " + classFilePath.toString());
                         }
                     }
                     payload.addDecompiledFileModel(decompiledFileModel);
@@ -133,7 +134,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
             catch (final DecompilationException exc)
             {
                 throw new WindupException("Error decompiling archive " + archivePath + " due to: " + exc.getMessage(),
-                        exc);
+                            exc);
             }
         }
         ExecutionStatistics.get().end("ProcyonDecompilationOperation.perform");

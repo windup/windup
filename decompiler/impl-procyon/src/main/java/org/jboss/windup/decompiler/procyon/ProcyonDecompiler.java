@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -56,6 +59,7 @@ import com.strobel.io.PathHelper;
 public class ProcyonDecompiler implements Decompiler
 {
     private ExecutorService exService = Executors.newSingleThreadExecutor();
+    private int numberOfThreads = 1;
     private static final Logger log = Logger.getLogger(ProcyonDecompiler.class.getName());
     private final ProcyonConfiguration procyonConf;
 
@@ -129,8 +133,7 @@ public class ProcyonDecompiler implements Decompiler
     }
 
     /**
-     * Decompiles all .class files and archives in the given directory and places results in the specified output
-     * directory.
+     * Decompiles all .class files and archives in the given directory and places results in the specified output directory.
      * <p>
      * Discovered archives will be decompiled into directories matching the name of the archive, e.g.
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
@@ -151,7 +154,7 @@ public class ProcyonDecompiler implements Decompiler
         return result;
     }
 
-    public void setExecutorService(ExecutorService service)
+    public void setExecutorService(ExecutorService service, int numberOfThreads)
     {
         this.exService.shutdown();
         try
@@ -162,6 +165,7 @@ public class ProcyonDecompiler implements Decompiler
         {
             throw new IllegalStateException("Was not able to decompile in the given time limit.");
         }
+        this.numberOfThreads = numberOfThreads;
         this.exService = service;
     }
 
@@ -176,7 +180,6 @@ public class ProcyonDecompiler implements Decompiler
         DecompilerSettings settings = getDefaultSettings(outputDir);
         // MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
         // MetadataSystem metadataSystem = new NoRetryMetadataSystem(rootDir.getPath());
-        
 
         // TODO: Rewrite with Commons IO's DirectoryWalker.
         File curDirFull = rootDir.toPath().resolve(subPath).toFile();
@@ -286,61 +289,74 @@ public class ProcyonDecompiler implements Decompiler
         log.info("Decompiling archive '" + archive.getAbsolutePath() + "' to '" + outputDir.getAbsolutePath() + "'");
 
         JarFile jar = loadJar(archive);
-        int jarEntryCount = 0;
+        final AtomicInteger jarEntryCount = new AtomicInteger(0);
         Enumeration<JarEntry> countEnum = jar.entries();
         while (countEnum.hasMoreElements())
         {
             countEnum.nextElement();
-            jarEntryCount++;
+            jarEntryCount.incrementAndGet();
         }
 
         // MetadataSystem, TypeLoader's
-        DecompilerSettings settings = getDefaultSettings(outputDir);
+        final DecompilerSettings settings = getDefaultSettings(outputDir);
         settings.setTypeLoader(new CompositeTypeLoader(new JarTypeLoader(jar), settings.getTypeLoader()));
-        MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
 
-        int classesDecompiled = 0;
         final DecompilationResult res = new DecompilationResult();
 
         Filter.Result filterRes = Filter.Result.ACCEPT;
 
-        int current = 0;
+        final AtomicInteger current = new AtomicInteger(0);
         final Enumeration<JarEntry> entries = jar.entries();
         Collection<Callable<File>> tasks = new ArrayList<Callable<File>>();
         while (entries.hasMoreElements())
         {
             final JarEntry entry = entries.nextElement();
-            current++;
-            if (current % 100 == 0)
-            {
-                log.info("Decompiling " + current + " / " + jarEntryCount);
-            }
 
             if (filter != null)
                 filterRes = filter.decide(entry);
             if (filterRes == Filter.Result.REJECT)
+            {
+                jarEntryCount.decrementAndGet();
                 continue;
+            }
             if (filterRes == Filter.Result.STOP)
                 break;
 
             final String name = entry.getName();
 
             if (!name.endsWith(".class"))
+            {
+                jarEntryCount.decrementAndGet();
                 continue;
+            }
 
             final String typeName = StringUtils.removeEnd(name, ".class");
 
+            @SuppressWarnings("unchecked")
+            final Queue<MetadataSystem> metadataSystemCache = new LinkedList<>();
+            refreshMetadataCache(metadataSystemCache, settings);
+
             // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
-            metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
-            final DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
             Callable<File> callable = new Callable<File>()
             {
                 @Override
                 public File call() throws Exception
                 {
+                    MetadataSystem metadataSystem = null;
                     try
                     {
+                        synchronized (metadataSystemCache)
+                        {
+                            if (current.incrementAndGet() % 100 == 0)
+                            {
+                                log.info("Decompiling " + current + " / " + jarEntryCount);
+                                refreshMetadataCache(metadataSystemCache, settings);
+                            }
+                            metadataSystem = metadataSystemCache.remove();
+                        }
+
                         ExecutionStatistics.get().begin("ProcyonDecompiler.decompileIndividualItem");
+                        final DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
                         // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
                         t.start();
                         t.join(60000L); // wait up to one minute
@@ -365,6 +381,13 @@ public class ProcyonDecompiler implements Decompiler
                     }
                     finally
                     {
+                        if (metadataSystem != null)
+                        {
+                            synchronized (metadataSystemCache)
+                            {
+                                metadataSystemCache.add(metadataSystem);
+                            }
+                        }
                         ExecutionStatistics.get().end("ProcyonDecompiler.decompileIndividualItem");
                     }
                     return null;
@@ -381,6 +404,14 @@ public class ProcyonDecompiler implements Decompiler
             throw new IllegalStateException("Decompilation was interrupted.");
         }
         return res;
+    }
+
+    private void refreshMetadataCache(final Queue<MetadataSystem> metadataSystemCache, final DecompilerSettings settings)
+    {
+        for (int i = 0; i < this.numberOfThreads; i++)
+        {
+            metadataSystemCache.add(new NoRetryMetadataSystem(settings.getTypeLoader()));
+        }
     }
 
     private class DecompileExecutor extends Thread
@@ -413,7 +444,7 @@ public class ProcyonDecompiler implements Decompiler
 
         public void cancelDecompilation()
         {
-            this.stop(new NullPointerException());
+            this.stop();
         }
     }
 
