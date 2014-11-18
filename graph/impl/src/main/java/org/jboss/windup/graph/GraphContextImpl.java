@@ -11,7 +11,6 @@ import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
@@ -66,6 +65,18 @@ public class GraphContextImpl implements GraphContext
         Configuration conf = new BaseConfiguration();
         conf.setProperty("storage.directory", berkeley.toAbsolutePath().toString());
         conf.setProperty("storage.backend", "berkeleyje");
+
+        // Sets the berkeley cache to a relatively small value to reduce the memory footprint.
+        // This is actually more important than performance on some of the smaller machines out there, and
+        // the performance decrease seems to be minimal.
+        conf.setProperty("storage.berkeleydb.cache-percentage", 1);
+
+        //
+        // turn on a db-cache that persists across txn boundaries, but make it relatively small
+        conf.setProperty("cache.db-cache", true);
+        conf.setProperty("cache.db-cache-clean-wait", 0);
+        conf.setProperty("cache.db-cache-size", .05);
+        conf.setProperty("cache.db-cache-time", 0);
 
         conf.setProperty("index.search.backend", "lucene");
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());

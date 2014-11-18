@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.decompiler.api.DecompilationException;
 import org.jboss.windup.decompiler.api.DecompilationFailure;
+import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.util.CountClassesFilter;
@@ -112,7 +113,20 @@ public abstract class DecompilerTestBase
         File decompDir = new File(testTempDir, "decompiled");
 
         final Decompiler dec = this.getDecompiler();
-        final DecompilationResult res = dec.decompileArchive(archive, decompDir, new CountClassesFilter(100));
+        final DecompilationResult res = dec.decompileArchive(archive, decompDir, new CountClassesFilter(100), new DecompilationListener()
+        {
+            @Override
+            public void decompilationProcessComplete()
+            {
+                // noop
+            }
+
+            @Override
+            public void fileDecompiled(String inputPath, String outputPath)
+            {
+                // noop
+            }
+        });
 
         Assert.assertNotNull("Results object returned", res);
 

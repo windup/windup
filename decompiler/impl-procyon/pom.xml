@@ -16,7 +16,7 @@
     <name>Windup Engine - Decompiler Procyon</name>
 
     <properties>
-        <version.procyon>0.5.25</version.procyon>
+        <version.procyon>0.5.27</version.procyon>
     </properties>
 
     <dependencies>
@@ -31,6 +31,11 @@
             <groupId>org.bitbucket.mstrobel</groupId>
             <artifactId>procyon-compilertools</artifactId>
             <version>${version.procyon}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.0</version>
         </dependency>
 
         <!-- Addon Dependencies -->

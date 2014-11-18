@@ -7,16 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Keeps a count of successful decompilations and list of failed ones, in the form of an exception with String path and
- * cause exception.
+ * Keeps a count of successful decompilations and list of failed ones, in the form of an exception with String path and cause exception.
  * 
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DecompilationResult
 {
-    private final List<DecompilationFailure> failed = new LinkedList<>();
-    private final Map<String, String> decompiledFiles = new HashMap<>();
+    private final List<DecompilationFailure> failed = Collections.synchronizedList(new LinkedList<DecompilationFailure>());
+    private final Map<String, String> decompiledFiles = Collections.synchronizedMap(new HashMap<String, String>());
 
     public void addDecompiled(String inputPath, String path)
     {
