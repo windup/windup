@@ -10,6 +10,9 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("ArchiveModel")
 public interface ArchiveModel extends FileModel
 {
+    public static String MALFORMED_ARCHIVE= "Malformed archive";
+    
+    
     @Adjacency(label = "parentArchive", direction = Direction.IN)
     public ArchiveModel getParentArchive();
 
