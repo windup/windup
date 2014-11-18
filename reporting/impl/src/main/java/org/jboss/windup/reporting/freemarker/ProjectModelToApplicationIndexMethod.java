@@ -1,12 +1,14 @@
 package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.service.ApplicationReportIndexService;
 import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Logging;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -24,6 +26,7 @@ import freemarker.template.TemplateModelException;
  */
 public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMethod
 {
+    private static Logger LOG = Logging.get(ProjectModelToApplicationIndexMethod.class);
 
     private static final String NAME = "projectModelToApplicationIndex";
 
@@ -52,6 +55,11 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
         StringModel stringModelArg = (StringModel) arguments.get(0);
         ProjectModel projectModel = (ProjectModel) stringModelArg.getWrappedObject();
         ApplicationReportIndexModel index = service.getApplicationReportIndexForProjectModel(projectModel);
+        if (index == null)
+        {
+            LOG.warning("Could not find an application index for project model: " + projectModel.getName() + " (Vertex ID: "
+                        + projectModel.asVertex().getId() + ")");
+        }
         ExecutionStatistics.get().end(NAME);
         return index;
     }

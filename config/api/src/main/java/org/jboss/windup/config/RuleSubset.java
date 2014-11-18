@@ -31,6 +31,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.RuleProviderExecutionStatisticsService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.rewrite.bind.Binding;
@@ -74,14 +75,16 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
-     * Used for tracking the time taken by the rules within each RuleProvider
+     * Used for tracking the time taken by the rules within each RuleProvider. This links from a {@link WindupRuleProvider} to the ID of a
+     * {@link RuleProviderExecutionStatisticsModel}
      */
-    private final IdentityHashMap<WindupRuleProvider, RuleProviderExecutionStatisticsModel> timeTakenByProvider = new IdentityHashMap<>();
+    private final IdentityHashMap<WindupRuleProvider, Object> timeTakenByProvider = new IdentityHashMap<>();
 
     /**
-     * Used for tracking the time taken by each phase of execution
+     * Used for tracking the time taken by each phase of execution. This links from a {@link RulePhase} to the ID of a
+     * {@link RulePhaseExecutionStatisticsModel}
      */
-    private final Map<RulePhase, RulePhaseExecutionStatisticsModel> timeTakenByPhase = new HashMap<>();
+    private final Map<RulePhase, Object> timeTakenByPhase = new HashMap<>();
 
     private final Configuration config;
 
@@ -109,17 +112,17 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
         if (!timeTakenByProvider.containsKey(ruleProvider))
         {
-            RuleProviderExecutionStatisticsModel model = new GraphService<>(graphContext,
-                        RuleProviderExecutionStatisticsModel.class).create();
+            RuleProviderExecutionStatisticsModel model = new RuleProviderExecutionStatisticsService(graphContext).create();
             model.setRuleIndex(ruleIndex);
             model.setRuleProviderID(ruleProvider.getID());
             model.setTimeTaken(timeTaken);
 
-            timeTakenByProvider.put(ruleProvider, model);
+            timeTakenByProvider.put(ruleProvider, model.asVertex().getId());
         }
         else
         {
-            RuleProviderExecutionStatisticsModel model = timeTakenByProvider.get(ruleProvider);
+            RuleProviderExecutionStatisticsService service = new RuleProviderExecutionStatisticsService(graphContext);
+            RuleProviderExecutionStatisticsModel model = service.getById(timeTakenByProvider.get(ruleProvider));
             int prevTimeTaken = model.getTimeTaken();
             model.setTimeTaken(prevTimeTaken + timeTaken);
         }
@@ -137,11 +140,12 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         RulePhaseExecutionStatisticsModel.class).create();
             model.setRulePhase(phase.toString());
             model.setTimeTaken(timeTaken);
-            timeTakenByPhase.put(phase, model);
+            timeTakenByPhase.put(phase, model.asVertex().getId());
         }
         else
         {
-            RulePhaseExecutionStatisticsModel model = timeTakenByPhase.get(phase);
+            GraphService<RulePhaseExecutionStatisticsModel> service = new GraphService<>(graphContext, RulePhaseExecutionStatisticsModel.class);
+            RulePhaseExecutionStatisticsModel model = service.getById(timeTakenByPhase.get(phase));
             int prevTimeTaken = model.getTimeTaken();
             model.setTimeTaken(prevTimeTaken + timeTaken);
         }
