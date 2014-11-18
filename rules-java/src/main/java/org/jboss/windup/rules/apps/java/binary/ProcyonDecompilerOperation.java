@@ -9,7 +9,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.decompiler.api.DecompilationException;
 import org.jboss.windup.decompiler.api.DecompilationResult;
-import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -53,7 +52,13 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
         ExecutionStatistics.get().begin("ProcyonDecompilationOperation.perform");
         if (payload.getUnzippedDirectory() != null)
         {
-            Decompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
+            ProcyonDecompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
+            int cores = Runtime.getRuntime().availableProcessors() / 2;
+            if (cores < 1)
+            {
+                cores = 1;
+            }
+            // decompiler.setExecutorService(Executors.newFixedThreadPool(cores));
             String archivePath = ((FileModel) payload).getFilePath();
             File archive = new File(archivePath);
             File outputDir = new File(payload.getUnzippedDirectory().getFilePath());
@@ -65,6 +70,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
             try
             {
                 DecompilationResult result = decompiler.decompileArchive(archive, outputDir);
+                decompiler.close();
                 Map<String, String> decompiledOutputFiles = result.getDecompiledFiles();
 
                 FileModelService fileService = new FileModelService(event.getGraphContext());
