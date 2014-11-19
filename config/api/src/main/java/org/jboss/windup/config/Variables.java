@@ -58,6 +58,14 @@ public class Variables
     }
 
     /**
+     * Push the given {@link Variables} layer on top of the stack.
+     */
+    public void push(Map<String, Iterable<WindupVertexFrame>> frame)
+    {
+        deque.push(frame);
+    }
+    
+    /**
      * Remove the top {@link Variables} layer from the the stack.
      */
     public Map<String, Iterable<WindupVertexFrame>> pop()
@@ -158,11 +166,9 @@ public class Variables
      */
     public Iterable<WindupVertexFrame> findVariable(String name)
     {
-        Iterator<Map<String, Iterable<WindupVertexFrame>>> descIter = deque.descendingIterator();
         Iterable<WindupVertexFrame> result = null;
-        while (descIter.hasNext())
+        for (Map<String, Iterable<WindupVertexFrame>> frame : deque)
         {
-            Map<String, Iterable<WindupVertexFrame>> frame = descIter.next();
             result = frame.get(name);
             if (result != null)
             {
@@ -178,10 +184,8 @@ public class Variables
      */
     public Iterable<WindupVertexFrame> findVariableOfType(Class<?> type)
     {
-        Iterator<Map<String, Iterable<WindupVertexFrame>>> descIter = deque.descendingIterator();
-        while (descIter.hasNext())
+        for (Map<String, Iterable<WindupVertexFrame>> topOfStack : deque)
         {
-            Map<String, Iterable<WindupVertexFrame>> topOfStack = descIter.next();
             for (Iterable<WindupVertexFrame> frames : topOfStack.values())
             {
                 for (WindupVertexFrame frame : frames)
