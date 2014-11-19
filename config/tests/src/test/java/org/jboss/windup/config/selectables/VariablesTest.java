@@ -1,7 +1,11 @@
 package org.jboss.windup.config.selectables;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -12,6 +16,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Sets;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
@@ -52,6 +57,42 @@ public class VariablesTest
     @Inject
     private GraphContextFactory factory;
 
+    @Test
+    public void testMultipleFramesSameName() throws Exception {
+    	final Path folder = OperatingSystemUtils.createTempDir().toPath();
+        try (final GraphContext context = factory.create(folder))
+        {
+            GraphRewrite event = new GraphRewrite(context);
+            final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
+            final DefaultParameterValueStore values = new DefaultParameterValueStore();
+            evaluationContext.put(ParameterValueStore.class, values);
+
+            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel1.setQualifiedName("com.example.Class1NoToString");
+            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            classModel2.setQualifiedName("com.example.Class2HasToString");
+
+            List<WindupVertexFrame> list1 = new ArrayList<>();
+            Variables vars = Variables.instance(event);
+            vars.push();
+            vars.setVariable("1", list1);
+            
+            Iterable<WindupVertexFrame> fromVars1 = vars.findVariable("1");
+            Assert.assertFalse(fromVars1.iterator().hasNext());
+            
+            List<WindupVertexFrame> list2 = new ArrayList<>();
+            list2.add(classModel1);
+            list2.add(classModel2);
+            Map<String, Iterable<WindupVertexFrame>> newFrame = new HashMap<>();
+            newFrame.put("1", list2);
+            vars.push(newFrame);
+            
+            Iterable<WindupVertexFrame> fromVars2 = vars.findVariable("1");
+            List<WindupVertexFrame> fromVars2List = new ArrayList<>(Sets.toSet(fromVars2));
+            Assert.assertEquals(2, fromVars2List.size());
+        }
+    }
+    
     @Test
     public void testInvalidTypeGet() throws Exception
     {
