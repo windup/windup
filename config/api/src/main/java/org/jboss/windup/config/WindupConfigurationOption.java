@@ -3,9 +3,9 @@ package org.jboss.windup.config;
 /**
  * Specifies details regarding a particular configuraiton option that can be passed into the Windup executor. This
  * information is used by the UI to determine the available options for running Windup.
- * 
- * @author jsightler <jesse.sightler@gmail.com>
  *
+ * @author jsightler <jesse.sightler@gmail.com>
+ * @author Ondrej Zizka
  */
 public interface WindupConfigurationOption
 {
@@ -41,6 +41,11 @@ public interface WindupConfigurationOption
      * Indicates whether or not this option must be specified.
      */
     boolean isRequired();
+
+    /**
+     * Default value for this option (if not set by user).
+     */
+    Object getDefaultValue();
 
     /**
      * Validate the user indicated value and return the result.
