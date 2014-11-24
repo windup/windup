@@ -15,6 +15,7 @@ import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.selectors.FramesSelector;
+import org.jboss.windup.graph.frames.VertexFromFramedIterable;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Task;
@@ -95,11 +96,8 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                 Query.this.setInitialFramesSelector(createInitialFramesSelector(Query.this));
                 Iterable<WindupVertexFrame> resultIterable = framesSelector.getFrames(event, context);
                 Iterator<WindupVertexFrame> iterator = resultIterable.iterator();
-                List<WindupVertexFrame> result = new ArrayList<WindupVertexFrame>();
-                while (iterator.hasNext())
-                {
-                    result.add(iterator.next());
-                }
+
+                Iterable<WindupVertexFrame> result = resultIterable;
 
                 if (resultFilter != null)
                 {
@@ -111,7 +109,8 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                             filtered.add(frame);
                         }
                     }
-                    result.retainAll(filtered);
+
+                    result = filtered;
                 }
 
                 Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
@@ -180,12 +179,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                     }
                     Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
                     Iterable<WindupVertexFrame> frames = variables.findVariable(query.getInputVariablesName());
-                    List<Vertex> startingVerticesList = new ArrayList<Vertex>();
-                    for (WindupVertexFrame frame : frames)
-                    {
-                        startingVerticesList.add(frame.asVertex());
-                    }
-                    return startingVerticesList;
+                    return new VertexFromFramedIterable(frames);
                 }
                 else
                 {

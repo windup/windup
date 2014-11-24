@@ -25,7 +25,7 @@ ruleSet("Example Servlet Rule")
     )
     
     .addRule()
-    .when(JavaClass.references("java.lang.StringBuilder.*"))
+    .when(JavaClass.references("StringBuilder.*"))
     .perform(Hint.withText("This is using a StringBuilder").withEffort(8))
     
     .addRule()
