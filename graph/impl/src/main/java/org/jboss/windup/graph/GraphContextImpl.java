@@ -11,7 +11,6 @@ import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
@@ -156,7 +155,7 @@ public class GraphContextImpl implements GraphContext
         {
             for (AfterGraphInitializationListener listener : afterInitializationListeners)
             {
-                listener.process(confProps, framed);
+                listener.afterGraphStarted(confProps, this);
             }
         }
     }
