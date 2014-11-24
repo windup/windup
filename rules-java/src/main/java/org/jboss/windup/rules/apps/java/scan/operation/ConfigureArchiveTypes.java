@@ -69,6 +69,10 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
         }
     }
 
+    /**
+     * Scans all Frame classes for @ArchiveType annotation.
+     * TODO: Does this execute for every archive? Should be cached.
+     */
     private void initTypes()
     {
         Set<Class<? extends WindupVertexFrame>> frameClasses = graphTypeManager.getRegisteredTypes();

@@ -12,6 +12,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -21,13 +22,14 @@ import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers MANIFEST.MF files within archives.
- * 
+ *
  * @author jsightler <jesse.sightler@gmail.com>
- * 
+ *
  */
 public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
@@ -40,6 +42,13 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "Java/Discover");
     }
 
     @Override

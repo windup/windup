@@ -27,7 +27,9 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import java.util.logging.Logger;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.util.Logging;
+import org.ocpsoft.rewrite.context.Context;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -46,6 +48,13 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "Java");
     }
 
     @Override

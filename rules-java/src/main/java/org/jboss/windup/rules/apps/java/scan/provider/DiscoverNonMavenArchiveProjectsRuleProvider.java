@@ -6,6 +6,7 @@ import java.util.List;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
@@ -19,11 +20,12 @@ import org.jboss.windup.graph.service.ProjectModelService;
 import org.jboss.windup.util.ZipUtil;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for them.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvider
@@ -33,6 +35,14 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
     {
         return RulePhase.DISCOVERY;
     }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "Core");
+    }
+
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
@@ -69,35 +79,35 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
                         public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
                         {
                             List<ArchiveModel> hierarchy = new ArrayList<>();
-                            
+
                             ArchiveModel parentArchive = payload;
                             while(parentArchive != null)
                             {
                                 hierarchy.add(parentArchive);
-                                
+
                                 // break once we have added a parent with a project model
                                 if (parentArchive.getProjectModel() != null)
                                 {
                                     break;
                                 }
-                                
+
                                 parentArchive = parentArchive.getParentArchive();
-                                
+
                             }
-                            
+
                             ProjectModel childProjectModel = null;
                             ProjectModelService projectModelService = new ProjectModelService(event.getGraphContext());
                             for (ArchiveModel archiveModel : hierarchy)
                             {
                                 ProjectModel projectModel = archiveModel.getProjectModel();
-                                
+
                                 // create the project if we don't already have one
                                 if (projectModel == null) {
                                     projectModel = projectModelService.create();
                                     projectModel.setName(archiveModel.getArchiveName());
                                     projectModel.setRootFileModel(archiveModel);
                                     projectModel.setDescription("Unidentified Archive");
-                                    
+
                                     if(ZipUtil.endsWithZipExtension(archiveModel.getArchiveName()))
                                     {
                                         for (String extension : ZipUtil.getZipExtensions())
@@ -106,7 +116,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
                                                 projectModel.setProjectType(extension);
                                         }
                                     }
-                                    
+
                                     archiveModel.setProjectModel(projectModel);
                                     // Attach the project to all files within the archive
                                     for (FileModel f : archiveModel.getContainedFileModels())
@@ -121,7 +131,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
                                         }
                                     }
                                 }
-                                
+
                                 if(childProjectModel != null)
                                 {
                                     childProjectModel.setParentProject(projectModel);
@@ -129,7 +139,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
                                 childProjectModel = projectModel;
                             }
                         }
-                        
+
                         public String toString() {
                             return "ScanAsNonMavenProject";
                         }
@@ -137,7 +147,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
                     .and(IterationProgress.monitoring("Checking for non-Maven archive: ", 1))
                 )
             .endIteration()
-        );       
+        );
         // @formatter:on
     }
 

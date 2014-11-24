@@ -38,19 +38,19 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
     void addUserRulesPath(FileModel userRulesPath);
-    
-    /**
-     * The location for user provided ignore directory (list of ignored jar files)
-     */
-    @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
-    void addUserIgnorePath(FileModel userIgnorePath);
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
     Iterable<FileModel> getUserRulesPaths();
-    
+
+    /**
+     * The location for user provided ignore directory (list of ignored jar files)
+     */
+    @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
+    void addUserIgnorePath(FileModel userIgnorePath);
+
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */

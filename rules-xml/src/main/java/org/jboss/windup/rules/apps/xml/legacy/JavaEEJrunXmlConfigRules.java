@@ -11,15 +11,15 @@ import org.ocpsoft.rewrite.context.Context;
 
 /**
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briškár</a>
- * 
+ *
  */
-public class XmlJrunConfig extends WindupRuleProvider
+public class JavaEEJrunXmlConfigRules extends WindupRuleProvider
 {
     @Override
     public void enhanceMetadata(Context context)
     {
         super.enhanceMetadata(context);
-        context.put(RuleMetadata.CATEGORY, "XML");
+        context.put(RuleMetadata.CATEGORY, "JavaEE/JRun/XML");
     }
 
     // @formatter:off

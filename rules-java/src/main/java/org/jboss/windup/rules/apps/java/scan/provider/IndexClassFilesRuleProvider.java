@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.query.Query;
@@ -16,10 +17,11 @@ import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.Context;
 
 /**
  * Discovers .class files from the applications being analyzed.
- * 
+ *
  */
 public class IndexClassFilesRuleProvider extends WindupRuleProvider
 {
@@ -30,6 +32,15 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
     {
         return RulePhase.INITIAL_ANALYSIS;
     }
+
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "Java");
+    }
+
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()

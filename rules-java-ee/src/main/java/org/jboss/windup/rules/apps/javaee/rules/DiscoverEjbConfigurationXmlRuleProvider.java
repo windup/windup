@@ -11,6 +11,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -33,15 +34,16 @@ import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.xml.DoctypeUtils;
 import org.jboss.windup.util.xml.NamespaceUtils;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Discovers ejb-jar.xml files and parses the related metadata
- * 
+ *
  * @author jsightler <jesse.sightler@gmail.com>
- * 
+ *
  */
 public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
@@ -54,6 +56,13 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "JavaEE");
     }
 
     @Override

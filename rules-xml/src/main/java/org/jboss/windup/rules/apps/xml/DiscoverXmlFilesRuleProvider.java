@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -31,6 +32,7 @@ import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -43,6 +45,13 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "XML");
     }
 
     @Override

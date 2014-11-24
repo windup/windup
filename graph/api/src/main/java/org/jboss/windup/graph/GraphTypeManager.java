@@ -37,6 +37,9 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     private Map<String, Class<? extends WindupVertexFrame>> registeredTypes = new HashMap<>();
     private TypeRegistry typeRegistry = new TypeRegistry();
 
+    /**
+     * @return All known WindupVertexFrame subclasses (typically, found in any loaded Forge addon).
+     */
     public Set<Class<? extends WindupVertexFrame>> getRegisteredTypes()
     {
         return Collections.unmodifiableSet(new HashSet<>(registeredTypes.values()));
