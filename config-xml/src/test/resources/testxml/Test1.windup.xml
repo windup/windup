@@ -16,5 +16,23 @@
         <log message="test log message"/>
       </perform>
     </rule>
+    <rule>
+      <when>
+        <true/>
+      </when>
+      <perform>
+        <iteration>
+            <when>
+                <true/>
+            </when>
+            <perform>
+                <log message="test log message perform"/>
+            </perform>
+            <otherwise>
+                <log message="test log message otherwise"/>
+            </otherwise>
+        </iteration>
+      </perform>
+    </rule>
   </rules>
 </ruleset>
