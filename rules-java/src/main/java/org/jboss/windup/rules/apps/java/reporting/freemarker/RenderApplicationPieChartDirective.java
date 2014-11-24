@@ -35,6 +35,13 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
     private GraphContext context;
 
     @Override
+    public String getDescription()
+    {
+        return "Renders a pie chart. Takes the following parameters: project (a " + ProjectModel.class.getSimpleName()
+                    + "), recursive (Boolean), and elementid (HTML ID of the element in which to render).";
+    }
+
+    @Override
     public void execute(Environment env, @SuppressWarnings("rawtypes") Map params, TemplateModel[] loopVars,
                 TemplateDirectiveBody body)
                 throws TemplateException, IOException

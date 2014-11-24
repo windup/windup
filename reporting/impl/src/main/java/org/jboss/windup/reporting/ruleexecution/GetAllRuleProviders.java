@@ -39,10 +39,16 @@ public class GetAllRuleProviders implements WindupFreeMarkerMethod
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes no parameters and returns a List<" + WindupRuleProvider.class.getSimpleName() + "> containing all loaded Rule Providers.";
+    }
+
+    @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);
-        Object result = WindupRuleMetadata.instance(this.event).getProviders();
+        List<WindupRuleProvider> result = WindupRuleMetadata.instance(this.event).getProviders();
         ExecutionStatistics.get().end(NAME);
         return result;
     }

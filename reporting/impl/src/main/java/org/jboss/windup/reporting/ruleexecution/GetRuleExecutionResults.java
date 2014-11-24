@@ -30,6 +30,13 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes a parameter of type " + WindupRuleProvider.class.getSimpleName() + " and returns a List<"
+                    + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current Windup execution.";
+    }
+
+    @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);
@@ -39,7 +46,7 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
         WindupRuleProvider ruleProvider = (WindupRuleProvider) stringModelArg.getWrappedObject();
-        Object result = RuleExecutionResultsListener.instance(this.event).getRuleExecutionInformation(ruleProvider);
+        List<RuleExecutionInformation> result = RuleExecutionResultsListener.instance(this.event).getRuleExecutionInformation(ruleProvider);
         ExecutionStatistics.get().begin(NAME);
         return result;
     }

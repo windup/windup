@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  */
 public class RenderRuleProviderReportRuleProvider extends WindupRuleProvider
 {
-    private static final String OUTPUT_FILENAME = "ruleproviders.html";
+    private static final String OUTPUT_FILENAME = "windup_ruleproviders.html";
     private static final String TEMPLATE = "/reports/templates/ruleprovidersummary.ftl";
 
     @Inject

@@ -41,6 +41,12 @@ public class FormatRule implements WindupFreeMarkerMethod
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes a " + Rule.class.getSimpleName() + " as a paremeter and formats it into multiple rows for display.";
+    }
+
+    @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);

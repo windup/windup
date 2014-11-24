@@ -75,6 +75,13 @@ public class GetPrettyPathForFile implements WindupFreeMarkerMethod
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes a " + FileModel.class.getSimpleName()
+                    + " as a parameter and either the qualified name (if it is a Java file) or the path within the file's project.";
+    }
+
+    @Override
     public void setContext(GraphRewrite event)
     {
         // no-op

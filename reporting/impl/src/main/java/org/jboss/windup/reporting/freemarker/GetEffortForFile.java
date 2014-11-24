@@ -41,6 +41,12 @@ public class GetEffortForFile implements WindupFreeMarkerMethod
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes a " + FileModel.class.getSimpleName() + " as a parameter and returns an int containing the effort estimate for this file.";
+    }
+
+    @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);

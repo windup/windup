@@ -21,6 +21,11 @@ public interface WindupFreeMarkerTemplateDirective extends TemplateDirectiveMode
     public String getDirectiveName();
 
     /**
+     * This should return a description of what this directive does, along with any required parameters.
+     */
+    String getDescription();
+
+    /**
      * Set the current {@link GraphRewrite} event to use for
      * {@link #execute(freemarker.core.Environment, java.util.Map, freemarker.template.TemplateModel[], freemarker.template.TemplateDirectiveBody)}
      */

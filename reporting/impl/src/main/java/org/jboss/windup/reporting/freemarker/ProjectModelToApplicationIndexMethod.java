@@ -45,6 +45,13 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes a parameter of type " + ProjectModel.class.getSimpleName() + " and returns the associated "
+                    + ApplicationReportIndexModel.class.getSimpleName() + ".";
+    }
+
+    @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);

@@ -17,10 +17,15 @@ public interface WindupFreeMarkerMethod extends TemplateMethodModelEx
     /**
      * Returns the name to be used for the function inside of freemarker.
      */
-    public String getMethodName();
+    String getMethodName();
+
+    /**
+     * This should return a description of what this method does, along with any required parameters.
+     */
+    String getDescription();
 
     /**
      * Sets the current {@link GraphRewrite} event for {@link #exec(java.util.List)}.
      */
-    public void setContext(GraphRewrite event);
+    void setContext(GraphRewrite event);
 }
