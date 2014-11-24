@@ -63,11 +63,6 @@ public class HintHandler implements ElementHandler<Hint>
             }
         }
 
-        if (StringUtils.isBlank(message))
-        {
-            throw new WindupException("Error, 'hint' element must have a non-empty 'message' attribute or element");
-        }
-
         String effortStr = $(element).attr("effort");
         
         Hint hint = Hint.in(in).withText(message);

@@ -42,15 +42,16 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
     {
         String xpath = $(element).attr("matches");
         String as = $(element).attr("as");
+        String publicId = $(element).attr("public-id");
         if(as == null) {
             as = Iteration.DEFAULT_VARIABLE_LIST_STRING;
         }
-        if (StringUtils.isBlank(xpath))
+        if (StringUtils.isBlank(xpath) && StringUtils.isBlank(publicId))
         {
-            throw new WindupException("Error, 'xmlfile' element must have a non-empty 'matches' attribute");
+            throw new WindupException("Error, 'xmlfile' element must have a non-empty 'matches' or public-id attribute");
         }
         String inFile = $(element).attr("in-file");
-        String publicId = $(element).attr("public-id");
+        
         Map<String, String> namespaceMappings = new HashMap<>();
 
         List<Element> children = $(element).children("namespace").get();
