@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -31,12 +32,15 @@ import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.WindupConfigurationOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.InputPathOption;
+import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.util.WindupPathUtil;
@@ -125,7 +129,34 @@ public class WindupCommand implements UICommand
             builder.add(inputComponent);
             inputOptions.add(new WindupOptionAndInput(option, inputComponent));
         }
+        final UIInput inputForInput = (UIInput) getInputForOption(InputPathOption.class);
+        UIInput inputForOutput = (UIInput) getInputForOption(OutputPathOption.class);
+        inputForOutput.setDefaultValue(new Callable<DirectoryResource>() {
+
+            @Override
+            public DirectoryResource call() throws Exception
+            {
+                if(inputForInput.getValue() !=null) {
+                    FileResource value = (FileResource)inputForInput.getValue();
+                    DirectoryResource childDirectory = value.getParent().getChildDirectory(value.getName() + ".report");
+                    return childDirectory;
+                }
+                
+                return null;
+            }
+            
+        });
         builder.add(overwrite);
+    }
+    
+    private InputComponent<?, ?>  getInputForOption(Class<? extends WindupConfigurationOption> option) {
+        for (WindupOptionAndInput pair : this.inputOptions)
+        {
+            if(option.isAssignableFrom(pair.option.getClass())) {
+              return pair.input;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -140,6 +171,7 @@ public class WindupCommand implements UICommand
                 context.addValidationError(pair.input, result.getMessage());
             }
         }
+        
     }
 
     private Object getValueForInput(InputComponent<?, ?> input)

@@ -14,6 +14,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -138,22 +141,22 @@ public class WindupCommandTest
         Assert.assertNotNull(uiTestHarness);
         try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
         {
-            File outputFile = File.createTempFile("windupwizardtest", ".jar");
-            outputFile.deleteOnExit();
+            File inputFile = File.createTempFile("windupwizardtest", ".jar");
+            inputFile.deleteOnExit();
             try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
             {
-                try (OutputStream oStream = new FileOutputStream(outputFile))
+                try (OutputStream oStream = new FileOutputStream(inputFile))
                 {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
-            File reportPath = new File(outputFile.getAbsoluteFile() + "_output");
+            File reportPath = new File(inputFile.getAbsoluteFile() + "_output");
             try
             {
                 reportPath.mkdirs();
 
-                setupController(controller, outputFile, reportPath);
+                setupController(controller, inputFile, reportPath);
 
                 Result result = controller.execute();
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
@@ -161,8 +164,46 @@ public class WindupCommandTest
             }
             finally
             {
-                outputFile.delete();
+                inputFile.delete();
                 FileUtils.deleteDirectory(reportPath);
+            }
+        }
+    }
+    
+    @Test
+    public void testOutputDefaultValue() throws Exception
+    {
+        Assert.assertNotNull(uiTestHarness);
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
+        {
+            File inputFile = File.createTempFile("windupwizardtest", ".jar");
+            inputFile.deleteOnExit();
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
+            {
+                try (OutputStream oStream = new FileOutputStream(inputFile))
+                {
+                    IOUtils.copy(iStream, oStream);
+                }
+            }
+
+            try
+            {
+
+                setupController(controller, inputFile, null);
+
+                Result result = controller.execute();
+                Object outputDir = controller.getValueFor("output");
+                Assert.assertTrue("The output should be a folder",DirectoryResource.class.isAssignableFrom(outputDir.getClass()));
+                Assert.assertTrue("The output should be created inside the .report folder by default",((DirectoryResource)outputDir).getName().endsWith(".report"));
+                FileResource<?> inputDir= (FileResource<?>)controller.getValueFor("input");
+                Resource<?> child = inputDir.getParent().getChild(((DirectoryResource)outputDir).getName());
+                Assert.assertNotNull("The output should be created near the ${input} folder by default",child);
+                final String msg = "controller.execute() 'Failed': " + result.getMessage();
+                Assert.assertFalse(msg, result instanceof Failed);
+            }
+            finally
+            {
+                inputFile.delete();
             }
         }
     }
@@ -314,8 +355,10 @@ public class WindupCommandTest
         controller.initialize();
         Assert.assertTrue(controller.isEnabled());
         controller.setValueFor("input", inputFile);
-        Assert.assertFalse(controller.canExecute());
-        controller.setValueFor("output", outputFile);
+        Assert.assertTrue(controller.canExecute());
+        if(outputFile !=null) {
+            controller.setValueFor("output", outputFile);
+        }
         Assert.assertTrue(controller.canExecute());
         controller.setValueFor("packages", "org.jboss");
         Assert.assertTrue(controller.canExecute());
