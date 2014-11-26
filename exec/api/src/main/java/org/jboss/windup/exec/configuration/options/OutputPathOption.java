@@ -45,7 +45,7 @@ public class OutputPathOption extends AbstractPathConfigurationOption
     @Override
     public boolean isRequired()
     {
-        return true;
+        return false;
     }
 
     @Override
