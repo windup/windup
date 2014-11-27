@@ -154,7 +154,7 @@ public class XmlFile extends GraphCondition
 
             if (fileName != null && !fileName.equals(""))
             {
-                if (!xml.getFileName().equals(fileName))
+                if (!xml.getFileName().matches(fileName))
                 {
                     continue;
                 }

@@ -61,7 +61,7 @@ public class ClassificationHandler implements ElementHandler<Classification>
             classification.withDescription(description);
         }
 
-        List<Element> children = $(element).children().get();
+        List<Element> children = $(element).children("link").get();
         for (Element child : children)
         {
             Link link = handlerManager.processElement(child);
