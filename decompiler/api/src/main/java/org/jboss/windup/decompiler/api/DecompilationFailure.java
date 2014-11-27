@@ -4,7 +4,7 @@ package org.jboss.windup.decompiler.api;
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DecompilationFailure
+public class DecompilationFailure extends Exception
 {
     private final String path;
     private final String message;
