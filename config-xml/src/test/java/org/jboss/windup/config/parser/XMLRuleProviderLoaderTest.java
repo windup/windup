@@ -2,6 +2,7 @@ package org.jboss.windup.config.parser;
 
 import java.io.File;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,7 @@ import org.ocpsoft.rewrite.config.True;
 @RunWith(Arquillian.class)
 public class XMLRuleProviderLoaderTest
 {
+    private static Logger LOG = Logger.getLogger(XMLRuleProviderLoaderTest.class.getName());
 
     @Deployment
     @Dependencies({
@@ -73,23 +75,60 @@ public class XMLRuleProviderLoaderTest
             Assert.assertEquals("testruleprovider", id);
             Assert.assertEquals(RulePhase.DISCOVERY, provider.getPhase());
             List<Rule> rules = provider.getConfiguration(graphContext).getRules();
-            Assert.assertEquals(1, rules.size());
+            Assert.assertEquals(2, rules.size());
 
-            RuleBuilder rule = (RuleBuilder) rules.get(0);
+            RuleBuilder rule1 = (RuleBuilder) rules.get(0);
+            checkRule1(rule1);
 
-            // check the conditions
-            List<Condition> conditions = rule.getConditions();
-            Assert.assertEquals(1, conditions.size());
-            Condition condition = conditions.get(0);
-            Assert.assertTrue(condition instanceof And);
-            And and = (And) condition;
-            Assert.assertEquals(1, and.getConditions().size());
-            Assert.assertTrue(and.getConditions().get(0) instanceof True);
-
-            // check the operations
-            List<Operation> operations = rule.getOperations();
-            Assert.assertEquals(1, operations.size());
-            Assert.assertTrue(operations.get(0) instanceof DefaultOperationBuilder);
+            RuleBuilder rule2 = (RuleBuilder) rules.get(1);
+            checkRule2(rule2);
         }
+    }
+
+    private void checkRule1(RuleBuilder rule)
+    {
+        // check the conditions
+        List<Condition> conditions = rule.getConditions();
+        Assert.assertEquals(1, conditions.size());
+        Condition condition = conditions.get(0);
+        Assert.assertTrue(condition instanceof And);
+        And and = (And) condition;
+        Assert.assertEquals(1, and.getConditions().size());
+        Assert.assertTrue(and.getConditions().get(0) instanceof True);
+
+        // check the operations
+        List<Operation> operations = rule.getOperations();
+        Assert.assertEquals(1, operations.size());
+        Assert.assertTrue(operations.get(0) instanceof DefaultOperationBuilder);
+    }
+
+    private void checkRule2(RuleBuilder rule) throws Exception
+    {
+        LOG.info("Rule: " + rule);
+
+        // check the conditions
+        List<Condition> conditions = rule.getConditions();
+        Assert.assertEquals(1, conditions.size());
+        Condition condition = conditions.get(0);
+        Assert.assertTrue(condition instanceof And);
+        And and = (And) condition;
+        Assert.assertEquals(1, and.getConditions().size());
+        Assert.assertTrue(and.getConditions().get(0) instanceof True);
+
+        // check the operations
+        List<Operation> operations = rule.getOperations();
+        Assert.assertEquals(1, operations.size());
+        Assert.assertTrue(operations.get(0) instanceof DefaultOperationBuilder);
+        DefaultOperationBuilder opBuilder = (DefaultOperationBuilder) operations.get(0);
+        String opBuilderStr = opBuilder.toString();
+        LOG.info("Op Builder is: " + opBuilderStr);
+
+        // Iteration.over(?).when(And.all(new True())).perform(Perform.all(LOG[INFO, test log message perform])).otherwise(Perform.all(LOG[INFO, test
+        // log message otherwise]))
+
+        // This is really ugly, but there is no good way to introspect the contents of the operations otherwise.
+        Assert.assertTrue(opBuilderStr.contains("over(?).when(new True"));
+        Assert.assertTrue(opBuilderStr.contains("perform(Perform.all(LOG[INFO, test log message perform]))"));
+        Assert.assertTrue(opBuilderStr.contains("otherwise(Perform.all(LOG[INFO, test"));
     }
 }
