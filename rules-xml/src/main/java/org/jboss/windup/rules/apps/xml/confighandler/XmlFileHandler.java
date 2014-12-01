@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
@@ -40,26 +41,33 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
                 throws ConfigurationException
     {
         String xpath = $(element).attr("matches");
+        String as = $(element).attr("as");
+        if(as == null) {
+            as = Iteration.DEFAULT_VARIABLE_LIST_STRING;
+        }
         if (StringUtils.isBlank(xpath))
         {
             throw new WindupException("Error, 'xmlfile' element must have a non-empty 'matches' attribute");
         }
+        String inFile = $(element).attr("in-file");
         String publicId = $(element).attr("public-id");
         Map<String, String> namespaceMappings = new HashMap<>();
 
-        List<Element> children = $(element).children().get();
+        List<Element> children = $(element).children("namespace").get();
         for (Element child : children)
         {
             NamespaceEntry namespaceEntry = handlerManager.processElement(child);
             namespaceMappings.put(namespaceEntry.getPrefix(), namespaceEntry.getNamespaceURI());
         }
-
+        
         XmlFile xmlFile = XmlFile.matchesXpath(xpath);
         xmlFile.setPublicId(publicId);
         for (Map.Entry<String, String> nsMapping : namespaceMappings.entrySet())
         {
             xmlFile.namespace(nsMapping.getKey(), nsMapping.getValue());
         }
+        xmlFile.inFile(inFile);
+        xmlFile.as(as);
         return xmlFile;
     }
 }

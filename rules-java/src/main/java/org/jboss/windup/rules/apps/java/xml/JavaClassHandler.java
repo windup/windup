@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
@@ -41,13 +42,17 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
                 throws ConfigurationException
     {
         String type = $(element).attr("references");
+        String as = $(element).attr("as");
+        if(as == null) {
+            as = Iteration.DEFAULT_VARIABLE_LIST_STRING;
+        }
         if (StringUtils.isBlank(type))
         {
             throw new WindupException("Error, 'javaclass' element must have a non-empty 'type' attribute");
         }
 
         List<TypeReferenceLocation> locations = new ArrayList<TypeReferenceLocation>();
-        List<Element> children = $(element).children().get();
+        List<Element> children = $(element).children("location").get();
         for (Element child : children)
         {
             TypeReferenceLocation location = handlerManager.processElement(child);
@@ -63,6 +68,7 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         
         JavaClassBuilderAt javaClass = javaClassReferences.at(
                     locations.toArray(new TypeReferenceLocation[locations.size()]));
+        javaClass.as(as);
         return javaClass;
     }
 }

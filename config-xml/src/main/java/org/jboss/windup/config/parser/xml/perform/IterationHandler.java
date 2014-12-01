@@ -84,9 +84,15 @@ public class IterationHandler implements ElementHandler<Iteration>
                 }
             }
         }
-        IterationBuilderPerform iterationBuilderPerform = iterationOver.perform(operations.toArray(new Operation[operations.size()]));
-        IterationBuilderOtherwise iterationBuilderOtherwise = iterationBuilderPerform.otherwise(Perform.all(otherwise.toArray(new Operation[otherwise
-                    .size()])));
-        return (Iteration) iterationBuilderOtherwise;
+        IterationBuilderPerform iterationBuilderPerform = iterationOver.perform(operations
+                    .toArray(new Operation[operations.size()]));
+        if (otherwise.size() > 0)
+        {
+            IterationBuilderOtherwise iterationBuilderOtherwise = iterationBuilderPerform.otherwise(Perform
+                        .all(otherwise.toArray(new Operation[otherwise.size()])));
+            return (Iteration) iterationBuilderOtherwise;
+        }
+
+        return (Iteration) iterationBuilderPerform;
     }
 }

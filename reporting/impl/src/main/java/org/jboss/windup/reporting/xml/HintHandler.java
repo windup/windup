@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
@@ -45,6 +46,10 @@ public class HintHandler implements ElementHandler<Hint>
     public Hint processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
         String message = $(element).attr("message");
+        String in = $(element).attr("in");
+        if(in == null) {
+            in = Iteration.DEFAULT_SINGLE_VARIABLE_STRING;
+        }
 
         if (StringUtils.isBlank(message))
         {
@@ -64,8 +69,8 @@ public class HintHandler implements ElementHandler<Hint>
         }
 
         String effortStr = $(element).attr("effort");
-
-        Hint hint = Hint.withText(message);
+        
+        Hint hint = Hint.in(in).withText(message);
         if (!StringUtils.isBlank(effortStr))
         {
             try
@@ -88,7 +93,6 @@ public class HintHandler implements ElementHandler<Hint>
                 hint.with(link);
             }
         }
-
         return hint;
     }
 }

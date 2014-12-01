@@ -3,14 +3,17 @@
     <rules>
         <rule>
             <when>
-                <javaclass references="org\.apache\.commons.*" in=".*File2">
+                <javaclass references="org\.apache\.commons.*" in=".*File2" as="testVariable">
                     <location>IMPORT</location>
                 </javaclass>
             </when>
             <perform>
-                <hint message="Rule1">
+            <iteration over="testVariable">
+            
+                <hint in="testVariable_instance" message="Rule1">
                     <link href="http://example.com" description="Description from XML Hint Link" />
                 </hint>
+                </iteration>
             </perform>
         </rule>
         <rule>

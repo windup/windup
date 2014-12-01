@@ -37,7 +37,9 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
 import java.util.logging.Logger;
+
 import org.jboss.windup.util.Logging;
 
 public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
@@ -88,6 +90,10 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             super.perform(event, context);
         }
 
+    }
+    
+    public void addXsltParameter(String key, String value) {
+        xsltParameters.put(key, value);
     }
 
     /**
@@ -262,6 +268,17 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         {
             LOG.log(Level.SEVERE, "Exception transforming XML.", e);
         }
+    }
+
+    public XSLTTransformation withParameters(Map<String, String> parameters)
+    {
+       this.xsltParameters=parameters;
+        return this;
+    }
+
+    public void setContextClassLoader(ClassLoader classLoader)
+    {
+        this.contextClassLoader=classLoader;
     }
 
 }
