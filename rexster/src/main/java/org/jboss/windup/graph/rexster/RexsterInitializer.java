@@ -9,13 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -37,16 +35,19 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     public RexsterInitializer()
     {
     }
-    
-    private Addon getAddon() {
-    	Set<Addon> addons = SimpleContainer.getFurnace(RexsterInitializer.class.getClassLoader()).getAddonRegistry().getAddons();
-    	for(Addon addon:addons) {
-    		boolean isRexster =addon.getId().getName().contains("rexster");
-    		if(isRexster) {
-    			return addon;
-    		}
-    	}
-    	return null;
+
+    private Addon getAddon()
+    {
+        Set<Addon> addons = SimpleContainer.getFurnace(RexsterInitializer.class.getClassLoader()).getAddonRegistry().getAddons();
+        for (Addon addon : addons)
+        {
+            boolean isRexster = addon.getId().getName().contains("rexster");
+            if (isRexster)
+            {
+                return addon;
+            }
+        }
+        return null;
     }
 
     public void start(FramedGraph<EventGraph<TitanGraph>> graph)
@@ -58,7 +59,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener
 
             RexsterProperties properties = new RexsterProperties("rexster.xml");
             File rexsterAddonDir = new File(getClass().getResource("/public").getPath().split("!")[0].split(":")[1]);
-            
+
             new File(rexsterExtractDirectory).mkdirs();
             extractZipFile(rexsterAddonDir, rexsterExtractDirectory);
             configureScriptEngine(properties);
@@ -78,26 +79,29 @@ public class RexsterInitializer implements AfterGraphInitializationListener
             log.warning("Error while creating rexster.xml");
         }
     }
-    
-    
-    private void extractZipFile(File jarFile,String destDir) throws IOException {
-    	java.util.jar.JarFile jar = new java.util.jar.JarFile(jarFile);
-    	java.util.Enumeration enumEntries = jar.entries();
-    	while (enumEntries.hasMoreElements()) {
-    	    java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
-    	    java.io.File f = new java.io.File(destDir + java.io.File.separator + file.getName());
-    	    if (file.isDirectory()) { // if its a directory, create it
-    	        f.mkdir();
-    	        continue;
-    	    }
-    	    java.io.InputStream is = jar.getInputStream(file); // get the input stream
-    	    java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
-    	    while (is.available() > 0) {  // write contents of 'is' to 'fos'
-    	        fos.write(is.read());
-    	    }
-    	    fos.close();
-    	    is.close();
-    	}
+
+    private void extractZipFile(File jarFile, String destDir) throws IOException
+    {
+        java.util.jar.JarFile jar = new java.util.jar.JarFile(jarFile);
+        java.util.Enumeration enumEntries = jar.entries();
+        while (enumEntries.hasMoreElements())
+        {
+            java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
+            java.io.File f = new java.io.File(destDir + java.io.File.separator + file.getName());
+            if (file.isDirectory())
+            { // if its a directory, create it
+                f.mkdir();
+                continue;
+            }
+            java.io.InputStream is = jar.getInputStream(file); // get the input stream
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
+            while (is.available() > 0)
+            {  // write contents of 'is' to 'fos'
+                fos.write(is.read());
+            }
+            fos.close();
+            is.close();
+        }
     }
 
     private void configureScriptEngine(RexsterProperties properties)
@@ -123,8 +127,8 @@ public class RexsterInitializer implements AfterGraphInitializationListener
                     "    <server-port>8182</server-port>\n" +
                     "    <server-host>0.0.0.0</server-host>\n" +
                     "    <base-uri>http://localhost</base-uri>\n" +
-                    "    <web-root>" + rexsterExtractDirectory +"/public</web-root>\n" +
-                  //  "    <http.web-root> </http.web-root> \n" +
+                    "    <web-root>" + rexsterExtractDirectory + "/public</web-root>\n" +
+                    // "    <http.web-root> </http.web-root> \n" +
                     "    <character-set>UTF-8</character-set>\n" +
                     "    <enable-jmx>false</enable-jmx>\n" +
                     "    <enable-doghouse>true</enable-doghouse>\n" +
@@ -233,10 +237,10 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     }
 
     @Override
-    public void process(Map<String, Object> configuration, FramedGraph<EventGraph<TitanGraph>> graph)
+    public void afterGraphStarted(Map<String, Object> configuration, GraphContext graphContext)
     {
-        rexsterExtractDirectory =getAddon().getRepository().getAddonDescriptor(getAddon().getId()).getParent() + "/rexster-extract";
+        rexsterExtractDirectory = getAddon().getRepository().getAddonDescriptor(getAddon().getId()).getParent() + "/rexster-extract";
         configurationString = createRexsterXmlFileString(configuration);
-        start(graph);
+        start(graphContext.getFramed());
     }
 }

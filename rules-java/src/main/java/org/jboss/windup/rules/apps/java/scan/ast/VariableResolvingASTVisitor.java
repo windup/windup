@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -53,7 +54,6 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
-import java.util.logging.Logger;
 import org.jboss.windup.util.Logging;
 
 /**
@@ -84,8 +84,8 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private final List<String> wildcardImports = new ArrayList<>();
 
     /**
-     * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will
-     * exist here even if no results were found.
+     * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will exist here even if no results
+     * were found.
      */
     private final Set<String> classNameLookedUp = new HashSet<>();
     /**

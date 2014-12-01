@@ -30,6 +30,7 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.scan.ast.WindupRoasterWildcardImportResolver;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -84,60 +85,68 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
         {
-            TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-            GraphContext graphContext = event.getGraphContext();
-            WindupConfigurationModel configuration = new GraphService<>(graphContext, WindupConfigurationModel.class)
-                        .getUnique();
-
-            String inputDir = configuration.getInputPath().getFilePath();
-            inputDir = Paths.get(inputDir).toAbsolutePath().toString();
-
-            String filepath = payload.getFilePath();
-            filepath = Paths.get(filepath).toAbsolutePath().toString();
-
-            if (!filepath.startsWith(inputDir))
+            WindupRoasterWildcardImportResolver.setGraphContext(event.getGraphContext());
+            try
             {
-                return;
+                TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
+                GraphContext graphContext = event.getGraphContext();
+                WindupConfigurationModel configuration = new GraphService<>(graphContext, WindupConfigurationModel.class)
+                            .getUnique();
+
+                String inputDir = configuration.getInputPath().getFilePath();
+                inputDir = Paths.get(inputDir).toAbsolutePath().toString();
+
+                String filepath = payload.getFilePath();
+                filepath = Paths.get(filepath).toAbsolutePath().toString();
+
+                if (!filepath.startsWith(inputDir))
+                {
+                    return;
+                }
+
+                String classFilePath = filepath.substring(inputDir.length() + 1);
+                String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
+                            classFilePath.length() - JAVA_SUFFIX_LEN);
+
+                String packageName = "";
+                if (qualifiedName.contains("."))
+                    packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
+
+                if (packageName.startsWith("src.main.java."))
+                {
+                    packageName = packageName.substring("src.main.java.".length());
+                }
+
+                // make sure we mark this as a Java file
+                JavaSourceFileModel javaFileModel = GraphService.addTypeToModel(graphContext, payload,
+                            JavaSourceFileModel.class);
+                technologyTagService.addTagToFileModel(javaFileModel, TECH_TAG, TECH_TAG_LEVEL);
+
+                javaFileModel.setPackageName(packageName);
+                try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
+                {
+                    addParsedClassToFile(fis, event.getGraphContext(), javaFileModel);
+                }
+                catch (FileNotFoundException e)
+                {
+                    throw new WindupException("File in " + payload.getFilePath() + " was not found.", e);
+                }
+                catch (IOException e)
+                {
+                    throw new WindupException("IOException thrown when parsing file located in " + payload.getFilePath(), e);
+                }
+                catch (Exception e)
+                {
+                    LOG.log(Level.WARNING, "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
+                    ClassificationService classificationService = new ClassificationService(graphContext);
+                    classificationService.attachClassification(javaFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
+                                JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                    return;
+                }
             }
-
-            String classFilePath = filepath.substring(inputDir.length() + 1);
-            String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
-                        classFilePath.length() - JAVA_SUFFIX_LEN);
-
-            String packageName = "";
-            if (qualifiedName.contains("."))
-                packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
-
-            if (packageName.startsWith("src.main.java."))
+            finally
             {
-                packageName = packageName.substring("src.main.java.".length());
-            }
-
-            // make sure we mark this as a Java file
-            JavaSourceFileModel javaFileModel = GraphService.addTypeToModel(graphContext, payload,
-                        JavaSourceFileModel.class);
-            technologyTagService.addTagToFileModel(javaFileModel, TECH_TAG, TECH_TAG_LEVEL);
-
-            javaFileModel.setPackageName(packageName);
-            try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
-            {
-                addParsedClassToFile(fis, event.getGraphContext(), javaFileModel);
-            }
-            catch (FileNotFoundException e)
-            {
-                throw new WindupException("File in " + payload.getFilePath() + " was not found.", e);
-            }
-            catch (IOException e)
-            {
-                throw new WindupException("IOException thrown when parsing file located in " + payload.getFilePath(), e);
-            }
-            catch (Exception e)
-            {
-                LOG.log(Level.WARNING, "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
-                ClassificationService classificationService = new ClassificationService(graphContext);
-                classificationService.attachClassification(javaFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
-                            JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
-                return;
+                WindupRoasterWildcardImportResolver.setGraphContext(null);
             }
         }
 

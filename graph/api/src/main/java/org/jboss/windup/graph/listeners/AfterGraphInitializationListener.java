@@ -2,13 +2,17 @@ package org.jboss.windup.graph.listeners;
 
 import java.util.Map;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.tinkerpop.frames.FramedGraph;
+import org.jboss.windup.graph.GraphContext;
 
+/**
+ * Listen to events related to {@link GraphContext} initialization.
+ */
 public interface AfterGraphInitializationListener
 {
 
-    void process(Map<String, Object> configuration, FramedGraph<EventGraph<TitanGraph>> graph);
+    /**
+     * Called after the {@link GraphContext} has been initialized.
+     */
+    void afterGraphStarted(Map<String, Object> graphConfiguration, GraphContext graphContext);
 
 }
