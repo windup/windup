@@ -216,7 +216,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         TypeValue typeValue = this.type.getAnnotation(TypeValue.class);
         if (typeValue == null)
-            throw new IllegalArgumentException("Must contain annotation 'TypeValue'");
+            throw new IllegalArgumentException("Must be annotated with '@TypeValue': " + this.type.getName());
         return typeValue.value();
     }
 
