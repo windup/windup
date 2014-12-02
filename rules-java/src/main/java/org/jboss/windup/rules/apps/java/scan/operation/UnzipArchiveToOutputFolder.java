@@ -108,6 +108,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 
         // Setup a temp folder for the archive
         String appArchiveName = archiveModel.getArchiveName();
+        if (null == appArchiveName)
+            throw new IllegalStateException("Archive model doesn't have an archiveName: " + archiveModel.getFilePath());
 
         final Path appArchiveFolder = getAppArchiveFolder(tempFolder, appArchiveName);
 
@@ -131,7 +133,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         {
             ClassificationService classificationService = new ClassificationService(context);
             classificationService.attachClassification(archiveModel, ArchiveModel.MALFORMED_ARCHIVE, "Cannot unzip the file");
-            LOG.warning("Cannot unzip the file " + inputZipFile.getPath() + " to " + appArchiveFolder.toString() + 
+            LOG.warning("Cannot unzip the file " + inputZipFile.getPath() + " to " + appArchiveFolder.toString() +
                         ". The ArchiveModel was classified as malformed.");
             return;
         }
@@ -147,7 +149,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 
     /**
      * Recurses the given folder and adds references to these files to the graph as FileModels.
-     * 
+     *
      * We don't set the parent file model in the case of the inital children, as the direct parent is really the archive
      * itself. For example for file "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary
      * directory that happens to hold it.
@@ -174,7 +176,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                         LOG.info("File/Directory placed in " + subFile.getAbsolutePath() + " was ignored, because matched some of the ignore regex.");
                         continue;
                     }
-                    
+
                     if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
                     {
 
@@ -196,7 +198,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             }
         }
     }
-    
+
     private boolean checkIfIgnored(String fileName,List<String> regexes) {
         boolean ignored = false;
         if (regexes != null && regexes.size()!=0)
