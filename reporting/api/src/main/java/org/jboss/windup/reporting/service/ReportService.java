@@ -17,7 +17,7 @@ import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Convenient search and creation methods for {@link ReportModel}.
- * 
+ *
  */
 public class ReportService extends GraphService<ReportModel>
 {
