@@ -34,6 +34,9 @@ public class PropertyAnnotationHandler implements AnnotationHandler<Property> {
                     element.setProperty(annotation.value(), value);
                 }
             }
+            // If return type is this class, return this.
+            if (method.getReturnType().isAssignableFrom(element.getClass()))
+                return element;
             return null;
         } else if (ClassUtilities.isRemoveMethod(method)) {
             element.removeProperty(annotation.value());

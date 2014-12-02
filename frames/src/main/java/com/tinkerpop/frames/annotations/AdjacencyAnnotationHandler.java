@@ -48,6 +48,8 @@ public class AdjacencyAnnotationHandler implements AnnotationHandler<Adjacency> 
                 returnValue = framedGraph.addVertex(null, returnType);
                 newVertex = ((VertexFrame) returnValue).asVertex();
             } else {
+                if (arguments[0] == null)
+                    throw new IllegalArgumentException("null passed to @Adjacency " + method.getName() + " labelled " + adjacency.label());
                 newVertex = ((VertexFrame) arguments[0]).asVertex();
             }
             addEdges(adjacency, framedGraph, vertex, newVertex);
