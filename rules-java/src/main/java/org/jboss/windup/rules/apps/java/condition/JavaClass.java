@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.condition;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -31,6 +32,9 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaClassBuilderAt, JavaClassBuilderInFile
 {
+    private static final AtomicInteger numberCreated = new AtomicInteger(0);
+
+    private final String uniqueID; // maintains a unique identifier for each
     private final String regex;
     private List<TypeReferenceLocation> locations = Collections.emptyList();
     private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;
@@ -39,7 +43,8 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     private JavaClass(String regex)
     {
         this.regex = regex;
-        TypeInterestFactory.registerInterest(regex);
+        this.uniqueID = numberCreated.incrementAndGet() + "_JavaClass";
+        TypeInterestFactory.registerInterest(this.uniqueID, regex);
     }
 
     /**
@@ -75,6 +80,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
     {
         if (locations != null)
             this.locations = Arrays.asList(locations);
+        TypeInterestFactory.registerInterest(this.uniqueID, this.regex, locations); // reregister based upon the provided locations
         return this;
     }
 

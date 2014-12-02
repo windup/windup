@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +23,11 @@ public final class TypeInterestFactory
 {
     private static Logger LOG = Logging.get(TypeInterestFactory.class);
 
-    private static Map<String, Pattern> patterns = new HashMap<>();
+    // Keep track of each pattern, as well as an identifier of who gave the pattern to us (so that we can update it)
+    private static Map<String, PatternAndLocation> patternsBySource = new HashMap<>();
+
+    // The full list of patterns, organized by location (including null for the case of no location specified)
+    private static Map<TypeReferenceLocation, Map<String, Pattern>> patternsByLocation = new HashMap<>();
 
     private static Set<String> ignorePatternSet = Collections.synchronizedSet(new HashSet<String>());
     static
@@ -55,25 +60,20 @@ public final class TypeInterestFactory
     /**
      * Register a regex pattern to filter interest in certain Java types.
      */
-    public static void registerInterest(String regex)
+    public static void registerInterest(String sourceKey, String regex, TypeReferenceLocation... locations)
     {
-        /*
-         * For now, surround with .* to ensure that regexes will match some of the messier references that the type visitor report.
-         */
-        patterns.put(regex, Pattern.compile(".*" + regex + ".*"));
+        patternsBySource.put(sourceKey, new PatternAndLocation(locations, regex));
     }
 
-    /**
-     * Get all the compiled patterns to be used as a filter for Java types.
-     */
-    public static Set<Pattern> getPatterns()
+    private static String getCacheKey(TypeReferenceLocation location, String text)
     {
-        return Collections.unmodifiableSet(new HashSet<>(patterns.values()));
+        return location + "_" + text;
     }
 
-    private static Boolean checkCacheForMatches(String text)
+    private static Boolean checkCacheForMatches(String inputText, TypeReferenceLocation location)
     {
-        Boolean cachedResult = (Boolean) resultsCache.get(text);
+        String key = getCacheKey(location, inputText);
+        Boolean cachedResult = (Boolean) resultsCache.get(key);
         Long lookupCount = cacheLookupCount.incrementAndGet();
         Long hitCount = cacheHitCount.get();
         if (cachedResult != null)
@@ -88,7 +88,52 @@ public final class TypeInterestFactory
         return cachedResult;
     }
 
-    public static boolean matchesAny(String text)
+    private static Map<String, Pattern> getPatternsByLocation(TypeReferenceLocation typeReferenceLocation)
+    {
+        Map<String, Pattern> result = patternsByLocation.get(typeReferenceLocation);
+        if (result == null)
+        {
+            result = new HashMap<>();
+            for (PatternAndLocation patternKey : patternsBySource.values())
+            {
+                String entryPattern = patternKey.pattern;
+                TypeReferenceLocation[] entryLocations = patternKey.locations;
+                if (result.containsKey(entryPattern))
+                {
+                    continue;
+                }
+
+                boolean shouldAdd = false;
+                if (entryLocations == null || entryLocations.length == 0)
+                {
+                    shouldAdd = true;
+                }
+                else
+                {
+                    for (TypeReferenceLocation entryLocation : entryLocations)
+                    {
+                        if (typeReferenceLocation.equals(entryLocation))
+                        {
+                            shouldAdd = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (shouldAdd)
+                {
+                    /*
+                     * For now, surround with .* to ensure that regexes will match some of the messier references that the type visitor report.
+                     */
+                    result.put(entryPattern, Pattern.compile(".*" + entryPattern + ".*"));
+                }
+            }
+            patternsByLocation.put(typeReferenceLocation, result);
+        }
+        return result;
+    }
+
+    public static boolean matchesAny(String text, TypeReferenceLocation typeReferenceLocation)
     {
         ExecutionStatistics.get().begin("TypeInterestFactory.matchesAny(text)");
         try
@@ -100,7 +145,7 @@ public final class TypeInterestFactory
             ExecutionStatistics.get().begin("TypeInterestFactory.matchesAny(text).cacheCheck");
             try
             {
-                Boolean cachedResult = checkCacheForMatches(text);
+                Boolean cachedResult = checkCacheForMatches(text, typeReferenceLocation);
                 if (cachedResult != null)
                 {
                     return cachedResult;
@@ -114,7 +159,7 @@ public final class TypeInterestFactory
             ExecutionStatistics.get().begin("TypeInterestFactory.matchesAny(text).manualSearch");
             try
             {
-                for (Pattern pattern : patterns.values())
+                for (Pattern pattern : getPatternsByLocation(typeReferenceLocation).values())
                 {
                     if (pattern.matcher(text).matches())
                     {
@@ -122,7 +167,7 @@ public final class TypeInterestFactory
                         return true;
                     }
                 }
-                resultsCache.put(text, false);
+                resultsCache.put(getCacheKey(typeReferenceLocation, text), false);
                 return false;
             }
             finally
@@ -133,6 +178,50 @@ public final class TypeInterestFactory
         finally
         {
             ExecutionStatistics.get().end("TypeInterestFactory.matchesAny(text)");
+        }
+    }
+
+    private static class PatternAndLocation
+    {
+        private TypeReferenceLocation[] locations;
+        private String pattern;
+
+        private PatternAndLocation(TypeReferenceLocation[] locations, String pattern)
+        {
+            this.locations = locations;
+            this.pattern = pattern;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Arrays.hashCode(locations);
+            result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            PatternAndLocation other = (PatternAndLocation) obj;
+            if (!Arrays.equals(locations, other.locations))
+                return false;
+            if (pattern == null)
+            {
+                if (other.pattern != null)
+                    return false;
+            }
+            else if (!pattern.equals(other.pattern))
+                return false;
+            return true;
         }
     }
 }
