@@ -76,10 +76,10 @@ public class WindupConfigurationLoaderImpl implements WindupRuleLoader
         executionMetadata.setProviders(providers);
         for (WindupRuleProvider provider : providers)
         {
+            // If there is a filter, and it rejects the ruleProvider, then skip this rule provider
             if (ruleProviderFilter != null && !ruleProviderFilter.accept(provider))
             {
-                // if there is a filter, and it rejects the ruleProvider, then skip this rule provider
-                LOG.info(provider + " didn't pass the filter so is ignored.");
+                LOG.info("Skiped by filter: " + provider);
                 continue;
             }
 
@@ -94,7 +94,7 @@ public class WindupConfigurationLoaderImpl implements WindupRuleLoader
                 if (rule instanceof Context)
                     provider.enhanceMetadata((Context) rule);
 
-                if (rule instanceof RuleBuilder && StringUtils.isEmpty(rule.getId()))
+                if (rule instanceof RuleBuilder && StringUtils.isBlank(rule.getId()))
                 {
                     // set synthetic id
                     ((RuleBuilder) rule).withId(generatedRuleID(provider, rule, i));
@@ -139,6 +139,7 @@ public class WindupConfigurationLoaderImpl implements WindupRuleLoader
 
     private String generatedRuleID(WindupRuleProvider provider, Rule rule, int idx)
     {
-        return "GeneratedID_" + provider.getID() + "_" + idx;
+        String provID = provider.getID().replace("org.jboss.windup.rules.", "w:");
+        return "GeneratedID_" + provID + "_" + idx;
     }
 }
