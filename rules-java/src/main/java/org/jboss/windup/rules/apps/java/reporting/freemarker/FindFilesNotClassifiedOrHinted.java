@@ -9,6 +9,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.FileLocationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
@@ -81,4 +82,11 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
         return NAME;
     }
 
+    @Override
+    public String getDescription()
+    {
+        return "Takes an Iterable<" + FileModel.class.getSimpleName()
+                    + "> as a parameter and returns the files that have neither " + ClassificationModel.class.getSimpleName()
+                    + "s nor " + InlineHintModel.class.getSimpleName() + "s associated with them.";
+    }
 }

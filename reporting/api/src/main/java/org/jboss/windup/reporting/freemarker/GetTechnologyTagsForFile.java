@@ -54,4 +54,12 @@ public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
     {
         return NAME;
     }
+
+    @Override
+    public String getDescription()
+    {
+        return "Takes a " + FileModel.class.getSimpleName()
+                    + " as a parameter and returns an Iterable<" + TechnologyTagModel.class.getSimpleName()
+                    + "> containing the technology tags for this file.";
+    }
 }

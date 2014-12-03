@@ -44,6 +44,13 @@ public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes a " + ProjectModel.class.getSimpleName()
+                    + " as a parameter and returns an int containing the effort estimate for this project.";
+    }
+
+    @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);

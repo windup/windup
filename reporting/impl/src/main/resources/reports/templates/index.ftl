@@ -74,6 +74,13 @@
           </#list>
           
         </table>
+        
+    	<div style="width: 100%; text-align: center">
+			<a href="reports/windup_ruleproviders.html">All Rules</a>
+				|
+			<a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker Methods</a>
+		<ul>
+	</div>
     </div> <!-- /container -->
 
 

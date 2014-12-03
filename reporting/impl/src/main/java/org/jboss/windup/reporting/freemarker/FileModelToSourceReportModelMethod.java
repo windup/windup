@@ -42,6 +42,13 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes a " + FileModel.class.getSimpleName() + " as a parameter, and returns the related " + SourceReportModel.class.getSimpleName()
+                    + " (or null if none is available).";
+    }
+
+    @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);

@@ -48,6 +48,12 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
     }
 
     @Override
+    public String getDescription()
+    {
+        return "Takes an Iterable<" + FileModel.class.getSimpleName() + "> and returns them, ordered alphabetically.";
+    }
+
+    @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);
