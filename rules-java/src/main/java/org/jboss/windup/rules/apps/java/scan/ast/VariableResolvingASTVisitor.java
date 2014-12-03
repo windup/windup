@@ -132,7 +132,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private void processConstructor(ConstructorType interest, int lineNumber, int columnNumber, int length)
     {
         String text = interest.toString();
-        if (TypeInterestFactory.matchesAny(text))
+        if (TypeInterestFactory.matchesAny(text, TypeReferenceLocation.CONSTRUCTOR_CALL))
         {
             JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
                         TypeReferenceLocation.CONSTRUCTOR_CALL,
@@ -145,7 +145,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private void processMethod(MethodType interest, int lineNumber, int columnNumber, int length)
     {
         String text = interest.toString();
-        if (TypeInterestFactory.matchesAny(text))
+        if (TypeInterestFactory.matchesAny(text, TypeReferenceLocation.METHOD_CALL))
         {
             JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
                         TypeReferenceLocation.METHOD_CALL,
@@ -158,7 +158,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     private void processImport(String interest, int lineNumber, int columnNumber, int length)
     {
         String sourceString = interest;
-        if (TypeInterestFactory.matchesAny(sourceString))
+        if (TypeInterestFactory.matchesAny(sourceString, TypeReferenceLocation.IMPORT))
         {
             sourceString = resolveClassname(sourceString);
 
@@ -177,7 +177,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
         String sourceString = type.toString();
         sourceString = resolveClassname(sourceString);
-        if (TypeInterestFactory.matchesAny(sourceString))
+        if (TypeInterestFactory.matchesAny(sourceString, referenceLocation))
         {
             int lineNumber = cu.getLineNumber(type.getStartPosition());
             int columnNumber = cu.getColumnNumber(type.getStartPosition());
@@ -204,7 +204,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             return;
 
         String sourceString = resolveClassname(name.toString());
-        if (TypeInterestFactory.matchesAny(sourceString))
+        if (TypeInterestFactory.matchesAny(sourceString, referenceLocation))
         {
             sourceString = resolveClassname(sourceString);
 
