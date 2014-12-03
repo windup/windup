@@ -62,7 +62,7 @@ public class VariableResolvingASTVisitorTest
         {
             Assert.assertNotNull(context);
             VariableResolvingASTVisitor visitor = new VariableResolvingASTVisitor(context);
-            Assert.assertNotNull(visitor );
+            Assert.assertNotNull(visitor);
 
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath("src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
@@ -83,7 +83,7 @@ public class VariableResolvingASTVisitorTest
             parser.setKind(ASTParser.K_COMPILATION_UNIT);
             CompilationUnit cu1 = (CompilationUnit) parser.createAST(null);
 
-            TypeInterestFactory.registerInterest(".*"); // for this test, we care about all references
+            TypeInterestFactory.registerInterest(this.getClass().getCanonicalName(), ".*"); // for this test, we care about all references
             visitor.init(cu1, fileModel);
 
             CompilationUnit cu = cu1;
