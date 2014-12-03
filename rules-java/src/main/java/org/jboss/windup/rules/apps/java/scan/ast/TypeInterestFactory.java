@@ -24,6 +24,29 @@ public final class TypeInterestFactory
 
     private static Map<String, Pattern> patterns = new HashMap<>();
 
+    private static Set<String> ignorePatternSet = Collections.synchronizedSet(new HashSet<String>());
+    static
+    {
+        ignorePatternSet.add("void");
+        ignorePatternSet.add("String");
+        ignorePatternSet.add("java.lang.String");
+        ignorePatternSet.add("boolean");
+        ignorePatternSet.add("Boolean");
+        ignorePatternSet.add("java.lang.Boolean");
+        ignorePatternSet.add("int");
+        ignorePatternSet.add("Integer");
+        ignorePatternSet.add("java.lang.Integer");
+        ignorePatternSet.add("long");
+        ignorePatternSet.add("Long");
+        ignorePatternSet.add("java.lang.Long");
+        ignorePatternSet.add("double");
+        ignorePatternSet.add("Double");
+        ignorePatternSet.add("java.lang.Double");
+        ignorePatternSet.add("float");
+        ignorePatternSet.add("Float");
+        ignorePatternSet.add("java.lang.Float");
+    }
+
     // cache these lookups in an LRU cache, as there are frequent duplicates (and the regex comparisons are much slower than a cache lookup)
     private static LRUMap resultsCache = new LRUMap(8000);
     private static AtomicLong cacheLookupCount = new AtomicLong(0);
@@ -68,9 +91,12 @@ public final class TypeInterestFactory
     public static boolean matchesAny(String text)
     {
         ExecutionStatistics.get().begin("TypeInterestFactory.matchesAny(text)");
-
         try
         {
+            if (ignorePatternSet.contains(text))
+            {
+                return false;
+            }
             ExecutionStatistics.get().begin("TypeInterestFactory.matchesAny(text).cacheCheck");
             try
             {
