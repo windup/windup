@@ -20,6 +20,9 @@
 # ------------------
 #   WINDUP_HOME - location of Windup's installed home dir
 #   WINDUP_OPTS - parameters passed to the Java VM when running Windup
+#   MAX_MEMORY - Maximum Java Heap (example: 2048m)
+#   MAX_PERM_SIZE - Maximum Permgen size (example: 256m)
+#   RESERVED_CODE_CACHE_SIZE - Hotspot code cache size (example: 128m)
 # -----------------------------------------------------------------------
 ADDONS_DIR=""
 WINDUP_DEBUG_ARGS=""
@@ -162,7 +165,24 @@ if [ -r "$WINDUP_HOME/addons/" ] ; then
   ADDONS_DIR="--immutableAddonDir $WINDUP_HOME/addons/"
 fi
 
+if [ -z "$MAX_PERM_SIZE" ] ; then
+  MAX_PERM_SIZE="256m"
+fi
+
+if [ -z "$RESERVED_CODE_CACHE_SIZE" ] ; then
+  RESERVED_CODE_CACHE_SIZE="128m"
+fi
+
+if [ -z "$WINDUP_OPTS" ] ; then
+  if [ -n "$MAX_MEMORY" ] ; then
+    WINDUP_OPTS="-Xmx$MAX_MEMORY -XX:MaxPermSize=$MAX_PERM_SIZE -XX:ReservedCodeCacheSize=$RESERVED_CODE_CACHE_SIZE"
+  else
+    WINDUP_OPTS="-XX:MaxPermSize=$MAX_PERM_SIZE -XX:ReservedCodeCacheSize=$RESERVED_CODE_CACHE_SIZE"
+  fi
+fi
+
 windup_exec_cmd="\"$JAVACMD\" $WINDUP_DEBUG_ARGS $WINDUP_OPTS \"-Dforge.standalone=true\" \"-Dforge.home=${WINDUP_HOME}\" \
    -cp \"${WINDUP_HOME}/lib/*\" $WINDUP_MAIN_CLASS"
 
 eval $windup_exec_cmd "$QUOTED_ARGS" "$ADDONS_DIR"
+
