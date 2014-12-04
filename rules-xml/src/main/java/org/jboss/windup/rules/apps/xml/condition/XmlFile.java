@@ -27,9 +27,11 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.FileReferenceModel;
+import org.jboss.windup.rules.apps.xml.model.MatchedXPathModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
+import org.jboss.windup.rules.apps.xml.service.MatchedXPathService;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -54,7 +56,6 @@ public class XmlFile extends GraphCondition
     private Map<String, String> namespaces = new HashMap<>();
     private String fileName;
     private String publicId;
-
     private String xpathResultMatch;
 
     public void setXpathResultMatch(String xpathResultMatch)
@@ -122,13 +123,29 @@ public class XmlFile extends GraphCondition
         ExecutionStatistics.get().begin("XmlFile.evaluate");
         // list will cache all the created xpath matches for this given condition running
         List<WindupVertexFrame> resultLocations = new ArrayList<WindupVertexFrame>();
+
         GraphContext graphContext = event.getGraphContext();
         GraphService<XmlFileModel> xmlResourceService = new GraphService<XmlFileModel>(graphContext,
                     XmlFileModel.class);
         Iterable<? extends WindupVertexFrame> allXmls;
+
+        MatchedXPathModel newMatchedXPathToModel = null;
+
         if (getInputVariablesName() == null || getInputVariablesName().equals(""))
         {
-            allXmls = xmlResourceService.findAll();
+            // only create it if we are doing a global search
+            MatchedXPathService matchedXPathService = new MatchedXPathService(event.getGraphContext());
+            MatchedXPathModel foundMatchedXPathToModel = matchedXPathService.find(this.xpath, this.fileName, this.publicId, this.xpathResultMatch);
+            if (foundMatchedXPathToModel != null)
+            {
+                allXmls = foundMatchedXPathToModel.getMatchedModels();
+            }
+            else
+            {
+                newMatchedXPathToModel = matchedXPathService.create(this.xpath, this.fileName, this.publicId, this.xpathResultMatch);
+                allXmls = xmlResourceService.findAll();
+            }
+
         }
         else
         {
@@ -166,7 +183,6 @@ public class XmlFile extends GraphCondition
                 {
                     continue;
                 }
-
             }
             if (xpath != null)
             {
@@ -186,6 +202,7 @@ public class XmlFile extends GraphCondition
                     }
                     if (result != null && (result.getLength() != 0))
                     {
+                        boolean matchesFound = false;
                         for (int i = 0; i < result.getLength(); i++)
                         {
                             Node node = result.item(i);
@@ -196,6 +213,8 @@ public class XmlFile extends GraphCondition
                                     continue;
                                 }
                             }
+                            matchesFound = true;
+
                             // Everything passed for this Node. Start creating XmlTypeReferenceModel for it.
                             int lineNumber = (int) node.getUserData(
                                         LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
@@ -226,6 +245,10 @@ public class XmlFile extends GraphCondition
                                 fileLocation.addNamespace(metaModel);
                             }
                             resultLocations.add(fileLocation);
+                        }
+                        if (matchesFound && newMatchedXPathToModel != null)
+                        {
+                            newMatchedXPathToModel.addMatchedModel(xml);
                         }
                     }
                 }
