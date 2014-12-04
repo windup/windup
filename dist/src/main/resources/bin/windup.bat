@@ -16,6 +16,9 @@
 @REM ------------------
 @REM WINDUP_HOME - location of Windup's installed home dir
 @REM WINDUP_OPTS - parameters passed to the Java VM when running Windup
+@REM MAX_MEMORY - Maximum Java Heap (example: 2048m)
+@REM MAX_PERM_SIZE - Maximum Permgen size (example: 256m)
+@REM RESERVED_CODE_CACHE_SIZE - Hotspot code cache size (example: 128m)
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -152,7 +155,33 @@ goto runWindup
 
 if exist "%WINDUP_HOME%\addons" set ADDONS_DIR=--immutableAddonDir "%WINDUP_HOME%\addons"
 set WINDUP_MAIN_CLASS=org.jboss.windup.bootstrap.Bootstrap
-%WINDUP_JAVA_EXE% %WINDUP_DEBUG_ARGS% %WINDUP_OPTS% "-Dforge.standalone=true" "-Dforge.home=%WINDUP_HOME%" ^
+
+@REM MAX_MEMORY - Maximum Java Heap (example: 2048m)
+@REM MAX_PERM_SIZE - Maximum Permgen size (example: 256m)
+@REM RESERVED_CODE_CACHE_SIZE - Hotspot code cache size (example: 128m)
+if "%MAX_PERM_SIZE%" == "" (
+  set WINDUP_MAX_PERM_SIZE=256m
+) else (
+  set WINDUP_MAX_PERM_SIZE=%MAX_PERM_SIZE%
+)
+
+if "%RESERVED_CODE_CACHE_SIZE%" == "" (
+  set WINDUP_RESERVED_CODE_CACHE_SIZE=128m
+) else (
+  set WINDUP_RESERVED_CODE_CACHE_SIZE=%RESERVED_CODE_CACHE_SIZE%
+)
+
+if "%WINDUP_OPTS%" == "" (
+  if "%MAX_MEMORY%" == "" (
+    set WINDUP_OPTS_INTERNAL=-XX:MaxPermSize=%WINDUP_MAX_PERM_SIZE% -XX:ReservedCodeCacheSize=128m
+  ) else (
+    set WINDUP_OPTS_INTERNAL=-Xmx%MAX_MEMORY% -XX:MaxPermSize=%WINDUP_MAX_PERM_SIZE% -XX:ReservedCodeCacheSize=128m
+  )
+) else (
+  set WINDUP_OPTS_INTERNAL=%WINDUP_OPTS%
+)
+
+%WINDUP_JAVA_EXE% %WINDUP_DEBUG_ARGS% %WINDUP_OPTS_INTERNAL% "-Dforge.standalone=true" "-Dforge.home=%WINDUP_HOME%" ^
    -cp ".;%WINDUP_HOME%\lib\*" %WINDUP_MAIN_CLASS% %WINDUP_CMD_LINE_ARGS% %ADDONS_DIR%
 if ERRORLEVEL 1 goto error
 goto end
@@ -171,6 +200,9 @@ if "%OS%"=="WINNT" goto endNT
 @REM before we started - at least we don't leave any baggage around
 set WINDUP_JAVA_EXE=
 set WINDUP_CMD_LINE_ARGS=
+set WINDUP_OPTS_INTERNAL=
+set WINDUP_MAX_PERM_SIZE=
+set WINDUP_RESERVED_CODE_CACHE_SIZE=
 goto postExec
 
 :endNT
