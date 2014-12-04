@@ -108,7 +108,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
     {
 
         @Override
-        public void vertexAdded(Vertex vertex)
+        public synchronized void vertexAdded(Vertex vertex)
         {
             if (currentRule != null)
             {
@@ -117,7 +117,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         }
 
         @Override
-        public void vertexRemoved(Vertex vertex, Map<String, Object> props)
+        public synchronized void vertexRemoved(Vertex vertex, Map<String, Object> props)
         {
             if (currentRule != null)
             {
@@ -126,7 +126,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         }
 
         @Override
-        public void edgeAdded(Edge edge)
+        public synchronized void edgeAdded(Edge edge)
         {
             if (currentRule != null)
             {
@@ -135,7 +135,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         }
 
         @Override
-        public void edgeRemoved(Edge edge, Map<String, Object> props)
+        public synchronized void edgeRemoved(Edge edge, Map<String, Object> props)
         {
             if (currentRule != null)
             {
@@ -146,29 +146,21 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         @Override
         public void edgePropertyRemoved(Edge edge, String key, Object removedValue)
         {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void vertexPropertyChanged(Vertex vertex, String key, Object oldValue, Object setValue)
         {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void vertexPropertyRemoved(Vertex vertex, String key, Object removedValue)
         {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void edgePropertyChanged(Edge edge, String key, Object oldValue, Object setValue)
         {
-            // TODO Auto-generated method stub
-
         }
 
     }

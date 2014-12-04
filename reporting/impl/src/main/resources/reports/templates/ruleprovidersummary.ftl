@@ -71,10 +71,10 @@
 									<span style="white-space: pre">${formatRule(ruleExecutionInfo.rule)}</span>
 							</td>
 							<td>
-								<div>Vertices Created: ${ruleExecutionInfo.vertexIDsAdded?size}</div>
-								<div>Edges Created: ${ruleExecutionInfo.edgeIDsAdded?size}</div>
-								<div>Vertices Removed: ${ruleExecutionInfo.vertexIDsRemoved?size}</div>
-								<div>Edges Removed: ${ruleExecutionInfo.edgeIDsRemoved?size}</div>
+								<div>Vertices Created: ${ruleExecutionInfo.vertexIDsAdded}</div>
+								<div>Edges Created: ${ruleExecutionInfo.edgeIDsAdded}</div>
+								<div>Vertices Removed: ${ruleExecutionInfo.vertexIDsRemoved}</div>
+								<div>Edges Removed: ${ruleExecutionInfo.edgeIDsRemoved}</div>
 							</td>					
 							<td>
 								${ruleExecutionInfo.executed?string("yes", "no")}
