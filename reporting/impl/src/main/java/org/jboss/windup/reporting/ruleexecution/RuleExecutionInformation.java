@@ -1,8 +1,6 @@
 package org.jboss.windup.reporting.ruleexecution;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.ocpsoft.rewrite.config.Rule;
@@ -23,10 +21,10 @@ public class RuleExecutionInformation
     private boolean evaluationResult;
     private boolean executed;
     private boolean failed;
-    private final List<Object> vertexIDsAdded = new ArrayList<>();
-    private final List<Object> edgeIDsAdded = new ArrayList<>();
-    private final List<Object> vertexIDsRemoved = new ArrayList<>();
-    private final List<Object> edgeIDsRemoved = new ArrayList<>();
+    private final AtomicInteger vertexIDsAdded = new AtomicInteger();
+    private final AtomicInteger edgeIDsAdded = new AtomicInteger();
+    private final AtomicInteger vertexIDsRemoved = new AtomicInteger();
+    private final AtomicInteger edgeIDsRemoved = new AtomicInteger();
 
     private Throwable failureCause;
 
@@ -116,17 +114,17 @@ public class RuleExecutionInformation
     /**
      * Contains the IDs of any {@link Edge}s added by this {@link Rule}.
      */
-    public List<Object> getEdgeIDsAdded()
+    public int getEdgeIDsAdded()
     {
-        return Collections.unmodifiableList(edgeIDsAdded);
+        return this.edgeIDsAdded.get();
     }
 
     /**
      * Contains the IDs of any {@link Vertex}s added by this {@link Rule}.
      */
-    public List<Object> getVertexIDsAdded()
+    public int getVertexIDsAdded()
     {
-        return Collections.unmodifiableList(vertexIDsAdded);
+        return this.vertexIDsAdded.get();
     }
 
     /**
@@ -134,7 +132,7 @@ public class RuleExecutionInformation
      */
     public void addVertexIDAdded(Object vID)
     {
-        this.vertexIDsAdded.add(vID);
+        this.vertexIDsAdded.incrementAndGet();
     }
 
     /**
@@ -142,23 +140,23 @@ public class RuleExecutionInformation
      */
     public void addEdgeIDAdded(Object edgeID)
     {
-        this.edgeIDsAdded.add(edgeID);
+        this.edgeIDsAdded.incrementAndGet();
     }
 
     /**
      * Contains the IDs of any {@link Edge}s removed by this {@link Rule}.
      */
-    public List<Object> getEdgeIDsRemoved()
+    public int getEdgeIDsRemoved()
     {
-        return Collections.unmodifiableList(edgeIDsRemoved);
+        return this.edgeIDsRemoved.get();
     }
 
     /**
      * Contains the IDs of any {@link Vertex} removed by this {@link Rule}.
      */
-    public List<Object> getVertexIDsRemoved()
+    public int getVertexIDsRemoved()
     {
-        return Collections.unmodifiableList(vertexIDsRemoved);
+        return this.vertexIDsRemoved.get();
     }
 
     /**
@@ -166,15 +164,15 @@ public class RuleExecutionInformation
      */
     public void addVertexIDRemoved(Object vID)
     {
-        this.vertexIDsRemoved.add(vID);
+        this.vertexIDsRemoved.incrementAndGet();
     }
 
     /**
      * Contains the IDs of any {@link Edge} removed by this {@link Rule}.
      */
-    public void addEdgeIDRemoed(Object edgeID)
+    public void addEdgeIDRemoved(Object edgeID)
     {
-        this.edgeIDsRemoved.add(edgeID);
+        this.edgeIDsRemoved.incrementAndGet();
     }
 
     @Override
