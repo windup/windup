@@ -1,5 +1,7 @@
 package org.jboss.windup.config.loader;
 
+import org.jboss.windup.util.exception.WindupMultiException;
+import org.jboss.windup.util.exception.WindupMultiStringException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,7 +15,6 @@ import java.util.Set;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.util.exception.WindupException;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -157,17 +158,18 @@ public class WindupRuleProviderSorter
             }
             currentProviders.add(provider);
 
+            List<String> errors = new LinkedList();
+
             // add connections to ruleproviders that should execute before this one
             for (Class<? extends WindupRuleProvider> clz : provider.getExecuteAfter())
             {
                 WindupRuleProvider otherProvider = getByClass(clz);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("RuleProvider " + provider.getID()
-                                + " is specified to execute after class: "
-                                + clz.getCanonicalName() + " but this class could not be found!");
+                    errors.add("RuleProvider " + provider.getID() + " is specified to execute after class: "
+                        + clz.getName() + " but this class could not be found.");
                 }
-                g.addEdge(otherProvider, provider);
+                else g.addEdge(otherProvider, provider);
             }
 
             // add connections to ruleproviders that should execute after this one
@@ -176,11 +178,10 @@ public class WindupRuleProviderSorter
                 WindupRuleProvider otherProvider = getByClass(clz);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("RuleProvider " + provider.getID()
-                                + " is specified to execute before: "
-                                + clz.getCanonicalName() + " but this class could not be found!");
+                    errors.add("RuleProvider " + provider.getID() + " is specified to execute before: "
+                        + clz.getName() + " but this class could not be found.");
                 }
-                g.addEdge(provider, otherProvider);
+                else g.addEdge(provider, otherProvider);
             }
 
             // add connections to ruleproviders that should execute before this one (by String ID)
@@ -189,11 +190,10 @@ public class WindupRuleProviderSorter
                 WindupRuleProvider otherProvider = getByID(depID);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("RuleProvider " + provider.getID()
-                                + " is specified to execute after: "
-                                + depID + " but this provider could not be found!");
+                    errors.add("RuleProvider " + provider.getID() + " is specified to execute after: "
+                        + depID + " but this provider could not be found.");
                 }
-                g.addEdge(otherProvider, provider);
+                else g.addEdge(otherProvider, provider);
             }
 
             // add connections to ruleproviders that should execute before this one (by String ID)
@@ -202,15 +202,18 @@ public class WindupRuleProviderSorter
                 WindupRuleProvider otherProvider = getByID(depID);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("RuleProvider " + provider.getID()
-                                + " is specified to execute before: "
-                                + depID + " but this provider could not be found!");
+                    errors.add("RuleProvider " + provider.getID() + " is specified to execute before: "
+                        + depID + " but this provider could not be found.");
                 }
-                g.addEdge(provider, otherProvider);
+                else g.addEdge(provider, otherProvider);
             }
 
-            // also, if the current provider is not an implicit phase, then
-            // add dependencies onto all visitors from the previous phase
+            // Report the errors.
+            if (!errors.isEmpty())
+                throw new WindupMultiStringException("Some rules to be executed before or after were not found:", errors);
+
+            // If the current provider is not an implicit phase,
+            // then add dependencies onto all visitors from the previous phase
             if (currentPhase != RulePhase.IMPLICIT)
             {
                 for (WindupRuleProvider prevV : previousProviders)
@@ -269,17 +272,23 @@ public class WindupRuleProviderSorter
                 continue;
             }
 
+            List<Exception> exs = new LinkedList();
+
             for (WindupRuleProvider otherProvider : getProvidersAfter(provider, true))
             {
                 if (!phaseRelationshipOk(otherProvider, provider))
-                    throw new IncorrectPhaseDependencyException(formatErrorMessageAfter(provider, otherProvider));
+                    exs.add(new IncorrectPhaseDependencyException(formatErrorMessageAfter(provider, otherProvider)));
             }
 
             for (WindupRuleProvider otherProvider : getProvidersBefore(provider, true))
             {
                 if (!phaseRelationshipOk(provider, otherProvider))
-                    throw new IncorrectPhaseDependencyException(formatErrorMessageBefore(provider, otherProvider));
+                    exs.add(new IncorrectPhaseDependencyException(formatErrorMessageBefore(provider, otherProvider)));
             }
+
+            // Report the errors.
+            if (!exs.isEmpty())
+                throw new WindupMultiException("Some rules have wrong relationships:", exs);
         }
     }
 

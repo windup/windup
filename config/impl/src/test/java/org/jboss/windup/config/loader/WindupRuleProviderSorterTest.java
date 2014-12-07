@@ -1,5 +1,6 @@
 package org.jboss.windup.config.loader;
 
+import org.jboss.windup.util.exception.WindupMultiException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -119,7 +120,7 @@ public class WindupRuleProviderSorterTest
         public RulePhase getPhase() {
         	return RulePhase.IMPLICIT;
         }
-        
+
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
@@ -467,7 +468,7 @@ public class WindupRuleProviderSorterTest
             WindupRuleProviderSorter.sort(ruleProviders);
             Assert.fail("No improper phase dependencies detected!");
         }
-        catch (IncorrectPhaseDependencyException e)
+        catch (IncorrectPhaseDependencyException | WindupMultiException e)
         {
             // ignore... this exception is expected in this test
         }
