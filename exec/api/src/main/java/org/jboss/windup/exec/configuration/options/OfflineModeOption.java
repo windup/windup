@@ -5,7 +5,7 @@ import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
 /**
- * Indicates that all opterations should function in "Offline" mode (without accessing the internet).
+ * Indicates that all operations should function in "Offline" mode (without accessing the internet).
  */
 public class OfflineModeOption extends AbstractWindupConfigurationOption
 {

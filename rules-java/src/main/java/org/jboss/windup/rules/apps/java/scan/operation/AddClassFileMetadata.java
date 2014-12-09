@@ -13,7 +13,6 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -22,6 +21,7 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -50,6 +50,8 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
         ExecutionStatistics.get().begin("AddClassFileMetadata.perform()");
         try
         {
+            WindupJavaConfigurationService javaCfgService = new WindupJavaConfigurationService(event.getGraphContext());
+
             try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
             {
                 final ClassParser parser = new ClassParser(fis, payload.getFilePath());
@@ -74,7 +76,6 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
 
                 final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
                 final JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
-
                 javaClassModel.setSimpleName(simpleName);
                 javaClassModel.setPackageName(packageName);
                 javaClassModel.setQualifiedName(qualifiedName);
@@ -90,41 +91,43 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
                     }
                 }
 
-                for (final Method method : bcelJavaClass.getMethods())
-                {
-                    javaClassService.addJavaMethod(javaClassModel, method.getName(),
-                                toJavaClasses(javaClassService, method.getArgumentTypes()));
-                }
-
-                final Constant[] pool = bcelJavaClass.getConstantPool().getConstantPool();
-                for (final Constant c : pool)
-                {
-                    if (c == null)
-                        continue;
-                    c.accept(new EmptyVisitor()
-                    {
-                        @Override
-                        public void visitConstantClass(final ConstantClass obj)
-                        {
-                            final ConstantPool pool = bcelJavaClass.getConstantPool();
-                            String classVal = obj.getConstantValue(pool).toString();
-                            classVal = StringUtils.replace(classVal, "/", ".");
-
-                            if (StringUtils.equals(classVal, bcelJavaClass.getClassName()))
-                            {
-                                // skip adding class name.
-                                return;
-                            }
-
-                            final JavaClassModel clz = javaClassService.getOrCreate(classVal);
-                            javaClassModel.addImport(clz);
-                        }
-                    });
-                }
-
                 String superclassName = bcelJavaClass.getSuperclassName();
-                if (Strings.isNullOrEmpty(superclassName))
+                if (!StringUtils.isBlank(superclassName))
                     javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
+
+                if (javaCfgService.shouldScanPackage(packageName)) // only add these details if this is a scanned package
+                {
+                    for (final Method method : bcelJavaClass.getMethods())
+                    {
+                        javaClassService.addJavaMethod(javaClassModel, method.getName(), toJavaClasses(javaClassService, method.getArgumentTypes()));
+                    }
+
+                    final Constant[] pool = bcelJavaClass.getConstantPool().getConstantPool();
+                    for (final Constant c : pool)
+                    {
+                        if (c == null)
+                            continue;
+                        c.accept(new EmptyVisitor()
+                        {
+                            @Override
+                            public void visitConstantClass(final ConstantClass obj)
+                            {
+                                final ConstantPool pool = bcelJavaClass.getConstantPool();
+                                String classVal = obj.getConstantValue(pool).toString();
+                                classVal = StringUtils.replace(classVal, "/", ".");
+
+                                if (StringUtils.equals(classVal, bcelJavaClass.getClassName()))
+                                {
+                                    // skip adding class name.
+                                    return;
+                                }
+
+                                final JavaClassModel clz = javaClassService.getOrCreate(classVal);
+                                javaClassModel.addImport(clz);
+                            }
+                        });
+                    }
+                }
 
                 classFileModel.setJavaClass(javaClassModel);
             }
