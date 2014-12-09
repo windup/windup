@@ -27,12 +27,10 @@ import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
-import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.WindupConfigurationOption;
@@ -41,6 +39,7 @@ import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
+import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.util.WindupPathUtil;
@@ -55,10 +54,6 @@ import org.jboss.windup.util.WindupPathUtil;
 public class WindupCommand implements UICommand
 {
     public static final String WINDUP_CONFIGURATION = "windupConfiguration";
-
-    @Inject
-    @WithAttributes(label = "Overwrite", required = false, defaultValue = "false", description = "Force overwrite of the output directory, without prompting")
-    private UIInput<Boolean> overwrite;
 
     @Inject
     private InputComponentFactory componentFactory;
@@ -131,29 +126,32 @@ public class WindupCommand implements UICommand
         }
         final UIInput inputForInput = (UIInput) getInputForOption(InputPathOption.class);
         UIInput inputForOutput = (UIInput) getInputForOption(OutputPathOption.class);
-        inputForOutput.setDefaultValue(new Callable<DirectoryResource>() {
+        inputForOutput.setDefaultValue(new Callable<DirectoryResource>()
+        {
 
             @Override
             public DirectoryResource call() throws Exception
             {
-                if(inputForInput.getValue() !=null) {
-                    FileResource value = (FileResource)inputForInput.getValue();
+                if (inputForInput.getValue() != null)
+                {
+                    FileResource value = (FileResource) inputForInput.getValue();
                     DirectoryResource childDirectory = value.getParent().getChildDirectory(value.getName() + ".report");
                     return childDirectory;
                 }
-                
+
                 return null;
             }
-            
+
         });
-        builder.add(overwrite);
     }
-    
-    private InputComponent<?, ?>  getInputForOption(Class<? extends WindupConfigurationOption> option) {
+
+    private InputComponent<?, ?> getInputForOption(Class<? extends WindupConfigurationOption> option)
+    {
         for (WindupOptionAndInput pair : this.inputOptions)
         {
-            if(option.isAssignableFrom(pair.option.getClass())) {
-              return pair.input;
+            if (option.isAssignableFrom(pair.option.getClass()))
+            {
+                return pair.input;
             }
         }
         return null;
@@ -171,7 +169,7 @@ public class WindupCommand implements UICommand
                 context.addValidationError(pair.input, result.getMessage());
             }
         }
-        
+
     }
 
     private Object getValueForInput(InputComponent<?, ?> input)
@@ -215,21 +213,21 @@ public class WindupCommand implements UICommand
             Files.createDirectories(userRulesDir);
         }
         windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
-        
+
         Path userIgnoreDir = WindupPathUtil.getWindupIgnoreListDir();
         if (!Files.isDirectory(userIgnoreDir))
         {
             Files.createDirectories(userIgnoreDir);
         }
         windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
-        
+
         Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
         if (!Files.isDirectory(windupHomeRulesDir))
         {
             Files.createDirectories(windupHomeRulesDir);
         }
         windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
-        
+
         Path windupHomeIgnoreDir = WindupPathUtil.getWindupHomeIgnoreListDir();
         if (!Files.isDirectory(windupHomeIgnoreDir))
         {
@@ -237,7 +235,11 @@ public class WindupCommand implements UICommand
         }
         windupConfiguration.addDefaultUserIgnorePath(windupHomeIgnoreDir);
 
-        boolean overwrite = this.overwrite.getValue();
+        Boolean overwrite = (Boolean) windupConfiguration.getOptionMap().get(OverwriteOption.NAME);
+        if (overwrite == null)
+        {
+            overwrite = false;
+        }
         if (!overwrite && pathNotEmpty(windupConfiguration.getOutputDirectory().toFile()))
         {
             String promptMsg = "Overwrite all contents of \"" + windupConfiguration.getOutputDirectory().toString()
