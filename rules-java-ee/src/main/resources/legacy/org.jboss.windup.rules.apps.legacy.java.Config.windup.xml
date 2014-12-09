@@ -133,7 +133,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="((javax.naming.InitialContext)|(javax.naming.Context)).lookup" as="default">
+                <javaclass references="javax.naming.{*}Context.lookup" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
