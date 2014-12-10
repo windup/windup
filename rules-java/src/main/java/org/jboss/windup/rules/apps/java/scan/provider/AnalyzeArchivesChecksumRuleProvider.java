@@ -26,7 +26,7 @@ public class AnalyzeArchivesChecksumRuleProvider extends IteratingRuleProvider<A
     @Override
     public ConditionBuilder when()
     {
-        return Query.find(ArchiveModel.class);
+        return Query.fromType(ArchiveModel.class);
     }
 
     @Override

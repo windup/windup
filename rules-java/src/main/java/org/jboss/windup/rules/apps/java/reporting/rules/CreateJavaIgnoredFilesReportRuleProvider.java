@@ -51,7 +51,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder applicationProjectModelsFound = Query
-                    .find(WindupJavaConfigurationModel.class);
+                    .fromType(WindupJavaConfigurationModel.class);
 
         AbstractIterationOperation<WindupJavaConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupJavaConfigurationModel>()
         {

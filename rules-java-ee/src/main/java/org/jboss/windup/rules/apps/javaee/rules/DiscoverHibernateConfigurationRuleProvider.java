@@ -78,7 +78,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
             }
         };
 
-        return Query.find(DoctypeMetaModel.class).piped(doctypeSearchCriterion);
+        return Query.fromType(DoctypeMetaModel.class).piped(doctypeSearchCriterion);
     }
 
     @Override

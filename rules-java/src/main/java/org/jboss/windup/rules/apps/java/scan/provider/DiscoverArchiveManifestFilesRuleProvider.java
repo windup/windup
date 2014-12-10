@@ -57,7 +57,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     @Override
     public ConditionBuilder when()
     {
-        return Query.find(ArchiveModel.class);
+        return Query.fromType(ArchiveModel.class);
     }
 
     @Override

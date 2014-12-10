@@ -126,7 +126,7 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
     @Override
     public ConditionBuilder when()
     {
-        return Query.find(WindupConfigurationModel.class);
+        return Query.fromType(WindupConfigurationModel.class);
     }
 
     @Override

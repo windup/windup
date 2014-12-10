@@ -42,7 +42,7 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder javaSourceAvailable = Query.find(JavaSourceFileModel.class);
+        ConditionBuilder javaSourceAvailable = Query.fromType(JavaSourceFileModel.class);
         
         return ConfigurationBuilder.begin()
             .addRule()

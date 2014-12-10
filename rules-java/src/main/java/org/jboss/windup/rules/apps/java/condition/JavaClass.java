@@ -105,7 +105,7 @@ public class JavaClass extends GraphCondition implements JavaClassBuilder, JavaC
         }
         else
         {
-            query = Query.find(JavaTypeReferenceModel.class);
+            query = Query.fromType(JavaTypeReferenceModel.class);
         }
         query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, regex);
         if (typeFilterRegex != null)

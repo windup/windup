@@ -28,7 +28,7 @@ public class DiscoverFileTypesRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
 
         .addRule()
-        .when(Query.find(FileModel.class)
+        .when(Query.fromType(FileModel.class)
             .withProperty(FileModel.IS_DIRECTORY, true)
         )
         .perform(Iteration.over(FileModel.class)
@@ -36,7 +36,7 @@ public class DiscoverFileTypesRuleProvider extends WindupRuleProvider
         )
 
         .addRule()
-        .when(Query.find(FileModel.class)
+        .when(Query.fromType(FileModel.class)
             .withProperty(FileModel.IS_DIRECTORY, false)
             .withProperty(FileModel.FILE_PATH,
                 QueryPropertyComparisonType.REGEX,

@@ -49,7 +49,7 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
     {
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(Query.find(FileModel.class)
+                    .when(Query.fromType(FileModel.class)
                                 .withProperty(FileModel.IS_DIRECTORY, false)
                                 .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.class")
                     )

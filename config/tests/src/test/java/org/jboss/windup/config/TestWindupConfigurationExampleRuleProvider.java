@@ -71,7 +71,7 @@ public class TestWindupConfigurationExampleRuleProvider extends WindupRuleProvid
              * Select all java classes with the FQCN matching "com.example.(.*)", store the
              * resultant list in a parameter named "javaClasses"
              */
-            Query.find(JavaClassModel.class)
+            Query.fromType(JavaClassModel.class)
                 .withProperty("qualifiedName", QueryPropertyComparisonType.REGEX, "com\\.example\\..*")
                 .as("javaClasses")
 

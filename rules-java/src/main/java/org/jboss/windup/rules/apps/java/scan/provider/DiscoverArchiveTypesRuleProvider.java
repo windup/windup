@@ -39,7 +39,7 @@ public class DiscoverArchiveTypesRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder.begin()
             .addRule()
             .when(
-                Query.find(ArchiveModel.class)
+                Query.fromType(ArchiveModel.class)
             )
             .perform(
                 Iteration.over()

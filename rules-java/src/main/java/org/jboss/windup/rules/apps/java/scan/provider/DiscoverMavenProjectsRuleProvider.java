@@ -58,7 +58,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder fileWhen = Query
-                    .find(XmlFileModel.class)
+                    .fromType(XmlFileModel.class)
                     .withProperty(FileModel.FILE_NAME, "pom.xml");
 
         AbstractIterationOperation<XmlFileModel> evaluatePomFiles = new AbstractIterationOperation<XmlFileModel>()

@@ -55,7 +55,7 @@ public class TestIterationPayloadTestRuleProvider extends WindupRuleProvider
         return ConfigurationBuilder
                     .begin()
                     .addRule()
-                    .when(Query.find(TestChildModel.class).as("children"))
+                    .when(Query.fromType(TestChildModel.class).as("children"))
                     .perform(Iteration
                                 .over("children")
                                 .as("child")

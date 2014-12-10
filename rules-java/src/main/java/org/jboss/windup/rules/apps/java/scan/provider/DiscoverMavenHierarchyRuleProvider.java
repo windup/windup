@@ -54,7 +54,7 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
         // @formatter:off
         return ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.find(MavenProjectModel.class))
+            .when(Query.fromType(MavenProjectModel.class))
             .perform(setupParentModule);
         // @formatter:on
     }

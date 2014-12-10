@@ -71,7 +71,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     @Override
     public ConditionBuilder when()
     {
-        return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar");
+        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar");
     }
 
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
