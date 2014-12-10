@@ -13,7 +13,7 @@ public class TopLayerSingletonFramesSelector implements FramesSelector
     private String varName;
 
     @Override
-    public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
+    public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
     {
         Variables variables = Variables.instance(event);
         this.varName = Iteration.getPayloadVariableName(event, context);

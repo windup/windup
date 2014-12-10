@@ -93,9 +93,9 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             public Boolean execute()
             {
                 Query.this.setInitialFramesSelector(createInitialFramesSelector(Query.this));
-                Iterable<WindupVertexFrame> resultIterable = framesSelector.getFrames(event, context);
+                Iterable<? extends WindupVertexFrame> resultIterable = framesSelector.getFrames(event, context);
 
-                Iterable<WindupVertexFrame> result = resultIterable;
+                Iterable<? extends WindupVertexFrame> result = resultIterable;
                 if (resultFilter != null)
                 {
                     List<WindupVertexFrame> filtered = new LinkedList<>();
@@ -175,7 +175,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                         query.piped(new QueryTypeCriterion(query.searchType));
                     }
                     Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
-                    Iterable<WindupVertexFrame> frames = variables.findVariable(query.getInputVariablesName());
+                    Iterable<? extends WindupVertexFrame> frames = variables.findVariable(query.getInputVariablesName());
                     return new VertexFromFramedIterable(frames);
                 }
                 else

@@ -207,7 +207,7 @@ public class Iteration extends DefaultOperationBuilder
     public void perform(GraphRewrite event, EvaluationContext context)
     {
         Variables variables = Variables.instance(event);
-        Iterable<WindupVertexFrame> frames = getSelectionManager().getFrames(event, context);
+        Iterable<? extends WindupVertexFrame> frames = getSelectionManager().getFrames(event, context);
         event.getRewriteContext().put(DEFAULT_VARIABLE_LIST_STRING, frames); // set the current frames
         for (WindupVertexFrame frame : frames)
         {
@@ -264,7 +264,7 @@ public class Iteration extends DefaultOperationBuilder
     public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx)
     {
         Variables variables = Variables.instance(event);
-        Map<String, Iterable<WindupVertexFrame>> topLayer = variables.peek();
+        Map<String, Iterable<? extends WindupVertexFrame>> topLayer = variables.peek();
         if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
         {
             throw new IllegalArgumentException(
@@ -280,9 +280,9 @@ public class Iteration extends DefaultOperationBuilder
     public static void setCurrentPayload(Variables stack, String name, WindupVertexFrame frame)
                 throws IllegalArgumentException
     {
-        Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
+        Map<String, Iterable<? extends WindupVertexFrame>> vars = stack.peek();
 
-        Iterable<WindupVertexFrame> existingValue = vars.get(name);
+        Iterable<? extends WindupVertexFrame> existingValue = vars.get(name);
         if (!(existingValue == null || existingValue instanceof IterationPayload))
         {
             throw new IllegalArgumentException("Variable \"" + name
@@ -302,9 +302,9 @@ public class Iteration extends DefaultOperationBuilder
     public static <FRAMETYPE extends WindupVertexFrame> FRAMETYPE getCurrentPayload(Variables stack, String name)
                 throws IllegalStateException, IllegalArgumentException
     {
-        Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
+        Map<String, Iterable<? extends WindupVertexFrame>> vars = stack.peek();
 
-        Iterable<WindupVertexFrame> existingValue = vars.get(name);
+        Iterable<? extends WindupVertexFrame> existingValue = vars.get(name);
         if (!(existingValue == null || existingValue instanceof IterationPayload))
         {
             throw new IllegalArgumentException("Variable \"" + name
@@ -324,9 +324,9 @@ public class Iteration extends DefaultOperationBuilder
     public static <FRAMETYPE extends WindupVertexFrame> FRAMETYPE getCurrentPayload(Variables stack,
                 Class<FRAMETYPE> type, String name) throws IllegalStateException, IllegalArgumentException
     {
-        Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
+        Map<String, Iterable<? extends WindupVertexFrame>> vars = stack.peek();
 
-        Iterable<WindupVertexFrame> existingValue = vars.get(name);
+        Iterable<? extends WindupVertexFrame> existingValue = vars.get(name);
         if (!(existingValue == null || existingValue instanceof IterationPayload))
         {
             throw new IllegalArgumentException("Variable \"" + name
@@ -346,7 +346,7 @@ public class Iteration extends DefaultOperationBuilder
     {
         FRAMETYPE payload = getCurrentPayload(stack, type, name);
 
-        Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
+        Map<String, Iterable<? extends WindupVertexFrame>> vars = stack.peek();
         vars.remove(name);
 
         return payload;
@@ -360,7 +360,7 @@ public class Iteration extends DefaultOperationBuilder
     {
         FRAMETYPE payload = getCurrentPayload(stack, name);
 
-        Map<String, Iterable<WindupVertexFrame>> vars = stack.peek();
+        Map<String, Iterable<? extends WindupVertexFrame>> vars = stack.peek();
         vars.remove(name);
 
         return payload;
