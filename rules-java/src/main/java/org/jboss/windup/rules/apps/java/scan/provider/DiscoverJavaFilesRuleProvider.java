@@ -54,7 +54,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
     @Override
     public RulePhase getPhase()
     {
-        return RulePhase.POST_DISCOVERY;
+        return RulePhase.INITIAL_ANALYSIS;
     }
 
     // @formatter:off
@@ -99,12 +99,15 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
                 String filepath = payload.getFilePath();
                 filepath = Paths.get(filepath).toAbsolutePath().toString();
 
-                if (!filepath.startsWith(inputDir))
+                String classFilePath;
+                if (filepath.startsWith(inputDir))
                 {
-                    return;
+                    classFilePath = filepath.substring(inputDir.length() + 1);
                 }
-
-                String classFilePath = filepath.substring(inputDir.length() + 1);
+                else
+                {
+                    classFilePath = payload.getPrettyPathWithinProject();
+                }
                 String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
                             classFilePath.length() - JAVA_SUFFIX_LEN);
 
