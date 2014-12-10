@@ -47,9 +47,6 @@ public class HintHandler implements ElementHandler<Hint>
     {
         String message = $(element).attr("message");
         String in = $(element).attr("in");
-        if(in == null) {
-            in = Iteration.DEFAULT_SINGLE_VARIABLE_STRING;
-        }
 
         if (StringUtils.isBlank(message))
         {
