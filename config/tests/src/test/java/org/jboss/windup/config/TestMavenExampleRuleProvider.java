@@ -43,7 +43,7 @@ public class TestMavenExampleRuleProvider extends WindupRuleProvider
         // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
         .addRule()
         .when(
-            Query.find(TestXmlMetaFacetModel.class)
+            Query.fromType(TestXmlMetaFacetModel.class)
         )
         .perform(
             Iteration.over(TestXmlMetaFacetModel.class)
@@ -56,7 +56,7 @@ public class TestMavenExampleRuleProvider extends WindupRuleProvider
         // Add all MavenFacetModel vertices to this.results.
         .addRule()
         .when(
-            Query.find(MavenProjectModel.class).as("mavenModels")
+            Query.fromType(MavenProjectModel.class).as("mavenModels")
         )
         .perform(
             Iteration.over(MavenProjectModel.class, "mavenModels")

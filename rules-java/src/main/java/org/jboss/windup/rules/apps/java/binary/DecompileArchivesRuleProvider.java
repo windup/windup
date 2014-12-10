@@ -37,7 +37,7 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
         
         return ConfigurationBuilder.begin()
         .addRule()
-        .when(Query.find(ArchiveModel.class).piped(shouldDecompileCriterion))
+        .when(Query.fromType(ArchiveModel.class).piped(shouldDecompileCriterion))
         .perform(
             new ProcyonDecompilerOperation()
             .and(IterationProgress.monitoring("Decompiled archive: ", 1))

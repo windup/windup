@@ -85,7 +85,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             }
         };
 
-        return Query.find(DoctypeMetaModel.class).piped(doctypeSearchCriterion);
+        return Query.fromType(DoctypeMetaModel.class).piped(doctypeSearchCriterion);
     }
 
     @Override

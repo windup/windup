@@ -151,7 +151,7 @@ public class RuleIterationOverAllSpecifiedTest
         {
             Configuration configuration = ConfigurationBuilder.begin()
                         .addRule()
-                        .when(Query.find(TestSimple2Model.class).as("list_variable"))
+                        .when(Query.fromType(TestSimple2Model.class).as("list_variable"))
                         .perform(Iteration
                                     .over("list_variable").as("single_var")
                                     .perform(new GraphOperation()
@@ -174,7 +174,7 @@ public class RuleIterationOverAllSpecifiedTest
                                     .endIteration()
                         )
                         .addRule()
-                        .when(Query.find(TestSimple1Model.class).as("list_variable"))
+                        .when(Query.fromType(TestSimple1Model.class).as("list_variable"))
                         .perform(Iteration
                                     .over("list_variable").as("single_var2")
                                     .perform(new GraphOperation()
@@ -209,7 +209,7 @@ public class RuleIterationOverAllSpecifiedTest
         {
             Configuration configuration = ConfigurationBuilder.begin()
                         .addRule()
-                        .when(Query.find(TestSimple2Model.class).as("list_variable"))
+                        .when(Query.fromType(TestSimple2Model.class).as("list_variable"))
                         .perform(Iteration
                                     .over("list_variable").as("single_var")
                                     .perform(new GraphOperation()

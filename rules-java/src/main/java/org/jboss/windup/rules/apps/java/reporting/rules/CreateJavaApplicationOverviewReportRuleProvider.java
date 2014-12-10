@@ -33,7 +33,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
     public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder applicationProjectModelsFound = Query
-                    .find(WindupConfigurationModel.class);
+                    .fromType(WindupConfigurationModel.class);
 
         AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {

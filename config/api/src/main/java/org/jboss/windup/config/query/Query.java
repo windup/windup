@@ -54,7 +54,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     /**
      * Begin this {@link Query} with all {@link WindupVertexFrame} instances of the given type.
      */
-    public static QueryBuilderFind find(Class<? extends WindupVertexFrame> type)
+    public static QueryBuilderFind fromType(Class<? extends WindupVertexFrame> type)
     {
         final Query query = new Query();
         // this query is going to be added after evaluate() method, because in some cases we need gremlin and in some

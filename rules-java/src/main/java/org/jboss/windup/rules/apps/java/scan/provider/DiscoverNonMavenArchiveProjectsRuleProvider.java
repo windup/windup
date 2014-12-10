@@ -47,7 +47,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
         return ConfigurationBuilder.begin()
         .addRule()
         .when(
-            Query.find(ArchiveModel.class)
+            Query.fromType(ArchiveModel.class)
         ).perform(
             Iteration.over(ArchiveModel.class)
                 .when(new AbstractIterationFilter<ArchiveModel>(){

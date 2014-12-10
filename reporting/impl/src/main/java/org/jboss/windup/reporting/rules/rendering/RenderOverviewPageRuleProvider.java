@@ -43,7 +43,7 @@ public class RenderOverviewPageRuleProvider extends WindupRuleProvider
 
         return ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.find(ApplicationReportModel.class).as(VAR_APPLICATION_REPORTS))
+            .when(Query.fromType(ApplicationReportModel.class).as(VAR_APPLICATION_REPORTS))
             .perform(generateReportOperation);
     }
     // @formatter:on

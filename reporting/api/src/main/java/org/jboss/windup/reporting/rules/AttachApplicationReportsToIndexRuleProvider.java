@@ -30,7 +30,7 @@ public class AttachApplicationReportsToIndexRuleProvider extends WindupRuleProvi
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationReportFound = Query.find(ApplicationReportModel.class);
+        ConditionBuilder applicationReportFound = Query.fromType(ApplicationReportModel.class);
 
         AbstractIterationOperation<ApplicationReportModel> addToApplicationIndex = new AddToApplicationIndex();
 

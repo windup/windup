@@ -156,7 +156,7 @@ public class RuleIterationOverTypesTest
         {
             Configuration configuration = ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.find(TestSimple2Model.class))
+            .when(Query.fromType(TestSimple2Model.class))
             .perform(Iteration
                 .over(TestSimple2Model.class)
                 .perform(new GraphOperation()
@@ -170,7 +170,7 @@ public class RuleIterationOverTypesTest
                 .endIteration()
             )
             .addRule()
-            .when(Query.find(TestSimple1Model.class))
+            .when(Query.fromType(TestSimple1Model.class))
             .perform(Iteration
                 .over(TestSimple1Model.class)
                 .perform(new GraphOperation()
@@ -196,7 +196,7 @@ public class RuleIterationOverTypesTest
         {
             Configuration configuration = ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.find(TestSimple2Model.class))
+            .when(Query.fromType(TestSimple2Model.class))
             .perform(Iteration
                 .over(TestSimple1Model.class)
                 .perform(new GraphOperation()

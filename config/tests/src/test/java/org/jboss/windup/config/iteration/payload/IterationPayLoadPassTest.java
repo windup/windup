@@ -140,7 +140,7 @@ public class IterationPayLoadPassTest
         {
             Configuration configuration = ConfigurationBuilder.begin()
                         .addRule()
-                        .when(Query.find(TestPayloadModel.class).as("list_variable"))
+                        .when(Query.fromType(TestPayloadModel.class).as("list_variable"))
                         .perform(Iteration
                                     .over("list_variable").as("single_var")
                                     .perform(new AbstractIterationOperation<TestPayloadModel>()
@@ -169,8 +169,8 @@ public class IterationPayLoadPassTest
             Configuration configuration = ConfigurationBuilder
                         .begin()
                         .addRule()
-                        .when(Query.find(TestSimple2Model.class).as("do_not_perform")
-                                    .and(Query.find(TestPayloadModel.class).as("list_variable")))
+                        .when(Query.fromType(TestSimple2Model.class).as("do_not_perform")
+                                    .and(Query.fromType(TestPayloadModel.class).as("list_variable")))
                         .perform(Iteration //first iteration
                                     .over("list_variable")
                                     .as("single_var")

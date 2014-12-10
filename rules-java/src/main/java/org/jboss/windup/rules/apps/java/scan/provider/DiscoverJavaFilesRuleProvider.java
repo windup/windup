@@ -62,7 +62,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder javaSourceQuery = Query
-            .find(FileModel.class)
+            .fromType(FileModel.class)
             .withProperty(FileModel.IS_DIRECTORY, false)
             .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$");
 

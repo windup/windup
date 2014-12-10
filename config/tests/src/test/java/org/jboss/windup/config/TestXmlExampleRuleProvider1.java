@@ -44,7 +44,7 @@ public class TestXmlExampleRuleProvider1 extends WindupRuleProvider
     {
         Configuration configuration = ConfigurationBuilder.begin()
         .addRule()
-        .when(Query.find(TestXmlMetaFacetModel.class))
+        .when(Query.fromType(TestXmlMetaFacetModel.class))
         .perform(Iteration
             .over()
             .when(new AbstractIterationFilter<TestXmlMetaFacetModel>()

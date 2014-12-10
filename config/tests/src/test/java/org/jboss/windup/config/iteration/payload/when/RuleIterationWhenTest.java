@@ -132,9 +132,9 @@ public class RuleIterationWhenTest
         {
             Configuration configuration = ConfigurationBuilder.begin()
                         .addRule()
-                        .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME))
+                        .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME))
                         .perform(Iteration.over()
-                                    .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                    .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
                                     .perform(
                                     new GraphOperation()
                                     {
@@ -157,11 +157,11 @@ public class RuleIterationWhenTest
                         )
                         
                         .addRule()
-                        .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME))
+                        .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME))
                         .perform(Iteration.over()
-                                    .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                    .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
                                     .perform(Iteration.over()
-                                                .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, NAME))
+                                                .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, NAME))
                                                 .perform( new GraphOperation()
                                                 {
                                                     @Override
@@ -175,11 +175,11 @@ public class RuleIterationWhenTest
                         )
                         
                         .addRule()
-                        .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME).as("outer_variable"))
+                        .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME).as("outer_variable"))
                         .perform(Iteration.over()
-                                    .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                    .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
                                     .perform(Iteration.over("outer_variable")
-                                                .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, NAME))
+                                                .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, NAME))
                                                 .perform( new GraphOperation()
                                                 {
                                                     @Override
@@ -192,11 +192,11 @@ public class RuleIterationWhenTest
                                     
                         )
                         .addRule()
-                        .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME).as("outer_variable"))
+                        .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME).as("outer_variable"))
                         .perform(Iteration.over()
-                                    .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                    .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
                                     .perform(Iteration.over()
-                                                .when(Query.find(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
+                                                .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.SECOND_NAME, SECOND_NAME))
                                                 .perform( new GraphOperation()
                                                 {
                                                     @Override

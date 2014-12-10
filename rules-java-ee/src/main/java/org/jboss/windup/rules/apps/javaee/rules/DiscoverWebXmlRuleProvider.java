@@ -64,7 +64,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     @Override
     public ConditionBuilder when()
     {
-        return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app");
+        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app");
     }
 
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)

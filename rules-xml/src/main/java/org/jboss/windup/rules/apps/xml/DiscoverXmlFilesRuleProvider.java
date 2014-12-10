@@ -49,7 +49,7 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext arg0)
     {
         ConditionBuilder isXml = Query
-                    .find(FileModel.class)
+                    .fromType(FileModel.class)
                     .withProperty(FileModel.IS_DIRECTORY, false)
                     .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$");
 

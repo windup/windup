@@ -62,7 +62,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
     @Override
     public ConditionBuilder when()
     {
-        return Query.find(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "beans");
+        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "beans");
     }
 
     @Override

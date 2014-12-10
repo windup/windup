@@ -39,7 +39,7 @@ public class UnzipArchivesToOutputRuleProvider extends WindupRuleProvider
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin().addRule()
-            .when(Query.find(ArchiveModel.class))
+            .when(Query.fromType(ArchiveModel.class))
             .perform(UnzipArchiveToOutputFolder.unzip()
             .and(IterationProgress.monitoring("Unzipped archive: ", 1))
             .and(Commit.every(1))

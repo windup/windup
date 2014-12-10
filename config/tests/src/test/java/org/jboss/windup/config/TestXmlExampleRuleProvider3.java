@@ -39,7 +39,7 @@ public class TestXmlExampleRuleProvider3 extends WindupRuleProvider
     {
         Configuration configuration = ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.find(TestXmlMetaFacetModel.class)
+            .when(Query.fromType(TestXmlMetaFacetModel.class)
                 .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
                     QueryPropertyComparisonType.EQUALS, "xmlTag2"))
             .perform(Iteration.over(TestXmlMetaFacetModel.class)
