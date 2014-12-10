@@ -20,15 +20,14 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
- * A variables stack - keeps few layers of "key"->[vertices] maps, one per rule execution level, {@link Iteration} and
- * {@link RuleSubset}.
+ * A variables stack - keeps few layers of "key"->[vertices] maps, one per rule execution level, {@link Iteration} and {@link RuleSubset}.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
 public class Variables
 {
-    private final Deque<Map<String, Iterable<WindupVertexFrame>>> deque = new LinkedList<>();
+    private final Deque<Map<String, Iterable<? extends WindupVertexFrame>>> deque = new LinkedList<>();
 
     private Variables()
     {
@@ -53,22 +52,22 @@ public class Variables
      */
     public void push()
     {
-        Map<String, Iterable<WindupVertexFrame>> newFrame = new HashMap<>();
+        Map<String, Iterable<? extends WindupVertexFrame>> newFrame = new HashMap<>();
         deque.push(newFrame);
     }
 
     /**
      * Push the given {@link Variables} layer on top of the stack.
      */
-    public void push(Map<String, Iterable<WindupVertexFrame>> frame)
+    public void push(Map<String, Iterable<? extends WindupVertexFrame>> frame)
     {
         deque.push(frame);
     }
-    
+
     /**
      * Remove the top {@link Variables} layer from the the stack.
      */
-    public Map<String, Iterable<WindupVertexFrame>> pop()
+    public Map<String, Iterable<? extends WindupVertexFrame>> pop()
     {
         return deque.pop();
     }
@@ -76,7 +75,7 @@ public class Variables
     /**
      * Get the top {@link Variables} layer from the stack.
      */
-    public Map<String, Iterable<WindupVertexFrame>> peek()
+    public Map<String, Iterable<? extends WindupVertexFrame>> peek()
     {
         return deque.peek();
     }
@@ -90,12 +89,11 @@ public class Variables
     }
 
     /**
-     * Set a variable in the top variables layer to given "collection" of the vertex frames. Can't be reassigned -
-     * throws on attempt to reassign.
+     * Set a variable in the top variables layer to given "collection" of the vertex frames. Can't be reassigned - throws on attempt to reassign.
      */
-    public void setVariable(String name, Iterable<WindupVertexFrame> frames)
+    public void setVariable(String name, Iterable<? extends WindupVertexFrame> frames)
     {
-        Map<String, Iterable<WindupVertexFrame>> frame = peek();
+        Map<String, Iterable<? extends WindupVertexFrame>> frame = peek();
         if (!Iteration.DEFAULT_VARIABLE_LIST_STRING.equals(name) && findVariable(name) != null)
         {
             throw new IllegalArgumentException("Variable \"" + name
@@ -110,24 +108,23 @@ public class Variables
      */
     public void removeVariable(String name)
     {
-        Map<String, Iterable<WindupVertexFrame>> frame = peek();
+        Map<String, Iterable<? extends WindupVertexFrame>> frame = peek();
         frame.remove(name);
     }
 
     /**
-     * Wrapper around {@link #findVariable(String)} which gives only one framed vertex, and checks if there is 0 or 1;
-     * throws otherwise.
+     * Wrapper around {@link #findVariable(String)} which gives only one framed vertex, and checks if there is 0 or 1; throws otherwise.
      */
     @SuppressWarnings("unchecked")
     public <T extends WindupVertexFrame> T findSingletonVariable(String name)
     {
-        Iterable<WindupVertexFrame> frames = findVariable(name);
+        Iterable<? extends WindupVertexFrame> frames = findVariable(name);
         if (null == frames)
         {
             throw new IllegalStateException("Variable not found: \"" + name + "\"");
         }
 
-        Iterator<WindupVertexFrame> iterator = frames.iterator();
+        Iterator<? extends WindupVertexFrame> iterator = frames.iterator();
         if (!iterator.hasNext())
         {
             return null;
@@ -164,10 +161,10 @@ public class Variables
     /**
      * Searches the variables layers, top to bottom, for given name, and returns if found; null otherwise.
      */
-    public Iterable<WindupVertexFrame> findVariable(String name)
+    public Iterable<? extends WindupVertexFrame> findVariable(String name)
     {
-        Iterable<WindupVertexFrame> result = null;
-        for (Map<String, Iterable<WindupVertexFrame>> frame : deque)
+        Iterable<? extends WindupVertexFrame> result = null;
+        for (Map<String, Iterable<? extends WindupVertexFrame>> frame : deque)
         {
             result = frame.get(name);
             if (result != null)
@@ -179,14 +176,13 @@ public class Variables
     }
 
     /**
-     * Searches the variables layers, top to bottom, for the iterable having all of it's items of the given type. Return
-     * null if not found.
+     * Searches the variables layers, top to bottom, for the iterable having all of it's items of the given type. Return null if not found.
      */
-    public Iterable<WindupVertexFrame> findVariableOfType(Class<?> type)
+    public Iterable<? extends WindupVertexFrame> findVariableOfType(Class<?> type)
     {
-        for (Map<String, Iterable<WindupVertexFrame>> topOfStack : deque)
+        for (Map<String, Iterable<? extends WindupVertexFrame>> topOfStack : deque)
         {
-            for (Iterable<WindupVertexFrame> frames : topOfStack.values())
+            for (Iterable<? extends WindupVertexFrame> frames : topOfStack.values())
             {
                 for (WindupVertexFrame frame : frames)
                 {

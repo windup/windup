@@ -58,8 +58,9 @@ public class VariablesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testMultipleFramesSameName() throws Exception {
-    	final Path folder = OperatingSystemUtils.createTempDir().toPath();
+    public void testMultipleFramesSameName() throws Exception
+    {
+        final Path folder = OperatingSystemUtils.createTempDir().toPath();
         try (final GraphContext context = factory.create(folder))
         {
             GraphRewrite event = new GraphRewrite(context);
@@ -76,23 +77,23 @@ public class VariablesTest
             Variables vars = Variables.instance(event);
             vars.push();
             vars.setVariable("1", list1);
-            
-            Iterable<WindupVertexFrame> fromVars1 = vars.findVariable("1");
+
+            Iterable<? extends WindupVertexFrame> fromVars1 = vars.findVariable("1");
             Assert.assertFalse(fromVars1.iterator().hasNext());
-            
+
             List<WindupVertexFrame> list2 = new ArrayList<>();
             list2.add(classModel1);
             list2.add(classModel2);
-            Map<String, Iterable<WindupVertexFrame>> newFrame = new HashMap<>();
+            Map<String, Iterable<? extends WindupVertexFrame>> newFrame = new HashMap<>();
             newFrame.put("1", list2);
             vars.push(newFrame);
-            
-            Iterable<WindupVertexFrame> fromVars2 = vars.findVariable("1");
-            List<WindupVertexFrame> fromVars2List = new ArrayList<>(Sets.toSet(fromVars2));
+
+            Iterable<? extends WindupVertexFrame> fromVars2 = vars.findVariable("1");
+            List<? extends WindupVertexFrame> fromVars2List = new ArrayList<>(Sets.toSet(fromVars2));
             Assert.assertEquals(2, fromVars2List.size());
         }
     }
-    
+
     @Test
     public void testInvalidTypeGet() throws Exception
     {

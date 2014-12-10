@@ -84,7 +84,7 @@ public class FreeMarkerUtil
             }
             else
             {
-                Iterable<WindupVertexFrame> var = variables.findVariable(varName);
+                Iterable<? extends WindupVertexFrame> var = variables.findVariable(varName);
                 if (var != null)
                 {
                     results.put(varName, var);
