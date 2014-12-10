@@ -1,14 +1,10 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
 import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.transform.OutputKeys;
@@ -17,6 +13,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -35,6 +34,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
+import org.jboss.windup.util.xml.NamespaceMapContext;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -49,12 +49,16 @@ public class XmlFile extends GraphCondition
 
     protected static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
     protected static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed via XPath";
+
+    private static XPathFactory factory = XPathFactory.newInstance();
+    private XPath xpathEngine = factory.newXPath();
+
     private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;
-    private String xpath;
+    private String xpathString;
+    private XPathExpression compiledXPath;
     private Map<String, String> namespaces = new HashMap<>();
     private String fileName;
     private String publicId;
-
     private String xpathResultMatch;
 
     public void setXpathResultMatch(String xpathResultMatch)
@@ -64,7 +68,7 @@ public class XmlFile extends GraphCondition
 
     private XmlFile(String xpath)
     {
-        this.xpath = xpath;
+        this.xpathString = xpath;
     }
 
     XmlFile()
@@ -151,6 +155,10 @@ public class XmlFile extends GraphCondition
                 throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString()
                             + ")");
             }
+            if (!XmlFileCache.matchIsPossible(xml.asVertex().getId(), this.xpathString, this.namespaces))
+            {
+                continue;
+            }
 
             if (fileName != null && !fileName.equals(""))
             {
@@ -168,23 +176,34 @@ public class XmlFile extends GraphCondition
                 }
 
             }
-            if (xpath != null)
+            if (xpathString != null)
             {
+                if (compiledXPath == null)
+                {
+                    NamespaceMapContext nsContext = new NamespaceMapContext(namespaces);
+                    this.xpathEngine.setNamespaceContext(nsContext);
+                    try
+                    {
+                        this.compiledXPath = xpathEngine.compile(this.xpathString);
+                    }
+                    catch (Exception e)
+                    {
+                        LOG.severe("Condition: " + this + " failed to run, as the following xpath was uncompilable: " + xpathString);
+                        return false;
+                    }
+                }
+
                 XmlFileService xmlFileService = new XmlFileService(graphContext);
                 Document document = xmlFileService.loadDocumentQuiet(xml);
                 if (document != null)
                 {
-                    NodeList result = XmlUtil.xpathNodeList(document, xpath, namespaces);
-                    List<String> lines = null;
-                    try
+                    NodeList result = XmlUtil.xpathNodeList(document, compiledXPath);
+                    if (result == null || result.getLength() == 0)
                     {
-                        lines = Files.readAllLines(Paths.get(xml.getFilePath()), Charset.defaultCharset());
+                        // cache that no results were found (this will save us from having to parse this file for this xpath again)
+                        XmlFileCache.cacheNoResultsFound(xml.asVertex().getId(), this.xpathString, this.namespaces);
                     }
-                    catch (Exception e)
-                    {
-                        LOG.log(Level.WARNING, "Could not read lines from: " + xml.getFilePath() + ", due to: " + e.getMessage(), e);
-                    }
-                    if (result != null && (result.getLength() != 0))
+                    else
                     {
                         for (int i = 0; i < result.getLength(); i++)
                         {
@@ -202,18 +221,18 @@ public class XmlFile extends GraphCondition
                             int columnNumber = (int) node.getUserData(
                                         LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
 
-                            int lineLength = lines == null ? 0 : lines.get(lineNumber - 1).length();
                             graphContext = event.getGraphContext();
                             GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<XmlTypeReferenceModel>(
                                         graphContext,
                                         XmlTypeReferenceModel.class);
                             XmlTypeReferenceModel fileLocation = fileLocationService.create();
-                            fileLocation.setSourceSnippit(nodeToString(node));
+                            String sourceSnippit = nodeToString(node);
+                            fileLocation.setSourceSnippit(sourceSnippit);
                             fileLocation.setLineNumber(lineNumber);
                             fileLocation.setColumnNumber(columnNumber);
-                            fileLocation.setLength(lineLength);
+                            fileLocation.setLength(node.toString().length());
                             fileLocation.setFile(xml);
-                            fileLocation.setXpath(xpath);
+                            fileLocation.setXpath(xpathString);
                             GraphService<NamespaceMetaModel> metaModelService = new GraphService<NamespaceMetaModel>(
                                         graphContext,
                                         NamespaceMetaModel.class);
@@ -244,7 +263,8 @@ public class XmlFile extends GraphCondition
 
     public void setXpath(String xpath)
     {
-        this.xpath = xpath;
+        this.xpathString = xpath;
+        this.compiledXPath = null;
     }
 
     public void setPublicId(String publicId)
@@ -277,9 +297,9 @@ public class XmlFile extends GraphCondition
         {
             builder.append(".inputVariable(" + getInputVariablesName() + ")");
         }
-        if (xpath != null)
+        if (xpathString != null)
         {
-            builder.append(".matches(" + xpath + ")");
+            builder.append(".matches(" + xpathString + ")");
         }
         if (fileName != null)
         {

@@ -96,9 +96,6 @@ public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
 
         String prefix = preparePrefix(ann);
 
-        System.out.println("    Vertex/@type: " + vertex.getProperty("type"));// /
-        System.out.println("    Prefix: " + prefix + " Method declared in: " + method.getDeclaringClass());// /
-
         // For all keys in the old map...
         Set<String> keys = vertex.getPropertyKeys();
         Set<String> mapKeys = map.keySet();

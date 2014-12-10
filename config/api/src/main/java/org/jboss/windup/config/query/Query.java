@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -95,10 +94,8 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             {
                 Query.this.setInitialFramesSelector(createInitialFramesSelector(Query.this));
                 Iterable<WindupVertexFrame> resultIterable = framesSelector.getFrames(event, context);
-                Iterator<WindupVertexFrame> iterator = resultIterable.iterator();
 
                 Iterable<WindupVertexFrame> result = resultIterable;
-
                 if (resultFilter != null)
                 {
                     List<WindupVertexFrame> filtered = new LinkedList<>();
