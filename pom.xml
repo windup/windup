@@ -213,6 +213,9 @@
                                     <header>${javadoc.branding}</header>
                                     <footer>${javadoc.branding}</footer>
 
+                                    <detectLinks>true</detectLinks>
+                                    <additionalparam>-link http://docs.jboss.org/forge/javadoc/2.13.0-SNAPSHOT/</additionalparam>
+
                                     <includeDependencySources>true</includeDependencySources>
                                     <dependencySourceExcludes>
                                         <dependencySourceExclude>com.tinkerpop.frames:frames</dependencySourceExclude>
@@ -287,7 +290,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-	    
+
             <dependency>
                 <groupId>org.jboss.forge.furnace.test</groupId>
                 <artifactId>furnace-test-harness</artifactId>
