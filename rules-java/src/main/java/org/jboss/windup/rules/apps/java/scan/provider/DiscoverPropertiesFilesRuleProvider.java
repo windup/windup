@@ -6,6 +6,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -16,11 +17,12 @@ import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers Java-style .properties files and places them into the graph.
- * 
+ *
  * @author jsightler <jesse.sightler@gmail.com>
  */
 public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel>
@@ -32,6 +34,13 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "Java");
     }
 
     @Override

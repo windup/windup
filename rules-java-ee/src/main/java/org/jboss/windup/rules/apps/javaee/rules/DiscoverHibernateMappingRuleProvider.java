@@ -36,6 +36,8 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.config.metadata.RuleMetadata;
+import org.ocpsoft.rewrite.context.Context;
 
 public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
@@ -50,6 +52,13 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "JavaEE");
     }
 
     @Override

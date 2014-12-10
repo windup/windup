@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -23,11 +24,12 @@ import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scan the Java Source code files and store the used type information from them.
- * 
+ *
  */
 public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
 {
@@ -38,12 +40,22 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
         return RulePhase.INITIAL_ANALYSIS;
     }
 
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "Java/WindupConfig");
+    }
+
+
+
     // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder javaSourceAvailable = Query.find(JavaSourceFileModel.class);
-        
+
         return ConfigurationBuilder.begin()
             .addRule()
             .when(javaSourceAvailable)

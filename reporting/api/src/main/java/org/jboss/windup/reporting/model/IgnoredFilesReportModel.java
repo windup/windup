@@ -1,7 +1,5 @@
 package org.jboss.windup.reporting.model;
 
-import java.util.List;
-
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
@@ -20,7 +18,7 @@ public interface IgnoredFilesReportModel extends ApplicationReportModel
     public static final String TYPE = "IgnoredFilesReport";
     public static final String FILE_REGEXES = "fileRegexes";
     public static final String IGNORED_FILES = "ignoredFiles";
-    
+
     /**
      * All the regexes used to ignore the files.
      */
@@ -32,7 +30,7 @@ public interface IgnoredFilesReportModel extends ApplicationReportModel
      */
     @Adjacency(label = FILE_REGEXES, direction = Direction.OUT)
     public void addFileRegex(IgnoredFileRegexModel fileRegex);
-    
+
     /**
      * Get the files that were ignored.
      */
@@ -44,7 +42,5 @@ public interface IgnoredFilesReportModel extends ApplicationReportModel
      */
     @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
     public void addIgnoredFile(FileModel fileModel);
-    
-    
-    
+
 }

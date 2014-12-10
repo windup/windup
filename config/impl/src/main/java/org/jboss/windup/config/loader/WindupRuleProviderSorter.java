@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,9 +21,9 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 
 /**
  * Sorts {@link WindupRuleProvider}s based upon their Phase and executeBefore/executeAfter methods.
- * 
+ *
  * @author jsightler <jesse.sightler@gmail.com>
- * 
+ * @author Ondrej Zizka <zizka@seznam.cz>
  */
 public class WindupRuleProviderSorter
 {
@@ -34,12 +35,12 @@ public class WindupRuleProviderSorter
     /**
      * Maps from the WindupRuleProvider class back to the instance of WindupRuleProvider
      */
-    private IdentityHashMap<Class<? extends WindupRuleProvider>, WindupRuleProvider> classToProviderMap = new IdentityHashMap<>();
+    private final IdentityHashMap<Class<? extends WindupRuleProvider>, WindupRuleProvider> classToProviderMap = new IdentityHashMap<>();
 
     /**
      * Maps from the provider's ID to the RuleProvider
      */
-    private Map<String, WindupRuleProvider> idToProviderMap = new HashMap<>();
+    private final Map<String, WindupRuleProvider> idToProviderMap = new HashMap<>();
 
     private WindupRuleProviderSorter(List<WindupRuleProvider> providers)
     {
@@ -162,7 +163,7 @@ public class WindupRuleProviderSorter
                 WindupRuleProvider otherProvider = getByClass(clz);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("Configuration Provider: " + provider.getID()
+                    throw new WindupException("RuleProvider " + provider.getID()
                                 + " is specified to execute after class: "
                                 + clz.getCanonicalName() + " but this class could not be found!");
                 }
@@ -175,7 +176,7 @@ public class WindupRuleProviderSorter
                 WindupRuleProvider otherProvider = getByClass(clz);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("Configuration Provider: " + provider.getID()
+                    throw new WindupException("RuleProvider " + provider.getID()
                                 + " is specified to execute before: "
                                 + clz.getCanonicalName() + " but this class could not be found!");
                 }
@@ -188,7 +189,7 @@ public class WindupRuleProviderSorter
                 WindupRuleProvider otherProvider = getByID(depID);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("Configuration Provider: " + provider.getID()
+                    throw new WindupException("RuleProvider " + provider.getID()
                                 + " is specified to execute after: "
                                 + depID + " but this provider could not be found!");
                 }
@@ -201,7 +202,7 @@ public class WindupRuleProviderSorter
                 WindupRuleProvider otherProvider = getByID(depID);
                 if (otherProvider == null)
                 {
-                    throw new WindupException("Configuration Provider: " + provider.getID()
+                    throw new WindupException("RuleProvider " + provider.getID()
                                 + " is specified to execute before: "
                                 + depID + " but this provider could not be found!");
                 }
@@ -247,105 +248,79 @@ public class WindupRuleProviderSorter
     }
 
     /**
-     * Check that no rules from earlier phases have inadvertantly become dependent upon rules from later phases.
+     * Check that no rules from earlier phases have inadvertently become dependent upon rules from later phases.
      */
     private void checkForImproperPhaseRelationships()
     {
         for (WindupRuleProvider provider : this.providers)
         {
-            RulePhase rulePhase = provider.getPhase();
-            if (rulePhase == null)
+            if (provider.getPhase() == null)
             {
-                // just make sure it has at least one dependency
+                // Make sure it has at least one dependency.
                 if ((provider.getExecuteAfter() == null || provider.getExecuteAfter().isEmpty()) &&
-                            (provider.getExecuteAfterIDs() == null || provider.getExecuteAfterIDs().isEmpty()) &&
-                            (provider.getExecuteBefore() == null || provider.getExecuteBefore().isEmpty()) &&
-                            (provider.getExecuteBeforeIDs() == null || provider.getExecuteBeforeIDs().isEmpty()))
+                    (provider.getExecuteAfterIDs() == null || provider.getExecuteAfterIDs().isEmpty()) &&
+                    (provider.getExecuteBefore() == null || provider.getExecuteBefore().isEmpty()) &&
+                    (provider.getExecuteBeforeIDs() == null || provider.getExecuteBeforeIDs().isEmpty()))
                 {
-                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
-                                + "\" Uses an implicit phase (phase is null) "
-                                + " but does not specify any dependencies");
+                    throw new IncorrectPhaseDependencyException("Rule \"" + provider.getID()
+                    + "\" uses an implicit phase (phase is null) but does not specify any dependencies.");
                 }
 
                 continue;
             }
 
-            for (Class<? extends WindupRuleProvider> classDep : provider.getExecuteAfter())
+            for (WindupRuleProvider otherProvider : getProvidersAfter(provider, true))
             {
-                WindupRuleProvider otherProvider = getByClass(classDep);
-                if (otherProvider == null)
-                {
-                    // skip, as we will check for these types of errors
-                    continue;
-                }
                 if (!phaseRelationshipOk(otherProvider, provider))
-                {
-                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
-                                + "\" from phase \"" + rulePhase
-                                + "\" is to set to execute after rule \"" + otherProvider.getID() + "\""
-                                + " from phase \""
-                                + otherProvider.getPhase()
-                                + "\". Rules must only specify rules " + rulePhase + " or an earlier phase.");
-                }
+                    throw new IncorrectPhaseDependencyException(formatErrorMessageAfter(provider, otherProvider));
             }
 
-            for (Class<? extends WindupRuleProvider> classDep : provider.getExecuteBefore())
+            for (WindupRuleProvider otherProvider : getProvidersBefore(provider, true))
             {
-                WindupRuleProvider otherProvider = getByClass(classDep);
-                if (otherProvider == null)
-                {
-                    // skip, as we will check for these types of conditions later
-                    continue;
-                }
                 if (!phaseRelationshipOk(provider, otherProvider))
-                {
-                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
-                                + "\" from phase \"" + rulePhase
-                                + "\" is to set to execute before rule \"" + otherProvider.getID() + "\""
-                                + " from phase \""
-                                + otherProvider.getPhase()
-                                + "\". Rules must only specify rules " + rulePhase + " or a later phase.");
-                }
-            }
-
-            for (String idDep : provider.getExecuteAfterIDs())
-            {
-                WindupRuleProvider otherProvider = getByID(idDep);
-                if (otherProvider == null)
-                {
-                    // skip, as we will check for these types of conditions later
-                    continue;
-                }
-                if (!phaseRelationshipOk(otherProvider, provider))
-                {
-                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
-                                + "\" from phase \"" + rulePhase
-                                + "\" is to set to execute after rule \"" + otherProvider.getID() + "\""
-                                + " from phase \""
-                                + otherProvider.getPhase()
-                                + "\". Rules must only specify rules " + rulePhase + " or an earlier phase.");
-                }
-            }
-
-            for (String idDep : provider.getExecuteBeforeIDs())
-            {
-                WindupRuleProvider otherProvider = getByID(idDep);
-                if (otherProvider == null)
-                {
-                    // skip, as we will check for these types of conditions later
-                    continue;
-                }
-                if (!phaseRelationshipOk(provider, otherProvider))
-                {
-                    throw new IncorrectPhaseDependencyException("Error, rule \"" + provider.getID()
-                                + "\" from phase \"" + rulePhase
-                                + "\" is to set to execute before rule \"" + otherProvider.getID() + "\""
-                                + " from phase \""
-                                + otherProvider.getPhase()
-                                + "\". Rules must only specify rules " + rulePhase + " or a later phase.");
-                }
+                    throw new IncorrectPhaseDependencyException(formatErrorMessageBefore(provider, otherProvider));
             }
         }
+    }
+
+
+    /**
+     * @return All providers to be executed after given provider - both by classes and by IDs.
+     */
+    private List<WindupRuleProvider> getProvidersAfter(WindupRuleProvider provider, boolean removeNulls)
+    {
+        List<WindupRuleProvider> otherProviders = new LinkedList(getByClasses(provider.getExecuteAfter()));
+        otherProviders.addAll(this.getByIDs(provider.getExecuteAfterIDs()));
+        if (removeNulls)
+            otherProviders.removeAll(Collections.singleton(null));
+        return otherProviders;
+    }
+
+
+    private List<WindupRuleProvider> getProvidersBefore(WindupRuleProvider provider, boolean removeNulls)
+    {
+        List<WindupRuleProvider> otherProviders;
+        otherProviders = new LinkedList(getByClasses(provider.getExecuteBefore()));
+        otherProviders.addAll(this.getByIDs(provider.getExecuteBeforeIDs()));
+        if (removeNulls)
+            otherProviders.removeAll(Collections.singleton(null));
+        return otherProviders;
+    }
+
+
+    private static String formatErrorMessageAfter(WindupRuleProvider provider, WindupRuleProvider otherProvider)
+    {
+        return WindupRuleProvider.class.getSimpleName() + '[' + provider.getID() + "] from phase " + provider.getPhase() + " is to set to execute after\n"
+            + WindupRuleProvider.class.getSimpleName() + '[' + otherProvider.getID() + "] from later phase " + otherProvider.getPhase()
+            + ".\nPossible solution is to specify phase " + otherProvider.getPhase() + " or later for the former.";
+    }
+
+
+    private static String formatErrorMessageBefore(WindupRuleProvider provider, WindupRuleProvider otherProvider)
+    {
+        return WindupRuleProvider.class.getSimpleName() + '[' + provider.getID() + "] from phase " + provider.getPhase() + " is to set to execute before\n"
+            + WindupRuleProvider.class.getSimpleName() + '[' + otherProvider.getID() + "] from earlier phase " + otherProvider.getPhase()
+            + ".\nPossible solution is to specify phase " + otherProvider.getPhase() + " or earlier for the former.";
     }
 
     private static boolean phaseRelationshipOk(WindupRuleProvider before, WindupRuleProvider after)
@@ -364,9 +339,31 @@ public class WindupRuleProviderSorter
         return classToProviderMap.get(c);
     }
 
+    /**
+     * Translate a List of rule provider classes to a list of RuleProvider instances.
+     */
+    private List<WindupRuleProvider> getByClasses(List<Class<? extends WindupRuleProvider>> clss)
+    {
+        List<WindupRuleProvider> rps = new ArrayList(clss.size());
+        for (Class<? extends WindupRuleProvider> cls : clss)
+            rps.add(this.classToProviderMap.get(cls));
+        return rps;
+    }
+
     private WindupRuleProvider getByID(String id)
     {
         return idToProviderMap.get(id);
+    }
+
+    /**
+     * Translate a List of IDs to a List of RuleProviders.
+     */
+    private List<WindupRuleProvider> getByIDs(List<String> ids)
+    {
+        List<WindupRuleProvider> rps = new ArrayList(ids.size());
+        for (String id : ids)
+            rps.add(this.idToProviderMap.get(id));
+        return rps;
     }
 
     @SuppressWarnings("unchecked")

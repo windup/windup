@@ -11,6 +11,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -27,13 +28,14 @@ import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.xml.DoctypeUtils;
 import org.jboss.windup.util.xml.NamespaceUtils;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Discovers web.xml files, parses them, and places relevant metadata into the graph.
- * 
+ *
  * @author jsightler <jesse.sightler@gmail.com>
  */
 public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
@@ -47,6 +49,13 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "JavaEE");
     }
 
     @Override

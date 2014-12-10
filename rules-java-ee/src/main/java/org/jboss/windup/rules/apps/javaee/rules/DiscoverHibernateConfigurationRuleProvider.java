@@ -25,13 +25,15 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.config.metadata.RuleMetadata;
+import org.ocpsoft.rewrite.context.Context;
 
 /**
  * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata
  * into the graph.
- * 
+ *
  * @author jsightler <jesse.sightler@gmail.com>
- * 
+ *
  */
 public class DiscoverHibernateConfigurationRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
@@ -44,6 +46,13 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "JavaEE");
     }
 
     @Override

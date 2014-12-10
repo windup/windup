@@ -11,6 +11,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -24,19 +25,19 @@ import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Discovers spring configuration XML files, and places the metadata into the Graph.
- * 
+ *
  * @author jsightler <jesse.sightler@gmail.com>
  */
 public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverSpringConfigurationFilesRuleProvider.class
-                .getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DiscoverSpringConfigurationFilesRuleProvider.class.getSimpleName());
 
     private static final String TECH_TAG = "Spring XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
@@ -45,6 +46,13 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "JavaEE");
     }
 
     @Override

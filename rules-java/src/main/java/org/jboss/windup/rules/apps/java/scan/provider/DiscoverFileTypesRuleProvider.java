@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -12,13 +13,25 @@ import org.jboss.windup.rules.apps.java.scan.operation.RecurseDirectoryAndAddFil
 import org.jboss.windup.util.ZipUtil;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.Context;
 
+/**
+ * Recursively traverses all directories present in graph at the time of running this
+ * and adds all files under them to the graph.
+ */
 public class DiscoverFileTypesRuleProvider extends WindupRuleProvider
 {
     @Override
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "Core");
     }
 
     // @formatter:off

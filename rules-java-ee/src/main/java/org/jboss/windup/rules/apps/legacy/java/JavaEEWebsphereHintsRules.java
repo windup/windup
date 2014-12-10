@@ -12,7 +12,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
-public class WebsphereConfig extends WindupRuleProvider
+public class JavaEEWebsphereHintsRules extends WindupRuleProvider
 {
     @Override
     public void enhanceMetadata(Context context)

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.query.Query;
@@ -13,6 +14,7 @@ import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolde
 import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.Context;
 
 public class UnzipArchivesToOutputRuleProvider extends WindupRuleProvider
 {
@@ -20,6 +22,13 @@ public class UnzipArchivesToOutputRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.DISCOVERY;
+    }
+
+    @Override
+    public void enhanceMetadata(Context context)
+    {
+        super.enhanceMetadata(context);
+        context.put(RuleMetadata.CATEGORY, "Core");
     }
 
     @Override
