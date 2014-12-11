@@ -96,9 +96,9 @@ public class WindupCommand implements UICommand
         public Object call() throws Exception
         {
             Object val = this.option.getDefaultValue();
-            if(val != null && this.expectedType != null && ! this.expectedType.isAssignableFrom(val.getClass()))
+            if (val != null && this.expectedType != null && !this.expectedType.isAssignableFrom(val.getClass()))
                 throw new IllegalStateException("Windup option " + option.getName() +
-                    " was expected to return " + expectedType.getName() + " but returned " + val.getClass());
+                            " was expected to return " + expectedType.getName() + " but returned " + val.getClass());
             return val;
         }
     }
@@ -111,49 +111,56 @@ public class WindupCommand implements UICommand
             InputComponent<?, ?> inputComponent = null;
             switch (option.getUIType())
             {
-                case SINGLE: {
-                    UIInput<?> inputSingle = componentFactory.createInput(option.getName(), option.getType());
-                    inputSingle.setDefaultValue(new DefaultValue(option));
-                    inputComponent = inputSingle;
-                    break;
-                }
-                case MANY: {
-                    UIInputMany<?> inputMany = componentFactory.createInputMany(option.getName(), option.getType());
-                    inputMany.setDefaultValue(new DefaultValue(option, Iterable.class));
-                    inputComponent = inputMany;
-                    break;
-                }
-                case SELECT_MANY: {
-                    UISelectMany<?> selectMany = componentFactory.createSelectMany(option.getName(), option.getType());
-                    selectMany.setDefaultValue(new DefaultValue(option, Iterable.class));
-                    inputComponent = selectMany;
-                    break;
-                }
-                case SELECT_ONE: {
-                    UISelectOne<?> selectOne = componentFactory.createSelectOne(option.getName(), option.getType());
-                    selectOne.setDefaultValue(new DefaultValue(option));
-                    inputComponent = selectOne;
-                    break;
-                }
-                case DIRECTORY: {
-                    UIInput<DirectoryResource> directoryInput = componentFactory.createInput(option.getName(),
-                                DirectoryResource.class);
-                    directoryInput.setDefaultValue(new DefaultValue(option, DirectoryResource.class));
-                    inputComponent = directoryInput;
-                    break;
-                }
-                case FILE: {
-                    UIInput<?> fileInput = componentFactory.createInput(option.getName(), FileResource.class);
-                    fileInput.setDefaultValue(new DefaultValue(option, FileResource.class));
-                    inputComponent = fileInput;
-                    break;
-                }
-                case FILE_OR_DIRECTORY: {
-                    UIInput<?> fileOrDirInput = componentFactory.createInput(option.getName(), FileResource.class);
-                    fileOrDirInput.setDefaultValue(new DefaultValue(option, FileResource.class));
-                    inputComponent = fileOrDirInput;
-                    break;
-                }
+            case SINGLE:
+            {
+                UIInput<?> inputSingle = componentFactory.createInput(option.getName(), option.getType());
+                inputSingle.setDefaultValue(new DefaultValue(option));
+                inputComponent = inputSingle;
+                break;
+            }
+            case MANY:
+            {
+                UIInputMany<?> inputMany = componentFactory.createInputMany(option.getName(), option.getType());
+                inputMany.setDefaultValue(new DefaultValue(option, Iterable.class));
+                inputComponent = inputMany;
+                break;
+            }
+            case SELECT_MANY:
+            {
+                UISelectMany<?> selectMany = componentFactory.createSelectMany(option.getName(), option.getType());
+                selectMany.setDefaultValue(new DefaultValue(option, Iterable.class));
+                inputComponent = selectMany;
+                break;
+            }
+            case SELECT_ONE:
+            {
+                UISelectOne<?> selectOne = componentFactory.createSelectOne(option.getName(), option.getType());
+                selectOne.setDefaultValue(new DefaultValue(option));
+                inputComponent = selectOne;
+                break;
+            }
+            case DIRECTORY:
+            {
+                UIInput<DirectoryResource> directoryInput = componentFactory.createInput(option.getName(),
+                            DirectoryResource.class);
+                directoryInput.setDefaultValue(new DefaultValue(option, DirectoryResource.class));
+                inputComponent = directoryInput;
+                break;
+            }
+            case FILE:
+            {
+                UIInput<?> fileInput = componentFactory.createInput(option.getName(), FileResource.class);
+                fileInput.setDefaultValue(new DefaultValue(option, FileResource.class));
+                inputComponent = fileInput;
+                break;
+            }
+            case FILE_OR_DIRECTORY:
+            {
+                UIInput<?> fileOrDirInput = componentFactory.createInput(option.getName(), FileResource.class);
+                fileOrDirInput.setDefaultValue(new DefaultValue(option, FileResource.class));
+                inputComponent = fileOrDirInput;
+                break;
+            }
             }
             if (inputComponent == null)
             {

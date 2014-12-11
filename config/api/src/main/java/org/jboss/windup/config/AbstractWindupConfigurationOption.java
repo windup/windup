@@ -14,12 +14,10 @@ public abstract class AbstractWindupConfigurationOption implements WindupConfigu
         return 0;
     }
 
-
     @Override
     public Object getDefaultValue()
     {
-        if (Boolean.class.isAssignableFrom(this.getType())
-            || boolean.class.isAssignableFrom(this.getType()) )
+        if (Boolean.class.isAssignableFrom(this.getType()) || boolean.class.isAssignableFrom(this.getType()))
         {
             return false;
         }
