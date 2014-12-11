@@ -56,12 +56,12 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
         {
             throw new WindupException("Error, 'xslt' element must have a non-empty 'extension' attribute");
         }
-        Map<String,String> parameters = new HashMap<String,String>();
+        Map<String, String> parameters = new HashMap<String, String>();
         List<Element> children = $(element).children("xslt-parameter").get();
         for (Element child : children)
         {
             XSLTParameter param = handlerManager.processElement(child);
-            parameters.put(param.getKey(),param.getValue());
+            parameters.put(param.getKey(), param.getValue());
         }
 
         Path pathContainingXml = handlerManager.getXmlInputPath();
@@ -76,7 +76,8 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             {
                 fullPath = pathContainingXml.resolve(template).toAbsolutePath().toString();
             }
-            if(of != null) {
+            if (of != null)
+            {
                 return XSLTTransformation
                             .of(of)
                             .usingFilesystem(fullPath)
@@ -93,7 +94,8 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
         else
         {
             ClassLoader xmlFileAddonClassLoader = handlerManager.getAddonContainingInputXML().getClassLoader();
-            if(of != null) {
+            if (of != null)
+            {
                 return XSLTTransformation
                             .of(of)
                             .using(template, xmlFileAddonClassLoader)

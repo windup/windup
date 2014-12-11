@@ -52,7 +52,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     private static final Logger LOG = Logging.get(XSLTTransformation.class);
 
     private String description;
-    private String location;
+    private String template;
     private String extension;
 
     private Transformer xsltTransformer;
@@ -70,9 +70,8 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     }
 
     /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type.
-     * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a
-     * model referencing it.
+     * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type. This is mainly to simplify the
+     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
      *
      */
     @Override
@@ -91,8 +90,9 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         }
 
     }
-    
-    public void addXsltParameter(String key, String value) {
+
+    public void addXsltParameter(String key, String value)
+    {
         xsltParameters.put(key, value);
     }
 
@@ -113,9 +113,9 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         return this;
     }
 
-    public void setSourceLocation(String location)
+    public void setTemplate(String template)
     {
-        this.location = location;
+        this.template = template;
     }
 
     /**
@@ -141,7 +141,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     public static XSLTTransformation usingFilesystem(String location)
     {
         XSLTTransformation tansformation = new XSLTTransformation();
-        tansformation.location = location;
+        tansformation.template = location;
         return tansformation;
     }
 
@@ -153,7 +153,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         XSLTTransformation tansformation = new XSLTTransformation();
         // classLoader instance needed to see the file passed in the location
         tansformation.contextClassLoader = classLoader;
-        tansformation.location = location;
+        tansformation.template = location;
         return tansformation;
     }
 
@@ -161,11 +161,11 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     {
         if (this.contextClassLoader != null)
         {
-            return contextClassLoader.getResourceAsStream(location);
+            return contextClassLoader.getResourceAsStream(template);
         }
         else
         {
-            return new FileInputStream(this.location);
+            return new FileInputStream(this.template);
         }
     }
 
@@ -210,11 +210,11 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
                 }
             }
 
-            LOG.fine("Created XSLT successfully: " + location);
+            LOG.fine("Created XSLT successfully: " + template);
         }
         catch (TransformerConfigurationException e)
         {
-            throw new IllegalStateException("Problem working with xsl file located at " + location
+            throw new IllegalStateException("Problem working with xsl file located at " + template
                         + ". Please check if the file really exists.", e);
         }
         catch (Exception e)
@@ -250,7 +250,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             XsltTransformationModel transformation = transformationService.create();
             transformation.setDescription(description);
             transformation.setExtension(extension);
-            transformation.setSourceLocation(location);
+            transformation.setSourceLocation(template);
             transformation.setSourceFile(payload);
             transformation.setResult(fileName);
 
@@ -272,13 +272,33 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 
     public XSLTTransformation withParameters(Map<String, String> parameters)
     {
-       this.xsltParameters=parameters;
+        this.xsltParameters = parameters;
         return this;
     }
 
     public void setContextClassLoader(ClassLoader classLoader)
     {
-        this.contextClassLoader=classLoader;
+        this.contextClassLoader = classLoader;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public String getTemplate()
+    {
+        return template;
+    }
+
+    public String getExtension()
+    {
+        return extension;
+    }
+
+    public Map<String, String> getXsltParameters()
+    {
+        return xsltParameters;
     }
 
 }

@@ -59,6 +59,8 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        
+       
 
         <!-- Furnace Container -->
         <dependency>

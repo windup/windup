@@ -47,8 +47,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>
     }
 
     /**
-     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be
-     * displayed in the report.
+     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be displayed in the report.
      */
     public static Hint withText(String text)
     {
@@ -120,6 +119,21 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>
         if (links != null && !links.isEmpty())
             result.append(".with(" + links + ")");
         return result.toString();
+    }
+
+    public RegexParameterizedPatternParser getHintText()
+    {
+        return hintTextPattern;
+    }
+
+    public int getEffort()
+    {
+        return effort;
+    }
+
+    public List<Link> getLinks()
+    {
+        return links;
     }
 
     @Override

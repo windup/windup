@@ -47,9 +47,8 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     }
 
     /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it.
-     * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a
-     * model referencing it.
+     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it. This is mainly to simplify the
+     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
      * 
      */
     @Override
@@ -114,8 +113,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     public void performParameterized(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
         /*
-         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't
-         * want to add another.
+         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
          */
         String description = null;
         if (descriptionPattern != null)
@@ -179,6 +177,26 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
         if (links != null && !links.isEmpty())
             result.append(".with(" + links + ")");
         return result.toString();
+    }
+
+    public List<Link> getLinks()
+    {
+        return links;
+    }
+
+    public RegexParameterizedPatternParser getClassificationPattern()
+    {
+        return classificationPattern;
+    }
+
+    public RegexParameterizedPatternParser getDescriptionPattern()
+    {
+        return descriptionPattern;
+    }
+
+    public int getEffort()
+    {
+        return effort;
     }
 
     @Override

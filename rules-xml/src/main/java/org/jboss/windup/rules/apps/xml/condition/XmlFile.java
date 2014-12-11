@@ -101,6 +101,11 @@ public class XmlFile extends ParameterizedGraphCondition
         this.xpathEngine.setXPathFunctionResolver(xmlFileFunctionResolver);
     }
 
+    public String getXpathString()
+    {
+        return xpathString;
+    }
+
     /**
      * Create a new {@link XmlFile} {@link Condition}.
      */
@@ -145,6 +150,21 @@ public class XmlFile extends ParameterizedGraphCondition
     {
         this.xpathResultMatch = regex;
         return this;
+    }
+
+    public XPathExpression getXPathExpression()
+    {
+        return compiledXPath;
+    }
+
+    public String getInFile()
+    {
+        return fileName;
+    }
+
+    public String getPublicId()
+    {
+        return publicId;
     }
 
     /**

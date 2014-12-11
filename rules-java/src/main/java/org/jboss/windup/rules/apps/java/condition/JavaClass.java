@@ -267,7 +267,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                         .back("result");
         }
     }
-
+    
     @Override
     public Set<String> getRequiredParameterNames()
     {
@@ -300,7 +300,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     }
 
     @Override
-    protected String getVarname()
+    public String getVarname()
     {
         return getOutputVariablesName();
     }
@@ -323,5 +323,20 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         }
         builder.append(".as(" + getVarname() + ")");
         return builder.toString();
+    }
+
+    public RegexParameterizedPatternParser getReferences()
+    {
+        return referencePattern;
+    }
+
+    public List<TypeReferenceLocation> getLocations()
+    {
+        return locations;
+    }
+
+    public RegexParameterizedPatternParser getTypeFilterRegex()
+    {
+        return typeFilterPattern;
     }
 }

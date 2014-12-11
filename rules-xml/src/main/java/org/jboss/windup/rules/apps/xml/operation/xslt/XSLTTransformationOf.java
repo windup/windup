@@ -19,7 +19,7 @@ public class XSLTTransformationOf
     
     public XSLTTransformation usingFilesystem(String location)
     {
-        transformation.setSourceLocation(location);
+        transformation.setTemplate(location);
         return transformation;
     }
     
@@ -27,7 +27,7 @@ public class XSLTTransformationOf
     {
         // classLoader instance needed to see the file passed in the location
         transformation.setContextClassLoader(classLoader);
-        transformation.setSourceLocation(location);
+        transformation.setTemplate(location);
         return transformation;
     }
 
@@ -36,7 +36,7 @@ public class XSLTTransformationOf
      */
     public XSLTTransformation using(String location)
     {
-        this.transformation.setSourceLocation(location);
+        this.transformation.setTemplate(location);
         return this.transformation;
     }
 }

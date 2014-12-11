@@ -41,9 +41,13 @@ public class ClassificationHandler implements ElementHandler<Classification>
                         "Error, 'classification' element must have a non-empty 'classification' attribute (eg, 'Mule ESB Transformer')");
         }
         String description = $(element).attr("description");
+        String of = $(element).attr("of");
         String effortStr = $(element).attr("effort");
 
         Classification classification = Classification.as(classificationStr);
+        if(of !=null) {
+        	classification.setVariableName(of);
+        }
         if (!StringUtils.isBlank(effortStr))
         {
             try
@@ -67,7 +71,6 @@ public class ClassificationHandler implements ElementHandler<Classification>
             Link link = handlerManager.processElement(child);
             classification.with(link);
         }
-
         return classification;
     }
 }
