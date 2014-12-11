@@ -16,9 +16,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.DirectoryWalker;
-import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.container.simple.Service;
@@ -173,8 +170,7 @@ public class FurnaceClasspathScanner implements Service
     {
         try
         {
-            new DirectoryWalker<String>(DirectoryFileFilter.DIRECTORY, new SuffixFileFilter(".class",
-                        IOCase.INSENSITIVE), -1)
+            new DirectoryWalker<String>()
             {
                 private Path startDir;
 
