@@ -183,12 +183,12 @@ public class Bootstrap
             }
         }
 
-        addRepos(furnace, mutableRepos, immutableRepos);
+        addReposToFurnace(furnace, mutableRepos, immutableRepos);
 
         Iterable<WindupConfigurationOption> knownWindupArgs = getKnownWindupArgs(furnace);
 
         // add them again (since starting/stopping furnace destroyed them)
-        addRepos(furnace, mutableRepos, immutableRepos);
+        addReposToFurnace(furnace, mutableRepos, immutableRepos);
 
         furnace.addContainerLifecycleListener(new GreetingListener());
 
@@ -202,7 +202,7 @@ public class Bootstrap
 
         if (displayHelp)
         {
-            System.out.println(help(knownWindupArgs));
+            System.out.println(getHelpMessage(knownWindupArgs));
             return args;
         }
 
@@ -292,7 +292,7 @@ public class Bootstrap
         return args;
     }
 
-    private void addRepos(final Furnace furnace, List<File> mutableRepos, List<File> immutableRepos)
+    private static void addReposToFurnace(final Furnace furnace, List<File> mutableRepos, List<File> immutableRepos)
     {
         for (File repo : mutableRepos)
         {
@@ -304,7 +304,7 @@ public class Bootstrap
         }
     }
 
-    private boolean isWindupArg(Iterable<WindupConfigurationOption> availableOptions, String arg)
+    private static boolean isWindupArg(Iterable<WindupConfigurationOption> availableOptions, String arg)
     {
         for (WindupConfigurationOption availableOption : availableOptions)
         {
@@ -335,7 +335,7 @@ public class Bootstrap
         furnace.setArgs(args);
     }
 
-    private String help(Iterable<WindupConfigurationOption> windupOptions)
+    private static String getHelpMessage(Iterable<WindupConfigurationOption> windupOptions)
     {
         StringBuilder sb = new StringBuilder();
         sb.append("Usage: windup [OPTION]... PARAMETER ... \n");
@@ -460,7 +460,7 @@ public class Bootstrap
         furnaceService.start(exitAfter, batchMode);
     }
 
-    private void startFurnaceAsyncAndReturnWhenStarted(Furnace furnace)
+    private static void startFurnaceAsyncAndReturnWhenStarted(Furnace furnace)
     {
         furnace.setServerMode(true);
         furnace.startAsync();
@@ -477,7 +477,7 @@ public class Bootstrap
         }
     }
 
-    private Iterable<WindupConfigurationOption> getKnownWindupArgs(Furnace furnace)
+    private static Iterable<WindupConfigurationOption> getKnownWindupArgs(Furnace furnace)
     {
         startFurnaceAsyncAndReturnWhenStarted(furnace);
         try
