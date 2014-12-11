@@ -46,6 +46,7 @@
                 <iteration over="JPA1">
                     <classification classification="JPA 1.x Configuration" effort="0" />
                     <iteration over="JPA1">
+                        <when>
                         <xmlfile as="1"
                             matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']"
                             from="JPA1_instance">
@@ -55,6 +56,7 @@
                             xpathResultMatch="weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask$ | weblogic.ant.taskdefs.webservices.javaschema.JavaSchema$ | weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD$ | weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask$"
                             from="1">
                         </xmlfile>
+                        </when>
                         <iteration over="1">
                             <hint message="Weblogic Specifc Webservice Ant Tasks" effort="10">
                             </hint>
@@ -299,7 +301,7 @@
                 <iteration over="JPA2">
                     <classification classification="JPA 2.x Configuration" effort="0" />
                     <iteration over="JPA2">
-
+                        <when>
                         <xmlfile as="1"
                             matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']"
                             from="JPA2_instance">
@@ -309,6 +311,7 @@
                             xpathResultMatch="weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask$ | weblogic.ant.taskdefs.webservices.javaschema.JavaSchema$ | weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD$ | weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask$"
                             from="1">
                         </xmlfile>
+                        </when>
 
                         <iteration over="1">
                             <hint message="Weblogic Specifc Webservice Ant Tasks" effort="10">
