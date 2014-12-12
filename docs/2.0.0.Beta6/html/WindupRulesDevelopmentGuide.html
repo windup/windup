@@ -474,6 +474,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_additional_resources">Additional Resources</a>
 <ul class="sectlevel2">
+<li><a href="#Rules-Available-Rules-Utilities">Available Rule Utilities</a></li>
 <li><a href="#Review-the-Windup-Quickstarts">Review the Windup Quickstarts</a></li>
 <li><a href="#Known-Issues">Known Issues</a></li>
 <li><a href="#Glossary">Glossary of Terms Used in Windup</a></li>
@@ -482,6 +483,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_appendix">Appendix</a>
 <ul class="sectlevel2">
 <li><a href="#Dev-Windup-Architectural-Components">Windup Architectural Components</a></li>
+<li><a href="#Dev-Dependencies">Dependencies (Forge add-ons)</a></li>
+<li><a href="#Rules-Windup-Models">Windup Models</a></li>
 </ul>
 </li>
 </ul>
@@ -776,7 +779,7 @@ Better Reporting
 </div>
 </li>
 <li>
-<p><a href="Execute-Windup">Try Windup</a> on your application. Be sure to <a href="Report-Issues-with-Windup">report any issues</a> you encounter.</p>
+<p><a href="#Execute-Windup">Try Windup</a> on your application. Be sure to <a href="#Report-Issues-with-Windup">report any issues</a> you encounter.</p>
 </li>
 <li>
 <p>Write an Windup rule to automate the migration process.</p>
@@ -1319,7 +1322,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <div class="sect4">
 <h5 id="_individual_file_analysis_reports">Individual File Analysis Reports</h5>
 <div class="paragraph">
-<p>You can directly access the the <a href="#file-analysis-pages">file analysis report pages</a> described above by browsing for them by name in the <code>OUTPUT_REPORT_DIRECTORY/reports/</code> directory. Because the same common file names can exist in multiple archives, for example "manifest.mf" or "web.xml", Windup adds a unique numeric suffix to each report file name.</p>
+<p>You can directly access the the file analysis report pages described above by browsing for them by name in the <code>OUTPUT_REPORT_DIRECTORY/reports/</code> directory. Because the same common file names can exist in multiple archives, for example "manifest.mf" or "web.xml", Windup adds a unique numeric suffix to each report file name.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/report-directory-file-list.png" alt="Report Directory File List" width="500"></span></p>
@@ -1861,7 +1864,7 @@ and not actually used, is <code>RuleMetadata.CATEGORY</code>.</p>
 <h4 id="_available_utilities">Available utilities</h4>
 <div class="paragraph">
 <p>For a list of what key services and constructs can be used in the rule,
-see <a href="#Rules-Available-Utilities">Available Rules Utilities</a>.</p>
+see <a href="#Rules-Available-Rules-Utilities">Available Rules Utilities</a>.</p>
 </div>
 </div>
 </div>
@@ -2579,7 +2582,7 @@ Working examples of XML-based rules can be found in the Windup quickstarts GitHu
 <p><strong>&lt;ruleset&gt;</strong>: This element defines this as a Windup rule.</p>
 </li>
 <li>
-<p><strong>&lt;phase&gt;</strong>: This element specifies when the ruleset should execute. See <a href="Rules-Rules-Execution-Lifecycle.html#rule-phases">Rule Phases in the Rule Execution Lifecyle</a> for more information.</p>
+<p><strong>&lt;phase&gt;</strong>: This element specifies when the ruleset should execute. See <a href="#Rules-Rule-Execution-Lifecycle">Rule Execution Lifecyle</a> for more information about rule phases.</p>
 </li>
 <li>
 <p><strong>&lt;rules&gt;</strong>: element contains the individual rules.</p>
@@ -2898,7 +2901,7 @@ If you have not started Windup, follow the instructions to <a href="#Execute-Win
 <div class="sect4">
 <h5 id="_individual_file_analysis_reports_2">Individual File Analysis Reports</h5>
 <div class="paragraph">
-<p>You can directly access the the <a href="#file-analysis-pages">file analysis report pages</a> described above by browsing for them by name in the <code>OUTPUT_REPORT_DIRECTORY/reports/</code> directory. Because the same common file names can exist in multiple archives, for example "manifest.mf" or "web.xml", Windup adds a unique numeric suffix to each report file name.</p>
+<p>You can directly access the the file analysis report pages described above by browsing for them by name in the <code>OUTPUT_REPORT_DIRECTORY/reports/</code> directory. Because the same common file names can exist in multiple archives, for example "manifest.mf" or "web.xml", Windup adds a unique numeric suffix to each report file name.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/report-directory-file-list.png" alt="Report Directory File List" width="500"></span></p>
@@ -3123,6 +3126,132 @@ See <a href="#Dev-Dependencies">Dependencies</a> for some hints.</p>
 <div class="sect1">
 <h2 id="_additional_resources">Additional Resources</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="Rules-Available-Rules-Utilities">Available Rule Utilities</h3>
+<div class="sect3">
+<h4 id="_programmatically_access_the_graph">Programmatically Access the Graph</h4>
+<div class="paragraph">
+<p><em>Note: Needs update. This is out of date!</em></p>
+</div>
+<div class="paragraph">
+<p>(Lower Level API, to cover cases not provided by high level API)</p>
+</div>
+<div class="paragraph">
+<p>This topic describes how to to programmatically access or update graph data when you create a Java-based rule addon.</p>
+</div>
+<div class="sect4">
+<h5 id="_query_the_graph">Query the graph</h5>
+<div class="paragraph">
+<p>There are several ways - including Query API, Gremlin support, or
+GraphService methods.</p>
+</div>
+<div class="sect5">
+<h6 id="_query_the_graph_within_the_when_method">Query the Graph Within the .when() method</h6>
+<div class="paragraph">
+<p>Building a rule contains the method when(), which is used to create a
+<strong>condition</strong>. Vertices that fulfill the condition, are passed to the
+perform() method.</p>
+</div>
+<div class="paragraph">
+<p>For the queries in the when() method, class Query is used. There are
+several methods which you can use to specify the condition. For example:
+* <strong>find()</strong> specifies the Model type of the vertex * <strong>as()</strong> method
+specifies the name of the final list, that is passed to the perform()
+method * <strong>from(String name)</strong> starts the query not on the all vertices,
+but only on the vertices already stored in the the given <strong>name</strong> (used to
+begin query on the result of the other one) * <strong>withProperty()</strong> specify
+the property value of the given vertex</p>
+</div>
+<div class="paragraph">
+<p>The following are examples of simple queries.</p>
+</div>
+<div class="paragraph">
+<p>Return a list of archives</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">Query.find(ArchiveModel.class)</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">Query.find(ApplicationReportModel.class).as(VAR_APPLICATION_REPORTS)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_iteration_2">Iteration</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">ConfigurationBuilder.begin().addRule()
+    .when(
+        GraphSearchConditionBuilderGremlin.create("javaFiles", new ArrayList())
+        .V().framedType( JavaFileModel.class ).has("analyze")
+    )
+    .perform(
+        // For all java files...
+        Iteration.over("javaFiles").var("javaFile").perform(</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_nested_iteration">Nested Iteration</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">code,java
+// For all java files...
+Iteration.over("javaFiles").var("javaFile").perform(
+    // A nested rule.
+    RuleSubset.evaluate(
+        ConfigurationBuilder.begin().addRule()
+        .when(...)
+        .perform(
+            Iteration.over("regexes").var(RegexModel.class, "regex").perform(
+                new AbstractIterationOperator&lt;RegexModel&gt;( RegexModel.class, "regex" ) {
+                    public void perform( GraphRewrite event, EvaluationContext context, RegexModel regex ) {
+                        //...
+                    }
+                }
+            )
+            .endIteration()
+        )// perform()
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_modify_graph_data">Modify Graph Data</h4>
+<div class="paragraph">
+<p>For more custom operations dealing with Graph data that are not covered by the <code>Query</code> mechanism, use the GraphService.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">GraphService&lt;FooModel&gt; fooService = new GraphService&lt;FooModel&gt;(graph,FooModel.class);
+
+List&lt;FooModel&gt; = fooService.findAll();
+FooModel = fooService.create();
+
+// etc ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>GraphService&lt;&gt; can also be used to query the graph for models of the specified type:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">FooModel foo = new GraphService&lt;&gt;(graphContext, FooModel.class).getUnique();</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">FooModel foo = new GraphService&lt;&gt;(graphContext, FooModel.class).getUniqueByProperty("size", 1);</code></pre>
+</div>
+</div>
+</div>
+</div>
 <div class="sect2">
 <h3 id="Review-the-Windup-Quickstarts">Review the Windup Quickstarts</h3>
 <div class="paragraph">
@@ -3408,12 +3537,206 @@ Ocpsoft Rewrite, see: <a href="http://ocpsoft.org/rewrite/">OCPsoft Rewrite</a>.
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="Dev-Dependencies">Dependencies (Forge add-ons)</h3>
+<div class="paragraph">
+<p>DRAFT <em>Based on
+<a href="https://github.com/OndraZizka/windup/commit/3574e81900cbad2b3a83d0bd6c263eb22c48e55e">this</a>
+discussion.</em></p>
+</div>
+<div class="sect3">
+<h4 id="_maven_add_on_structure">Maven Add-on Structure</h4>
+<div class="paragraph">
+<p>The following is the typical structure of Maven <code>add-on</code> modules.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>myaddon-parent
++--- myaddon - jar, classifier: forge-addon
++--- myaddon-api - jar
++--- myaddon-impl - jar
++--- myaddon-tests - jar</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>add-on</code> POM file can declare dependencies on other forge-addons.
+To prevent exporting the add-on to dependent modules, use <code>&lt;optional&gt;true&lt;/optional&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.jboss.forge.furnace.container&lt;/groupId&gt;
+    &lt;artifactId&gt;cdi&lt;/artifactId&gt;
+    &lt;classifier&gt;forge-addon&lt;/classifier&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>add-on</code> POM files may also declare a dependency on typical Maven artifacts.
+To prevent exporting the add-on to dependent modules, use <code>&lt;optional&gt;true&lt;/optional&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.thinkaurelius.titan&lt;/groupId&gt;
+    &lt;artifactId&gt;titan-lucene&lt;/artifactId&gt;
+    &lt;version&gt;${version.titangraph.lucene}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>One more question regarding dependencies. Is it advisable to depend on the`forge-addon`
+artifact from add-on&#8217;s subparts?</em></p>
+</div>
+<div class="paragraph">
+<p>Add-ons should reference the <code>&lt;classifier&gt;forge-addon&lt;/classifier&gt;</code>
+artifact from other add-ons.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_add_on_sub_parts">Add-on sub-parts</h4>
+<div class="paragraph">
+<p>Add-on sub-parts declare dependency preferably on forge add-on APIs, not
+on the add-ons themselves, wherever possible (wherever an add-on has an
+explicit API). These dependencies must be marked as <code>provided</code> scope.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.jboss.forge.furnace.container&lt;/groupId&gt;
+    &lt;artifactId&gt;cdi-api&lt;/artifactId&gt;
+    &lt;classifier&gt;forge-addon&lt;/classifier&gt;
+    &lt;scope&gt;provided&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>They may instead depend on the primary add-on dependency, e.g.
+<code>forge-addon</code>. The latter makes the POM files simpler, but can be confusing,
+because the add-on dependency still needs to be declared in the depending
+add-on&#8217;s POM.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.jboss.forge.furnace.container&lt;/groupId&gt;
+    &lt;artifactId&gt;cdi-api&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Declaring a <code>forge-addon</code> depencendy anywhere else than the
+<code>forge-addon</code> pom doesn&#8217;t actually cause Furnace to establish an add-on
+dependency. I.e. classes from the dep won&#8217;t be available unless you
+declare it in the `forge-addon&#8217;s pom.</p>
+</div>
+<div class="paragraph">
+<p>Add-on&#8217;s sub-parts may also declare dependencies on other normal maven
+dependencies, and these are treated as normal.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Add-on depends on API , scope <code>compile</code> &gt; Addon
+depends on Impl , scope <code>compile</code> with <code>&lt;optional&gt;true&lt;/optional&gt;</code> -
+prevents exporting this dependency to consumers of the add-on.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_dependencies">Test dependencies</h4>
+<div class="paragraph">
+<p>For test dependencies on add-ons: Any addon/sub-part requiring an addon
+for testing purposes should use <code>&lt;scope&gt;test&lt;/scope&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.jboss.windup.graph&lt;/groupId&gt;
+    &lt;artifactId&gt;windup-graph&lt;/artifactId&gt;
+    &lt;version&gt;${project.version}&lt;/version&gt;
+    &lt;classifier&gt;forge-addon&lt;/classifier&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_dependencies_between_sub_parts_within_the_same_add_on">Dependencies between sub-parts within the same add-on</h4>
+<div class="paragraph">
+<p>Subpart may declare dependency on other subpart. E.g. <code>impl</code> typically
+depends on <code>api</code>. In that case, the scope should be set appropriately
+for the given situation - typically <code>provided</code> or <code>compile</code> scope.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.jboss.windup.graph&lt;/groupId&gt;
+    &lt;artifactId&gt;windup-graph-api&lt;/artifactId&gt;
+    &lt;scope&gt;compile&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Rules-Windup-Models">Windup Models</h3>
+<div class="paragraph">
+<p>Windup models are the classes extending WindupVertexFrame.
+They are used to model the data in the graph database to Java objects.</p>
+</div>
+<div class="paragraph">
+<p>This is an overview of the most important models.
+The complete and up-to-date list of models is in <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/graph/model/WindupVertexFrame.html">Javadoc</a>.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="img/WindupModels-NbScreenshot.png" alt="Windup Models Graphic"></span></p>
+</div>
+<div class="sect3">
+<h4 id="_meta_models">Meta Models</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>User input</p>
+</li>
+<li>
+<p>Rules and Rule Providers metadata</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_core_models">Core Models</h4>
+<div class="paragraph">
+<p>FileModel ArchiveModel</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reporting_models">Reporting Models</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_custom_models_coming_from_addons">Custom Models (coming from Addons)</h4>
+<div class="paragraph">
+<p>See respective ruleset&#8217;s documentation.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-12-12 11:26:33 EST
+Last updated 2014-12-12 14:25:45 EST
 </div>
 </div>
 </body>
