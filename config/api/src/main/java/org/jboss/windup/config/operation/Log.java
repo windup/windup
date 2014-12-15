@@ -1,7 +1,6 @@
 package org.jboss.windup.config.operation;
 
 import java.util.Set;
-
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.logging.Logger.Level;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
@@ -12,18 +11,45 @@ import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedPattern;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternBuilder;
 
+
+/**
+ * Logging utility class. Usage:
+ * <code>
+ *    Log.message(Level.INFO, "Client requested path: {p}")
+ * </code>
+ *
+ * @see {@link Log#message(Level, String)}
+ */
 public class Log extends DefaultOperationBuilder implements Parameterized
 {
-    private static final Logger log = Logger.getLogger(Log.class);
-
+    private final Logger log;
     private final Level level;
     private final RegexParameterizedPatternBuilder messageBuilder;
 
-    private Log(Level level, String message)
+    private Log(Logger log, Level level, String message)
     {
+        Class<?> caller = findClassCaller();
+        if (caller == null)
+            caller = Log.class;
+        log = Logger.getLogger(caller);
+
+        if (level == null)
+            level = Level.INFO;
+
+        if (message == null)
+            message = "(null)";
+
+        this.log = log;
         this.level = level;
         this.messageBuilder = new RegexParameterizedPatternBuilder(message);
     }
+
+    private Log(Level level, String message)
+    {
+        this(null, level, message);
+    }
+
+
 
     /**
      * Log a message at the given {@link Level}.
@@ -53,39 +79,40 @@ public class Log extends DefaultOperationBuilder implements Parameterized
         return new Log(level, message);
     }
 
+    public static Log message(Class<?> cls, Level level, String message)
+    {
+        return new Log(Logger.getLogger(cls), level, message);
+    }
+
     @Override
     public void perform(Rewrite event, EvaluationContext context)
     {
-        final String message = messageBuilder.build(event, context);
-
+        // Quite verbose. TODO: ... See https://github.com/ocpsoft/logging/issues/1
         switch (level)
         {
         case TRACE:
             if (log.isTraceEnabled())
-                log.trace(message);
+                log.trace(messageBuilder.build(event, context));
             break;
 
         case DEBUG:
             if (log.isDebugEnabled())
-                log.debug(message);
+                log.debug(messageBuilder.build(event, context));
             break;
 
         case INFO:
             if (log.isInfoEnabled())
-                log.info(message);
+                log.info(messageBuilder.build(event, context));
             break;
 
         case WARN:
             if (log.isWarnEnabled())
-                log.warn(message);
+                log.warn(messageBuilder.build(event, context));
             break;
 
         case ERROR:
             if (log.isErrorEnabled())
-                log.error(message);
-            break;
-
-        default:
+                log.error(messageBuilder.build(event, context));
             break;
         }
     }
@@ -106,5 +133,23 @@ public class Log extends DefaultOperationBuilder implements Parameterized
     public String toString()
     {
         return "LOG[" + level + ", " + messageBuilder.toString() + "]";
+    }
+
+
+    /**
+     * Finds the calling class - looks for most recent call outside of this class (and descendants).
+     */
+    private static Class<? extends StackTraceElement> findClassCaller()
+    {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+        for( int i = 2; i < stackTrace.length; i++ )
+        {
+            StackTraceElement call = stackTrace[i];
+            if (!Log.class.isAssignableFrom(call.getClass()))
+                return call.getClass();
+        }
+
+        return null;
     }
 }
