@@ -1,0 +1,1132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" WebsphereConfig">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.asynchbeans.Work" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere Asyncronous Work" effort="2" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.startupservice.{*}StartUp{*}" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere Startup Service" effort="4">
+                        <links link="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean" />
+                        <links link="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean" />
+                    </classification>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.startupservice.AppStartUpHome" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Replace with EJB 3.1 @Singleton / @Startup annotations." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.asynchbeans.WorkManager" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to JBoss JCA Work Manager" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Connection" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeQueueConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueConnection" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ConnectionFactory" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeJNDIConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ConnectionFactory" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeJNDIQueueConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ConnectionFactory" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeQueueConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueConnectionFactory" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeConnectionMetaData" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ConnectionMetaData" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeDestination" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Destination" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeJMSQueue" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Queue" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeJMSJNDIQueue" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Queue" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeTemporaryQueue" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TemporaryQueue" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Message" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeBytesMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.BytesMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeMapMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MapMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeObjectMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ObjectMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeStreamMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.StreamMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeTextMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TextMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeMessageConsumer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageConsumer" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeQueueReceiver" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueReceiver" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeMessageProducer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageProducer" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeQueueSender" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueSender" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeQueueBrowser" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueBrowser" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Session" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mqe.jms.MQeQueueSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueSession" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQQueueConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXAQueueConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAQueueConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQTopicConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXATopicConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XATopicConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXAConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQDestination" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Destination" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQQueue" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Queue" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQTemporaryQueue" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TemporaryQueue" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQTopic" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Topic" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQTemporaryTopic" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TemporaryTopic" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Connection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQQueueConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXAQueueConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAQueueConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQTopicConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXATopicConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XATopicConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXAConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQConnectionMetaData" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ConnectionMetaData" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQMessageConsumer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageConsumer" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQQueueReceiver" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueReceiver" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQTopicSubscriber" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicSubscriber" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQMessageProducer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageProducer" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQQueueSender" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueSender" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQTopicPublisher" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicPublisher" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQQueueBrowser" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueBrowser" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Session" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQQueueSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueSession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQTopicSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicSession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXASession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XASession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXAQueueSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAQueueSession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.mq.jms.MQXATopicSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XATopicSession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.sib.api.jms.JmsTopicConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.sib.api.jms.JmsTopic" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Topic" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.sib.api.jms.JmsQueueConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.sib.api.jms.JmsQueue" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Queue" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.sib.api.jms.JmsMsgProducer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageProducer" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.sib.api.jms.JmsMsgConsumer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageConsumer" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.sib.api.jms.JmsDestination" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Destination" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.websphere.sib.api.jms.JmsConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Connection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsConnectionMetaData" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ConnectionMetaData" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsDestination" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Destination" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsMessageConsumer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageConsumer" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsMessageProducer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageProducer" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsQueue" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Queue" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsQueueBrowser" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueBrowser" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsQueueConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsQueueConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsQueueReceiver" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueReceiver" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsQueueSender" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueSender" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsQueueSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueSession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Session" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsTemporaryQueue" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TemporaryQueue" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsTemporaryTopic" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TemporaryTopic" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsTopic" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Topic" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsTopicConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsTopicConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsTopicPublisher" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicPublisher" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsTopicSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicSession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsTopicSubscriber" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicSubscriber" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXAConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXAConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXAQueueConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAQueueConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXAQueueConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAQueueConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXAQueueSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XAQueueSession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXASession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XASession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXATopicConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XATopicConnection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXATopicConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XATopicConnectionFactory" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.msg.client.jms.JmsXATopicSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.XATopicSession" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.jms.JMSBytesMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ByteMessage" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.jms.JMSMapMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MapMessage" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.jms.JMSMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Message" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.jms.JMSObjectMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ObjectMessage" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.jms.JMSStreamMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.StreamMessage" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.jms.JMSTextMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TextMessage" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

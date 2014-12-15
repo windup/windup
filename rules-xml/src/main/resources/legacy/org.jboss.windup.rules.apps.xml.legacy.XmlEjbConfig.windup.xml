@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlEjbConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="ejb" matches="/j2e:ejb-jar | /jee:ejb-jar | /ejb-jar">
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+                <xmlfile as="MDB"
+                    matches="/ejb-jar//message-driven//ejb-name | /j2e:ejb-jar//j2e:message-driven//j2e:ejb-name | /jee:ejb-jar//jee:message-driven//jee:ejb-name"
+                    from="ejb">
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+                <xmlfile as="sessionEJB"
+                    matches="/ejb-jar//session//ejb-name | /j2e:ejb-jar//j2e:session//j2e:ejb-name | /jee:ejb-jar//jee:session//jee:ejb-name"
+                    from="ejb">
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+                <xmlfile as="entityEJB"
+                    matches="/ejb-jar//entity//ejb-name | /j2e:ejb-jar//j2e:entity//j2e:ejb-name | /jee:ejb-jar//jee:entity//jee:ejb-name"
+                    from="ejb">
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+                <xmlfile as="ejbRelationship"
+                    matches="//*[local-name()='ejb-relation']/*[local-name()='ejb-relationship-role'][2]/*[local-name()='ejb-relationship-role-name']"
+                    from="ejb">
+                </xmlfile>
+                <xmlfile as="ejb2" public-id="Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.." from="ejb">
+                </xmlfile>
+                <xmlfile as="ejb1" public-id="Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.." from="ejb">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="ejb">
+                    <classification classification="EJB XML" effort="0" />
+                </iteration>
+                <iteration over="MDB">
+                    <classification classification="EJB - MDB" effort="0" />
+                </iteration>
+                <iteration over="sessionEJB">
+                    <hint message="EJB - Session" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="entityEJB">
+                    <hint message="EJB - Entity" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="ejbRelationship">
+                    <hint message="EJB Relationship" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="ejb1">
+                    <classification classification="EJB 1.x" effort="0" />
+                </iteration>
+                <iteration over="ejb2">
+                    <classification classification="EJB 2.x" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

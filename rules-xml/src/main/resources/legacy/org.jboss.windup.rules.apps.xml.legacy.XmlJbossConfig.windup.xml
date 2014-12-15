@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlJbossConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//mbean[@code='org.jboss.cache.TreeCache']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Cache" effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" public-id="JBoss.+DTD Java EE.+5">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss 5.x EAR Descriptor" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/classloading">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Classloading" effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/jbc:classloading">
+                    <namespace prefix="jbc" uri="urn:jboss:classloading:1.0" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Classloading Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/sc:components">
+                    <namespace prefix="sc" uri="http://jboss.com/products/seam/components" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Seam Components" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/sp:pages">
+                    <namespace prefix="sp" uri="http://jboss.com/products/seam/pages" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Seam Pages" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='jboss-app']" in="jboss-app.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss EAR Configuration" effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='jboss-web']" in="jboss-web.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Web Application Descriptor" effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='classloading']" in="jboss-classloading.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss 5 Classloader Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='jboss-deployment-structure']" in="jboss-deployment-structure.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Module and Classloading Configuration (since AS7/EAP6)"
+                        effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='jbosscmp-jdbc']" in="jbosscmp-jdbc.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss EJB2 CMP Deployment Descriptor" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='jboss']" in="jboss.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss EJB Deployment Descriptor (prior to AS7/EAP6)"
+                        effort="0" />
+                    <classification
+                        classification="If migrating to JBoss AS7 or EAP6 the &amp;quot;jboss.xml&amp;quot; descriptor is ignored in deployments. Replace with &amp;quot;jboss-ejb3.xml&amp;quot;"
+                        effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='security-domain' ][starts-with(., 'java:/jaas/')]/text()">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="JBoss AS7/EAP6 Specific" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='security-domain' ][starts-with(., 'java:/jaas/')]/text()"
+                    xpathResultMatch="java\:\/jaas\/">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Remove the &amp;quot;java:/jaas/&amp;quot; prefix for security-domain elements in AS7/EAP6."
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='policy']" in="login-config.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Security Configuration Descriptor (prior to AS7/EAP6)"
+                        effort="0" />
+                    <classification
+                        classification="If migrating to JBoss AS7 or EAP6 the &amp;quot;login-config.xml&amp;quot; descriptor is no longer supported. Security is now configured in the security-domain element inside the server configuration."
+                        effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='ejb-jar']" in="jboss-ejb3.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss EJB3 Deployment Descriptor (since AS7/EAP6)"
+                        effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='webservices']" in="jboss-webservices.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Webservices Deployment Descriptor (since AS7/EAP6)"
+                        effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/page" in=".+.page.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Seam Page" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="jboss-app" matches="jboss-app">
+                </xmlfile>
+                <xmlfile as="jboss-app-no-DTD" matches="jboss-app" public-id="">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="jboss-app">
+                    <classification classification="Jboss App Descriptor" effort="0" />
+                </iteration>
+                <iteration over="jboss-app-no-DTD">
+                    <classification classification="Jboss App XML with missing DTD detect" effort="1" />
+                </iteration>
+                <iteration over="jboss-app-no-DTD">
+                    <xslt description="JBoss APP Descriptor - JBoss 5 (Windup-Generated)" template="transformations/xslt/jboss-app-to-jboss5.xsl"
+                        extension="-jboss5.xml" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="server/mbean[@code='org.jboss.mq.server.jmx.Queue']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss 4 JMS Configuration" effort="2" />
+                    <xslt description="Queue Destinations Service - JBoss 5 (Windup-Generated)" template="transformations/xslt/jboss4-mq-to-jboss5.xsl"
+                        extension="-jboss5.xml" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

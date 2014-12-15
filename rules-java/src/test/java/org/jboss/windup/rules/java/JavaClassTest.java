@@ -53,7 +53,6 @@ public class JavaClassTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rexster:rexster", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
@@ -132,8 +131,8 @@ public class JavaClassTest
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
-            Assert.assertEquals(3, provider.getFirstRuleMatchCount());
-            Assert.assertEquals(1, provider.getSecondRuleMatchCount());
+            Assert.assertEquals(4, provider.getFirstRuleMatchCount());
+            Assert.assertEquals(2, provider.getSecondRuleMatchCount());
         }
     }
 
@@ -157,7 +156,7 @@ public class JavaClassTest
         {
             return ConfigurationBuilder.begin()
             .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.*").inType(".*").at(TypeReferenceLocation.IMPORT)
+                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT)
             ).perform(
                 Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                 {
@@ -171,7 +170,7 @@ public class JavaClassTest
             )
                     
             .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.*").inType(".*JavaClassTestFile1").at(TypeReferenceLocation.IMPORT)
+                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}JavaClassTestFile1").at(TypeReferenceLocation.IMPORT)
             ).perform(
                 Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                 {

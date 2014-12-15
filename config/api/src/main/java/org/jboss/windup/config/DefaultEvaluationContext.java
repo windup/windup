@@ -10,6 +10,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.context.RewriteState;
 import org.ocpsoft.rewrite.param.DefaultParameterStore;
 import org.ocpsoft.rewrite.param.ParameterStore;
+import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -19,10 +20,37 @@ public class DefaultEvaluationContext extends ContextBase implements EvaluationC
     private final List<Operation> preOperations = new ArrayList<>();
     private final List<Operation> postOperations = new ArrayList<>();
     private RewriteState state;
+    private final EvaluationContext parent;
 
     public DefaultEvaluationContext()
     {
         put(ParameterStore.class, new DefaultParameterStore());
+        parent = null;
+    }
+
+    public DefaultEvaluationContext(EvaluationContext context)
+    {
+        put(ParameterStore.class, context.get(ParameterStore.class));
+        put(ParameterValueStore.class, context.get(ParameterValueStore.class));
+        parent = context;
+    }
+
+    @Override
+    public boolean containsKey(Object key)
+    {
+        boolean result = super.containsKey(key);
+        if (result == false && parent != null)
+            result = parent.containsKey(key);
+        return result;
+    }
+
+    @Override
+    public Object get(Object key)
+    {
+        Object result = super.get(key);
+        if (result == null && parent != null)
+            result = parent.get(key);
+        return result;
     }
 
     @Override

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" PersistenceConfig">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Session.find" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()"
+                        effort="2">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Session.iterate" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()"
+                        effort="2">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Session.filter" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()"
+                        effort="2">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Session.delete" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()"
+                        effort="2">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Session.saveOrUpdateCopy" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use merge()"
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Session.createSQLQuery" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic" effort="3">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Lifecycle" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic" effort="3">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Validatable" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic" effort="3">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.PersistentEnum" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Removed in Hibernate 3, use UserType" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.FetchMode.EAGER" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated in Hibernate 3, use FetchMode.JOIN" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.FetchMode.LAZY" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Deprecated in Hibernate 3, use FetchMode.SELECT" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.{*}" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Replace net.sf.hibernate with org.hibernate (Hibernate 3)" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Interceptor" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="Hibernate 3 adds two methods to the Interceptor interface; consider simply extending the EmptyInterceptor class rather than writing empty implementations"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.Interceptor.instantiate()" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Method signature is now: instantiate(String entity)" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.isUnsaved()" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Renamed to isTransient()" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.UserType" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Re-implement with additional methods, moved to org.hibernate.usertype" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.CompositeUserType" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Re-implement with additional methods, moved to org.hibernate.usertype" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.criterion.{*}" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Has undergone significant refactoring, be careful during migration" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="net.sf.hibernate.mapping.{*}" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Has undergone significant refactoring, be careful during migration" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

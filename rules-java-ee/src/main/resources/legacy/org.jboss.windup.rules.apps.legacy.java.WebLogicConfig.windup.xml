@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" WebLogicConfig">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="javax.xml.rpc.handler.GenericHandler" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JAX-RPC Generic Handler" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.security.Security" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation" effort="0">
+                        <links>
+                            <link
+                                link="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
+                                description="Security Context - JBoss 6" />
+                        </links>
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.security.Security" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to JBoss EAP 6: org.jboss.security.SecurityContextAssociation" effort="0">
+                        <links>
+                            <link
+                                link="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
+                                description="Security Context - JBoss 6" />
+                        </links>
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.security.Security.getCurrentSubject" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="Migrate to JBoss EAP 6: org.jboss.security.SecurityContextAssociation.getCurrentContext().getCurrentPrincipal()"
+                        effort="3">
+                        <links>
+                            <link
+                                link="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
+                                description="Security Context - JBoss 6" />
+                        </links>
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.security.Security.getCurrentSubject" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation.getPrincipal().getName()"
+                        effort="3">
+                        <links>
+                            <link
+                                link="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
+                                description="Security Context - JBoss 6" />
+                        </links>
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.application.ApplicationLifecycleListener" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic ApplicationLifecycleListener, proprietary class, must be migrated."
+                        effort="3">
+                        <links link="http://www.mastertheboss.com/ejb-3/ejb-31-tutorial" description="Master the JBoss Tutorial: EJB 3.1 Tutorial" />
+                        <links
+                            link="http://blog.caucho.com/2009/10/06/servlet-30-tutorial-weblistener-webservlet-webfilter-and-webinitparam/"
+                            description="Caucho.com Tutorial: ServletContextListener, @WebListener tutorial" />
+                        <links link="http://www.roseindia.net/servlets/servlet3/WebListener_annotation.shtml"
+                            description="Rose India Tutorial: ServletContextListener, @WebListener tutorial" />
+                    </classification>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.application.ApplicationLifecycleListener" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="This class is proprietary to Weblogic, remove." effort="2">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.application.ApplicationLifecycleListener" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="Use a javax.servlet.ServletContextListener with @javax.annotation.servlet.WebListener, or EJB 3.1 @javax.ejb.Startup @javax.ejb.Singleton service bean."
+                        effort="2">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.application.ApplicationLifecycleEvent" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="This class is proprietary to Weblogic, remove." effort="2">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.application.ApplicationLifecycleEvent" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Requires migration effort" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.i18n.logging.NonCatalogLogger({*})" as="default">
+                    <location>CONSTRUCTOR_CALL</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Requires migration effort" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ConnectionFactory" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsQueueConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueConnectionFactory" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsTopicConnectionFactory" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TopicConnectionFactory" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsDestination" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Destination" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Message" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsBytesMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.BytesMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsMapMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MapMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsObjectMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.ObjectMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsStreamMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.StreamMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsTextMessage" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.TextMessage" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsConnection" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Connection" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsConsumer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageConsumer" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsProducer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.MessageProducer" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsQueueBrowser" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.QueueBrowser" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.jms.AQjmsSession" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to: javax.jms.Session" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

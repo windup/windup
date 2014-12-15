@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" Config">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="edu.oswego.cs.dl.util.concurrent.{*}" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Upgrade to javax.util.concurrent in Java 5+" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="edu.emory.mathcs.backport.java.util.{*}" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Upgrade to javax.util.concurrent in Java 5+" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="java.lang.Class.classForName" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Ensure class is available to JBoss" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="oracle.sql.{*}" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Oracle-specific SQL code" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.osoa.sca.annotations.{*}" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Remove import" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.osoa.sca.annotations.Property" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="SCA Property Injection; replace with Spring Property Injection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.osoa.sca.annotations.Reference" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="SCA Bean Injection; replace with Spring Bean Injection" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.osoa.sca.annotations.Init" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="SCA Initialization Hook; Use the property: init-method='example' on the Spring Bean, where example is the initialization method"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.osoa.sca.annotations.Destroy" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="SCA Destroy Hook; Use the property: destroy-method='example' on the Spring Bean, where example is the destroy method"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.ibm.ctg.client.JavaGateway" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="IBM CICS Adapter" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.naming.{*}Context.lookup" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="&lt;![CDATA[&#xA;                Ensure that the JNDI Name does not need to change for JBoss&#xA;                &#xA;                *For Example:*&#xA;                &#xA;                ```java&#xA;                (ConnectionFactory)initialContext.lookup(&quot;weblogic.jms.ConnectionFactory&quot;);&#xA;                ```&#xA;                &#xA;                *should become:*&#xA;                &#xA;                ```java&#xA;                (ConnectionFactory)initialContext.lookup(&quot;/ConnectionFactory&quot;);&#xA;                ```&#xA;                &#xA;                &#xA;                ]]&gt;"
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.naming.InitialContext({*})" as="default">
+                    <location>CONSTRUCTOR_CALL</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Ensure that the InitialContext connection properties do not need to change for JBoss"
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.management.remote.JMXServiceURL({*})" as="default">
+                    <location>CONSTRUCTOR_CALL</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Ensure that the connection properties do not need to change for JBoss" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.management.ObjectName({*})" as="default">
+                    <location>CONSTRUCTOR_CALL</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Ensure that the ObjectName exists in JBoss" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.management.remote.JMXConnectorFactory.connect({*})" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Ensure that the connection properties do not need to change for JBoss" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="java.sql.DriverManager" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="Move to a JCA Connector unless this class is used for batch processes, then refactor as necessary"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="java.sql.DriverManager" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to JCA Connector" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="amx_{*}" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Tibco ActiveMatrix Stub; regenerate the SOAP Client for the class" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.tibco.matrix.java.annotations.WebParam" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Tibco specific annotation; replace with javax.jws.WebParam" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.tibco.amf.platform.runtime.extension.exception.SOAPCode" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Tibco specific annotation" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.tibco.matrix.java.annotations.WebServiceInterface" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Tibco specific annotation; replace with javax.jws.WebService" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.tibco.matrix.java.annotations.WebMethod" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Tibco specific annotation; replace with javax.jws.WebMethod" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.tibco.matrix.java.annotations.WebFault" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Tibco specific annotation; replace with javax.xml.ws.WebFault" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.mule.transformers.AbstractTransformer" as="default" />
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Mule specific; replace with org.apache.camel.Converter annotation" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.mule.umo.UMOMessage.getPayload.{*}" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Mule specific; replace with org.apache.camel.Message.getBody()" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

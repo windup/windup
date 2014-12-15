@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlWebsphereConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/rl:RuleSet">
+                    <namespace prefix="rl" uri="http://www.ibm.com/xmlns/prod/websphere/wbi/br/6.0.0" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="IBM Process Server Rules 6.0" effort="0" />
+                    <xslt description="Drools (Windup-Generated)" template="transformations/xslt/websphere-psrules-to-drools.xsl"
+                        extension="-drools-example.drl" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/applicationbnd:ApplicationBinding">
+                    <namespace prefix="applicationbnd" uri="applicationbnd.xmi" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere EAR Application Binding" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/webappext:WebAppExtension">
+                    <namespace prefix="webappext" uri="webappext.xmi" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere Web Application Extension" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/ext:web-ext">
+                    <namespace prefix="ext" uri="http://websphere.ibm.com/xml/ns/javaee" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere Web Extension" effort="3" />
+                    <xslt description="JBoss Web EAP5 (Windup-Generated)" template="transformations/xslt/websphere-jboss5-web-xml.xsl"
+                        extension="-jboss-web.xml" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/ext:web-bnd">
+                    <namespace prefix="ext" uri="http://websphere.ibm.com/xml/ns/javaee" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere Web Binding Extension" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/webappbnd:WebAppBinding">
+                    <namespace prefix="webappbnd" uri="webappbnd.xmi" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere Web Application Binding" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/com.ibm.etools.webservice.wscext:WsClientExtension">
+                    <namespace prefix="com.ibm.etools.webservice.wscext" uri="http://www.ibm.com/websphere/appserver/schemas/5.0.2/wscext.xmi" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere ETools WSClient Extension" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/com.ibm.etools.webservice.wscbnd:ClientBinding">
+                    <namespace prefix="com.ibm.etools.webservice.wscbnd" uri="http://www.ibm.com/websphere/appserver/schemas/5.0.2/wscbnd.xmi" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Websphere ETools WSClient Binding" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/appdeployment:Deployment">
+                    <namespace prefix="appdeployment" uri="http://www.ibm.com/websphere/appserver/schemas/5.0/appdeployment.xmi" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="IBM Deployment Descriptor" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

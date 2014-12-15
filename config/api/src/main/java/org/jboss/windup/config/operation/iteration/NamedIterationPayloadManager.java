@@ -41,4 +41,10 @@ public class NamedIterationPayloadManager implements IterationPayloadManager
         return var;
     }
 
+    @Override
+    public String toString()
+    {
+        return getClass().getName() + " [" + var + "]";
+    }
+
 }

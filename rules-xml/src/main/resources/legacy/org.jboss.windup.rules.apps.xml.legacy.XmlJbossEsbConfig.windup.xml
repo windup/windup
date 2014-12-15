@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlJbossEsbConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/jbossesb-deployment">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss ESB Deployment Descriptor" effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/*[local-name()='jbossesb']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss ESB Pipeline Configuration" effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/*[local-name()='smooks-resource-list']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Smooks Configuration" effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

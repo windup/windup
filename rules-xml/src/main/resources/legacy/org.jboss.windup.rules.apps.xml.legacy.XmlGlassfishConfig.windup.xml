@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlGlassfishConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" public-id=".+GlassFish Application Server .+Servlet.+">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Glassfish Web Descriptor" effort="3" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

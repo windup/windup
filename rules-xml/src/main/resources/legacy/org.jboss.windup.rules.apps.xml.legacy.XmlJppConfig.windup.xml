@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlJppConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//p:portlet-app | //portlet-app" in="portlet.xml">
+                    <namespace prefix="p" uri="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Portlet 2.0 Application Descriptor" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//p:portlet-app | //portlet-app" in="portlet.xml">
+                    <namespace prefix="p" uri="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Portlet 1.0 Application Descriptor" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//webui-configuration" in="webui-configuration.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="GateIn WebUI Configuration" effort="1" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//dep:deployment | //deployment" in="gatein-jboss-beans.xml">
+                    <namespace prefix="dep" uri="urn:jboss:bean-deployer:2.0" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Bean Deployer for GateIn" effort="2" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/k10:configuration | /k12:configuration">
+                    <namespace prefix="k10" uri="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd" />
+                    <namespace prefix="k12" uri="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="GateIn eXo Kernel Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/gdg:gadgets">
+                    <namespace prefix="gdg" uri="http://www.gatein.org/xml/ns/gadgets_1_0" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="GateIn Gadget" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/go:node-navigation">
+                    <namespace prefix="go" uri="http://www.gatein.org/xml/ns/gatein_objects_1_2" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="GateIn Node Navigation Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/go:page-set">
+                    <namespace prefix="go" uri="http://www.gatein.org/xml/ns/gatein_objects_1_2" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="GateIn Page Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/go:portal-config">
+                    <namespace prefix="go" uri="http://www.gatein.org/xml/ns/gatein_objects_1_2" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="GateIn Portal Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/gr:gatein-resources">
+                    <namespace prefix="gr" uri="http://www.gatein.org/xml/ns/gatein_resources_1_2" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="GateIn Resources" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="/jee:faces-config/jee:application/jee:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /je:faces-config/je:application/je:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /faces-config/application/view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')]">
+                    <namespace prefix="je" uri="http://java.sun.com/JSF/Configuration" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="/jee:faces-config/jee:application/jee:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /je:faces-config/je:application/je:view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')] | /faces-config/application/view-handler/text()[contains(., 'org.jboss.portletbridge.application.PortletViewHandler')]"
+                    xpathResultMatch="org.jboss.portletbridge.application.PortletViewHandler" from="1">
+                    <namespace prefix="je" uri="http://java.sun.com/JSF/Configuration" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="PortletBridge View Handler" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint message="Remove this entry, as it's not needed by Red Hat JBoss Portal 6.x" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="/jee:faces-config/jee:application/jee:state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')] | /je:faces-config/je:application/je:state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')] | /faces-config/application/state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')]">
+                    <namespace prefix="je" uri="http://java.sun.com/JSF/Configuration" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="/jee:faces-config/jee:application/jee:state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')] | /je:faces-config/je:application/je:state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')] | /faces-config/application/state-manager/text()[contains(., 'org.jboss.portletbridge.application.PortletStateManager')]"
+                    xpathResultMatch="org.jboss.portletbridge.application.PortletStateManager" from="1">
+                    <namespace prefix="je" uri="http://java.sun.com/JSF/Configuration" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="PortletBridge State Manager" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint message="Remove this entry, as it's not needed by Red Hat JBoss Portal 6.x" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="/application/module/java/text()">
+                </xmlfile>
+                <xmlfile as="2" matches="/application/module/java/text()" xpathResultMatch=".*jar$" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Portal library" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="Move the library to the EAR's lib directory. See https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_Portal/6.0/html/Migration_Guide/ar01s06.html"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[starts-with(., 'org.jboss.portal.portlet.impl.jsr168.taglib')]/text()">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[starts-with(., 'org.jboss.portal.portlet.impl.jsr168.taglib')]/text()"
+                    xpathResultMatch="org.jboss.portal.portlet.impl.jsr168.taglib.*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="PortletBridge org.jboss.portal.portlet.impl.jsr168.taglib moved" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint message="This package has been moved to org.gatein.pc.portlet.impl.jsr168.taglib" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[starts-with(., 'org.exoplatform.web.login.InitiateLoginServlet')]/text()">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[starts-with(., 'org.exoplatform.web.login.InitiateLoginServlet')]/text()"
+                    xpathResultMatch="org.exoplatform.web.login.InitiateLoginServlet" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Class org.exoplatform.web.login.InitiateLoginServlet moved" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[starts-with(., 'org.exoplatform.web.login.DoLoginServlet')]/text()">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[starts-with(., 'org.exoplatform.web.login.DoLoginServlet')]/text()"
+                    xpathResultMatch="org.exoplatform.web.login.DoLoginServlet" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Class org.exoplatform.web.login.DoLoginServlet moved" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[starts-with(., 'org.exoplatform.web.login.ErrorLoginServlet')]/text()">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[starts-with(., 'org.exoplatform.web.login.ErrorLoginServlet')]/text()"
+                    xpathResultMatch="org.exoplatform.web.login.ErrorLoginServlet" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Class org.exoplatform.web.login.ErrorLoginServlet moved" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[starts-with(., 'org.exoplatform.web.security.PortalLoginController')]/text()">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[starts-with(., 'org.exoplatform.web.security.PortalLoginController')]/text()"
+                    xpathResultMatch="org.exoplatform.web.security.PortalLoginController" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Class org.exoplatform.web.security.PortalLoginController moved" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

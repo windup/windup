@@ -82,6 +82,10 @@ public class IterationHandler implements ElementHandler<Iteration>
                 {
                     operations.add((Operation) object);
                 }
+                else if (object instanceof Condition)
+                {
+                    iterationOver.when((Condition) object);
+                }
             }
         }
         IterationBuilderPerform iterationBuilderPerform = iterationOver.perform(operations

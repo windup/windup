@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlJrunConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/*[local-name()='jrun-web-app']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JRun Web App" effort="3" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/*[local-name()='jrun-ejb-jar']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JRun EJB" effort="4" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" public-id="Macromedia, Inc.//DTD jrun-ejb-jar ...">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JRun EJB XML" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" public-id="Macromedia, Inc.//DTD jrun-web 1..">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JRun WAR Application Descriptor" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

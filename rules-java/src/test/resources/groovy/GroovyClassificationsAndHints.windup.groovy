@@ -18,7 +18,7 @@ ruleSet("ExampleJavaGroovy").setPhase(RulePhase.POST_MIGRATION_RULES)
 
     .addRule()
     .when(
-        JavaClass.references("org.jboss.forge.furnace.*").at(TypeReferenceLocation.IMPORT)
+        JavaClass.references("org.jboss.forge.furnace.{*}").at(TypeReferenceLocation.IMPORT)
     )
     .perform(
          Classification.as("Furnace Service").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)

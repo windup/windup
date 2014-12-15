@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" JBossConfig">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="org.jboss.ejb3.annotation.Management" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss 5 JMX ManagementBean" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.jms.QueueConnectionFactory" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="If migrating from JBoss 4, replace lookup string &quot;QueueConnectionFactory&quot; with &quot;ConnectionFactory&quot;"
+                        effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.persistence.JoinColumn" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.jboss.annotation.ejb.Service" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrated to org.jboss.ejb3.annotation.Service" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.jboss.annotation.ejb.Management" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrated to org.jboss.ejb3.annotation.Management" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.jboss.annotation.ejb.LocalBinding" as="default">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrated to org.jboss.ejb3.annotation.LocalBinding" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.jboss.annotation.ejb.Depends" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Validate that JBoss 6 Dependency exists." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

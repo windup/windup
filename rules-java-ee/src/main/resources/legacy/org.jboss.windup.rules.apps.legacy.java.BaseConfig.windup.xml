@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" BaseConfig">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="commonj.timers.Timer.{*}" as="default">
+                    <location>EXTENDS_TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Commonj Timer" effort="0">
+                        <links
+                            link="https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Operations_Network/3.1/html/Dev_Complete_Resource_Reference/JBossAS7-JBossAS7_Standalone_Server-JCA-Workmanager.html"
+                            description="JBoss JCA WorkManager" />
+                    </classification>
+                    <hint message="Migrate to JBoss JCA WorkManager" effort="8">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="commonj.work.Work" as="default">
+                    <location>EXTENDS_TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Commonj Work" effort="0">
+                        <links
+                            link="https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Operations_Network/3.1/html/Dev_Complete_Resource_Reference/JBossAS7-JBossAS7_Standalone_Server-JCA-Workmanager.html"
+                            description="JBoss JCA WorkManager" />
+                    </classification>
+                    <hint message="Migrate to JBoss JCA WorkManager" effort="8">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.mule.umo.UMOFilter" as="default">
+                    <location>EXTENDS_TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Mule ESB Message Filter" effort="0" as="ref">
+                        <links link="http://camel.apache.org/message-filter.html" description="Camel Message Filter" />
+                        <links link="http://camel.apache.org/bean-language.html" description="Camel Message Bean Filter" />
+                    </classification>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.jboss.wsf.{*}" as="default">
+                    <location>EXTENDS_TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JBoss Web Services Specific" effort="0">
+                        <links link="https://community.jboss.org/wiki/JBossWS4MigrationGuide" description="JBoss Web Service (EAP4) Migration Guide" />
+                    </classification>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="org.mule.transformers.AbstractTransformer" as="default">
+                    <location>EXTENDS_TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Mule ESB Transformer" effort="0">
+                        <links link="http://camel.apache.org/type-converter.html" description="Camel Converter" />
+                    </classification>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

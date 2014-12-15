@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlWeblogicConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="/*[local-name()='weblogic-rdbms-jar']">
+                    <namespace prefix="wle" uri="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar" />
+                </xmlfile>
+                <xmlfile as="2" matches="//*[@value='delay-updates-until-end-of-tx']/text()" from="1">
+                </xmlfile>
+                <xmlfile as="3" public-id="delay-updates-until-end-of-tx$" from="2">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <classification classification="Weblogic Entity EJB Configuration" effort="3" />
+                </iteration>
+                <iteration over="2">
+                    <hint message="Weblogic Specific Transaction Property Delay Updates" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="3">
+                    <hint message="In EAP6 replace with: &amp;lt;sync-on-commit-only&amp;gt; in jbosscmp-jdbc.xml"
+                        effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="1">
+                    <xslt description="JBoss EJB CMP Descriptor (Windup-Generated)" template="transformations/xslt/weblogic-entity2-to-jboss.xsl"
+                        extension="-jbosscmp-jdbc.xml" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/weblogic-ejb-jar">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic EJB XML" effort="3" />
+                    <xslt description="JBoss EJB Descriptor (Windup-Generated)" template="transformations/xslt/weblogic-ejb-to-jboss.xsl"
+                        extension="-jboss.xml" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wl9:weblogic-ejb-jar">
+                    <namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic EJB XML" effort="3" />
+                    <xslt description="JBoss EJB Descriptor (Windup-Generated)" template="transformations/xslt/weblogic9-ejb-to-jboss.xsl"
+                        extension="-jboss.xml" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wl10:weblogic-ejb-jar">
+                    <namespace prefix="wl10" uri="http://www.bea.com/ns/weblogic/10.0" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic EJB XML" effort="3" />
+                    <xslt description="JBoss EJB Descriptor (Windup-Generated)" template="transformations/xslt/weblogic10-ejb-to-jboss.xsl"
+                        extension="-jboss.xml" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wl10:weblogic-wsee-standaloneclient">
+                    <namespace prefix="wl10" uri="http://www.bea.com/ns/weblogic/weblogic-wsee-standaloneclient" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic SOAP Client Mapping" effort="6" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/jee:java-wsdl-mapping">
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/j2ee" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Java to WSDL Mapping" effort="3" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/*[local-name()='weblogic-application']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic EAR Application Descriptor" effort="3" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wl:webservice-policy-ref | /wl9:webservice-policy-ref">
+                    <namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+                    <namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/webservice-policy-ref" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic Webservice Policy" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="/wl:weblogic-webservices | /wl9:weblogic-webservices">
+                    <namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+                    <namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/weblogic-webservices" />
+                </xmlfile>
+                <xmlfile as="2" matches="//wl:webservice-type | //wl9:webservice-type" from="1">
+                    <namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90" />
+                    <namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/weblogic-webservices" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <classification classification="Weblogic Webservice Descriptor" effort="0" />
+                </iteration>
+                <iteration over="2">
+                    <hint message="Webservice Type" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/*[local-name()='weblogic-jms']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic JMS Descriptor" effort="1" />
+                    <xslt description="JBoss Messaging Queue/Topic Configuration (Windup-Generated)" template="transformations/xslt/weblogic-jms-to-jboss-messaging.xsl"
+                        extension="-jms-queuetopic-service.xml" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="/bea:weblogic-web-app | /wlso:weblogic-web-app | /wls:weblogic-web-app | /weblogic-web-app">
+                    <namespace prefix="wlso" uri="http://xmlns.oracle.com/weblogic/weblogic-web-app" />
+                    <namespace prefix="bea" uri="http://www.bea.com/ns/weblogic/90" />
+                    <namespace prefix="wls" uri="http://www.bea.com/ns/weblogic/weblogic-web-app" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic Web Application Descriptor" effort="3" />
+                    <xslt description="JBoss Web EAP5 (Windup-Generated)" template="transformations/xslt/weblogic-jboss5-web-xml.xsl"
+                        extension="-jboss-web.xml" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" public-id="BEA.+RMI Runtime DTD 1..">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic RMI XML Version 1.x" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wsdd:type-mapping">
+                    <namespace prefix="wsdd" uri="http://www.bea.com/servers/wls70" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic Webservice Type Mapping" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wlw:wlw-config">
+                    <namespace prefix="wlw" uri="http://www.bea.com/2003/03/wlw/config/" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic Services Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic-specifc Webservice Ant Tasks" effort="10" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wl:annotation-manifest | /annotation-manifest">
+                    <namespace prefix="wl" uri="http://www.bea.com/2004/03/wlw/external-config/" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Weblogic Annotation Manifest" effort="8" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

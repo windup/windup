@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlSpringConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/spring:flow">
+                    <namespace prefix="spring" uri="http://www.springframework.org/schema/webflow" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Spring Web Flow Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/spring:beans | /beans">
+                    <namespace prefix="spring" uri="http://www.springframework.org/schema/beans" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Spring Configuration" effort="0" />
+                    <iteration>
+                        <when>
+                            <xmlfile as="default" matches="//sca:reference/@type" from="default_instance">
+                                <namespace prefix="sca" uri="http://www.springframework.org/schema/sca" />
+                            </xmlfile>
+                        </when>
+                        <hint message="SCA Implementation" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default" matches="//tibco:service-metadata/@wsdl-location" from="default_instance">
+                                <namespace prefix="tibco" uri="http://xsd.tns.tibco.com/2008/amf/extension/spring" />
+                            </xmlfile>
+                        </when>
+                        <hint message="Tibco WSDL Location" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default" matches="//*[@class='org.springframework.jndi.JndiObjectFactoryBean']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="JNDI Lookup" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.glassfish.ClassTransformerAdapter']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Glassfish Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.glassfish.GlassFishClassLoaderAdapter']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Glassfish Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.glassfish.GlassFishLoadTimeWeaver']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Glassfish Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.jca.work.glassfish.GlassFishWorkManagerTaskExecutor']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Glassfish Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.jboss.JBossClassLoaderAdapter']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="JBoss Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.jboss.JBossLoadTimeWeaver']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="JBoss Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.jboss.JBossTranslatorAdapter']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="JBoss Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.jca.work.jboss.JBossWorkManagerTaskExecutor']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="JBoss Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.jca.work.jboss.JBossWorkManagerUtils']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="JBoss Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.jdbc.support.nativejdbc.JBossNativeJdbcExtractor']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="JBoss Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.tomcat.TomcatInstrumentableClassLoader']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Tomcat Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.scheduling.commonj.WorkManagerTaskExecutor']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Weblogic and Websphere Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.weblogic.WebLogicClassLoaderAdapter']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Weblogic Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.weblogic.WebLogicClassPreProcessorAdapter']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Weblogic Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.instrument.classloading.weblogic.WebLogicLoadTimeWeaver']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Weblogic Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.jdbc.support.nativejdbc.WebLogicNativeJdbcExtractor']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Weblogic Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.transaction.jta.WebLogicJtaTransactionManager']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Weblogic Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.jdbc.datasource.WebSphereDataSourceAdapter']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Websphere Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.jdbc.support.nativejdbc.WebSphereNativeJdbcExtractor']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Websphere Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.jmx.support.WebSphereMBeanServerFactoryBean']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Websphere Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.transaction.jta.WebSphereUowTransactionManager']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Websphere Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//*[@class='org.springframework.transaction.jta.WebSphereUowTransactionManager$UOWActionAdapter']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Websphere Specific" effort="1">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default" matches="//*[@class='org.apache.activemq.ActiveMQConnectionFactory']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Apache ActiveMQ Specific" effort="0">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default" matches="//*[@class='org.apache.activemq.pool.PooledConnectionFactory']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Apache ActiveMQ Specific" effort="0">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default" matches="//*[@class='org.apache.activemq.command.ActiveMQQueue']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Apache ActiveMQ Specific" effort="0">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default" matches="//*[@class='com.ibm.mq.jms.MQQueueConnectionFactory']/@class"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="IBM MQ Specific" effort="0">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default"
+                                matches="//property[@value='com.tibco.tibjms.naming.TibjmsInitialContextFactory']/@value"
+                                from="default_instance">
+                            </xmlfile>
+                        </when>
+                        <hint message="Tibco EMS Specific" effort="0">
+                        </hint>
+                    </iteration>
+                    <iteration>
+                        <when>
+                            <xmlfile as="default" matches="//jee:jndi-lookup/@jndi-name" from="default_instance">
+                                <namespace prefix="jee" uri="http://www.springframework.org/schema/jee" />
+                            </xmlfile>
+                        </when>
+                        <hint message="Validate JNDI Lookup" effort="1">
+                        </hint>
+                    </iteration>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

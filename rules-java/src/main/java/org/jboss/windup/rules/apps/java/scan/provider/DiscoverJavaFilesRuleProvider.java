@@ -28,6 +28,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.binary.DecompileArchivesRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupRoasterWildcardImportResolver;
@@ -55,6 +56,11 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
     public RulePhase getPhase()
     {
         return RulePhase.INITIAL_ANALYSIS;
+    }
+
+    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    {
+        return asClassList(DecompileArchivesRuleProvider.class);
     }
 
     // @formatter:off
@@ -90,7 +96,8 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
             {
                 TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
                 GraphContext graphContext = event.getGraphContext();
-                WindupConfigurationModel configuration = new GraphService<>(graphContext, WindupConfigurationModel.class)
+                WindupConfigurationModel configuration = new GraphService<>(graphContext,
+                            WindupConfigurationModel.class)
                             .getUnique();
 
                 String inputDir = configuration.getInputPath().getFilePath();
@@ -136,13 +143,16 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
                 }
                 catch (IOException e)
                 {
-                    throw new WindupException("IOException thrown when parsing file located in " + payload.getFilePath(), e);
+                    throw new WindupException("IOException thrown when parsing file located in "
+                                + payload.getFilePath(), e);
                 }
                 catch (Exception e)
                 {
-                    LOG.log(Level.WARNING, "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
+                    LOG.log(Level.WARNING,
+                                "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
                     ClassificationService classificationService = new ClassificationService(graphContext);
-                    classificationService.attachClassification(javaFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
+                    classificationService.attachClassification(javaFileModel,
+                                JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                 JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                     return;
                 }

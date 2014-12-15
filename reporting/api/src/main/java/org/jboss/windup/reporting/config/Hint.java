@@ -2,26 +2,29 @@ package org.jboss.windup.reporting.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.LinkModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.param.ParameterStore;
+import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends AbstractIterationOperation<FileLocationModel>
+public class Hint extends ParameterizedIterationOperation<FileLocationModel>
 {
     private static final Logger log = Logger.getLogger(Hint.class.getName());
 
-    private String hintText;
+    private RegexParameterizedPatternParser hintTextPattern;
     private int effort;
     private List<Link> links = new ArrayList<>();
 
@@ -51,12 +54,12 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
     {
         Assert.notNull(text, "Hint text must not be null.");
         Hint hint = new Hint();
-        hint.hintText = text;
+        hint.setText(text);
         return hint;
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel locationModel)
+    public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel locationModel)
     {
         GraphService<InlineHintModel> service = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
 
@@ -67,7 +70,7 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
         hintModel.setFileLocationReference(locationModel);
         hintModel.setFile(locationModel.getFile());
         hintModel.setEffort(effort);
-        hintModel.setHint(hintText);
+        hintModel.setHint(hintTextPattern.getBuilder().build(event, context));
 
         GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
         for (Link link : links)
@@ -104,19 +107,31 @@ public class Hint extends AbstractIterationOperation<FileLocationModel>
      */
     protected void setText(String text)
     {
-        this.hintText = text;
+        this.hintTextPattern = new RegexParameterizedPatternParser(text);
     }
 
     @Override
     public String toString()
     {
         StringBuilder result = new StringBuilder();
-        result.append("Hint.withText(\"" + hintText + "\")");
+        result.append("Hint.withText(\"" + hintTextPattern.getPattern() + "\")");
         if (effort != 0)
             result.append(".withEffort(" + effort + ")");
         if (links != null && !links.isEmpty())
             result.append(".with(" + links + ")");
         return result.toString();
+    }
+
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        return hintTextPattern.getRequiredParameterNames();
+    }
+
+    @Override
+    public void setParameterStore(ParameterStore store)
+    {
+        hintTextPattern.setParameterStore(store);
     }
 
 }

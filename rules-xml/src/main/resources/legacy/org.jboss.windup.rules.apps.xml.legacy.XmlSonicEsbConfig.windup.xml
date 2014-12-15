@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlSonicEsbConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/xq:serviceType">
+                    <namespace prefix="xq" uri="http://www.sonicsw.com/sonicxq" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="SonicESB Service Configuration" effort="4" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

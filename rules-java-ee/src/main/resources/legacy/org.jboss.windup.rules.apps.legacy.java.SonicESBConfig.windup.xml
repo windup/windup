@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" SonicESBConfig">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQService" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Sonic ESB Service" effort="0">
+                        <links
+                            link="http://documentation.progress.com/output/Sonic/8.0.0/Docs8.0/api/esb_api/com/sonicsw/xq/XQService.html"
+                            description="XQService Javadoc" />
+                    </classification>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQInitContext.getParameter" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to Spring property injection." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQParameters.getParameter" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to Spring property injection." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQParameters" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to Spring property injection." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQParameterInfo" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to Spring property injection." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQMessage" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to org.apache.camel.Message" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQMessage.getHeaderValue" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to org.apache.camel.Message.getHeader(String name)" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQMessage.setHeaderValue" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to org.apache.camel.Message.setHeader(String name, Object value)"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQMessage.getHeaderNames" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to org.apache.camel.Message.getHeaders()" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQPart" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate XQPart to an attachment on the org.apache.camel.Message" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQMessage.getPartCount" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to org.apache.camel.Message.getAttachments().size()" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQMessage.getPart(" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to org.apache.camel.Message.getAttachment(String id)" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQLog" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to SLF4J." effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQServiceException" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Requires migration effort" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQMessage.getCorrelationId" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Requires migration effort" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQAddressFactory.createEndpointAddress" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Requires migration effort" effort="3">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQServiceContext.addOutgoing" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Requires migration effort" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQEnvelope" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to org.apache.camel.Exchange" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="com.sonicsw.xq.XQEnvelope.getMessage" as="default">
+                    <location>METHOD</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate to com.sonicsw.xq.XQEnvelope.getMessage.getIn()" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

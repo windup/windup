@@ -15,6 +15,8 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import com.tinkerpop.frames.Property;
+
 /**
  * Simplified operation having method that already accepts the found payload.
  */
@@ -58,12 +60,17 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void perform(GraphRewrite event, EvaluationContext context)
     {
         checkVariableName(event, context);
         WindupVertexFrame payload = resolveVariable(event, variableName);
-        perform(event, context, (T) payload);
+        perform(event, context, resolvePayload(event, context, payload));
+    }
+
+    @SuppressWarnings("unchecked")
+    public T resolvePayload(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
+    {
+        return (T) payload;
     }
 
     /**

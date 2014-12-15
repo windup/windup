@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" EjbConfig">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="javax.persistence.Entity" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JPA Entity" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.EJBHome" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 1.x/2.x - Home Interface" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.EJBObject" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 1.x/2.x - Remote Interface" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.EntityBean" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 1.x/2.x - Entity Bean" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.SessionBean" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 1.x/2.x - Session Bean" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.EJBLocalHome" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 2.x - Local Home" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.EJBLocalObject" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 2.x - Local Object" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.MessageDrivenBean" as="default">
+                    <location>INHERITANCE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 2.x - Message Driven Bean" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.MessageDriven" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 3.x - Message Driven Bean" effort="2" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.Local" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 3.x - Local Session Bean Interface" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.Remote" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 3.x - Remote Session Bean Interface" effort="2" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.Stateless" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 3.x - Stateless Session Bean" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="javax.ejb.Stateful" as="default">
+                    <location>TYPE</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="EJB 3.x - Stateful Session Bean" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

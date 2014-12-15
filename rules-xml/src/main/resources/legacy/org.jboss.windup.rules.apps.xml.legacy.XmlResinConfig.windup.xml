@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlResinConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/resin:web-app">
+                    <namespace prefix="resin" uri="http://caucho.com/ns/resin" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Resin Web Application Descriptor" effort="3" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlWebserviceConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/serviceGroup/service/operation">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Apache Axis Service Group" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/module/InFlow">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Apache Axis Module" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/axisconfig">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Apache Axis Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/xfire:beans">
+                    <namespace prefix="xfire" uri="http://xfire.codehaus.org/config/1.0" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="XFire 1.x Configuration" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/jee:handler-chains | /j2e:handler-chains">
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JAX-WS Handler Chain" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="/jee:webservices | /j2e:webservices">
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+                <xmlfile as="2" matches="//jee:handler-class | //j2e:handler-class" from="1">
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+                <xmlfile as="3" matches="//jee:service-endpoint-interface | //j2e:service-endpoint-interface"
+                    from="1">
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <classification classification="Java Webservice Configuration" effort="0" />
+                </iteration>
+                <iteration over="2">
+                    <hint message="Handler Class" effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="3">
+                    <hint message="Service Interface" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/cxf:extensions">
+                    <namespace prefix="cxf" uri="http://cxf.apache.org/bus/extension" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Apache CXF Bus Extension" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wsp:Policy">
+                    <namespace prefix="wsp" uri="http://schemas.xmlsoap.org/ws/2004/09/policy" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="WS-Policy" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/se:Envelope">
+                    <namespace prefix="se" uri="http://schemas.xmlsoap.org/soap/envelope/" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="SOAP Envelope" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/wsdl:definitions">
+                    <namespace prefix="wsdl" uri="http://schemas.xmlsoap.org/wsdl/" />
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="WSDL Definition" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

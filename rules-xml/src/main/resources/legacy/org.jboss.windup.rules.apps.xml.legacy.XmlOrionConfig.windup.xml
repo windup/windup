@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlOrionConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/orion-ejb-jar">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Oracle Application Platform EJB Descriptor" effort="3" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/orion-web-app">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Oracle Application Platform Web Descriptor " effort="3" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="/orion-application">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="Oracle Application Platform EAR Descriptor " effort="3" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

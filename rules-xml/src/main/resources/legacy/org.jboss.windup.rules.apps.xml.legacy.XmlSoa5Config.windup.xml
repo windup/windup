@@ -1,0 +1,1217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlSoa5Config">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='jms-listener' and @is-gateway='true']/@name">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Convert JMS gateway listener to service binding" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="//*[local-name()='jms-listener' and (not(@is-gateway) or @is-gateway='false')]/@name">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="ESB-aware listener is no longer required" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='service']/@name">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Migrate action processing pipeline for service" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='service']/@name">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Create component service for" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//*[local-name()='service']/@name">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Create composite service for service" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="//*[local-name()='action' and not(starts-with(@class, 'org.jboss.soa.esb.actions'))]/@class">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Convert action class" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and not(starts-with(@class, 'org.jboss.soa.esb.actions'))]/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and not(starts-with(@class, 'org.jboss.soa.esb.actions'))]/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert action class" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" Custom action classes should be migrated to CDI Beans in SOA&#xA;                    6. These beans&#xA;                    can be defined as services or called directly from a Camel route.&#xA;&#xA;                    For additional&#xA;                    information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/action-class-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;action class microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='actions']">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='actions']" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <classification classification="Action : create component service for action processing pipeline"
+                        effort="1" />
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="The logic and execution flow of a service in SOA 5 is defined&#xA;                    in an&#xA;                    action processing pipeline. In SOA 6, this logic is contained within a&#xA;                    service component&#xA;                    definition and expressed using any of the available&#xA;                    implementation types in SwitchYard.&#xA;&#xA;                    For additional&#xA;                    information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/action-pipeline-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;action pipeline microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='service']/@name">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='service']/@name" xpathResultMatch=".*" from="1">
+                </xmlfile>
+                <xmlfile as="3" matches="//*[local-name()='jms-listener']/@name" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : composite service required for service" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" Each &amp;lt;service&amp;gt; definition in SOA 5 represents a service&#xA;                    which can be&#xA;                    called from outside the application through an ESB listner. The&#xA;                    equivalent definition in&#xA;                    SOA 6 is a composite service.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/service-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;service migration microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="3">
+                    <hint message="value : jms Listener name" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='jms-listener' and @is-gateway='true']/@name">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='jms-listener' and @is-gateway='true']/@name"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : composite service binding required for listener" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="This listener requires a composite service binding in&#xA;                    SwitchYard. The&#xA;                    configuration for a JCA or JMS binding can be found in the jms-bus&#xA;                    definition&#xA;                    associated with this listener.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/gateway-listener-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;gateway listener microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='hibernate-bus']/@busid">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='hibernate-bus']/@busid" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : service binding configuration in hibernate-bus" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" Although Camel has both hibernate and jpa components that are&#xA;                    useful&#xA;                    in consuming records, there isn't any support for hibernate events. To&#xA;                    migrate this sort of bus&#xA;                    to SwitchYard you may have to build a custom&#xA;                    SwitchYard component using the hibernate listeners, or&#xA;                    redesign your&#xA;                    requirements to leverage the existing Camel components available (hibernate/jpa/sql)&#xA;                    in&#xA;                    this area."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='jms-bus']/@busid">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='jms-bus']/@busid" xpathResultMatch=".*" from="1">
+                </xmlfile>
+                <xmlfile as="3" matches="//*[local-name()='jms-bus']/@busid">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : service binding configuration in jms-bus" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" A jms-bus definition can be converted to a JMS or JCA gateway&#xA;                    binding&#xA;                    on a composite service in SwitchYard. If the jms-bus configuration&#xA;                    is used for a non-gateway&#xA;                    listener, it does not need to be migrated to&#xA;                    SOA 6. For additional information and tips, see the&#xA;                    &amp;lt;a href=&quot;https://github.com/windup/soa-migration/blob/master/advice/jms-bus-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;jms-bus migration microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+                <iteration over="3">
+                    <hint message="Value : Composite-service-name" effort="1">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='ftp-bus']/@busid">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='ftp-bus']/@busid" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : service binding configuration in ftp-bus" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="A ftp-bus definition can be converted to a FTP gateway&#xA;                    binding&#xA;                    on a composite service in SwitchYard.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/ftp-bus-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;ftp-bus migration microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='camel-bus']/@busid">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='camel-bus']/@busid" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : service binding configuration in ftp-bus" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="A camel-bus definition can be converted to a Camel gateway&#xA;                    binding&#xA;                    on a composite service in SwitchYard.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/camel-bus-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;camel-bus migration microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='udp-listener']/@busid">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='udp-listener']/@busid" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : service binding configuration in udp-listener" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="A udp-listener definition can be converted to a TCP/UDP&#xA;                    gateway binding&#xA;                    on a composite service in SwitchYard."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='jms-jca-provider']/@busidref">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='jms-jca-provider']/@busidref" xpathResultMatch=".*"
+                    from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : composite service binding required for listener" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="A jms-jca-provider definition can be converted to a JCA&#xA;                    gateway binding&#xA;                    on a composite service in SwitchYard."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='http-provider']/@busidref">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='http-provider']/@busidref" xpathResultMatch=".*"
+                    from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : composite service binding required for listener" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" A http-provider definition can be converted to a HTTP gateway&#xA;                    binding&#xA;                    on a composite service in SwitchYard.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/gateway-listener-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;gateway listener microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='cron-schedule']/@scheduleid">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='cron-schedule']/@scheduleid" xpathResultMatch=".*"
+                    from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : service binding configuration in ftp-bus" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" A cron-schedule definition can be converted to a Quartz&#xA;                    gateway binding&#xA;                    on a composite service in SwitchYard.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/cron-schedule-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;cron-schedule migration microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='ftp-listener' and @is-gateway='true']/@name">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='ftp-listener' and @is-gateway='true']/@name"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : composite service binding required for listener" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="This listener requires a composite service binding in&#xA;                    SwitchYard. The&#xA;                    configuration for a FTP binding can be found in the ftp-bus&#xA;                    definition associated with&#xA;                    this listener.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/gateway-listener-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;gateway listener microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='camel-gateway']/@busidref">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='camel-gateway']/@busidref" xpathResultMatch=".*"
+                    from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : composite service binding required for listener" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="This gateway requires a composite service binding in&#xA;                    SwitchYard. The&#xA;                    configuration for a Camel binding can be found in the camel-bus&#xA;                    definition associated&#xA;                    with this listener.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/gateway-listener-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;gateway listener microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='http-gateway']/@name">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='http-gateway']/@name" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : replace with HTTP binding" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" A &amp;lt;http-gateway&amp;gt; can be replaced in SwitchYard by a&#xA;                    http&#xA;                    binding added to your composite service.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/http-gateway-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;http-gateway microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert SmooksAction to Transform" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="SwitchYard uses a &amp;lt;transform&amp;gt; to replace the invocation&#xA;                    of as SmooksAction&#xA;                    to transform message content. You most likely will want to use a Smooks transform&#xA;                    to specify your Smooks configuration and from/to types.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//property[@name='smooksConfig']/@name">
+                </xmlfile>
+                <xmlfile as="2" matches="//property[@name='smooksConfig']/@name" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : Smooks config conversion" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In a SwitchYard Smooks transform, you can specify your Smooks&#xA;                    configuration with the &quot;config&quot; attribute.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/*[local-name()='property' and @name='resultType']">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.smooks.SmooksAction']/*[local-name()='property' and @name='resultType']"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert SmooksAction to Transform" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="SwitchYard uses a &amp;lt;transform&amp;gt; to replace the invocation&#xA;                    of as SmooksAction&#xA;                    to transform message content. You most likely will want to use a Smooks transform&#xA;                    to specify your Smooks configuration and from/to types.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.proxy.SOAPProxy']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.proxy.SOAPProxy']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert SOAPProxy" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="Instead of the JBoss ESB SOAPProxy action which transforms a&#xA;                    specified&#xA;                    WSDL and rewrites the address to the JBossESB server, SwitchYard&#xA;                    relies on Camel's routing&#xA;                    capability to forward&#xA;                    requests from a proxying service to the source. Create a proxy&#xA;                    service and a&#xA;                    reference to the original service, and then use Camel&#xA;                    to route them.&#xA;&#xA;                    For additional information and&#xA;                    tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/soap-proxy.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;SOAPProxy microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.SystemPrintln']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.SystemPrintln']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert SystemPrintln" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to log your message (or a static logging message),&#xA;                    you&#xA;                    may want to create a Bean service which logs the message in the&#xA;                    manner you wish, or you can use&#xA;                    Camel routing to log static&#xA;                    logging messages.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/action-class-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;action class microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert StaticRouter to Camel routing" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to configure static routes for your message in&#xA;                    SwitchYard, you&#xA;                    should use Camel's routing (either through Java DSL routes or route.xml).&#xA;&#xA;                    For&#xA;                    additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/action-class-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;action class microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.JMSRouter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.JMSRouter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert JMSRouter" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the JMSRouter in SwitchYard,&#xA;                    you should use a JMS binding.&#xA;                    You may need to review the options for JMS bindings in SwitchYard if&#xA;                    you are using the&#xA;                    unwrap property.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/action-class-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;action class microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.TestMessageStore']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.TestMessageStore']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : remove TestMessageStore" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="TestMessageStore is a out-of-the-box ESB action that is used&#xA;                    in JBoss AS container tests to store a message with some form&#xA;                    of logging - to a file, JMX, etc.&#xA;                    TestMessageStore is used throughou&#xA;                    the JBoss ESB sample projects to help test the results of&#xA;                    processed messages.&#xA;&#xA;                    SwitchYard is able to leverage Arquillian to do container&#xA;                    testing, so&#xA;                    TestMessageStore is not really necessary in SwitchYard&#xA;                    for testing."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.GroovyActionProcessor']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.GroovyActionProcessor']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : replace GroovyActionProcessor with Camel" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" The GroovyActionProcessor action executes a Groovy script.&#xA;                    You can duplicate this functionality in SwitchYard through Camel&#xA;                    routing (both Java and XML.)&#xA;&#xA;                    For&#xA;                    additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://docs.jboss.org/author/display/SWITCHYARD/Camel#Camel-Scriptinglanguages&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;Camel / Scripting languages documentation&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.services.jbpm.actions.BpmProcessor']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.services.jbpm.actions.BpmProcessor']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : Replace BpmProcessor" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="The BpmProcessor makes calls to jBPM 3 through the jBPM&#xA;                    command API.&#xA;                    SwitchYard supports jBPM 5, so you will need to migrate your existing&#xA;                    workflow from jBPM&#xA;                    3 to jBPM 5 and use a SwitchYard BPM implementation.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/bpm_migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;BPM microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='fs-bus']/@busid">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='fs-bus']/@busid" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : service binding configuration in fs-bus" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="A fs-bus definition can be converted to a Camel binding&#xA;                    on a&#xA;                    composite service in SwitchYard.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/gateway-listener-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;gateway migration microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='fs-bus']/@busid">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='fs-bus']/@busid" xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : service binding configuration in fs-bus" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" A fs-bus definition can be converted to a Camel binding&#xA;                    on a&#xA;                    composite service in SwitchYard.&#xA;&#xA;                    For additional information and tips, see the&#xA;                    &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/gateway-listener-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;gateway migration microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1" matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Notifier']/@class">
+                </xmlfile>
+                <xmlfile as="2" matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Notifier']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert Notifiers to bindings" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses notifiers to transform ESB aware messages to a&#xA;                    format that ESB-unaware services can handle. SwitchYard uses&#xA;                    bi-directional gateways to transfer&#xA;                    messages."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ByteArrayToString']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ByteArrayToString']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert ByteArrayToString to bindings" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" JBoss ESB uses a ByteArrayToString action to do conversion on&#xA;                    a message body.&#xA;                    SwitchYard would use Camel to do type conversion."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert LongToDateConverter to a Camel type conversion" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses the LongToDateConverter action to do&#xA;                    conversion on a message body.&#xA;                    SwitchYard would use Camel to do type conversion."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.LongToDateConverter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert LongToDateConverter to a Camel type conversion" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses the LongToDateConverter action to do&#xA;                    conversion on a message body.&#xA;                    SwitchYard would use Camel to do type conversion."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToCSVString']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToCSVString']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert ObjectToCSVString to a Camel type conversion" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message=" JBoss ESB uses the ObjectToCSVString action to do conversion&#xA;                    on a message body.&#xA;                    SwitchYard would use Camel or a possibly a Smooks transform to do this sort of&#xA;                    conversion.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectInvoke']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectInvoke']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert ObjectInvoke to a bean service" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses a ObjectInvoke action to do invoke a processor&#xA;                    on a message.&#xA;                    SwitchYard would use a bean component to do something similar."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToXStream']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.ObjectToXStream']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert ObjectToXStream to a transform" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses a ObjectToXStream action to do convert an&#xA;                    Object payload to XML using the XStream&#xA;                    processor. SwitchYard would use Camel or a possibly a Smooks&#xA;                    transform to do this sort of conversion.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.XStreamToObject']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.XStreamToObject']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert XStreamToObject to a transform" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses a XStreamToObject action to convert XML in a&#xA;                    payload to an object using the&#xA;                    XStream processor. SwitchYard would use Camel or a possibly a Smooks&#xA;                    transform to do this sort of conversion.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert XsltAction to a transform" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses a XStreamToObject action to convert XML in a&#xA;                    payload to an object using the&#xA;                    XStream processor. SwitchYard would use Camel or a possibly a Smooks&#xA;                    transform to do this sort of conversion.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.transformation.xslt.XsltAction']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert XsltAction to a transform" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses the XsltAction action to transform documents&#xA;                    in a payload. SwitchYard would use&#xA;                    Camel or a possibly a Smooks transform to do this sort of&#xA;                    conversion.&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.SmooksTransformer']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.converters.SmooksTransformer']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert SmooksTransformer to Transform" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="SwitchYard uses a &amp;lt;transform&amp;gt; to replace the invocation&#xA;                    of a SmooksTransformer&#xA;                    to transform message content. You most likely will want to use a Smooks&#xA;                    transform&#xA;                    to specify your Smooks configuration and from/to types.&#xA;&#xA;                    For additional information and tips,&#xA;                    see the &amp;lt;a&#xA;                    href=&quot;https://github.com/windup/soa-migration/blob/master/advice/transformation-migration.md&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;transformation microsite&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.MessagePersister']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.MessagePersister']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert MessagePersister to SQL binding" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="SwitchYard uses the MessagePersister action to persist a&#xA;                    message. SwitchYard would uses&#xA;                    a SQL reference binding to accomplish something similar."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.EJBProcessor']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.EJBProcessor']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : replace EJBProcessor with a bean service" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses the EJBProcessor action to invoke a stateless&#xA;                    session bean with the&#xA;                    contents of a message. Similar things can be achieved in SwitchYard through the&#xA;                    use of&#xA;                    a bean service."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.ScriptingAction']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.scripting.ScriptingAction']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : replace ScriptingAction with Camel" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="The ScriptingAction executes a script using the&#xA;                    BeanScriptingFramework.&#xA;                    You can duplicate this functionality in SwitchYard through Camel&#xA;                    routing (both&#xA;                    Java and XML.)&#xA;&#xA;                    For additional information and tips, see the &amp;lt;a&#xA;                    href=&quot;https://docs.jboss.org/author/display/SWITCHYARD/Camel#Camel-Scriptinglanguages&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;Camel / Scripting languages documentation&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Aggregator']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.Aggregator']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : replace Aggregator with Camel Aggregator" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses the Aggregator action to aggregate a message&#xA;                    sequence into a single&#xA;                    aggregated message. SwitchYard would make use of Camel routing and Camel's&#xA;                    aggregator to accomplish this.&#xA;&#xA;                    For more information, see &amp;lt;a&#xA;                    href=&quot;http://camel.apache.org/aggregator.html&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;Camel Aggregator&#xA;                    documentation&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StreamingAggregator']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StreamingAggregator']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : replace Streaming Aggregator with Camel Aggregator" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="JBoss ESB uses the StreamingAggregator action to aggregate a&#xA;                    message sequence into a single&#xA;                    aggregated message. SwitchYard would make use of Camel routing and&#xA;                    Camel's&#xA;                    aggregator to accomplish this.&#xA;&#xA;                    For more information, see &amp;lt;a&#xA;                    href=&quot;http://camel.apache.org/aggregator.html&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;Camel Aggregator&#xA;                    documentation&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.http.HttpRouter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.http.HttpRouter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert HttpRouter" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the HttpRouter in SwitchYard,&#xA;                    you should use a http reference binding.&#xA;                    You may need to review the options for http bindings in&#xA;                    SwitchYard."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.email.EmailRouter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.routing.email.EmailRouter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert EmailRouter" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the EmailRouter in SwitchYard,&#xA;                    you should use a mail reference binding.&#xA;                    You may need to review the options for http bindings in&#xA;                    SwitchYard."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.ContentBasedRouter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.ContentBasedRouter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert ContentBasedRouter" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the ContentBasedRouter in&#xA;                    SwitchYard, you should use Camel to route&#xA;                    messages.&#xA;&#xA;                    A good example of this functionality can be found&#xA;                    in the quickstarts project in the &quot;rules-camel-jbr&quot;&#xA;                    quickstart."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticWiretap']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticWiretap']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert StaticWiretap" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the StaticWiretap in&#xA;                    SwitchYard, you should use Camel to route&#xA;                    messages."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert StaticRouter" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the StaticRouter in&#xA;                    SwitchYard, you should use Camel to route&#xA;                    messages."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.StaticRouter']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert StaticRouter" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the StaticRouter in&#xA;                    SwitchYard, you should use Camel to route&#xA;                    messages."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPProcessor']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPProcessor']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert SOAPProcessor" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the StaticRouter in&#xA;                    SwitchYard, you should use a SOAP reference&#xA;                    binding in SwitchYard.&#xA;&#xA;                    For more information, see &amp;lt;a&#xA;                    href=&quot;https://community.jboss.org/wiki/InvokingExternalWebServiceFromSwitchYard&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;Invoking an external Web Service from SwitchYard&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="1"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPClient']/@class">
+                </xmlfile>
+                <xmlfile as="2"
+                    matches="//*[local-name()='action' and @class='org.jboss.soa.esb.actions.soap.SOAPClient']/@class"
+                    xpathResultMatch=".*" from="1">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration over="1">
+                    <hint message="Action : convert SOAPClient" effort="1">
+                    </hint>
+                </iteration>
+                <iteration over="2">
+                    <hint
+                        message="In order to replace the use of the SOAPClient in SwitchYard,&#xA;                    you should use a SOAP reference&#xA;                    binding in SwitchYard.&#xA;&#xA;                    For more information, see &amp;lt;a&#xA;                    href=&quot;https://community.jboss.org/wiki/InvokingExternalWebServiceFromSwitchYard&quot;&#xA;                    target=&quot;_blank&quot;&amp;gt;Invoking an external Web Service from SwitchYard&amp;lt;/a&amp;gt;."
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

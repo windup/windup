@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlJonasConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" public-id=".+JOnAS Web App.+">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <classification classification="JOnAS Web Descriptor" effort="0" />
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

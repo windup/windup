@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlKnowHowConfig">
+    <rules>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//datasource/@pool-name" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//datasource/@jndi-name" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//datasource/@jta" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//datasource/@spy" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//datasource/@use-ccm" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//connection-url" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//driver-class" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//new-connection-sql" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//min-pool-size" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//max-pool-size" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//prefill" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//use-strict-min" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//transaction-isolation" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//flush-strategy" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//user-name" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//password" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//background-validation" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//use-fast-fail" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//idle-timeout-minutes" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//xa-resource-timeout" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//track-statements" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//prepared-statement-cache-size" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//check-valid-connection-sql" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//validate-on-match" in=".*ds-eap6.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Define this attribute as one parameter with CLI." effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:postgres')]"
+                    in=".*-ds.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Manually port datasource settings" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:oracle')]"
+                    in=".*-ds.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Manually port datasource settings" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:sqlserver')]" in=".*-ds.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Manually port datasource settings" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector/@port" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check port number" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector/@protocol" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check protocol value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector/@maxThreads" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check maxThreads value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector/@connectionTimeout" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check connectionTimeout value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector/@emptySessionPath" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check emptySessionPath value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector/@enableLookups" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check enableLookups value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector/@redirectPort" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check redirectPort value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector/@scheme" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check scheme value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Connector[@secure='true']" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check secure value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" matches="//Server/Service/Engine/@jvmRoute" in="server.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Check jvmRoute value" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="//jboss/container-configurations/container-configuration[@extends='Standard Stateless SessionBean']"
+                    in="jboss.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Bean-specific instance pool can be set with one line in management CLI" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="//jboss/container-configurations/container-configuration[@extends='Clustered Stateless SessionBean']"
+                    in="jboss.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Bean-specific instance pool can be set with one line in management CLI" effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="//jboss/container-configurations/container-configuration[@extends='Standard Message Driven Bean']"
+                    in="jboss.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="MDB's Bean-specific instance pool can be set with one line in management CLI"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="//jboss/container-configurations/container-configuration[@extends='Singleton Message Driven Bean']"
+                    in="jboss.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="Singleton Message Driven BeanMDB's Bean-specific instance pool can be set with one line in management CLI"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default"
+                    matches="//jboss/container-configurations/container-configuration[@extends='Standard Message Inflow Driven Bean']"
+                    in="jboss.xml">
+                </xmlfile>
+            </when>
+            <perform>
+                <iteration>
+                    <hint
+                        message="Standard Message Inflow Driven Bean's Bean-specific instance pool can be set with one line in management CLI"
+                        effort="0">
+                    </hint>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>
