@@ -29,7 +29,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
-import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.ui.WindupCommand;
 import org.jboss.windup.util.WindupPathUtil;
 import org.junit.Assert;
@@ -72,21 +71,16 @@ public class WindupCommandTest
     @Inject
     private UITestHarness uiTestHarness;
 
-    @Inject
-    private GraphContextFactory graphContextFactory;
-
-    private Path forgeHome;
-
     @Before
     public void beforeTest()
     {
         if (System.getProperty("forge.home") == null)
         {
-            String defaultForgeHomePath = Paths.get(OperatingSystemUtils.getTempDirectory().getAbsolutePath()).resolve("Windup")
+            String defaultForgeHomePath = Paths.get(OperatingSystemUtils.getTempDirectory().getAbsolutePath())
+                        .resolve("Windup")
                         .resolve("fakeforgehome_" + RandomStringUtils.randomAlphanumeric(6)).toString();
             System.setProperty("forge.home", defaultForgeHomePath);
         }
-        this.forgeHome = Paths.get(System.getProperty("forge.home"));
     }
 
     @Test
@@ -169,7 +163,7 @@ public class WindupCommandTest
             }
         }
     }
-    
+
     @Test
     public void testOutputDefaultValue() throws Exception
     {
@@ -193,11 +187,13 @@ public class WindupCommandTest
 
                 Result result = controller.execute();
                 Object outputDir = controller.getValueFor("output");
-                Assert.assertTrue("The output should be a folder",DirectoryResource.class.isAssignableFrom(outputDir.getClass()));
-                Assert.assertTrue("The output should be created inside the .report folder by default",((DirectoryResource)outputDir).getName().endsWith(".report"));
-                FileResource<?> inputDir= (FileResource<?>)controller.getValueFor("input");
-                Resource<?> child = inputDir.getParent().getChild(((DirectoryResource)outputDir).getName());
-                Assert.assertNotNull("The output should be created near the ${input} folder by default",child);
+                Assert.assertTrue("The output should be a folder",
+                            DirectoryResource.class.isAssignableFrom(outputDir.getClass()));
+                Assert.assertTrue("The output should be created inside the .report folder by default",
+                            ((DirectoryResource) outputDir).getName().endsWith(".report"));
+                FileResource<?> inputDir = (FileResource<?>) controller.getValueFor("input");
+                Resource<?> child = inputDir.getParent().getChild(((DirectoryResource) outputDir).getName());
+                Assert.assertNotNull("The output should be created near the ${input} folder by default", child);
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
                 Assert.assertFalse(msg, result instanceof Failed);
             }
@@ -240,7 +236,8 @@ public class WindupCommandTest
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
                 Assert.assertFalse(msg, result instanceof Failed);
 
-                WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext().getAttributeMap()
+                WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext()
+                            .getAttributeMap()
                             .get(WindupConfiguration.class);
                 File resultUserSpecifiedRulesDir = windupConfiguration.getOptionValue(UserRulesDirectoryOption.NAME);
                 Assert.assertEquals(userRulesDir, resultUserSpecifiedRulesDir);
@@ -314,7 +311,8 @@ public class WindupCommandTest
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
                 Assert.assertFalse(msg, result instanceof Failed);
 
-                WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext().getAttributeMap()
+                WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext()
+                            .getAttributeMap()
                             .get(WindupConfiguration.class);
                 File resultUserSpecifiedRulesDir = windupConfiguration.getOptionValue(UserRulesDirectoryOption.NAME);
                 Assert.assertEquals(expectedUserHomeRulesDir.toFile(), resultUserSpecifiedRulesDir);
@@ -356,7 +354,8 @@ public class WindupCommandTest
         Assert.assertTrue(controller.isEnabled());
         controller.setValueFor("input", inputFile);
         Assert.assertTrue(controller.canExecute());
-        if(outputFile !=null) {
+        if (outputFile != null)
+        {
             controller.setValueFor("output", outputFile);
         }
         Assert.assertTrue(controller.canExecute());

@@ -76,33 +76,7 @@ public class WindupCommand implements UICommand
                     .category(Categories.create("Platform", "Migration"));
     }
 
-    // Used below for default values.
-    private static class DefaultValue implements Callable
-    {
-        private WindupConfigurationOption option;
-        private Class<?> expectedType;
-
-        public DefaultValue(WindupConfigurationOption option, Class<?> expectedType)
-        {
-            this.option = option;
-            this.expectedType = expectedType;
-        }
-
-        public DefaultValue(WindupConfigurationOption option)
-        {
-            this(option, null);
-        }
-
-        public Object call() throws Exception
-        {
-            Object val = this.option.getDefaultValue();
-            if (val != null && this.expectedType != null && !this.expectedType.isAssignableFrom(val.getClass()))
-                throw new IllegalStateException("Windup option " + option.getName() +
-                            " was expected to return " + expectedType.getName() + " but returned " + val.getClass());
-            return val;
-        }
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     public void initializeUI(UIBuilder builder) throws Exception
     {
@@ -172,7 +146,10 @@ public class WindupCommand implements UICommand
             builder.add(inputComponent);
             inputOptions.add(new WindupOptionAndInput(option, inputComponent));
         }
+
+        @SuppressWarnings("rawtypes")
         final UIInput inputForInput = (UIInput) getInputForOption(InputPathOption.class);
+        @SuppressWarnings("rawtypes")
         UIInput inputForOutput = (UIInput) getInputForOption(OutputPathOption.class);
         inputForOutput.setDefaultValue(new Callable<DirectoryResource>()
         {
@@ -182,7 +159,7 @@ public class WindupCommand implements UICommand
             {
                 if (inputForInput.getValue() != null)
                 {
-                    FileResource value = (FileResource) inputForInput.getValue();
+                    FileResource<?> value = (FileResource<?>) inputForInput.getValue();
                     DirectoryResource childDirectory = value.getParent().getChildDirectory(value.getName() + ".report");
                     return childDirectory;
                 }
@@ -191,6 +168,33 @@ public class WindupCommand implements UICommand
             }
 
         });
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static class DefaultValue implements Callable
+    {
+        private WindupConfigurationOption option;
+        private Class<?> expectedType;
+
+        public DefaultValue(WindupConfigurationOption option, Class<?> expectedType)
+        {
+            this.option = option;
+            this.expectedType = expectedType;
+        }
+
+        public DefaultValue(WindupConfigurationOption option)
+        {
+            this(option, null);
+        }
+
+        public Object call() throws Exception
+        {
+            Object val = this.option.getDefaultValue();
+            if (val != null && this.expectedType != null && !this.expectedType.isAssignableFrom(val.getClass()))
+                throw new IllegalStateException("Windup option " + option.getName() +
+                            " was expected to return " + expectedType.getName() + " but returned " + val.getClass());
+            return val;
+        }
     }
 
     private InputComponent<?, ?> getInputForOption(Class<? extends WindupConfigurationOption> option)
@@ -256,28 +260,28 @@ public class WindupCommand implements UICommand
 
         // add dist/rules/ and ${forge.home}/rules/ to the user rules directory list
         Path userRulesDir = WindupPathUtil.getWindupUserRulesDir();
-        if (!Files.isDirectory(userRulesDir))
+        if (userRulesDir != null && !Files.isDirectory(userRulesDir))
         {
             Files.createDirectories(userRulesDir);
         }
         windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
 
         Path userIgnoreDir = WindupPathUtil.getWindupIgnoreListDir();
-        if (!Files.isDirectory(userIgnoreDir))
+        if (userIgnoreDir != null && !Files.isDirectory(userIgnoreDir))
         {
             Files.createDirectories(userIgnoreDir);
         }
         windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
 
         Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
-        if (!Files.isDirectory(windupHomeRulesDir))
+        if (windupHomeRulesDir != null && !Files.isDirectory(windupHomeRulesDir))
         {
             Files.createDirectories(windupHomeRulesDir);
         }
         windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
 
         Path windupHomeIgnoreDir = WindupPathUtil.getWindupHomeIgnoreListDir();
-        if (!Files.isDirectory(windupHomeIgnoreDir))
+        if (windupHomeIgnoreDir != null && !Files.isDirectory(windupHomeIgnoreDir))
         {
             Files.createDirectories(windupHomeIgnoreDir);
         }
@@ -315,7 +319,8 @@ public class WindupCommand implements UICommand
 
             uiProgressMonitor.done();
 
-            return Results.success("Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html");
+            return Results.success("Windup report created: "
+                        + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html");
         }
     }
 
