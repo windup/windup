@@ -498,6 +498,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>This guide is for engineers, consultants, and others who plan to use
 Windup 2.0 to migrate Java applications or other components.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This is a very rough first draft!
+</td>
+</tr>
+</table>
+</div>
 <div class="sect2">
 <h3 id="What-is-Windup">What is Windup?</h3>
 <div class="paragraph">
@@ -993,7 +1005,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 <p>You are presented with the following prompt.</p>
 <div class="listingblock">
 <div class="content">
-<pre>Using Windup at /home/username/windup-distribution-2.0.0.Beta4
+<pre>Using Windup at /home/username/windup-distribution-VERSION
 
  _       ___           __
 | |     / (_)___  ____/ /_  ______
@@ -1002,9 +1014,9 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 |__/|__/_/_/ /_/\__,_/\__,_/ .___/
                           /_/
 
-JBoss Windup, version [ 2.0.0.Beta4 ] - JBoss, by Red Hat, Inc. [ http://windup.jboss.org ]
+JBoss Windup, version [ VERSION ] - JBoss, by Red Hat, Inc. [ http://windup.jboss.org ]
 
-[windup-distribution-2.0.0.Beta4]$</pre>
+[windup-distribution-VERSION]$</pre>
 </div>
 </div>
 </li>
@@ -1713,7 +1725,7 @@ Points] <a href="https://issues.jboss.org/browse/WINDUP-255">WINDUP-255</a></p>
 <div class="ulist">
 <ul>
 <li>
-<p>If the rule should run in a phase other than the default <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#MIGRATION_PHASE">MIGRATION_PHASE</a>, you must implement the <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/WindupRuleProvider.html#getPhase%28%29">getPhase()</a> method and specify in which Windup lifecycle phase the rule should be executed. For more information about rule phases, see xref:./Rules-Rule-Execution-Lifecycle[Rule Execution Lifecycle].</p>
+<p>If the rule should run in a phase other than the default <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#MIGRATION_PHASE">MIGRATION_PHASE</a>, you must implement the <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/WindupRuleProvider.html#getPhase%28%29">getPhase()</a> method and specify in which Windup lifecycle phase the rule should be executed. For more information about rule phases, see <a href="#Rules-Rule-Execution-Lifecycle">Rule Execution Lifecycle</a>.</p>
 </li>
 <li>
 <p>Rules are added using the <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/WindupRuleProvider.html">getConfiguration(GraphContext context)</a> method. This method is inherited from the <a href="http://ocpsoft.org/rewrite/">OCPsoft Rewrite</a> interface org.ocpsoft.rewrite.config.ConfigurationProvider. Rules are discussed in more detail later.</p>
@@ -2706,7 +2718,7 @@ If you have not started Windup, follow the instructions to <a href="#Execute-Win
 </div>
 </div>
 <div class="paragraph">
-<p>For more information and examples of how to run Windup, see: xref:-Execute-Windup[Execute Windup]</p>
+<p>For more information and examples of how to run Windup, see: <a href="#Execute-Windup">Execute Windup</a></p>
 </div>
 </div>
 </div>
@@ -3696,7 +3708,7 @@ They are used to model the data in the graph database to Java objects.</p>
 </div>
 <div class="paragraph">
 <p>This is an overview of the most important models.
-The complete and up-to-date list of models is in <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/graph/model/WindupVertexFrame.html">Javadoc</a>.</p>
+The complete and up-to-date list of models is in <a href="#http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/graph/model/WindupVertexFrame.html">Javadoc</a>.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="img/WindupModels-NbScreenshot.png" alt="Windup Models Graphic"></span></p>
@@ -3736,7 +3748,7 @@ The complete and up-to-date list of models is in <a href="http://windup.github.i
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-12-12 16:31:46 EST
+Last updated 2014-12-17 15:31:37 EST
 </div>
 </div>
 </body>
