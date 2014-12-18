@@ -28,8 +28,8 @@ import com.tinkerpop.rexster.server.RexsterProperties;
 
 public class RexsterInitializer implements AfterGraphInitializationListener
 {
-    private String configurationString;
     private String rexsterExtractDirectory;
+    private Map<String, Object> configuration;
     private static final Logger log = Logger.getLogger(RexsterInitializer.class.getName());
 
     public RexsterInitializer()
@@ -54,14 +54,29 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     {
         try (PrintWriter out = new PrintWriter("rexster.xml"))
         {
-            out.println(configurationString);
+           
+
+            
+            String path = getClass().getResource("/public").getPath();
+            if(path.contains("!")) {
+                path = path.split("!")[0];
+            }
+            if(path.contains(":")) {
+                path = path.split(":")[1];
+            }
+            if(path.endsWith(".jar")) {
+                File rexsterAddonDir = new File(path);
+
+                new File(rexsterExtractDirectory).mkdirs();
+                extractZipFile(rexsterAddonDir, rexsterExtractDirectory);
+            } else {
+                //remove the "public" from the end
+                String substring = path.substring(0, path.length() - 8);
+                rexsterExtractDirectory = substring;
+            }
+            out.println(createRexsterXmlFileString(configuration));
             out.flush();
-
             RexsterProperties properties = new RexsterProperties("rexster.xml");
-            File rexsterAddonDir = new File(getClass().getResource("/public").getPath().split("!")[0].split(":")[1]);
-
-            new File(rexsterExtractDirectory).mkdirs();
-            extractZipFile(rexsterAddonDir, rexsterExtractDirectory);
             configureScriptEngine(properties);
             HttpRexsterServer rexsterServer = new HttpRexsterServer(properties);
             rexsterServer.start(new DefaultRexsterApplication("main", graph.getBaseGraph()));
@@ -239,8 +254,8 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     @Override
     public void afterGraphStarted(Map<String, Object> configuration, GraphContext graphContext)
     {
+        this.configuration=configuration;
         rexsterExtractDirectory = getAddon().getRepository().getAddonDescriptor(getAddon().getId()).getParent() + "/rexster-extract";
-        configurationString = createRexsterXmlFileString(configuration);
         start(graphContext.getFramed());
     }
 }
