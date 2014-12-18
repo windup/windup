@@ -23,10 +23,13 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
+import org.ocpsoft.rewrite.config.Not;
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleBuilder;
 import org.ocpsoft.rewrite.config.True;
+import org.ocpsoft.rewrite.param.Parameter;
+import org.ocpsoft.rewrite.param.RegexConstraint;
 
 @RunWith(Arquillian.class)
 public class XMLRuleProviderLoaderTest
@@ -75,13 +78,16 @@ public class XMLRuleProviderLoaderTest
             Assert.assertEquals("testruleprovider", id);
             Assert.assertEquals(RulePhase.DISCOVERY, provider.getPhase());
             List<Rule> rules = provider.getConfiguration(graphContext).getRules();
-            Assert.assertEquals(2, rules.size());
+            Assert.assertEquals(3, rules.size());
 
             RuleBuilder rule1 = (RuleBuilder) rules.get(0);
             checkRule1(rule1);
 
             RuleBuilder rule2 = (RuleBuilder) rules.get(1);
             checkRule2(rule2);
+
+            RuleBuilder rule2_otherwise = (RuleBuilder) rules.get(2);
+            checkRule2_Otherwise(rule2_otherwise);
         }
     }
 
@@ -123,12 +129,38 @@ public class XMLRuleProviderLoaderTest
         String opBuilderStr = opBuilder.toString();
         LOG.info("Op Builder is: " + opBuilderStr);
 
-        // Iteration.over(?).when(And.all(new True())).perform(Perform.all(LOG[INFO, test log message perform])).otherwise(Perform.all(LOG[INFO, test
-        // log message otherwise]))
-
-        // This is really ugly, but there is no good way to introspect the contents of the operations otherwise.
         Assert.assertTrue(opBuilderStr.contains("over(?).when(new True"));
-        Assert.assertTrue(opBuilderStr.contains("perform(Perform.all(LOG[INFO, test log message perform]))"));
-        Assert.assertTrue(opBuilderStr.contains("otherwise(Perform.all(LOG[INFO, test"));
+        Assert.assertTrue(opBuilderStr.contains("perform(Perform.all(LOG[INFO, test {foo} iteration perform]))"));
+        Assert.assertTrue(opBuilderStr.contains("otherwise(Perform.all(LOG[INFO, test {foo} iteration otherwise]"));
+
+        Parameter<?> foo = rule.getParameterStore().get("foo");
+        Assert.assertEquals("foo", foo.getName());
+        Assert.assertEquals(new RegexConstraint("\\d+"), foo.getConstraints().get(0));
+    }
+
+    private void checkRule2_Otherwise(RuleBuilder rule) throws Exception
+    {
+        LOG.info("Rule: " + rule);
+
+        // check the conditions
+        List<Condition> conditions = rule.getConditions();
+        Assert.assertEquals(1, conditions.size());
+        Condition condition = conditions.get(0);
+        Assert.assertTrue(condition instanceof Not);
+        Condition andCondition = ((RuleBuilder) ((Not) condition).getConditions().get(0)).getConditions().get(0);
+        Assert.assertTrue(andCondition instanceof And);
+        And and = (And) andCondition;
+        Assert.assertEquals(1, and.getConditions().size());
+        Assert.assertTrue(and.getConditions().get(0) instanceof True);
+
+        // check the operations
+        List<Operation> operations = rule.getOperations();
+        Assert.assertEquals(1, operations.size());
+        Assert.assertTrue(operations.get(0) instanceof DefaultOperationBuilder);
+        DefaultOperationBuilder opBuilder = (DefaultOperationBuilder) operations.get(0);
+        String opBuilderStr = opBuilder.toString();
+        LOG.info("Op Builder is: " + opBuilderStr);
+
+        Assert.assertTrue(opBuilderStr.contains("LOG[INFO, test rule {foo} otherwise]"));
     }
 }
