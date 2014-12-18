@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.Commit;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -23,6 +23,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  */
 public class IndexClassFilesRuleProvider extends WindupRuleProvider
 {
+    private static final String ALL_CLASS_FILES = "allClassFiles";
     private static Logger LOG = Logging.get(IndexClassFilesRuleProvider.class);
 
     @Override
@@ -52,11 +53,14 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
                     .when(Query.fromType(FileModel.class)
                                 .withProperty(FileModel.IS_DIRECTORY, false)
                                 .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.class")
+                                .as(ALL_CLASS_FILES)
                     )
                     .perform(
-                        new AddClassFileMetadata()
-                        .and(Commit.every(10))
-                        .and(IterationProgress.monitoring("Indexed class file: ", 1000))
+                        Iteration.over(ALL_CLASS_FILES).threaded()
+                        .perform(
+                                    new AddClassFileMetadata()
+                                    .and(IterationProgress.monitoring("Indexed class file: ", 1000))
+                        ).endIteration()
                     );
     }
     // @formatter:on

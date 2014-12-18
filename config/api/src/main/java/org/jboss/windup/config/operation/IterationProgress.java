@@ -36,7 +36,7 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
+    public synchronized void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
         if (totalIterations == -1)
         {

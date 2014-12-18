@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-ejb-jar xmlns="http://www.bea.com/ns/weblogic/90" xmlns:j2ee="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.bea.com/ns/weblogic/90 http://www.bea.com/ns/weblogic/90/weblogic-ejb-jar.xsd">
+	<weblogic-enterprise-bean>
+		<ejb-name>ItemLookupBean</ejb-name>
+		<stateless-session-descriptor>
+		</stateless-session-descriptor>
+		<transaction-descriptor>
+			<trans-timeout-seconds>180</trans-timeout-seconds>
+		</transaction-descriptor>
+		<enable-call-by-reference>true</enable-call-by-reference>
+		<run-as-principal-name>Admin</run-as-principal-name>
+		<jndi-name>ejb/ItemLookupBean</jndi-name>
+	</weblogic-enterprise-bean>
+
+	<weblogic-enterprise-bean>
+		<ejb-name>ProductCatalogBean</ejb-name>
+		<stateless-session-descriptor>
+		</stateless-session-descriptor>
+		<transaction-descriptor>
+			<trans-timeout-seconds>180</trans-timeout-seconds>
+		</transaction-descriptor>
+		<enable-call-by-reference>true</enable-call-by-reference>
+		<run-as-principal-name>Admin</run-as-principal-name>
+		<jndi-name>ejb/ProductCatalogBean</jndi-name>
+	</weblogic-enterprise-bean>
+	
+	<weblogic-enterprise-bean>
+		<ejb-name>LogEventSubscriber</ejb-name>
+		<message-driven-descriptor>
+			<destination-jndi-name>jms/LogEventQueue</destination-jndi-name>
+		</message-driven-descriptor>
+		<run-as-principal-name>admin_user</run-as-principal-name>
+	</weblogic-enterprise-bean>
+
+	<security-role-assignment>
+		<role-name>acme_user</role-name>
+		<principal-name>AnvilUser</principal-name>
+		<principal-name>Admin</principal-name>
+	</security-role-assignment>
+
+	<!-- http://docs.oracle.com/cd/E15051_01/wls/docs103/ejb/DDreference-ejb-jar.html#wp1114299 -->
+	<idempotent-methods>
+		<method>
+			<ejb-name>ItemLookupBean</ejb-name>
+			<method-name>lookupItem</method-name>
+			<method-params>
+				<method-param>java.lang.Long</method-param>
+			</method-params>
+		</method>
+		<method>
+			<ejb-name>ProductCatalogBean</ejb-name>
+			<method-name>populateCatalog</method-name>
+		</method>
+	</idempotent-methods>
+</weblogic-ejb-jar>

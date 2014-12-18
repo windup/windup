@@ -13,11 +13,19 @@ public class FramedVertexIterable<T> implements Iterable<T> {
     protected final Class<T> kind;
     protected final Iterable<Vertex> iterable;
     protected final FramedGraph<? extends Graph> framedGraph;
+    private boolean reloadNeeded = false;
 
     public FramedVertexIterable(final FramedGraph<? extends Graph> framedGraph, final Iterable<Vertex> iterable, final Class<T> kind) {
         this.framedGraph = framedGraph;
         this.iterable = iterable;
         this.kind = kind;
+        
+        this.framedGraph.addWrappedGraphReplacedListener(new FramedGraph.WrappedGraphReplacedListener() {
+            @Override
+            public void onWrappedGraphReplaced() {
+        	reloadNeeded = true;
+            }
+	});
     }
 
     public Iterator<T> iterator() {
@@ -33,7 +41,11 @@ public class FramedVertexIterable<T> implements Iterable<T> {
             }
 
             public T next() {
-                return framedGraph.frame(this.iterator.next(), kind);
+        	Vertex v = this.iterator.next();
+        	if (reloadNeeded) {
+        	    v = framedGraph.getVertex(v.getId());
+        	}
+                return framedGraph.frame(v, kind);
             }
         };
     }

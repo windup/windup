@@ -267,7 +267,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     }
                     if (autocommit)
                     {
-                        event.getGraphContext().getGraph().getBaseGraph().commit();
+                        event.getGraphContext().commit();
                     }
 
                     event.selectionPop();

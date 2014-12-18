@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Source Report for LoggerDynamicMBean.java</title>
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/windup.css" rel="stylesheet" media="screen">
+	  <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
+	  <link rel='stylesheet' type='text/css' href='resources/css/windup-source.css' />
+	  <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
+  </head>
+  <body role="document">
+    
+    <!-- Fixed navbar -->
+    <div class="navbar-fixed-top windup-bar" role="navigation">
+      <div class="container theme-showcase" role="main">
+        <img src="resources/img/windup-logo.png" class="logo"/>
+      </div>
+    </div>
+
+
+    <div class="container" role="main">
+        <div class="row">
+          <div class="page-header page-header-no-border">
+            <h1>
+              Source Report
+              <span class="slash">/</span>
+              <small style="margin-left: 20px; font-weight: 100;">jee-example-app-1.0.0.ear/log4j-1.2.6.jar/org/apache/log4j/jmx/LoggerDynamicMBean.java</small>
+            </h1>
+            <div class="navbar navbar-default">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+            <div class="navbar-collapse collapse navbar-responsive-collapse">
+	     <ol class="breadcrumb top-menu">
+		<li><a href="../index.html">All Applications</a></li>
+  <li><a href="JEE_Example_App__org_windup_example_jee_example_app_1_0_0_.1.html">JEE Example App (org.windup.example:jee-example-app:1.0.0)</a></li>
+  
+  <li><a href="LoggerDynamicMBean_java.2.html">LoggerDynamicMBean.java</a></li>
+  
+	     </ol> 
+            </div>
+            <div class="navbar-collapse collapse navbar-responsive-collapse">
+              <ul class="nav navbar-nav">
+  <li><a href="JEE_Example_App__org_windup_example_jee_example_app_1_0_0_.1.html">Overview</a></li>
+  <li><a href="ignoredfiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_.1.html">Ignored Files</a></li>
+  <li><a href="nonclassifiedfiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_.1.html">Unclassified Files</a></li>
+              </ul>
+            </div><!-- /.nav-collapse -->
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+
+    <div class="container theme-showcase" role="main">
+
+    <div class="panel panel-default">
+    	<div class="panel-heading">Information</div>
+    	<div class="panel-body">
+	        <ul>
+	          <li>Estimated Story Points: 2</li>
+		          <li>
+	              		<span class="label label-info">Decompiled Java File</span>
+	              		<span class="label label-info">Java Source</span>
+	              </li>
+            </ul>
+        
+            <ul>
+            </ul>
+		</div>
+      </div>
+    
+    
+
+<pre id='source'>package org.apache.log4j.jmx;
+
+import org.apache.log4j.jmx.AppenderDynamicMBean;
+import java.util.Enumeration;
+import javax.management.InvalidAttributeValueException;
+import org.apache.log4j.Priority;
+import javax.management.Attribute;
+import org.apache.log4j.helpers.OptionConverter;
+import org.apache.log4j.Level;
+import javax.management.AttributeNotFoundException;
+import javax.management.ObjectName;
+import javax.management.RuntimeOperationsException;
+import javax.management.ReflectionException;
+import javax.management.MBeanException;
+import javax.management.MBeanNotificationInfo;
+import javax.management.MBeanInfo;
+import javax.management.MBeanParameterInfo;
+import javax.management.MBeanAttributeInfo;
+import org.apache.log4j.Appender;
+import javax.management.Notification;
+import org.apache.log4j.Logger;
+import java.util.Vector;
+import javax.management.MBeanOperationInfo;
+import javax.management.MBeanConstructorInfo;
+import javax.management.NotificationListener;
+import org.apache.log4j.jmx.AbstractDynamicMBean;
+
+public class LoggerDynamicMBean extends AbstractDynamicMBean implements NotificationListener{
+    private MBeanConstructorInfo[] dConstructors;
+    private MBeanOperationInfo[] dOperations;
+    private Vector dAttributes;
+    private String dClassName;
+    private String dDescription;
+    private static Logger cat;
+    private Logger logger;
+    static /* synthetic */ Class class$org$apache$log4j$jmx$LoggerDynamicMBean;
+    static /* synthetic */ Class class$org$apache$log4j$Appender;
+    public LoggerDynamicMBean(final Logger logger){
+        super();
+        this.dConstructors=new MBeanConstructorInfo[1];
+        this.dOperations=new MBeanOperationInfo[1];
+        this.dAttributes=new Vector();
+        this.dClassName=this.getClass().getName();
+        this.dDescription=&quot;This MBean acts as a management facade for a org.apache.log4j.Logger instance.&quot;;
+        this.logger=logger;
+        this.buildDynamicMBeanInfo();
+    }
+    public void handleNotification(final Notification notification,final Object o){
+        LoggerDynamicMBean.cat.debug(&quot;Received notification: &quot;+notification.getType());
+        this.registerAppenderMBean((Appender)notification.getUserData());
+    }
+    private void buildDynamicMBeanInfo(){
+        this.dConstructors[0]=new MBeanConstructorInfo(&quot;HierarchyDynamicMBean(): Constructs a HierarchyDynamicMBean instance&quot;,this.getClass().getConstructors()[0]);
+        this.dAttributes.add(new MBeanAttributeInfo(&quot;name&quot;,&quot;java.lang.String&quot;,&quot;The name of this Logger.&quot;,true,false,false));
+        this.dAttributes.add(new MBeanAttributeInfo(&quot;priority&quot;,&quot;java.lang.String&quot;,&quot;The priority of this logger.&quot;,true,true,false));
+        this.dOperations[0]=new MBeanOperationInfo(&quot;addAppender&quot;,&quot;addAppender(): add an appender&quot;,new MBeanParameterInfo[] { new MBeanParameterInfo(&quot;class name&quot;,&quot;java.lang.String&quot;,&quot;add an appender to this logger&quot;),new MBeanParameterInfo(&quot;appender name&quot;,&quot;java.lang.String&quot;,&quot;name of the appender&quot;) },&quot;void&quot;,1);
+    }
+    protected Logger getLogger(){
+        return this.logger;
+    }
+    public MBeanInfo getMBeanInfo(){
+        final MBeanAttributeInfo[] array=new MBeanAttributeInfo[this.dAttributes.size()];
+        this.dAttributes.toArray(array);
+        return new MBeanInfo(this.dClassName,this.dDescription,array,this.dConstructors,this.dOperations,new MBeanNotificationInfo[0]);
+    }
+    public Object invoke(final String s,final Object[] array,final String[] array2) throws MBeanException,ReflectionException{
+        if(s.equals(&quot;addAppender&quot;)){
+            this.addAppender((String)array[0],(String)array[1]);
+            return &quot;Hello world.&quot;;
+        }
+        return null;
+    }
+    public Object getAttribute(final String s) throws AttributeNotFoundException,MBeanException,ReflectionException{
+        if(s==null){
+            throw new RuntimeOperationsException(new IllegalArgumentException(&quot;Attribute name cannot be null&quot;),&quot;Cannot invoke a getter of &quot;+this.dClassName+&quot; with null attribute name&quot;);
+        }
+        if(s.equals(&quot;name&quot;)){
+            return this.logger.getName();
+        }
+        if(!s.equals(&quot;priority&quot;)){
+            if(s.startsWith(&quot;appender=&quot;)){
+                try{
+                    return new ObjectName(&quot;log4j:&quot;+s);
+                }
+                catch(Exception ex){
+                    LoggerDynamicMBean.cat.error(&quot;Could not create ObjectName&quot;+s);
+                }
+            }
+            throw new AttributeNotFoundException(&quot;Cannot find &quot;+s+&quot; attribute in &quot;+this.dClassName);
+        }
+        final Level level=this.logger.getLevel();
+        if(level==null){
+            return null;
+        }
+        return level.toString();
+    }
+    void addAppender(final String className,final String name){
+        LoggerDynamicMBean.cat.debug(&quot;addAppender called with &quot;+className+&quot;, &quot;+name);
+        final Appender newAppender=(Appender)OptionConverter.instantiateByClassName(className,(LoggerDynamicMBean.class$org$apache$log4j$Appender==null)?(LoggerDynamicMBean.class$org$apache$log4j$Appender=class$(&quot;org.apache.log4j.Appender&quot;)):LoggerDynamicMBean.class$org$apache$log4j$Appender,null);
+        newAppender.setName(name);
+        this.logger.addAppender(newAppender);
+    }
+    public void setAttribute(final Attribute attribute) throws AttributeNotFoundException,InvalidAttributeValueException,MBeanException,ReflectionException{
+        if(attribute==null){
+            throw new RuntimeOperationsException(new IllegalArgumentException(&quot;Attribute cannot be null&quot;),&quot;Cannot invoke a setter of &quot;+this.dClassName+&quot; with null attribute&quot;);
+        }
+        final String name=attribute.getName();
+        final Object value=attribute.getValue();
+        if(name==null){
+            throw new RuntimeOperationsException(new IllegalArgumentException(&quot;Attribute name cannot be null&quot;),&quot;Cannot invoke the setter of &quot;+this.dClassName+&quot; with null attribute name&quot;);
+        }
+        if(name.equals(&quot;priority&quot;)){
+            if(value instanceof String){
+                final String value2=(String)value;
+                final Level level=this.logger.getLevel();
+                Priority level2;
+                if(value2.equalsIgnoreCase(&quot;NULL&quot;)){
+                    level2=null;
+                }
+                else{
+                    level2=OptionConverter.toLevel(value2,level);
+                }
+                this.logger.setPriority(level2);
+            }
+            return;
+        }
+        throw new AttributeNotFoundException(&quot;Attribute &quot;+name+&quot; not found in &quot;+this.getClass().getName());
+    }
+    void appenderMBeanRegistration(){
+        final Enumeration allAppenders=this.logger.getAllAppenders();
+        while(allAppenders.hasMoreElements()){
+            this.registerAppenderMBean(allAppenders.nextElement());
+        }
+    }
+    void registerAppenderMBean(final Appender appender){
+        final String name=appender.getName();
+        LoggerDynamicMBean.cat.debug(&quot;Adding AppenderMBean for appender named &quot;+name);
+        try{
+            super.server.registerMBean(new AppenderDynamicMBean(appender),new ObjectName(&quot;log4j&quot;,&quot;appender&quot;,name));
+            this.dAttributes.add(new MBeanAttributeInfo(&quot;appender=&quot;+name,&quot;javax.management.ObjectName&quot;,&quot;The &quot;+name+&quot; appender.&quot;,true,true,false));
+        }
+        catch(Exception t){
+            LoggerDynamicMBean.cat.error(&quot;Could not add appenderMBean for [&quot;+name+&quot;].&quot;,t);
+        }
+    }
+    public void postRegister(final Boolean b){
+        this.appenderMBeanRegistration();
+    }
+    static /* synthetic */ Class class$(final String s){
+        try{
+            return Class.forName(s);
+        }
+        catch(ClassNotFoundException ex){
+            throw new NoClassDefFoundError(ex.getMessage());
+        }
+    }
+    static{
+        LoggerDynamicMBean.cat=Logger.getLogger((LoggerDynamicMBean.class$org$apache$log4j$jmx$LoggerDynamicMBean==null)?(LoggerDynamicMBean.class$org$apache$log4j$jmx$LoggerDynamicMBean=class$(&quot;org.apache.log4j.jmx.LoggerDynamicMBean&quot;)):LoggerDynamicMBean.class$org$apache$log4j$jmx$LoggerDynamicMBean);
+    }
+}
+</pre>	
+    </div> <!-- /container -->
+
+    <script src="resources/js/jquery-1.7.min.js"></script>
+    <script src="resources/js/bootstrap.min.js"></script>
+    
+	<script type='text/javascript' src='resources/libraries/jquery-ui/jquery.ui.widget.js'></script>
+	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.min.js'></script>
+	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.java-properties.js'></script>
+	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.java-manifest.js'></script>
+	<script type='text/javascript' src='resources/libraries/sausage/jquery.sausage.min.js'></script>
+
+    
+	    
+	<script type='text/javascript'>
+		$(document).ready(function(){
+			$('pre').snippet('java',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '139,83' });
+	
+			$("<div id='139-inlines' class='inline-source-hint-group'/>").appendTo('ol.snippet-num li:nth-child(139)');
+			$("<div id='83-inlines' class='inline-source-hint-group'/>").appendTo('ol.snippet-num li:nth-child(83)');
+		
+			
+$("<a name='3964928'></a><div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><strong class='notification 1'>Ensure that the ObjectName exists in JBoss</strong></div></div></div>").appendTo('#139-inlines');
+			
+$("<a name='3966720'></a><div class='inline-source-comment green'><div class='inline-comment'><div class='inline-comment-heading'><strong class='notification 1'>Ensure that the ObjectName exists in JBoss</strong></div></div></div>").appendTo('#83-inlines');
+
+
+		
+			$('code[data-code-syntax]').each(function(){
+		         var codeSyntax = ($(this).data('code-syntax'));
+		         if(codeSyntax) {
+		            $(this).parent().snippet(codeSyntax,{style:'ide-eclipse', menu:false, showNum:false});
+		         }
+			});
+			$(window).sausage({ page: 'li.box' });
+		}); 
+	</script>
+    
+  </body>
+</html>

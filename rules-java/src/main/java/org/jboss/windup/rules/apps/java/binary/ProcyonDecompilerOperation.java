@@ -128,7 +128,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                 public void run()
                 {
                     LOG.info("Performing final commit for archive vertex: " + archiveModelID);
-                    context.getGraph().getBaseGraph().commit();
+                    context.commit();
                 }
             });
             executorService.shutdown();
@@ -231,7 +231,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                     if (atomicInteger.incrementAndGet() % 100 == 0)
                     {
                         LOG.info("Performing periodic commit (" + atomicInteger.get() + ") for archive vertex: " + archiveModelID);
-                        context.getGraph().getBaseGraph().commit();
+                        context.commit();
                     }
                 }
             });

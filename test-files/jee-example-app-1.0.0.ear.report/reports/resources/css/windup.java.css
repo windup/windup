@@ -1,0 +1,40 @@
+.windupPieGraph {
+  height:250px;
+  width:800px;
+  margin: 0 auto;
+  border: 0px dashed gainsboro;
+}
+
+.windupPieGraph div.legend table {
+  width: 300px;
+}
+
+.windupPieGraph div.legend td.legendColorBox, 
+.windupPieGraph div.legend td.legendColorBox div {
+  width: 14px;
+}
+
+.totalLoe {
+  font-size: 100px;
+  display: block;
+  color: #00254b;
+  text-align: right;
+  text-shadow: 0px -1px 1px #000;
+}
+
+.totalDesc {
+  color: #999;
+  font-size: 15px;
+  text-align: right;
+  margin-right: 10px;
+  margin-top: -10px;
+}
+
+.mainGraphContainer {
+  margin-bottom: 20px;
+} 
+
+.archiveGraphContainer {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

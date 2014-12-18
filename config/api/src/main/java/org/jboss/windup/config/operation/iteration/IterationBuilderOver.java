@@ -7,6 +7,7 @@
 package org.jboss.windup.config.operation.iteration;
 
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.iteration.threaded.IterationBuilderThreaded;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -17,8 +18,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 public interface IterationBuilderOver extends IterationBuilderVar
 {
     /**
-     * Sets the name and type of the variable for this iteration's "current element". The type server for automatic type
-     * check.
+     * Sets the name and type of the variable for this iteration's "current element". The type server for automatic type check.
      */
     public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var);
 
@@ -26,5 +26,9 @@ public interface IterationBuilderOver extends IterationBuilderVar
      * Sets the name of the variable for this iteration's "current element".
      */
     public IterationBuilderVar as(String var);
+
+    public IterationBuilderThreaded threaded();
+
+    public IterationBuilderThreaded threaded(int threaded);
 
 }

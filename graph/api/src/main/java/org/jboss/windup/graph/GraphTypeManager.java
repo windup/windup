@@ -18,7 +18,6 @@ import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
@@ -67,8 +66,8 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
-        EventVertex ev = (EventVertex) element;
-        StandardVertex v = (StandardVertex) ev.getBaseVertex();
+        VertexWrapper vertexWrapper = (VertexWrapper) element;
+        StandardVertex v = (StandardVertex) vertexWrapper.getBaseVertex();
         Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
@@ -129,7 +128,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      * of types in the type list will be returned). This prevents Annotation resolution issues between superclasses and subclasses (see also:
      * WINDUP-168).
      */
-    private Class<?>[] resolve(Element e, Class<?> defaultType)
+    private Class<?>[] resolve(Element element, Class<?> defaultType)
     {
         // The class field holding the name of the type holding property.
         Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(defaultType);
@@ -137,10 +136,10 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             // Name of the graph element property holding the type list.
             String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-            EventVertex ev = (EventVertex) e;
-            StandardVertex v = (StandardVertex) ev.getBaseVertex();
+            VertexWrapper vertexWrapper = (VertexWrapper) element;
+            StandardVertex standardVertex = (StandardVertex) vertexWrapper.getBaseVertex();
 
-            Iterable<TitanProperty> valuesAll = v.getProperties(propName);
+            Iterable<TitanProperty> valuesAll = standardVertex.getProperties(propName);
             if (valuesAll != null)
             {
 
