@@ -2,6 +2,7 @@ package com.tinkerpop.frames;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.ElementHelper;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
 import com.tinkerpop.frames.modules.MethodHandler;
@@ -22,13 +23,16 @@ public class FramedElement implements InvocationHandler {
 
     private final Direction direction;
     protected final FramedGraph framedGraph;
-    protected final Element element;
+    private final Object elementID;
+    
+    protected Element element;
+    
+    private final boolean isVertex;
     private static Method hashCodeMethod;
     private static Method equalsMethod;
     private static Method toStringMethod;
     private static Method asVertexMethod;
     private static Method asEdgeMethod;
-
 
     static {
         try {
@@ -54,16 +58,28 @@ public class FramedElement implements InvocationHandler {
             throw new IllegalArgumentException("Element can not be null");
         }
 
+        this.elementID = element.getId();
         this.element = element;
+        this.isVertex = element instanceof Vertex;
+        
         this.framedGraph = framedGraph;
         this.direction = direction;
+        
+        framedGraph.addWrappedGraphReplacedListener(new FramedGraph.WrappedGraphReplacedListener() {
+            @Override
+            public void onWrappedGraphReplaced() {
+        	synchronized (FramedElement.this) {
+        	    FramedElement.this.element = null;
+        	}
+            }
+	});
     }
 
     public FramedElement(final FramedGraph framedGraph, final Element element) {
         this(framedGraph, element, Direction.OUT);
     }
 
-    public Object invoke(final Object proxy, final Method originalMethod, final Object[] arguments) {
+    public synchronized Object invoke(final Object proxy, final Method originalMethod, final Object[] arguments) {
         Method method = null;
         
         // try to find the method on one of the proxy's interfaces
@@ -89,26 +105,26 @@ public class FramedElement implements InvocationHandler {
         for (final Annotation annotation : annotations) {
 			MethodHandler methodHandler = methodHandlers.get(annotation.annotationType());
             if (methodHandler != null) {
-                return methodHandler.processElement(proxy, method, arguments, annotation, this.framedGraph, this.element);
+                return methodHandler.processElement(proxy, method, arguments, annotation, this.framedGraph, getElement());
             }
         }
         for (final Annotation annotation : annotations) {
 			AnnotationHandler annotationHandler = annotationHandlers.get(annotation.annotationType());
             if (annotationHandler != null) {
-                return annotationHandler.processElement(annotation, method, arguments, this.framedGraph, this.element, this.direction);
+                return annotationHandler.processElement(annotation, method, arguments, this.framedGraph, getElement(), this.direction);
             }
         }
         
         // Now that we have checked for annotations, check if it is one of the default methods that we 
         // have builtin support for
         if (originalMethod.equals(hashCodeMethod)) {
-            return this.element.hashCode();
+            return getElement().hashCode();
         } else if (originalMethod.equals(equalsMethod)) {
             return this.proxyEquals(arguments[0]);
         } else if (originalMethod.equals(toStringMethod)) {
-            return this.element.toString();
+            return getElement().toString();
         } else if (originalMethod.equals(asVertexMethod) || originalMethod.equals(asEdgeMethod)) {
-            return this.element;
+            return getElement();
         }
         
         if(method.getAnnotations().length == 0) {
@@ -142,17 +158,26 @@ public class FramedElement implements InvocationHandler {
     
     private Boolean proxyEquals(final Object other) {
         if (other instanceof VertexFrame) {
-            return this.element.equals(((VertexFrame) other).asVertex());
+            return this.getElement().equals(((VertexFrame) other).asVertex());
         } if (other instanceof EdgeFrame) {
-            return this.element.equals(((EdgeFrame) other).asEdge());
+            return this.getElement().equals(((EdgeFrame) other).asEdge());
         } else if (other instanceof Element) {
-            return ElementHelper.areEqual(this.element, other);
+            return ElementHelper.areEqual(getElement(), other);
         } else {
             return Boolean.FALSE;
         }
     }
 
-    public Element getElement() {
-        return this.element;
+    public synchronized Element getElement() {
+	Element loadedElement = this.element;
+	if (loadedElement == null) {
+	    if (isVertex) {
+		loadedElement = this.framedGraph.getVertex(this.elementID);
+	    } else {
+		loadedElement = this.framedGraph.getEdge(this.elementID);
+	    }
+	    this.element = loadedElement;
+	}
+        return loadedElement;
     }
 }

@@ -3,7 +3,6 @@ package org.jboss.windup.graph.service;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
-import com.thinkaurelius.titan.core.TitanTransaction;
 import com.tinkerpop.frames.VertexFrame;
 
 /**
@@ -85,13 +84,6 @@ public interface Service<FRAMETYPE extends VertexFrame>
      * Search the graph for a model of the appropriate type with the given property name and value. Return <code>null</code> if not found.
      */
     FRAMETYPE getUniqueByProperty(String property, Object value) throws NonUniqueResultException;
-
-    /**
-     * Begin a transaction.
-     * 
-     * @see #commit()
-     */
-    TitanTransaction newTransaction();
 
     /**
      * Get the {@link WindupVertexFrame} type for which this {@link Service} operates.

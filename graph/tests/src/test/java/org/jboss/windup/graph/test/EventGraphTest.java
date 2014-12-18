@@ -50,7 +50,7 @@ public class EventGraphTest
             Assert.assertNotNull(context);
 
             StubGraphChangedListener stubGraphListener = new StubGraphChangedListener();
-            context.getGraph().addListener(stubGraphListener);
+            context.addGraphChangedListener(stubGraphListener);
 
             TestFooModel initialModelType = context.getFramed().addVertex(null, TestFooModel.class);
 

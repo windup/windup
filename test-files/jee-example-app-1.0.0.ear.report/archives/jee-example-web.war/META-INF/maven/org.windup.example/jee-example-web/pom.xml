@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>jee-example</artifactId>
+    <groupId>org.windup.example</groupId>
+    <version>1.0.0</version>
+    <relativePath>..</relativePath>
+  </parent>
+  <artifactId>jee-example-web</artifactId>
+  <packaging>war</packaging>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.windup.example</groupId>
+  		<artifactId>jee-example-services</artifactId>
+  		<version>1.0.0</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>javaee</groupId>
+  		<artifactId>javaee-api</artifactId>
+  		<version>5</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-lang</groupId>
+  		<artifactId>commons-lang</artifactId>
+  		<version>2.5</version>
+  	</dependency>
+  </dependencies>
+  <name>JEE Example Web Application</name>
+</project>

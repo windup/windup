@@ -97,7 +97,7 @@ public class JavaClassXmlRulesTest
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setGraphContext(context);

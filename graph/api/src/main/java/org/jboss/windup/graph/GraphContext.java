@@ -7,7 +7,9 @@ import java.util.Map;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 
 import com.thinkaurelius.titan.core.TitanGraph;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
+import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
 import com.tinkerpop.frames.FramedGraph;
 
 /**
@@ -22,15 +24,19 @@ public interface GraphContext extends Closeable
      */
     Path getGraphDirectory();
 
+    void addGraphChangedListener(GraphChangedListener listener);
+
+    void commit();
+
     /**
      * Get the underlying {@link EventGraph}, which is itself a wrapper for a {@link TitanGraph}.
      */
-    EventGraph<TitanGraph> getGraph();
+    Graph getGraph();
 
     /**
      * Get the {@link FramedGraph} view of the underlying {@link EventGraph}.
      */
-    FramedGraph<EventGraph<TitanGraph>> getFramed();
+    FramedGraph<? extends Graph> getFramed();
 
     /**
      * Get the {@link GraphTypeRegistry}.

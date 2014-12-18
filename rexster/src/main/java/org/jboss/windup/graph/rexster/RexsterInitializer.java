@@ -16,9 +16,7 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.tinkerpop.frames.FramedGraph;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.rexster.protocol.EngineConfiguration;
 import com.tinkerpop.rexster.protocol.EngineController;
 import com.tinkerpop.rexster.server.DefaultRexsterApplication;
@@ -50,7 +48,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener
         return null;
     }
 
-    public void start(FramedGraph<EventGraph<TitanGraph>> graph)
+    public void start(Graph graph)
     {
         try (PrintWriter out = new PrintWriter("rexster.xml"))
         {
@@ -64,7 +62,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener
             extractZipFile(rexsterAddonDir, rexsterExtractDirectory);
             configureScriptEngine(properties);
             HttpRexsterServer rexsterServer = new HttpRexsterServer(properties);
-            rexsterServer.start(new DefaultRexsterApplication("main", graph.getBaseGraph()));
+            rexsterServer.start(new DefaultRexsterApplication("main", graph));
 
             RexProRexsterServer rexPro = new RexProRexsterServer(properties, true);
             rexPro.start(new DefaultRexsterApplication("main", graph));
@@ -241,6 +239,6 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     {
         rexsterExtractDirectory = getAddon().getRepository().getAddonDescriptor(getAddon().getId()).getParent() + "/rexster-extract";
         configurationString = createRexsterXmlFileString(configuration);
-        start(graphContext.getFramed());
+        start(graphContext.getGraph());
     }
 }

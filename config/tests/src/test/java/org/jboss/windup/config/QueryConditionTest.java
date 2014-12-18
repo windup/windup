@@ -219,7 +219,7 @@ public class QueryConditionTest
         {
 
             fillData(context);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             // setup the context for the rules
             GraphRewrite event = new GraphRewrite(context);
@@ -243,7 +243,7 @@ public class QueryConditionTest
         {
 
             fillData(context);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             // setup the context for the rules
             GraphRewrite event = new GraphRewrite(context);
@@ -275,7 +275,7 @@ public class QueryConditionTest
         {
 
             fillData(context);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             // setup the context for the rules
             GraphRewrite event = new GraphRewrite(context);
@@ -300,7 +300,7 @@ public class QueryConditionTest
         {
 
             fillData(context);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             // setup the context for the rules
             GraphRewrite event = new GraphRewrite(context);

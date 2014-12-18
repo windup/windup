@@ -114,7 +114,7 @@ public class JavaClassTest
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(

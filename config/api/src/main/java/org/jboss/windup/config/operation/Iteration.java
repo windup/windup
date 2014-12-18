@@ -11,11 +11,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.exception.IllegalTypeArgumentException;
+import org.jboss.windup.config.operation.executor.WindupExecutorFactory;
 import org.jboss.windup.config.operation.iteration.IterationBuilderComplete;
 import org.jboss.windup.config.operation.iteration.IterationBuilderOtherwise;
 import org.jboss.windup.config.operation.iteration.IterationBuilderOver;
@@ -29,8 +32,10 @@ import org.jboss.windup.config.operation.iteration.TopLayerSingletonFramesSelect
 import org.jboss.windup.config.operation.iteration.TypedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
+import org.jboss.windup.config.operation.iteration.threaded.IterationBuilderThreaded;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.CompositeOperation;
@@ -43,15 +48,15 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
- * Used to iterate over an implicit or explicit variable defined within the corresponding
- * {@link ConfigurationRuleBuilder#when(Condition)} clause in the current rule.
+ * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
+ * the current rule.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Iteration extends DefaultOperationBuilder
             implements IterationBuilderVar, IterationBuilderOver,
             IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise,
-            IterationBuilderComplete, CompositeOperation
+            IterationBuilderComplete, IterationBuilderThreaded, CompositeOperation
 {
     private static final String VAR_INSTANCE_STRING = "_instance";
     public static final String DEFAULT_VARIABLE_LIST_STRING = "default";
@@ -63,6 +68,9 @@ public class Iteration extends DefaultOperationBuilder
 
     private IterationPayloadManager payloadManager;
     private final FramesSelector selectionManager;
+
+    private boolean threaded;
+    private int numberOfThreads;
 
     /**
      * Calculates the default name for the single variable in the selection with the given name.
@@ -82,8 +90,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the named selection of the given type. Also sets the name and type of the
-     * variable for this iteration's "current element". The type server for automatic type check.
+     * Begin an {@link Iteration} over the named selection of the given type. Also sets the name and type of the variable for this iteration's
+     * "current element". The type server for automatic type check.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
@@ -94,8 +102,7 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's
-     * "current element".
+     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's "current element".
      */
     public static IterationBuilderOver over(String source)
     {
@@ -105,8 +112,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name
-     * of the variable for this iteration's "current element" to have the default value.
+     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name of the variable for this
+     * iteration's "current element" to have the default value.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType)
     {
@@ -117,8 +124,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection that is placed on the top of the {@link Variables}. Also sets the
-     * name of the variable for this iteration's "current element" (i.e payload) to have the default value.
+     * Begin an {@link Iteration} over the selection that is placed on the top of the {@link Variables}. Also sets the name of the variable for this
+     * iteration's "current element" (i.e payload) to have the default value.
      */
     public static IterationBuilderOver over()
     {
@@ -128,8 +135,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Change the name of the single variable of the given type. If this method is not called, the name is calculated
-     * using the {@link Iteration.singleVariableIterationName()} method.
+     * Change the name of the single variable of the given type. If this method is not called, the name is calculated using the {@link
+     * Iteration.singleVariableIterationName()} method.
      */
     @Override
     public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var)
@@ -183,6 +190,21 @@ public class Iteration extends DefaultOperationBuilder
         return this;
     }
 
+    @Override
+    public IterationBuilderThreaded threaded()
+    {
+        this.threaded = true;
+        return this;
+    }
+
+    @Override
+    public IterationBuilderThreaded threaded(int threadCount)
+    {
+        this.threaded = true;
+        this.numberOfThreads = threadCount;
+        return this;
+    }
+
     /**
      * Visual end of the iteration.
      */
@@ -202,58 +224,119 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Called internally to actually process the Iteration. Loops over the frames to iterate, and performs their
-     * .perform( ... ) or .otherwise( ... ) parts.
+     * Called internally to actually process the Iteration. Loops over the frames to iterate, and performs their .perform( ... ) or .otherwise( ... )
+     * parts.
      */
-    public void perform(GraphRewrite event, EvaluationContext context)
+    public void perform(final GraphRewrite event, final EvaluationContext context)
     {
-        Variables variables = Variables.instance(event);
+        final Variables variablesOrig = Variables.instance(event);
         Iterable<? extends WindupVertexFrame> frames = getSelectionManager().getFrames(event, context);
         event.getRewriteContext().put(DEFAULT_VARIABLE_LIST_STRING, frames); // set the current frames
-        for (WindupVertexFrame frame : frames)
+
+        final ExecutorService executor;
+        if (threaded)
         {
-            variables.push();
-            getPayloadManager().setCurrentPayload(variables, frame);
-            boolean conditionResult = true;
-            if (condition != null)
+            executor = WindupExecutorFactory.createExecutorService(this.numberOfThreads);
+        }
+        else
+        {
+            executor = null;
+        }
+
+        for (final WindupVertexFrame frame : frames)
+        {
+            Runnable r = new Runnable()
             {
-                // automatically set the input variable to point to the current payload
-                if (condition instanceof GraphCondition)
+                public void run()
                 {
-                    ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
+                    Variables variables;
+                    if (executor == null)
+                    {
+                        variables = variablesOrig;
+                    }
+                    else
+                    {
+                        variables = variablesOrig.cloneToNewThread(event);
+                    }
+                    variables.push();
+                    getPayloadManager().setCurrentPayload(variables, frame);
+                    boolean conditionResult = true;
+                    if (condition != null)
+                    {
+                        // automatically set the input variable to point to the current payload
+                        if (condition instanceof GraphCondition)
+                        {
+                            ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
+                        }
+                        conditionResult = condition.evaluate(event, context);
+                        /*
+                         * Add special clear layer for perform, because condition used one and could have added new variables. The condition result
+                         * put into variables is ignored.
+                         */
+                        variables.push();
+                        getPayloadManager().setCurrentPayload(variables, frame);
+                    }
+                    if (conditionResult)
+                    {
+                        if (operationPerform != null)
+                        {
+                            operationPerform.perform(event, context);
+                        }
+                    }
+                    else if (condition != null)
+                    {
+                        if (operationOtherwise != null)
+                        {
+                            operationOtherwise.perform(event, context);
+                        }
+                    }
+                    getPayloadManager().removeCurrentPayload(variables);
+                    // remove the perform layer
+                    variables.pop();
+                    if (condition != null)
+                    {
+                        // remove the condition layer
+                        variables.pop();
+                    }
                 }
-                conditionResult = condition.evaluate(event, context);
-                /*
-                 * Add special clear layer for perform, because condition used one and could have added new variables.
-                 * The condition result put into variables is ignored.
-                 */
-                variables.push();
-                getPayloadManager().setCurrentPayload(variables, frame);
-            }
-            if (conditionResult)
+            };
+            if (executor == null)
             {
-                if (operationPerform != null)
-                {
-                    operationPerform.perform(event, context);
-                }
+                r.run();
             }
-            else if (condition != null)
+            else
             {
-                if (operationOtherwise != null)
-                {
-                    operationOtherwise.perform(event, context);
-                }
-            }
-            getPayloadManager().removeCurrentPayload(variables);
-            // remove the perform layer
-            variables.pop();
-            if (condition != null)
-            {
-                // remove the condition layer
-                variables.pop();
+                executor.execute(r);
             }
         }
 
+        if (executor != null)
+        {
+            executor.shutdown();
+            try
+            {
+                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            }
+            catch (InterruptedException e)
+            {
+                throw new WindupException("Threaded iteration was interrupted due to: " + e.getMessage(), e);
+            }
+        }
+
+        ExecutorService persistenceExecutor = WindupExecutorFactory.getSingleThreadedIterationPersistenceExecutor(event);
+        persistenceExecutor.shutdown();
+        try
+        {
+            persistenceExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            throw new WindupException("Iteration was interrupted due to: " + e.getMessage(), e);
+        }
+        finally
+        {
+            WindupExecutorFactory.removeSingleThreadedIterationPersistenceExecutor(event);
+        }
     }
 
     @Override
@@ -265,8 +348,7 @@ public class Iteration extends DefaultOperationBuilder
     /**
      * Return the current {@link Iteration} payload variable name.
      * 
-     * @throws IllegalStateException if there is more than one variable in the {@link Variables} stack, and the payload
-     *             name cannot be determined.
+     * @throws IllegalStateException if there is more than one variable in the {@link Variables} stack, and the payload name cannot be determined.
      */
     public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx) throws IllegalStateException
     {

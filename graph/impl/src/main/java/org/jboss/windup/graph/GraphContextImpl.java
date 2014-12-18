@@ -1,9 +1,11 @@
 package org.jboss.windup.graph;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -15,17 +17,20 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.wrapper.EventGraphWithMultiThreadedTitanTransactions;
 
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
 import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
+import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
@@ -39,11 +44,15 @@ public class GraphContextImpl implements GraphContext
     private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
 
     private Furnace furnace;
+    private GraphApiCompositeClassLoaderProvider classLoaderProvider;
     private Map<String, Object> configurationOptions;
     private final GraphTypeRegistry graphTypeRegistry;
-    private final EventGraph<TitanGraph> eventGraph;
-    private final BatchGraph<TitanGraph> batchGraph;
-    private final FramedGraph<EventGraph<TitanGraph>> framed;
+    private final TitanGraph titanGraph;
+    private final EventGraphWithMultiThreadedTitanTransactions eventGraph;
+    private final FramedGraph<? extends Graph> framed;
+    private final List<GraphChangedListener> listeners = new ArrayList<>();
+
+    private BatchGraph<TitanGraph> batchGraph;
 
     private final Path graphDir;
 
@@ -51,6 +60,7 @@ public class GraphContextImpl implements GraphContext
                 Path graphDir)
     {
         this.furnace = furnace;
+        this.classLoaderProvider = classLoaderProvider;
         this.graphTypeRegistry = graphTypeRegistry;
         this.graphDir = graphDir;
 
@@ -81,7 +91,7 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("index.search.backend", "lucene");
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
 
-        final TitanGraph titanGraph = TitanFactory.open(conf);
+        this.titanGraph = TitanFactory.open(conf);
 
         // TODO: This has to load dynamically.
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
@@ -111,9 +121,12 @@ public class GraphContextImpl implements GraphContext
         }
         mgmt.commit();
 
-        this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
+        this.eventGraph = new EventGraphWithMultiThreadedTitanTransactions(titanGraph);
+        for (GraphChangedListener listener : this.listeners)
+        {
+            this.eventGraph.addListener(listener);
+        }
         this.batchGraph = new BatchGraph<TitanGraph>(titanGraph, 1000L);
-
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
         final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver()
@@ -150,7 +163,7 @@ public class GraphContextImpl implements GraphContext
                     new GremlinGroovyModule() // @Gremlin
         );
 
-        framed = factory.create(eventGraph);
+        this.framed = factory.create(eventGraph);
 
         Imported<AfterGraphInitializationListener> afterInitializationListeners = furnace.getAddonRegistry().getServices(
                     AfterGraphInitializationListener.class);
@@ -162,7 +175,7 @@ public class GraphContextImpl implements GraphContext
             confProps.put(key, conf.getProperty(key));
         }
 
-        System.out.println("Properties: " + confProps);
+        log.fine("Properties: " + confProps);
         if (!afterInitializationListeners.isUnsatisfied())
         {
             for (AfterGraphInitializationListener listener : afterInitializationListeners)
@@ -170,6 +183,19 @@ public class GraphContextImpl implements GraphContext
                 listener.afterGraphStarted(confProps, this);
             }
         }
+    }
+
+    @Override
+    public void commit()
+    {
+        this.eventGraph.commit();
+        this.framed.fireWrappedGraphReplacedEvent();
+    }
+
+    @Override
+    public void addGraphChangedListener(GraphChangedListener listener)
+    {
+        this.listeners.add(listener);
     }
 
     @Override
@@ -181,17 +207,17 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void close()
     {
-        this.eventGraph.getBaseGraph().shutdown();
+        this.eventGraph.shutdown();
     }
 
     @Override
     public void clear()
     {
-        TitanCleanup.clear(this.eventGraph.getBaseGraph());
+        TitanCleanup.clear(this.titanGraph);
     }
 
     @Override
-    public EventGraph<TitanGraph> getGraph()
+    public EventGraph<TitanTransaction> getGraph()
     {
         return eventGraph;
     }
@@ -207,7 +233,7 @@ public class GraphContextImpl implements GraphContext
     }
 
     @Override
-    public FramedGraph<EventGraph<TitanGraph>> getFramed()
+    public FramedGraph<? extends Graph> getFramed()
     {
         return framed;
     }

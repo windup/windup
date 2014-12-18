@@ -1,10 +1,14 @@
 package com.tinkerpop.frames;
 
 import java.lang.annotation.Annotation;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -42,7 +46,28 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 
 	private FramedGraphConfiguration config;
 	private boolean configViaFactory;
+	private List<WeakReference<WrappedGraphReplacedListener>> wrappedGraphReplacedListeners = new ArrayList<>();
 
+	public static interface WrappedGraphReplacedListener {
+	    void onWrappedGraphReplaced();
+	}
+	
+	public void addWrappedGraphReplacedListener(WrappedGraphReplacedListener l) {
+	    this.wrappedGraphReplacedListeners.add(new WeakReference<FramedGraph.WrappedGraphReplacedListener>(l));
+	}
+	
+	public void fireWrappedGraphReplacedEvent() {
+	    ListIterator<WeakReference<WrappedGraphReplacedListener>> iterator = wrappedGraphReplacedListeners.listIterator();
+	    while (iterator.hasNext()) {
+		WrappedGraphReplacedListener listener = iterator.next().get();
+		if (listener == null) {
+		    iterator.remove();
+		} else {
+		    listener.onWrappedGraphReplaced();
+		}
+	    }
+	}
+	
 	/**
 	 * @param baseGraph The original graph being framed.
 	 * @param config The configuration for the framed graph.
@@ -95,7 +120,6 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 		if(vertex == null) {
 			return null;
 		}
-		
 		Collection<Class<?>> resolvedTypes = new HashSet<Class<?>>();
 		resolvedTypes.add(VertexFrame.class);
 		resolvedTypes.add(kind);

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Source Report for weblogic-ejb-jar.xml</title>
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/windup.css" rel="stylesheet" media="screen">
+	  <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
+	  <link rel='stylesheet' type='text/css' href='resources/css/windup-source.css' />
+	  <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
+  </head>
+  <body role="document">
+    
+    <!-- Fixed navbar -->
+    <div class="navbar-fixed-top windup-bar" role="navigation">
+      <div class="container theme-showcase" role="main">
+        <img src="resources/img/windup-logo.png" class="logo"/>
+      </div>
+    </div>
+
+
+    <div class="container" role="main">
+        <div class="row">
+          <div class="page-header page-header-no-border">
+            <h1>
+              Source Report
+              <span class="slash">/</span>
+              <small style="margin-left: 20px; font-weight: 100;">jee-example-app-1.0.0.ear/jee-example-services.jar/META-INF/weblogic-ejb-jar.xml</small>
+            </h1>
+            <div class="navbar navbar-default">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+            <div class="navbar-collapse collapse navbar-responsive-collapse">
+	     <ol class="breadcrumb top-menu">
+		<li><a href="../index.html">All Applications</a></li>
+  <li><a href="JEE_Example_App__org_windup_example_jee_example_app_1_0_0_.1.html">JEE Example App (org.windup.example:jee-example-app:1.0.0)</a></li>
+  
+  <li><a href="weblogic_ejb_jar_xml.1.html">weblogic-ejb-jar.xml</a></li>
+  
+	     </ol> 
+            </div>
+            <div class="navbar-collapse collapse navbar-responsive-collapse">
+              <ul class="nav navbar-nav">
+  <li><a href="JEE_Example_App__org_windup_example_jee_example_app_1_0_0_.1.html">Overview</a></li>
+  <li><a href="ignoredfiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_.1.html">Ignored Files</a></li>
+  <li><a href="nonclassifiedfiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_.1.html">Unclassified Files</a></li>
+              </ul>
+            </div><!-- /.nav-collapse -->
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+
+    <div class="container theme-showcase" role="main">
+
+    <div class="panel panel-default">
+    	<div class="panel-heading">Information</div>
+    	<div class="panel-body">
+	        <ul>
+	          <li>Estimated Story Points: 3</li>
+            </ul>
+        
+            <ul>
+	            <li>
+					Weblogic EJB XML
+					<ul>
+					</ul>
+				</li>
+					<li>
+						 <a href='transformedxml/weblogic-ejb-jar-xml-jboss.xml'>JBoss EJB Descriptor (Windup-Generated)</a>
+
+					</li>
+            </ul>
+		</div>
+      </div>
+    
+    
+
+<pre id='source'>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;weblogic-ejb-jar xmlns=&quot;http://www.bea.com/ns/weblogic/90&quot; xmlns:j2ee=&quot;http://java.sun.com/xml/ns/j2ee&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://www.bea.com/ns/weblogic/90 http://www.bea.com/ns/weblogic/90/weblogic-ejb-jar.xsd&quot;&gt;
+	&lt;weblogic-enterprise-bean&gt;
+		&lt;ejb-name&gt;ItemLookupBean&lt;/ejb-name&gt;
+		&lt;stateless-session-descriptor&gt;
+		&lt;/stateless-session-descriptor&gt;
+		&lt;transaction-descriptor&gt;
+			&lt;trans-timeout-seconds&gt;180&lt;/trans-timeout-seconds&gt;
+		&lt;/transaction-descriptor&gt;
+		&lt;enable-call-by-reference&gt;true&lt;/enable-call-by-reference&gt;
+		&lt;run-as-principal-name&gt;Admin&lt;/run-as-principal-name&gt;
+		&lt;jndi-name&gt;ejb/ItemLookupBean&lt;/jndi-name&gt;
+	&lt;/weblogic-enterprise-bean&gt;
+
+	&lt;weblogic-enterprise-bean&gt;
+		&lt;ejb-name&gt;ProductCatalogBean&lt;/ejb-name&gt;
+		&lt;stateless-session-descriptor&gt;
+		&lt;/stateless-session-descriptor&gt;
+		&lt;transaction-descriptor&gt;
+			&lt;trans-timeout-seconds&gt;180&lt;/trans-timeout-seconds&gt;
+		&lt;/transaction-descriptor&gt;
+		&lt;enable-call-by-reference&gt;true&lt;/enable-call-by-reference&gt;
+		&lt;run-as-principal-name&gt;Admin&lt;/run-as-principal-name&gt;
+		&lt;jndi-name&gt;ejb/ProductCatalogBean&lt;/jndi-name&gt;
+	&lt;/weblogic-enterprise-bean&gt;
+	
+	&lt;weblogic-enterprise-bean&gt;
+		&lt;ejb-name&gt;LogEventSubscriber&lt;/ejb-name&gt;
+		&lt;message-driven-descriptor&gt;
+			&lt;destination-jndi-name&gt;jms/LogEventQueue&lt;/destination-jndi-name&gt;
+		&lt;/message-driven-descriptor&gt;
+		&lt;run-as-principal-name&gt;admin_user&lt;/run-as-principal-name&gt;
+	&lt;/weblogic-enterprise-bean&gt;
+
+	&lt;security-role-assignment&gt;
+		&lt;role-name&gt;acme_user&lt;/role-name&gt;
+		&lt;principal-name&gt;AnvilUser&lt;/principal-name&gt;
+		&lt;principal-name&gt;Admin&lt;/principal-name&gt;
+	&lt;/security-role-assignment&gt;
+
+	&lt;!-- http://docs.oracle.com/cd/E15051_01/wls/docs103/ejb/DDreference-ejb-jar.html#wp1114299 --&gt;
+	&lt;idempotent-methods&gt;
+		&lt;method&gt;
+			&lt;ejb-name&gt;ItemLookupBean&lt;/ejb-name&gt;
+			&lt;method-name&gt;lookupItem&lt;/method-name&gt;
+			&lt;method-params&gt;
+				&lt;method-param&gt;java.lang.Long&lt;/method-param&gt;
+			&lt;/method-params&gt;
+		&lt;/method&gt;
+		&lt;method&gt;
+			&lt;ejb-name&gt;ProductCatalogBean&lt;/ejb-name&gt;
+			&lt;method-name&gt;populateCatalog&lt;/method-name&gt;
+		&lt;/method&gt;
+	&lt;/idempotent-methods&gt;
+&lt;/weblogic-ejb-jar&gt;
+</pre>	
+    </div> <!-- /container -->
+
+    <script src="resources/js/jquery-1.7.min.js"></script>
+    <script src="resources/js/bootstrap.min.js"></script>
+    
+	<script type='text/javascript' src='resources/libraries/jquery-ui/jquery.ui.widget.js'></script>
+	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.min.js'></script>
+	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.java-properties.js'></script>
+	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.java-manifest.js'></script>
+	<script type='text/javascript' src='resources/libraries/sausage/jquery.sausage.min.js'></script>
+
+    
+	    
+	<script type='text/javascript'>
+		$(document).ready(function(){
+			$('pre').snippet('xml',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '' });
+	
+		
+
+
+		
+			$('code[data-code-syntax]').each(function(){
+		         var codeSyntax = ($(this).data('code-syntax'));
+		         if(codeSyntax) {
+		            $(this).parent().snippet(codeSyntax,{style:'ide-eclipse', menu:false, showNum:false});
+		         }
+			});
+			$(window).sausage({ page: 'li.box' });
+		}); 
+	</script>
+    
+  </body>
+</html>

@@ -112,7 +112,7 @@ public class JavaClassCompositeTest
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
@@ -187,7 +187,7 @@ public class JavaClassCompositeTest
         {
             return firstRuleMatchCount;
         }
-        
+
         public int getSecondRuleMatchCount()
         {
             return secondRuleMatchCount;

@@ -13,7 +13,6 @@ import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Task;
 
-import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import com.tinkerpop.blueprints.GraphQuery;
@@ -42,7 +41,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             @Override
             public Void execute()
             {
-                getGraphContext().getGraph().getBaseGraph().commit();
+                getGraphContext().commit();
                 return null;
             }
         });
@@ -285,12 +284,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     protected GraphContext getGraphContext()
     {
         return context;
-    }
-
-    @Override
-    public TitanTransaction newTransaction()
-    {
-        return context.getGraph().getBaseGraph().newTransaction();
     }
 
     /**

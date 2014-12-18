@@ -104,7 +104,7 @@ public class LoadGroovyRulesTest
             }
             Assert.assertTrue("Script path should have been set in Rule Metatada", foundScriptPath);
             Assert.assertTrue(allProviders.size() > 0);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
         }
     }
 

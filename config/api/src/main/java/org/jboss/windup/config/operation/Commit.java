@@ -24,7 +24,7 @@ public class Commit extends GraphOperation
         uncommittedIterations++;
         if (uncommittedIterations > period)
         {
-            event.getGraphContext().getGraph().getBaseGraph().commit();
+            event.getGraphContext().commit();
             uncommittedIterations = 0;
         }
     }

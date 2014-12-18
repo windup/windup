@@ -58,7 +58,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         ruleExecutionInformation.clear();
         this.event = event;
         event.getRewriteContext().put(RuleExecutionResultsListener.class, this);
-        event.getGraphContext().getGraph().addListener(new GraphChangeListener());
+        event.getGraphContext().addGraphChangedListener(new GraphChangeListener());
     }
 
     @Override

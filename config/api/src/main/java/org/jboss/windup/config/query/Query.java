@@ -109,7 +109,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                     result = filtered;
                 }
 
-                Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
+                Variables variables = Variables.instance(event);
                 variables.setVariable(outputVar, result);
 
                 return result.iterator().hasNext();
@@ -173,7 +173,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                     {
                         query.piped(new QueryTypeCriterion(query.searchType));
                     }
-                    Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
+                    Variables variables = Variables.instance(event);
                     Iterable<? extends WindupVertexFrame> frames = variables.findVariable(query.getInputVariablesName());
                     return new VertexFromFramedIterable(frames);
                 }

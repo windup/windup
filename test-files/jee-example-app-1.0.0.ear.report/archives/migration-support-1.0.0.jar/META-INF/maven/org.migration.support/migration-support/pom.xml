@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.migration.support</groupId>
+  <artifactId>migration-support</artifactId>
+  <version>1.0.0</version>
+  <name>Sample Migration</name>
+  <description>Used only to support migration activities.</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>log4j</groupId>
+  		<artifactId>log4j</artifactId>
+  		<version>1.2.12</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>javax.servlet</groupId>
+  		<artifactId>servlet-api</artifactId>
+  		<version>2.3</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>javax.ejb</groupId>
+  		<artifactId>ejb-api</artifactId>
+  		<version>3.0</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>javaee</groupId>
+  		<artifactId>javaee-api</artifactId>
+  		<version>5</version>
+  		<scope>provided</scope>
+  	</dependency>
+  </dependencies>
+</project>

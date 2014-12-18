@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Windup FreeMarker Functions and Directives</title>
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/windup.css" rel="stylesheet" media="screen">
+    <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
+  </head>
+  <body role="document">
+    
+    <!-- Fixed navbar -->
+    <div class="navbar-fixed-top windup-bar" role="navigation">
+      <div class="container theme-showcase" role="main">
+        <img src="resources/img/windup-logo.png" class="logo"/>
+      </div>
+    </div>
+
+    <div class="container" role="main">
+    <div class="row">
+      <div class="page-header page-header-no-border">
+        <h1>
+        	Windup FreeMarker Functions and Directives
+		</h1>
+         <div class="navbar navbar-default">
+          <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../index.html">&lt;- All Applications</a></li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+          <ul class="nav navbar-nav">
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div>
+</div>
+
+    <div class="container theme-showcase" role="main">
+
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+			    Functions
+			</div>
+			<table class="table table-striped table-bordered">
+			  	<tr>
+		    		<th>Function Name</th>			    		
+		    		<th>Description</th>
+	  			</tr>
+	  								<tr>
+						<td>findFilesNotClassifiedOrHinted</td>
+						<td>Takes an Iterable<FileModel> as a parameter and returns the files that have neither ClassificationModels nor InlineHintModels associated with them. (Implemented by: org.jboss.windup.rules.apps.java.reporting.freemarker.FindFilesNotClassifiedOrHinted)</td>
+					</tr>
+					<tr>
+						<td>getAllFreeMarkerMethods</td>
+						<td>This method takes no parameters, and returns a List of hashes containing a 'name', 'description', and 'class' field. (Implemented by: org.jboss.windup.reporting.freemarker.GetAllFreeMarkerMethodsMethod)</td>
+					</tr>
+					<tr>
+						<td>getAllFreeMarkerDirectives</td>
+						<td>This method takes no parameters, and returns a List of hashes containing a 'name', 'class',  and 'description' field. (Implemented by: org.jboss.windup.reporting.freemarker.GetAllFreeMarkerDirectivesMethod)</td>
+					</tr>
+					<tr>
+						<td>getPrettyPathForFile</td>
+						<td>Takes a FileModel as a parameter and either the qualified name (if it is a Java file) or the path within the file's project. (Implemented by: org.jboss.windup.rules.apps.java.reporting.freemarker.GetPrettyPathForFile)</td>
+					</tr>
+					<tr>
+						<td>getMigrationEffortPoints</td>
+						<td>Takes a ProjectModel as a parameter and returns an int containing the effort estimate for this project. (Implemented by: org.jboss.windup.reporting.freemarker.GetEffortForProjectMethod)</td>
+					</tr>
+					<tr>
+						<td>getRuleExecutionResults</td>
+						<td>Takes a parameter of type WindupRuleProvider and returns a List<RuleExecutionInformation> containing metadata related to the current Windup execution. (Implemented by: org.jboss.windup.reporting.ruleexecution.GetRuleExecutionResults)</td>
+					</tr>
+					<tr>
+						<td>getTechnologyTagsForFile</td>
+						<td>Takes a FileModel as a parameter and returns an Iterable<TechnologyTagModel> containing the technology tags for this file. (Implemented by: org.jboss.windup.reporting.freemarker.GetTechnologyTagsForFile)</td>
+					</tr>
+					<tr>
+						<td>fileModelToSourceReport</td>
+						<td>Takes a FileModel as a parameter, and returns the related SourceReportModel (or null if none is available). (Implemented by: org.jboss.windup.reporting.freemarker.FileModelToSourceReportModelMethod)</td>
+					</tr>
+					<tr>
+						<td>sortFilesByPathAscending</td>
+						<td>Takes an Iterable<FileModel> and returns them, ordered alphabetically. (Implemented by: org.jboss.windup.reporting.freemarker.SortFilesByPathMethod)</td>
+					</tr>
+					<tr>
+						<td>sortProjectsByPathAscending</td>
+						<td>Takes an Iterable<ProjectModel> and returns them, ordered alphabetically. (Implemented by: org.jboss.windup.reporting.freemarker.SortProjectsByPathMethod)</td>
+					</tr>
+					<tr>
+						<td>getAllRuleProviders</td>
+						<td>Takes no parameters and returns a List<WindupRuleProvider> containing all loaded Rule Providers. (Implemented by: org.jboss.windup.reporting.ruleexecution.GetAllRuleProviders)</td>
+					</tr>
+					<tr>
+						<td>getMigrationEffortPointsForFile</td>
+						<td>Takes a FileModel as a parameter and returns an int containing the effort estimate for this file. (Implemented by: org.jboss.windup.reporting.freemarker.GetEffortForFile)</td>
+					</tr>
+					<tr>
+						<td>formatRule</td>
+						<td>Takes a Rule as a paremeter and formats it into multiple rows for display. (Implemented by: org.jboss.windup.reporting.ruleexecution.FormatRule)</td>
+					</tr>
+					<tr>
+						<td>projectModelToApplicationIndex</td>
+						<td>Takes a parameter of type ProjectModel and returns the associated ApplicationReportIndexModel. (Implemented by: org.jboss.windup.reporting.freemarker.ProjectModelToApplicationIndexMethod)</td>
+					</tr>
+	  		</table>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+			    Directives
+			</div>
+			<table class="table table-striped table-bordered">
+			  	<tr>
+		    		<th>Directive Name</th>			    		
+		    		<th>Description</th>
+	  			</tr>
+					<tr>
+						<td>org.jboss.windup.rules.apps.java.reporting.freemarker.RenderApplicationPieChartDirective</td>
+						<td>render_pie</td>
+						<td>Renders a pie chart. Takes the following parameters: project (a ProjectModel), recursive (Boolean), and elementid (HTML ID of the element in which to render). (Implemented by: org.jboss.windup.rules.apps.java.reporting.freemarker.RenderApplicationPieChartDirective)</td>
+					</tr>
+	  		</table>
+		</div>
+       
+    </div> <!-- /container -->
+
+
+    <script src="resources/js/jquery-1.10.1.min.js"></script>
+    
+    <script src="resources/libraries/flot/jquery.flot.min.js"></script>
+    <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
+    
+    <script src="resources/js/bootstrap.min.js"></script>
+  </body>
+</html>
