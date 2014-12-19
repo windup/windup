@@ -517,8 +517,10 @@ This is a very rough first draft!
 </div>
 <hr>
 <div class="paragraph">
-<p>JBoss Windup is a rule-based tool to simplify application migrations. Running from
-a <a href="http://forge.jboss.org">Forge</a> environment, the tool examines EAR, WAR, and
+<p>JBoss Windup is a rule-based tool to simplify application migrations.</p>
+</div>
+<div class="paragraph">
+<p>Running from a <a href="http://forge.jboss.org">Forge</a> environment, the tool examines EAR, WAR, and
 JAR deployments (or a project source directory) and produces an HTML report detailing the inner workings of
 the Java application to simplify migration efforts. It seeks to make
 migrating from other containers to JBoss EAP a piece of cake.</p>
@@ -539,7 +541,7 @@ application, and provide a consumable report for organizations to
 estimate, document, and migrate enterprise applications to Java EE and JBoss EAP.</p>
 </div>
 <div class="paragraph">
-<p>These are some of the of the areas targetted by Windup rulesets:</p>
+<p>These are some of the of the areas targetted by current core Windup rulesets:</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -554,16 +556,16 @@ estimate, document, and migrate enterprise applications to Java EE and JBoss EAP
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Java Interrogator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Java code</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reads compiled Java files, determines if blacklisted classes are imported, and if so, continues to profile the resource.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JSP Interrogator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSP code</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reads JSP files, extracts the JSP imports and taglibs, and continues to
 profile the resource</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">XML Interrogator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XML configuration</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reads XML files into a DOM objects and continues to profile the resource.</p></td>
 </tr>
 </tbody>
@@ -634,7 +636,7 @@ Better Rules
 <p>XML-based rules are simple to write and and easy to implement.</p>
 </li>
 <li>
-<p>Java-based rule addons are based on <strong>ocpsoft rewrite</strong> and provide greater flexibility and power creating when rules.</p>
+<p>Java-based rule addons are based on  <a href="http://ocpsoft.org/rewrite/">OCPsoft Rewrite</a> and provide greater flexibility and power creating when rules.</p>
 </li>
 <li>
 <p>Rules can now be nested to handle more complex situations. This means you can nest simple statements rather than use complex XPATH or REGEX expressions.
@@ -815,6 +817,37 @@ Better Reporting
 <p>Any level of involvement is greatly appreciated!</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_basic_links">Basic links</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Windup Wiki: <a href="https://github.com/windup/windup/wiki" class="bare">https://github.com/windup/windup/wiki</a></p>
+</li>
+<li>
+<p>Windup documentation (generated from above wiki): <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html" class="bare">http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html</a></p>
+</li>
+<li>
+<p>Windup Forums: <a href="https://community.jboss.org/en/windup" class="bare">https://community.jboss.org/en/windup</a></p>
+</li>
+<li>
+<p>Windup Issue Tracker: <a href="https://issues.jboss.org/browse/WINDUP" class="bare">https://issues.jboss.org/browse/WINDUP</a></p>
+</li>
+<li>
+<p>Windup Users Mailing List: <a href="mailto:windup-users@lists.jboss.org">windup-users@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup Developers Mailing List: <a href="mailto:windup-dev@lists.jboss.org">windup-dev@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup Commits Mailing List: <a href="mailto:windup-commits@lists.jboss.org">windup-commits@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup on Twitter: <a href="https://twitter.com/jbosswindup">@JBossWindup</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="Report-Issues-with-Windup">Report Issues with Windup</h3>
@@ -987,6 +1020,9 @@ The documentation uses the replaceable value <code>WINDUP_HOME</code> to denote 
 </div>
 <div class="sect3">
 <h4 id="_start_windup">Start Windup</h4>
+<div class="paragraph">
+<p>For information about the use of WINDUP_HOME in the instructions below, see <a href="#About-the-WINDUP_HOME-Variable">About the WINDUP_HOME Variable</a>.</p>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1113,7 +1149,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <div class="sect3">
 <h4 id="windup-command-examples">Windup Command Examples</h4>
 <div class="paragraph">
-<p>The following Windup command examples report against applications located in the <a href="https://github.com/windup/windup/tree/master/test-files">Windup source test-files</a> directory.</p>
+<p>The following Windup command examples report against applications located in the Windup source <a href="https://github.com/windup/windup/tree/master/test-files">test-files</a> directory.</p>
 </div>
 <div class="sect4">
 <h5 id="_source_code_example">Source Code Example</h5>
@@ -1667,6 +1703,7 @@ public List&lt;Class&lt;? extends WindupRuleProvider&gt;&gt; getExecuteAfter()
 <div class="sect3">
 <h4 id="_what_are_story_points">What are Story Points?</h4>
 <div class="paragraph">
+<div class="title">DRAFT</div>
 <p>Story points are an abstract metric used in Scrum methodology to estimate the level of effort for various tasks. They are based on a <a href="http://scrummethodology.com/scrum-effort-estimation-and-story-points/">modified Fibonacci sequence</a>. In a similar manner, Windup uses story points to express the level of effort needed to migrate particular application constructs, and in a sum, the application as a whole.</p>
 </div>
 </div>
@@ -1676,27 +1713,26 @@ public List&lt;Class&lt;? extends WindupRuleProvider&gt;&gt; getExecuteAfter()
 <p>TODO: TBD.</p>
 </div>
 <div class="paragraph">
-<p>This could contain relative examples like:</p>
+<p>Estimating story points for a rule can be tricky. The following are 'rules of thumb' or suggestions to use when estimating the level of effort required for a rule.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Pure copy&#8217;n&#8217;paste - when we know for sure it will need no migration: 0</p>
+<p>The level of effort required for "Lift and Shift", which basically means the code or file is standards-based and can be ported to the new environment with no changes, would be '0' story points.</p>
 </li>
 <li>
-<p>When we don&#8217;t know if it will need a migration: Could depend on number of unknown imports, size
+<p>Changing a parameter name or value of units might be '2' story points.
+This could contain relative examples like:</p>
+</li>
+<li>
+<p>Porting a web page (or similar concept) from one web framework to another depends on the complexity and the number of components. You could estimate '20' story points per component.</p>
+</li>
+<li>
+<p>Porting MyBatis to JPA: '20' story points per query.</p>
+</li>
+<li>
+<p>When you don&#8217;t know if it will need a migration: Could depend on number of unknown imports, size
 of the file, &#8230;&#8203;</p>
-</li>
-<li>
-<p>Changing parameter name, or value units: 2.</p>
-</li>
-<li>
-<p>Porting one web page (or similar concept) from one web framework to
-the other: Could depend on complexity, e.g. number of components. E.g.
-20 per component.</p>
-</li>
-<li>
-<p>Porting MyBatis to JPA: 20 per query.</p>
 </li>
 </ul>
 </div>
@@ -1787,6 +1823,11 @@ and some others, all of which are optional.</p>
 </div>
 <div class="sect4">
 <h5 id="_when">when()</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.when(Query.fromType(XmlMetaFacetModel.class))</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>In the <code>.when()</code> part, the rule typically queries the graph, using the
 <code>Query</code> API. Results of the query are put on variables stack
@@ -1805,8 +1846,21 @@ create a condition.</p>
 </div>
 <div class="sect4">
 <h5 id="_perform">perform()</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.perform(
+   new AbstractIterationOperation&lt;XmlMetaFacetModel&gt;(XmlMetaFacetModel.class, "xml")
+   {
+      public void perform(GraphRewrite event, EvaluationContext context, XmlMetaFacetModel model)
+      {
+         // for each model, do something
+      }
+   }
+)</code></pre>
+</div>
+</div>
 <div class="paragraph">
-<p>In the <code>.perform()</code> part, the rule typically scans the items of interest
+<p>In the <code>.perform()</code> part, the rule typically iterates over the items of interest
 (Java files, XML files, querying services, &#8230;&#8203;), processes them, and
 writes the findings into the graph.</p>
 </div>
@@ -1853,6 +1907,25 @@ several convenient implementations for constructs like iteration
 conditions in <code>.when()</code> return false (e.g. they do not match anything).
 For more information, see <a href="http://ocpsoft.org/rewrite/">OCP Rewrite web</a>.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">.otherwise(
+   new AbstractIterationOperation&lt;XmlMetaFacetModel&gt;(XmlMetaFacetModel.class, "xml")
+   {
+      public void perform(GraphRewrite event, EvaluationContext context, XmlMetaFacetModel model)
+      {
+         // for each model, do something altenate
+      }
+   }
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_where">Where</h5>
+<div class="paragraph">
+<p>TODO</p>
 </div>
 </div>
 <div class="sect4">
@@ -2448,10 +2521,8 @@ Windup building elements.</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>DRAFT</p>
-</div>
 <div class="olist arabic">
+<div class="title">DRAFT</div>
 <ol class="arabic">
 <li>
 <p>Create the Forge add-on</p>
@@ -3552,7 +3623,8 @@ Ocpsoft Rewrite, see: <a href="http://ocpsoft.org/rewrite/">OCPsoft Rewrite</a>.
 <div class="sect2">
 <h3 id="Dev-Dependencies">Dependencies (Forge add-ons)</h3>
 <div class="paragraph">
-<p>DRAFT <em>Based on
+<div class="title">DRAFT</div>
+<p><em>Based on
 <a href="https://github.com/OndraZizka/windup/commit/3574e81900cbad2b3a83d0bd6c263eb22c48e55e">this</a>
 discussion.</em></p>
 </div>
@@ -3748,7 +3820,7 @@ The complete and up-to-date list of models is in <a href="#http://windup.github.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-12-17 15:31:37 EST
+Last updated 2014-12-19 14:59:14 EST
 </div>
 </div>
 </body>

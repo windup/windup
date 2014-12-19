@@ -439,12 +439,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Glossary">Glossary of Terms Used in Windup</a></li>
 </ul>
 </li>
-<li><a href="#_appendix">Appendix</a>
-<ul class="sectlevel2">
-<li><a href="#Dev-Windup-Architectural-Components">Windup Architectural Components</a></li>
-<li><a href="#Rules-Rule-Story-Points">Rule Story Points</a></li>
-</ul>
-</li>
 </ul>
 </div>
 </div>
@@ -475,8 +469,10 @@ This is a very rough first draft!
 </div>
 <hr>
 <div class="paragraph">
-<p>JBoss Windup is a rule-based tool to simplify application migrations. Running from
-a <a href="http://forge.jboss.org">Forge</a> environment, the tool examines EAR, WAR, and
+<p>JBoss Windup is a rule-based tool to simplify application migrations.</p>
+</div>
+<div class="paragraph">
+<p>Running from a <a href="http://forge.jboss.org">Forge</a> environment, the tool examines EAR, WAR, and
 JAR deployments (or a project source directory) and produces an HTML report detailing the inner workings of
 the Java application to simplify migration efforts. It seeks to make
 migrating from other containers to JBoss EAP a piece of cake.</p>
@@ -497,7 +493,7 @@ application, and provide a consumable report for organizations to
 estimate, document, and migrate enterprise applications to Java EE and JBoss EAP.</p>
 </div>
 <div class="paragraph">
-<p>These are some of the of the areas targetted by Windup rulesets:</p>
+<p>These are some of the of the areas targetted by current core Windup rulesets:</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -512,16 +508,16 @@ estimate, document, and migrate enterprise applications to Java EE and JBoss EAP
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Java Interrogator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Java code</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reads compiled Java files, determines if blacklisted classes are imported, and if so, continues to profile the resource.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JSP Interrogator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSP code</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reads JSP files, extracts the JSP imports and taglibs, and continues to
 profile the resource</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">XML Interrogator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XML configuration</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reads XML files into a DOM objects and continues to profile the resource.</p></td>
 </tr>
 </tbody>
@@ -592,7 +588,7 @@ Better Rules
 <p>XML-based rules are simple to write and and easy to implement.</p>
 </li>
 <li>
-<p>Java-based rule addons are based on <strong>ocpsoft rewrite</strong> and provide greater flexibility and power creating when rules.</p>
+<p>Java-based rule addons are based on  <a href="http://ocpsoft.org/rewrite/">OCPsoft Rewrite</a> and provide greater flexibility and power creating when rules.</p>
 </li>
 <li>
 <p>Rules can now be nested to handle more complex situations. This means you can nest simple statements rather than use complex XPATH or REGEX expressions.
@@ -773,6 +769,37 @@ Better Reporting
 <p>Any level of involvement is greatly appreciated!</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_basic_links">Basic links</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Windup Wiki: <a href="https://github.com/windup/windup/wiki" class="bare">https://github.com/windup/windup/wiki</a></p>
+</li>
+<li>
+<p>Windup documentation (generated from above wiki): <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html" class="bare">http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html</a></p>
+</li>
+<li>
+<p>Windup Forums: <a href="https://community.jboss.org/en/windup" class="bare">https://community.jboss.org/en/windup</a></p>
+</li>
+<li>
+<p>Windup Issue Tracker: <a href="https://issues.jboss.org/browse/WINDUP" class="bare">https://issues.jboss.org/browse/WINDUP</a></p>
+</li>
+<li>
+<p>Windup Users Mailing List: <a href="mailto:windup-users@lists.jboss.org">windup-users@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup Developers Mailing List: <a href="mailto:windup-dev@lists.jboss.org">windup-dev@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup Commits Mailing List: <a href="mailto:windup-commits@lists.jboss.org">windup-commits@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup on Twitter: <a href="https://twitter.com/jbosswindup">@JBossWindup</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="Report-Issues-with-Windup">Report Issues with Windup</h3>
@@ -945,6 +972,9 @@ The documentation uses the replaceable value <code>WINDUP_HOME</code> to denote 
 </div>
 <div class="sect3">
 <h4 id="_start_windup">Start Windup</h4>
+<div class="paragraph">
+<p>For information about the use of WINDUP_HOME in the instructions below, see <a href="#About-the-WINDUP_HOME-Variable">About the WINDUP_HOME Variable</a>.</p>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1071,7 +1101,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <div class="sect3">
 <h4 id="windup-command-examples">Windup Command Examples</h4>
 <div class="paragraph">
-<p>The following Windup command examples report against applications located in the <a href="https://github.com/windup/windup/tree/master/test-files">Windup source test-files</a> directory.</p>
+<p>The following Windup command examples report against applications located in the Windup source <a href="https://github.com/windup/windup/tree/master/test-files">test-files</a> directory.</p>
 </div>
 <div class="sect4">
 <h5 id="_source_code_example">Source Code Example</h5>
@@ -1495,147 +1525,10 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_appendix">Appendix</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="Dev-Windup-Architectural-Components">Windup Architectural Components</h3>
-<div class="paragraph">
-<p>The following open source software, tools, and APIs are used within
-Windup to analyze and provide migration information. If you plan to
-contribute source code to the core Windup 2.0 project, you should be
-familiar with them.</p>
-</div>
-<div class="sect3">
-<h4 id="_forge">Forge</h4>
-<div class="paragraph">
-<p>Forge is an open source, extendable, rapid application development tool
-for creating Java EE applications using Maven. For more information
-about Forge 2, see: <a href="http://forge.jboss.org/">JBoss Forge</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_forge_furnace">Forge Furnace</h4>
-<div class="paragraph">
-<p>Forge Furnace is a modular runtime container behind Forge that provides
-the ability to run Forge addons in an embedded application. For more
-information about Forge Furnace, see:
-<a href="http://forge.jboss.org/document/run-forge-embedded">Run Forge Embedded</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_tinkerpop">TinkerPop</h4>
-<div class="paragraph">
-<p>TinkerPop is an open source graph computing framework. For more
-information, see: <a href="http://www.tinkerpop.com/">TinkerPop</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_titan">Titan</h4>
-<div class="paragraph">
-<p>Titan is a scalable graph database optimized for storing and querying graphs.
-For more information, see: <a href="http://thinkaurelius.github.io/titan/">Titan Distributed Graph Database</a> and <a href="https://github.com/thinkaurelius/titan/wiki/Beginner%27s-Guide">Titan Beginner&#8217;s Guide</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_frames">Frames</h4>
-<div class="paragraph">
-<p>Frames represents graph data in the form of interrelated Java Objects or
-a collection of annotated Java Interfaces. For more information, see:
-<a href="https://github.com/tinkerpop/frames/wiki">TinkerPop Frames</a>.</p>
-</div>
-<div class="paragraph">
-<p>Windup includes several Frames extensions, which are documented here:
-<a href="#Dev-Frames-extensions">Frames Extensions</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_gremlin">Gremlin</h4>
-<div class="paragraph">
-<p>Gremlin is a graph traversal language that allows you to query, analyze,
-and manipulate property graphs that implement the Blueprints property
-graph data model. For more information, see:
-<a href="https://github.com/tinkerpop/gremlin/wiki">TinkerPop Gremlin Wiki</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_blueprints">Blueprints</h4>
-<div class="paragraph">
-<p>Blueprints is an industry standard API used to access graph databases.
-For more information about Blueprints, see:
-<a href="https://github.com/tinkerpop/blueprints/wiki">TinkerPop Blueprints Wiki</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_pipes">Pipes</h4>
-<div class="paragraph">
-<p>Pipes is a dataflow framework used to process graph data. It for the
-transformation of data from input to output. For more information, see:
-<a href="https://github.com/tinkerpop/pipes/wiki">Tinkerpop Pipes Wiki</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_rexster">Rexster</h4>
-<div class="paragraph">
-<p>Rexster is a graph server that exposes any Blueprints graph through HTTP/REST and a binary protocol called RexPro. Rexster makes extensive use of Blueprints, Pipes, and Gremlin. For more information, see:
-<a href="https://github.com/tinkerpop/rexster/wiki">TinkerPop Rexster Wiki</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_ocpsoft_rewrite">OCPsoft Rewrite</h4>
-<div class="paragraph">
-<p>OCPsoft Rewrite is an open source routing and URL rewriting solution for
-Servlets, Java Web Frameworks, and Java EE. For more information about
-Ocpsoft Rewrite, see: <a href="http://ocpsoft.org/rewrite/">OCPsoft Rewrite</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="Rules-Rule-Story-Points">Rule Story Points</h3>
-<div class="sect3">
-<h4 id="_what_are_story_points">What are Story Points?</h4>
-<div class="paragraph">
-<p>Story points are an abstract metric used in Scrum methodology to estimate the level of effort for various tasks. They are based on a <a href="http://scrummethodology.com/scrum-effort-estimation-and-story-points/">modified Fibonacci sequence</a>. In a similar manner, Windup uses story points to express the level of effort needed to migrate particular application constructs, and in a sum, the application as a whole.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_how_to_estimate_story_points_in_a_rule">How to Estimate Story Points in a Rule</h4>
-<div class="paragraph">
-<p>TODO: TBD.</p>
-</div>
-<div class="paragraph">
-<p>This could contain relative examples like:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Pure copy&#8217;n&#8217;paste - when we know for sure it will need no migration: 0</p>
-</li>
-<li>
-<p>When we don&#8217;t know if it will need a migration: Could depend on number of unknown imports, size
-of the file, &#8230;&#8203;</p>
-</li>
-<li>
-<p>Changing parameter name, or value units: 2.</p>
-</li>
-<li>
-<p>Porting one web page (or similar concept) from one web framework to
-the other: Could depend on complexity, e.g. number of components. E.g.
-20 per component.</p>
-</li>
-<li>
-<p>Porting MyBatis to JPA: 20 per query.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-12-17 15:31:37 EST
+Last updated 2014-12-19 14:59:14 EST
 </div>
 </div>
 </body>
