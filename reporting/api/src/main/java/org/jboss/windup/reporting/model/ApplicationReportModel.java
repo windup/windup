@@ -20,6 +20,7 @@ public interface ApplicationReportModel extends ReportModel
     public static final String DISPLAY_IN_APPLICATION_LIST = "displayInApplicationList";
     public static final String TYPE = "ApplicationReport";
     public static final String REPORT_TO_APPLICATION_NOTE = "reportToApplicationNote";
+    public static final String REPORT_LINES = "reportLines";
     public static final String REPORT_TO_PROJECT_MODEL = "reportToProjectModel";
     public static final String REPORT_PRIORITY = "reportPriority";
     public static final String MAIN_APPLICATION_REPORT = "mainApplicationModel";
@@ -86,6 +87,20 @@ public interface ApplicationReportModel extends ReportModel
     @Property(MAIN_APPLICATION_REPORT)
     public void setMainApplicationReport(Boolean mainApplicationReport);
 
+    
+    /**
+     * Application notes allow custom text to be added
+     */
+    @Adjacency(label = REPORT_LINES, direction = Direction.OUT)
+    public Iterable<OverviewReportLineMessageModel> getApplicationReportLines();
+
+    /**
+     * Application notes allow custom text to be added
+     */
+    @Adjacency(label = REPORT_LINES, direction = Direction.OUT)
+    public void addApplicationReportLine(OverviewReportLineMessageModel line);
+    
+    
     /**
      * Application notes allow custom text to be added
      */

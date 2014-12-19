@@ -8,7 +8,9 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
+import org.jboss.windup.reporting.model.OverviewReportLineMessageModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
@@ -75,7 +77,21 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         applicationReportModel.setDisplayInApplicationList(true);
-
+        GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<OverviewReportLineMessageModel>(context,OverviewReportLineMessageModel.class);
+        Iterable<OverviewReportLineMessageModel> findAll = lineNotesService.findAll();
+        for(OverviewReportLineMessageModel find : findAll) {
+            String projectPrettyPath = projectModel.getRootFileModel().getPrettyPath();
+            ProjectModel project = find.getProject();
+            boolean found = false;
+            while(project!=null && !found) {
+                if(projectPrettyPath.equals(project.getRootFileModel().getPrettyPath())) {
+                    applicationReportModel.addApplicationReportLine(find);
+                    found = true;
+                } else {
+                    project = project.getParentProject();
+                }
+            }
+        }
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
         reportService.setUniqueFilename(applicationReportModel, projectModel.getName(), "html");

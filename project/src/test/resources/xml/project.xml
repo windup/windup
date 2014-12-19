@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/v1/xml">
+	<project>
+		<artifact groupId="someGroupId" artifactId="someArtifactId" from="SomeFromVersion" to="SomeToVersion" />
+	</project>
+	
+</test>

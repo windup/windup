@@ -116,7 +116,7 @@ public class JavaClassTest
 
             context.getGraph().getBaseGraph().commit();
 
-            final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
+            final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
                         JavaClassTestRuleProvider.class));
             processorConfig.setGraphContext(context);
