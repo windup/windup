@@ -1,38 +1,46 @@
 <?xml version="1.0"?>
-<ruleset xmlns="http://windup.jboss.org/v1/xml"
-  id="testruleprovider">
-  
-  <!-- This defaults to MIGRATION_RULES -->
-  <phase>
-    DISCOVERY
-  </phase>
-  
-  <rules>
-    <rule>
-      <when>
-        <true/>
-      </when>
-      <perform>
-        <log message="test log message"/>
-      </perform>
-    </rule>
-    <rule>
-      <when>
-        <true/>
-      </when>
-      <perform>
-        <iteration>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id="testruleprovider">
+
+    <!-- This defaults to MIGRATION_RULES -->
+    <phase>
+        DISCOVERY
+    </phase>
+
+    <rules>
+
+        <rule>
             <when>
-                <true/>
+                <true />
             </when>
             <perform>
-                <log message="test log message perform"/>
+                <log message="test log message" />
+            </perform>
+        </rule>
+
+        <rule>
+            <when>
+                <true />
+            </when>
+            <perform>
+                <iteration>
+                    <when>
+                        <true />
+                    </when>
+                    <perform>
+                        <log message="test {foo} iteration perform" />
+                    </perform>
+                    <otherwise>
+                        <log message="test {foo} iteration otherwise" />
+                    </otherwise>
+                </iteration>
             </perform>
             <otherwise>
-                <log message="test log message otherwise"/>
+                <log message="test rule {foo} otherwise" />
             </otherwise>
-        </iteration>
-      </perform>
-    </rule>
-  </rules>
+            <where param="foo">
+                <matches pattern="\d+" />
+            </where>
+        </rule>
+
+    </rules>
 </ruleset>

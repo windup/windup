@@ -22,7 +22,7 @@ public class WhereHandler implements ElementHandler<Void>
     {
         ConfigurationRuleBuilderPerform rule = context.getRule();
 
-        String name = $(element).attr("name");
+        String name = $(element).attr("param");
 
         ConfigurationRuleParameterWhere where = rule.where(name);
         context.setWhere(where);

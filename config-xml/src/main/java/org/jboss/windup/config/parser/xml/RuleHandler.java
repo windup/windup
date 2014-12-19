@@ -8,8 +8,7 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.ocpsoft.rewrite.config.Condition;
-import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
-import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderPerform;
+import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.Operation;
 import org.w3c.dom.Element;
 
@@ -22,7 +21,8 @@ public class RuleHandler implements ElementHandler<Void>
     @Override
     public Void processElement(ParserContext context, Element element)
     {
-        ConfigurationRuleBuilderCustom rule = context.getBuilder().addRule();
+        ConfigurationRuleBuilder rule = (ConfigurationRuleBuilder) context.getBuilder().addRule();
+        context.setRule(rule);
 
         List<Element> children = $(element).children().get();
         for (Element child : children)
@@ -36,14 +36,13 @@ public class RuleHandler implements ElementHandler<Void>
                 break;
 
             case "perform":
-                ConfigurationRuleBuilderPerform perform = rule.perform(((Operation) result));
-                context.setRule(perform);
+                rule.perform(((Operation) result));
                 break;
 
             case "otherwise":
-                rule.perform(((Operation) result));
-
+                rule.otherwise(((Operation) result));
                 break;
+
             case "where":
                 break;
             }

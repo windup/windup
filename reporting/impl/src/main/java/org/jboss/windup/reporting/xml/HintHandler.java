@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
@@ -66,7 +65,7 @@ public class HintHandler implements ElementHandler<Hint>
         }
 
         String effortStr = $(element).attr("effort");
-        
+
         Hint hint = Hint.in(in).withText(message);
         if (!StringUtils.isBlank(effortStr))
         {
