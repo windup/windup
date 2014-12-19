@@ -13,6 +13,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
@@ -89,10 +90,10 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                         Map<String, Iterable<? extends WindupVertexFrame>> layer = entry.getValue();
                         if (layer == null)
                         {
-                            layer = Variables.instance(event).peek();
-                            entry.setValue(layer);
+                            throw new WindupException("Value store with no associated variables frame. This should not happen");
                         }
-                        Iterable<? extends WindupVertexFrame> variable = Variables.instance(event).findVariable(getVarname());
+
+                        Iterable<? extends WindupVertexFrame> variable = layer.get(getVarname());
                         if (variable != null)
                         {
                             for (WindupVertexFrame frame : variable)
@@ -100,7 +101,8 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                 ParameterValueStore last = resultSetStores.put(frame, valueStore);
                                 if (last != null)
                                 {
-                                    // TODO is this a valid scenario?
+                                    // WHY DOES THIS HAPPEN?
+                                    System.out.println("DOES THIS STILL HAPPEN?");
                                 }
                             }
                         }

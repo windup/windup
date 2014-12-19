@@ -151,15 +151,41 @@ public class JavaHintsClassificationsTest
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
                 Assert.assertEquals(4, hints.size());
 
-                boolean found = false;
+                boolean foundAddonDep1 = false;
+                boolean foundAddonDep2 = false;
+                boolean foundIterators = false;
+                boolean foundCallables = false;
                 for (InlineHintModel hint : hints)
                 {
+                    System.out.println("Hint: " + hint.getHint());
                     if (hint.getHint().contains("AddonDependencyEntry"))
                     {
-                        found = true;
+                        if (!foundAddonDep1)
+                        {
+                            foundAddonDep1 = true;
+                        }
+                        else if (!foundAddonDep2)
+                        {
+                            foundAddonDep2 = true;
+                        }
+                        else
+                        {
+                            Assert.fail("Found too many references to AddonDependencyEntry");
+                        }
+                    }
+                    else if (hint.getHint().contains("util.Callables"))
+                    {
+                        foundCallables = true;
+                    }
+                    else if (hint.getHint().contains("util.Iterators"))
+                    {
+                        foundIterators = true;
                     }
                 }
-                Assert.assertTrue(found);
+                Assert.assertTrue(foundAddonDep1);
+                Assert.assertTrue(foundAddonDep2);
+                Assert.assertTrue(foundIterators);
+                Assert.assertTrue(foundCallables);
 
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
                 Assert.assertEquals(1, classifications.size());
