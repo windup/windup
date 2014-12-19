@@ -33,6 +33,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java-ee"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-tattletale"),
                 @AddonDependency(name = "org.jboss.windup.tests:test-util"),
                 @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
@@ -49,6 +50,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java-ee"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-tattletale"),
                                 AddonDependencyEntry.create("org.jboss.windup.tests:test-util"),
                                 AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")

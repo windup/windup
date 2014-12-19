@@ -17,6 +17,7 @@ import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
