@@ -75,6 +75,7 @@
 
         <module>exec</module>
         <module>reporting</module>
+<module>project</module>
         <module>ui</module>
 
         <module>utils</module>

@@ -7,6 +7,26 @@
 	<span class="label label-info"><#nested/></span>
 </#macro>
 
+<#macro reportLineRenderer reportLinesIterable>
+<#if reportLinesIterable.iterator()?has_content>
+
+<div class="panel panel-primary">
+<div class="panel-heading">
+            <h3 class="panel-title">Overview Application Messages</h3>
+        </div>
+        <table class="table table-striped table-bordered">
+
+            <#list reportLinesIterable.iterator() as reportLine>
+            <tr>
+                <td> ${reportLine.message}</td>
+            </tr>
+            </#list>
+        </table>
+    </div>
+	
+ </#if>
+</#macro>
+
 <#macro fileModelRenderer fileModel>
   <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
   <#if sourceReportModel.reportFilename??>
@@ -134,7 +154,7 @@
     <div class="container theme-showcase" role="main">
 
 
-
+		<@reportLineRenderer reportModel.applicationReportLines />
 	     <@projectModelRenderer reportModel.projectModel />
     </div> <!-- /container -->
 

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/v1/xml">
+	<lineitem message="someMessage"/>
+	<lineitem/>
+</test>

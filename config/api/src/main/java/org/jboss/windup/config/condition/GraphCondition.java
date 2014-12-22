@@ -30,6 +30,7 @@ public abstract class GraphCondition extends DefaultConditionBuilder
 {
 
     private String inputVariablesName;
+    private String outputVariablesName;
 
     public abstract boolean evaluate(GraphRewrite event, EvaluationContext context);
 
@@ -49,5 +50,15 @@ public abstract class GraphCondition extends DefaultConditionBuilder
         if (event instanceof GraphRewrite)
             return evaluate((GraphRewrite) event, context);
         return false;
+    }
+
+    public String getOutputVariablesName()
+    {
+        return outputVariablesName;
+    }
+
+    public void setOutputVariablesName(String outputVariablesName)
+    {
+        this.outputVariablesName = outputVariablesName;
     }
 }
