@@ -8,7 +8,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Replace with `javax.net.ssl.HttpsURLConnection.getLocalPrinciple()`" effort="2" />
+                    <hint message="Replace with `javax.net.ssl.HttpsURLConnection.getLocalPrincipal()`" effort="2" />
                 </iteration>
             </perform>
         </rule>
