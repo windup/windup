@@ -55,7 +55,7 @@ public class OverviewReportLineTest
                  * version
                  */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
-                @AddonDependency(name = "org.jboss.windup.rules:project"),
+                @AddonDependency(name = "org.jboss.windup.rules:rules-java-project"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
@@ -67,7 +67,7 @@ public class OverviewReportLineTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules:project"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules:rules-java-project"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
