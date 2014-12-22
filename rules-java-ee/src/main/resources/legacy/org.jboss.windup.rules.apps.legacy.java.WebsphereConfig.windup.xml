@@ -3,6 +3,28 @@
     <rules>
         <rule>
             <when>
+                <javaclass references="weblogic.net.http.HttpsURLConnection.loadLocalIdentity()" as="default">
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Replace with `javax.net.ssl.HttpsURLConnection.getLocalPrinciple()`" effort="2" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <javaclass references="weblogic.net.http.HttpsURLConnection" as="default">
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <hint message="Replace with `javax.net.ssl.HttpsURLConnection`" effort="2" />
+                </iteration>
+            </perform>
+        </rule>
+        <rule>
+            <when>
                 <javaclass references="com.ibm.websphere.asynchbeans.Work" as="default">
                     <location>INHERITANCE</location>
                 </javaclass>
