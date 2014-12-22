@@ -13,6 +13,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
@@ -100,7 +101,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                 ParameterValueStore last = resultSetStores.put(frame, valueStore);
                                 if (last != null)
                                 {
-                                    // TODO is this a valid scenario?
+                                    throw new WindupException(); // YEAH, this happens all the time :)
                                 }
                             }
                         }
