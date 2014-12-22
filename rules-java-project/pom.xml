@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>org.jboss.windup.rules</groupId>
-    <artifactId>project</artifactId>
+    <artifactId>rules-java-project</artifactId>
 
     <name>Windup Rules - Project</name>
 

@@ -75,7 +75,7 @@
 
         <module>exec</module>
         <module>reporting</module>
-<module>project</module>
+        <module>rules-java-project</module>
         <module>ui</module>
 
         <module>utils</module>
