@@ -22,7 +22,7 @@ public class ArtifactHandler implements ElementHandler<Artifact>
         String artifactId = $(element).attr("artifactId");
         String from = $(element).attr("from");
         String to = $(element).attr("to");
-        Artifact artifact = Artifact.withArtifactId(artifactId).andGroupId(groupId).andVersion(Version.fromVersion(from).to(to));
+        Artifact artifact = Artifact.withGroupId(groupId).andArtifactId(artifactId).andVersion(Version.fromVersion(from).to(to));
         return artifact;
     }
 }

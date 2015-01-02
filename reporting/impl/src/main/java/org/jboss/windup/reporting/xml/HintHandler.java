@@ -9,9 +9,10 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
-import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.reporting.config.HintText;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -66,7 +67,7 @@ public class HintHandler implements ElementHandler<Hint>
 
         String effortStr = $(element).attr("effort");
 
-        Hint hint = Hint.in(in).withText(message);
+        HintText hint = Hint.in(in).withText(message);
         if (!StringUtils.isBlank(effortStr))
         {
             try
@@ -89,6 +90,6 @@ public class HintHandler implements ElementHandler<Hint>
                 hint.with(link);
             }
         }
-        return hint;
+        return (Hint)hint;
     }
 }

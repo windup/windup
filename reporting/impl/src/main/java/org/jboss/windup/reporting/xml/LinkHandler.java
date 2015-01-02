@@ -41,6 +41,6 @@ public class LinkHandler implements ElementHandler<Link>
             throw new WindupException(
                         "Error, 'link' element must have a non-empty 'description' attribute (eg, 'Helpful tips on migrating Spring Beans')");
         }
-        return Link.to(description, link);
+        return (Link)Link.to(description, link);
     }
 }

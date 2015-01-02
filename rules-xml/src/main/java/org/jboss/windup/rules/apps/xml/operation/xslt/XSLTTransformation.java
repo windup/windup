@@ -42,7 +42,11 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.util.Logging;
 
-public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
+/**
+ * Graph operation doing the xslt transformation using the .xslt source on the target xml object
+ * @author mbriskar
+ */
+public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel> implements XSLTTransformationDescription,XSLTTransformationExtension,XSLTTransformationParams,XSLTTransformationLocation,XSLTTransformationFileSystem
 {
     private ClassLoader contextClassLoader;
 
@@ -107,7 +111,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     /**
      * Set the description of this {@link XSLTTransformation}.
      */
-    public XSLTTransformation withDescription(String description)
+    public XSLTTransformationDescription withDescription(String description)
     {
         this.description = description;
         return this;
@@ -121,7 +125,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     /**
      * Set the extension of this {@link XSLTTransformation}.
      */
-    public XSLTTransformation withExtension(String extension)
+    public XSLTTransformationExtension withExtension(String extension)
     {
         this.extension = extension;
         return this;
@@ -130,7 +134,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     /**
      * Set the location of the source XSLT file.
      */
-    public static XSLTTransformation using(String location)
+    public static XSLTTransformationLocation using(String location)
     {
         return using(location, Thread.currentThread().getContextClassLoader());
     }
@@ -138,7 +142,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     /**
      * Set the location of the source XSLT file to a absolute path on the filesystem
      */
-    public static XSLTTransformation usingFilesystem(String location)
+    public static XSLTTransformationFileSystem usingFilesystem(String location)
     {
         XSLTTransformation tansformation = new XSLTTransformation();
         tansformation.template = location;
@@ -148,7 +152,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     /**
      * Set the location of the source XSLT file and set it to use the provided {@link ClassLoader} for resource lookup.
      */
-    public static XSLTTransformation using(String location, ClassLoader classLoader)
+    public static XSLTTransformationLocation using(String location, ClassLoader classLoader)
     {
         XSLTTransformation tansformation = new XSLTTransformation();
         // classLoader instance needed to see the file passed in the location
@@ -270,7 +274,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         }
     }
 
-    public XSLTTransformation withParameters(Map<String, String> parameters)
+    public XSLTTransformationParams withParameters(Map<String, String> parameters)
     {
         this.xsltParameters = parameters;
         return this;

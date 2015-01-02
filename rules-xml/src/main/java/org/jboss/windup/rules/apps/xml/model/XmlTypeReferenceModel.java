@@ -6,6 +6,9 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * The result of the XmlFile condition
+ */
 @TypeValue("XmlTypeReference")
 public interface XmlTypeReferenceModel extends FileLocationModel
 {

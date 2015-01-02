@@ -83,8 +83,8 @@ public class JavaClassHandlerTest
         Assert.assertEquals(1, javaClassCondition.getLocations().size());
         List<TypeReferenceLocation> locations = javaClassCondition.getLocations();
         Assert.assertEquals("METHOD_CALL", locations.get(0).name());
-        Assert.assertEquals("org\\.apache\\.commons.*", javaClassCondition.getReferences().toString());
-        Assert.assertEquals(".*File1", javaClassCondition.getTypeFilterRegex().toString());
+        Assert.assertEquals("org.apache.commons.{*}", javaClassCondition.getReferences().toString());
+        Assert.assertEquals("{*}File1", javaClassCondition.getTypeFilterRegex().toString());
 
         Element secondJavaClass = javaClassList.get(1);
         javaClassCondition = parser.<JavaClass> processElement(secondJavaClass);
@@ -95,7 +95,7 @@ public class JavaClassHandlerTest
         Assert.assertEquals("IMPORT", locations.get(0).name());
         Assert.assertEquals("METHOD_CALL", locations.get(1).name());
         Assert.assertEquals("INHERITANCE", locations.get(2).name());
-        Assert.assertEquals("org\\.apache\\.commons.*", javaClassCondition.getReferences().toString());
+        Assert.assertEquals("org.apache.commons.{*}", javaClassCondition.getReferences().toString());
         Assert.assertEquals(null, javaClassCondition.getTypeFilterRegex());
     }
 

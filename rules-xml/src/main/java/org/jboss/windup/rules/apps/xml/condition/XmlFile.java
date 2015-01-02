@@ -56,7 +56,7 @@ import org.windup.rules.apps.model.FileReferenceModel;
 /**
  * Handles matching on {@link XmlFileModel} objects and creating {@link XmlTypeReferenceModel} objects on the matching nodes.
  */
-public class XmlFile extends ParameterizedGraphCondition
+public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,XmlFileIn,XmlFileNamespace,XmlFileResult,XmlFileXpath
 {
     private static final Logger LOG = Logging.get(XmlFile.class);
 
@@ -109,15 +109,21 @@ public class XmlFile extends ParameterizedGraphCondition
     /**
      * Create a new {@link XmlFile} {@link Condition}.
      */
-    public static XmlFile matchesXpath(String xpath)
+    public static XmlFileXpath matchesXpath(String xpath)
     {
         return new XmlFile(xpath);
+    }
+    
+    public XmlFileDTD andDTDPublicId(String publicIdRegex)
+    {
+        this.publicId = publicIdRegex;
+        return this;
     }
 
     /**
      * Create a new {@link XmlFile} that matches on the provided DTD id regular expression.
      */
-    public static XmlFile withDTDPublicId(String publicIdRegex)
+    public static XmlFileDTD withDTDPublicId(String publicIdRegex)
     {
         XmlFile xmlFile = new XmlFile();
         xmlFile.publicId = publicIdRegex;
@@ -137,7 +143,7 @@ public class XmlFile extends ParameterizedGraphCondition
     /**
      * Scan only files that match the given file name.
      */
-    public XmlFile inFile(String fileName)
+    public XmlFileIn inFile(String fileName)
     {
         this.fileName = fileName;
         return this;
@@ -146,7 +152,7 @@ public class XmlFile extends ParameterizedGraphCondition
     /**
      * Only return results that match the given regex.
      */
-    public XmlFile resultMatches(String regex)
+    public XmlFileResult resultMatches(String regex)
     {
         this.xpathResultMatch = regex;
         return this;
@@ -403,7 +409,7 @@ public class XmlFile extends ParameterizedGraphCondition
         return !resultLocations.isEmpty();
     }
 
-    public XmlFile namespace(String prefix, String url)
+    public XmlFileNamespace namespace(String prefix, String url)
     {
         namespaces.put(prefix, url);
         return this;

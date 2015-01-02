@@ -78,14 +78,14 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             }
             if (of != null)
             {
-                return XSLTTransformation
+                return (XSLTTransformation)XSLTTransformation
                             .of(of)
                             .usingFilesystem(fullPath)
                             .withDescription(description)
                             .withExtension(extension)
                             .withParameters(parameters);
             }
-            return XSLTTransformation
+            return (XSLTTransformation)XSLTTransformation
                         .usingFilesystem(fullPath)
                         .withDescription(description)
                         .withExtension(extension)
@@ -96,14 +96,14 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             ClassLoader xmlFileAddonClassLoader = handlerManager.getAddonContainingInputXML().getClassLoader();
             if (of != null)
             {
-                return XSLTTransformation
+                return (XSLTTransformation)XSLTTransformation
                             .of(of)
                             .using(template, xmlFileAddonClassLoader)
                             .withDescription(description)
                             .withExtension(extension)
                             .withParameters(parameters);
             }
-            return XSLTTransformation
+            return (XSLTTransformation) XSLTTransformation
                         .using(template, xmlFileAddonClassLoader)
                         .withDescription(description)
                         .withExtension(extension)

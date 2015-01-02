@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.config;
+package org.jboss.windup.reporting.config.classification;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +14,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.LinkModel;
 import org.ocpsoft.rewrite.config.Rule;
@@ -27,7 +28,8 @@ import org.windup.rules.apps.model.FileReferenceModel;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class Classification extends ParameterizedIterationOperation<FileModel>
+public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
+            ClassificationDescription, ClassificationLink
 {
     private static final Logger log = Logger.getLogger(Classification.class.getName());
 
@@ -77,7 +79,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     /**
      * Set the description of this {@link Classification}.
      */
-    public Classification withDescription(String description)
+    public ClassificationDescription withDescription(String description)
     {
         this.descriptionPattern = new RegexParameterizedPatternParser(description);
         return this;
@@ -86,7 +88,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     /**
      * Add a {@link Link} to this {@link Classification}.
      */
-    public Classification with(Link link)
+    public ClassificationLink with(Link link)
     {
         this.links.add(link);
         return this;
@@ -101,7 +103,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     /**
      * Classify the current {@link FileModel} as the given text.
      */
-    public static Classification as(String classification)
+    public static ClassificationAs as(String classification)
     {
         Assert.notNull(classification, "Classification text must not be null.");
         Classification result = new Classification();
