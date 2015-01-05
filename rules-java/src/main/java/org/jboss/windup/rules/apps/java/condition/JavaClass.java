@@ -57,7 +57,6 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
 
     private final String uniqueID; // maintains a unique identifier for each
     private List<TypeReferenceLocation> locations = Collections.emptyList();
-    private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;
 
     private RegexParameterizedPatternParser referencePattern;
     private RegexParameterizedPatternParser typeFilterPattern;
@@ -111,7 +110,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     public ConditionBuilder as(String variable)
     {
         Assert.notNull(variable, "Variable name must not be null.");
-        this.variable = variable;
+        this.setOutputVariablesName(variable);
         return this;
     }
 
@@ -326,7 +325,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     @Override
     protected String getVarname()
     {
-        return variable;
+        return getOutputVariablesName();
     }
 
     public String toString()
@@ -345,7 +344,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         {
             builder.append(".at(" + locations + ")");
         }
-        builder.append(".as(" + variable + ")");
+        builder.append(".as(" + getVarname() + ")");
         return builder.toString();
     }
 }
