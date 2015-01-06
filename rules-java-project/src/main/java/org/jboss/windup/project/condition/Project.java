@@ -13,6 +13,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
+import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class Project extends GraphCondition
@@ -25,6 +26,15 @@ public class Project extends GraphCondition
         Project project = new Project();
         project.artifact = artifact;
         return project;
+    }
+    
+    public static ProjectFrom from(String from)
+    {
+        return new ProjectFrom(from);
+    }
+    
+    public void setArtifact(Artifact artifact) {
+        this.artifact=artifact;
     }
 
     public Artifact getArtifact()
@@ -86,9 +96,10 @@ public class Project extends GraphCondition
     
     
 
-    public void as(String as)
+    public ConditionBuilder as(String as)
     {
         super.setOutputVariablesName(as);
+        return this;
     }
 
     public String toString()

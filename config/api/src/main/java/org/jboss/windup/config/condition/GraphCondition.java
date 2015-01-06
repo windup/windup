@@ -16,6 +16,7 @@
 package org.jboss.windup.config.condition;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.operation.Iteration;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -30,7 +31,7 @@ public abstract class GraphCondition extends DefaultConditionBuilder
 {
 
     private String inputVariablesName;
-    private String outputVariablesName;
+    private String outputVariablesName = Iteration.DEFAULT_VARIABLE_LIST_STRING;
 
     public abstract boolean evaluate(GraphRewrite event, EvaluationContext context);
 

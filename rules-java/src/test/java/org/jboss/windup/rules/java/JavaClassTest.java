@@ -41,6 +41,7 @@ import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvid
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -134,6 +135,17 @@ public class JavaClassTest
             Assert.assertEquals(4, provider.getFirstRuleMatchCount());
             Assert.assertEquals(2, provider.getSecondRuleMatchCount());
         }
+    }
+    
+    /**
+     * Testing that .from() and .as() sets the right variable
+     */
+    @Test
+    public void testJavaClassInputOutputVariables() 
+    {
+        JavaClass as = (JavaClass) JavaClass.from("input").references("abc").as("output");
+        Assert.assertEquals("input", as.getInputVariablesName());
+        Assert.assertEquals("output", as.getOutputVariablesName());
     }
 
     private Path getDefaultPath()

@@ -54,7 +54,6 @@ public class XmlFile extends GraphCondition
     private static XPathFactory factory = XPathFactory.newInstance();
     private XPath xpathEngine = factory.newXPath();
 
-    private String variable = Iteration.DEFAULT_VARIABLE_LIST_STRING;
     private String xpathString;
     private XPathExpression compiledXPath;
     private Map<String, String> namespaces = new HashMap<>();
@@ -94,7 +93,7 @@ public class XmlFile extends GraphCondition
     public ConditionBuilder as(String variable)
     {
         Assert.notNull(variable, "Variable name must not be null.");
-        this.variable = variable;
+        this.setOutputVariablesName(variable);
         return this;
     }
 
@@ -255,7 +254,7 @@ public class XmlFile extends GraphCondition
                 }
             }
         }
-        Variables.instance(event).setVariable(variable, resultLocations);
+        Variables.instance(event).setVariable(getOutputVariablesName(), resultLocations);
         ExecutionStatistics.get().end("XmlFile.evaluate");
         return !resultLocations.isEmpty();
     }
@@ -314,7 +313,7 @@ public class XmlFile extends GraphCondition
         {
             builder.append(".withDTDPublicId(" + publicId + ")");
         }
-        builder.append(".as(" + variable + ")");
+        builder.append(".as(" + getInputVariablesName() + ")");
         return builder.toString();
     }
 }
