@@ -26,6 +26,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.FileReferenceModel;
+import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
@@ -169,10 +170,14 @@ public class XmlFile extends GraphCondition
             }
             if (publicId != null && !publicId.equals(""))
             {
-                if (xml.getDoctype() == null || xml.getDoctype().getPublicId() == null
-                            || !xml.getDoctype().getPublicId().matches(publicId))
+                DoctypeMetaModel doctype = xml.getDoctype();
+                if (doctype == null || doctype.getPublicId() == null
+                            || !doctype.getPublicId().matches(publicId))
                 {
                     continue;
+                } else if(xpathString == null) {
+                    //if the xpath is not set and therefore we have the result already
+                    resultLocations.add(xml);
                 }
 
             }
