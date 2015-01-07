@@ -42,7 +42,9 @@ public class ParameterWiringTest
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.utils:utils"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.utils:utils"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+
     })
     public static ForgeArchive getDeployment()
     {
@@ -53,6 +55,7 @@ public class ParameterWiringTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;
