@@ -57,6 +57,11 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
      */
     public boolean shouldScanPackage(String pkg)
     {
+        // assume an empty string if it wasn't specified
+        if (pkg == null)
+        {
+            pkg = "";
+        }
         WindupJavaConfigurationModel cfg = getJavaConfigurationModel(getGraphContext());
         for (PackageModel pkgModel : cfg.getExcludeJavaPackages())
         {

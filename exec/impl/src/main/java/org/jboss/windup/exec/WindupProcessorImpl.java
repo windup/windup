@@ -22,6 +22,7 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Checks;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
@@ -64,9 +65,16 @@ public class WindupProcessorImpl implements WindupProcessor
         configModel.setOfflineMode(windupConfiguration.isOffline());
         for (Path path : windupConfiguration.getAllUserRulesDirectories())
         {
+            System.out.println("User rules dir: " + path);
+            LOG.info("User rules dir: " + path);
+            LOG.warning("User rules dir: " + path);
+            if (path == null)
+            {
+                throw new WindupException("Null path found (all paths are: " + windupConfiguration.getAllUserRulesDirectories() + ")");
+            }
             configModel.addUserRulesPath(getFileModel(context, path));
         }
-        
+
         for (Path path : windupConfiguration.getAllIgnoreDirectories())
         {
             configModel.addUserIgnorePath(getFileModel(context, path));

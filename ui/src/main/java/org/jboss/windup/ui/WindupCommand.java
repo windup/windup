@@ -264,28 +264,40 @@ public class WindupCommand implements UICommand
         {
             Files.createDirectories(userRulesDir);
         }
-        windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
+        if (userRulesDir != null)
+        {
+            windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
+        }
 
         Path userIgnoreDir = WindupPathUtil.getWindupIgnoreListDir();
         if (userIgnoreDir != null && !Files.isDirectory(userIgnoreDir))
         {
             Files.createDirectories(userIgnoreDir);
         }
-        windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
+        if (userIgnoreDir != null)
+        {
+            windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
+        }
 
         Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
         if (windupHomeRulesDir != null && !Files.isDirectory(windupHomeRulesDir))
         {
             Files.createDirectories(windupHomeRulesDir);
         }
-        windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
+        if (windupHomeRulesDir != null)
+        {
+            windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
+        }
 
         Path windupHomeIgnoreDir = WindupPathUtil.getWindupHomeIgnoreListDir();
         if (windupHomeIgnoreDir != null && !Files.isDirectory(windupHomeIgnoreDir))
         {
             Files.createDirectories(windupHomeIgnoreDir);
         }
-        windupConfiguration.addDefaultUserIgnorePath(windupHomeIgnoreDir);
+        if (windupHomeIgnoreDir != null)
+        {
+            windupConfiguration.addDefaultUserIgnorePath(windupHomeIgnoreDir);
+        }
 
         Boolean overwrite = (Boolean) windupConfiguration.getOptionMap().get(OverwriteOption.NAME);
         if (overwrite == null)
