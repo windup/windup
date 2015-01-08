@@ -18,7 +18,6 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.DirectoryWalker;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.AddonFilters;
 import org.jboss.forge.furnace.util.Predicate;
@@ -29,7 +28,7 @@ import org.jboss.windup.util.WindupPathUtil;
  * @author jsightler
  * @author Ondrej Zizka
  */
-public class FurnaceClasspathScanner implements Service
+public class FurnaceClasspathScanner
 {
     private static final Logger LOG = Logger.getLogger(FurnaceClasspathScanner.class.getName());
     private final Furnace furnace;
