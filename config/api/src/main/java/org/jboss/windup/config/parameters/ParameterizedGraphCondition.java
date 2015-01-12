@@ -15,7 +15,9 @@ import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.param.DefaultParameterStore;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
+import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 import org.ocpsoft.rewrite.param.Parameterized;
 
@@ -116,10 +118,12 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
 
                 DefaultParameterValueStore original = (DefaultParameterValueStore) DefaultParameterValueStore
                             .getInstance(context);
+
                 for (Entry<ParameterValueStore, Map<String, Iterable<? extends WindupVertexFrame>>> entry : valueStores
                             .entrySet())
                 {
                     ParameterValueStore valueStore = entry.getKey();
+                    ParameterStore store = DefaultParameterStore.getInstance(context);
                     Map<String, Iterable<? extends WindupVertexFrame>> variables = entry.getValue();
                     try
                     {

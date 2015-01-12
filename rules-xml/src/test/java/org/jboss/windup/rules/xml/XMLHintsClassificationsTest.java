@@ -168,7 +168,7 @@ public class XMLHintsClassificationsTest
             return ConfigurationBuilder
                         .begin()
                         .addRule()
-                        .when(XmlFile.matchesXpath("/abc:ejb-jar[abc:myfunc()]")
+                        .when(XmlFile.matchesXpath("/abc:ejb-jar")
                                     .namespace("abc", "http://java.sun.com/xml/ns/javaee"))
                         .perform(Classification.as("Maven POM File")
                                                .with(Link.to("Apache Maven POM Reference",

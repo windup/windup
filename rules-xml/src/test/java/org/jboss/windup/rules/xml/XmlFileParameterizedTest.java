@@ -49,8 +49,7 @@ public class XmlFileParameterizedTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 /*
-                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded
-                 * version
+                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded version
                  */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
@@ -237,9 +236,8 @@ public class XmlFileParameterizedTest
                         .addRule()
                         .when(XmlFile.matchesXpath(
                                         "/root" + 
-                                        "/row[windup:startFrame(0) and windup:evaluate(0, windup:matches(0, index/text(), '{index}'))]" + 
-                                        "/@indexAtt[windup:startFrame(1) and windup:evaluate(1, windup:matches(1, self::node(), '{index}'))]" + 
-                                        "/self::node()[windup:persist(2, .)]"
+                                        "/row[windup:matches(index/text(), '{index}')]" + 
+                                        "/@indexAtt[windup:matches(self::node(), '{index}')]"
                                     )
                         )
                         .perform(Hint.withText("Found value: {index}").withEffort(2)
@@ -249,9 +247,8 @@ public class XmlFileParameterizedTest
                         .addRule()
                         .when(
                                     XmlFile.matchesXpath(
-                                        "//row[windup:startFrame(0) and windup:evaluate(0, windup:matches(0, index/text(), '{index}'))]" + 
-                                        "//@indexAtt[windup:startFrame(1) and windup:evaluate(1, windup:matches(1, self::node(), '{index}'))]" + 
-                                        "/self::node()[windup:persist(2, .)]"
+                                        "//row[windup:matches(index/text(), '{index}')]" + 
+                                        "//@indexAtt[windup:matches(self::node(), '{index}')]"
                                     )
                         )
                         .perform(Hint.withText("Found dangling value: {index}").withEffort(2)
@@ -260,13 +257,8 @@ public class XmlFileParameterizedTest
                                      
                         .addRule()
                         .when(
-                                    XmlFile.matchesXpath(
-                                        "//row[windup:startFrame(0) and windup:evaluate(0, windup:matches(0, index/text(), '{index}'))]" + 
-                                        "/self::node()[windup:persist(1, .)]")
-                                    .and(XmlFile.matchesXpath(
-                                        "//@indexAtt[windup:startFrame(0) and windup:evaluate(0, windup:matches(0, self::node(), '{index}'))]" + 
-                                        "/self::node()[windup:persist(1, .)]")
-                                    )
+                                    XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]")
+                                    .and(XmlFile.matchesXpath("//@indexAtt[windup:matches(self::node(), '{index}')]"))
                         )
                         .perform(Hint.withText("Found dual value: {index}").withEffort(2)
                                      .and(addTypeRefToList));
