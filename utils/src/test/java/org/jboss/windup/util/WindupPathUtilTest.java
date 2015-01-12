@@ -1,6 +1,7 @@
 package org.jboss.windup.util;
 
 import java.nio.file.Paths;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -45,40 +46,40 @@ public class WindupPathUtilTest
     @Test
     public void testWindupHome()
     {
-        Assert.assertNull(WindupPathUtil.getWindupHome());
+        Assert.assertNull(WindupConfigurationModel.getWindupHome());
         setWindupHome("/foo");
-        Assert.assertEquals(Paths.get("/foo"), WindupPathUtil.getWindupHome());
+        Assert.assertEquals(Paths.get("/foo"), WindupConfigurationModel.getWindupHome());
     }
 
     @Test
     public void testWindupHomeRules()
     {
-        Assert.assertNull(WindupPathUtil.getWindupHomeRules());
+        Assert.assertNull(WindupConfigurationModel.getWindupHomeRules());
         setWindupHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", "rules"), WindupPathUtil.getWindupHomeRules());
+        Assert.assertEquals(Paths.get("/foo", "rules"), WindupConfigurationModel.getWindupHomeRules());
     }
 
     @Test
     public void testWindupHomeIgnoreListDir()
     {
-        Assert.assertNull(WindupPathUtil.getWindupHomeIgnoreListDir());
+        Assert.assertNull(WindupConfigurationModel.getWindupHomeIgnoreListDir());
         setWindupHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", "ignore"), WindupPathUtil.getWindupHomeIgnoreListDir());
+        Assert.assertEquals(Paths.get("/foo", "ignore"), WindupConfigurationModel.getWindupHomeIgnoreListDir());
     }
 
     @Test
     public void testWindupUserDir()
     {
-        Assert.assertNull(WindupPathUtil.getWindupUserDir());
+        Assert.assertNull(WindupConfigurationModel.getWindupUserDir());
         setUserHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", ".windup"), WindupPathUtil.getWindupUserDir());
+        Assert.assertEquals(Paths.get("/foo", ".windup"), WindupConfigurationModel.getWindupUserDir());
     }
 
     @Test
     public void testWindupIgnoreListDir()
     {
-        Assert.assertNull(WindupPathUtil.getWindupIgnoreListDir());
+        Assert.assertNull(WindupConfigurationModel.getWindupIgnoreListDir());
         setUserHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", ".windup", "ignore"), WindupPathUtil.getWindupIgnoreListDir());
+        Assert.assertEquals(Paths.get("/foo", ".windup", "ignore"), WindupConfigurationModel.getWindupIgnoreListDir());
     }
 }

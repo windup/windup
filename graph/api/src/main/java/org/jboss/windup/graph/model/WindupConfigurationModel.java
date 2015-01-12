@@ -6,6 +6,8 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Contains the global configuration for the current Windup execution.
@@ -38,7 +40,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
     void addUserRulesPath(FileModel userRulesPath);
-    
+
     /**
      * The location for user provided ignore directory (list of ignored jar files)
      */
@@ -50,7 +52,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
     Iterable<FileModel> getUserRulesPaths();
-    
+
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
@@ -77,4 +79,79 @@ public interface WindupConfigurationModel extends WindupVertexFrame
 
     @Property(OFFLINE_MODE)
     void setOfflineMode(boolean offline);
+
+
+
+    /**
+     * The path WINDUP_HOME/ignore
+     */
+    public static Path getWindupHomeIgnoreListDir()
+    {
+        Path windupHome = getWindupHome();
+        if( windupHome == null )
+            return null;
+        return windupHome.resolve("ignore");
+    }
+
+
+    /**
+     * The path ~/.windup
+     */
+    public static Path getWindupUserDir()
+    {
+        String userHome = System.getProperty("user.home");
+        if( userHome == null )
+            return null;
+        return Paths.get(userHome).resolve(".windup");
+    }
+
+
+    /**
+     * The path WINDUP_HOME
+     */
+    public static Path getWindupHome()
+    {
+        String forgeHome = System.getProperty("forge.home");
+        if( forgeHome == null )
+            return null;
+        return Paths.get(forgeHome);
+    }
+
+
+    /**
+     * The path ~/.windup/rules
+     */
+    public static Path getWindupUserRulesDir()
+    {
+        Path windupUserDir = getWindupUserDir();
+        if( windupUserDir == null )
+            return null;
+        return windupUserDir.resolve("rules");
+    }
+
+
+    /**
+     * The path WINDUP_HOME/rules
+     */
+    public static Path getWindupHomeRules()
+    {
+        Path windupHome = getWindupHome();
+        if( windupHome == null )
+            return null;
+        return windupHome.resolve("rules");
+    }
+
+
+    /**
+     * The path ~/.windup/ignore
+     */
+    public static Path getWindupIgnoreListDir()
+    {
+        Path windupUserDir = getWindupUserDir();
+        if( windupUserDir == null )
+            return null;
+        return windupUserDir.resolve("ignore");
+    }
+
+
 }
