@@ -382,7 +382,7 @@ public class XmlFile extends ParameterizedGraphCondition
                                         paramPattern.setParameterStore(store);
                                         ParameterizedPatternResult referenceResult = paramPattern.parse(nodeText);
 
-                                        boolean refMatches = referenceResult.matches();
+                                        boolean refMatches = referenceResult.isValid(event, context);
                                         if (!refMatches)
                                         {
                                             return false;
