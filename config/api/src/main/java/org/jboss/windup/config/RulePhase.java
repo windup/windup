@@ -2,7 +2,19 @@ package org.jboss.windup.config;
 
 /**
  * Lists the various phases of execution of Windup. The integer controls the order of phase execution.
- * 
+ *
+ * The order of phases (without PRE_ and POST_ phases):
+ * <ul>
+   <li>DISCOVERY
+   <li>INITIAL_ANALYSIS
+   <li>COMPOSITION
+   <li>MIGRATION_RULES
+   <li>REPORT_GENERATION
+   <li>REPORT_RENDERING
+   <li>FINALIZE
+   <li>POST_FINALIZE
+   </ul>
+ *
  * @author jsightler <jesse.sightler@gmail.com>
  */
 public enum RulePhase
@@ -45,7 +57,7 @@ public enum RulePhase
 
     /**
      * Perform high-level composition operations on the graph.
-     * 
+     *
      * Eg, these may attach metadata from XML files to related Java classes, or perform other high-level graph
      * operations, now that all metadata has been extracted
      */
@@ -63,7 +75,7 @@ public enum RulePhase
 
     /**
      * Migration rules will attach data to the graph associated with migration. This could include:
-     * 
+     *
      * - Hints to migrators for manual migration - Automated migration of schemas or source segments - Blacklists to
      * indicate vendor specific APIs
      */
@@ -123,7 +135,7 @@ public enum RulePhase
      * These rules will operate solely based the return the return value of {@link
      * org.jboss.windup.config.WindupRuleProvider.getExecuteAfter()} and {@link
      * org.jboss.windup.config.WindupRuleProvider.getExecuteBefore()}.
-     * 
+     *
      * Depending upon the ordering specified by those methods, this could occur during any phase of execution.
      */
     IMPLICIT(Integer.MAX_VALUE);
