@@ -41,7 +41,14 @@ public class SourceMode extends GraphCondition
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
         Boolean result = (Boolean) event.getGraphContext().getOptionMap().get(SourceModeOption.NAME);
-        return value.equals(result);
+        if (value)
+        {
+            return value.equals(result);
+        }
+        else
+        {
+            return value.equals(result) || result == null;
+        }
     }
 
 }

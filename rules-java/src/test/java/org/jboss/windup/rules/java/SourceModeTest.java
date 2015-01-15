@@ -26,6 +26,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,7 +70,7 @@ public class SourceModeTest
     private GraphContextFactory factory;
 
     @Test
-    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
+    public void testSourceModePositive() throws IOException, InstantiationException, IllegalAccessException
     {
         final Path inputDir = Paths.get("src/test/resources/org/jboss/windup/rules/java");
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
@@ -87,8 +88,55 @@ public class SourceModeTest
 
             processor.execute(processorConfig);
 
-            Assert.assertEquals(1, provider.getFirstRuleMatchCount());
-            Assert.assertEquals(0, provider.getSecondRuleMatchCount());
+            Assert.assertEquals(1, provider.getEnabledCount());
+            Assert.assertEquals(0, provider.getDisabledCount());
+        }
+    }
+
+    @Test
+    public void testSourceModeNegative() throws IOException, InstantiationException, IllegalAccessException
+    {
+        final Path inputDir = Paths.get("src/test/resources/org/jboss/windup/rules/java");
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+
+        try (GraphContext context = factory.create(getDefaultPath()))
+        {
+            final WindupConfiguration processorConfig = new WindupConfiguration();
+            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
+                        SourceModeTestRuleProvider.class));
+            processorConfig.setGraphContext(context);
+            processorConfig.setInputPath(inputDir);
+            processorConfig.setOutputDirectory(outputPath);
+            processorConfig.setOptionValue(SourceModeOption.NAME, false);
+
+            processor.execute(processorConfig);
+
+            Assert.assertEquals(0, provider.getEnabledCount());
+            Assert.assertEquals(1, provider.getDisabledCount());
+        }
+    }
+
+    @Test
+    public void testSourceModeDefault() throws IOException, InstantiationException, IllegalAccessException
+    {
+        final Path inputDir = Paths.get("src/test/resources/org/jboss/windup/rules/java");
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+
+        try (GraphContext context = factory.create(getDefaultPath()))
+        {
+            final WindupConfiguration processorConfig = new WindupConfiguration();
+            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
+                        SourceModeTestRuleProvider.class));
+            processorConfig.setGraphContext(context);
+            processorConfig.setInputPath(inputDir);
+            processorConfig.setOutputDirectory(outputPath);
+
+            processor.execute(processorConfig);
+
+            Assert.assertEquals(0, provider.getEnabledCount());
+            Assert.assertEquals(1, provider.getDisabledCount());
         }
     }
 
@@ -98,11 +146,19 @@ public class SourceModeTest
                     .resolve("windupgraph_sourcemodetest" + RandomStringUtils.randomAlphanumeric(6));
     }
 
+    private static int enabledCount = 0;
+    private static int disabledCount = 0;
+
+    @After
+    public void after()
+    {
+        enabledCount = 0;
+        disabledCount = 0;
+    }
+
     @Singleton
     public static class SourceModeTestRuleProvider extends WindupRuleProvider
     {
-        private int firstRuleMatchCount = 0;
-        private int secondRuleMatchCount = 0;
 
         // @formatter:off
         @Override
@@ -116,7 +172,7 @@ public class SourceModeTest
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context)
                     {
-                        firstRuleMatchCount++;
+                        enabledCount++;
                     }
                 }
             )
@@ -128,21 +184,21 @@ public class SourceModeTest
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context)
                     {
-                        secondRuleMatchCount++;
+                        disabledCount++;
                     }
                 }
             );
         }
         // @formatter:on
 
-        public int getFirstRuleMatchCount()
+        public int getEnabledCount()
         {
-            return firstRuleMatchCount;
+            return enabledCount;
         }
 
-        public int getSecondRuleMatchCount()
+        public int getDisabledCount()
         {
-            return secondRuleMatchCount;
+            return disabledCount;
         }
     }
 }
