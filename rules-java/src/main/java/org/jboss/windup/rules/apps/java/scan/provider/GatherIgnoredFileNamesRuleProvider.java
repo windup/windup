@@ -14,6 +14,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
@@ -112,6 +114,11 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
                     IgnoredFileRegexModel ignored = graphService.create();
                     ignored.setRegex(line);
                     javaCfg.addIgnoredFileRegex(ignored);
+                    try {
+                        Pattern.compile(line);
+                    } catch (PatternSyntaxException exception) {
+                        ignored.setCompilationError(exception.getMessage());
+                    }
                 }
             }
             catch (FileNotFoundException e)

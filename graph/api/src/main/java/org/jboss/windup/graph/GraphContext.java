@@ -26,6 +26,18 @@ public interface GraphContext extends Closeable
      * Get the underlying {@link EventGraph}, which is itself a wrapper for a {@link TitanGraph}.
      */
     EventGraph<TitanGraph> getGraph();
+    
+    /**
+     * Creates new graph using the configuration. In case there was already a graph located in the specified path, it will be deleted.
+     */
+    GraphContext create();
+    
+    /**
+     * Loads the graph using the configuration.
+     */
+    GraphContext load();
+    
+    
 
     /**
      * Get the {@link FramedGraph} view of the underlying {@link EventGraph}.

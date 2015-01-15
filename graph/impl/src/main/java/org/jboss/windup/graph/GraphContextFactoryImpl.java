@@ -32,7 +32,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
         return new GraphContextImpl(
                     this.furnace,
                     this.graphTypeRegistry,
-                    this.graphApiCompositeClassLoaderProvider, getDefaultGraphDirectory());
+                    this.graphApiCompositeClassLoaderProvider, getTempGraphDirectory()).create();
     }
 
     @Override
@@ -41,7 +41,16 @@ public class GraphContextFactoryImpl implements GraphContextFactory
         return new GraphContextImpl(
                     this.furnace,
                     this.graphTypeRegistry,
-                    this.graphApiCompositeClassLoaderProvider, graphDir);
+                    this.graphApiCompositeClassLoaderProvider, graphDir).create();
+    }
+    
+    @Override
+    public GraphContext load(Path graphDir)
+    {
+        return new GraphContextImpl(
+                    this.furnace,
+                    this.graphTypeRegistry,
+                    this.graphApiCompositeClassLoaderProvider, graphDir).load();
     }
 
     @Produces
@@ -55,9 +64,11 @@ public class GraphContextFactoryImpl implements GraphContextFactory
         return graphContext;
     }
 
-    private Path getDefaultGraphDirectory()
+    private Path getTempGraphDirectory()
     {
         return new File(FileUtils.getTempDirectory(), "windupgraph_" + RandomStringUtils.randomAlphanumeric(6))
                     .toPath();
     }
+
+    
 }

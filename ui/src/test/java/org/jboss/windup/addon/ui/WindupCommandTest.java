@@ -24,11 +24,19 @@ import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
+import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphTypeRegistry;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.IgnoredFileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.ui.WindupCommand;
 import org.jboss.windup.util.WindupPathUtil;
 import org.junit.Assert;
@@ -55,6 +63,7 @@ public class WindupCommandTest
                     .create(ForgeArchive.class)
                     .addBeansXML()
                     .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar")
+                    .addAsResource(WindupCommandTest.class.getResource("/ignore/test-windup-ignore.txt"), TEST_IGNORE_FILE)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup:ui"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -67,9 +76,17 @@ public class WindupCommandTest
 
         return archive;
     }
+    
+    private static String TEST_IGNORE_FILE = "/test.txt";
 
     @Inject
     private UITestHarness uiTestHarness;
+    
+    @Inject
+    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
+    
+    @Inject
+    private Furnace furnace;
 
     @Before
     public void beforeTest()
@@ -346,6 +363,103 @@ public class WindupCommandTest
                 FileUtils.deleteDirectory(reportPath);
             }
         }
+    }
+    
+    @Test
+    public void testUserIgnoreDirMigration() throws Exception
+    {
+        Assert.assertNotNull(uiTestHarness);
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
+        {   
+            File outputFile = File.createTempFile("windupwizardtest", ".jar");
+            outputFile.deleteOnExit();
+            File inputIgnoreFile = File.createTempFile("generated-windup-ignore", ".txt");
+            inputIgnoreFile.deleteOnExit();
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
+            {
+                try (OutputStream oStream = new FileOutputStream(outputFile))
+                {
+                    IOUtils.copy(iStream, oStream);
+                }
+            }
+            try (InputStream iStream = getClass().getResourceAsStream(TEST_IGNORE_FILE))
+            {
+                try (OutputStream oStream = new FileOutputStream(inputIgnoreFile))
+                {
+                    IOUtils.copy(iStream, oStream);
+                }
+            }
+
+            File reportPath = new File(outputFile.getAbsoluteFile() + "_output");
+            try
+            {
+                reportPath.mkdirs();
+
+                setupController(controller, outputFile, reportPath);
+
+                controller.setValueFor(UserIgnorePathOption.NAME, inputIgnoreFile);
+
+                Result result = controller.execute();
+                final String msg = "controller.execute() 'Failed': " + result.getMessage();
+                Assert.assertFalse(msg, result instanceof Failed);
+
+                WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext()
+                            .getAttributeMap()
+                            .get(WindupConfiguration.class);
+                File resultIgnoreFile = windupConfiguration.getOptionValue(UserIgnorePathOption.NAME);
+                Assert.assertEquals(inputIgnoreFile, resultIgnoreFile);
+
+                Iterable<Path> allIgnoreDirectories = windupConfiguration.getAllIgnoreDirectories();
+
+                Path expectedUserHomeIgnoreDir = WindupPathUtil.getWindupIgnoreListDir();
+                Path expectedWindupHomeIgnoreDir = WindupPathUtil.getWindupHomeIgnoreListDir();
+
+                boolean foundUserSpecifiedPath = false;
+                boolean foundUserHomeDirIgnorePath = false;
+                boolean foundWindupHomeDirIgnorePath = false;
+                int totalFound = 0;
+                for (Path rulesPath : allIgnoreDirectories)
+                {
+                    totalFound++;
+                    if (rulesPath.equals(resultIgnoreFile.toPath()))
+                    {
+                        foundUserSpecifiedPath = true;
+                    }
+                    if (rulesPath.equals(expectedUserHomeIgnoreDir))
+                    {
+                        foundUserHomeDirIgnorePath = true;
+                    }
+                    if (rulesPath.equals(expectedWindupHomeIgnoreDir))
+                    {
+                        foundWindupHomeDirIgnorePath = true;
+                    }
+                }
+                Assert.assertTrue(foundUserSpecifiedPath);
+                Assert.assertTrue(foundUserHomeDirIgnorePath);
+                Assert.assertTrue(foundWindupHomeDirIgnorePath);
+                Assert.assertEquals(3, totalFound);
+                GraphContext context =(GraphContext)controller.getContext().getAttributeMap().get(GraphContext.class);
+                GraphService<FileModel> service = new GraphService<FileModel>(context.load(), FileModel.class);
+                Iterable<FileModel> findAll = service.findAll();
+                boolean notEmpty = false;
+                for(FileModel fileModel : findAll) {
+                    notEmpty = true;
+                    if(!(fileModel instanceof IgnoredFileModel) && (fileModel.getFileName().contains("META-INF"))) {
+                        Assert.fail("The file " + fileModel.getFileName() + " should be ignored");
+                    }
+                }
+                Assert.assertTrue("There should be some file models present in the graph",notEmpty);
+            }
+            finally
+            {
+                outputFile.delete();
+                FileUtils.deleteDirectory(reportPath);
+            }
+        }
+        
+       
+        
+        
     }
 
     private void setupController(CommandController controller, File inputFile, File outputFile) throws Exception
