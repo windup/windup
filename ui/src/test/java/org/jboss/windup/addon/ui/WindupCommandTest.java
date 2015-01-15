@@ -29,6 +29,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.ui.WindupCommand;
 import org.jboss.windup.util.WindupPathUtil;
 import org.junit.Assert;
@@ -244,8 +245,8 @@ public class WindupCommandTest
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
 
-                Path expectedUserHomeRulesDir = WindupPathUtil.getWindupUserRulesDir();
-                Path expectedWindupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
+                Path expectedUserHomeRulesDir = WindupConfigurationModel.getWindupUserRulesDir();
+                Path expectedWindupHomeRulesDir = WindupConfigurationModel.getWindupHomeRules();
 
                 boolean foundUserSpecifiedPath = false;
                 boolean foundUserHomeDirRulesPath = false;
@@ -303,7 +304,7 @@ public class WindupCommandTest
 
                 setupController(controller, outputFile, reportPath);
 
-                Path expectedUserHomeRulesDir = WindupPathUtil.getWindupUserRulesDir();
+                Path expectedUserHomeRulesDir = WindupConfigurationModel.getWindupUserRulesDir();
                 expectedUserHomeRulesDir.toFile().mkdirs();
                 controller.setValueFor("userRulesDirectory", expectedUserHomeRulesDir.toFile());
 
@@ -319,7 +320,7 @@ public class WindupCommandTest
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
 
-                Path expectedWindupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
+                Path expectedWindupHomeRulesDir = WindupConfigurationModel.getWindupHomeRules();
 
                 boolean foundUserHomeDirRulesPath = false;
                 boolean foundWindupHomeDirRulesPath = false;

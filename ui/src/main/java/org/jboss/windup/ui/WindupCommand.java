@@ -42,6 +42,7 @@ import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.util.WindupPathUtil;
 
 /**
@@ -259,7 +260,7 @@ public class WindupCommand implements UICommand
         }
 
         // add dist/rules/ and ${forge.home}/rules/ to the user rules directory list
-        Path userRulesDir = WindupPathUtil.getWindupUserRulesDir();
+        Path userRulesDir = WindupConfigurationModel.getWindupUserRulesDir();
         if (userRulesDir != null && !Files.isDirectory(userRulesDir))
         {
             Files.createDirectories(userRulesDir);
@@ -269,7 +270,7 @@ public class WindupCommand implements UICommand
             windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
         }
 
-        Path userIgnoreDir = WindupPathUtil.getWindupIgnoreListDir();
+        Path userIgnoreDir = WindupConfigurationModel.getWindupIgnoreListDir();
         if (userIgnoreDir != null && !Files.isDirectory(userIgnoreDir))
         {
             Files.createDirectories(userIgnoreDir);
@@ -279,7 +280,7 @@ public class WindupCommand implements UICommand
             windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
         }
 
-        Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
+        Path windupHomeRulesDir = WindupConfigurationModel.getWindupHomeRules();
         if (windupHomeRulesDir != null && !Files.isDirectory(windupHomeRulesDir))
         {
             Files.createDirectories(windupHomeRulesDir);
@@ -289,7 +290,7 @@ public class WindupCommand implements UICommand
             windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
         }
 
-        Path windupHomeIgnoreDir = WindupPathUtil.getWindupHomeIgnoreListDir();
+        Path windupHomeIgnoreDir = WindupConfigurationModel.getWindupHomeIgnoreListDir();
         if (windupHomeIgnoreDir != null && !Files.isDirectory(windupHomeIgnoreDir))
         {
             Files.createDirectories(windupHomeIgnoreDir);
