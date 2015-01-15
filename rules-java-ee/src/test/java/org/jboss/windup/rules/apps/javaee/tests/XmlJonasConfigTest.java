@@ -19,10 +19,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -38,88 +35,89 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class XmlJonasConfigTest
 {
-    
-        @Deployment
-        @Dependencies({
-                    @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                    @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                    @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
-                    @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java-ee", version = "2.0.0-SNAPSHOT"),
-                    @AddonDependency(name = "org.jboss.windup.rexster:rexster", version = "2.0.0-SNAPSHOT"),
-                    @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
-                    @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy", version = "2.0.0-SNAPSHOT"),
-                    @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                    @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-        })
-        public static ForgeArchive getDeployment()
+
+    @Deployment
+    @Dependencies({
+                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java-ee", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.rexster:rexster", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
+                @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static ForgeArchive getDeployment()
+    {
+        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+                    .addBeansXML()
+                    .addAsResource(new File("src/test/resources/xml/jonasConfigExample.xml"),
+                                XML_FILE)
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java-ee"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-xml"),
+                                AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
+
+        return archive;
+    }
+
+    @Inject
+    private WindupProcessor processor;
+
+    public static String XML_FILE = "/org/jboss/windup/addon/xml/jonasConfigExample.xml";
+
+    @Inject
+    private GraphContextFactory factory;
+
+    @Test
+    public void testHintsAndClassificationOperation() throws Exception
+    {
+        try (GraphContext context = factory.create())
         {
-            final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                        .addBeansXML()
-                        .addClass(XmlJonasConfigTest.class)
-                        .addAsResource(new File("src/test/resources/xml/jonasConfigExample.xml"),
-                                    XML_FILE)
-                        .addAsAddonDependencies(
-                                    AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                    AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                    AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                                    AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java-ee"),
-                                    AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-xml"),
-                                    AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
-                                    AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                    AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                        );
+            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            pm.setName("Main Project");
+            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            inputPath.setFilePath("src/test/resources/");
 
-            return archive;
-        }
+            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
+                        + UUID.randomUUID().toString());
+            FileUtils.deleteDirectory(outputPath.toFile());
+            Files.createDirectories(outputPath);
 
-        @Inject
-        private WindupProcessor processor;
-        
-        public static String XML_FILE = "/org/jboss/windup/addon/xml/jonasConfigExample.xml";
+            inputPath.setProjectModel(pm);
+            pm.setRootFileModel(inputPath);
+            WindupConfiguration windupConfiguration = new WindupConfiguration()
+                        .setGraphContext(context);
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setOutputDirectory(outputPath);
+            processor.execute(windupConfiguration);
 
-        @Inject
-        private GraphContextFactory factory;
+            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
+                        ClassificationModel.class);
 
-        @Test
-        public void testHintsAndClassificationOperation() throws Exception
-        {
-            try (GraphContext context = factory.create())
+            List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
+            boolean jonasClassification = false;
+            for (ClassificationModel model : classifications)
             {
-                ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-                pm.setName("Main Project");
-                FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-                inputPath.setFilePath("src/test/resources/");
-
-                Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                            + UUID.randomUUID().toString());
-                FileUtils.deleteDirectory(outputPath.toFile());
-                Files.createDirectories(outputPath);
-
-                inputPath.setProjectModel(pm);
-                pm.setRootFileModel(inputPath);
-                WindupConfiguration windupConfiguration = new WindupConfiguration()
-                            .setGraphContext(context);
-                windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
-                windupConfiguration.setOutputDirectory(outputPath);
-                processor.execute(windupConfiguration);
-
-                GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                            ClassificationModel.class);
-
-                List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-                boolean jonasClassification = false;
-                for (ClassificationModel model : classifications)
+                String classification = model.getClassification();
+                if (classification.contains("JOnAS Web Descriptor"))
                 {
-                    String classification = model.getClassification();
-                    if(classification.contains("JOnAS Web Descriptor")) {
-                        jonasClassification = true;
-                    }
+                    jonasClassification = true;
                 }
-                if(!jonasClassification) {
-                    fail("No Jonas Web Descriptor classification found, even though there is an xml file");
-                }
-                Assert.assertEquals(1, classifications.size());
-
             }
+            if (!jonasClassification)
+            {
+                fail("No Jonas Web Descriptor classification found, even though there is an xml file");
+            }
+            Assert.assertEquals(1, classifications.size());
+
         }
+    }
 }

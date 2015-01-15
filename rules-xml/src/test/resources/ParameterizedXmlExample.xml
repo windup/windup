@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<root>
+    <row indexAtt="1">
+        <index>1</index>
+        <value>one</value>
+    </row>
+    <row indexAtt="2">
+        <index>2</index>
+        <value>two</value>
+    </row>
+    <row indexAtt="3">
+        <index>3</index>
+        <value>three</value>
+    </row>
+    <row indexAtt="wrongvalue">
+        <index>4</index>
+        <value>four</value>
+    </row>
+    <row indexAtt="5">
+        <index>5</index>
+        <value>five</value>
+    </row>
+    <row indexAtt="6">
+        <index>6</index>
+        <value>six</value>
+    </row>
+    <row indexAtt="7">
+        <index>7</index>
+        <value>seven</value>
+    </row>
+    <row indexAtt="8">
+        <!--  <index>8</index> --> <!-- Skip this one to test handling of an error condition -->
+        <value>eight</value>
+    </row>
+    <row indexAtt="9">
+        <index>9</index>
+        <value>nine</value>
+    </row>
+    <row indexAtt="10">
+        <index>10</index>
+        <value>ten</value>
+    </row>
+    <row-reference>
+        <references-index>2</references-index>
+    </row-reference>
+    <row-reference>
+        <references-index>3</references-index>
+    </row-reference>
+</root>

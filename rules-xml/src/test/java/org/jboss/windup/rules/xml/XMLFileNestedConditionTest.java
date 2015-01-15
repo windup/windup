@@ -54,8 +54,7 @@ public class XMLFileNestedConditionTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 /*
-                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded
-                 * version
+                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded version
                  */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
@@ -173,7 +172,7 @@ public class XMLFileNestedConditionTest
                         .perform(Classification.as("Spring File")
                                                .and(
                                                            Iteration.over("first")
-                                                           .when(XmlFile.from(Iteration.singleVariableIterationName("first")).matchesXpath("//windup:file-gate").namespace("windup", "http://www.jboss.org/schema/windup"))
+                                                           .when(XmlFile.from(Iteration.singleVariableIterationName("first")).matchesXpath("//windupv1:file-gate").namespace("windupv1", "http://www.jboss.org/schema/windup"))
                                                            .perform(addTypeRefToList).endIteration()
                                                            )
                                 );
