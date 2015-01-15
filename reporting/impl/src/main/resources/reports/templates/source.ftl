@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<#if reportModel.sourceFileModel.projectModel??>
 <#assign applicationReportIndexModel = projectModelToApplicationIndex(reportModel.sourceFileModel.projectModel)>
+</#if>
 
   <head>
     <meta charset="utf-8">

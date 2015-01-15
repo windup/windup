@@ -60,6 +60,10 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
             throw new TemplateModelException("Error, method expects one argument (ProjectModel)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
+        if (stringModelArg == null)
+        {
+            throw new IllegalArgumentException("FreeMarker Method " + NAME + " called with null project model");
+        }
         ProjectModel projectModel = (ProjectModel) stringModelArg.getWrappedObject();
         ApplicationReportIndexModel index = service.getApplicationReportIndexForProjectModel(projectModel);
         if (index == null)
