@@ -137,8 +137,6 @@ public class GraphContextImpl implements GraphContext
                 config.addMethodHandler(new MapInAdjacentPropertiesHandler());
                 config.addMethodHandler(new MapInAdjacentVerticesHandler());
 
-                // Returns "this" for setters, to allow things like frame.setFoo(123).setBar(456).
-                config.addMethodHandler(new WindupPropertyMethodHandler());
                 return baseGraph;
             }
         };

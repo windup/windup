@@ -32,12 +32,13 @@ import com.tinkerpop.frames.annotations.DomainAnnotationHandler;
 import com.tinkerpop.frames.annotations.InVertexAnnotationHandler;
 import com.tinkerpop.frames.annotations.IncidenceAnnotationHandler;
 import com.tinkerpop.frames.annotations.OutVertexAnnotationHandler;
-import com.tinkerpop.frames.annotations.PropertyAnnotationHandler;
+import com.tinkerpop.frames.annotations.PropertyMethodHandler;
 import com.tinkerpop.frames.annotations.RangeAnnotationHandler;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovyAnnotationHandler;
 import com.tinkerpop.frames.domain.classes.Person;
 import com.tinkerpop.frames.domain.classes.Project;
 import com.tinkerpop.frames.domain.incidences.Knows;
+import com.tinkerpop.frames.modules.MethodHandler;
 
 
 /**
@@ -70,7 +71,7 @@ public class FramedGraphTest extends GraphTest {
 				return handler.getClass();
 			}
         });
-        Assert.assertTrue(collections.containsAll(Arrays.asList(PropertyAnnotationHandler.class, 
+        Assert.assertTrue(collections.containsAll(Arrays.asList( 
         		AdjacencyAnnotationHandler.class, 
         		IncidenceAnnotationHandler.class, 
         		DomainAnnotationHandler.class,
@@ -84,10 +85,10 @@ public class FramedGraphTest extends GraphTest {
         Graph graph = TinkerGraphFactory.createTinkerGraph();
         FramedGraph<Graph> framedGraph = new FramedGraph<Graph>(graph);
         framedGraph.getAnnotationHandlers().clear();
-        AnnotationHandler<?> handler = new PropertyAnnotationHandler();
-        framedGraph.registerAnnotationHandler(handler);
-        Assert.assertEquals(1, framedGraph.getAnnotationHandlers().size());
-        Assert.assertTrue(framedGraph.getAnnotationHandlers().contains(handler));
+        MethodHandler<?> handler = new PropertyMethodHandler();
+        framedGraph.getConfig().addMethodHandler(handler);
+        Assert.assertEquals(1, framedGraph.getConfig().getMethodHandlers().size());
+        Assert.assertTrue(framedGraph.getConfig().getMethodHandlers().containsValue(handler));
         
     }
 

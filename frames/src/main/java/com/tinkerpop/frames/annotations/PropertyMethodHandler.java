@@ -1,14 +1,14 @@
 package com.tinkerpop.frames.annotations;
 
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.ClassUtilities;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.MethodHandler;
 
 import java.lang.reflect.Method;
 
-public class PropertyAnnotationHandler implements AnnotationHandler<Property> {
+public class PropertyMethodHandler implements MethodHandler<Property> {
 
     @Override
     public Class<Property> getAnnotationType() {
@@ -16,7 +16,9 @@ public class PropertyAnnotationHandler implements AnnotationHandler<Property> {
     }
 
     @Override
-    public Object processElement(final Property annotation, final Method method, final Object[] arguments, final FramedGraph framedGraph, final Element element, final Direction direction) {
+    public Object processElement(Object frame, Method method,
+            Object[] arguments, Property annotation,
+            FramedGraph<?> framedGraph, Element element) {
         if (ClassUtilities.isGetMethod(method)) {
             Object value = element.getProperty(annotation.value());
             if (method.getReturnType().isEnum())
@@ -34,10 +36,8 @@ public class PropertyAnnotationHandler implements AnnotationHandler<Property> {
                     element.setProperty(annotation.value(), value);
                 }
             }
-            // If return type is this class, return this.
-            if (method.getReturnType().isAssignableFrom(element.getClass()))
-                return element;
-            return null;
+            if (method.getReturnType().isAssignableFrom(frame.getClass()))
+        	return frame;
         } else if (ClassUtilities.isRemoveMethod(method)) {
             element.removeProperty(annotation.value());
             return null;
