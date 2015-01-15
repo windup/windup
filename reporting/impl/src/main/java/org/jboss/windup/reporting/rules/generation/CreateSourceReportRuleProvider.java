@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.rules.generation;
 
+import java.util.logging.Logger;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.services.Imported;
@@ -10,6 +12,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -23,6 +26,7 @@ import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportModelService;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -38,6 +42,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class CreateSourceReportRuleProvider extends WindupRuleProvider
 {
+    private static Logger LOG = Logging.get(CreateSourceReportRuleProvider.class);
     private static final String TEMPLATE = "/reports/templates/source.ftl";
 
     @Inject
@@ -69,6 +74,13 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
                 ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
                             ReportFileModel.class);
                 sm.setSourceFileModel(reportFileModel);
+                if (reportFileModel.getProjectModel() == null)
+                {
+                    LOG.warning("Error, source report created for file: " + payload.getFilePath() + ", but this file does not have a " + 
+                                ProjectModel.class.getSimpleName() + " associated. Execution will continue, however the source report " + 
+                                "for this file may be malformed");
+                }
+                
                 sm.setReportName(payload.getPrettyPath());
                 sm.setSourceType(resolveSourceType(payload));
 
