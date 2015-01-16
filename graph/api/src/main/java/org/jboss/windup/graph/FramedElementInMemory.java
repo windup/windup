@@ -76,8 +76,7 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
         Property propertyAnnotation = method.getAnnotation(Property.class);
         if (propertyAnnotation == null)
         {
-            org.jboss.windup.graph.Property windupPropertyAnnnotation = method
-                        .getAnnotation(org.jboss.windup.graph.Property.class);
+            Property windupPropertyAnnnotation = method.getAnnotation(Property.class);
             if (windupPropertyAnnnotation == null)
             {
                 throw new WindupException("Method " + methodName

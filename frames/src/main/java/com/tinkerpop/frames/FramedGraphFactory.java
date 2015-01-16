@@ -6,7 +6,7 @@ import com.tinkerpop.frames.annotations.AdjacencyAnnotationHandler;
 import com.tinkerpop.frames.annotations.DomainAnnotationHandler;
 import com.tinkerpop.frames.annotations.IncidenceAnnotationHandler;
 import com.tinkerpop.frames.annotations.InVertexAnnotationHandler;
-import com.tinkerpop.frames.annotations.PropertyAnnotationHandler;
+import com.tinkerpop.frames.annotations.PropertyMethodHandler;
 import com.tinkerpop.frames.annotations.RangeAnnotationHandler;
 import com.tinkerpop.frames.annotations.OutVertexAnnotationHandler;
 import com.tinkerpop.frames.modules.Module;
@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.Module;
 /**
  * Creates a factory for creating {@link FramedGraph}s using a set of modules to
  * configure each graph. Note that by default all Framed graphs have the
- * following handlers registered: {@link PropertyAnnotationHandler}
+ * following handlers registered: {@link PropertyMethodHandler}
  * {@link AdjacencyAnnotationHandler} {@link IncidenceAnnotationHandler}
  * {@link DomainAnnotationHandler} {@link RangeAnnotationHandler}
  * 
@@ -85,7 +85,7 @@ public class FramedGraphFactory {
 
 	private FramedGraphConfiguration getBaseConfig() {
 		FramedGraphConfiguration config = new FramedGraphConfiguration();
-		config.addAnnotationHandler(new PropertyAnnotationHandler());
+		config.addMethodHandler(new PropertyMethodHandler());
 		config.addAnnotationHandler(new AdjacencyAnnotationHandler());
 		config.addAnnotationHandler(new IncidenceAnnotationHandler());
 		config.addAnnotationHandler(new DomainAnnotationHandler());

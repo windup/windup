@@ -19,7 +19,7 @@ import com.tinkerpop.frames.annotations.DomainAnnotationHandler;
 import com.tinkerpop.frames.annotations.InVertexAnnotationHandler;
 import com.tinkerpop.frames.annotations.IncidenceAnnotationHandler;
 import com.tinkerpop.frames.annotations.OutVertexAnnotationHandler;
-import com.tinkerpop.frames.annotations.PropertyAnnotationHandler;
+import com.tinkerpop.frames.annotations.PropertyMethodHandler;
 import com.tinkerpop.frames.annotations.RangeAnnotationHandler;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovyAnnotationHandler;
 import com.tinkerpop.frames.core.FramedGraphQueryImpl;
@@ -67,7 +67,7 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 		config = new FramedGraphConfiguration();
 		config.setConfiguredGraph(baseGraph);
 		configViaFactory = false;
-		registerAnnotationHandler(new PropertyAnnotationHandler());
+		config.addMethodHandler(new PropertyMethodHandler());
 		registerAnnotationHandler(new AdjacencyAnnotationHandler());
 		registerAnnotationHandler(new IncidenceAnnotationHandler());
 		registerAnnotationHandler(new DomainAnnotationHandler());
