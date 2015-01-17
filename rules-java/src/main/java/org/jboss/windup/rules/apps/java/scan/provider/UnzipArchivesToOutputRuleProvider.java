@@ -1,37 +1,29 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.util.List;
-
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
+import org.jboss.windup.config.phase.ArchiveExtraction;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolder;
-import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
+/**
+ * Unzip archives from the input application.
+ * 
+ * @author jsightler
+ *
+ */
 public class UnzipArchivesToOutputRuleProvider extends WindupRuleProvider
 {
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DiscoverFileTypesRuleProvider.class);
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
-    {
-        return asClassList(DiscoverXmlFilesRuleProvider.class);
+        return ArchiveExtraction.class;
     }
 
     // @formatter:off

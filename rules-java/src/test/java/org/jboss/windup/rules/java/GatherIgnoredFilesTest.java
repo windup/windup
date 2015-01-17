@@ -17,8 +17,8 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.ReportGeneration;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -92,7 +92,7 @@ public class GatherIgnoredFilesTest
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return provider.getPhase() != RulePhase.REPORT_GENERATION;
+                    return provider.getPhase() != ReportGeneration.class;
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -103,10 +103,8 @@ public class GatherIgnoredFilesTest
             processor.execute(windupConfiguration);
             WindupJavaConfigurationService javaCfg = new WindupJavaConfigurationService(context);
             Assert.assertTrue(javaCfg.getIgnoredFileRegexes().contains("testRegex"));
-            
+
         }
     }
-    
-    
 
 }

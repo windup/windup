@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,8 +9,8 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.ArchiveMetadataExtraction;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -37,15 +36,9 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(UnzipArchivesToOutputRuleProvider.class);
+        return ArchiveMetadataExtraction.class;
     }
 
     @Override

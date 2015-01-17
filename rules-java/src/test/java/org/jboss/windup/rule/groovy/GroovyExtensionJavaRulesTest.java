@@ -20,9 +20,10 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
+import org.jboss.windup.config.phase.MigrationRules;
+import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.ReportRendering;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -73,7 +74,7 @@ public class GroovyExtensionJavaRulesTest
 
     @Inject
     private WindupProcessor processor;
-    
+
     public static String GROOVY_CLASSIFICATION_AND_HINT_FILE = "/org/jboss/windup/addon/groovy/GroovyClassificationsAndHints.windup.groovy";
 
     @Inject
@@ -116,23 +117,27 @@ public class GroovyExtensionJavaRulesTest
 
             try
             {
-                Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>() {
+                Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+                {
 
                     @Override
                     public boolean accept(WindupRuleProvider provider)
                     {
-                        if(provider.getPhase().equals(RulePhase.MIGRATION_RULES)) {
+                        if (provider.getPhase().equals(MigrationRules.class))
+                        {
                             return false;
                         }
-                        if(provider.getPhase().equals(RulePhase.REPORT_GENERATION)) {
+                        if (provider.getPhase().equals(ReportGeneration.class))
+                        {
                             return false;
                         }
-                        if(provider.getPhase().equals(RulePhase.REPORT_RENDERING)) {
+                        if (provider.getPhase().equals(ReportRendering.class))
+                        {
                             return false;
                         }
                         return true;
                     }
-                    
+
                 };
                 WindupConfiguration configuration = new WindupConfiguration()
                             .setGraphContext(context)

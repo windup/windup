@@ -1,9 +1,10 @@
 package org.jboss.windup.rules.apps.tattletale;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -21,9 +22,9 @@ public class CreateTattletaleReportLinkRuleProvider extends WindupRuleProvider
     private static final String TATTLETALE_INDEX_HTML = "tattletale/index.html";
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.REPORT_GENERATION;
+        return ReportGeneration.class;
     }
 
     @Override

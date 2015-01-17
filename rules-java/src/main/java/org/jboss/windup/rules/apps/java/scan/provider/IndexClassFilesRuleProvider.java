@@ -1,19 +1,18 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.util.List;
-import java.util.logging.Logger;
 
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
+import org.jboss.windup.config.phase.Implicit;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.binary.DecompileArchivesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
-import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
@@ -23,12 +22,10 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  */
 public class IndexClassFilesRuleProvider extends WindupRuleProvider
 {
-    private static Logger LOG = Logging.get(IndexClassFilesRuleProvider.class);
-
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.INITIAL_ANALYSIS;
+        return Implicit.class;
     }
 
     @Override

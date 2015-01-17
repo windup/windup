@@ -1,7 +1,7 @@
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.metadata.RuleMetadata
 import org.jboss.windup.config.operation.Iteration;

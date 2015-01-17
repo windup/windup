@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
@@ -85,7 +86,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
      * Used for tracking the time taken by each phase of execution. This links from a {@link RulePhase} to the ID of a
      * {@link RulePhaseExecutionStatisticsModel}
      */
-    private final Map<RulePhase, Object> timeTakenByPhase = new HashMap<>();
+    private final Map<Class<? extends RulePhase>, Object> timeTakenByPhase = new HashMap<>();
 
     private final Configuration config;
 
@@ -133,7 +134,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     /**
      * Logs the time taken by this rule and adds this to the total time taken for this phase
      */
-    private void logTimeTakenByPhase(GraphContext graphContext, RulePhase phase, int timeTaken)
+    private void logTimeTakenByPhase(GraphContext graphContext, Class<? extends RulePhase> phase, int timeTaken)
     {
         if (!timeTakenByPhase.containsKey(phase))
         {
@@ -141,6 +142,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         RulePhaseExecutionStatisticsModel.class).create();
             model.setRulePhase(phase.toString());
             model.setTimeTaken(timeTaken);
+            model.setOrderExecuted(timeTakenByPhase.size());
             timeTakenByPhase.put(phase, model.asVertex().getId());
         }
         else
@@ -504,8 +506,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     /**
-     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and
-     * their results.
+     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and their results.
      */
     public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener)
     {

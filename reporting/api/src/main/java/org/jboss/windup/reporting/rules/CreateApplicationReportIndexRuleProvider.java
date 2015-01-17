@@ -1,9 +1,10 @@
 package org.jboss.windup.reporting.rules;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.PreReportGeneration;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -25,9 +26,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateApplicationReportIndexRuleProvider extends WindupRuleProvider
 {
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.PRE_REPORT_GENERATION;
+        return PreReportGeneration.class;
     }
 
     @Override
@@ -76,8 +77,8 @@ public class CreateApplicationReportIndexRuleProvider extends WindupRuleProvider
     }
 
     /**
-     * Attach all project models within the application to the index. This will make it easy to navigate from the
-     * projectModel to the application index.
+     * Attach all project models within the application to the index. This will make it easy to navigate from the projectModel to the application
+     * index.
      */
     private void addAllProjectModels(ApplicationReportIndexModel navIdx, ProjectModel projectModel)
     {

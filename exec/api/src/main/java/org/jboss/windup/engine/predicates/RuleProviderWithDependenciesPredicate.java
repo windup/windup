@@ -42,16 +42,17 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<WindupRu
     @Override
     public boolean accept(WindupRuleProvider type)
     {
+        int typeExecutionIndex = type.getExecutionIndex();
         for (WindupRuleProvider ruleProvider : this.ruleProviders)
         {
-            int compareTo = type.getPhase().compareTo(ruleProvider.getPhase());
-            if (compareTo < 0)
+            int otherExecutionIndex = ruleProvider.getExecutionIndex();
+            if (otherExecutionIndex <= typeExecutionIndex)
             {
                 LOG.info("Accepting provider: " + type.getID());
                 // is in the pre-phase
                 return true;
             }
-            else if (compareTo == 0)
+            else
             {
                 List<Class<? extends WindupRuleProvider>> executeAfter = ruleProvider.getExecuteAfter();
                 List<String> executeAfterIDs = ruleProvider.getExecuteAfterIDs();

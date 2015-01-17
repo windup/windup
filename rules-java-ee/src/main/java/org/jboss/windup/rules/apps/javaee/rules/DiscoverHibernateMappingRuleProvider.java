@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.javaee.rules;
 
 import static org.joox.JOOX.$;
 
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -11,8 +10,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -23,7 +22,6 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateMappingFileModel;
 import org.jboss.windup.rules.apps.javaee.service.HibernateEntityService;
 import org.jboss.windup.rules.apps.javaee.service.HibernateMappingFileService;
-import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
@@ -47,15 +45,9 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
     private static final String hibernateRegex = "(?i).*hibernate.mapping.*";
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DiscoverXmlFilesRuleProvider.class);
+        return InitialAnalysis.class;
     }
 
     @Override

@@ -23,8 +23,10 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.PostMigrationRules;
+import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -55,10 +57,10 @@ public class XMLTransformationTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 /*
-                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded
-                 * version
+                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded version
                  */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-base"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
@@ -67,11 +69,11 @@ public class XMLTransformationTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(TestXMLTransformationRuleProvider.class)
                     .addAsResource("simpleXSLT.xsl")
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-base"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-xml"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
@@ -85,6 +87,9 @@ public class XMLTransformationTest
 
     @Inject
     private GraphContextFactory factory;
+
+    @Inject
+    private TestXMLTransformationRuleProvider provider;
 
     @Test
     public void testXSLTTransformation() throws IOException
@@ -101,18 +106,19 @@ public class XMLTransformationTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
-                        XsltTransformationModel.class);
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
+            GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
+                        XsltTransformationModel.class);
             Assert.assertFalse(transformationService.findAll().iterator().hasNext());
+
             Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
             {
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return provider.getPhase() != RulePhase.REPORT_GENERATION;
+                    return provider.getPhase() != ReportGeneration.class;
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -155,9 +161,9 @@ public class XMLTransformationTest
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.POST_MIGRATION_RULES;
+            return PostMigrationRules.class;
         }
 
         // @formatter:off

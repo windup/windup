@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -26,6 +27,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Creates a report for all the ignored files along with all the regexes they were matched against.
+ * 
  * @author mbriskar
  *
  */
@@ -35,9 +37,9 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.REPORT_GENERATION;
+        return ReportGeneration.class;
     }
 
     // @formatter:off
@@ -77,8 +79,8 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
     private IgnoredFilesReportModel createIgnoredFilesReport(GraphContext context,
                 WindupJavaConfigurationModel javaCfg, ProjectModel rootProjectModel)
     {
-        GraphService<IgnoredFilesReportModel> ignoredFilesService= new GraphService<IgnoredFilesReportModel>(context,IgnoredFilesReportModel.class);
-        IgnoredFilesReportModel ignoredFilesReportModel =ignoredFilesService.create();
+        GraphService<IgnoredFilesReportModel> ignoredFilesService = new GraphService<IgnoredFilesReportModel>(context, IgnoredFilesReportModel.class);
+        IgnoredFilesReportModel ignoredFilesReportModel = ignoredFilesService.create();
         ignoredFilesReportModel.setReportPriority(100);
         ignoredFilesReportModel.setReportName(TITLE);
         ignoredFilesReportModel.setMainApplicationReport(false);

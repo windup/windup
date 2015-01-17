@@ -1,9 +1,10 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -25,9 +26,9 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.REPORT_GENERATION;
+        return ReportGeneration.class;
     }
 
     // @formatter:off
@@ -77,17 +78,23 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         applicationReportModel.setDisplayInApplicationList(true);
-        GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<OverviewReportLineMessageModel>(context,OverviewReportLineMessageModel.class);
+        GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<OverviewReportLineMessageModel>(context,
+                    OverviewReportLineMessageModel.class);
         Iterable<OverviewReportLineMessageModel> findAll = lineNotesService.findAll();
-        for(OverviewReportLineMessageModel find : findAll) {
+        for (OverviewReportLineMessageModel find : findAll)
+        {
             String projectPrettyPath = projectModel.getRootFileModel().getPrettyPath();
             ProjectModel project = find.getProject();
             boolean found = false;
-            while(project!=null && !found) {
-                if(projectPrettyPath.equals(project.getRootFileModel().getPrettyPath())) {
+            while (project != null && !found)
+            {
+                if (projectPrettyPath.equals(project.getRootFileModel().getPrettyPath()))
+                {
                     applicationReportModel.addApplicationReportLine(find);
                     found = true;
-                } else {
+                }
+                else
+                {
                     project = project.getParentProject();
                 }
             }
