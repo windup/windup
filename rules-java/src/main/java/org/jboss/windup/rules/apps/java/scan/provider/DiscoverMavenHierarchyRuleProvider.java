@@ -1,30 +1,31 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.DiscoverProjectStructure;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import java.util.logging.Logger;
-import org.jboss.windup.util.Logging;
 
 public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return DiscoverProjectStructure.class;
     }
 
     @Override

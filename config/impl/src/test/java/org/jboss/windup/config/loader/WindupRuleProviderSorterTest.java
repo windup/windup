@@ -1,38 +1,49 @@
 package org.jboss.windup.config.loader;
 
-import org.jboss.windup.util.exception.WindupMultiException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.Implicit;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.exception.WindupMultiStringException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.ocpsoft.rewrite.config.Configuration;
 
 public class WindupRuleProviderSorterTest
 {
-
-    private class WCPPhaseDefaultClass1 extends WindupRuleProvider
+    private class Phase1 extends RulePhase
     {
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
         {
-            return null;
+            return asClassList(Phase2.class);
         }
+    }
 
+    private class Phase2 extends RulePhase
+    {
         @Override
-        public String toString()
+        public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
         {
-            return "PhaseDefaultClass1";
+            return asClassList(Phase3.class);
         }
+    }
 
+    private class Phase3 extends RulePhase
+    {
+    }
+
+    private class Phase4 extends RulePhase
+    {
         @Override
-        public String getID()
+        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
-            return toString();
+            return asClassList(Phase3.class);
         }
     }
 
@@ -47,9 +58,9 @@ public class WindupRuleProviderSorterTest
         }
 
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.DISCOVERY;
+            return Phase1.class;
         }
 
         @Override
@@ -82,9 +93,9 @@ public class WindupRuleProviderSorterTest
         }
 
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.DISCOVERY;
+            return Phase1.class;
         }
 
         @Override
@@ -112,13 +123,20 @@ public class WindupRuleProviderSorterTest
         public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
             List<Class<? extends WindupRuleProvider>> l = new ArrayList<>();
-            l.add(WCPPhase1Class1.class);
+            l.add(WCPPhase1Class2.class);
             return l;
         }
 
         @Override
-        public RulePhase getPhase() {
-        	return RulePhase.IMPLICIT;
+        public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
+        {
+            return asClassList(WCPPhase2Class1.class);
+        }
+
+        @Override
+        public Class<? extends RulePhase> getPhase()
+        {
+            return Implicit.class;
         }
 
         @Override
@@ -151,9 +169,9 @@ public class WindupRuleProviderSorterTest
         }
 
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.DISCOVERY;
+            return Phase1.class;
         }
 
         @Override
@@ -178,9 +196,9 @@ public class WindupRuleProviderSorterTest
     private class WCPPhase2Class1 extends WindupRuleProvider
     {
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.INITIAL_ANALYSIS;
+            return Phase2.class;
         }
 
         @Override
@@ -205,9 +223,9 @@ public class WindupRuleProviderSorterTest
     private class WCPPhase2Class3 extends WindupRuleProvider
     {
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.INITIAL_ANALYSIS;
+            return Phase2.class;
         }
 
         @Override
@@ -244,9 +262,9 @@ public class WindupRuleProviderSorterTest
     private class WCPPhase2Class4 extends WindupRuleProvider
     {
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.INITIAL_ANALYSIS;
+            return Phase2.class;
         }
 
         @Override
@@ -277,9 +295,9 @@ public class WindupRuleProviderSorterTest
     private class WCPPhase1WrongPhaseDep extends WindupRuleProvider
     {
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.DISCOVERY;
+            return Phase1.class;
         }
 
         @Override
@@ -310,9 +328,9 @@ public class WindupRuleProviderSorterTest
     private class WCPAcceptableCrossPhaseDep extends WindupRuleProvider
     {
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.REPORT_RENDERING;
+            return Phase3.class;
         }
 
         @Override
@@ -343,9 +361,9 @@ public class WindupRuleProviderSorterTest
     private class WCPImplicitPhase2Step2 extends WindupRuleProvider
     {
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.IMPLICIT;
+            return Implicit.class;
         }
 
         @Override
@@ -380,10 +398,20 @@ public class WindupRuleProviderSorterTest
 
     }
 
+    private List<RulePhase> getPhases()
+    {
+        List<RulePhase> phases = new ArrayList<>();
+        // mix them up as we want to test sorting of these as well
+        phases.add(new Phase3());
+        phases.add(new Phase1());
+        phases.add(new Phase4());
+        phases.add(new Phase2());
+        return phases;
+    }
+
     @Test
     public void testSort()
     {
-        WindupRuleProvider vD = new WCPPhaseDefaultClass1();
         WindupRuleProvider v1 = new WCPPhase1Class1();
         WindupRuleProvider v2 = new WCPPhase1Class2();
         WindupRuleProvider vI = new WCPPhaseImplicitClass2();
@@ -394,7 +422,6 @@ public class WindupRuleProviderSorterTest
         WindupRuleProvider v7 = new WCPPhase2Class4();
         List<WindupRuleProvider> ruleProviders = new ArrayList<>();
         ruleProviders.add(v7);
-        ruleProviders.add(vD);
         ruleProviders.add(v6);
         ruleProviders.add(vI);
         ruleProviders.add(v5);
@@ -402,11 +429,24 @@ public class WindupRuleProviderSorterTest
         ruleProviders.add(v4);
         ruleProviders.add(v2);
         ruleProviders.add(v1);
+        ruleProviders.addAll(getPhases());
 
-        List<WindupRuleProvider> sortedRCPList = WindupRuleProviderSorter
+        List<WindupRuleProvider> sortedRCPListUnmodifiable = WindupRuleProviderSorter
                     .sort(ruleProviders);
+        System.out.println("Results With Phases:  " + sortedRCPListUnmodifiable);
+        List<WindupRuleProvider> sortedRCPList = new ArrayList<>(sortedRCPListUnmodifiable);
 
-        System.out.println("Results: " + sortedRCPList);
+        // remove phases (this makes asserting on the results easier)
+        ListIterator<WindupRuleProvider> sortedRCPLI = sortedRCPList.listIterator();
+        while (sortedRCPLI.hasNext())
+        {
+            WindupRuleProvider p = sortedRCPLI.next();
+            if (p instanceof RulePhase)
+            {
+                sortedRCPLI.remove();
+            }
+        }
+        System.out.println("Results without Phases:  " + sortedRCPList);
 
         Assert.assertEquals(v1, sortedRCPList.get(0));
         Assert.assertEquals(v2, sortedRCPList.get(1));
@@ -416,7 +456,6 @@ public class WindupRuleProviderSorterTest
         Assert.assertEquals(v5, sortedRCPList.get(5));
         Assert.assertEquals(v6, sortedRCPList.get(6));
         Assert.assertEquals(v7, sortedRCPList.get(7));
-        Assert.assertEquals(vD, sortedRCPList.get(8));
     }
 
     @Test
@@ -468,7 +507,7 @@ public class WindupRuleProviderSorterTest
             WindupRuleProviderSorter.sort(ruleProviders);
             Assert.fail("No improper phase dependencies detected!");
         }
-        catch (IncorrectPhaseDependencyException | WindupMultiException e)
+        catch (IncorrectPhaseDependencyException | WindupMultiStringException e)
         {
             // ignore... this exception is expected in this test
         }
@@ -504,6 +543,43 @@ public class WindupRuleProviderSorterTest
             e.printStackTrace();
             Assert.fail("This cross-dependency should be acceptable!");
         }
+    }
+
+    @Test
+    public void testPhaseSorting()
+    {
+        List<WindupRuleProvider> ruleProviders = new ArrayList<>();
+        ruleProviders.addAll(getPhases());
+
+        List<WindupRuleProvider> results = WindupRuleProviderSorter.sort(ruleProviders);
+        Assert.assertEquals(4, results.size());
+
+        int row = 0;
+        Assert.assertTrue(results.get(row) instanceof Phase1);
+        Assert.assertTrue(results.get(row).getExecuteAfter().isEmpty());
+        Assert.assertEquals(1, results.get(row).getExecuteBefore().size());
+        Assert.assertTrue(results.get(row).getExecuteBefore().get(0) == Phase2.class);
+
+        row++;
+        Assert.assertTrue(results.get(row) instanceof Phase2);
+        Assert.assertEquals(1, results.get(row).getExecuteAfter().size());
+        Assert.assertEquals(1, results.get(row).getExecuteBefore().size());
+        Assert.assertTrue(results.get(row).getExecuteAfter().get(0) == Phase1.class);
+        Assert.assertTrue(results.get(row).getExecuteBefore().get(0) == Phase3.class);
+
+        row++;
+        Assert.assertTrue(results.get(row) instanceof Phase3);
+        Assert.assertEquals(1, results.get(row).getExecuteAfter().size());
+        Assert.assertEquals(1, results.get(row).getExecuteBefore().size());
+        Assert.assertTrue(results.get(row).getExecuteAfter().get(0) == Phase2.class);
+        Assert.assertTrue(results.get(row).getExecuteBefore().get(0) == Phase4.class);
+
+        row++;
+        Assert.assertTrue(results.get(row) instanceof Phase4);
+        Assert.assertEquals(1, results.get(row).getExecuteAfter().size());
+        Assert.assertEquals(0, results.get(row).getExecuteBefore().size());
+        Assert.assertTrue(results.get(row).getExecuteAfter().get(0) == Phase3.class);
+        Assert.assertTrue(results.get(row).getExecuteBefore().isEmpty());
     }
 
 }

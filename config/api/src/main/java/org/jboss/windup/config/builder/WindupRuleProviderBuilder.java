@@ -8,8 +8,8 @@ import java.util.Map;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -30,7 +30,7 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
             WindupRuleProviderBuilderAddDependencies
 {
     private String id;
-    private RulePhase rulePhase = WindupRuleProvider.DEFAULT_PHASE;
+    private Class<? extends RulePhase> rulePhase = WindupRuleProvider.DEFAULT_PHASE;
 
     private List<String> executeAfterIDs = new ArrayList<>();
     private List<Class<? extends WindupRuleProvider>> executeAfterTypes = new ArrayList<>();
@@ -63,7 +63,7 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies setPhase(RulePhase phase)
+    public WindupRuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase)
     {
         this.rulePhase = phase;
         return this;
@@ -136,7 +136,7 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     }
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
         return rulePhase;
     }
@@ -164,9 +164,10 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     {
         return executeBeforeIDs;
     }
-    
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         return this.getID();
     }
 }

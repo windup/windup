@@ -1,12 +1,11 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.phase.ArchiveMetadataExtraction;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphTypeManager;
@@ -21,15 +20,9 @@ public class DiscoverArchiveTypesRuleProvider extends WindupRuleProvider
     private GraphTypeManager graphTypeManager;
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DiscoverFileTypesRuleProvider.class);
+        return ArchiveMetadataExtraction.class;
     }
 
     // @formatter:off

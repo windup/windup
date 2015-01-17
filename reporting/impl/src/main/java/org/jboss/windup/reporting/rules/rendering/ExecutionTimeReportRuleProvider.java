@@ -12,9 +12,10 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.config.phase.PostFinalize;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
@@ -38,11 +39,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class ExecutionTimeReportRuleProvider extends WindupRuleProvider
 {
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
         // this is basically a reporting rule, but we execute it during finalize in order
         // to also report on the time it took to generate reports
-        return RulePhase.POST_FINALIZE;
+        return PostFinalize.class;
     }
 
     @Override
@@ -118,9 +119,7 @@ public class ExecutionTimeReportRuleProvider extends WindupRuleProvider
                                                 public int compare(RulePhaseExecutionStatisticsModel o1,
                                                             RulePhaseExecutionStatisticsModel o2)
                                                 {
-                                                    RulePhase r1 = RulePhase.valueOf(o1.getRulePhase());
-                                                    RulePhase r2 = RulePhase.valueOf(o2.getRulePhase());
-                                                    return r1.getPriority() - r2.getPriority();
+                                                    return o1.getOrderExecuted() - o2.getOrderExecuted();
                                                 }
                                             });
 

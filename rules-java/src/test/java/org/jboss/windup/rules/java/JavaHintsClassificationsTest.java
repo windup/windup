@@ -22,9 +22,10 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -208,9 +209,9 @@ public class JavaHintsClassificationsTest
         private Set<JavaTypeReferenceModel> typeReferences = new HashSet<>();
 
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.INITIAL_ANALYSIS;
+            return InitialAnalysis.class;
         }
 
         @Override

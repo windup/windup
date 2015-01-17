@@ -2,21 +2,20 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.binary.DecompileArchivesRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.VariableResolvingASTVisitor;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
@@ -35,15 +34,9 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
 {
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.INITIAL_ANALYSIS;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DecompileArchivesRuleProvider.class, DiscoverJavaFilesRuleProvider.class);
+        return InitialAnalysis.class;
     }
 
     // @formatter:off

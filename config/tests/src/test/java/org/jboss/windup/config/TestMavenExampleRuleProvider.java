@@ -13,6 +13,8 @@ import org.jboss.windup.config.graph.TypeOperation;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.phase.Discovery;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
@@ -29,9 +31,9 @@ public class TestMavenExampleRuleProvider extends WindupRuleProvider
     private final List<MavenProjectModel> results = new LinkedList<>();
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return Discovery.class;
     }
 
     // @formatter:off
@@ -76,7 +78,6 @@ public class TestMavenExampleRuleProvider extends WindupRuleProvider
         return configuration;
     }
     // @formatter:on
-    
 
     public List<MavenProjectModel> getSearchResults()
     {

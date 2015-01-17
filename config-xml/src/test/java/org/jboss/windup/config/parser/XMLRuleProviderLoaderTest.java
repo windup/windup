@@ -13,8 +13,8 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.Discovery;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
@@ -76,7 +76,7 @@ public class XMLRuleProviderLoaderTest
             WindupRuleProvider provider = providers.get(0);
             String id = provider.getID();
             Assert.assertEquals("testruleprovider", id);
-            Assert.assertEquals(RulePhase.DISCOVERY, provider.getPhase());
+            Assert.assertEquals(Discovery.class, provider.getPhase());
             List<Rule> rules = provider.getConfiguration(graphContext).getRules();
             Assert.assertEquals(3, rules.size());
 

@@ -60,12 +60,12 @@ public class StreamRegexMatcher extends RegexModifier
             long lineNumber = matchFactory.getCurrentLine();
             // the start Column may be after the first char in a line, so use the LineColumnAwareModificationFactory to figure out the actual column
             // number
-            int startColumn = (int) matchFactory.getCurrentColumn() + matchResult.start();
+            int startColumn = (int) matchFactory.getCurrentColumn() + matchResult.start() - firstModifiableCharacterInBuffer;
             boolean calculateStartColumn = false;
 
             // now we calculate the actual line number based upon the start line number of the buffer and the index of the match in the buffer
             char lastChar = 0;
-            for (int i = 0; i < matchResult.start(); i++)
+            for (int i = 0; i < matcher.start(); i++)
             {
                 char ch = characterBuffer.charAt(i);
                 if (ch == '\r')

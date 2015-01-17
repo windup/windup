@@ -3,9 +3,10 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.config.phase.DiscoverProjectStructure;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -24,9 +25,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class DiscoverNonMavenSourceProjectsRuleProvider extends WindupRuleProvider
 {
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return DiscoverProjectStructure.class;
     }
 
     @Override

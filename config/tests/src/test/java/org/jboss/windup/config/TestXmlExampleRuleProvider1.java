@@ -15,6 +15,8 @@ import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.Discovery;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
@@ -33,9 +35,9 @@ public class TestXmlExampleRuleProvider1 extends WindupRuleProvider
     private final Set<String> excludedXmlRootNames = new HashSet<>();
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return Discovery.class;
     }
 
     // @formatter:off

@@ -1,11 +1,12 @@
 package org.jboss.windup.rules.apps.java.binary;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.Log;
+import org.jboss.windup.config.phase.DecompilationPhase;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
@@ -24,9 +25,9 @@ import com.tinkerpop.pipes.PipeFunction;
 public class DecompileArchivesRuleProvider extends WindupRuleProvider
 {
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.INITIAL_ANALYSIS;
+        return DecompilationPhase.class;
     }
 
     // @formatter:off

@@ -1,7 +1,7 @@
 package org.jboss.windup.config.builder;
 
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.RulePhase;
 
 /**
  * @author jsightler
@@ -12,5 +12,5 @@ public interface WindupRuleProviderBuilderMetadataSetPhase
     /**
      * Set the {@link RulePhase} for this {@link WindupRuleProvider}
      */
-    WindupRuleProviderBuilderAddDependencies setPhase(RulePhase phase);
+    WindupRuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase);
 }

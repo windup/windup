@@ -5,8 +5,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.PostFinalize;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -27,9 +28,9 @@ public class RenderRuleProviderReportRuleProvider extends WindupRuleProvider
     private Furnace furnace;
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.POST_FINALIZE;
+        return PostFinalize.class;
     }
 
     @Override
