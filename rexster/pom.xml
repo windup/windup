@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jboss.windup</groupId>
@@ -24,13 +25,13 @@
 				<executions>
 					<execution>
 						<id>create-forge-addon</id>
-                        			<phase>package</phase>
-                        			<goals>
-                         			   <goal>jar</goal>
-                       			 </goals>
-                       			 <configuration>
-                        		    <classifier>forge-addon</classifier>
-                      		         </configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>forge-addon</classifier>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -77,11 +78,11 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-	       <groupId>commons-io</groupId>
-           <artifactId>commons-io</artifactId>
-	       <version>2.4</version>
-           <optional>true</optional>
-        </dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+			<optional>true</optional>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.annotation</groupId>
@@ -96,5 +97,22 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jboss.forge.furnace.test</groupId>
+			<artifactId>furnace-test-harness</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.furnace.test</groupId>
+			<artifactId>arquillian-furnace-classpath</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.exec</groupId>
+			<artifactId>windup-exec</artifactId>
+			<version>${project.version}</version>
+			<classifier>forge-addon</classifier>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
