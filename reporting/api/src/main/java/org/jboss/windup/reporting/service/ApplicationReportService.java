@@ -23,6 +23,19 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         super(context, ApplicationReportModel.class);
     }
 
+    /**
+     * Overrides GraphService.create() to create the object with some reasonable defaults
+     */
+    public ApplicationReportModel create()
+    {
+        ApplicationReportModel applicationReportModel = super.create();
+        applicationReportModel.setDisplayInApplicationList(false);
+        applicationReportModel.setDisplayInApplicationReportIndex(false);
+        applicationReportModel.setMainApplicationReport(false);
+        applicationReportModel.setReportPriority(Integer.MAX_VALUE);
+        return applicationReportModel;
+    }
+
     public ApplicationReportModel getMainApplicationReportForFile(FileModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<>(getGraphContext().getGraph());
@@ -33,7 +46,8 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
 
         // check that the project for this application report is the same as the root project for the provided fileModel
         ProjectModel rootProjectModel = fileModel.getProjectModel();
-        if(rootProjectModel == null) {
+        if (rootProjectModel == null)
+        {
             return null;
         }
         while (rootProjectModel.getParentProject() != null)

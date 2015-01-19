@@ -34,14 +34,21 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-xml</artifactId>
+            <artifactId>rules-java-ee</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-java-ee</artifactId>
+            <artifactId>rules-tattletale</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>rules-xml</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>

@@ -71,6 +71,7 @@
 
         <module>rules-java</module>
         <module>rules-java-ee</module>
+        <module>rules-tattletale</module>
         <module>rules-xml</module>
 
         <module>exec</module>
