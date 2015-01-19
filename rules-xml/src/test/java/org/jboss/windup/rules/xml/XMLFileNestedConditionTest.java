@@ -37,7 +37,6 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,6 +44,7 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.windup.rules.apps.model.FileLocationModel;
 
 @RunWith(Arquillian.class)
 public class XMLFileNestedConditionTest

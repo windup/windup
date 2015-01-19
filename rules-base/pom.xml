@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.windup</groupId>
+        <artifactId>windup-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.jboss.windup.rules.apps</groupId>
+    <artifactId>rules-base-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Windup Rules - Base Rules</name>
+
+    <modules>
+        <module>addon</module>
+        <module>api</module>
+        <module>impl</module>
+        <module>tests</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>rules-base-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>rules-base-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.config</groupId>
+                <artifactId>windup-config</artifactId>
+                <version>${project.version}</version>
+                <classifier>forge-addon</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.config</groupId>
+                <artifactId>windup-config-xml</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.utils</groupId>
+                <artifactId>utils</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

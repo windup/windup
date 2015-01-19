@@ -6,15 +6,16 @@ import java.util.logging.Logger;
 import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 
+import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.util.Logging;
 
 class XmlFileEvaluateXPathFunction implements XPathFunction
 {
     private static final Logger LOG = Logging.get(XmlFileEvaluateXPathFunction.class);
 
-    private final XmlFile.EvaluationStrategy evaluationStrategy;
+    private final EvaluationStrategy evaluationStrategy;
 
-    XmlFileEvaluateXPathFunction(XmlFile.EvaluationStrategy evaluationStrategy)
+    XmlFileEvaluateXPathFunction(EvaluationStrategy evaluationStrategy)
     {
         this.evaluationStrategy = evaluationStrategy;
     }

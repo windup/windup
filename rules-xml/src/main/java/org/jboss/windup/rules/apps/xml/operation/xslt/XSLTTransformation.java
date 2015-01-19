@@ -30,13 +30,13 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.reporting.model.LinkModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.windup.rules.apps.model.FileReferenceModel;
 
 import java.util.logging.Logger;
 

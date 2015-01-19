@@ -7,9 +7,9 @@ import java.util.Set;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.FileLocationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.util.ExecutionStatistics;
+import org.windup.rules.apps.model.FileLocationModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;

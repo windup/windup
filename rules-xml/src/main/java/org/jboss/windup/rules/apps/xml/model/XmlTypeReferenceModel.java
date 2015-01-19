@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.xml.model;
 
-import org.jboss.windup.reporting.model.FileLocationModel;
+import org.windup.rules.apps.model.FileLocationModel;
 
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
@@ -11,7 +11,6 @@ public interface XmlTypeReferenceModel extends FileLocationModel
 {
     public static final String XPATH = "xpath";
     public static final String NAMESPACES = "namespaces";
-    public static final String SOURCE_SNIPPIT = "referenceSourceSnippit";
 
     @Property(XPATH)
     String getXpath();
@@ -27,11 +26,5 @@ public interface XmlTypeReferenceModel extends FileLocationModel
 
     @Adjacency(label = NAMESPACES)
     NamespaceMetaModel addNamespace(NamespaceMetaModel friend);
-
-    @Property(SOURCE_SNIPPIT)
-    void setSourceSnippit(String source);
-
-    @Property(SOURCE_SNIPPIT)
-    String getSourceSnippit();
 
 }
