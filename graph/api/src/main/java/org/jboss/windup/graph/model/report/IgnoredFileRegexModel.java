@@ -25,5 +25,14 @@ public interface IgnoredFileRegexModel extends WindupVertexFrame
      */
     @Property("name_regex")
     public void setRegex(String regex);
+    
+    /**
+     * Checks if the regex is compilable
+     */
+    @Property("compilationError")
+    public String getCompilationError();
+    
+    @Property("compilationError")
+    public void setCompilationError(String errorMessage);
 
 }

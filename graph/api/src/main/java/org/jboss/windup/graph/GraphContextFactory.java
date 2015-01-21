@@ -20,4 +20,10 @@ public interface GraphContextFactory
      * Create a new {@link GraphContext} using a temporary file storage location.
      */
     GraphContext create();
+    
+    /**
+     * Loads a {@link GraphContext} using the given {@link Path} as a file storage location. 
+     */
+    GraphContext load(Path dir);
+
 }

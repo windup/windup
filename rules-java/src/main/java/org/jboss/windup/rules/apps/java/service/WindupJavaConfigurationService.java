@@ -46,7 +46,10 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
             WindupJavaConfigurationModel cfg = getJavaConfigurationModel(getGraphContext());
             for (IgnoredFileRegexModel ignored : cfg.getIgnoredFileRegexes())
             {
-                ignoredRegexes.add(ignored.getRegex());
+                //TODO: Consider having isCompilable() in case there is no message but is not compilable
+            	if(ignored.getCompilationError() == null) {
+            		ignoredRegexes.add(ignored.getRegex());
+            	}
             }
         }
         return ignoredRegexes;

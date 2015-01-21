@@ -317,11 +317,13 @@ public class WindupCommand implements UICommand
 
         // put this in the context for debugging, and unit tests (or anything else that needs it)
         context.getUIContext().getAttributeMap().put(WindupConfiguration.class, windupConfiguration);
+        
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
         try (GraphContext graphContext = graphContextFactory.create(graphPath))
         {
+            context.getUIContext().getAttributeMap().put(GraphContext.class, graphContext);
             UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();
             WindupProgressMonitor progressMonitor = new WindupProgressMonitorAdapter(uiProgressMonitor);
             windupConfiguration

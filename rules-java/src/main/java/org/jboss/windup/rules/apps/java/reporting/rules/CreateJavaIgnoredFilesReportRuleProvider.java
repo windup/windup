@@ -11,24 +11,18 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.rules.apps.java.model.IgnoredFileModel;
-import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.reporting.model.IgnoredFilesReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-
-import com.tinkerpop.blueprints.Predicate;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * Creates a report for all the ignored files along with all the regexes they were matched against.

@@ -13,12 +13,14 @@
             <tr>
                 <th>File</th>
                 <th>Path</th>
+		<th>Ignored by regex</th>
             </tr>
 
             <#list reportModel.ignoredFiles.iterator() as file>
             <tr>
                 <td> <#if file.fileName?has_content> ${file.fileName} </#if> </td>
                 <td> <#if file.filePath?has_content> ${file.filePath} </#if> </td>
+		<td> <#if file.ignoredRegex?has_content> ${file.ignoredRegex} </#if> </td>
             </tr>
             </#list>
         </table>
@@ -32,11 +34,15 @@
         <table class="table table-striped table-bordered">
             <tr>
                 <th>Regex</th>
+		<th>Compilable</th>
             </tr>
 
             <#list reportModel.fileRegexes.iterator() as regex>
             <tr>
                 <td> <#if regex.regex?has_content> ${regex.regex} </#if> </td>
+		<td> <#if regex.compilationError?has_content> ${regex.compilationError}
+		     <#else> OK
+                     </#if> </td>
             </tr>
             </#list>
         </table>

@@ -41,76 +41,64 @@ public class GraphContextImpl implements GraphContext
     private Furnace furnace;
     private Map<String, Object> configurationOptions;
     private final GraphTypeRegistry graphTypeRegistry;
-    private final EventGraph<TitanGraph> eventGraph;
-    private final BatchGraph<TitanGraph> batchGraph;
-    private final FramedGraph<EventGraph<TitanGraph>> framed;
+    private EventGraph<TitanGraph> eventGraph;
+    private BatchGraph<TitanGraph> batchGraph;
+    private FramedGraph<EventGraph<TitanGraph>> framed;
+    private Configuration conf;
 
     private final Path graphDir;
+
+    private GraphApiCompositeClassLoaderProvider classLoaderProvider;
 
     public GraphContextImpl(Furnace furnace, GraphTypeRegistry graphTypeRegistry, GraphApiCompositeClassLoaderProvider classLoaderProvider,
                 Path graphDir)
     {
         this.furnace = furnace;
         this.graphTypeRegistry = graphTypeRegistry;
+        this.classLoaderProvider = classLoaderProvider;
         this.graphDir = graphDir;
+    }
 
-        log.fine("Initializing graph.");
-
+    public GraphContextImpl create()
+    {
         FileUtils.deleteQuietly(graphDir.toFile());
+        TitanGraph titan = initializeTitanGraph();
+        initializeTitanManagement(titan);
+        createFramed(titan);
+        fireListeners();
+        return this;
+    }
 
-        Path lucene = graphDir.resolve("graphsearch");
-        Path berkeley = graphDir.resolve("titangraph");
-
-        // TODO: Externalize this.
-        Configuration conf = new BaseConfiguration();
-        conf.setProperty("storage.directory", berkeley.toAbsolutePath().toString());
-        conf.setProperty("storage.backend", "berkeleyje");
-
-        // Sets the berkeley cache to a relatively small value to reduce the memory footprint.
-        // This is actually more important than performance on some of the smaller machines out there, and
-        // the performance decrease seems to be minimal.
-        conf.setProperty("storage.berkeleydb.cache-percentage", 1);
-
-        //
-        // turn on a db-cache that persists across txn boundaries, but make it relatively small
-        conf.setProperty("cache.db-cache", true);
-        conf.setProperty("cache.db-cache-clean-wait", 0);
-        conf.setProperty("cache.db-cache-size", .05);
-        conf.setProperty("cache.db-cache-time", 0);
-
-        conf.setProperty("index.search.backend", "lucene");
-        conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
-
-        final TitanGraph titanGraph = TitanFactory.open(conf);
-
-        // TODO: This has to load dynamically.
-        // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
-        String[] keys = new String[] { "namespaceURI", "schemaLocation", "publicId", "rootTagName",
-                    "systemId", "qualifiedName", "filePath", "mavenIdentifier", "packageName", "classification" };
-
-        TitanManagement mgmt = titanGraph.getManagementSystem();
-
-        for (String key : keys)
+    public GraphContextImpl load()
+    {
+        TitanGraph titan = initializeTitanGraph();
+        createFramed(titan);
+        fireListeners();
+        return this;
+    }
+    
+    private void fireListeners() {
+        Imported<AfterGraphInitializationListener> afterInitializationListeners = furnace.getAddonRegistry().getServices(
+                    AfterGraphInitializationListener.class);
+        Map<String, Object> confProps = new HashMap<>();
+        Iterator<?> keyIter = conf.getKeys();
+        while (keyIter.hasNext())
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
-                        .make();
-            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
+            String key = (String) keyIter.next();
+            confProps.put(key, conf.getProperty(key));
         }
 
-        for (String key : new String[] { "referenceSourceSnippit" })
+        System.out.println("Properties: " + confProps);
+        if (!afterInitializationListeners.isUnsatisfied())
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
-                        .make();
-            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
+            for (AfterGraphInitializationListener listener : afterInitializationListeners)
+            {
+                listener.afterGraphStarted(confProps, this);
+            }
         }
-
-        for (String key : new String[] { WindupVertexFrame.TYPE_PROP })
-        {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.LIST).make();
-            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
-        }
-        mgmt.commit();
-
+    }
+    
+    private void createFramed(TitanGraph titanGraph) {
         this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
         this.batchGraph = new BatchGraph<TitanGraph>(titanGraph, 1000L);
 
@@ -149,25 +137,73 @@ public class GraphContextImpl implements GraphContext
         );
 
         framed = factory.create(eventGraph);
+    }
 
-        Imported<AfterGraphInitializationListener> afterInitializationListeners = furnace.getAddonRegistry().getServices(
-                    AfterGraphInitializationListener.class);
-        Map<String, Object> confProps = new HashMap<>();
-        Iterator<?> keyIter = conf.getKeys();
-        while (keyIter.hasNext())
+    private void initializeTitanManagement(TitanGraph titanGraph)
+    {
+        // TODO: This has to load dynamically.
+        // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
+        String[] keys = new String[] { "namespaceURI", "schemaLocation", "publicId", "rootTagName",
+                    "systemId", "qualifiedName", "filePath", "mavenIdentifier", "packageName", "classification" };
+
+        TitanManagement mgmt = titanGraph.getManagementSystem();
+
+        for (String key : keys)
         {
-            String key = (String) keyIter.next();
-            confProps.put(key, conf.getProperty(key));
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
+                        .make();
+            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
-        System.out.println("Properties: " + confProps);
-        if (!afterInitializationListeners.isUnsatisfied())
+        for (String key : new String[] { "referenceSourceSnippit" })
         {
-            for (AfterGraphInitializationListener listener : afterInitializationListeners)
-            {
-                listener.afterGraphStarted(confProps, this);
-            }
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
+                        .make();
+            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
         }
+
+        for (String key : new String[] { WindupVertexFrame.TYPE_PROP })
+        {
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.LIST).make();
+            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
+        }
+        mgmt.commit();
+    }
+
+    private TitanGraph initializeTitanGraph()
+    {
+        log.fine("Initializing graph.");
+
+        Path lucene = graphDir.resolve("graphsearch");
+        Path berkeley = graphDir.resolve("titangraph");
+
+        // TODO: Externalize this.
+        conf = new BaseConfiguration();
+        conf.setProperty("storage.directory", berkeley.toAbsolutePath().toString());
+        conf.setProperty("storage.backend", "berkeleyje");
+
+        // Sets the berkeley cache to a relatively small value to reduce the memory footprint.
+        // This is actually more important than performance on some of the smaller machines out there, and
+        // the performance decrease seems to be minimal.
+        conf.setProperty("storage.berkeleydb.cache-percentage", 1);
+
+        //
+        // turn on a db-cache that persists across txn boundaries, but make it relatively small
+        conf.setProperty("cache.db-cache", true);
+        conf.setProperty("cache.db-cache-clean-wait", 0);
+        conf.setProperty("cache.db-cache-size", .05);
+        conf.setProperty("cache.db-cache-time", 0);
+
+        conf.setProperty("index.search.backend", "lucene");
+        conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
+
+        return TitanFactory.open(conf);
+    }
+
+
+    public Configuration getConfiguration()
+    {
+        return conf;
     }
 
     @Override
