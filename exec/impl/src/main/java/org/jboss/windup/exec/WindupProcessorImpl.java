@@ -67,15 +67,16 @@ public class WindupProcessorImpl implements WindupProcessor
         {
             System.out.println("User rules dir: " + path);
             LOG.info("User rules dir: " + path);
-            LOG.warning("User rules dir: " + path);
             if (path == null)
             {
-                throw new WindupException("Null path found (all paths are: " + windupConfiguration.getAllUserRulesDirectories() + ")");
+                throw new WindupException("One of user rules dir is null."
+                    + "\n\tAll paths are: " + windupConfiguration.getAllUserRulesDirectories());
             }
             configModel.addUserRulesPath(getFileModel(context, path));
         }
 
-        for (Path path : windupConfiguration.getAllIgnoreDirectories())
+        // Ignored paths pattern files - files that contain regexes to ignore files.
+        for (Path path : windupConfiguration.getAllIgnorePaths())
         {
             configModel.addUserIgnorePath(getFileModel(context, path));
         }

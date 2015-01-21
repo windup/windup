@@ -30,7 +30,7 @@ import org.jboss.windup.graph.GraphContext;
 
 /**
  * Configuration of WindupProcessor.
- * 
+ *
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -181,13 +181,13 @@ public class WindupConfiguration
     /**
      * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the file/directory specified by the user
      * and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
-     * 
+     *
      * @return
      */
-    public Iterable<Path> getAllIgnoreDirectories()
+    public Iterable<Path> getAllIgnorePaths()
     {
         Set<Path> results = new HashSet<>();
-        results.addAll(getDefaultUserIgnoreDirectories());
+        results.addAll(getDefaultUserIgnorePaths());
         File userSpecifiedFile = getOptionValue(UserIgnorePathOption.NAME);
         if (userSpecifiedFile != null)
         {
@@ -212,7 +212,7 @@ public class WindupConfiguration
     /**
      * Contains a default list of {@link Path}s with directories/files that contains files having regexes of file names to be ignored.
      */
-    public List<Path> getDefaultUserIgnoreDirectories()
+    public List<Path> getDefaultUserIgnorePaths()
     {
         List<Path> paths = getOptionValue(DEFAULT_USER_IGNORE_DIRECTORIES_OPTION);
         if (paths == null)
@@ -224,7 +224,7 @@ public class WindupConfiguration
 
     /**
      * Contains a list of {@link Path}s with the directory that contains user provided rules.
-     * 
+     *
      * This method does guard against duplicate directories.
      */
     public WindupConfiguration addDefaultUserRulesDirectory(Path path)
@@ -255,7 +255,7 @@ public class WindupConfiguration
 
     /**
      * Adds a path to the list of default {@link Path}s with directories/files that contain files with regexes of file names to be ignored.
-     * 
+     *
      * This method does guard against duplicate directories.
      */
     public WindupConfiguration addDefaultUserIgnorePath(Path path)
