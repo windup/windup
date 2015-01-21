@@ -24,7 +24,7 @@
                     <hint message="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation" effort="0">
                         <links>
                             <link
-                                link="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
+                                link="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
                                 description="Security Context - JBoss 6" />
                         </links>
                     </hint>
@@ -42,7 +42,7 @@
                     <hint message="Migrate to JBoss EAP 6: org.jboss.security.SecurityContextAssociation" effort="0">
                         <links>
                             <link
-                                link="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
+                                link="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
                                 description="Security Context - JBoss 6" />
                         </links>
                     </hint>
@@ -62,7 +62,7 @@
                         effort="3">
                         <links>
                             <link
-                                link="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
+                                link="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
                                 description="Security Context - JBoss 6" />
                         </links>
                     </hint>
@@ -81,7 +81,7 @@
                         effort="3">
                         <links>
                             <link
-                                link="https://access.redhat.com/knowledge/docs/en-US/JBoss_Enterprise_Application_Platform/6/html/Javadocs/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
+                                link="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
                                 description="Security Context - JBoss 6" />
                         </links>
                     </hint>
