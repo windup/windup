@@ -1,7 +1,8 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
-import org.jboss.windup.reporting.model.FileLocationModel;
+import org.windup.rules.apps.model.FileLocationModel;
 
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
@@ -14,17 +15,16 @@ public interface JavaTypeReferenceModel extends FileLocationModel
 
     public static final String TYPE = "JavaTypeReference";
     public static final String REFERENCE_TYPE = "referenceType";
-    public static final String SOURCE_SNIPPIT = "referenceSourceSnippit";
 
+    /**
+     * Contains the {@link TypeReferenceLocation} location referred to by this {@link Vertex}.
+     */
     @Property(REFERENCE_TYPE)
     public TypeReferenceLocation getReferenceLocation();
 
+    /**
+     * Contains the {@link TypeReferenceLocation} location referred to by this {@link Vertex}.
+     */
     @Property(REFERENCE_TYPE)
     public void setReferenceLocation(TypeReferenceLocation type);
-
-    @Property(SOURCE_SNIPPIT)
-    public void setSourceSnippit(String source);
-
-    @Property(SOURCE_SNIPPIT)
-    public String getSourceSnippit();
 }

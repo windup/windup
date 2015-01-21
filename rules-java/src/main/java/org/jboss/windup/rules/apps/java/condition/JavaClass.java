@@ -16,8 +16,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
+import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.config.condition.GraphCondition;
-import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.condition.NoopEvaluationStrategy;
 import org.jboss.windup.config.parameters.FrameContext;
 import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
@@ -27,7 +28,6 @@ import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -42,6 +42,7 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
+import org.windup.rules.apps.model.FileReferenceModel;
 
 import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Vertex;
@@ -121,11 +122,12 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     {
         return evaluate(event, context, new EvaluationStrategy()
         {
+
             private LinkedHashMap<String, List<WindupVertexFrame>> variables;
 
             @Override
             @SuppressWarnings("rawtypes")
-            public void modelMatched(WindupVertexFrame model)
+            public void modelMatched()
             {
                 this.variables = new LinkedHashMap<String, List<WindupVertexFrame>>();
                 frameCreationContext.beginNew((Map) variables);
@@ -138,7 +140,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             }
 
             @Override
-            public void modelSubmissionRejected(WindupVertexFrame model)
+            public void modelSubmissionRejected()
             {
                 frameCreationContext.rollback();
             }
@@ -149,23 +151,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context,
                 final FrameContext frameContext)
     {
-        boolean result = evaluate(event, context, new EvaluationStrategy()
-        {
-            @Override
-            public void modelMatched(WindupVertexFrame model)
-            {
-            }
-
-            @Override
-            public void modelSubmitted(WindupVertexFrame model)
-            {
-            }
-
-            @Override
-            public void modelSubmissionRejected(WindupVertexFrame model)
-            {
-            }
-        });
+        boolean result = evaluate(event, context, new NoopEvaluationStrategy());
 
         if (result == false)
             frameContext.reject();
@@ -221,7 +207,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                                     .getSourceSnippit());
                         if (referenceResult.matches())
                         {
-                            evaluationStrategy.modelMatched(model);
+                            evaluationStrategy.modelMatched();
                             if (referenceResult.submit(event, context)
                                         && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
                                                     .getQualifiedName()).submit(event, context)))
@@ -231,7 +217,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                             }
                             else
                             {
-                                evaluationStrategy.modelSubmissionRejected(model);
+                                evaluationStrategy.modelSubmissionRejected();
                             }
                         }
                     }
@@ -249,15 +235,6 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             return true;
         }
         return false;
-    }
-
-    private interface EvaluationStrategy
-    {
-        public void modelMatched(WindupVertexFrame model);
-
-        public void modelSubmitted(WindupVertexFrame model);
-
-        public void modelSubmissionRejected(WindupVertexFrame model);
     }
 
     private final class TypeFilterCriterion implements QueryGremlinCriterion

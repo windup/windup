@@ -20,13 +20,13 @@ import javax.xml.xpath.XPathFunctionResolver;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
+import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.config.parameters.FrameContext;
 import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.FileReferenceModel;
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
@@ -51,6 +51,7 @@ import org.ocpsoft.rewrite.util.Maps;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.windup.rules.apps.model.FileReferenceModel;
 
 /**
  * Handles matching on {@link XmlFileModel} objects and creating {@link XmlTypeReferenceModel} objects on the matching nodes.
@@ -188,7 +189,7 @@ public class XmlFile extends ParameterizedGraphCondition
     protected boolean evaluateAndPopulateValueStores(final GraphRewrite event, final EvaluationContext context,
                 final FrameCreationContext frameCreationContext)
     {
-        return evaluate(event, context, new EvaluationStrategy()
+        return evaluate(event, context, new XmlFileEvaluationStrategy()
         {
             private LinkedHashMap<String, List<WindupVertexFrame>> variables;
 
@@ -221,10 +222,15 @@ public class XmlFile extends ParameterizedGraphCondition
         });
     }
 
+    private interface XmlFileEvaluationStrategy extends EvaluationStrategy
+    {
+        public boolean submitValue(Parameter<?> parameter, String value);
+    }
+
     @Override
     protected boolean evaluateWithValueStore(final GraphRewrite event, final EvaluationContext context, final FrameContext frameContext)
     {
-        boolean result = evaluate(event, context, new EvaluationStrategy()
+        boolean result = evaluate(event, context, new XmlFileEvaluationStrategy()
         {
             @Override
             public void modelMatched()
@@ -263,18 +269,7 @@ public class XmlFile extends ParameterizedGraphCondition
         return result;
     }
 
-    interface EvaluationStrategy
-    {
-        void modelMatched();
-
-        void modelSubmitted(WindupVertexFrame model);
-
-        boolean submitValue(Parameter<?> parameter, String value);
-
-        void modelSubmissionRejected();
-    }
-
-    private boolean evaluate(final GraphRewrite event, final EvaluationContext context, final EvaluationStrategy evaluationStrategy)
+    private boolean evaluate(final GraphRewrite event, final EvaluationContext context, final XmlFileEvaluationStrategy evaluationStrategy)
     {
         ExecutionStatistics.get().begin("XmlFile.evaluate");
         // list will cache all the created xpath matches for this given condition running
@@ -438,12 +433,12 @@ public class XmlFile extends ParameterizedGraphCondition
     {
         private final GraphContext graphContext;
         private final XmlFileModel xml;
-        private final EvaluationStrategy evaluationStrategy;
+        private final XmlFileEvaluationStrategy evaluationStrategy;
         private final ParameterStore store;
         private final XmlFileParameterMatchCache paramMatchCache;
         private final List<WindupVertexFrame> resultLocations;
 
-        XmlFilePersistXPathFunction(GraphContext graphContext, XmlFileModel xml, EvaluationStrategy evaluationStrategy, ParameterStore store,
+        XmlFilePersistXPathFunction(GraphContext graphContext, XmlFileModel xml, XmlFileEvaluationStrategy evaluationStrategy, ParameterStore store,
                     XmlFileParameterMatchCache paramMatchCache, List<WindupVertexFrame> resultLocations)
         {
             this.graphContext = graphContext;

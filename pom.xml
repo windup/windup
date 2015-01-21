@@ -69,6 +69,7 @@
 
         <module>decompiler</module>
 
+        <module>rules-base</module>
         <module>rules-java</module>
         <module>rules-java-ee</module>
         <module>rules-tattletale</module>

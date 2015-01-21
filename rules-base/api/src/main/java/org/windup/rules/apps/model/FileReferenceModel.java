@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.model;
+package org.windup.rules.apps.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -9,6 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Isolated file reference interface from the other models.
+ * 
  * @author mbriskar
  *
  */
@@ -17,10 +18,16 @@ public interface FileReferenceModel extends WindupVertexFrame
 {
     String TYPE = "fileReferenceModel";
     public static final String FILE_MODEL = "file";
-    
+
+    /**
+     * Contains the {@link FileModel} referenced by this object.
+     */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
     FileModel getFile();
 
+    /**
+     * Contains the {@link FileModel} referenced by this object.
+     */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
     FileModel setFile(FileModel file);
 }
