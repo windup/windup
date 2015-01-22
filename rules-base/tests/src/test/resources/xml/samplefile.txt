@@ -1,0 +1,1 @@
+This is an sample for the xml rule.

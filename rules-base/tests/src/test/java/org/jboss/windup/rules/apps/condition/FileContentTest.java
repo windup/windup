@@ -32,6 +32,8 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.service.InlineHintService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +51,8 @@ public class FileContentTest
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-base"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
@@ -58,8 +62,11 @@ public class FileContentTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
+                    .addAsResource("xml/FileContentXmlExample.windup.xml")
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-xml"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-base"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
@@ -111,6 +118,18 @@ public class FileContentTest
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
+
+            InlineHintService inlineHintService = new InlineHintService(context);
+            Iterable<InlineHintModel> inlineHints = inlineHintService.findAll();
+            boolean foundFileContentHintFromXmlRule = false;
+            for (InlineHintModel inlineHint : inlineHints)
+            {
+                if (inlineHint.getHint().equals("File Content xml"))
+                {
+                    foundFileContentHintFromXmlRule = true;
+                }
+            }
+            Assert.assertTrue(foundFileContentHintFromXmlRule);
 
             boolean foundFile1Line1 = false;
             boolean foundFile1Line2 = false;

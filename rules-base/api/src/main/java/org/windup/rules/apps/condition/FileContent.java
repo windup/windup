@@ -226,4 +226,14 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         Variables.instance(event).setVariable(getVarname(), results);
         return !results.isEmpty();
     }
+
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("FileContent");
+        builder.append(".matches(" + contentPattern + ")");
+        builder.append(".inFilesNamed(" + filenamePattern + ")");
+        builder.append(".as(" + getVarname() + ")");
+        return builder.toString();
+    }
 }
