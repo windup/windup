@@ -67,8 +67,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
-        EventVertex ev = (EventVertex) element;
-        StandardVertex v = (StandardVertex) ev.getBaseVertex();
+        StandardVertex v = GraphTypeManager.asTitanVertex(element);
         Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
@@ -124,6 +123,47 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         return resolve(v, defaultType);
     }
 
+    public static boolean hasType(Class<? extends WindupVertexFrame> type, WindupVertexFrame frame)
+    {
+        return hasType(type, frame.asVertex());
+    }
+
+    public static boolean hasType(Class<? extends WindupVertexFrame> type, Vertex v)
+    {
+        TypeValue typeValueAnnotation = type.getAnnotation(TypeValue.class);
+        if (typeValueAnnotation == null)
+        {
+            throw new IllegalArgumentException("Class " + type.getCanonicalName() + " lacks a @TypeValue annotation");
+        }
+        StandardVertex titanVertex = GraphTypeManager.asTitanVertex(v);
+        Iterable<TitanProperty> vertexTypes = titanVertex.getProperties(WindupVertexFrame.TYPE_PROP);
+        for (TitanProperty typeProp : vertexTypes)
+        {
+            String typeValue = typeProp.getValue().toString();
+            if (typeValue.equals(typeValueAnnotation.value()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static StandardVertex asTitanVertex(Element e)
+    {
+        if (e instanceof StandardVertex)
+        {
+            return (StandardVertex) e;
+        }
+        else if (e instanceof EventVertex)
+        {
+            return (StandardVertex) ((EventVertex) e).getBaseVertex();
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unrecognized element type: " + e.getClass());
+        }
+    }
+
     /**
      * Returns the classes which this vertex/edge represents, typically subclasses. This will only return the lowest level subclasses (no superclasses
      * of types in the type list will be returned). This prevents Annotation resolution issues between superclasses and subclasses (see also:
@@ -137,8 +177,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             // Name of the graph element property holding the type list.
             String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-            EventVertex ev = (EventVertex) e;
-            StandardVertex v = (StandardVertex) ev.getBaseVertex();
+            StandardVertex v = GraphTypeManager.asTitanVertex(e);
 
             Iterable<TitanProperty> valuesAll = v.getProperties(propName);
             if (valuesAll != null)

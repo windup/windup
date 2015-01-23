@@ -15,10 +15,15 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.model.TestSomeModel;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
+import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.query.QueryBuilderFind;
+import org.jboss.windup.config.query.QueryBuilderFrom;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.junit.Assert;
@@ -27,6 +32,8 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
+
+import com.google.common.collect.Iterables;
 
 @RunWith(Arquillian.class)
 public class QueryConditionTest
@@ -298,7 +305,6 @@ public class QueryConditionTest
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
         try (final GraphContext context = factory.create(folder))
         {
-
             fillData(context);
             context.getGraph().getBaseGraph().commit();
 
@@ -314,6 +320,51 @@ public class QueryConditionTest
             Assert.assertEquals(1, provider.getTypeSearchResults().size());
             TestXmlMetaFacetModel result1 = provider.getTypeSearchResults().get(0);
             Assert.assertEquals("xmlTag2", result1.getRootTagName());
+        }
+    }
+
+    @Test
+    public void testExcludeTypeFilter() throws Exception
+    {
+        try (final GraphContext context = factory.create())
+        {
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
+
+            fillData(context);
+
+            WindupVertexFrame bothTypesFrame = context.getFramed().addVertex(null, TestSomeModel.class);
+            bothTypesFrame = GraphService.addTypeToModel(context, bothTypesFrame, TestXmlMetaFacetModel.class);
+
+            context.getGraph().getBaseGraph().commit();
+
+            Variables variables = Variables.instance(event);
+            variables.push();
+            QueryBuilderFrom q = Query.fromType(TestSomeModel.class);
+            q.as("allResults");
+            boolean resultsFound = q.evaluate(event, evaluationContext);
+            Assert.assertTrue(resultsFound);
+
+            Iterable<? extends WindupVertexFrame> allResults = variables.findVariable("allResults");
+            Assert.assertEquals(5, Iterables.size(allResults));
+
+            variables.pop();
+
+            variables.push();
+            QueryBuilderFind qExcluded = Query.fromType(TestSomeModel.class).excludingType(TestXmlMetaFacetModel.class);
+            qExcluded.as("withTypeExcluded");
+            boolean excludedResultsFound = qExcluded.evaluate(event, evaluationContext);
+            Assert.assertTrue(excludedResultsFound);
+            Iterable<? extends WindupVertexFrame> excludedResults = variables.findVariable("withTypeExcluded");
+            Assert.assertEquals(4, Iterables.size(excludedResults));
+
+            for (WindupVertexFrame frame : excludedResults)
+            {
+                Assert.assertTrue(frame instanceof TestSomeModel);
+                Assert.assertFalse(frame instanceof TestXmlMetaFacetModel);
+            }
+
+            variables.pop();
         }
     }
 }

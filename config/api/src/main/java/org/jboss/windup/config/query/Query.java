@@ -14,6 +14,7 @@ import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.selectors.FramesSelector;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.frames.VertexFromFramedIterable;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -25,6 +26,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.PipeFunction;
 
 public class Query extends GraphCondition implements QueryBuilderFind, QueryBuilderFrom, QueryBuilderWith,
             QueryBuilderPiped
@@ -61,6 +63,30 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         // frames
         query.searchType = type;
         return query;
+    }
+
+    /**
+     * Excludes Vertices that are of the provided type.
+     */
+    @Override
+    public QueryBuilderFind excludingType(final Class<? extends WindupVertexFrame> type)
+    {
+        pipelineCriteria.add(new QueryGremlinCriterion()
+        {
+            @Override
+            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+            {
+                pipeline.filter(new PipeFunction<Vertex, Boolean>()
+                {
+                    @Override
+                    public Boolean compute(Vertex argument)
+                    {
+                        return !GraphTypeManager.hasType(type, argument);
+                    }
+                });
+            }
+        });
+        return this;
     }
 
     /**
@@ -109,7 +135,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                     result = filtered;
                 }
 
-                Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
+                Variables variables = Variables.instance(event);
                 variables.setVariable(outputVar, result);
 
                 return result.iterator().hasNext();
