@@ -139,7 +139,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="org.jbpm.JbpmConfiguration.createJbpmContext(\)" as="default" />
+                <javaclass references="org.jbpm.JbpmConfiguration.createJbpmContext()" as="default" />
             </when>
             <perform>
                 <iteration>
