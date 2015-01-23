@@ -3,7 +3,7 @@
   id="xmltestrules_1"
 >
   <rules>
-    <phase>POST_MIGRATION_RULES</phase>
+    <phase>PostMigrationRules</phase>
     <rule>
       <when>
         <filecontent pattern="for the {xml} rule" filename="{filename}.txt"/>
