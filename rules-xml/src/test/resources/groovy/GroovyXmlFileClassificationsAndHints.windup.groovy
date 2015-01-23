@@ -1,8 +1,8 @@
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.RulePhase;
+import org.jboss.windup.config.phase.PostMigrationRules;
 import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
@@ -14,7 +14,7 @@ import org.ocpsoft.rewrite.config.True;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 
-ruleSet("ExampleJavaGroovy").setPhase(RulePhase.POST_MIGRATION_RULES)
+ruleSet("ExampleJavaGroovy").setPhase(PostMigrationRules.class)
 
         .addRule()
         

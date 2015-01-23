@@ -21,9 +21,11 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
+import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.MigrationRules;
+import org.jboss.windup.config.phase.ReportGeneration;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -99,8 +101,8 @@ public class FileContentTest
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return (provider.getPhase() != RulePhase.REPORT_GENERATION) &&
-                                (provider.getPhase() != RulePhase.MIGRATION_RULES);
+                    return (provider.getPhase() != ReportGeneration.class) &&
+                                (provider.getPhase() != MigrationRules.class);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -172,9 +174,9 @@ public class FileContentTest
         private List<FileLocationModel> rule1ResultModels = new ArrayList<>();
 
         @Override
-        public RulePhase getPhase()
+        public Class<? extends org.jboss.windup.config.phase.RulePhase> getPhase()
         {
-            return RulePhase.PRE_MIGRATION_RULES;
+            return InitialAnalysis.class;
         }
 
         @Override

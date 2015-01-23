@@ -1,9 +1,10 @@
 package org.jboss.windup.reporting.rules.generation;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -19,9 +20,9 @@ public class CreateFreeMarkerMethodReportRuleProvider extends WindupRuleProvider
     private static final String OUTPUT_FILENAME = "windup_freemarkerfunctions.html";
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.REPORT_GENERATION;
+        return ReportGeneration.class;
     }
 
     @Override

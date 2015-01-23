@@ -9,10 +9,12 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.WindupRuleMetadata;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.ServiceLogger;
 import org.ocpsoft.rewrite.bind.Evaluation;
@@ -62,6 +64,47 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         }
 
         List<WindupRuleProvider> providers = WindupRuleProviderSorter.sort(allProviders);
+        for (WindupRuleProvider provider : providers)
+        {
+            if (provider instanceof RulePhase)
+            {
+                System.out.println("PROVIDERINFO|" + provider.getID());
+            }
+            else
+            {
+                System.out.print("PROVIDERINFO|" + Proxies.unwrap(provider).getClass().getSimpleName() + "|" + provider.getPhase().getSimpleName());
+                System.out.print("|");
+                List<Class<? extends WindupRuleProvider>> executeAfters = provider.getExecuteAfter();
+                List<String> executeAfterIDs = provider.getExecuteAfterIDs();
+                for (Class<? extends WindupRuleProvider> executeAfter : executeAfters)
+                {
+                    System.out.print(executeAfter.getSimpleName());
+                    System.out.print(",");
+                }
+                System.out.print("|");
+                for (String executeAfter : executeAfterIDs)
+                {
+                    System.out.print(executeAfter);
+                    System.out.print(",");
+                }
+                System.out.print("|");
+                List<Class<? extends WindupRuleProvider>> executeBefores = provider.getExecuteBefore();
+                List<String> executeBeforeIDs = provider.getExecuteBeforeIDs();
+                for (Class<? extends WindupRuleProvider> executeBefore : executeBefores)
+                {
+                    System.out.print(executeBefore.getSimpleName());
+                    System.out.print(",");
+                }
+                System.out.print("|");
+                for (String executeBefore : executeBeforeIDs)
+                {
+                    System.out.print(executeBefore);
+                    System.out.print(",");
+                }
+                System.out.print("|");
+                System.out.println();
+            }
+        }
         ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, providers);
         return Collections.unmodifiableList(providers);
     }

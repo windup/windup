@@ -1,11 +1,9 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.util.List;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.ClassifyFileTypes;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -29,15 +27,9 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(UnzipArchivesToOutputRuleProvider.class);
+        return ClassifyFileTypes.class;
     }
 
     @Override

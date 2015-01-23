@@ -16,12 +16,12 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.PostMigrationRules;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -51,8 +51,7 @@ public class OverviewReportLineTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 /*
-                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded
-                 * version
+                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded version
                  */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.rules:rules-java-project"),
@@ -122,7 +121,6 @@ public class OverviewReportLineTest
             subsubProject.addFileModel(subsubinputPath);
             subsubProject.setRootFileModel(subsubinputPath);
 
-          
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
@@ -133,7 +131,8 @@ public class OverviewReportLineTest
             Iterable<OverviewReportLineMessageModel> allOverviewLines = overviewLineService.findAll();
             long count = overviewLineService.count(allOverviewLines);
             Assert.assertEquals(1, count);
-            for(OverviewReportLineMessageModel line : allOverviewLines) {
+            for (OverviewReportLineMessageModel line : allOverviewLines)
+            {
                 Assert.assertEquals("Just some test message", line.getMessage());
             }
             Assert.assertEquals(1, provider.getMatchCount());
@@ -145,18 +144,18 @@ public class OverviewReportLineTest
     {
 
         private int matchCount;
-        
+
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.POST_MIGRATION_RULES;
+            return PostMigrationRules.class;
         }
-        
+
         public void addMatchCount()
         {
             matchCount++;
         }
-        
+
         public int getMatchCount()
         {
             return matchCount;

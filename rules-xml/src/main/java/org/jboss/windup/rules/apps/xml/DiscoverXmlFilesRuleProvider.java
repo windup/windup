@@ -10,9 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.ClassifyFileTypes;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
@@ -40,9 +41,9 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     private static final Logger LOG = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getSimpleName());
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return ClassifyFileTypes.class;
     }
 
     @Override

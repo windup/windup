@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -25,7 +25,6 @@ import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
-import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
@@ -51,15 +50,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DiscoverXmlFilesRuleProvider.class);
+        return InitialAnalysis.class;
     }
 
     @Override

@@ -20,9 +20,12 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.MigrationRules;
+import org.jboss.windup.config.phase.PostMigrationRules;
+import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -52,6 +55,7 @@ public class XmlFileParameterizedTest
                  * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded version
                  */
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-base"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-xml"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
@@ -63,6 +67,7 @@ public class XmlFileParameterizedTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-base"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-xml"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
@@ -121,8 +126,8 @@ public class XmlFileParameterizedTest
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return (provider.getPhase() != RulePhase.REPORT_GENERATION) &&
-                                (provider.getPhase() != RulePhase.MIGRATION_RULES);
+                    return (provider.getPhase() != ReportGeneration.class) &&
+                                (provider.getPhase() != MigrationRules.class);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -213,9 +218,9 @@ public class XmlFileParameterizedTest
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.POST_MIGRATION_RULES;
+            return PostMigrationRules.class;
         }
 
         // @formatter:off

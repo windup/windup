@@ -22,9 +22,10 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -45,7 +46,6 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.provider.DiscoverJavaFilesRuleProvider;
-import org.jboss.windup.rules.java.JavaHintsClassificationsTest.TestHintsClassificationsTestRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -209,9 +209,9 @@ public class JavaIgnoreRegexesTest
         private Set<JavaTypeReferenceModel> typeReferences = new HashSet<>();
 
         @Override
-        public RulePhase getPhase()
+        public Class<? extends RulePhase> getPhase()
         {
-            return RulePhase.INITIAL_ANALYSIS;
+            return InitialAnalysis.class;
         }
 
         @Override

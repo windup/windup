@@ -16,9 +16,10 @@ import org.jboss.forge.roaster.model.Extendable;
 import org.jboss.forge.roaster.model.InterfaceCapable;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.ClassifyFileTypes;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
@@ -28,7 +29,6 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
-import org.jboss.windup.rules.apps.java.binary.DecompileArchivesRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupRoasterWildcardImportResolver;
@@ -53,14 +53,9 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.INITIAL_ANALYSIS;
-    }
-
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DecompileArchivesRuleProvider.class);
+        return ClassifyFileTypes.class;
     }
 
     // @formatter:off

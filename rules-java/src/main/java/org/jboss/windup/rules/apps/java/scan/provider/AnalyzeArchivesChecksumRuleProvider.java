@@ -2,13 +2,12 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.ArchiveMetadataExtraction;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.util.exception.WindupException;
@@ -30,15 +29,9 @@ public class AnalyzeArchivesChecksumRuleProvider extends IteratingRuleProvider<A
     }
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.INITIAL_ANALYSIS;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(UnzipArchivesToOutputRuleProvider.class);
+        return ArchiveMetadataExtraction.class;
     }
 
     @Override

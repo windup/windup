@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.phase.Discovery;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -24,9 +25,9 @@ public class TestIterationPayloadTestRuleProvider extends WindupRuleProvider
     private List<TestChildModel> allChildren = new ArrayList<>();
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return Discovery.class;
     }
 
     public int getChildCount()

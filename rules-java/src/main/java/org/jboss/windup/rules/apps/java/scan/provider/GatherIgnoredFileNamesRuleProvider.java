@@ -19,23 +19,24 @@ import java.util.regex.PatternSyntaxException;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.Initialization;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.config.CopyJavaConfigToGraphRuleProvider;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-
 /**
  * Read and add all the ignore regexes (when a file matches the regex, it will not be scanned by windup) that are present in the windup runtime.
+ * 
  * @author mbriskar
  *
  */
@@ -44,16 +45,16 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
 
     private final String IGNORE_FILE_EXTENSION = "windup-ignore.txt";
     private static final Logger log = Logger.getLogger(GatherIgnoredFileNamesRuleProvider.class.getName());
-    
+
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
+        return Initialization.class;
     }
 
-    public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
+    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(UnzipArchivesToOutputRuleProvider.class);
+        return asClassList(CopyJavaConfigToGraphRuleProvider.class);
     }
 
     @Override
@@ -114,9 +115,12 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
                     IgnoredFileRegexModel ignored = graphService.create();
                     ignored.setRegex(line);
                     javaCfg.addIgnoredFileRegex(ignored);
-                    try {
+                    try
+                    {
                         Pattern.compile(line);
-                    } catch (PatternSyntaxException exception) {
+                    }
+                    catch (PatternSyntaxException exception)
+                    {
                         ignored.setCompilationError(exception.getMessage());
                     }
                 }

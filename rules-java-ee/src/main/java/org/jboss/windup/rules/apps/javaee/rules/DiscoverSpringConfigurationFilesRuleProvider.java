@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.RulePhase;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -20,7 +20,6 @@ import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
 import org.jboss.windup.rules.apps.javaee.service.SpringConfigurationFileService;
-import org.jboss.windup.rules.apps.xml.DiscoverXmlFilesRuleProvider;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -42,15 +41,9 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     @Override
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
-        return RulePhase.DISCOVERY;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DiscoverXmlFilesRuleProvider.class);
+        return InitialAnalysis.class;
     }
 
     @Override

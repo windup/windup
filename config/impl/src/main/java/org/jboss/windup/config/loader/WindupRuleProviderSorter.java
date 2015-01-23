@@ -1,10 +1,7 @@
 package org.jboss.windup.config.loader;
 
-import org.jboss.windup.util.exception.WindupMultiException;
-import org.jboss.windup.util.exception.WindupMultiStringException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
@@ -13,15 +10,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jboss.forge.furnace.proxy.Proxies;
-import org.jboss.windup.config.RulePhase;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.phase.RulePhase;
+import org.jboss.windup.util.exception.WindupMultiStringException;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
 /**
- * Sorts {@link WindupRuleProvider}s based upon their Phase and executeBefore/executeAfter methods.
+ * Sorts {@link WindupRuleProvider}s based upon their executeBefore/executeAfter methods.
  *
  * @author jsightler <jesse.sightler@gmail.com>
  * @author Ondrej Zizka <zizka@seznam.cz>
@@ -97,11 +95,6 @@ public class WindupRuleProviderSorter
             g.addVertex(provider);
         }
 
-        sortByPhase();
-
-        // check for phase relationships that would cause cycles
-        checkForImproperPhaseRelationships();
-
         addProviderRelationships(g);
 
         checkForCycles(g);
@@ -117,21 +110,12 @@ public class WindupRuleProviderSorter
         }
 
         this.providers = Collections.unmodifiableList(result);
-    }
 
-    /**
-     * Sort the providers by phase
-     */
-    private void sortByPhase()
-    {
-        Collections.sort(providers, new Comparator<WindupRuleProvider>()
+        int index = 0;
+        for (WindupRuleProvider provider : this.providers)
         {
-            @Override
-            public int compare(WindupRuleProvider o1, WindupRuleProvider o2)
-            {
-                return o1.getPhase().getPriority() - o2.getPhase().getPriority();
-            }
-        });
+            provider.setExecutionIndex(index++);
+        }
     }
 
     /**
@@ -139,49 +123,43 @@ public class WindupRuleProviderSorter
      */
     private void addProviderRelationships(DefaultDirectedWeightedGraph<WindupRuleProvider, DefaultEdge> g)
     {
-        // Keep a list of all visitors from the previous phase
-        // This allows us to create edges from nodes in one phase to the next,
-        // allowing the topological sort to sort by phases as well.
-        List<WindupRuleProvider> previousProviders = new ArrayList<>();
-        List<WindupRuleProvider> currentProviders = new ArrayList<>();
-        RulePhase previousPhase = null;
+        linkRulePhases();
+
         for (WindupRuleProvider provider : providers)
         {
-            RulePhase currentPhase = provider.getPhase();
+            WindupRuleProvider phaseProvider = getByClass(provider.getPhase());
 
-            if (currentPhase != previousPhase && currentPhase != RulePhase.IMPLICIT)
-            {
-                // we've reached a new phase, so move the current phase to the last
-                previousProviders.clear();
-                previousProviders.addAll(currentProviders);
-                currentProviders.clear();
-            }
-            currentProviders.add(provider);
-
-            List<String> errors = new LinkedList();
+            List<String> errors = new LinkedList<>();
 
             // add connections to ruleproviders that should execute before this one
             for (Class<? extends WindupRuleProvider> clz : provider.getExecuteAfter())
             {
-                WindupRuleProvider otherProvider = getByClass(clz);
-                if (otherProvider == null)
+                addExecuteAfterRelationship(g, provider, errors, clz);
+            }
+
+            if (phaseProvider != null)
+            {
+                if (provider.getPhase() != Proxies.unwrap(provider).getClass())
+                    addExecuteAfterRelationship(g, provider, errors, provider.getPhase());
+
+                for (Class<? extends WindupRuleProvider> clz : phaseProvider.getExecuteAfter())
                 {
-                    errors.add("RuleProvider " + provider.getID() + " is specified to execute after class: "
-                        + clz.getName() + " but this class could not be found.");
+                    addExecuteAfterRelationship(g, provider, errors, clz);
                 }
-                else g.addEdge(otherProvider, provider);
             }
 
             // add connections to ruleproviders that should execute after this one
             for (Class<? extends WindupRuleProvider> clz : provider.getExecuteBefore())
             {
-                WindupRuleProvider otherProvider = getByClass(clz);
-                if (otherProvider == null)
+                addExecuteBeforeRelationship(g, provider, errors, clz);
+            }
+
+            if (phaseProvider != null)
+            {
+                for (Class<? extends WindupRuleProvider> clz : phaseProvider.getExecuteBefore())
                 {
-                    errors.add("RuleProvider " + provider.getID() + " is specified to execute before: "
-                        + clz.getName() + " but this class could not be found.");
+                    addExecuteBeforeRelationship(g, provider, errors, clz);
                 }
-                else g.addEdge(provider, otherProvider);
             }
 
             // add connections to ruleproviders that should execute before this one (by String ID)
@@ -191,9 +169,10 @@ public class WindupRuleProviderSorter
                 if (otherProvider == null)
                 {
                     errors.add("RuleProvider " + provider.getID() + " is specified to execute after: "
-                        + depID + " but this provider could not be found.");
+                                + depID + " but this provider could not be found.");
                 }
-                else g.addEdge(otherProvider, provider);
+                else
+                    g.addEdge(otherProvider, provider);
             }
 
             // add connections to ruleproviders that should execute before this one (by String ID)
@@ -203,26 +182,88 @@ public class WindupRuleProviderSorter
                 if (otherProvider == null)
                 {
                     errors.add("RuleProvider " + provider.getID() + " is specified to execute before: "
-                        + depID + " but this provider could not be found.");
+                                + depID + " but this provider could not be found.");
                 }
-                else g.addEdge(provider, otherProvider);
+                else
+                    g.addEdge(provider, otherProvider);
             }
 
             // Report the errors.
             if (!errors.isEmpty())
                 throw new WindupMultiStringException("Some rules to be executed before or after were not found:", errors);
 
-            // If the current provider is not an implicit phase,
-            // then add dependencies onto all visitors from the previous phase
-            if (currentPhase != RulePhase.IMPLICIT)
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void linkRulePhases()
+    {
+        // Go through all of the RulePhases and link tail-to-head-to-tail
+        // Basically this just makes sure that each phase has both an executeBefore and an executeAfter, linked
+        // to the next phase in the execution cycle. This isn't strictly necessary, but it does make debugging easier,
+        // and makes the execution order more predictable.
+        for (WindupRuleProvider provider : providers)
+        {
+            if (provider instanceof RulePhase)
             {
-                for (WindupRuleProvider prevV : previousProviders)
+                if (provider.getExecuteBefore().isEmpty())
                 {
-                    g.addEdge(prevV, provider);
+                    // find any that should execute after this one
+                    for (WindupRuleProvider otherProvider : providers)
+                    {
+                        if (otherProvider instanceof RulePhase)
+                        {
+                            if (otherProvider.getExecuteAfter().contains(Proxies.unwrap(provider).getClass()))
+                            {
+                                ((RulePhase) provider).setExecuteBefore((Class<? extends RulePhase>) Proxies.unwrap((RulePhase) otherProvider)
+                                            .getClass());
+                            }
+                        }
+                    }
+                }
+                if (provider.getExecuteAfter().isEmpty())
+                {
+                    // find any that should execute before this one
+                    for (WindupRuleProvider otherProvider : providers)
+                    {
+                        if (otherProvider instanceof RulePhase)
+                        {
+                            if (otherProvider.getExecuteBefore().contains(Proxies.unwrap(provider).getClass()))
+                            {
+                                ((RulePhase) provider).setExecuteAfter((Class<? extends RulePhase>) Proxies.unwrap((RulePhase) otherProvider)
+                                            .getClass());
+                            }
+                        }
+                    }
                 }
             }
-            previousPhase = currentPhase;
         }
+    }
+
+    private void addExecuteBeforeRelationship(DefaultDirectedWeightedGraph<WindupRuleProvider, DefaultEdge> g, WindupRuleProvider provider,
+                List<String> errors, Class<? extends WindupRuleProvider> clz)
+    {
+        WindupRuleProvider otherProvider = getByClass(clz);
+        if (otherProvider == null)
+        {
+            errors.add("RuleProvider " + provider.getID() + " is specified to execute before: "
+                        + clz.getName() + " but this class could not be found.");
+        }
+        else
+            g.addEdge(provider, otherProvider);
+    }
+
+    private void addExecuteAfterRelationship(DefaultDirectedWeightedGraph<WindupRuleProvider, DefaultEdge> g, WindupRuleProvider provider,
+                List<String> errors, Class<? extends WindupRuleProvider> clz)
+    {
+        WindupRuleProvider otherProvider = getByClass(clz);
+        if (otherProvider == null)
+        {
+            errors.add("RuleProvider " + provider.getID() + " is specified to execute after class: "
+                        + clz.getName() + " but this class could not be found.");
+        }
+        else
+            g.addEdge(otherProvider, provider);
     }
 
     /**
@@ -250,129 +291,14 @@ public class WindupRuleProviderSorter
         }
     }
 
-    /**
-     * Check that no rules from earlier phases have inadvertently become dependent upon rules from later phases.
-     */
-    private void checkForImproperPhaseRelationships()
-    {
-        for (WindupRuleProvider provider : this.providers)
-        {
-            if (provider.getPhase() == null)
-            {
-                // Make sure it has at least one dependency.
-                if ((provider.getExecuteAfter() == null || provider.getExecuteAfter().isEmpty()) &&
-                    (provider.getExecuteAfterIDs() == null || provider.getExecuteAfterIDs().isEmpty()) &&
-                    (provider.getExecuteBefore() == null || provider.getExecuteBefore().isEmpty()) &&
-                    (provider.getExecuteBeforeIDs() == null || provider.getExecuteBeforeIDs().isEmpty()))
-                {
-                    throw new IncorrectPhaseDependencyException("Rule \"" + provider.getID()
-                    + "\" uses an implicit phase (phase is null) but does not specify any dependencies.");
-                }
-
-                continue;
-            }
-
-            List<Exception> exs = new LinkedList();
-
-            for (WindupRuleProvider otherProvider : getProvidersAfter(provider, true))
-            {
-                if (!phaseRelationshipOk(otherProvider, provider))
-                    exs.add(new IncorrectPhaseDependencyException(formatErrorMessageAfter(provider, otherProvider)));
-            }
-
-            for (WindupRuleProvider otherProvider : getProvidersBefore(provider, true))
-            {
-                if (!phaseRelationshipOk(provider, otherProvider))
-                    exs.add(new IncorrectPhaseDependencyException(formatErrorMessageBefore(provider, otherProvider)));
-            }
-
-            // Report the errors.
-            if (!exs.isEmpty())
-                throw new WindupMultiException("Some rules have wrong relationships:", exs);
-        }
-    }
-
-
-    /**
-     * @return All providers to be executed after given provider - both by classes and by IDs.
-     */
-    private List<WindupRuleProvider> getProvidersAfter(WindupRuleProvider provider, boolean removeNulls)
-    {
-        List<WindupRuleProvider> otherProviders = new LinkedList(getByClasses(provider.getExecuteAfter()));
-        otherProviders.addAll(this.getByIDs(provider.getExecuteAfterIDs()));
-        if (removeNulls)
-            otherProviders.removeAll(Collections.singleton(null));
-        return otherProviders;
-    }
-
-
-    private List<WindupRuleProvider> getProvidersBefore(WindupRuleProvider provider, boolean removeNulls)
-    {
-        List<WindupRuleProvider> otherProviders;
-        otherProviders = new LinkedList(getByClasses(provider.getExecuteBefore()));
-        otherProviders.addAll(this.getByIDs(provider.getExecuteBeforeIDs()));
-        if (removeNulls)
-            otherProviders.removeAll(Collections.singleton(null));
-        return otherProviders;
-    }
-
-
-    private static String formatErrorMessageAfter(WindupRuleProvider provider, WindupRuleProvider otherProvider)
-    {
-        return WindupRuleProvider.class.getSimpleName() + '[' + provider.getID() + "] from phase " + provider.getPhase() + " is to set to execute after\n"
-            + WindupRuleProvider.class.getSimpleName() + '[' + otherProvider.getID() + "] from later phase " + otherProvider.getPhase()
-            + ".\nPossible solution is to specify phase " + otherProvider.getPhase() + " or later for the former.";
-    }
-
-
-    private static String formatErrorMessageBefore(WindupRuleProvider provider, WindupRuleProvider otherProvider)
-    {
-        return WindupRuleProvider.class.getSimpleName() + '[' + provider.getID() + "] from phase " + provider.getPhase() + " is to set to execute before\n"
-            + WindupRuleProvider.class.getSimpleName() + '[' + otherProvider.getID() + "] from earlier phase " + otherProvider.getPhase()
-            + ".\nPossible solution is to specify phase " + otherProvider.getPhase() + " or earlier for the former.";
-    }
-
-    private static boolean phaseRelationshipOk(WindupRuleProvider before, WindupRuleProvider after)
-    {
-        RulePhase beforePhase = before.getPhase();
-        RulePhase afterPhase = after.getPhase();
-        if (beforePhase == RulePhase.IMPLICIT || afterPhase == RulePhase.IMPLICIT)
-        {
-            return true;
-        }
-        return beforePhase.getPriority() <= afterPhase.getPriority();
-    }
-
     private WindupRuleProvider getByClass(Class<? extends WindupRuleProvider> c)
     {
         return classToProviderMap.get(c);
     }
 
-    /**
-     * Translate a List of rule provider classes to a list of RuleProvider instances.
-     */
-    private List<WindupRuleProvider> getByClasses(List<Class<? extends WindupRuleProvider>> clss)
-    {
-        List<WindupRuleProvider> rps = new ArrayList(clss.size());
-        for (Class<? extends WindupRuleProvider> cls : clss)
-            rps.add(this.classToProviderMap.get(cls));
-        return rps;
-    }
-
     private WindupRuleProvider getByID(String id)
     {
         return idToProviderMap.get(id);
-    }
-
-    /**
-     * Translate a List of IDs to a List of RuleProviders.
-     */
-    private List<WindupRuleProvider> getByIDs(List<String> ids)
-    {
-        List<WindupRuleProvider> rps = new ArrayList(ids.size());
-        for (String id : ids)
-            rps.add(this.idToProviderMap.get(id));
-        return rps;
     }
 
     @SuppressWarnings("unchecked")

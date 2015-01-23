@@ -13,6 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(RulePhaseExecutionStatisticsModel.TYPE)
 public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame
 {
+    public static final String ORDER_EXECUTED = "orderExecuted";
     public static final String RULE_PHASE = "rulePhase";
     public static final String TYPE = "RulePhaseExecutionStatisticsModel";
     public static final String TIME_TAKEN = "timeTaken";
@@ -40,4 +41,16 @@ public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame
      */
     @Property(TIME_TAKEN)
     public int getTimeTaken();
+
+    /**
+     * Stores an increasing index indicating the order in which the phases were executed (lower numbers execute earlier than larger numbers).
+     */
+    @Property(ORDER_EXECUTED)
+    public int getOrderExecuted();
+
+    /**
+     * Stores an increasing index indicating the order in which the phases were executed (lower numbers execute earlier than larger numbers).
+     */
+    @Property(ORDER_EXECUTED)
+    public void setOrderExecuted(int orderExecuted);
 }

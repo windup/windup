@@ -14,28 +14,31 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.phase.MigrationRules;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 
-
 /**
- * {@link WindupRuleProvider} provides metadata, and a list of {@link Rule} objects that are then evaluated by the
- * {@link RuleSubet} during Windup execution.
+ * {@link WindupRuleProvider} provides metadata, and a list of {@link Rule} objects that are then evaluated by the {@link RuleSubet} during Windup
+ * execution.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class WindupRuleProvider implements ConfigurationProvider<GraphContext>
 {
-    public static final RulePhase DEFAULT_PHASE = RulePhase.MIGRATION_RULES;
+    public static final Class<? extends RulePhase> DEFAULT_PHASE = MigrationRules.class;
 
     @Inject
     private Addon addon;
 
+    private int executionIndex;
+
     /**
-     * Returns a unique identifier for this particular rule provider. The default is based on the addon and classname,
-     * but this can be overridden in subclasses to provide a more readable name.
+     * Returns a unique identifier for this particular rule provider. The default is based on the addon and classname, but this can be overridden in
+     * subclasses to provide a more readable name.
      */
     public String getID()
     {
@@ -47,7 +50,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
      * <p>
      * The default phase is {@link RulePhase#MIGRATION_RULES}.
      */
-    public RulePhase getPhase()
+    public Class<? extends RulePhase> getPhase()
     {
         return DEFAULT_PHASE;
     }
@@ -66,8 +69,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     }
 
     /**
-     * Returns a list of {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this
-     * {@link WindupRuleProvider}.
+     * Returns a list of {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this {@link WindupRuleProvider}.
      *
      * {@link WindupRuleProvider}s can also be specified based on id ({@link #getExecuteAfterID}).
      */
@@ -77,12 +79,10 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     }
 
     /**
-     * Returns a list of the {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this
-     * {@link WindupRuleProvider}.
+     * Returns a list of the {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this {@link WindupRuleProvider}.
      *
-     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
-     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
-     * IDs.
+     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
+     * case of the Groovy rules extension, a single class covers many rules with their own IDs.
      *
      * For specifying Java-based rules, getExecuteAfter is preferred.
      */
@@ -92,8 +92,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     }
 
     /**
-     * Returns a list of {@link WindupRuleProvider} classes that should execute after the {@link Rule}s in this
-     * {@link WindupRuleProvider}.
+     * Returns a list of {@link WindupRuleProvider} classes that should execute after the {@link Rule}s in this {@link WindupRuleProvider}.
      *
      * {@link WindupRuleProvider}s can also be specified based on id ({@link #getExecuteBeforeID}).
      */
@@ -103,12 +102,10 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     }
 
     /**
-     * Returns a list of the {@link WindupRuleProvider} classes that should execute after the {@link Rule}s in this
-     * {@link WindupRuleProvider}.
+     * Returns a list of the {@link WindupRuleProvider} classes that should execute after the {@link Rule}s in this {@link WindupRuleProvider}.
      *
-     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
-     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
-     * IDs.
+     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
+     * case of the Groovy rules extension, a single class covers many rules with their own IDs.
      *
      * For specifying Java-based rules, getExecuteBefore is preferred.
      */
@@ -147,7 +144,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     @Override
     public int priority()
     {
-        return getPhase().getPriority();
+        return 0;
     }
 
     @Override
@@ -171,5 +168,15 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     public int hashCode()
     {
         return getID().hashCode();
+    }
+
+    public int getExecutionIndex()
+    {
+        return executionIndex;
+    }
+
+    public void setExecutionIndex(int executionIndex)
+    {
+        this.executionIndex = executionIndex;
     }
 }
