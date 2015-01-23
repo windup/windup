@@ -68,41 +68,43 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         {
             if (provider instanceof RulePhase)
             {
-                System.out.println("PROVIDERINFO|" + provider.getID());
+                LOG.info("PROVIDERINFO|" + provider.getID());
             }
             else
             {
-                System.out.print("PROVIDERINFO|" + Proxies.unwrap(provider).getClass().getSimpleName() + "|" + provider.getPhase().getSimpleName());
-                System.out.print("|");
+                StringBuilder builder = new StringBuilder();
+                builder.append("PROVIDERINFO|" + Proxies.unwrap(provider).getClass().getSimpleName() + "|"
+                            + provider.getPhase().getSimpleName());
+                builder.append("|");
                 List<Class<? extends WindupRuleProvider>> executeAfters = provider.getExecuteAfter();
                 List<String> executeAfterIDs = provider.getExecuteAfterIDs();
                 for (Class<? extends WindupRuleProvider> executeAfter : executeAfters)
                 {
-                    System.out.print(executeAfter.getSimpleName());
-                    System.out.print(",");
+                    builder.append(executeAfter.getSimpleName());
+                    builder.append(",");
                 }
-                System.out.print("|");
+                builder.append("|");
                 for (String executeAfter : executeAfterIDs)
                 {
-                    System.out.print(executeAfter);
-                    System.out.print(",");
+                    builder.append(executeAfter);
+                    builder.append(",");
                 }
-                System.out.print("|");
+                builder.append("|");
                 List<Class<? extends WindupRuleProvider>> executeBefores = provider.getExecuteBefore();
                 List<String> executeBeforeIDs = provider.getExecuteBeforeIDs();
                 for (Class<? extends WindupRuleProvider> executeBefore : executeBefores)
                 {
-                    System.out.print(executeBefore.getSimpleName());
-                    System.out.print(",");
+                    builder.append(executeBefore.getSimpleName());
+                    builder.append(",");
                 }
-                System.out.print("|");
+                builder.append("|");
                 for (String executeBefore : executeBeforeIDs)
                 {
-                    System.out.print(executeBefore);
-                    System.out.print(",");
+                    builder.append(executeBefore);
+                    builder.append(",");
                 }
-                System.out.print("|");
-                System.out.println();
+                builder.append("|");
+                LOG.info(builder.toString());
             }
         }
         ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, providers);
