@@ -108,13 +108,35 @@ public class WindupCommand implements UICommand
                 if (inputPath.hasValue())
                 {
                     /**
-                     * It would be really nice to be able to use native Resource types here... but we can't "realllly"
-                     * do that because the Windup configuration API doesn't understand Forge data types, so instead we
-                     * use string comparison and write a test case.
+                     * It would be really nice to be able to use native Resource types here... but we can't "realllly" do that because the Windup
+                     * configuration API doesn't understand Forge data types, so instead we use string comparison and write a test case.
                      */
-                    if (inputPath.getValue().toString().startsWith(outputPath.getValue().toString()))
+                    File inputFile = (File) getValueForInput(inputPath);
+                    File outputFile = (File) getValueForInput(outputPath);
+
+                    if (inputFile.equals(outputFile))
                     {
-                        context.addValidationError(outputPath, "Output path must not be a parent of input path.");
+                        context.addValidationError(outputPath, "Output file cannot be the same as the input file.");
+                    }
+
+                    File inputParent = inputFile.getParentFile();
+                    while (inputParent != null)
+                    {
+                        if (inputParent.equals(outputFile))
+                        {
+                            context.addValidationError(outputPath, "Output path must not be a parent of input path.");
+                        }
+                        inputParent = inputParent.getParentFile();
+                    }
+
+                    File outputParent = outputFile.getParentFile();
+                    while (outputParent != null)
+                    {
+                        if (outputParent.equals(inputFile))
+                        {
+                            context.addValidationError(inputPath, "Input path must not be a parent of output path.");
+                        }
+                        outputParent = outputParent.getParentFile();
                     }
                 }
             }
