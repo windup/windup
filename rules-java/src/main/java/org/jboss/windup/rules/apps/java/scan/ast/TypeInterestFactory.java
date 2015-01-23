@@ -59,6 +59,15 @@ public final class TypeInterestFactory
     private static AtomicLong cacheLookupCount = new AtomicLong(0);
     private static AtomicLong cacheHitCount = new AtomicLong(0);
 
+    static void clear()
+    {
+        patternsBySource.clear();
+        patternsByLocation.clear();
+        resultsCache.clear();
+        cacheLookupCount.set(0);
+        cacheHitCount.set(0);
+    }
+
     /**
      * Register a regex pattern to filter interest in certain Java types.
      */
@@ -134,8 +143,7 @@ public final class TypeInterestFactory
                 if (shouldAdd)
                 {
                     /*
-                     * For now, surround with .* to ensure that regexes will match some of the messier references that
-                     * the type visitor report.
+                     * For now, surround with .* to ensure that regexes will match some of the messier references that the type visitor report.
                      */
                     result.put(entryPattern, Pattern.compile(".*" + entryPattern + ".*"));
                 }
