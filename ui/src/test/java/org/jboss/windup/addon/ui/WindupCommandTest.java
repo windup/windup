@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -18,22 +19,20 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
-import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphTypeRegistry;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -63,7 +62,8 @@ public class WindupCommandTest
                     .create(ForgeArchive.class)
                     .addBeansXML()
                     .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar")
-                    .addAsResource(WindupCommandTest.class.getResource("/ignore/test-windup-ignore.txt"), TEST_IGNORE_FILE)
+                    .addAsResource(WindupCommandTest.class.getResource("/ignore/test-windup-ignore.txt"),
+                                TEST_IGNORE_FILE)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup:ui"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -76,17 +76,11 @@ public class WindupCommandTest
 
         return archive;
     }
-    
+
     private static String TEST_IGNORE_FILE = "/test.txt";
 
     @Inject
     private UITestHarness uiTestHarness;
-    
-    @Inject
-    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
-    
-    @Inject
-    private Furnace furnace;
 
     @Before
     public void beforeTest()
@@ -101,10 +95,54 @@ public class WindupCommandTest
     }
 
     @Test
+    public void testOutputDirCannotBeParentOfInputDir() throws Exception
+    {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
+        {
+            File tempDir = OperatingSystemUtils.createTempDir();
+            File inputFile = File.createTempFile("windupwizardtest", ".jar", tempDir);
+            inputFile.deleteOnExit();
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
+            {
+                try (OutputStream oStream = new FileOutputStream(inputFile))
+                {
+                    IOUtils.copy(iStream, oStream);
+                }
+            }
+
+            try
+            {
+                controller.initialize();
+                Assert.assertTrue(controller.isEnabled());
+                controller.setValueFor("input", inputFile);
+                Assert.assertTrue(controller.canExecute());
+                controller.setValueFor("output", tempDir);
+                Assert.assertFalse(controller.canExecute());
+                List<UIMessage> messages = controller.validate();
+                boolean validationFound = false;
+                for (UIMessage message : messages)
+                {
+                    if (message.getDescription().equals("Output path must not be a parent of input path."))
+                    {
+                        validationFound = true;
+                        break;
+                    }
+                }
+                Assert.assertTrue(validationFound);
+                controller.setValueFor("output", null);
+                Assert.assertTrue(controller.canExecute());
+                controller.setValueFor("overwrite", true);
+            }
+            finally
+            {
+                FileUtils.deleteDirectory(tempDir);
+            }
+        }
+    }
+
+    @Test
     public void testOverwriteConfirmation() throws Exception
     {
-        Assert.assertNotNull(uiTestHarness);
-
         String overwritePromptMessage = "Overwrite all contents of .*\\?";
 
         // Sets the overwrite response flag to false
@@ -364,13 +402,13 @@ public class WindupCommandTest
             }
         }
     }
-    
+
     @Test
     public void testUserIgnoreDirMigration() throws Exception
     {
         Assert.assertNotNull(uiTestHarness);
         try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {   
+        {
             File outputFile = File.createTempFile("windupwizardtest", ".jar");
             outputFile.deleteOnExit();
             File inputIgnoreFile = File.createTempFile("generated-windup-ignore", ".txt");
@@ -438,17 +476,19 @@ public class WindupCommandTest
                 Assert.assertTrue(foundUserHomeDirIgnorePath);
                 Assert.assertTrue(foundWindupHomeDirIgnorePath);
                 Assert.assertEquals(3, totalFound);
-                GraphContext context =(GraphContext)controller.getContext().getAttributeMap().get(GraphContext.class);
+                GraphContext context = (GraphContext) controller.getContext().getAttributeMap().get(GraphContext.class);
                 GraphService<FileModel> service = new GraphService<FileModel>(context.load(), FileModel.class);
                 Iterable<FileModel> findAll = service.findAll();
                 boolean notEmpty = false;
-                for(FileModel fileModel : findAll) {
+                for (FileModel fileModel : findAll)
+                {
                     notEmpty = true;
-                    if(!(fileModel instanceof IgnoredFileModel) && (fileModel.getFileName().contains("META-INF"))) {
+                    if (!(fileModel instanceof IgnoredFileModel) && (fileModel.getFileName().contains("META-INF")))
+                    {
                         Assert.fail("The file " + fileModel.getFileName() + " should be ignored");
                     }
                 }
-                Assert.assertTrue("There should be some file models present in the graph",notEmpty);
+                Assert.assertTrue("There should be some file models present in the graph", notEmpty);
             }
             finally
             {
@@ -456,10 +496,7 @@ public class WindupCommandTest
                 FileUtils.deleteDirectory(reportPath);
             }
         }
-        
-       
-        
-        
+
     }
 
     private void setupController(CommandController controller, File inputFile, File outputFile) throws Exception

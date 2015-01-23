@@ -3,8 +3,8 @@ package org.jboss.windup.ui;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -15,6 +15,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
+import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -32,6 +33,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.WindupConfigurationOption;
 import org.jboss.windup.exec.WindupProcessor;
@@ -45,15 +47,14 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.util.WindupPathUtil;
 
 /**
- * Provides a basic forge UI for running windup from within the Forge shell.
+ * Provides a basic Forge UI implementation for running Windup from within a {@link UIProvider}.
  *
  * @author jsightler <jesse.sightler@gmail.com>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
  */
 public class WindupCommand implements UICommand
 {
-    public static final String WINDUP_CONFIGURATION = "windupConfiguration";
+    private LinkedHashMap<WindupConfigurationOption, InputComponent<?, ?>> inputOptions = new LinkedHashMap<>();
 
     @Inject
     private InputComponentFactory componentFactory;
@@ -67,8 +68,6 @@ public class WindupCommand implements UICommand
     @Inject
     private ResourceFactory resourceFactory;
 
-    private List<WindupOptionAndInput> inputOptions = new ArrayList<>();
-
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
     {
@@ -76,90 +75,22 @@ public class WindupCommand implements UICommand
                     .category(Categories.create("Platform", "Migration"));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void initializeUI(UIBuilder builder) throws Exception
     {
-        for (final WindupConfigurationOption option : WindupConfiguration.getWindupConfigurationOptions())
-        {
-            InputComponent<?, ?> inputComponent = null;
-            switch (option.getUIType())
-            {
-            case SINGLE:
-            {
-                UIInput<?> inputSingle = componentFactory.createInput(option.getName(), option.getType());
-                inputSingle.setDefaultValue(new DefaultValue(option));
-                inputComponent = inputSingle;
-                break;
-            }
-            case MANY:
-            {
-                UIInputMany<?> inputMany = componentFactory.createInputMany(option.getName(), option.getType());
-                inputMany.setDefaultValue(new DefaultValue(option, Iterable.class));
-                inputComponent = inputMany;
-                break;
-            }
-            case SELECT_MANY:
-            {
-                UISelectMany<?> selectMany = componentFactory.createSelectMany(option.getName(), option.getType());
-                selectMany.setDefaultValue(new DefaultValue(option, Iterable.class));
-                inputComponent = selectMany;
-                break;
-            }
-            case SELECT_ONE:
-            {
-                UISelectOne<?> selectOne = componentFactory.createSelectOne(option.getName(), option.getType());
-                selectOne.setDefaultValue(new DefaultValue(option));
-                inputComponent = selectOne;
-                break;
-            }
-            case DIRECTORY:
-            {
-                UIInput<DirectoryResource> directoryInput = componentFactory.createInput(option.getName(),
-                            DirectoryResource.class);
-                directoryInput.setDefaultValue(new DefaultValue(option, DirectoryResource.class));
-                inputComponent = directoryInput;
-                break;
-            }
-            case FILE:
-            {
-                UIInput<?> fileInput = componentFactory.createInput(option.getName(), FileResource.class);
-                fileInput.setDefaultValue(new DefaultValue(option, FileResource.class));
-                inputComponent = fileInput;
-                break;
-            }
-            case FILE_OR_DIRECTORY:
-            {
-                UIInput<?> fileOrDirInput = componentFactory.createInput(option.getName(), FileResource.class);
-                fileOrDirInput.setDefaultValue(new DefaultValue(option, FileResource.class));
-                inputComponent = fileOrDirInput;
-                break;
-            }
-            }
-            if (inputComponent == null)
-            {
-                throw new IllegalArgumentException("Could not build input component for: " + option);
-            }
-            inputComponent.setLabel(option.getLabel());
-            inputComponent.setRequired(option.isRequired());
-            inputComponent.setDescription(option.getDescription());
-            builder.add(inputComponent);
-            inputOptions.add(new WindupOptionAndInput(option, inputComponent));
-        }
+        initializeConfigurationOptionComponents(builder);
 
-        @SuppressWarnings("rawtypes")
-        final UIInput inputForInput = (UIInput) getInputForOption(InputPathOption.class);
-        @SuppressWarnings("rawtypes")
-        UIInput inputForOutput = (UIInput) getInputForOption(OutputPathOption.class);
-        inputForOutput.setDefaultValue(new Callable<DirectoryResource>()
+        final UIInput inputPath = (UIInput) getInputForOption(InputPathOption.class);
+        final UIInput outputPath = (UIInput) getInputForOption(OutputPathOption.class);
+        outputPath.setDefaultValue(new Callable<DirectoryResource>()
         {
-
             @Override
             public DirectoryResource call() throws Exception
             {
-                if (inputForInput.getValue() != null)
+                if (inputPath.getValue() != null)
                 {
-                    FileResource<?> value = (FileResource<?>) inputForInput.getValue();
+                    FileResource<?> value = (FileResource<?>) inputPath.getValue();
                     DirectoryResource childDirectory = value.getParent().getChildDirectory(value.getName() + ".report");
                     return childDirectory;
                 }
@@ -168,97 +99,54 @@ public class WindupCommand implements UICommand
             }
 
         });
-    }
 
-    @SuppressWarnings("rawtypes")
-    private static class DefaultValue implements Callable
-    {
-        private WindupConfigurationOption option;
-        private Class<?> expectedType;
-
-        public DefaultValue(WindupConfigurationOption option, Class<?> expectedType)
+        outputPath.addValidator(new UIValidator()
         {
-            this.option = option;
-            this.expectedType = expectedType;
-        }
-
-        public DefaultValue(WindupConfigurationOption option)
-        {
-            this(option, null);
-        }
-
-        public Object call() throws Exception
-        {
-            Object val = this.option.getDefaultValue();
-            if (val != null && this.expectedType != null && !this.expectedType.isAssignableFrom(val.getClass()))
-                throw new IllegalStateException("Windup option " + option.getName() +
-                            " was expected to return " + expectedType.getName() + " but returned " + val.getClass());
-            return val;
-        }
-    }
-
-    private InputComponent<?, ?> getInputForOption(Class<? extends WindupConfigurationOption> option)
-    {
-        for (WindupOptionAndInput pair : this.inputOptions)
-        {
-            if (option.isAssignableFrom(pair.option.getClass()))
+            @Override
+            public void validate(UIValidationContext context)
             {
-                return pair.input;
+                if (inputPath.hasValue())
+                {
+                    /**
+                     * It would be really nice to be able to use native Resource types here... but we can't "realllly"
+                     * do that because the Windup configuration API doesn't understand Forge data types, so instead we
+                     * use string comparison and write a test case.
+                     */
+                    if (inputPath.getValue().toString().startsWith(outputPath.getValue().toString()))
+                    {
+                        context.addValidationError(outputPath, "Output path must not be a parent of input path.");
+                    }
+                }
             }
-        }
-        return null;
+        });
     }
 
     @Override
     public void validate(UIValidationContext context)
     {
-        for (WindupOptionAndInput pair : this.inputOptions)
+        for (Entry<WindupConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
-            Object value = getValueForInput(pair.input);
-            ValidationResult result = pair.option.validate(value);
+            Object value = getValueForInput(entry.getValue());
+            ValidationResult result = entry.getKey().validate(value);
             if (!result.isSuccess())
             {
-                context.addValidationError(pair.input, result.getMessage());
+                context.addValidationError(entry.getValue(), result.getMessage());
             }
         }
 
-    }
-
-    private Object getValueForInput(InputComponent<?, ?> input)
-    {
-        Object value = input.getValue();
-        if (value == null)
-        {
-            return value;
-        }
-
-        if (value instanceof Resource<?>)
-        {
-            Resource<?> resourceResolved = getResourceResolved((Resource<?>) value);
-            return resourceResolved.getUnderlyingResourceObject();
-        }
-        return value;
-    }
-
-    private Resource<?> getResourceResolved(Resource<?> value)
-    {
-        Resource<?> resource = (Resource<?>) value;
-        File file = (File) resource.getUnderlyingResourceObject();
-        return new ResourcePathResolver(resourceFactory, resource, file.getPath()).resolve().get(0);
     }
 
     @Override
     public Result execute(UIExecutionContext context) throws Exception
     {
         WindupConfiguration windupConfiguration = new WindupConfiguration();
-        for (WindupOptionAndInput pair : this.inputOptions)
+        for (Entry<WindupConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
-            String key = pair.option.getName();
-            Object value = getValueForInput(pair.input);
+            String key = entry.getKey().getName();
+            Object value = getValueForInput(entry.getValue());
             windupConfiguration.setOptionValue(key, value);
         }
 
-        // add dist/rules/ and ${forge.home}/rules/ to the user rules directory list
         Path userRulesDir = WindupPathUtil.getWindupUserRulesDir();
         if (userRulesDir != null && !Files.isDirectory(userRulesDir))
         {
@@ -315,9 +203,10 @@ public class WindupCommand implements UICommand
             }
         }
 
-        // put this in the context for debugging, and unit tests (or anything else that needs it)
+        /*
+         * Put this in the context for debugging, and unit tests (or anything else that needs it)
+         */
         context.getUIContext().getAttributeMap().put(WindupConfiguration.class, windupConfiguration);
-        
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
@@ -344,6 +233,115 @@ public class WindupCommand implements UICommand
         return true;
     }
 
+    /*
+     * Utility methods
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void initializeConfigurationOptionComponents(UIBuilder builder)
+    {
+        for (final WindupConfigurationOption option : WindupConfiguration.getWindupConfigurationOptions())
+        {
+            InputComponent<?, ?> inputComponent = null;
+            switch (option.getUIType())
+            {
+            case SINGLE:
+            {
+                UIInput<?> inputSingle = componentFactory.createInput(option.getName(), option.getType());
+                inputSingle.setDefaultValue(new DefaultValueAdapter(option));
+                inputComponent = inputSingle;
+                break;
+            }
+            case MANY:
+            {
+                UIInputMany<?> inputMany = componentFactory.createInputMany(option.getName(), option.getType());
+                inputMany.setDefaultValue(new DefaultValueAdapter(option, Iterable.class));
+                inputComponent = inputMany;
+                break;
+            }
+            case SELECT_MANY:
+            {
+                UISelectMany<?> selectMany = componentFactory.createSelectMany(option.getName(), option.getType());
+                selectMany.setDefaultValue(new DefaultValueAdapter(option, Iterable.class));
+                inputComponent = selectMany;
+                break;
+            }
+            case SELECT_ONE:
+            {
+                UISelectOne<?> selectOne = componentFactory.createSelectOne(option.getName(), option.getType());
+                selectOne.setDefaultValue(new DefaultValueAdapter(option));
+                inputComponent = selectOne;
+                break;
+            }
+            case DIRECTORY:
+            {
+                UIInput<DirectoryResource> directoryInput = componentFactory.createInput(option.getName(),
+                            DirectoryResource.class);
+                directoryInput.setDefaultValue(new DefaultValueAdapter(option, DirectoryResource.class));
+                inputComponent = directoryInput;
+                break;
+            }
+            case FILE:
+            {
+                UIInput<?> fileInput = componentFactory.createInput(option.getName(), FileResource.class);
+                fileInput.setDefaultValue(new DefaultValueAdapter(option, FileResource.class));
+                inputComponent = fileInput;
+                break;
+            }
+            case FILE_OR_DIRECTORY:
+            {
+                UIInput<?> fileOrDirInput = componentFactory.createInput(option.getName(), FileResource.class);
+                fileOrDirInput.setDefaultValue(new DefaultValueAdapter(option, FileResource.class));
+                inputComponent = fileOrDirInput;
+                break;
+            }
+            }
+            if (inputComponent == null)
+            {
+                throw new IllegalArgumentException("Could not build input component for: " + option);
+            }
+            inputComponent.setLabel(option.getLabel());
+            inputComponent.setRequired(option.isRequired());
+            inputComponent.setDescription(option.getDescription());
+            builder.add(inputComponent);
+            inputOptions.put(option, inputComponent);
+        }
+    }
+
+    private InputComponent<?, ?> getInputForOption(Class<? extends WindupConfigurationOption> option)
+    {
+        for (Entry<WindupConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
+        {
+            if (option.isAssignableFrom(entry.getKey().getClass()))
+            {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    private Object getValueForInput(InputComponent<?, ?> input)
+    {
+        Object value = input.getValue();
+        if (value == null)
+        {
+            return value;
+        }
+
+        if (value instanceof Resource<?>)
+        {
+            Resource<?> resourceResolved = getResourceResolved((Resource<?>) value);
+            return resourceResolved.getUnderlyingResourceObject();
+        }
+        return value;
+    }
+
+    private Resource<?> getResourceResolved(Resource<?> value)
+    {
+        Resource<?> resource = (Resource<?>) value;
+        File file = (File) resource.getUnderlyingResourceObject();
+        return new ResourcePathResolver(resourceFactory, resource, file.getPath()).resolve().get(0);
+    }
+
     private boolean pathNotEmpty(File f)
     {
         if (f.exists() && !f.isDirectory())
@@ -357,15 +355,4 @@ public class WindupCommand implements UICommand
         return false;
     }
 
-    private class WindupOptionAndInput
-    {
-        private WindupConfigurationOption option;
-        private InputComponent<?, ?> input;
-
-        public WindupOptionAndInput(WindupConfigurationOption option, InputComponent<?, ?> input)
-        {
-            this.option = option;
-            this.input = input;
-        }
-    }
 }

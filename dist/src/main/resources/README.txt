@@ -1,11 +1,9 @@
-    _____                    
-   |  ___|__  _ __ __ _  ___ 
-   | |_ / _ \| `__/ _` |/ _ \  \\
-   |  _| (_) | | | (_| |  __/  //
-   |_|  \___/|_|  \__, |\___| 
-                   |___/      
- 
-Welcome to JBoss Forge
-http://jboss.org/forge
+ _       ___           __          
+| |     / (_)___  ____/ /_  ______ 
+| | /| / / / __ \/ __  / / / / __ \
+| |/ |/ / / / / / /_/ / /_/ / /_/ /
+|__/|__/_/_/ /_/\__,_/\__,_/ .___/ 
+                          /_/      
 
-Go to above link for Documentations, Plugins, and Additional Information
+Windup 2.0 is a tool used to simplify Java application migrations.
+
