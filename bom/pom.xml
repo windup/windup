@@ -162,7 +162,17 @@
             </dependency>
 
 
+
+            <!-- Windup Rules Base -->
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>rules-base</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- ===== Bundled rules ===== -->
+
 
             <!-- Windup Rules - Java EE - Basic -->
             <dependency>
