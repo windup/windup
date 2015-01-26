@@ -97,7 +97,7 @@ public interface ReportModel extends WindupVertexFrame
      * @param wvf
      */
     @MapInAdjacentVertices(label = RELATED_RESOURCES)
-    public void addRelatedResource(Map<String, WindupVertexFrame> wvf);
+    public void setRelatedResource(Map<String, WindupVertexFrame> wvf);
 
     @MapInAdjacentVertices(label = RELATED_RESOURCES)
     public Map<String, WindupVertexFrame> getRelatedResources();

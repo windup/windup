@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    version="3.0"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd">
+    <enterprise-beans>
+        <session>
+            <ejb-name>TestBean</ejb-name>
+            <env-entry>
+                <description>admin email</description>
+                <env-entry-name>adminEmail</env-entry-name>
+                <env-entry-value>admin@example.x</env-entry-value>
+            </env-entry>
+            <ejb-ref>
+                <ejb-ref-name>ejb/fooremote</ejb-ref-name>
+                <ejb-ref-type>Session</ejb-ref-type>
+                <remote>test.FooRemoteIF</remote>
+            </ejb-ref>
+        </session>
+        <message-driven>
+            <ejb-name>ChatBean</ejb-name>
+            <ejb-class>org.superbiz.mdbdesc.ChatBean</ejb-class>
+            <messaging-type>javax.jms.MessageListener</messaging-type>
+            <activation-config>
+                <activation-config-property>
+                    <activation-config-property-name>destination</activation-config-property-name>
+                    <activation-config-property-value>ChatBeanDestination</activation-config-property-value>
+                </activation-config-property>
+                <activation-config-property>
+                    <activation-config-property-name>destinationType</activation-config-property-name>
+                    <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+                </activation-config-property>
+            </activation-config>
+            <resource-ref>
+                <res-ref-name>java:comp/env/org.superbiz.mdbdesc.ChatBean/connectionFactory</res-ref-name>
+                <res-type>javax.jms.ConnectionFactory</res-type>
+                <injection-target>
+                    <injection-target-class>org.superbiz.mdbdesc.ChatBean</injection-target-class>
+                    <injection-target-name>connectionFactory</injection-target-name>
+                </injection-target>
+            </resource-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>java:comp/env/AnswerQueue</resource-env-ref-name>
+                <resource-env-ref-type>javax.jms.Queue</resource-env-ref-type>
+                <mapped-name>AnswerQueue</mapped-name>
+                <injection-target>
+                    <injection-target-class>org.superbiz.mdbdesc.ChatBean</injection-target-class>
+                    <injection-target-name>answerQueue</injection-target-name>
+                </injection-target>
+            </resource-env-ref>
+        </message-driven>
+    </enterprise-beans>
+
+    <interceptors>
+        <interceptor>
+            <interceptor-class>test.Interceptor1</interceptor-class>
+        </interceptor>
+    </interceptors>
+
+    <assembly-descriptor>
+        <interceptor-binding>
+            <ejb-name>*</ejb-name>
+            <interceptor-class>test.Interceptor1</interceptor-class>
+        </interceptor-binding>
+    </assembly-descriptor>
+</ejb-jar>

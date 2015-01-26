@@ -276,6 +276,19 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         String sessionType = extractChildTagAndTrim(element, "session-type");
         String transactionType = extractChildTagAndTrim(element, "transaction-type");
 
+        String destination = null;
+        for (Element activationConfigPropertyElement : $($(element).find("activation-config")).find("activation-config-property").get())
+        {
+            String propName = extractChildTagAndTrim(activationConfigPropertyElement, "activation-config-property-name");
+            String propValue = extractChildTagAndTrim(activationConfigPropertyElement, "activation-config-property-value");
+            if ("destination".equals(propName))
+            {
+                destination = propValue;
+            }
+        }
+
+        destination = StringUtils.trimToNull(destination);
+
         Service<EjbMessageDrivenModel> sessionBeanService = new GraphService<>(ctx, EjbMessageDrivenModel.class);
         EjbMessageDrivenModel mdb = sessionBeanService.create();
         mdb.setEjbClass(ejb);
@@ -284,6 +297,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         mdb.setEjbId(ejbId);
         mdb.setSessionType(sessionType);
         mdb.setTransactionType(transactionType);
+        mdb.setDestination(destination);
 
         List<EnvironmentReferenceModel> refs = processEnvironmentReference(ctx, element);
         for (EnvironmentReferenceModel ref : refs)

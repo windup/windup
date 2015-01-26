@@ -1,12 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.tests;
 
-import static org.junit.Assert.fail;
-
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -18,7 +14,6 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -27,13 +22,13 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class XmlJonasConfigTest
+public class DiscoverEjbConfigurationTest
 {
 
     @Deployment
@@ -52,8 +47,6 @@ public class XmlJonasConfigTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addAsResource(new File("src/test/resources/xml/jonasConfigExample.xml"),
-                                XML_FILE)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -71,13 +64,11 @@ public class XmlJonasConfigTest
     @Inject
     private WindupProcessor processor;
 
-    public static String XML_FILE = "/org/jboss/windup/addon/xml/jonasConfigExample.xml";
-
     @Inject
     private GraphContextFactory factory;
 
     @Test
-    public void testHintsAndClassificationOperation() throws Exception
+    public void testEJBMetadataExtraction() throws Exception
     {
         try (GraphContext context = factory.create())
         {
@@ -99,26 +90,14 @@ public class XmlJonasConfigTest
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
-            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
-
-            List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-            boolean jonasClassification = false;
-            for (ClassificationModel model : classifications)
+            GraphService<EjbMessageDrivenModel> messageDrivenService = new GraphService<>(context, EjbMessageDrivenModel.class);
+            int msgDrivenFound = 0;
+            for (EjbMessageDrivenModel msgDriven : messageDrivenService.findAll())
             {
-                String classification = model.getClassification();
-                if (classification.contains("JOnAS Web Descriptor"))
-                {
-                    jonasClassification = true;
-                }
-                System.out.println("Classification: " + classification);
+                Assert.assertEquals("ChatBeanDestination", msgDriven.getDestination());
+                msgDrivenFound++;
             }
-            if (!jonasClassification)
-            {
-                fail("No Jonas Web Descriptor classification found, even though there is an xml file");
-            }
-            Assert.assertEquals(2, classifications.size());
-
+            Assert.assertEquals(1, msgDrivenFound);
         }
     }
 }
