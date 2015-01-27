@@ -1,5 +1,9 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
+import static org.joox.JOOX.$;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,14 +14,20 @@ import org.jboss.windup.config.phase.InitialAnalysis;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
+import org.jboss.windup.rules.apps.javaee.model.HibernateSessionFactoryModel;
 import org.jboss.windup.rules.apps.javaee.service.HibernateConfigurationFileService;
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
@@ -75,10 +85,6 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, DoctypeMetaModel payload)
     {
-        HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(
-                    event.getGraphContext());
-        TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-
         String publicId = payload.getPublicId();
         String systemId = payload.getSystemId();
 
@@ -87,15 +93,39 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
         for (XmlFileModel xml : payload.getXmlResources())
         {
-            // check the root XML node.
-            HibernateConfigurationFileModel hibernateCfgModel = hibernateConfigurationFileService
-                        .addTypeToModel(xml);
-            technologyTagService.addTagToFileModel(hibernateCfgModel, TECH_TAG, TECH_TAG_LEVEL);
+            createHibernateConfigurationModel(event.getGraphContext(), xml, versionInformation);
+        }
+    }
 
-            if (StringUtils.isNotBlank(versionInformation))
+    private void createHibernateConfigurationModel(GraphContext graphContext, XmlFileModel xmlFileModel, String versionInformation)
+    {
+        HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(graphContext);
+        GraphService<HibernateSessionFactoryModel> hibernateSessionFactoryService = new GraphService<>(graphContext,
+                    HibernateSessionFactoryModel.class);
+        TechnologyTagService technologyTagService = new TechnologyTagService(graphContext);
+
+        // check the root XML node.
+        HibernateConfigurationFileModel hibernateConfigurationModel = hibernateConfigurationFileService.addTypeToModel(xmlFileModel);
+        technologyTagService.addTagToFileModel(hibernateConfigurationModel, TECH_TAG, TECH_TAG_LEVEL);
+
+        if (StringUtils.isNotBlank(versionInformation))
+        {
+            hibernateConfigurationModel.setSpecificationVersion(versionInformation);
+        }
+
+        Document doc = new XmlFileService(graphContext).loadDocumentQuiet(xmlFileModel);
+        for (Element element : $(doc).find("session-factory").get())
+        {
+            HibernateSessionFactoryModel sessionFactoryModel = hibernateSessionFactoryService.create();
+            hibernateConfigurationModel.addHibernateSessionFactory(sessionFactoryModel);
+            Map<String, String> sessionFactoryProperties = new HashMap<>();
+            for (Element propElement : $(element).find("property"))
             {
-                hibernateCfgModel.setSpecificationVersion(versionInformation);
+                String propKey = $(propElement).attr("name");
+                String propValue = $(propElement).text().trim();
+                sessionFactoryProperties.put(propKey, propValue);
             }
+            sessionFactoryModel.setSessionFactoryProperties(sessionFactoryProperties);
         }
     }
 

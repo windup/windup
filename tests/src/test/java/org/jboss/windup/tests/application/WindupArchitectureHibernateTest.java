@@ -21,8 +21,10 @@ import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOve
 import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateMappingFileModel;
+import org.jboss.windup.rules.apps.javaee.rules.CreateHibernateReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.HibernateConfigurationFileService;
 import org.jboss.windup.rules.apps.javaee.service.HibernateMappingFileService;
+import org.jboss.windup.testutil.html.TestHibernateReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -147,6 +149,25 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
         Assert.assertEquals(3, numberModelsFound);
     }
 
+    private void validateHibernateReport(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateHibernateReportRuleProvider.TEMPLATE_HIBERNATE_REPORT);
+        TestHibernateReportUtil util = new TestHibernateReportUtil();
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+        Assert.assertTrue(util.checkSessionFactoryPropertyInReport("connection.pool_size", "2"));
+        Assert.assertTrue(util.checkSessionFactoryPropertyInReport("cache.provider_class", "org.hibernate.cache.NoCacheProvider"));
+        Assert.assertTrue(util.checkSessionFactoryPropertyInReport("dialect", "org.hibernate.dialect.HSQLDialect"));
+        Assert.assertTrue(util.checkSessionFactoryPropertyInReport("current_session_context_class", "org.hibernate.context.ManagedSessionContext"));
+
+        Assert.assertTrue(util.checkHibernateEntityInReport("org.hibernate.test.cache.Item", "Items"));
+        Assert.assertTrue(util.checkHibernateEntityInReport("org.hibernate.tutorial.domain.Person", "PERSON"));
+        Assert.assertTrue(util.checkHibernateEntityInReport("org.hibernate.tutorial.domain.Event", "EVENTS"));
+    }
+
     private void validateReports(GraphContext context)
     {
         ReportService reportService = new ReportService(context);
@@ -162,5 +183,7 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
                     "Hibernate Cfg");
         util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war",
                     "WEB-INF/classes/org/hibernate/tutorial/domain/Event.hbm.xml", "Hibernate Mapping");
+
+        validateHibernateReport(context);
     }
 }

@@ -21,6 +21,9 @@ import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOve
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
+import org.jboss.windup.rules.apps.javaee.rules.CreateEJBReportRuleProvider;
+import org.jboss.windup.testutil.html.TestEJBReportUtil;
+import org.jboss.windup.testutil.html.TestEJBReportUtil.EJBType;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -142,6 +145,20 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Assert.assertEquals(1, messageDrivenFound);
     }
 
+    private void validateEJBBeanReport(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateEJBReportRuleProvider.TEMPLATE_EJB_REPORT);
+        TestEJBReportUtil util = new TestEJBReportUtil();
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+        Assert.assertTrue(util.checkBeanInReport(EJBType.MDB, "LogEventSubscriber", "com.acme.anvil.service.jms.LogEventSubscriber"));
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "ItemLookupBean", "com.acme.anvil.service.ItemLookupBean"));
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "ProductCatalogBean", "com.acme.anvil.service.ProductCatalogBean"));
+    }
+
     private void validateReports(GraphContext context)
     {
         ReportService reportService = new ReportService(context);
@@ -154,5 +171,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("jee-example-app-1.0.0.ear/jee-example-services.jar", "META-INF/ejb-jar.xml",
                     "EJB XML");
+
+        validateEJBBeanReport(context);
     }
 }

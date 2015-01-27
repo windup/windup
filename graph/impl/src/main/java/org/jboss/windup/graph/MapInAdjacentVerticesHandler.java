@@ -73,7 +73,7 @@ public class MapInAdjacentVerticesHandler implements MethodHandler<MapInAdjacent
         if (arguments == null || arguments.length != 1)
             throw new WindupException("Method must take only one argument: " + method.getName());
 
-        Iterable<Edge> edges = vertex.getEdges(Direction.OUT, annotation.label());
+        Iterable<Edge> edges = vertex.getEdges(Direction.IN, annotation.label());
         for (Edge edge : edges)
         {
             framedGraph.removeEdge(edge);

@@ -6,6 +6,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Contains metadata used by all specializations of EJBs (eg, environment references)
@@ -13,8 +14,10 @@ import com.tinkerpop.frames.Property;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
+@TypeValue(EjbBeanBaseModel.TYPE)
 public interface EjbBeanBaseModel extends WindupVertexFrame
 {
+    public static final String TYPE = "EjbBeanBaseModel";
 
     public static final String EJB_SESSION_TO_ENVIRONMENT_REFERENCE = "ejbToEnvironmentReference";
     public static final String EJB_IMPLEMENTATION_CLASS = "ejbImplementationClass";

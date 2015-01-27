@@ -56,7 +56,7 @@
             <artifactId>rules-base</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>

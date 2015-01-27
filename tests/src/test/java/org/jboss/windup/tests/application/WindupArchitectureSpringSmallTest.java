@@ -20,8 +20,10 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
+import org.jboss.windup.rules.apps.javaee.rules.CreateSpringBeanReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.SpringConfigurationFileService;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
+import org.jboss.windup.testutil.html.TestSpringBeanReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,6 +75,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
 
             validateSpringBeans(context);
             validateReports(context);
+            validateSpringBeanReport(context);
         }
     }
 
@@ -110,6 +113,18 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
         Assert.assertEquals(2, numberFound);
         Assert.assertTrue(foundSpringMvcContext);
         Assert.assertTrue(foundSpringBusinessContext);
+    }
+
+    private void validateSpringBeanReport(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateSpringBeanReportRuleProvider.TEMPLATE_SPRING_REPORT);
+        TestSpringBeanReportUtil util = new TestSpringBeanReportUtil();
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+        Assert.assertTrue(util.checkSpringBeanInReport("", "org.springframework.web.servlet.view.InternalResourceViewResolver"));
     }
 
     private void validateReports(GraphContext context)

@@ -30,10 +30,12 @@ import org.jboss.windup.rules.apps.java.model.PropertiesModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
+import org.jboss.windup.rules.apps.javaee.rules.CreateSpringBeanReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.jboss.windup.tests.application.rules.TestServletAnnotationRuleProvider;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
+import org.jboss.windup.testutil.html.TestSpringBeanReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -170,6 +172,18 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         Assert.assertEquals(1, numberFound);
     }
 
+    private void validateSpringBeanReport(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateSpringBeanReportRuleProvider.TEMPLATE_SPRING_REPORT);
+        TestSpringBeanReportUtil util = new TestSpringBeanReportUtil();
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+        Assert.assertTrue(util.checkSpringBeanInReport("mysamplebean", "org.example.MyExampleBean"));
+    }
+
     /**
      * Validate that the report pages were generated correctly
      */
@@ -194,5 +208,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     "web-xml-converted-example.xml")));
         Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath().resolve(
                     "web-xmluserscript-converted-example.xml")));
+
+        validateSpringBeanReport(context);
     }
 }
