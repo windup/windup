@@ -11,11 +11,11 @@ import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.LinkModel;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
-import org.windup.rules.apps.model.FileLocationModel;
 
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.

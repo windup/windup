@@ -1,4 +1,4 @@
-package org.windup.rules.apps.condition.regex;
+package org.jboss.windup.rules.files.condition.regex;
 
 /**
  * Contains information about the regular expression match (line, column, text).

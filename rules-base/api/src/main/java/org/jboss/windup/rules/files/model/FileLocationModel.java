@@ -1,4 +1,4 @@
-package org.windup.rules.apps.model;
+package org.jboss.windup.rules.files.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 

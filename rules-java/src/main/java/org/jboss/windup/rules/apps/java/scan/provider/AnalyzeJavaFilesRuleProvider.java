@@ -21,7 +21,6 @@ import org.jboss.windup.rules.apps.java.scan.ast.VariableResolvingASTVisitor;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -43,11 +42,9 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder javaSourceAvailable = Query.fromType(JavaSourceFileModel.class);
-        
         return ConfigurationBuilder.begin()
             .addRule()
-            .when(javaSourceAvailable)
+            .when(Query.fromType(JavaSourceFileModel.class))
             .perform(new ParseSourceOperation()
             .and(IterationProgress.monitoring("Analyzed Java File: ", 250))
             .and(Commit.every(10)));

@@ -1,9 +1,11 @@
 package org.jboss.windup.graph.service;
 
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
 import com.thinkaurelius.titan.core.TitanTransaction;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.VertexFrame;
 
 /**
@@ -35,8 +37,8 @@ public interface Service<FRAMETYPE extends VertexFrame>
     FRAMETYPE createInMemory();
 
     /**
-     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned instance will already be
-     * persisted in the graph.
+     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned
+     * instance will already be persisted in the graph.
      */
     FRAMETYPE create();
 
@@ -56,18 +58,20 @@ public interface Service<FRAMETYPE extends VertexFrame>
     Iterable<FRAMETYPE> findAll();
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given properties.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
+     * properties.
      */
     Iterable<FRAMETYPE> findAllByProperties(String[] keys, String[] vals);
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given property.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
+     * property.
      */
     Iterable<FRAMETYPE> findAllByProperty(String key, Object value);
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the specified property matching the given
-     * regexes.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the
+     * specified property matching the given regexes.
      */
     Iterable<FRAMETYPE> findAllByPropertyMatchingRegex(String key, String... regex);
 
@@ -82,7 +86,8 @@ public interface Service<FRAMETYPE extends VertexFrame>
     FRAMETYPE getUnique() throws NonUniqueResultException;
 
     /**
-     * Search the graph for a model of the appropriate type with the given property name and value. Return <code>null</code> if not found.
+     * Search the graph for a model of the appropriate type with the given property name and value. Return
+     * <code>null</code> if not found.
      */
     FRAMETYPE getUniqueByProperty(String property, Object value) throws NonUniqueResultException;
 
@@ -97,4 +102,12 @@ public interface Service<FRAMETYPE extends VertexFrame>
      * Get the {@link WindupVertexFrame} type for which this {@link Service} operates.
      */
     Class<FRAMETYPE> getType();
+
+    /**
+     * Return the given {@link Vertex} as a {@link WindupVertexFrame} (if possible.)
+     * <p>
+     * <b>Note:</b> This method will always succeed! Even if the given {@link Vertex} is not actually the specified
+     * {@link WindupVertexFrame} type. Call {@link GraphTypeManager#hasType(Class, Vertex)} <b>before</b> using this!
+     */
+    FRAMETYPE frame(Vertex vertex);
 }

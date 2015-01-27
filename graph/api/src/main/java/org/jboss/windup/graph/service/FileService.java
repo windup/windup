@@ -9,9 +9,9 @@ import org.jboss.windup.util.ExecutionStatistics;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
-public class FileModelService extends GraphService<FileModel>
+public class FileService extends GraphService<FileModel>
 {
-    public FileModelService(GraphContext context)
+    public FileService(GraphContext context)
     {
         super(context, FileModel.class);
     }
@@ -23,7 +23,7 @@ public class FileModelService extends GraphService<FileModel>
 
     public FileModel createByFilePath(FileModel parentFile, String filePath)
     {
-        ExecutionStatistics.get().begin("FileModelService.createByFilePath(parentFile, filePath)");
+        ExecutionStatistics.get().begin("FileService.createByFilePath(parentFile, filePath)");
         // always search by absolute path
         String absolutePath = Paths.get(filePath).toAbsolutePath().toString();
         FileModel entry = findByPath(absolutePath);
@@ -35,7 +35,7 @@ public class FileModelService extends GraphService<FileModel>
             entry.setParentFile(parentFile);
         }
 
-        ExecutionStatistics.get().end("FileModelService.createByFilePath(parentFile, filePath)");
+        ExecutionStatistics.get().end("FileService.createByFilePath(parentFile, filePath)");
         return entry;
     }
 

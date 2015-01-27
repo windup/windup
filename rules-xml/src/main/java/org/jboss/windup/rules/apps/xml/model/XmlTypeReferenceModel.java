@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.xml.model;
 
-import org.windup.rules.apps.model.FileLocationModel;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;

@@ -38,6 +38,7 @@ import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.rewrite.bind.Binding;
 import org.ocpsoft.rewrite.bind.Evaluation;
 import org.ocpsoft.rewrite.config.CompositeOperation;
+import org.ocpsoft.rewrite.config.CompositeRule;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionVisit;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -72,13 +73,13 @@ import org.ocpsoft.rewrite.util.Visitor;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class RuleSubset extends DefaultOperationBuilder implements CompositeOperation, Parameterized
+public class RuleSubset extends DefaultOperationBuilder implements CompositeOperation, Parameterized, CompositeRule
 {
     private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
-     * Used for tracking the time taken by the rules within each RuleProvider. This links from a {@link WindupRuleProvider} to the ID of a
-     * {@link RuleProviderExecutionStatisticsModel}
+     * Used for tracking the time taken by the rules within each RuleProvider. This links from a
+     * {@link WindupRuleProvider} to the ID of a {@link RuleProviderExecutionStatisticsModel}
      */
     private final IdentityHashMap<WindupRuleProvider, Object> timeTakenByProvider = new IdentityHashMap<>();
 
@@ -114,7 +115,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
         if (!timeTakenByProvider.containsKey(ruleProvider))
         {
-            RuleProviderExecutionStatisticsModel model = new RuleProviderExecutionStatisticsService(graphContext).create();
+            RuleProviderExecutionStatisticsModel model = new RuleProviderExecutionStatisticsService(graphContext)
+                        .create();
             model.setRuleIndex(ruleIndex);
             model.setRuleProviderID(ruleProvider.getID());
             model.setTimeTaken(timeTaken);
@@ -147,7 +149,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         }
         else
         {
-            GraphService<RulePhaseExecutionStatisticsModel> service = new GraphService<>(graphContext, RulePhaseExecutionStatisticsModel.class);
+            GraphService<RulePhaseExecutionStatisticsModel> service = new GraphService<>(graphContext,
+                        RulePhaseExecutionStatisticsModel.class);
             RulePhaseExecutionStatisticsModel model = service.getById(timeTakenByPhase.get(phase));
             int prevTimeTaken = model.getTimeTaken();
             model.setTimeTaken(prevTimeTaken + timeTaken);
@@ -506,7 +509,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     /**
-     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and their results.
+     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and
+     * their results.
      */
     public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener)
     {
@@ -521,5 +525,23 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             }
         };
 
+    }
+
+    @Override
+    public String getId()
+    {
+        return "RuleSubset_" + config.hashCode();
+    }
+
+    @Override
+    public boolean evaluate(Rewrite event, EvaluationContext context)
+    {
+        return config != null && config.getRules() != null && !config.getRules().isEmpty();
+    }
+
+    @Override
+    public List<Rule> getRules()
+    {
+        return config == null ? null : config.getRules();
     }
 }

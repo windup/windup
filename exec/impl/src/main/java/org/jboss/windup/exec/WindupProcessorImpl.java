@@ -9,6 +9,7 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.loader.WindupRuleLoader;
@@ -17,16 +18,19 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Checks;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.config.RuleVisit;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
+import org.ocpsoft.rewrite.util.Visitor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -65,12 +69,11 @@ public class WindupProcessorImpl implements WindupProcessor
         configModel.setOfflineMode(windupConfiguration.isOffline());
         for (Path path : windupConfiguration.getAllUserRulesDirectories())
         {
-            System.out.println("User rules dir: " + path);
-            LOG.info("User rules dir: " + path);
-            LOG.warning("User rules dir: " + path);
+            System.out.println("Using user rules dir: " + path);
             if (path == null)
             {
-                throw new WindupException("Null path found (all paths are: " + windupConfiguration.getAllUserRulesDirectories() + ")");
+                throw new WindupException("Null path found (all paths are: "
+                            + windupConfiguration.getAllUserRulesDirectories() + ")");
             }
             configModel.addUserRulesPath(getFileModel(context, path));
         }
@@ -80,34 +83,48 @@ public class WindupProcessorImpl implements WindupProcessor
             configModel.addUserIgnorePath(getFileModel(context, path));
         }
 
-        GraphRewrite event = new GraphRewrite(context);
+        final GraphRewrite event = new GraphRewrite(context);
 
-        WindupRuleMetadata ruleMetadata = windupConfigurationLoader.loadConfiguration(context, windupConfiguration.getRuleProviderFilter());
+        WindupRuleMetadata ruleMetadata = windupConfigurationLoader.loadConfiguration(context,
+                    windupConfiguration.getRuleProviderFilter());
         event.getRewriteContext().put(WindupRuleMetadata.class, ruleMetadata);
 
         Configuration rules = ruleMetadata.getConfiguration();
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
         if (windupConfiguration.getProgressMonitor() != null)
-            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(), rules));
+            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(),
+                        rules));
 
         for (RuleLifecycleListener listener : listeners)
         {
             ruleSubset.addLifecycleListener(listener);
         }
 
+        new RuleVisit(ruleSubset).accept(new Visitor<Rule>()
+        {
+            @Override
+            public void visit(Rule r)
+            {
+                if (r instanceof PreRulesetEvaluation)
+                {
+                    ((PreRulesetEvaluation) r).preRulesetEvaluation(event);
+                }
+            }
+        });
         ruleSubset.perform(event, createEvaluationContext());
 
         long endTime = System.currentTimeMillis();
         long seconds = (endTime - startTime) / 1000L;
-        LOG.info("Windup execution took " + seconds + " seconds to execute on input: " + windupConfiguration.getInputPath() + "!");
+        LOG.info("Windup execution took " + seconds + " seconds to execute on input: "
+                    + windupConfiguration.getInputPath() + "!");
 
         ExecutionStatistics.get().reset();
     }
 
     private FileModel getFileModel(GraphContext context, Path path)
     {
-        return new FileModelService(context).createByFilePath(path.toString());
+        return new FileService(context).createByFilePath(path.toString());
     }
 
     /**
@@ -123,7 +140,8 @@ public class WindupProcessorImpl implements WindupProcessor
 
     private void validateConfig(WindupConfiguration windupConfiguration)
     {
-        Assert.notNull(windupConfiguration, "Windup configuration must not be null. (Call default execution if no configuration is required.)");
+        Assert.notNull(windupConfiguration,
+                    "Windup configuration must not be null. (Call default execution if no configuration is required.)");
 
         GraphContext context = windupConfiguration.getGraphContext();
         Assert.notNull(context, "Windup GraphContext must not be null!");

@@ -12,8 +12,8 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.util.ExecutionStatistics;
-import org.windup.rules.apps.model.FileLocationModel;
 
 import com.tinkerpop.blueprints.Vertex;
 

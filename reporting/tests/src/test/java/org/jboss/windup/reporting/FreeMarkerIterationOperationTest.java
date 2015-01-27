@@ -22,7 +22,7 @@ import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class FreeMarkerIterationOperationTest
         {
             Files.createDirectories(tempFolder);
         }
-        FileModelService fileModelService = new FileModelService(context);
+        FileService fileModelService = new FileService(context);
         cfgModel.setOutputPath(fileModelService.createByFilePath(tempFolder.toAbsolutePath().toString()));
 
         ApplicationReportModel appReportModel = context.getFramed().addVertex(null, ApplicationReportModel.class);

@@ -135,7 +135,8 @@ public class ProcyonDecompiler implements Decompiler
     }
 
     /**
-     * Decompiles all .class files and archives in the given directory and places results in the specified output directory.
+     * Decompiles all .class files and archives in the given directory and places results in the specified output
+     * directory.
      * <p>
      * Discovered archives will be decompiled into directories matching the name of the archive, e.g.
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
@@ -179,9 +180,10 @@ public class ProcyonDecompiler implements Decompiler
 
         log.info("Decompiling subdir '" + subPath + "'");
 
-        DecompilerSettings settings = getDefaultSettings(outputDir);
-        // MetadataSystem metadataSystem = new NoRetryMetadataSystem(settings.getTypeLoader());
-        // MetadataSystem metadataSystem = new NoRetryMetadataSystem(rootDir.getPath());
+        /*
+         * This forces an initialization of the settings.
+         */
+        getDefaultSettings(outputDir);
 
         // TODO: Rewrite with Commons IO's DirectoryWalker.
         File curDirFull = rootDir.toPath().resolve(subPath).toFile();
@@ -190,20 +192,16 @@ public class ProcyonDecompiler implements Decompiler
         for (File file : files)
         {
             final MetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());
-            // Directory...
             if (file.isDirectory())
             {
-                // Recurse.
                 Path subPathNew = subPath.resolve(file.getName());
                 decompileDirectory(rootDir, outputDir, subPathNew, result);
                 continue;
             }
 
-            // .class ?
             if (!file.getName().endsWith(".class"))
                 continue;
 
-            // Inner class?
             if (file.getName().contains("$"))
                 continue;
 
@@ -362,7 +360,8 @@ public class ProcyonDecompiler implements Decompiler
 
                             ExecutionStatistics.get().begin("ProcyonDecompiler.decompileIndividualItem");
                             final DecompileExecutor t = new DecompileExecutor(metadataSystem, typeName);
-                            // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs for now
+                            // TODO - This approach is a hack, but it should work around the Procyon decompiler hangs
+                            // for now
                             t.start();
                             t.join(60000L); // wait up to one minute
                             if (!t.success)
@@ -440,7 +439,8 @@ public class ProcyonDecompiler implements Decompiler
     /**
      * The metadata cache can become huge over time. This simply flushes it periodically.
      * 
-     * TODO: This should be replaced with a more reasonable approach that uses an LRU cache to retain frequently used type resolutions.
+     * TODO: This should be replaced with a more reasonable approach that uses an LRU cache to retain frequently used
+     * type resolutions.
      */
     private void refreshMetadataCache(final Queue<MetadataSystem> metadataSystemCache, final DecompilerSettings settings)
     {
@@ -480,6 +480,7 @@ public class ProcyonDecompiler implements Decompiler
             }
         }
 
+        @SuppressWarnings("deprecation")
         public void cancelDecompilation()
         {
             this.interrupt();
@@ -501,7 +502,7 @@ public class ProcyonDecompiler implements Decompiler
             }
             if (this.isAlive())
             {
-                // make one last attempt to kill it
+                // make one last (desperate) attempt to kill it
                 this.stop();
             }
         }

@@ -22,7 +22,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
@@ -107,7 +107,7 @@ public class QueryConditionTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            FileModelService fileModelService = new FileModelService(context);
+            FileService fileModelService = new FileService(context);
             windupCfg.setInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
 
             JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
@@ -146,7 +146,7 @@ public class QueryConditionTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            FileModelService fileModelService = new FileModelService(context);
+            FileService fileModelService = new FileService(context);
             windupCfg.setInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
 
             JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);

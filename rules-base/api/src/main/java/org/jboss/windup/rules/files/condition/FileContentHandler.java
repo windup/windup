@@ -1,4 +1,4 @@
-package org.windup.rules.apps.condition;
+package org.jboss.windup.rules.files.condition;
 
 import static org.joox.JOOX.$;
 

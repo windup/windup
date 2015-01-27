@@ -1,4 +1,4 @@
-package org.windup.rules.apps.condition;
+package org.jboss.windup.rules.files.condition;
 
 import java.io.FileReader;
 import java.io.Reader;
@@ -21,8 +21,12 @@ import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.files.condition.regex.StreamRegexMatchListener;
+import org.jboss.windup.rules.files.condition.regex.StreamRegexMatchedEvent;
+import org.jboss.windup.rules.files.condition.regex.StreamRegexMatcher;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterStore;
@@ -30,10 +34,6 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
-import org.windup.rules.apps.condition.regex.StreamRegexMatchListener;
-import org.windup.rules.apps.condition.regex.StreamRegexMatchedEvent;
-import org.windup.rules.apps.condition.regex.StreamRegexMatcher;
-import org.windup.rules.apps.model.FileLocationModel;
 
 import com.googlecode.streamflyer.core.Modifier;
 import com.googlecode.streamflyer.core.ModifyingReader;
@@ -104,8 +104,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
 
     @Override
     @SuppressWarnings("unchecked")
-    protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context,
-                final FrameCreationContext frameCreationContext)
+    protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context, final FrameCreationContext frameCreationContext)
     {
         return evaluate(event, context, new EvaluationStrategy()
         {
@@ -134,8 +133,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     }
 
     @Override
-    protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context,
-                final FrameContext frameContext)
+    protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context, final FrameContext frameContext)
     {
         boolean result = evaluate(event, context, new NoopEvaluationStrategy());
 
@@ -145,12 +143,13 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         return result;
     }
 
-    private boolean evaluate(final GraphRewrite event, final EvaluationContext context, final EvaluationStrategy evaluationStrategy)
+    private boolean evaluate(final GraphRewrite event, final EvaluationContext context,
+                final EvaluationStrategy evaluationStrategy)
     {
         final ParameterStore store = DefaultParameterStore.getInstance(context);
 
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
-        FileModelService fileModelService = new FileModelService(event.getGraphContext());
+        FileService fileModelService = new FileService(event.getGraphContext());
         final Iterable<FileModel> fileModels;
         if (filenamePattern != null)
         {
@@ -187,7 +186,8 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                             if (contentPatternResult.matches())
                             {
                                 evaluationStrategy.modelMatched();
-                                if (filenamePatternResult.submit(event, context) && contentPatternResult.submit(event, context))
+                                if (filenamePatternResult.submit(event, context)
+                                            && contentPatternResult.submit(event, context))
                                 {
                                     FileLocationModel fileLocationModel = fileLocationService.create();
                                     fileLocationModel.setFile(fileModel);
@@ -230,7 +230,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("FileContent");
+        builder.append(this.getClass().getSimpleName());
         builder.append(".matches(" + contentPattern + ")");
         builder.append(".inFilesNamed(" + filenamePattern + ")");
         builder.append(".as(" + getVarname() + ")");

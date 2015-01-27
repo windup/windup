@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
-import org.windup.rules.apps.model.FileLocationModel;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Property;

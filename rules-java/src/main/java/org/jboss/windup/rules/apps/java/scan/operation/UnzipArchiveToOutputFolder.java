@@ -16,7 +16,7 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
-import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -102,7 +102,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 final Path tempFolder, final File inputZipFile,
                 final ArchiveModel archiveModel)
     {
-        final FileModelService fileService = new FileModelService(context);
+        final FileService fileService = new FileService(context);
 
         // Setup a temp folder for the archive
         String appArchiveName = archiveModel.getArchiveName();
@@ -153,7 +153,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
      * "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary directory that happens to hold it.
      */
     private void recurseAndAddFiles(GraphContext context, Path tempFolder,
-                FileModelService fileService, ArchiveModel archiveModel,
+                FileService fileService, ArchiveModel archiveModel,
                 FileModel parentFileModel)
     {
         File fileReference = parentFileModel.asFile();

@@ -15,7 +15,6 @@ import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ClassifyFileTypes;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -24,12 +23,12 @@ import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.DoctypeMetaService;
 import org.jboss.windup.rules.apps.xml.service.NamespaceService;
+import org.jboss.windup.rules.files.FileMapping;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.LocationAwareContentHandler.Doctype;
 import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.jboss.windup.util.xml.XmlUtil;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -47,32 +46,28 @@ public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext arg0)
+    public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder isXml = Query
-                    .fromType(FileModel.class)
-                    .withProperty(FileModel.IS_DIRECTORY, false)
-                    .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.xml$");
-
-        AbstractIterationOperation<FileModel> evaluatePomFiles = new AbstractIterationOperation<FileModel>()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
-            {
-                addXmlMetaInformation(event.getGraphContext(), payload);
-            }
-
-            @Override
-            public String toString()
-            {
-                return "DiscoverXMLFiles";
-            }
-        };
-
         return ConfigurationBuilder.begin()
+                    
+                    .addRule(FileMapping.from(".*\\.xml$").to(XmlFileModel.class))
+
                     .addRule()
-                    .when(isXml)
-                    .perform(evaluatePomFiles);
+                    .when(Query.fromType(XmlFileModel.class))
+                    .perform(new AbstractIterationOperation<FileModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+                        {
+                            addXmlMetaInformation(event.getGraphContext(), payload);
+                        }
+
+                        @Override
+                        public String toString()
+                        {
+                            return "IndexXmlFilesMetadata";
+                        }
+                    });
     }
 
     private void addXmlMetaInformation(GraphContext context, FileModel file)

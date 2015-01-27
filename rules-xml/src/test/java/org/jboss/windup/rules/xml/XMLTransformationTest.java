@@ -38,12 +38,12 @@ import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.windup.rules.apps.model.FileLocationModel;
 
 @RunWith(Arquillian.class)
 public class XMLTransformationTest

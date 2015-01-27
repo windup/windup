@@ -9,11 +9,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.decompiler.api.DecompilationException;
+import org.jboss.windup.decompiler.api.DecompilationFailure;
 import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
@@ -23,7 +25,7 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.ArchiveService;
-import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -87,6 +89,10 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
             {
                 AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(payload, event.getGraphContext());
                 DecompilationResult result = decompiler.decompileArchive(archive, outputDir, addDecompiledItemsToGraph);
+                for (DecompilationFailure failure : result.getFailures())
+                {
+                    LOG.log(Level.WARNING, "Failed to decompile.", failure);
+                }
                 decompiler.close();
             }
             catch (final DecompilationException exc)
@@ -109,14 +115,14 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
         private final ExecutorService executorService = Executors.newSingleThreadExecutor();
         private final GraphContext context;
         private final Object archiveModelID;
-        private final FileModelService fileService;
+        private final FileService fileService;
         private final AtomicInteger atomicInteger = new AtomicInteger(0);
 
         private AddDecompiledItemsToGraph(ArchiveModel archiveModel, GraphContext context)
         {
             this.context = context;
             this.archiveModelID = archiveModel.asVertex().getId();
-            this.fileService = new FileModelService(context);
+            this.fileService = new FileService(context);
         }
 
         @Override
@@ -172,7 +178,8 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                                     .toString());
 
                         // make sure parent files already exist
-                        // (it can happen that it does not if procyon puts the decompiled .java file in an unexpected place, for example in the case
+                        // (it can happen that it does not if procyon puts the decompiled .java file in an unexpected
+                        // place, for example in the case
                         // of war files)
                         if (parentFileModel == null)
                         {

@@ -32,7 +32,12 @@ public interface WindupRuleProviderBuilderAddDependencies
     public WindupRuleProviderBuilderAddDependencies addExecuteBefore(Class<? extends WindupRuleProvider> type);
 
     /**
-     * Begin defining {@link Rule} instances.
+     * Begin defining a {@link Rule} instance.
      */
     public ConfigurationRuleBuilderCustom addRule();
+
+    /**
+     * Begin enhancing a {@link Rule} instance based on the given {@link Rule}.
+     */
+    public ConfigurationRuleBuilderCustom addRule(Rule rule);
 }

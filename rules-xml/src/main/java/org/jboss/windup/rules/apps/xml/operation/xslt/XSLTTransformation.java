@@ -35,8 +35,8 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
+import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.windup.rules.apps.model.FileReferenceModel;
 
 import java.util.logging.Logger;
 

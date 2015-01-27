@@ -21,10 +21,8 @@ import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ClassifyFileTypes;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -33,9 +31,9 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupRoasterWildcardImportResolver;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.files.FileMapping;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -45,9 +43,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
+public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
 {
-    private static Logger LOG = Logging.get(DiscoverJavaFilesRuleProvider.class);
+    private static Logger LOG = Logging.get(IndexJavaSourceFilesRuleProvider.class);
 
     private static final String TECH_TAG = "Java Source";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
@@ -58,23 +56,16 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         return ClassifyFileTypes.class;
     }
 
-    // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder javaSourceQuery = Query
-            .fromType(FileModel.class)
-            .withProperty(FileModel.IS_DIRECTORY, false)
-            .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.java$");
-
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when(javaSourceQuery)
-            .perform(new IndexJavaFileIterationOperator());
-        // @formatter:on
+                    .addRule()
+                    .when(Query.fromType(JavaSourceFileModel.class))
+                    .perform(new IndexJavaFileIterationOperator());
     }
 
-    private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<FileModel>
+    private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<JavaSourceFileModel>
     {
         private static final int JAVA_SUFFIX_LEN = 5;
 
@@ -84,7 +75,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
         }
 
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+        public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
             WindupRoasterWildcardImportResolver.setGraphContext(event.getGraphContext());
             try
@@ -123,14 +114,12 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
                 }
 
                 // make sure we mark this as a Java file
-                JavaSourceFileModel javaFileModel = GraphService.addTypeToModel(graphContext, payload,
-                            JavaSourceFileModel.class);
-                technologyTagService.addTagToFileModel(javaFileModel, TECH_TAG, TECH_TAG_LEVEL);
+                technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
 
-                javaFileModel.setPackageName(packageName);
+                payload.setPackageName(packageName);
                 try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
                 {
-                    addParsedClassToFile(fis, event.getGraphContext(), javaFileModel);
+                    addParsedClassToFile(fis, event.getGraphContext(), payload);
                 }
                 catch (FileNotFoundException e)
                 {
@@ -146,7 +135,7 @@ public class DiscoverJavaFilesRuleProvider extends WindupRuleProvider
                     LOG.log(Level.WARNING,
                                 "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
                     ClassificationService classificationService = new ClassificationService(graphContext);
-                    classificationService.attachClassification(javaFileModel,
+                    classificationService.attachClassification(payload,
                                 JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                 JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                     return;
