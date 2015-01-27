@@ -14,6 +14,7 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
+import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.thinkaurelius.titan.core.Cardinality;
@@ -215,6 +216,12 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void close()
     {
+        //TODO: This is probably not the same instance as the one gained using AfterGraphInitializationListener interface 
+        Imported<BeforeGraphCloseListener> beforeCloseListeners = furnace.getAddonRegistry().getServices(
+                    BeforeGraphCloseListener.class);
+        for(BeforeGraphCloseListener listener : beforeCloseListeners) {
+            listener.beforeGraphClose();
+        }
         this.eventGraph.getBaseGraph().shutdown();
     }
 

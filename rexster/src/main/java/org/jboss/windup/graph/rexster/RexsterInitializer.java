@@ -15,6 +15,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
+import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
 
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
@@ -26,11 +27,13 @@ import com.tinkerpop.rexster.server.HttpRexsterServer;
 import com.tinkerpop.rexster.server.RexProRexsterServer;
 import com.tinkerpop.rexster.server.RexsterProperties;
 
-public class RexsterInitializer implements AfterGraphInitializationListener
+public class RexsterInitializer implements AfterGraphInitializationListener, BeforeGraphCloseListener
 {
     private String rexsterExtractDirectory;
     private Map<String, Object> configuration;
     private static final Logger log = Logger.getLogger(RexsterInitializer.class.getName());
+    boolean started = false;
+    private RexProRexsterServer rexPro;
 
     public RexsterInitializer()
     {
@@ -54,23 +57,25 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     {
         try (PrintWriter out = new PrintWriter("rexster.xml"))
         {
-           
-
-            
             String path = getClass().getResource("/public").getPath();
-            if(path.contains("!")) {
+            if (path.contains("!"))
+            {
                 path = path.split("!")[0];
             }
-            if(path.contains(":")) {
+            if (path.contains(":"))
+            {
                 path = path.split(":")[1];
             }
-            if(path.endsWith(".jar")) {
+            if (path.endsWith(".jar"))
+            {
                 File rexsterAddonDir = new File(path);
 
                 new File(rexsterExtractDirectory).mkdirs();
                 extractZipFile(rexsterAddonDir, rexsterExtractDirectory);
-            } else {
-                //remove the "public" from the end
+            }
+            else
+            {
+                // remove the "public" from the end
                 String substring = path.substring(0, path.length() - 8);
                 rexsterExtractDirectory = substring;
             }
@@ -81,8 +86,9 @@ public class RexsterInitializer implements AfterGraphInitializationListener
             HttpRexsterServer rexsterServer = new HttpRexsterServer(properties);
             rexsterServer.start(new DefaultRexsterApplication("main", graph.getBaseGraph()));
 
-            RexProRexsterServer rexPro = new RexProRexsterServer(properties, true);
+            rexPro = new RexProRexsterServer(properties, true);
             rexPro.start(new DefaultRexsterApplication("main", graph));
+            started = true;
 
         }
         catch (FileNotFoundException e)
@@ -93,6 +99,11 @@ public class RexsterInitializer implements AfterGraphInitializationListener
         {
             log.warning("Error while creating rexster.xml");
         }
+    }
+
+    public boolean isStarted()
+    {
+        return started;
     }
 
     private void extractZipFile(File jarFile, String destDir) throws IOException
@@ -254,8 +265,23 @@ public class RexsterInitializer implements AfterGraphInitializationListener
     @Override
     public void afterGraphStarted(Map<String, Object> configuration, GraphContext graphContext)
     {
-        this.configuration=configuration;
+        this.configuration = configuration;
         rexsterExtractDirectory = getAddon().getRepository().getAddonDescriptor(getAddon().getId()).getParent() + "/rexster-extract";
         start(graphContext.getFramed());
+    }
+
+    @Override
+    public void beforeGraphClose()
+    {
+        try
+        {
+            if(rexPro !=null) {
+               rexPro.stop();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
