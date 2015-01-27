@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <version.forge>2.12.1.Final</version.forge>
+        <version.forge>2.13.1.Final</version.forge>
     </properties>
 
     <!-- Does NOT use windup-parent - this is a BOM. -->
