@@ -219,6 +219,8 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
+                            if (classModel.getJavaClass() != null)
+                                decompiledSourceFileModel.addJavaClass(classModel.getJavaClass());
                         }
                         else
                         {
