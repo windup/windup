@@ -122,10 +122,12 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         for (WindupRuleProvider provider : providers)
         {
             // If there is a filter, and it rejects the ruleProvider, then skip this rule provider
-            if (ruleProviderFilter != null && !ruleProviderFilter.accept(provider))
+            if (ruleProviderFilter != null)
             {
-                LOG.info("Skiped by filter: " + provider);
-                continue;
+                boolean accepted = ruleProviderFilter.accept(provider);
+                LOG.info( (accepted ? "Accepted" : "Skipped") + " by filter: " + provider);
+                if (!accepted)
+                    continue;
             }
 
             Configuration cfg = provider.getConfiguration(context);
