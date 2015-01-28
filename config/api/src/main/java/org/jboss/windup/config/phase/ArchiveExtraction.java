@@ -5,7 +5,12 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
+ * Previous: {@link Discovery}<br/>
+ * Next: {@link ArchiveMetadataExtraction}
+ * 
+ * <p>
  * Unzipping of any input files (such as an incoming ear file) occur during this phase.
+ * </p>
  * 
  * @author jsightler
  *

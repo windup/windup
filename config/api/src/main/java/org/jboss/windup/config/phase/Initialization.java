@@ -5,8 +5,13 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
+ * Previous: {@link ArchiveExtraction}<br/>
+ * Next: {@link Discovery}
+ * 
+ * <p>
  * This is the first phase of Windup Execution. Initialization related tasks (such as copying configuration data to the graph) should occur during
  * this phase.
+ * </p>
  * 
  * @author jsightler
  *

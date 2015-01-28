@@ -5,7 +5,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.Log;
-import org.jboss.windup.config.phase.DecompilationPhase;
+import org.jboss.windup.config.phase.Decompilation;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
@@ -27,7 +27,7 @@ public class DecompileArchivesRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return DecompilationPhase.class;
+        return Decompilation.class;
     }
 
     // @formatter:off

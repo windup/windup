@@ -5,7 +5,13 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * This occurs immediately after {@link MigrationRules}.
+ * Previous: {@link MigrationRules}<br/>
+ * Next: {@link PreReportGeneration}
+ * 
+ * <p>
+ * This occurs immediately after {@link MigrationRules}. This can be used in cases where some rule wants to execute immediately after all other
+ * migration rules. The primary use case at the moment involves unit tests.
+ * </p>
  * 
  * @author jsightler
  *
