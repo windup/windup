@@ -51,9 +51,14 @@
 		<!-- All Rule Providers -->
 		<div class="panel panel-primary">
 			<#list getAllRuleProviders() as ruleProvider>
+                <#if isRulePhase(ruleProvider)>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Phase: ${ruleProvider.ID}</h3>
+				    </div>
+                <#else>
 				<div class="panel-heading">
 				    <h3 class="panel-title">${ruleProvider.ID}</h3>
-				    Phase: ${ruleProvider.phase?replace("_", " ")?capitalize}
+				    Phase: ${ruleProvider.phase.simpleName}
 				</div>
 				<table class="table table-striped table-bordered">
 				  	<tr>
@@ -100,6 +105,7 @@
 						</#if>
 					</#list>
 	    		</table>
+                </#if>
 	    	</#list>
 		</div>
 
