@@ -48,15 +48,11 @@
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Windup Engine - Graph API -->
             <dependency>
                 <groupId>org.jboss.windup.graph</groupId>
                 <artifactId>windup-graph-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Windup Engine - Graph Impl -->
             <dependency>
                 <groupId>org.jboss.windup.graph</groupId>
                 <artifactId>windup-graph-impl</artifactId>
@@ -70,15 +66,11 @@
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Windup Engine - Config API -->
             <dependency>
                 <groupId>org.jboss.windup.config</groupId>
                 <artifactId>windup-config-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Windup Engine - Config Impl -->
             <dependency>
                 <groupId>org.jboss.windup.config</groupId>
                 <artifactId>windup-config-impl</artifactId>
@@ -123,15 +115,11 @@
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Windup Engine - Execution API -->
             <dependency>
                 <groupId>org.jboss.windup.exec</groupId>
                 <artifactId>windup-exec-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Windup Engine - Execution API Impl -->
             <dependency>
                 <groupId>org.jboss.windup.exec</groupId>
                 <artifactId>windup-exec-impl</artifactId>
@@ -146,18 +134,34 @@
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Windup Engine - Reporting API -->
             <dependency>
                 <groupId>org.jboss.windup.reporting</groupId>
                 <artifactId>windup-reporting-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Windup Engine - Reporting Impl -->
             <dependency>
                 <groupId>org.jboss.windup.reporting</groupId>
                 <artifactId>windup-reporting-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+
+            <!-- Windup Rules Base -->
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>rules-base</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>rules-base-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>rules-base-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
