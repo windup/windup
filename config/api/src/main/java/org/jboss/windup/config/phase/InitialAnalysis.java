@@ -5,7 +5,7 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link DiscoverProjectStructure}<br/>
+ * Previous: {@link Decompilation}<br/>
  * Next: {@link MigrationRules}
  * 
  * <p>
@@ -22,6 +22,6 @@ public class InitialAnalysis extends RulePhase
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(DiscoverProjectStructure.class);
+        return asClassList(Decompilation.class);
     }
 }
