@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" PersistenceConfig">
     <rules>
         <rule>
@@ -9,8 +9,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()"
-                        effort="2">
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()" effort="2">
                     </hint>
                 </iteration>
             </perform>
@@ -23,8 +22,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()"
-                        effort="2">
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()" effort="2">
                     </hint>
                 </iteration>
             </perform>
@@ -37,8 +35,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()"
-                        effort="2">
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()" effort="2">
                     </hint>
                 </iteration>
             </perform>
@@ -51,8 +48,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()"
-                        effort="2">
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use createQuery()" effort="2">
                     </hint>
                 </iteration>
             </perform>
@@ -65,8 +61,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use merge()"
-                        effort="1">
+                    <hint message="Deprecated by Hibernate 3, moved to org.hibernate.classic -- use merge()" effort="1">
                     </hint>
                 </iteration>
             </perform>
@@ -170,9 +165,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Hibernate 3 adds two methods to the Interceptor interface; consider simply extending the EmptyInterceptor class rather than writing empty implementations"
-                        effort="0">
+                    <hint message="Hibernate 3 adds two methods to the Interceptor interface; consider simply extending the EmptyInterceptor class rather than writing empty implementations" effort="0">
                     </hint>
                 </iteration>
             </perform>

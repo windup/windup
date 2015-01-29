@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" WebServiceConfig">
     <rules>
         <rule>
@@ -9,7 +9,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JAX-RPC Service" effort="0" />
+                    <classification classification="JAX-RPC Service" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -22,14 +22,14 @@
             <perform>
                 <iteration>
                     <classification classification="Weblogic Web Service Implementation" effort="6">
-                        <links link="http://cxf.apache.org/docs/a-simple-jax-ws-service.html" description="Apache CXF Simple JAX-WS Web Service Example" />
+                        <link href="http://cxf.apache.org/docs/a-simple-jax-ws-service.html" description="Apache CXF Simple JAX-WS Web Service Example"/>
                     </classification>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.wsee.jaxrpc.ServiceImpl" as="default" />
+                <javaclass references="weblogic.wsee.jaxrpc.ServiceImpl" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -47,36 +47,29 @@
             <perform>
                 <iteration>
                     <classification classification="Asynchronous Web Service Client" effort="8">
-                        <links link="http://docs.oracle.com/cd/E15051_01/wls/docs103/webserv_adv_rpc/asynch.html"
-                            description="Weblogic Asynchronous Execution Documentation" />
-                        <links
-                            link="http://singztechmusings.in/consuming-web-services-in-cxf-non-blocking-asynchronous-invocation-model/"
-                            description="CXF Asynchronous Webservice Client Example" />
+                        <link href="http://docs.oracle.com/cd/E15051_01/wls/docs103/webserv_adv_rpc/asynch.html" description="Weblogic Asynchronous Execution Documentation"/>
+                        <link href="http://singztechmusings.in/consuming-web-services-in-cxf-non-blocking-asynchronous-invocation-model/" description="CXF Asynchronous Webservice Client Example"/>
                     </classification>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.wsee.connection.transport.http.HttpTransportInfo.setUsername({*})"
-                    as="default">
+                <javaclass references="weblogic.wsee.connection.transport.http.HttpTransportInfo.setUsername({*})" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
                     <hint message="Replace proprietary web-service authentication with JAX-WS standards." effort="0">
-                        <links>
-                            <link link="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html"
-                                description="JAX-WS Proxy Password Example" />
-                        </links>
+                        <link href="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html" description="JAX-WS Proxy Password Example"/>
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.wsee.async.AsyncPreCallContext" as="default" />
+                <javaclass references="weblogic.wsee.async.AsyncPreCallContext" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -94,15 +87,15 @@
             <perform>
                 <iteration>
                     <classification classification="Weblogic Startup Service" effort="4">
-                        <links link="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean" />
-                        <links link="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean" />
+                        <link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/>
+                        <link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean"/>
                     </classification>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.common.T3StartupDef" as="default" />
+                <javaclass references="weblogic.common.T3StartupDef" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -120,15 +113,15 @@
             <perform>
                 <iteration>
                     <classification classification="Weblogic Startup Service" effort="8">
-                        <links link="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean" />
-                        <links link="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean" />
+                        <link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean"/>
+                        <link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/>
                     </classification>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.common.T3ServicesDef" as="default" />
+                <javaclass references="weblogic.common.T3ServicesDef" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -139,7 +132,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.common.T3ServicesDef" as="default" />
+                <javaclass references="weblogic.common.T3ServicesDef" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -157,17 +150,15 @@
             <perform>
                 <iteration>
                     <classification classification="Weblogic Scheduled Job" effort="0">
-                        <links link="http://jaitechwriteups.blogspot.com/2010/07/ejb31-timerservice-in-jboss-as-600m4.html"
-                            description="JBoss EJB3.1 Scheduled Job" />
-                        <links link="http://www.java2s.com/Code/Java/EJB3/EJBTutorialfromJBosstimer.htm"
-                            description="JBoss EJB3.0 Timeout Job" />
+                        <link href="http://jaitechwriteups.blogspot.com/2010/07/ejb31-timerservice-in-jboss-as-600m4.html" description="JBoss EJB3.1 Scheduled Job"/>
+                        <link href="http://www.java2s.com/Code/Java/EJB3/EJBTutorialfromJBosstimer.htm" description="JBoss EJB3.0 Timeout Job"/>
                     </classification>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.wsee.async.AsyncPreCallContext" as="default" />
+                <javaclass references="weblogic.wsee.async.AsyncPreCallContext" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -178,7 +169,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.utils.StringUtils.{*}" as="default" />
+                <javaclass references="weblogic.utils.StringUtils.{*}" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -189,7 +180,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.apache.xml.{*}" as="default" />
+                <javaclass references="weblogic.apache.xml.{*}" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -200,7 +191,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.transaction.TransactionManager" as="default" />
+                <javaclass references="weblogic.transaction.TransactionManager" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -217,8 +208,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Replace with the JEE standard javax.transaction.TransactionManager.resume(Transaction tx)"
-                        effort="0">
+                    <hint message="Replace with the JEE standard javax.transaction.TransactionManager.resume(Transaction tx)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -231,8 +221,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Replace with the JEE standard javax.transaction.TransactionManager.suspend()"
-                        effort="0">
+                    <hint message="Replace with the JEE standard javax.transaction.TransactionManager.suspend()" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -258,9 +247,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Look up the JEE javax.transaction.TransactionManager in JBoss using the javax.naming.InitialContext: java:TransactionManager"
-                        effort="0">
+                    <hint message="Look up the JEE javax.transaction.TransactionManager in JBoss using the javax.naming.InitialContext: java:TransactionManager" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -273,9 +260,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Look up the JEE javax.transaction.TransactionManager in JBoss using the javax.naming.InitialContext: java:TransactionManager"
-                        effort="0">
+                    <hint message="Look up the JEE javax.transaction.TransactionManager in JBoss using the javax.naming.InitialContext: java:TransactionManager" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -288,22 +273,18 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="T3StartupDef defines a startup service in Weblogic. The main method is executed when the server starts up, if it is registered in the Weblogic context.xml The equivalent in JBoss 5 is to use a JMX Management annotation: org.jboss.annotation.ejb.Management."
-                        effort="0">
+                    <hint message="T3StartupDef defines a startup service in Weblogic. The main method is executed when the server starts up, if it is registered in the Weblogic context.xml The equivalent in JBoss 5 is to use a JMX Management annotation: org.jboss.annotation.ejb.Management." effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.logging.NonCatalogLogger" as="default" />
+                <javaclass references="weblogic.logging.NonCatalogLogger" as="default"/>
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="NonCatalogLogger is a logger for logging messages to the Weblogic log; replace this with log4j, commons logging, or slf4j, with an appropriate log level."
-                        effort="1">
+                    <hint message="NonCatalogLogger is a logger for logging messages to the Weblogic log; replace this with log4j, commons logging, or slf4j, with an appropriate log level." effort="1">
                     </hint>
                 </iteration>
             </perform>
@@ -329,16 +310,14 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Replace weblogic.time.common.Triggerable with org.jboss.varia.scheduler.Schedulable for JBoss 5"
-                        effort="0">
+                    <hint message="Replace weblogic.time.common.Triggerable with org.jboss.varia.scheduler.Schedulable for JBoss 5" effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.jdbc.vendor.oracle.OracleThinClob" as="default" />
+                <javaclass references="weblogic.jdbc.vendor.oracle.OracleThinClob" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -349,13 +328,11 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.jdbc.vendor.oracle.OracleThinClob|oracle.sql.CLOB.getCharacterOutputStream()"
-                    as="default" />
+                <javaclass references="weblogic.jdbc.vendor.oracle.OracleThinClob|oracle.sql.CLOB.getCharacterOutputStream()" as="default"/>
             </when>
             <perform>
                 <iteration>
-                    <hint message="Weblogic-specific Code; replace with oracle.sql.CLOB.getCharacterOutputStream(1)"
-                        effort="0">
+                    <hint message="Weblogic-specific Code; replace with oracle.sql.CLOB.getCharacterOutputStream(1)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -388,7 +365,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.wsee.context.WebServiceContext" as="default" />
+                <javaclass references="weblogic.wsee.context.WebServiceContext" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -399,7 +376,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="weblogic.wsee.context.ContextNotFoundException" as="default" />
+                <javaclass references="weblogic.wsee.context.ContextNotFoundException" as="default"/>
             </when>
             <perform>
                 <iteration>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlJrunConfig">
     <rules>
         <rule>
@@ -8,7 +8,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JRun Web App" effort="3" />
+                    <classification classification="JRun Web App" effort="3"/>
                 </iteration>
             </perform>
         </rule>
@@ -19,7 +19,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JRun EJB" effort="4" />
+                    <classification classification="JRun EJB" effort="4"/>
                 </iteration>
             </perform>
         </rule>
@@ -30,7 +30,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JRun EJB XML" effort="0" />
+                    <classification classification="JRun EJB XML" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -41,7 +41,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JRun WAR Application Descriptor" effort="0" />
+                    <classification classification="JRun WAR Application Descriptor" effort="0"/>
                 </iteration>
             </perform>
         </rule>

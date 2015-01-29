@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlPersistanceConfig">
     <rules>
         <rule>
@@ -8,7 +8,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="iBatis Mapping" effort="0" />
+                    <classification classification="iBatis Mapping" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -19,7 +19,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="iBatis Configuration" effort="0" />
+                    <classification classification="iBatis Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -30,31 +30,25 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JPA Configuration" effort="0" />
-                    <xslt description="JPA Descriptor - JBoss 5 (Windup-Generated)" template="transformations/xslt/jboss4-persistence-to-jboss5.xsl"
-                        extension="-jboss5.xml" />
+                    <classification classification="JPA Configuration" effort="0"/>
+                    <xslt description="JPA Descriptor - JBoss 5 (Windup-Generated)" template="transformations/xslt/jboss4-persistence-to-jboss5.xsl" extension="-jboss5.xml"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="JPA1" matches="/jpa:persistence[@version='1.0'] | /persistence[@version='1.0']">
-                    <namespace prefix="jpa" uri="http://java.sun.com/xml/ns/persistence" />
+                    <namespace prefix="jpa" uri="http://java.sun.com/xml/ns/persistence"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration over="JPA1">
-                    <classification classification="JPA 1.x Configuration" effort="0" />
+                    <classification classification="JPA 1.x Configuration" effort="0"/>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']"
-                                xpathResultMatch="weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask$ | weblogic.ant.taskdefs.webservices.javaschema.JavaSchema$ | weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD$ | weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask$"
-                                from="1">
+                            <xmlfile as="2" matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']" xpathResultMatch="weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask$ | weblogic.ant.taskdefs.webservices.javaschema.JavaSchema$ | weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD$ | weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -68,13 +62,9 @@
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.JOnASTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JOnASTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -82,20 +72,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.JOTMTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JOTMTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -103,21 +88,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.WebSphereExtendedJTATransactionLookup$"
-                                from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value" xpathResultMatch="org.hibernate.transaction.WebSphereExtendedJTATransactionLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -125,20 +104,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()"
-                                xpathResultMatch="org.hibernate.transaction.WebSphereTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()" xpathResultMatch="org.hibernate.transaction.WebSphereTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -146,20 +120,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()"
-                                xpathResultMatch="org.hibernate.transaction.WeblogicTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()" xpathResultMatch="org.hibernate.transaction.WeblogicTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -167,20 +136,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.BESTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.BESTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -188,20 +152,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.JRun4TransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JRun4TransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -209,20 +168,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.OC4JTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.OC4JTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -230,20 +184,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.OrionTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.OrionTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -251,20 +200,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.ResinTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.ResinTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -272,20 +216,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA1">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value"
-                                from="JPA1_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value" from="JPA1_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.SunONETransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.SunONETransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -293,8 +232,7 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
@@ -304,22 +242,17 @@
         <rule>
             <when>
                 <xmlfile as="JPA2" matches="/jpa:persistence[@version='2.0'] | /persistence[@version='2.0']">
-                    <namespace prefix="jpa" uri="http://java.sun.com/xml/ns/persistence" />
+                    <namespace prefix="jpa" uri="http://java.sun.com/xml/ns/persistence"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration over="JPA2">
-                    <classification classification="JPA 2.x Configuration" effort="0" />
+                    <classification classification="JPA 2.x Configuration" effort="0"/>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']"
-                                xpathResultMatch="weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask$ | weblogic.ant.taskdefs.webservices.javaschema.JavaSchema$ | weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD$ | weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask$"
-                                from="1">
+                            <xmlfile as="2" matches="/project/taskdef[@classname='weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.javaschema.JavaSchema'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD'] | /project/taskdef[@classname='weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask']" xpathResultMatch="weblogic.ant.taskdefs.webservices.servicegen.ServiceGenTask$ | weblogic.ant.taskdefs.webservices.javaschema.JavaSchema$ | weblogic.ant.taskdefs.webservices.autotype.JavaSource2DD$ | weblogic.ant.taskdefs.webservices.clientgen.ClientGenTask$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -333,13 +266,9 @@
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.JOnASTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JOnASTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -347,20 +276,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.JOTMTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JOTMTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -368,21 +292,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.WebSphereExtendedJTATransactionLookup$"
-                                from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value" xpathResultMatch="org.hibernate.transaction.WebSphereExtendedJTATransactionLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -390,20 +308,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()"
-                                xpathResultMatch="org.hibernate.transaction.WebSphereTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()" xpathResultMatch="org.hibernate.transaction.WebSphereTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -411,20 +324,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()"
-                                xpathResultMatch="org.hibernate.transaction.WeblogicTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()" xpathResultMatch="org.hibernate.transaction.WeblogicTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -432,20 +340,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.BESTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.BESTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -453,20 +356,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.JRun4TransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JRun4TransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -474,20 +372,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.OC4JTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.OC4JTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -495,20 +388,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.OrionTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.OrionTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -516,20 +404,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.ResinTransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.ResinTransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -537,20 +420,15 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
                     <iteration over="JPA2">
                         <when>
-                            <xmlfile as="1"
-                                matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value"
-                                from="JPA2_instance">
+                            <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value" from="JPA2_instance">
                             </xmlfile>
-                            <xmlfile as="2"
-                                matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value"
-                                xpathResultMatch="org.hibernate.transaction.SunONETransactionManagerLookup$" from="1">
+                            <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.SunONETransactionManagerLookup$" from="1">
                             </xmlfile>
                         </when>
                         <iteration over="1">
@@ -558,8 +436,7 @@
                             </hint>
                         </iteration>
                         <iteration over="2">
-                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                                effort="0">
+                            <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                             </hint>
                         </iteration>
                     </iteration>
@@ -573,7 +450,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Hibernate Mapping" effort="0" />
+                    <classification classification="Hibernate Mapping" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -584,7 +461,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Hibernate 2.0 Mapping" effort="0" />
+                    <classification classification="Hibernate 2.0 Mapping" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -592,13 +469,12 @@
             <when>
                 <xmlfile as="1" matches="/hibernate-mapping/class/@outer-join">
                 </xmlfile>
-                <xmlfile as="2" matches="/hibernate-mapping/class/@outer-join" xpathResultMatch="outer-join"
-                    from="1">
+                <xmlfile as="2" matches="/hibernate-mapping/class/@outer-join" xpathResultMatch="outer-join" from="1">
                 </xmlfile>
             </when>
             <perform>
                 <iteration over="1">
-                    <classification classification="Outer-Join Property Tag" effort="1" />
+                    <classification classification="Outer-Join Property Tag" effort="1"/>
                 </iteration>
                 <iteration over="2">
                     <hint message="Outer Join tag deprecated, use fetch='join'and fetch='select' instead" effort="0">
@@ -610,17 +486,15 @@
             <when>
                 <xmlfile as="1" matches="/hibernate-mapping/class/@unused-value">
                 </xmlfile>
-                <xmlfile as="2" matches="/hibernate-mapping/class/@unused-value" xpathResultMatch="unused-value"
-                    from="1">
+                <xmlfile as="2" matches="/hibernate-mapping/class/@unused-value" xpathResultMatch="unused-value" from="1">
                 </xmlfile>
             </when>
             <perform>
                 <iteration over="1">
-                    <classification classification="Unused-Value Property Tag" effort="0" />
+                    <classification classification="Unused-Value Property Tag" effort="0"/>
                 </iteration>
                 <iteration over="2">
-                    <hint message="Unused Value is now optional, Hibernate will set equal to 0 where sensible."
-                        effort="0">
+                    <hint message="Unused Value is now optional, Hibernate will set equal to 0 where sensible." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -632,16 +506,13 @@
             </when>
             <perform>
                 <iteration over="hibernate">
-                    <classification classification="Hibernate Configuration" effort="0" />
+                    <classification classification="Hibernate Configuration" effort="0"/>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.JOnASTransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JOnASTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JOnASTransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -649,19 +520,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.JOTMTransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JOTMTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JOTMTransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -669,20 +536,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value"
-                            from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.WebSphereExtendedJTATransactionLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WebSphereExtendedJTATransactionLookup']/@value" xpathResultMatch="org.hibernate.transaction.WebSphereExtendedJTATransactionLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -690,20 +552,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()"
-                            from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()"
-                            xpathResultMatch="org.hibernate.transaction.WebSphereTransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WebSphereTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WebSphereTransactionManagerLookup']/text()" xpathResultMatch="org.hibernate.transaction.WebSphereTransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -711,20 +568,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()"
-                            from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()"
-                            xpathResultMatch="org.hibernate.transaction.WeblogicTransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.WeblogicTransactionManagerLookup']/@value | //property[@name='transaction.manager_lookup_class' and .='org.hibernate.transaction.WeblogicTransactionManagerLookup']/text()" xpathResultMatch="org.hibernate.transaction.WeblogicTransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -732,18 +584,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value"
-                            from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.BESTransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.BESTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.BESTransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -751,19 +600,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.JRun4TransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.JRun4TransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.JRun4TransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -771,19 +616,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.OC4JTransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.OC4JTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.OC4JTransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -791,19 +632,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.OrionTransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.OrionTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.OrionTransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -811,19 +648,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.ResinTransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.ResinTransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.ResinTransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -831,20 +664,15 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
                 <iteration over="hibernate">
                     <when>
-                        <xmlfile as="1"
-                            matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value"
-                            from="hibernate_instance">
+                        <xmlfile as="1" matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value" from="hibernate_instance">
                         </xmlfile>
-                        <xmlfile as="2"
-                            matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value"
-                            xpathResultMatch="org.hibernate.transaction.SunONETransactionManagerLookup$" from="1">
+                        <xmlfile as="2" matches="//*[@value='org.hibernate.transaction.SunONETransactionManagerLookup']/@value" xpathResultMatch="org.hibernate.transaction.SunONETransactionManagerLookup$" from="1">
                         </xmlfile>
                     </when>
                     <iteration over="1">
@@ -852,8 +680,7 @@
                         </hint>
                     </iteration>
                     <iteration over="2">
-                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup"
-                            effort="0">
+                        <hint message="Replace with: org.hibernate.transaction.JBossTransactionManagerLookup" effort="0">
                         </hint>
                     </iteration>
                 </iteration>
@@ -868,7 +695,7 @@
             </when>
             <perform>
                 <iteration over="1">
-                    <classification classification="Index Expression Semi-Deprecated" effort="1" />
+                    <classification classification="Index Expression Semi-Deprecated" effort="1"/>
                 </iteration>
                 <iteration over="2">
                     <hint message="Index is now semi-deprecated. list-index and map-key preferred." effort="0">
@@ -880,13 +707,12 @@
             <when>
                 <xmlfile as="1" matches="/hibernate-mapping/class/key-many-to-many">
                 </xmlfile>
-                <xmlfile as="2" matches="/hibernate-mapping/class/key-many-to-many" xpathResultMatch="key-many-to-many"
-                    from="1">
+                <xmlfile as="2" matches="/hibernate-mapping/class/key-many-to-many" xpathResultMatch="key-many-to-many" from="1">
                 </xmlfile>
             </when>
             <perform>
                 <iteration over="1">
-                    <classification classification="Key-many-to-many tag" effort="1" />
+                    <classification classification="Key-many-to-many tag" effort="1"/>
                     <iteration over="2">
                         <hint message="map-key-many-to-many preferred over key-many-to-many" effort="0">
                         </hint>
@@ -898,13 +724,12 @@
             <when>
                 <xmlfile as="1" matches="/hibernate-mapping/class/composite-index">
                 </xmlfile>
-                <xmlfile as="2" matches="/hibernate-mapping/class/composite-index" xpathResultMatch="composite-index"
-                    from="1">
+                <xmlfile as="2" matches="/hibernate-mapping/class/composite-index" xpathResultMatch="composite-index" from="1">
                 </xmlfile>
             </when>
             <perform>
                 <iteration over="1">
-                    <classification classification="Composite-index tag" effort="1" />
+                    <classification classification="Composite-index tag" effort="1"/>
                     <iteration over="2">
                         <hint message="composite-map-key preferred over composite-index" effort="0">
                         </hint>

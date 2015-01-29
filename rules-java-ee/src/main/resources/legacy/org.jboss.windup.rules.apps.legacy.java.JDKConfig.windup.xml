@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" JDKConfig">
     <rules>
         <rule>
@@ -10,8 +10,7 @@
             <perform>
                 <iteration>
                     <classification classification="Java Classloader, must be migrated." effort="1">
-                        <links link="https://access.redhat.com/knowledge/solutions/239033"
-                            description="Red Hat Customer Portal: How to get resources via the ClassLoader in a JavaEE application in JBoss EAP" />
+                        <link href="https://access.redhat.com/knowledge/solutions/239033" description="Red Hat Customer Portal: How to get resources via the ClassLoader in a JavaEE application in JBoss EAP"/>
                     </classification>
                 </iteration>
             </perform>
@@ -24,9 +23,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This interface has been replaced by the SAX2 Attributes interface, which includes Namespace support."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This interface has been replaced by the SAX2 Attributes interface, which includes Namespace support." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -39,9 +36,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. A new certificate handling package is created in the Java platform. This Certificate interface is entirely deprecated and is here to allow for a smooth transition to the new package."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. A new certificate handling package is created in the Java platform. This Certificate interface is entirely deprecated and is here to allow for a smooth transition to the new package." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -54,9 +49,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This interface has been replaced by the SAX2 ContentHandler interface, which includes Namespace support."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This interface has been replaced by the SAX2 ContentHandler interface, which includes Namespace support." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -186,9 +179,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This interface has been replaced by the SAX2 XMLReader interface, which includes Namespace support."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This interface has been replaced by the SAX2 XMLReader interface, which includes Namespace support." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -227,9 +218,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -255,8 +244,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. This class is deprecated as of version 1.3 of the Java Platform."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class is deprecated as of version 1.3 of the Java Platform." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -269,9 +257,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This class implements a deprecated interface, AttributeList; that interface has been replaced by Attributes, which is implemented in the AttributesImpl helper class."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class implements a deprecated interface, AttributeList; that interface has been replaced by Attributes, which is implemented in the AttributesImpl helper class." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -284,8 +270,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository() instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository() instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -298,8 +283,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository()} instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository()} instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -338,9 +322,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This class works with the deprecated DocumentHandler interface. It has been replaced by the SAX2 DefaultHandler class."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class works with the deprecated DocumentHandler interface. It has been replaced by the SAX2 DefaultHandler class." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -353,9 +335,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -368,9 +348,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -383,9 +361,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This class incorrectly assumes that bytes adequately represent characters. As of JDK 1.1, the preferred way to operate on character streams is via the new character-stream classes, which include a class for counting line numbers."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class incorrectly assumes that bytes adequately represent characters. As of JDK 1.1, the preferred way to operate on character streams is via the new character-stream classes, which include a class for counting line numbers." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -437,8 +413,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. This class works with the deprecated Parser interface."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class works with the deprecated Parser interface." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -477,9 +452,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class is no longer used. Its functionality has been replaced by java.security.KeyStore, the java.security.cert package, and java.security.Principal." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -492,8 +465,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory for creating SOAPElements."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory for creating SOAPElements." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -506,9 +478,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This class does not properly convert characters into bytes. As of JDK 1.1, the preferred way to create a stream from a string is via the StringReader class."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This class does not properly convert characters into bytes. As of JDK 1.1, the preferred way to create a stream from a string is via the StringReader class." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -547,9 +517,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Use SecurityException instead. Application code should never directly reference this class, and RMISecurityManager no longer throws this subclass of java.lang.SecurityException."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use SecurityException instead. Application code should never directly reference this class, and RMISecurityManager no longer throws this subclass of java.lang.SecurityException." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -575,9 +543,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -590,9 +556,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. no replacement. Skeletons are no longer required for remote method calls in the Java 2 platform v1.2 and greater." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -696,9 +660,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Because this field is final (it is part of an interface), its value cannot be changed."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Because this field is final (it is part of an interface), its value cannot be changed." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -854,9 +816,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Initialization of this field is prone to deadlocks. The field must be initialized by the Logger class initialization which may cause deadlocks with the LogManager class initialization. In such cases two class initialization wait for each other to complete. The preferred way to get the global logger object is via the call Logger.getGlobal(). For compatibility with old JDK versions where the Logger.getGlobal() is not available use the call Logger.getLogger(Logger.GLOBAL_LOGGER_NAME) or Logger.getLogger(&quot;global&quot;)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Initialization of this field is prone to deadlocks. The field must be initialized by the Logger class initialization which may cause deadlocks with the LogManager class initialization. In such cases two class initialization wait for each other to complete. The preferred way to get the global logger object is via the call Logger.getGlobal(). For compatibility with old JDK versions where the Logger.getGlobal() is not available use the call Logger.getLogger(Logger.GLOBAL_LOGGER_NAME) or Logger.getLogger(&quot;global&quot;)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -908,9 +868,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -956,8 +914,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.keyboardResizeToggleListener"
-                    as="default">
+                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.keyboardResizeToggleListener" as="default">
                     <location>TYPE</location>
                 </javaclass>
             </when>
@@ -1145,9 +1102,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. as of 1.3. Use DataFlavor.getReaderForText(Transferable) instead of Transferable.getTransferData(DataFlavor.plainTextFlavor)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. as of 1.3. Use DataFlavor.getReaderForText(Transferable) instead of Transferable.getTransferData(DataFlavor.plainTextFlavor)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1160,9 +1115,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.7, the Cursor.getPredefinedCursor(int) method should be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.7, the Cursor.getPredefinedCursor(int) method should be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1175,9 +1128,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of 1.3, value comes from UIManager UIManager property FormView.resetButtonText"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of 1.3, value comes from UIManager UIManager property FormView.resetButtonText" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1268,9 +1219,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array { ImageInputStream.class }."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array { ImageInputStream.class }." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1283,9 +1232,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array { ImageOutputStream.class }."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array { ImageOutputStream.class }." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1298,9 +1245,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of 1.3, value now comes from UIManager property FormView.submitButtonText"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of 1.3, value now comes from UIManager property FormView.submitButtonText" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1313,9 +1258,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of J2SE 5, use Character.UnicodeBlock.HIGH_SURROGATES, Character.UnicodeBlock.HIGH_PRIVATE_USE_SURROGATES, and Character.UnicodeBlock.LOW_SURROGATES. These new constants match the block definitions of the Unicode Standard. The Character.UnicodeBlock.of(char) and Character.UnicodeBlock.of(int) methods return the new constants, not SURROGATES_AREA."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of J2SE 5, use Character.UnicodeBlock.HIGH_SURROGATES, Character.UnicodeBlock.HIGH_PRIVATE_USE_SURROGATES, and Character.UnicodeBlock.LOW_SURROGATES. These new constants match the block definitions of the Unicode Standard. The Character.UnicodeBlock.of(char) and Character.UnicodeBlock.of(int) methods return the new constants, not SURROGATES_AREA." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1419,9 +1362,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, should register this component as ActionListener on component which fires action events."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, should register this component as ActionListener on component which fires action events." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1486,8 +1427,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by isMultipleMode()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by isMultipleMode()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1500,9 +1440,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. The definition of this call depends on ThreadGroup.suspend(), which is deprecated. Further, the behavior of this call was never specified."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. The definition of this call depends on ThreadGroup.suspend(), which is deprecated. Further, the behavior of this call was never specified." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1528,8 +1466,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of J2SE 1.4, replaced by Component.applyComponentOrientation."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of J2SE 1.4, replaced by Component.applyComponentOrientation." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1542,8 +1479,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of J2SE 1.4, replaced by Component.applyComponentOrientation."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of J2SE 1.4, replaced by Component.applyComponentOrientation." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1569,8 +1505,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. se #checkPermission(java.security.Permission) instead"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. se #checkPermission(java.security.Permission) instead" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1583,9 +1518,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1598,9 +1531,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1620,8 +1551,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="java.awt.image.renderable.RenderContext.concetenateTransform(AffineTransform)"
-                    as="default">
+                <javaclass references="java.awt.image.renderable.RenderContext.concetenateTransform(AffineTransform)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -1640,8 +1570,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentCount()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentCount()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1706,9 +1635,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. The definition of this call depends on Thread.suspend(), which is deprecated. Further, the results of this call were never well-defined."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. The definition of this call depends on Thread.suspend(), which is deprecated. Further, the results of this call were never well-defined." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1812,8 +1739,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Use a combination of create_recursive_tc and create_sequence_tc instead"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use a combination of create_recursive_tc and create_sequence_tc instead" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1826,9 +1752,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(javax.xml.soap.Name) instead"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(javax.xml.soap.Name) instead" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1841,8 +1765,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(String localName) instead"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(String localName) instead" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1855,17 +1778,14 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(String localName, String prefix, String uri) instead"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use javax.xml.soap.SOAPFactory.createElement(String localName, String prefix, String uri) instead" effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardDownRightListener()"
-                    as="default">
+                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardDownRightListener()" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -1878,8 +1798,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardEndListener()"
-                    as="default">
+                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardEndListener()" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -1892,8 +1811,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardHomeListener()"
-                    as="default">
+                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardHomeListener()" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -1906,8 +1824,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardResizeToggleListener()"
-                    as="default">
+                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardResizeToggleListener()" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -1920,8 +1837,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardUpLeftListener()"
-                    as="default">
+                <javaclass references="javax.swing.plaf.basic.BasicSplitPaneUI.createKeyboardUpLeftListener()" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -1940,8 +1856,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.2, replaced by new JScrollPane(aTable)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.2, replaced by new JScrollPane(aTable)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1954,9 +1869,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Table cells can now be any arbitrary View implementation and should be produced by the ViewFactory rather than the table."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Table cells can now be any arbitrary View implementation and should be produced by the ViewFactory rather than the table." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1982,9 +1895,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1997,9 +1908,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2012,9 +1921,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. The resulting string may vary depending on the platform's default encoding. Instead, use the decode(String,String) method to specify the encoding."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. The resulting string may vary depending on the platform's default encoding. Instead, use the decode(String,String) method to specify the encoding." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2053,9 +1960,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, Not for public use in the future. This method is expected to be retained only as a package private method."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, Not for public use in the future. This method is expected to be retained only as a package private method." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2068,8 +1973,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent e)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent e)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2082,8 +1986,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent e)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent e)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2096,9 +1999,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Use getClassLoaderFor to obtain the appropriate class loader for deserialization."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use getClassLoaderFor to obtain the appropriate class loader for deserialization." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2111,24 +2012,20 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository() to obtain the class loader repository and use it to deserialize."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use MBeanServer.getClassLoaderRepository() to obtain the class loader repository and use it to deserialize." effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.management.MBeanServer.deserialize(String, ObjectName, byte[])"
-                    as="default">
+                <javaclass references="javax.management.MBeanServer.deserialize(String, ObjectName, byte[])" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Use getClassLoader to obtain the class loader for deserialization."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use getClassLoader to obtain the class loader for deserialization." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2141,9 +2038,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method was originally designed to destroy this thread without any cleanup. Any monitors it held would have remained locked. However, the method was never implemented. If if were to be implemented, it would be deadlock-prone in much the manner of Thread.suspend(). If the target thread held a lock protecting a critical system resource when it was destroyed, no thread could ever access this resource again. If another thread ever attempted to lock this resource, deadlock would result. Such deadlocks typically manifest themselves as &quot;frozen processes&quot;. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method was originally designed to destroy this thread without any cleanup. Any monitors it held would have remained locked. However, the method was never implemented. If if were to be implemented, it would be deadlock-prone in much the manner of Thread.suspend(). If the target thread held a lock protecting a critical system resource when it was destroyed, no thread could ever access this resource again. If another thread ever attempted to lock this resource, deadlock would result. Such deadlocks typically manifest themselves as &quot;frozen processes&quot;. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2156,8 +2051,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2170,8 +2064,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2184,9 +2077,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by java.awt.Component.setEnabled(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by java.awt.Component.setEnabled(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2212,9 +2103,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. as of 1.4, replaced by KeyboardFocusManager.setDefaultFocusTraversalPolicy(FocusTraversalPolicy)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. as of 1.4, replaced by KeyboardFocusManager.setDefaultFocusTraversalPolicy(FocusTraversalPolicy)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2253,17 +2142,14 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls to the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object[], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls to the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object[], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value." effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.plaf.metal.MetalComboBoxUI.editablePropertyChanged(PropertyChangeEvent)"
-                    as="default">
+                <javaclass references="javax.swing.plaf.metal.MetalComboBoxUI.editablePropertyChanged(PropertyChangeEvent)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -2282,8 +2168,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2296,8 +2181,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2310,9 +2194,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by java.awt.Component.setEnabled(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by java.awt.Component.setEnabled(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2325,8 +2207,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2339,8 +2220,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEnabled(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2366,9 +2246,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. The resulting string may vary depending on the platform's default encoding. Instead, use the encode(String,String) method to specify the encoding."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. The resulting string may vary depending on the platform's default encoding. Instead, use the encode(String,String) method to specify the encoding." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2407,9 +2285,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As inconsistent with hashCode() contract, use isMimeTypeEqual(String) instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As inconsistent with hashCode() contract, use isMimeTypeEqual(String) instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2461,8 +2337,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of 1.4, replaced by KeyboardFocusManager.getFocusOwner()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of 1.4, replaced by KeyboardFocusManager.getFocusOwner()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2488,9 +2363,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method used to return the value of a proprietary property in the master file of the &quot;SUN&quot; Cryptographic Service Provider in order to determine how to parse algorithm-specific parameters. Use the new provider-based and algorithm-independent AlgorithmParameters and KeyFactory engine classes (introduced in the J2SE version 1.2 platform) instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method used to return the value of a proprietary property in the master file of the &quot;SUN&quot; Cryptographic Service Provider in order to determine how to parse algorithm-specific parameters. Use the new provider-based and algorithm-independent AlgorithmParameters and KeyFactory engine classes (introduced in the J2SE version 1.2 platform) instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2503,9 +2376,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. use getBigDecimal(int parameterIndex) or getBigDecimal(String parameterName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. use getBigDecimal(int parameterIndex) or getBigDecimal(String parameterName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2557,9 +2428,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method does not properly convert characters into bytes. As of JDK 1.1, the preferred way to do this is via the String.getBytes() method, which uses the platform's default charset."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method does not properly convert characters into bytes. As of JDK 1.1, the preferred way to do this is via the String.getBytes() method, which uses the platform's default charset." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2572,8 +2441,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getClipBounds()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getClipBounds()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2612,8 +2480,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getSelectedCheckbox()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getSelectedCheckbox()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2626,8 +2493,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Component.getCursor()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Component.getCursor()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2653,8 +2519,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.DAY_OF_MONTH)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.DAY_OF_MONTH)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2680,8 +2545,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.DAY_OF_WEEK)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.DAY_OF_WEEK)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2694,9 +2558,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. The instance specific getRequestProperty method should be used after an appropriate instance of URLConnection is obtained."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. The instance specific getRequestProperty method should be used after an appropriate instance of URLConnection is obtained." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2722,9 +2584,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitorMBean.getDerivedGauge(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitorMBean.getDerivedGauge(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2737,8 +2597,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getDerivedGauge(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getDerivedGauge(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2751,8 +2610,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitor.getDerivedGauge(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitor.getDerivedGauge(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2765,9 +2623,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitorMBean.getDerivedGauge(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitorMBean.getDerivedGauge(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2780,8 +2636,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitor.getDerivedGauge(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitor.getDerivedGauge(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2794,25 +2649,20 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getDerivedGauge(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getDerivedGauge(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.management.monitor.GaugeMonitorMBean.getDerivedGaugeTimeStamp()"
-                    as="default">
+                <javaclass references="javax.management.monitor.GaugeMonitorMBean.getDerivedGaugeTimeStamp()" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2825,9 +2675,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getDerivedGaugeTimeStamp(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getDerivedGaugeTimeStamp(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2840,25 +2688,20 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitor.getDerivedGaugeTimeStamp(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitor.getDerivedGaugeTimeStamp(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.management.monitor.StringMonitorMBean.getDerivedGaugeTimeStamp()"
-                    as="default">
+                <javaclass references="javax.management.monitor.StringMonitorMBean.getDerivedGaugeTimeStamp()" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by StringMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2871,25 +2714,20 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitor.getDerivedGaugeTimeStamp(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by GaugeMonitor.getDerivedGaugeTimeStamp(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.management.monitor.CounterMonitorMBean.getDerivedGaugeTimeStamp()"
-                    as="default">
+                <javaclass references="javax.management.monitor.CounterMonitorMBean.getDerivedGaugeTimeStamp()" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getDerivedGaugeTimeStamp(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2902,8 +2740,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.3, instead set the border on the divider."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.3, instead set the border on the divider." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2929,8 +2766,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. see GraphicsEnvironment.getAvailableFontFamilyNames()"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. see GraphicsEnvironment.getAvailableFontFamilyNames()" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2943,8 +2779,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. FontMetrics are not used for glyph rendering when running in the JDK."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. FontMetrics are not used for glyph rendering when running in the JDK." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2957,8 +2792,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.2, replaced by the Font method getLineMetrics."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.2, replaced by the Font method getLineMetrics." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -2997,8 +2831,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.HOUR_OF_DAY)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.HOUR_OF_DAY)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3011,9 +2844,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3065,8 +2896,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getUnitIncrement()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getUnitIncrement()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3079,9 +2909,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK 1.1, the preferred way to translate a byte stream in the local encoding into a character stream in Unicode is via the InputStreamReader and BufferedReader classes."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK 1.1, the preferred way to translate a byte stream in the local encoding into a character stream in Unicode is via the InputStreamReader and BufferedReader classes." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3094,9 +2922,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK 1.1, the preferred way to translate a Unicode character stream into a byte stream in the local encoding is via the OutputStreamWriter, BufferedWriter, and PrintWriter classes."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK 1.1, the preferred way to translate a Unicode character stream into a byte stream in the local encoding is via the OutputStreamWriter, BufferedWriter, and PrintWriter classes." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3122,8 +2948,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1.1, replaced by getMaxDescent()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1.1, replaced by getMaxDescent()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3136,8 +2961,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by getJMenuBar()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by getJMenuBar()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3150,8 +2974,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.3, replaced by getJMenuBar()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.3, replaced by getJMenuBar()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3177,8 +3000,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.MINUTE)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.MINUTE)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3204,8 +3026,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.MONTH)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.MONTH)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3231,8 +3052,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by MonitorMBean.getObservedObjects()"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by MonitorMBean.getObservedObjects()" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3245,8 +3065,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by Monitor.getObservedObjects()"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by Monitor.getObservedObjects()" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3285,9 +3104,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of J2SE 1.4, use ComponentOrientation.getOrientation(java.util.Locale)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of J2SE 1.4, use ComponentOrientation.getOrientation(java.util.Locale)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3326,8 +3143,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getBlockIncrement()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getBlockIncrement()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3353,8 +3169,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, programs should not directly manipulate peers."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, programs should not directly manipulate peers." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3367,9 +3182,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, programs should not directly manipulate peers; replaced by boolean isDisplayable()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, programs should not directly manipulate peers; replaced by boolean isDisplayable()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3434,8 +3247,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.SECOND)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.SECOND)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3448,9 +3260,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses this method to obtain a class loader's security context."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses this method to obtain a class loader's security context." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3476,8 +3286,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK 1.7, replaced by JList.getSelectedValuesList()"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK 1.7, replaced by JList.getSelectedValuesList()" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3490,8 +3299,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.2, replaced by getPassword."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.2, replaced by getPassword." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3504,8 +3312,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.2, replaced by getPassword."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.2, replaced by getPassword." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3518,8 +3325,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getThreshold(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.getThreshold(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3532,8 +3338,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getThreshold(ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.getThreshold(ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3546,9 +3351,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by -(Calendar.get(Calendar.ZONE_OFFSET) + Calendar.get(Calendar.DST_OFFSET)) / (60 * 1000)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by -(Calendar.get(Calendar.ZONE_OFFSET) + Calendar.get(Calendar.DST_OFFSET)) / (60 * 1000)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3574,9 +3377,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. use the getTimeToLive method instead, which returns an int instead of a byte."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. use the getTimeToLive method instead, which returns an int instead of a byte." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3589,8 +3390,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. use getCharacterStream in place of getUnicodeStream"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. use getCharacterStream in place of getUnicodeStream" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3616,9 +3416,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version Swing1.1 replaced by JScrollPane.getViewportBorderBounds()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version Swing1.1 replaced by JScrollPane.getViewportBorderBounds()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3631,8 +3429,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getVisibleAmount()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getVisibleAmount()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3658,8 +3455,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.YEAR)- 1900."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.get(Calendar.YEAR)- 1900." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3672,8 +3468,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processFocusEvent(FocusEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processFocusEvent(FocusEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3686,8 +3481,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1 replaced by processEvent(AWTEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1 replaced by processEvent(AWTEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3700,8 +3494,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.5, replaced by Window.setVisible(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.5, replaced by Window.setVisible(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3714,8 +3507,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3728,8 +3520,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.5, replaced by setVisible(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.5, replaced by setVisible(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3742,9 +3533,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3757,9 +3546,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This type of security checking is not recommended. It is recommended that the checkPermission call be used instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3779,9 +3566,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass
-                    references="javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction.insertAtBoundry(JEditorPane, HTMLDocument, int, Element, String, HTML.Tag, HTML.Tag)"
-                    as="default">
+                <javaclass references="javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction.insertAtBoundry(JEditorPane, HTMLDocument, int, Element, String, HTML.Tag, HTML.Tag)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -3800,8 +3585,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by insert(String, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by insert(String, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3827,8 +3611,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3841,8 +3624,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3855,8 +3637,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by contains(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3869,9 +3650,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls to the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object[], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls to the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object[], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3897,8 +3676,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.3, replaced by getScrollMode()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.3, replaced by getScrollMode()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3911,9 +3689,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of 1.4, replaced by KeyboardFocusManager.getDefaultFocusTraversalPolicy()"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of 1.4, replaced by KeyboardFocusManager.getDefaultFocusTraversalPolicy()" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3965,9 +3741,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of 1.4, replaced by Component.setFocusTraversalKeys(int, Set) and Container.setFocusCycleRoot(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of 1.4, replaced by Component.setFocusTraversalKeys(int, Set) and Container.setFocusCycleRoot(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -3980,8 +3754,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by isIndexSelected(int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by isIndexSelected(int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4033,8 +3806,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processKeyEvent(KeyEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processKeyEvent(KeyEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4047,8 +3819,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processKeyEvent(KeyEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processKeyEvent(KeyEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4139,8 +3910,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentAt(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentAt(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4153,8 +3923,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentAt(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getComponentAt(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4193,8 +3962,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processFocusEvent(FocusEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processFocusEvent(FocusEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4207,8 +3975,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4221,8 +3988,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4235,8 +4001,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4249,8 +4014,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4263,8 +4027,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4277,8 +4040,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4291,8 +4053,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4305,8 +4066,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getMinimumSize(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4332,8 +4092,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4346,8 +4105,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseMotionEvent(MouseEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseMotionEvent(MouseEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4360,8 +4118,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4374,8 +4131,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4388,8 +4144,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseMotionEvent(MouseEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseMotionEvent(MouseEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4402,8 +4157,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by processMouseEvent(MouseEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4416,8 +4170,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setLocation(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setLocation(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4430,8 +4183,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setLocation(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setLocation(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4464,16 +4216,13 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="java.rmi.server.RemoteRef.newCall(RemoteObject, Operation[], int, long)"
-                    as="default">
+                <javaclass references="java.rmi.server.RemoteRef.newCall(RemoteObject, Operation[], int, long)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls on the stub's the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object[], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. 1.2 style stubs no longer use this method. Instead of using a sequence of method calls on the stub's the remote reference (newCall, invoke, and done), a stub uses a single method, invoke(Remote, Method, Object[], int), on the remote reference to carry out parameter marshalling, remote method executing and unmarshalling of the return value." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4486,9 +4235,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method has been deprecated to maintain API consistency. All newInstance methods have been replaced with corresponding newFactory methods. The replacement XMLInputFactory.newFactory(java.lang.String, java.lang.ClassLoader) method defines no changes in behavior."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method has been deprecated to maintain API consistency. All newInstance methods have been replaced with corresponding newFactory methods. The replacement XMLInputFactory.newFactory(java.lang.String, java.lang.ClassLoader) method defines no changes in behavior." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4501,9 +4248,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method has been deprecated to maintain API consistency. All newInstance methods have been replaced with corresponding newFactory methods. The replacement XMLEventFactory.newFactory(java.lang.String, java.lang.ClassLoader) method defines no changes in behavior."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method has been deprecated to maintain API consistency. All newInstance methods have been replaced with corresponding newFactory methods. The replacement XMLEventFactory.newFactory(java.lang.String, java.lang.ClassLoader) method defines no changes in behavior." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4516,9 +4261,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method has been deprecated because it returns an instance of XMLInputFactory, which is of the wrong class. Use the new method XMLOutputFactory.newFactory(java.lang.String, java.lang.ClassLoader) instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method has been deprecated because it returns an instance of XMLInputFactory, which is of the wrong class. Use the new method XMLOutputFactory.newFactory(java.lang.String, java.lang.ClassLoader) instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4531,8 +4274,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by transferFocus()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by transferFocus()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4565,8 +4307,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="java.awt.datatransfer.DataFlavor.normalizeMimeTypeParameter(String, String)"
-                    as="default">
+                <javaclass references="java.awt.datatransfer.DataFlavor.normalizeMimeTypeParameter(String, String)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -4579,8 +4320,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.activation.ActivationDataFlavor.normalizeMimeTypeParameter(String, String)"
-                    as="default">
+                <javaclass references="javax.activation.ActivationDataFlavor.normalizeMimeTypeParameter(String, String)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -4593,8 +4333,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.tree.DefaultTreeSelectionModel.notifyPathChange(Vector, TreePath)"
-                    as="default">
+                <javaclass references="javax.swing.tree.DefaultTreeSelectionModel.notifyPathChange(Vector, TreePath)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -4639,8 +4378,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.parse(String s)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.parse(String s)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4679,8 +4417,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1 replaced by dispatchEvent(AWTEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1 replaced by dispatchEvent(AWTEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4693,8 +4430,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1 replaced by dispatchEvent(AWTEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1 replaced by dispatchEvent(AWTEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4707,23 +4443,20 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by dispatchEvent(AWTEvent)." effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="java.awt.image.renderable.RenderContext.preConcetenateTransform(AffineTransform)"
-                    as="default">
+                <javaclass references="java.awt.image.renderable.RenderContext.preConcetenateTransform(AffineTransform)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. replaced by preConcatenateTransform(AffineTransform)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. replaced by preConcatenateTransform(AffineTransform)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4736,8 +4469,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4750,8 +4482,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4764,8 +4495,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4778,8 +4508,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4792,8 +4521,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4806,8 +4534,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4820,8 +4547,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4834,8 +4560,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by getPreferredSize(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4861,9 +4586,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method does not properly convert bytes to characters. see DataInputStream for the details and alternatives."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method does not properly convert bytes to characters. see DataInputStream for the details and alternatives." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4876,9 +4599,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses the RegistryHandler to obtain the registry's implementation."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses the RegistryHandler to obtain the registry's implementation." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4891,9 +4612,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses the RegistryHandler to obtain the registry's stub."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. no replacement. As of the Java 2 platform v1.2, RMI no longer uses the RegistryHandler to obtain the registry's stub." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4945,8 +4664,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by replaceRange(String, int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by replaceRange(String, int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4959,9 +4677,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of 1.4, replaced by FocusTraversalPolicy.getDefaultComponent(Container).requestFocus()"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of 1.4, replaced by FocusTraversalPolicy.getDefaultComponent(Container).requestFocus()" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4974,8 +4690,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -4988,8 +4703,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5002,8 +4716,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBounds(int, int, int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5016,8 +4729,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(Dimension)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(Dimension)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5030,8 +4742,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5044,8 +4755,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(int, int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSize(int, int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5071,9 +4781,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method is used solely in conjunction with Thread.suspend and ThreadGroup.suspend, both of which have been deprecated, as they are inherently deadlock-prone. See Thread.suspend() for details."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method is used solely in conjunction with Thread.suspend and ThreadGroup.suspend, both of which have been deprecated, as they are inherently deadlock-prone. See Thread.suspend() for details." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5086,9 +4794,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method exists solely for use with Thread.suspend(), which has been deprecated because it is deadlock-prone. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method exists solely for use with Thread.suspend(), which has been deprecated because it is deadlock-prone. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5101,9 +4807,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method is inherently unsafe. It may result in finalizers being called on live objects while other threads are concurrently manipulating those objects, resulting in erratic behavior or deadlock."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method is inherently unsafe. It may result in finalizers being called on live objects while other threads are concurrently manipulating those objects, resulting in erratic behavior or deadlock." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5116,9 +4820,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method is inherently unsafe. It may result in finalizers being called on live objects while other threads are concurrently manipulating those objects, resulting in erratic behavior or deadlock."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method is inherently unsafe. It may result in finalizers being called on live objects while other threads are concurrently manipulating those objects, resulting in erratic behavior or deadlock." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5131,9 +4833,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method does not throw an IOException if an I/O error occurs while saving the property list. The preferred way to save a properties list is via the store(OutputStream out, String comments) method or the storeToXML(OutputStream os, String comment) method."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method does not throw an IOException if an I/O error occurs while saving the property list. The preferred way to save a properties list is via the store(OutputStream out, String comments) method or the storeToXML(OutputStream os, String comment) method." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5146,9 +4846,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Use the following code or its equivalent instead: ...... int ttl = mcastSocket.getTimeToLive(); mcastSocket.setTimeToLive(newttl); mcastSocket.send(p); mcastSocket.setTimeToLive(ttl); ......"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use the following code or its equivalent instead: ...... int ttl = mcastSocket.getTimeToLive(); mcastSocket.setTimeToLive(newttl); mcastSocket.send(p); mcastSocket.setTimeToLive(ttl); ......" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5161,8 +4859,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.3, replaced by setScrollMode()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Java 2 platform v1.3, replaced by setScrollMode()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5175,8 +4872,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSelectedCheckbox(Checkbox)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setSelectedCheckbox(Checkbox)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5189,8 +4885,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Component.setCursor(Cursor)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Component.setCursor(Cursor)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5216,9 +4911,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.DAY_OF_MONTH, int date)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.DAY_OF_MONTH, int date)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5231,9 +4924,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. The instance specific setRequestProperty method should be used after an appropriate instance of URLConnection is obtained. Invoking this method will have no effect."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. The instance specific setRequestProperty method should be used after an appropriate instance of URLConnection is obtained. Invoking this method will have no effect." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5259,8 +4950,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEchoChar(char)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setEchoChar(char)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5299,9 +4989,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.HOUR_OF_DAY, int hours)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.HOUR_OF_DAY, int hours)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5327,8 +5015,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setUnitIncrement(int)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setUnitIncrement(int)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5354,9 +5041,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method has no effect. The MBean Server used to obtain an attribute value is QueryEval.getMBeanServer()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method has no effect. The MBean Server used to obtain an attribute value is QueryEval.getMBeanServer()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5369,9 +5054,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method is not needed because a ValueExp can access the MBean server in which it is being evaluated by using QueryEval.getMBeanServer()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method is not needed because a ValueExp can access the MBean server in which it is being evaluated by using QueryEval.getMBeanServer()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5397,8 +5080,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by setJMenuBar(JMenuBar menu)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by setJMenuBar(JMenuBar menu)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5411,8 +5093,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by setJMenuBar(JMenuBar m)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of Swing version 1.0.3 replaced by setJMenuBar(JMenuBar m)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5438,9 +5119,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.MINUTE, int minutes)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.MINUTE, int minutes)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5479,9 +5158,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.MONTH, int month)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.MONTH, int month)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5494,8 +5171,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setMultipleMode(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setMultipleMode(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5515,16 +5191,13 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.management.monitor.MonitorMBean.setObservedObject(ObjectName)"
-                    as="default">
+                <javaclass references="javax.management.monitor.MonitorMBean.setObservedObject(ObjectName)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by MonitorMBean.addObservedObject(javax.management.ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by MonitorMBean.addObservedObject(javax.management.ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5537,9 +5210,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by Monitor.addObservedObject(javax.management.ObjectName)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by Monitor.addObservedObject(javax.management.ObjectName)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5565,8 +5236,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBlockIncrement()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setBlockIncrement()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5605,9 +5275,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. no replacement. The setRef method is not needed since RemoteStubs can be created with the RemoteStub(RemoteRef) CONSTRUCTOR_CALLor."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. no replacement. The setRef method is not needed since RemoteStubs can be created with the RemoteStub(RemoteRef) CONSTRUCTOR_CALLor." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5633,9 +5301,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.SECOND, int seconds)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.SECOND, int seconds)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5648,9 +5314,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.setInitThreshold(java.lang.Number)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitor.setInitThreshold(java.lang.Number)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5663,9 +5327,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.setInitThreshold(java.lang.Number)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JMX 1.2, replaced by CounterMonitorMBean.setInitThreshold(java.lang.Number)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5691,9 +5353,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. use the setTimeToLive method instead, which uses int instead of byte as the type for ttl."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. use the setTimeToLive method instead, which uses int instead of byte as the type for ttl." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5713,8 +5373,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.sql.rowset.BaseRowSet.setUnicodeStream(int, InputStream, int)"
-                    as="default">
+                <javaclass references="javax.sql.rowset.BaseRowSet.setUnicodeStream(int, InputStream, int)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
@@ -5727,15 +5386,13 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="java.net.URLStreamHandler.setURL(URL, String, String, int, String, String)"
-                    as="default">
+                <javaclass references="java.net.URLStreamHandler.setURL(URL, String, String, int, String, String)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Use setURL(URL, String, String, int, String, String, String, String);"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use setURL(URL, String, String, int, String, String, String, String);" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5748,9 +5405,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. since JAXB2.0, please see Unmarshaller.setSchema(javax.xml.validation.Schema)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. since JAXB2.0, please see Unmarshaller.setSchema(javax.xml.validation.Schema)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5776,9 +5431,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.YEAR, year + 1900)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(Calendar.YEAR, year + 1900)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5791,8 +5444,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.5, replaced by Window.setVisible(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.5, replaced by Window.setVisible(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5805,8 +5457,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5819,8 +5470,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.5, replaced by setVisible(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.5, replaced by setVisible(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5833,8 +5483,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by setVisible(boolean)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5873,8 +5522,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. This method is inherently unsafe. See Thread.stop() for details."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method is inherently unsafe. See Thread.stop() for details." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5887,9 +5535,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method is inherently unsafe. Stopping a thread with Thread.stop causes it to unlock all of the monitors that it has locked (as a natural consequence of the unchecked ThreadDeath exception propagating up the stack). If any of the objects previously protected by these monitors were in an inconsistent state, the damaged objects become visible to other threads, potentially resulting in arbitrary behavior. Many uses of stop should be replaced by code that simply modifies some variable to indicate that the target thread should stop running. The target thread should check this variable regularly, and return from its run method in an orderly fashion if the variable indicates that it is to stop running. If the target thread waits for long periods (on a condition variable, for example), the interrupt method should be used to interrupt the wait. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method is inherently unsafe. Stopping a thread with Thread.stop causes it to unlock all of the monitors that it has locked (as a natural consequence of the unchecked ThreadDeath exception propagating up the stack). If any of the objects previously protected by these monitors were in an inconsistent state, the damaged objects become visible to other threads, potentially resulting in arbitrary behavior. Many uses of stop should be replaced by code that simply modifies some variable to indicate that the target thread should stop running. The target thread should check this variable regularly, and return from its run method in an orderly fashion if the variable indicates that it is to stop running. If the target thread waits for long periods (on a condition variable, for example), the interrupt method should be used to interrupt the wait. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5902,9 +5548,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method is inherently unsafe. See Thread.stop() for details. An additional danger of this method is that it may be used to generate exceptions that the target thread is unprepared to handle (including checked exceptions that the thread could not possibly throw, were it not for this method). For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method is inherently unsafe. See Thread.stop() for details. An additional danger of this method is that it may be used to generate exceptions that the target thread is unprepared to handle (including checked exceptions that the thread could not possibly throw, were it not for this method). For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5917,9 +5561,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method is inherently deadlock-prone. See Thread.suspend() for details."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method is inherently deadlock-prone. See Thread.suspend() for details." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5932,9 +5574,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method has been deprecated, as it is inherently deadlock-prone. If the target thread holds a lock on the monitor protecting a critical system resource when it is suspended, no thread can access this resource until the target thread is resumed. If the thread that would resume the target thread attempts to lock this monitor prior to calling resume, deadlock results. Such deadlocks typically manifest themselves as &quot;frozen&quot; processes. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method has been deprecated, as it is inherently deadlock-prone. If the target thread holds a lock on the monitor protecting a critical system resource when it is suspended, no thread can access this resource until the target thread is resumed. If the thread that would resume the target thread attempts to lock this monitor prior to calling resume, deadlock results. Such deadlocks typically manifest themselves as &quot;frozen&quot; processes. For more information, see Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5947,9 +5587,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.format(Date date), using a GMT TimeZone."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.format(Date date), using a GMT TimeZone." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -5962,8 +5600,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.format(Date date)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.format(Date date)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6002,9 +5639,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the toString(String enc) method, which takes an encoding-name argument, or the toString() method, which uses the platform's default character encoding."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the toString(String enc) method, which takes an encoding-name argument, or the toString() method, which uses the platform's default character encoding." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6017,24 +5652,20 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method does not automatically escape characters that are illegal in URLs. It is recommended that new code convert an abstract pathname into a URL by first converting it into a URI, via the toURI method, and then converting the URI into a URL via the URI.toURL method."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method does not automatically escape characters that are illegal in URLs. It is recommended that new code convert an abstract pathname into a URL by first converting it into a URI, via the toURI method, and then converting the URI into a URL via the URI.toURL method." effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <javaclass references="javax.swing.plaf.metal.MetalScrollPaneUI.uninstallListeners(JScrollPane)"
-                    as="default">
+                <javaclass references="javax.swing.plaf.metal.MetalScrollPaneUI.uninstallListeners(JScrollPane)" as="default">
                     <location>METHOD</location>
                 </javaclass>
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Replaced by MetalScrollPaneUI.uninstallListeners(JComponent)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Replaced by MetalScrollPaneUI.uninstallListeners(JComponent)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6047,9 +5678,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min, sec), using a UTC TimeZone, followed by Calendar.getTime().getTime()."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min, sec), using a UTC TimeZone, followed by Calendar.getTime().getTime()." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6140,9 +5769,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method does not write the values contained by this PutField object in a proper format, and may result in corruption of the serialization stream. The correct way to write PutField data is by calling the ObjectOutputStream.writeFields() method."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method does not write the values contained by this PutField object in a proper format, and may result in corruption of the serialization stream. The correct way to write PutField data is by calling the ObjectOutputStream.writeFields() method." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6155,9 +5782,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="&lt;![CDATA[&#xA;            Deprecated By JDK 6. &#xA;            This method does not properly convert bytes to characters. As of JDK 1.1, the preferred way to read lines of text is via the BufferedReader.readLine() method. Programs that use the DataInputStream class to read lines can be converted to use the BufferedReader class by replacing code of the form:&#xA;            ```java&#xA;               DataInputStream d = new DataInputStream(in);&#xA;            with:&#xA;             BufferedReader d&#xA;                  = new BufferedReader(new InputStreamReader(in));&#xA;            ```&#xA;            ]]&gt;"
-                        effort="0">
+                    <hint message="&lt;![CDATA[&#10;            Deprecated By JDK 6. &#10;            This method does not properly convert bytes to characters. As of JDK 1.1, the preferred way to read lines of text is via the BufferedReader.readLine() method. Programs that use the DataInputStream class to read lines can be converted to use the BufferedReader class by replacing code of the form:&#10;            ```java&#10;               DataInputStream d = new DataInputStream(in);&#10;            with:&#10;             BufferedReader d&#10;                  = new BufferedReader(new InputStreamReader(in));&#10;            ```&#10;            ]]&gt;" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6170,9 +5795,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="&lt;![CDATA[&#xA;            Deprecated By JDK 6. &#xA;            As of JDK 5, replaced by Component.setBounds(int, int, int, int).&#xA;            Moves and resizes this component.&#xA;            ]]&gt;"
-                        effort="0">
+                    <hint message="&lt;![CDATA[&#10;            Deprecated By JDK 6. &#10;            As of JDK 5, replaced by Component.setBounds(int, int, int, int).&#10;            Moves and resizes this component.&#10;            ]]&gt;" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6185,9 +5808,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. An instance created with this CONSTRUCTOR_CALLor cannot be used in a query."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. An instance created with this CONSTRUCTOR_CALLor cannot be used in a query." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6213,9 +5834,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date) or GregorianCalendar(year + 1900, month, date)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date) or GregorianCalendar(year + 1900, month, date)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6228,9 +5847,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min) or GregorianCalendar(year + 1900, month, date, hrs, min)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min) or GregorianCalendar(year + 1900, month, date, hrs, min)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6243,9 +5860,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min, sec)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date, hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min, sec)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6258,8 +5873,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.parse(String s)."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. As of JDK version 1.1, replaced by DateFormat.parse(String s)." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6318,8 +5932,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="java.rmi.ServerRuntimeException(java.lang.String, java.lang.Exception)"
-                    as="default">
+                <javaclass references="java.rmi.ServerRuntimeException(java.lang.String, java.lang.Exception)" as="default">
                     <location>CONSTRUCTOR_CALL</location>
                 </javaclass>
             </when>
@@ -6377,9 +5990,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String CONSTRUCTOR_CALLors that take a Charset, charset name, or that use the platform's default charset."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String CONSTRUCTOR_CALLors that take a Charset, charset name, or that use the platform's default charset." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6392,9 +6003,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String CONSTRUCTOR_CALLors that take a Charset, charset name, or that use the platform's default charset."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. This method does not properly convert bytes into characters. As of JDK 1.1, the preferred way to do this is via the String CONSTRUCTOR_CALLors that take a Charset, charset name, or that use the platform's default charset." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6407,9 +6016,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Do not use this CONSTRUCTOR_CALLor as this method should be private according to the OMG specification. Use TCKind.from_int(int) instead."
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Do not use this CONSTRUCTOR_CALLor as this method should be private according to the OMG specification. Use TCKind.from_int(int) instead." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6422,9 +6029,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Deprecated By JDK 6. Use the CONSTRUCTOR_CALLor that takes a milliseconds value in place of this CONSTRUCTOR_CALLor"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. Use the CONSTRUCTOR_CALLor that takes a milliseconds value in place of this CONSTRUCTOR_CALLor" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6437,8 +6042,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. instead use the CONSTRUCTOR_CALLor Timestamp(long millis)"
-                        effort="0">
+                    <hint message="Deprecated By JDK 6. instead use the CONSTRUCTOR_CALLor Timestamp(long millis)" effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -6451,9 +6055,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="&lt;![CDATA[&#xA;                 Deprecated By JDK 6 - As of JDK version 1.1, the preferred way to tokenize an input stream is to convert it into a character stream, for example:&#xA;    &#xA;                ```java&#xA;                    Reader r = new BufferedReader(new InputStreamReader(is));&#xA;                    StreamTokenizer st = new StreamTokenizer(r);&#xA;                ```&#xA;            ]]&gt;"
-                        effort="0">
+                    <hint message="&lt;![CDATA[&#10;                 Deprecated By JDK 6 - As of JDK version 1.1, the preferred way to tokenize an input stream is to convert it into a character stream, for example:&#10;    &#10;                ```java&#10;                    Reader r = new BufferedReader(new InputStreamReader(is));&#10;                    StreamTokenizer st = new StreamTokenizer(r);&#10;                ```&#10;            ]]&gt;" effort="0">
                     </hint>
                 </iteration>
             </perform>
