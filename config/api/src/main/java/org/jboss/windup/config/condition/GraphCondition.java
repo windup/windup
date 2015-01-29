@@ -46,7 +46,7 @@ public abstract class GraphCondition extends DefaultConditionBuilder
     }
 
     @Override
-    public boolean evaluate(Rewrite event, EvaluationContext context)
+    public final boolean evaluate(Rewrite event, EvaluationContext context)
     {
         if (event instanceof GraphRewrite)
             return evaluate((GraphRewrite) event, context);

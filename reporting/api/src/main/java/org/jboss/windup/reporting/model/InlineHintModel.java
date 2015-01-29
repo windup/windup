@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
-import org.windup.rules.apps.model.FileLocationModel;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;

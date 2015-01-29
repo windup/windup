@@ -9,12 +9,10 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.WindupRuleMetadata;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.ServiceLogger;
 import org.ocpsoft.rewrite.bind.Evaluation;
@@ -64,49 +62,6 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         }
 
         List<WindupRuleProvider> providers = WindupRuleProviderSorter.sort(allProviders);
-        for (WindupRuleProvider provider : providers)
-        {
-            if (provider instanceof RulePhase)
-            {
-                LOG.info("PROVIDERINFO|" + provider.getID());
-            }
-            else
-            {
-                StringBuilder builder = new StringBuilder();
-                builder.append("PROVIDERINFO|" + Proxies.unwrap(provider).getClass().getSimpleName() + "|"
-                            + provider.getPhase().getSimpleName());
-                builder.append("|");
-                List<Class<? extends WindupRuleProvider>> executeAfters = provider.getExecuteAfter();
-                List<String> executeAfterIDs = provider.getExecuteAfterIDs();
-                for (Class<? extends WindupRuleProvider> executeAfter : executeAfters)
-                {
-                    builder.append(executeAfter.getSimpleName());
-                    builder.append(",");
-                }
-                builder.append("|");
-                for (String executeAfter : executeAfterIDs)
-                {
-                    builder.append(executeAfter);
-                    builder.append(",");
-                }
-                builder.append("|");
-                List<Class<? extends WindupRuleProvider>> executeBefores = provider.getExecuteBefore();
-                List<String> executeBeforeIDs = provider.getExecuteBeforeIDs();
-                for (Class<? extends WindupRuleProvider> executeBefore : executeBefores)
-                {
-                    builder.append(executeBefore.getSimpleName());
-                    builder.append(",");
-                }
-                builder.append("|");
-                for (String executeBefore : executeBeforeIDs)
-                {
-                    builder.append(executeBefore);
-                    builder.append(",");
-                }
-                builder.append("|");
-                LOG.info(builder.toString());
-            }
-        }
         ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, providers);
         return Collections.unmodifiableList(providers);
     }
@@ -121,11 +76,10 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         executionMetadata.setProviders(providers);
         for (WindupRuleProvider provider : providers)
         {
-            // If there is a filter, and it rejects the ruleProvider, then skip this rule provider
             if (ruleProviderFilter != null)
             {
                 boolean accepted = ruleProviderFilter.accept(provider);
-                LOG.info( (accepted ? "Accepted" : "Skipped") + " by filter: " + provider);
+                LOG.info( (accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleProviderFilter + "]");
                 if (!accepted)
                     continue;
             }
@@ -143,7 +97,6 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
 
                 if (rule instanceof RuleBuilder && StringUtils.isBlank(rule.getId()))
                 {
-                    // set synthetic id
                     ((RuleBuilder) rule).withId(generatedRuleID(provider, rule, i));
                 }
 

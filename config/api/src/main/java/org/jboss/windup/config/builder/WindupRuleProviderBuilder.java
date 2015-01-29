@@ -15,6 +15,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderWithMetadata;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 
 /**
@@ -113,6 +114,18 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
             ruleWithMetadata.withMetadata(metadataEntry.getKey(), metadataEntry.getValue());
         }
         return rule;
+    }
+
+    @Override
+    public ConfigurationRuleBuilderCustom addRule(Rule rule)
+    {
+        ConfigurationRuleBuilderCustom wrapped = configurationBuilder.addRule(rule);
+        ConfigurationRuleBuilderWithMetadata ruleWithMetadata = (ConfigurationRuleBuilderWithMetadata) wrapped;
+        for (Map.Entry<Object, Object> metadataEntry : ruleMetadata.entrySet())
+        {
+            ruleWithMetadata.withMetadata(metadataEntry.getKey(), metadataEntry.getValue());
+        }
+        return wrapped;
     }
 
     @Override

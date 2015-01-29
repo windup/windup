@@ -32,6 +32,7 @@ import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
+import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -51,10 +52,10 @@ import org.ocpsoft.rewrite.util.Maps;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.windup.rules.apps.model.FileReferenceModel;
 
 /**
- * Handles matching on {@link XmlFileModel} objects and creating {@link XmlTypeReferenceModel} objects on the matching nodes.
+ * Handles matching on {@link XmlFileModel} objects and creating {@link XmlTypeReferenceModel} objects on the matching
+ * nodes.
  */
 public class XmlFile extends ParameterizedGraphCondition
 {
@@ -346,35 +347,35 @@ public class XmlFile extends ParameterizedGraphCondition
                                 paramMatchCache, event));
                     this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "persist", new XmlFilePersistXPathFunction(graphContext, xml,
                                 evaluationStrategy, store, paramMatchCache, resultLocations));
-                }
 
-                if (compiledXPath == null)
-                {
-                    NamespaceMapContext nsContext = new NamespaceMapContext(namespaces);
-                    this.xpathEngine.setNamespaceContext(nsContext);
-                    try
+                    if (compiledXPath == null)
                     {
-                        this.compiledXPath = xpathEngine.compile(xpathStringWithParameterFunctions);
-                    }
-                    catch (Exception e)
-                    {
-                        String message = e.getMessage();
-
-                        // brutal hack to try to get a reasonable error message (ugly, but it seems to work)
-                        if (message == null && e.getCause() != null && e.getCause().getMessage() != null)
+                        NamespaceMapContext nsContext = new NamespaceMapContext(namespaces);
+                        this.xpathEngine.setNamespaceContext(nsContext);
+                        try
                         {
-                            message = e.getCause().getMessage();
+                            this.compiledXPath = xpathEngine.compile(xpathStringWithParameterFunctions);
                         }
-                        LOG.severe("Condition: " + this + " failed to run, as the following xpath was uncompilable: " + xpathString
-                                    + " (compiled contents: " + xpathStringWithParameterFunctions + ") due to: "
-                                    + message);
-                        return false;
-                    }
-                }
+                        catch (Exception e)
+                        {
+                            String message = e.getMessage();
 
-                NodeList result = XmlUtil.xpathNodeList(document, compiledXPath);
-                if (result == null || result.getLength() == 0)
-                {
+                            // brutal hack to try to get a reasonable error message (ugly, but it seems to work)
+                            if (message == null && e.getCause() != null && e.getCause().getMessage() != null)
+                            {
+                                message = e.getCause().getMessage();
+                            }
+                            LOG.severe("Condition: " + this + " failed to run, as the following xpath was uncompilable: " + xpathString
+                                        + " (compiled contents: " + xpathStringWithParameterFunctions + ") due to: "
+                                        + message);
+                            return false;
+                        }
+                    }
+
+                    /**
+                     * This actually does the work.
+                     */
+                    XmlUtil.xpathNodeList(document, compiledXPath);
                 }
             }
         }

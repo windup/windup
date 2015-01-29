@@ -15,8 +15,6 @@ import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -30,7 +28,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Adds metadata from the .class file itself to the graph.
  * 
  */
-public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
+public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFileModel>
 {
     private static Logger LOG = Logger.getLogger(AddClassFileMetadata.class.getSimpleName());
 
@@ -45,7 +43,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, JavaClassFileModel payload)
     {
         ExecutionStatistics.get().begin("AddClassFileMetadata.perform()");
         try
@@ -67,19 +65,16 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
                     simpleName = simpleName.substring(packageName.length() + 1);
                 }
 
-                final JavaClassFileModel classFileModel = GraphService.addTypeToModel(event.getGraphContext(),
-                            payload, JavaClassFileModel.class);
-
-                classFileModel.setMajorVersion(majorVersion);
-                classFileModel.setMinorVersion(minorVersion);
-                classFileModel.setPackageName(packageName);
+                payload.setMajorVersion(majorVersion);
+                payload.setMinorVersion(minorVersion);
+                payload.setPackageName(packageName);
 
                 final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
                 final JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
                 javaClassModel.setSimpleName(simpleName);
                 javaClassModel.setPackageName(packageName);
                 javaClassModel.setQualifiedName(qualifiedName);
-                javaClassModel.setClassFile(classFileModel);
+                javaClassModel.setClassFile(payload);
 
                 final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
                 if (interfaceNames != null)
@@ -129,7 +124,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<FileModel>
                     }
                 }
 
-                classFileModel.setJavaClass(javaClassModel);
+                payload.setJavaClass(javaClassModel);
             }
         }
         catch (Exception e)

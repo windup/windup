@@ -18,7 +18,7 @@ import org.ocpsoft.rewrite.event.Rewrite;
 public abstract class GraphOperation extends DefaultOperationBuilder
 {
     @Override
-    public void perform(Rewrite event, EvaluationContext context)
+    public final void perform(Rewrite event, EvaluationContext context)
     {
         if (event instanceof GraphRewrite)
             perform((GraphRewrite) event, context);

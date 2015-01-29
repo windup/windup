@@ -34,6 +34,8 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.rules.files.condition.FileContent;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +44,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
-import org.windup.rules.apps.condition.FileContent;
-import org.windup.rules.apps.model.FileLocationModel;
 
 @RunWith(Arquillian.class)
 public class FileContentTest

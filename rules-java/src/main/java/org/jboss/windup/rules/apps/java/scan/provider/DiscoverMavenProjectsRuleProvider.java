@@ -16,7 +16,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.maven.dao.MavenModelService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
@@ -87,7 +87,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                     {
                         // add the parent file
                         File parentFile = payload.asFile().getParentFile();
-                        FileModel parentFileModel = new FileModelService(graphContext).findByPath(parentFile
+                        FileModel parentFileModel = new FileService(graphContext).findByPath(parentFile
                                     .getAbsolutePath());
                         if (parentFileModel != null)
                         {

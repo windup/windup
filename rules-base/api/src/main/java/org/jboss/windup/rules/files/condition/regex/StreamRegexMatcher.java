@@ -1,4 +1,4 @@
-package org.windup.rules.apps.condition.regex;
+package org.jboss.windup.rules.files.condition.regex;
 
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;

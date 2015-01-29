@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.windup.rules.apps.model.FileReferenceModel;
+import org.jboss.windup.rules.files.model.FileReferenceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;

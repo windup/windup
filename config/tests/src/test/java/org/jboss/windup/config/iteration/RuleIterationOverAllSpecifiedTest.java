@@ -23,7 +23,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.FileModelService;
+import org.jboss.windup.graph.service.FileService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,7 +90,7 @@ public class RuleIterationOverAllSpecifiedTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            FileModelService fileModelService = new FileModelService(context);
+            FileService fileModelService = new FileService(context);
             windupCfg.setInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
                         .getAbsolutePath()));
 
@@ -124,7 +124,7 @@ public class RuleIterationOverAllSpecifiedTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            FileModelService fileModelService = new FileModelService(context);
+            FileService fileModelService = new FileService(context);
             windupCfg.setInputPath(fileModelService
                         .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 

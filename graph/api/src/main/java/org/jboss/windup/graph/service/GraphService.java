@@ -193,7 +193,8 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return context.getFramed().getVertex(id, this.type);
     }
 
-    protected T frame(Vertex vertex)
+    @Override
+    public T frame(Vertex vertex)
     {
         return getGraphContext().getFramed().frame(vertex, this.getType());
     }

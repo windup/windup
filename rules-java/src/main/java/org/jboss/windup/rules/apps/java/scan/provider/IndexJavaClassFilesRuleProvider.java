@@ -8,10 +8,9 @@ import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.phase.Implicit;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.binary.DecompileArchivesRuleProvider;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -20,7 +19,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * Discovers .class files from the applications being analyzed.
  * 
  */
-public class IndexClassFilesRuleProvider extends WindupRuleProvider
+public class IndexJavaClassFilesRuleProvider extends WindupRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()
@@ -31,7 +30,7 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(UnzipArchivesToOutputRuleProvider.class);
+        return asClassList(UnzipArchivesToOutputRuleProvider.class, DiscoverArchiveTypesRuleProvider.class);
     }
 
     @Override
@@ -46,10 +45,7 @@ public class IndexClassFilesRuleProvider extends WindupRuleProvider
     {
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(Query.fromType(FileModel.class)
-                                .withProperty(FileModel.IS_DIRECTORY, false)
-                                .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*\\.class")
-                    )
+                    .when(Query.fromType(JavaClassFileModel.class))
                     .perform(
                         new AddClassFileMetadata()
                         .and(Commit.every(10))

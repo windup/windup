@@ -45,7 +45,7 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
-import org.jboss.windup.rules.apps.java.scan.provider.DiscoverJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.scan.provider.IndexJavaSourceFilesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -217,7 +217,7 @@ public class JavaHintsClassificationsTest
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {
-            return asClassList(AnalyzeJavaFilesRuleProvider.class, DiscoverJavaFilesRuleProvider.class);
+            return asClassList(AnalyzeJavaFilesRuleProvider.class, IndexJavaSourceFilesRuleProvider.class);
         }
 
         // @formatter:off

@@ -1,4 +1,4 @@
-package org.windup.rules.apps.condition.regex;
+package org.jboss.windup.rules.files.condition.regex;
 
 /**
  * Indicates that a match has occurred while processing an incoming String with a regular expression.

@@ -1,4 +1,4 @@
-package org.windup.rules.apps.condition;
+package org.jboss.windup.rules.files.condition;
 
 /**
  * This is used to provide a fluent interface for instantiating {@link FileContent}.

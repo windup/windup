@@ -42,13 +42,13 @@ import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.windup.rules.apps.model.FileLocationModel;
 
 @RunWith(Arquillian.class)
 public class XMLHintsClassificationsTest

@@ -57,7 +57,7 @@
             <artifactId>rules-base</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Furnace Container -->
