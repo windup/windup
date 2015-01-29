@@ -30,13 +30,11 @@
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -54,7 +52,6 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>

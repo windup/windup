@@ -29,28 +29,24 @@
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-xml</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>rules-base</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -70,7 +66,6 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>

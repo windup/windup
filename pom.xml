@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -17,7 +18,7 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.furnace>2.13.1.Final</version.furnace>
+        <version.furnace>2.13.2-SNAPSHOT</version.furnace>
         <version.titangraph>0.5.0</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.20</version.freemarker>
@@ -30,7 +31,6 @@
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
-
         <forkCount>.5C</forkCount>
     </properties>
 
@@ -60,7 +60,7 @@
 
     <modules>
         <module>frames</module>
-	<module>rexster</module>
+        <module>rexster</module>
         <module>graph</module>
 
         <module>config</module>
@@ -87,6 +87,28 @@
         <module>dist</module>
         <module>bom</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 
     <build>
         <plugins>
@@ -118,9 +140,26 @@
                         <maxmem>512m</maxmem>
                         <fork>true</fork>
                         <compilerArgs>
-		            <arg>-J-Xss4m</arg>
-			</compilerArgs>
+                            <arg>-J-Xss4m</arg>
+                        </compilerArgs>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jboss.forge.furnace</groupId>
+                    <artifactId>furnace-maven-plugin</artifactId>
+                    <version>${version.furnace}</version>
+                    <executions>
+                        <execution>
+                            <id>generate-dot</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>generate-dot</goal>
+                            </goals>
+                            <configuration>
+                                <attach>true</attach>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -166,7 +205,7 @@
         <profile>
             <id>javadocDist</id>
             <properties>
-                <javadoc.branding>Windup ${project.version} javadoc</javadoc.branding>
+                <javadoc.branding>Windup ${project.version} Javadoc</javadoc.branding>
             </properties>
             <build>
                 <plugins>
@@ -217,7 +256,7 @@
                                     <footer>${javadoc.branding}</footer>
 
                                     <detectLinks>true</detectLinks>
-                                    <additionalparam>-link http://docs.jboss.org/forge/javadoc/2.13.0-SNAPSHOT/</additionalparam>
+                                    <additionalparam>-link http://docs.jboss.org/forge/javadoc/2.13.2-SNAPSHOT/</additionalparam>
 
                                     <includeDependencySources>true</includeDependencySources>
                                     <dependencySourceExcludes>
@@ -243,101 +282,5 @@
             </build>
         </profile>
     </profiles>
-
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-
-    <dependencyManagement>
-        <dependencies>
-
-            <!-- Forge BOM -->
-            <dependency>
-                <groupId>org.jboss.forge</groupId>
-                <artifactId>forge-bom</artifactId>
-                <version>${version.furnace}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Furnace CDI -->
-            <dependency>
-                <groupId>org.jboss.forge.furnace.container</groupId>
-                <artifactId>cdi</artifactId>
-                <classifier>forge-addon</classifier>
-                <version>${version.furnace}</version>
-                <scope>provided</scope>
-                <!-- Not propagated to submodules :/ -->
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-jdk14</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- Furnace CDI impl -->
-            <dependency>
-                <groupId>org.jboss.forge.furnace.container</groupId>
-                <artifactId>cdi-impl</artifactId>
-                <version>${version.furnace}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-jdk14</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.forge.furnace.test</groupId>
-                <artifactId>furnace-test-harness</artifactId>
-                <version>${version.furnace}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.forge.furnace.test</groupId>
-                <artifactId>arquillian-furnace-classpath</artifactId>
-                <version>${version.furnace}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- Logging -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
-            </dependency>
-
-            <!-- Commons -->
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
-            </dependency>
-
-
-        </dependencies>
-    </dependencyManagement>
 
 </project>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.jboss.windup.graph</groupId>
         <artifactId>windup-graph-parent</artifactId>
@@ -18,29 +19,28 @@
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-api</artifactId>
         </dependency>
-       
+
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-impl</artifactId>
             <optional>true</optional>
         </dependency>
-	
+
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
-            <version>${project.version}</version>
-       	    <classifier>forge-addon</classifier>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
 
         <!-- Furnace Container -->
-	<dependency>
+        <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-	
+
 
     </dependencies>
 
@@ -49,7 +49,6 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>
