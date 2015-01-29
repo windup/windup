@@ -385,7 +385,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             if (clzSuperClasses instanceof SimpleType)
             {
-                processType((SimpleType) clzSuperClasses, TypeReferenceLocation.EXTENDS_TYPE);
+                processType((SimpleType) clzSuperClasses, TypeReferenceLocation.INHERITANCE);
             }
             else
             {

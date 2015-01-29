@@ -4,7 +4,7 @@
         <rule>
             <when>
                 <javaclass references="commonj.timers.Timer.{*}" as="default">
-                    <location>EXTENDS_TYPE</location>
+                    <location>INHERITANCE</location>
                 </javaclass>
             </when>
             <perform>
@@ -20,7 +20,7 @@
         <rule>
             <when>
                 <javaclass references="commonj.work.Work" as="default">
-                    <location>EXTENDS_TYPE</location>
+                    <location>INHERITANCE</location>
                 </javaclass>
             </when>
             <perform>
@@ -36,7 +36,7 @@
         <rule>
             <when>
                 <javaclass references="org.mule.umo.UMOFilter" as="default">
-                    <location>EXTENDS_TYPE</location>
+                    <location>INHERITANCE</location>
                 </javaclass>
             </when>
             <perform>
@@ -51,7 +51,7 @@
         <rule>
             <when>
                 <javaclass references="org.jboss.wsf.{*}" as="default">
-                    <location>EXTENDS_TYPE</location>
+                    <location>INHERITANCE</location>
                 </javaclass>
             </when>
             <perform>
@@ -65,7 +65,7 @@
         <rule>
             <when>
                 <javaclass references="org.mule.transformers.AbstractTransformer" as="default">
-                    <location>EXTENDS_TYPE</location>
+                    <location>INHERITANCE</location>
                 </javaclass>
             </when>
             <perform>
