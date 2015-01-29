@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" EjbConfig">
     <rules>
         <rule>
@@ -9,7 +9,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JPA Entity" effort="0" />
+                    <classification classification="JPA Entity" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -21,7 +21,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 1.x/2.x - Home Interface" effort="0" />
+                    <classification classification="EJB 1.x/2.x - Home Interface" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -33,7 +33,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 1.x/2.x - Remote Interface" effort="0" />
+                    <classification classification="EJB 1.x/2.x - Remote Interface" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -45,7 +45,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 1.x/2.x - Entity Bean" effort="0" />
+                    <classification classification="EJB 1.x/2.x - Entity Bean" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -57,7 +57,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 1.x/2.x - Session Bean" effort="0" />
+                    <classification classification="EJB 1.x/2.x - Session Bean" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -69,7 +69,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 2.x - Local Home" effort="0" />
+                    <classification classification="EJB 2.x - Local Home" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -81,7 +81,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 2.x - Local Object" effort="0" />
+                    <classification classification="EJB 2.x - Local Object" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -93,7 +93,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 2.x - Message Driven Bean" effort="0" />
+                    <classification classification="EJB 2.x - Message Driven Bean" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -105,7 +105,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 3.x - Message Driven Bean" effort="2" />
+                    <classification classification="EJB 3.x - Message Driven Bean" effort="2"/>
                 </iteration>
             </perform>
         </rule>
@@ -117,7 +117,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 3.x - Local Session Bean Interface" effort="0" />
+                    <classification classification="EJB 3.x - Local Session Bean Interface" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -129,7 +129,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 3.x - Remote Session Bean Interface" effort="2" />
+                    <classification classification="EJB 3.x - Remote Session Bean Interface" effort="2"/>
                 </iteration>
             </perform>
         </rule>
@@ -141,7 +141,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 3.x - Stateless Session Bean" effort="0" />
+                    <classification classification="EJB 3.x - Stateless Session Bean" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -153,7 +153,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EJB 3.x - Stateful Session Bean" effort="0" />
+                    <classification classification="EJB 3.x - Stateful Session Bean" effort="0"/>
                 </iteration>
             </perform>
         </rule>

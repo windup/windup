@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" JPPConfig">
     <rules>
         <rule>
@@ -9,9 +9,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."
-                        effort="0">
+                    <hint message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -24,9 +22,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."
-                        effort="0">
+                    <hint message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -39,9 +35,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."
-                        effort="0">
+                    <hint message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -54,9 +48,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version."
-                        effort="0">
+                    <hint message="This class was removed in Red Hat JBoss Portal Platform 6. See the web.xml/login.jsp from the sample-portal quickstart for an example on how to deal with authentication/authorization on this version." effort="0">
                     </hint>
                 </iteration>
             </perform>

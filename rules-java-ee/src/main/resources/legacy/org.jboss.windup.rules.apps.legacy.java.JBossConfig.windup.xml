@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" JBossConfig">
     <rules>
         <rule>
@@ -9,7 +9,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JBoss 5 JMX ManagementBean" effort="0" />
+                    <classification classification="JBoss 5 JMX ManagementBean" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -21,9 +21,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="If migrating from JBoss 4, replace lookup string &quot;QueueConnectionFactory&quot; with &quot;ConnectionFactory&quot;"
-                        effort="1">
+                    <hint message="If migrating from JBoss 4, replace lookup string &quot;QueueConnectionFactory&quot; with &quot;ConnectionFactory&quot;" effort="1">
                     </hint>
                 </iteration>
             </perform>
@@ -36,8 +34,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn"
-                        effort="0">
+                    <hint message="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn" effort="0">
                     </hint>
                 </iteration>
             </perform>

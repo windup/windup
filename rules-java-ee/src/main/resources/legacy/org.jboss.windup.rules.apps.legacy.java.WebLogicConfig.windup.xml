@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" WebLogicConfig">
     <rules>
         <rule>
@@ -9,7 +9,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JAX-RPC Generic Handler" effort="0" />
+                    <classification classification="JAX-RPC Generic Handler" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -22,11 +22,7 @@
             <perform>
                 <iteration>
                     <hint message="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation" effort="0">
-                        <links>
-                            <link
-                                link="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
-                                description="Security Context - JBoss 6" />
-                        </links>
+                        <link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html" description="Security Context - JBoss 6"/>
                     </hint>
                 </iteration>
             </perform>
@@ -40,11 +36,7 @@
             <perform>
                 <iteration>
                     <hint message="Migrate to JBoss EAP 6: org.jboss.security.SecurityContextAssociation" effort="0">
-                        <links>
-                            <link
-                                link="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
-                                description="Security Context - JBoss 6" />
-                        </links>
+                        <link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html" description="Security Context - JBoss 6"/>
                     </hint>
                 </iteration>
             </perform>
@@ -57,14 +49,8 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Migrate to JBoss EAP 6: org.jboss.security.SecurityContextAssociation.getCurrentContext().getCurrentPrincipal()"
-                        effort="3">
-                        <links>
-                            <link
-                                link="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
-                                description="Security Context - JBoss 6" />
-                        </links>
+                    <hint message="Migrate to JBoss EAP 6: org.jboss.security.SecurityContextAssociation.getCurrentContext().getCurrentPrincipal()" effort="3">
+                        <link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html" description="Security Context - JBoss 6"/>
                     </hint>
                 </iteration>
             </perform>
@@ -77,13 +63,8 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation.getPrincipal().getName()"
-                        effort="3">
-                        <links>
-                            <link
-                                link="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html"
-                                description="Security Context - JBoss 6" />
-                        </links>
+                    <hint message="Migrate to JBoss EAP 5: org.jboss.security.SecurityAssociation.getPrincipal().getName()" effort="3">
+                        <link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/API_Documentation/files/javadoc/org/jboss/security/SecurityContextAssociation.html" description="Security Context - JBoss 6"/>
                     </hint>
                 </iteration>
             </perform>
@@ -96,14 +77,10 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Weblogic ApplicationLifecycleListener, proprietary class, must be migrated."
-                        effort="3">
-                        <links link="http://www.mastertheboss.com/ejb-3/ejb-31-tutorial" description="Master the JBoss Tutorial: EJB 3.1 Tutorial" />
-                        <links
-                            link="http://blog.caucho.com/2009/10/06/servlet-30-tutorial-weblistener-webservlet-webfilter-and-webinitparam/"
-                            description="Caucho.com Tutorial: ServletContextListener, @WebListener tutorial" />
-                        <links link="http://www.roseindia.net/servlets/servlet3/WebListener_annotation.shtml"
-                            description="Rose India Tutorial: ServletContextListener, @WebListener tutorial" />
+                    <classification classification="Weblogic ApplicationLifecycleListener, proprietary class, must be migrated." effort="3">
+                        <link href="http://www.mastertheboss.com/ejb-3/ejb-31-tutorial" description="Master the JBoss Tutorial: EJB 3.1 Tutorial"/>
+                        <link href="http://blog.caucho.com/2009/10/06/servlet-30-tutorial-weblistener-webservlet-webfilter-and-webinitparam/" description="Caucho.com Tutorial: ServletContextListener, @WebListener tutorial"/>
+                        <link href="http://www.roseindia.net/servlets/servlet3/WebListener_annotation.shtml" description="Rose India Tutorial: ServletContextListener, @WebListener tutorial"/>
                     </classification>
                 </iteration>
             </perform>
@@ -129,9 +106,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Use a javax.servlet.ServletContextListener with @javax.annotation.servlet.WebListener, or EJB 3.1 @javax.ejb.Startup @javax.ejb.Singleton service bean."
-                        effort="2">
+                    <hint message="Use a javax.servlet.ServletContextListener with @javax.annotation.servlet.WebListener, or EJB 3.1 @javax.ejb.Startup @javax.ejb.Singleton service bean." effort="2">
                     </hint>
                 </iteration>
             </perform>
@@ -177,7 +152,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsConnectionFactory" as="default" />
+                <javaclass references="oracle.jms.AQjmsConnectionFactory" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -188,7 +163,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsQueueConnectionFactory" as="default" />
+                <javaclass references="oracle.jms.AQjmsQueueConnectionFactory" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -199,7 +174,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsTopicConnectionFactory" as="default" />
+                <javaclass references="oracle.jms.AQjmsTopicConnectionFactory" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -210,7 +185,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsDestination" as="default" />
+                <javaclass references="oracle.jms.AQjmsDestination" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -221,7 +196,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsMessage" as="default" />
+                <javaclass references="oracle.jms.AQjmsMessage" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -232,7 +207,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsBytesMessage" as="default" />
+                <javaclass references="oracle.jms.AQjmsBytesMessage" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -243,7 +218,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsMapMessage" as="default" />
+                <javaclass references="oracle.jms.AQjmsMapMessage" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -254,7 +229,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsObjectMessage" as="default" />
+                <javaclass references="oracle.jms.AQjmsObjectMessage" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -265,7 +240,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsStreamMessage" as="default" />
+                <javaclass references="oracle.jms.AQjmsStreamMessage" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -276,7 +251,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsTextMessage" as="default" />
+                <javaclass references="oracle.jms.AQjmsTextMessage" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -287,7 +262,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsConnection" as="default" />
+                <javaclass references="oracle.jms.AQjmsConnection" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -298,7 +273,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsConsumer" as="default" />
+                <javaclass references="oracle.jms.AQjmsConsumer" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -309,7 +284,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsProducer" as="default" />
+                <javaclass references="oracle.jms.AQjmsProducer" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -320,7 +295,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsQueueBrowser" as="default" />
+                <javaclass references="oracle.jms.AQjmsQueueBrowser" as="default"/>
             </when>
             <perform>
                 <iteration>
@@ -331,7 +306,7 @@
         </rule>
         <rule>
             <when>
-                <javaclass references="oracle.jms.AQjmsSession" as="default" />
+                <javaclass references="oracle.jms.AQjmsSession" as="default"/>
             </when>
             <perform>
                 <iteration>

@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<ruleset xmlns="http://windup.jboss.org/v1/xml"
-  id="xmltestrules_1"
->
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id="xmltestrules_1">
   <rules>
     <rule>
       <when>
@@ -11,7 +9,7 @@
       </when>
       <perform>
         <hint message="Message from XML Rule">
-            <link href="http://example.com" description="Description from XML Hint Link" />
+            <link href="http://example.com" description="Description from XML Hint Link"/>
         </hint>
       </perform>
     </rule>

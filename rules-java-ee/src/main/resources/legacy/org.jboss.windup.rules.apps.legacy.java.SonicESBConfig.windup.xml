@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" SonicESBConfig">
     <rules>
         <rule>
@@ -10,9 +10,7 @@
             <perform>
                 <iteration>
                     <classification classification="Sonic ESB Service" effort="0">
-                        <links
-                            link="http://documentation.progress.com/output/Sonic/8.0.0/Docs8.0/api/esb_api/com/sonicsw/xq/XQService.html"
-                            description="XQService Javadoc" />
+                        <link href="http://documentation.progress.com/output/Sonic/8.0.0/Docs8.0/api/esb_api/com/sonicsw/xq/XQService.html" description="XQService Javadoc"/>
                     </classification>
                 </iteration>
             </perform>
@@ -103,8 +101,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Migrate to org.apache.camel.Message.setHeader(String name, Object value)"
-                        effort="0">
+                    <hint message="Migrate to org.apache.camel.Message.setHeader(String name, Object value)" effort="0">
                     </hint>
                 </iteration>
             </perform>

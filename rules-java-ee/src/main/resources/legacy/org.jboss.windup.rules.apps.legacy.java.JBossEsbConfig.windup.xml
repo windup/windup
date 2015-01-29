@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" JBossEsbConfig">
     <rules>
         <rule>
@@ -9,7 +9,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JBoss ESB 5 Action Handler" effort="0" />
+                    <classification classification="JBoss ESB 5 Action Handler" effort="0"/>
                 </iteration>
             </perform>
         </rule>

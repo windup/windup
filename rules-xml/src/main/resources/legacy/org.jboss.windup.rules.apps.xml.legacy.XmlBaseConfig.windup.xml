@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlBaseConfig">
     <rules>
         <rule>
             <when>
                 <xmlfile as="default" matches="/j2ee:taglib | /taglib">
-                    <namespace prefix="j2ee" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="j2ee" uri="http://java.sun.com/xml/ns/j2ee"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JSP Tag Library" effort="0" />
+                    <classification classification="JSP Tag Library" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -20,7 +20,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="OpenSymphony XWork Validator" effort="0" />
+                    <classification classification="OpenSymphony XWork Validator" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -31,19 +31,18 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JasperReports Report Design" effort="0" />
+                    <classification classification="JasperReports Report Design" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <xmlfile as="default"
-                    matches="/*[local-name()='binding']/*[local-name()='namespace'] | /*[local-name()='binding']/*[local-name()='mapping']/@value-style | /*[local-name()='binding']/*[local-name()='mapping']/*[local-name()='value']/@style | /*[local-name()='binding']/*[local-name()='mapping']/@value">
+                <xmlfile as="default" matches="/*[local-name()='binding']/*[local-name()='namespace'] | /*[local-name()='binding']/*[local-name()='mapping']/@value-style | /*[local-name()='binding']/*[local-name()='mapping']/*[local-name()='value']/@style | /*[local-name()='binding']/*[local-name()='mapping']/@value">
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JiBX Binding" effort="0" />
+                    <classification classification="JiBX Binding" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -54,7 +53,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Struts Menu" effort="0" />
+                    <classification classification="Struts Menu" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -65,7 +64,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Struts 1.x" effort="0" />
+                    <classification classification="Struts 1.x" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -76,7 +75,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Struts 2.x" effort="0" />
+                    <classification classification="Struts 2.x" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -87,7 +86,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Struts Configuration" effort="0" />
+                    <classification classification="Struts Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -98,7 +97,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Struts Tiles Definition" effort="0" />
+                    <classification classification="Struts Tiles Definition" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -109,71 +108,70 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Struts Chain Of Responsibility Configuration" effort="0" />
+                    <classification classification="Struts Chain Of Responsibility Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/xslt:stylesheet">
-                    <namespace prefix="xslt" uri="http://www.w3.org/1999/XSL/Transform" />
+                    <namespace prefix="xslt" uri="http://www.w3.org/1999/XSL/Transform"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="XSLT Configuration" effort="0" />
+                    <classification classification="XSLT Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/jee:facelet-taglib | /facelet-taglib | /*[local-name()='facelet-taglib']">
-                    <namespace prefix="facelet" uri="http://java.sun.com/JSF/Facelet" />
-                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                    <namespace prefix="facelet" uri="http://java.sun.com/JSF/Facelet"/>
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Facelet Taglib" effort="2" />
+                    <classification classification="Facelet Taglib" effort="2"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/jee:faces-config | /je:faces-config | /faces-config">
-                    <namespace prefix="je" uri="http://java.sun.com/JSF/Configuration" />
-                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                    <namespace prefix="je" uri="http://java.sun.com/JSF/Configuration"/>
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JavaServer Faces Config" effort="0" />
+                    <classification classification="JavaServer Faces Config" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <xmlfile as="default"
-                    matches="/jbpm31:process-definition | /process-definition/start-state | /jbpm32:process-definition">
-                    <namespace prefix="jbpm32" uri="urn:jbpm.org:jpdl-3.2" />
-                    <namespace prefix="jbpm31" uri="urn:jbpm.org:jpdl-3.1" />
+                <xmlfile as="default" matches="/jbpm31:process-definition | /process-definition/start-state | /jbpm32:process-definition">
+                    <namespace prefix="jbpm32" uri="urn:jbpm.org:jpdl-3.2"/>
+                    <namespace prefix="jbpm31" uri="urn:jbpm.org:jpdl-3.1"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="jBPM 3.x Process Definition" effort="0" />
+                    <classification classification="jBPM 3.x Process Definition" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/oagis:catalog">
-                    <namespace prefix="oagis" uri="urn:oasis:names:tc:entity:xmlns:xml:catalog" />
+                    <namespace prefix="oagis" uri="urn:oasis:names:tc:entity:xmlns:xml:catalog"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Oagis XML Catalog" effort="0" />
+                    <classification classification="Oagis XML Catalog" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -184,7 +182,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Commons Validator Rules Configuration" effort="0" />
+                    <classification classification="Commons Validator Rules Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -195,69 +193,69 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Commons Digester Configuration" effort="0" />
+                    <classification classification="Commons Digester Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/b:netui-config | /netui-config">
-                    <namespace prefix="b" uri="http://beehive.apache.org/netui/2004/server/config" />
+                    <namespace prefix="b" uri="http://beehive.apache.org/netui/2004/server/config"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Apache Beehive Configuration" effort="0" />
+                    <classification classification="Apache Beehive Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/rf:properties">
-                    <namespace prefix="rf" uri="http://jboss.org/schema/richfaces/cdk/extensions" />
+                    <namespace prefix="rf" uri="http://jboss.org/schema/richfaces/cdk/extensions"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Rich Faces Properties" effort="0" />
+                    <classification classification="Rich Faces Properties" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/jee:application | /j2e:application | /application">
-                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
-                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee"/>
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EAR Application Descriptor" effort="1" />
+                    <classification classification="EAR Application Descriptor" effort="1"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/web-app | /j2e:web-app | /jee:web-app">
-                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
-                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee"/>
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="WAR Application Descriptor" effort="0" />
+                    <classification classification="WAR Application Descriptor" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/dzr:mappings">
-                    <namespace prefix="dzr" uri="http://dozer.sourceforge.net" />
+                    <namespace prefix="dzr" uri="http://dozer.sourceforge.net"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Dozer Mappings" effort="0" />
+                    <classification classification="Dozer Mappings" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -268,31 +266,31 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Weblogic Webservice Annotation Descriptor" effort="0" />
+                    <classification classification="Weblogic Webservice Annotation Descriptor" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/cbf:binding">
-                    <namespace prefix="cbf" uri="http://www.castor.org/SourceGenerator/Binding" />
+                    <namespace prefix="cbf" uri="http://www.castor.org/SourceGenerator/Binding"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Castor Binding" effort="0" />
+                    <classification classification="Castor Binding" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/cbf:mapping">
-                    <namespace prefix="cbf" uri="http://castor.exolab.org/" />
+                    <namespace prefix="cbf" uri="http://castor.exolab.org/"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Castor Mapping" effort="0" />
+                    <classification classification="Castor Mapping" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -303,7 +301,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Castor JDO Config" effort="0" />
+                    <classification classification="Castor JDO Config" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -314,7 +312,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Castor Mapping" effort="0" />
+                    <classification classification="Castor Mapping" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -325,7 +323,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Mule ESB Configuration" effort="0" />
+                    <classification classification="Mule ESB Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -336,7 +334,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Jetty Configuration" effort="0" />
+                    <classification classification="Jetty Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -347,7 +345,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Properties Configuration" effort="0" />
+                    <classification classification="Properties Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -358,7 +356,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Sitemesh Configuration" effort="0" />
+                    <classification classification="Sitemesh Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -369,7 +367,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="RSS File" effort="0" />
+                    <classification classification="RSS File" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -380,80 +378,80 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Apache Axis Configuration" effort="0" />
+                    <classification classification="Apache Axis Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/configuration/appender/@class | /configuration/logger | /log4j:configuration">
-                    <namespace prefix="log4j" uri="http://jakarta.apache.org/log4j/" />
+                    <namespace prefix="log4j" uri="http://jakarta.apache.org/log4j/"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Apache Log4j Configuration" effort="2" />
+                    <classification classification="Apache Log4j Configuration" effort="2"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/bpws:process">
-                    <namespace prefix="bpws" uri="http://schemas.xmlsoap.org/ws/2004/03/business-process/" />
+                    <namespace prefix="bpws" uri="http://schemas.xmlsoap.org/ws/2004/03/business-process/"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="BPEL Process" effort="0" />
+                    <classification classification="BPEL Process" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/scdl:component">
-                    <namespace prefix="scdl" uri="http://www.ibm.com/xmlns/prod/websphere/scdl/6.0.0" />
+                    <namespace prefix="scdl" uri="http://www.ibm.com/xmlns/prod/websphere/scdl/6.0.0"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="IBM Process Server Component" effort="0" />
+                    <classification classification="IBM Process Server Component" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/xmi:XMI/extensionmodel:ExtensionMap">
-                    <namespace prefix="extensionmodel" uri="http:///extensionmodel.ecore" />
-                    <namespace prefix="xmi" uri="http://www.omg.org/XMI" />
+                    <namespace prefix="extensionmodel" uri="http:///extensionmodel.ecore"/>
+                    <namespace prefix="xmi" uri="http://www.omg.org/XMI"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="IBM Process Server Component" effort="0" />
+                    <classification classification="IBM Process Server Component" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/jee:beans">
-                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee" />
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/javaee"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="CDI Configuration" effort="0" />
+                    <classification classification="CDI Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/w3c:grammar">
-                    <namespace prefix="w3c" uri="http://www.w3.org/2001/06/grammar" />
+                    <namespace prefix="w3c" uri="http://www.w3.org/2001/06/grammar"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="W3C Speech Recognition Grammar" effort="0" />
+                    <classification classification="W3C Speech Recognition Grammar" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -464,7 +462,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Apache Ant Task Definition" effort="0" />
+                    <classification classification="Apache Ant Task Definition" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -475,7 +473,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Apache Ant Configuration" effort="0" />
+                    <classification classification="Apache Ant Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -486,7 +484,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="EH Cache Configuration" effort="0" />
+                    <classification classification="EH Cache Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -497,7 +495,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JGroups Configuration" effort="0" />
+                    <classification classification="JGroups Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -508,7 +506,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Infinispan Configuration" effort="0" />
+                    <classification classification="Infinispan Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
@@ -519,20 +517,20 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="JBoss Cache Configuration" effort="0" />
+                    <classification classification="JBoss Cache Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/jee:connector | /j2e:connector">
-                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee" />
-                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/j2ee" />
+                    <namespace prefix="j2e" uri="http://java.sun.com/xml/ns/j2ee"/>
+                    <namespace prefix="jee" uri="http://java.sun.com/xml/ns/j2ee"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Resource Adapter" effort="3" />
+                    <classification classification="Resource Adapter" effort="3"/>
                 </iteration>
             </perform>
         </rule>
@@ -543,65 +541,62 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Checkstyle Configuration" effort="0" />
+                    <classification classification="Checkstyle Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="default" matches="/pmd:ruleset | /pmd">
-                    <namespace prefix="pmd" uri="http://pmd.sf.net/ruleset/1.0.0" />
+                    <namespace prefix="pmd" uri="http://pmd.sf.net/ruleset/1.0.0"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <classification classification="PMD Configuration" effort="0" />
+                    <classification classification="PMD Configuration" effort="0"/>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
                 <xmlfile as="sca" matches="/sca:composite">
-                    <namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0" />
+                    <namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0"/>
                 </xmlfile>
                 <xmlfile as="tibco-soap" matches="//soapbt:binding.soap.service" from="sca">
-                    <namespace prefix="soapbt" uri="http://xsd.tns.tibco.com/amf/models/sca/binding/soap" />
+                    <namespace prefix="soapbt" uri="http://xsd.tns.tibco.com/amf/models/sca/binding/soap"/>
                 </xmlfile>
                 <xmlfile as="tibco-jms" matches="//jmsbt:binding.jms.reference" from="sca">
-                    <namespace prefix="jmsbt" uri="http://xsd.tns.tibco.com/amf/models/sca/bindingtype/jms" />
+                    <namespace prefix="jmsbt" uri="http://xsd.tns.tibco.com/amf/models/sca/bindingtype/jms"/>
                 </xmlfile>
                 <xmlfile as="dataSource" matches="//sca:property[@type='jdbc:JdbcDataSource']" from="sca">
-                    <namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0" />
-                    <namespace prefix="jdbc" uri="http://xsd.tns.tibco.com/amf/models/sharedresource/jdbc" />
+                    <namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0"/>
+                    <namespace prefix="jdbc" uri="http://xsd.tns.tibco.com/amf/models/sharedresource/jdbc"/>
                 </xmlfile>
-                <xmlfile as="jms" matches="//sca:property[@name='JMSConnectionFactory' and @type='jms:JMSConnectionFactory']"
-                    from="sca">
-                    <namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0" />
+                <xmlfile as="jms" matches="//sca:property[@name='JMSConnectionFactory' and @type='jms:JMSConnectionFactory']" from="sca">
+                    <namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0"/>
                 </xmlfile>
                 <xmlfile as="service" matches="//sca:implementation.java/@class" from="sca">
-                    <namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0" />
+                    <namespace prefix="sca" uri="http://www.osoa.org/xmlns/sca/1.0"/>
                 </xmlfile>
             </when>
             <perform>
                 <iteration over="sca">
-                    <classification classification="SCA Configuration" effort="0" />
+                    <classification classification="SCA Configuration" effort="0"/>
                 </iteration>
                 <iteration over="tibco-soap">
-                    <classification classification="Tibco SCA Extension: SOAP Binding" effort="0" />
+                    <classification classification="Tibco SCA Extension: SOAP Binding" effort="0"/>
                 </iteration>
                 <iteration over="tibco-jms">
-                    <classification classification="Tibco SCA Extension: JMS Binding" effort="0" />
+                    <classification classification="Tibco SCA Extension: JMS Binding" effort="0"/>
                     <hint message="abc" effort="0">
-                        <links>
-                            <link uri="deb" description="abc" />
-                        </links>
+                        
                     </hint>
                 </iteration>
                 <iteration over="dataSource">
-                    <classification classification="Data Source" effort="0" />
+                    <classification classification="Data Source" effort="0"/>
                 </iteration>
                 <iteration over="jms">
-                    <classification classification="JMS Listener" effort="0" />
+                    <classification classification="JMS Listener" effort="0"/>
                 </iteration>
                 <iteration over="service">
                     <hint message="Java Service" effort="0">

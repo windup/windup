@@ -4,12 +4,12 @@
         <rule>
             <when>
                 <xmlfile matches="/abc:project" in-file=".*" as="testVariable">
-                    <namespace prefix="abc" uri="http://maven.apache.org/POM/4.0.0" />
+                    <namespace prefix="abc" uri="http://maven.apache.org/POM/4.0.0"/>
                 </xmlfile>
             </when>
             <perform>
             	<iteration over="testVariable">
-                	<xslt of="testVariable_instance" description="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl" />
+                	<xslt of="testVariable_instance" description="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl"/>
                 </iteration>
             </perform>
         </rule>

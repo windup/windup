@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlKnowHowConfig">
     <rules>
         <rule>
@@ -291,8 +291,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:postgres')]"
-                    in=".*-ds.xml">
+                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:postgres')]" in=".*-ds.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -304,8 +303,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:oracle')]"
-                    in=".*-ds.xml">
+                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:oracle')]" in=".*-ds.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -317,8 +315,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default"
-                    matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:sqlserver')]" in=".*-ds.xml">
+                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:sqlserver')]" in=".*-ds.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -450,9 +447,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default"
-                    matches="//jboss/container-configurations/container-configuration[@extends='Standard Stateless SessionBean']"
-                    in="jboss.xml">
+                <xmlfile as="default" matches="//jboss/container-configurations/container-configuration[@extends='Standard Stateless SessionBean']" in="jboss.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -464,9 +459,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default"
-                    matches="//jboss/container-configurations/container-configuration[@extends='Clustered Stateless SessionBean']"
-                    in="jboss.xml">
+                <xmlfile as="default" matches="//jboss/container-configurations/container-configuration[@extends='Clustered Stateless SessionBean']" in="jboss.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -478,47 +471,36 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default"
-                    matches="//jboss/container-configurations/container-configuration[@extends='Standard Message Driven Bean']"
-                    in="jboss.xml">
+                <xmlfile as="default" matches="//jboss/container-configurations/container-configuration[@extends='Standard Message Driven Bean']" in="jboss.xml">
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <hint message="MDB's Bean-specific instance pool can be set with one line in management CLI"
-                        effort="0">
+                    <hint message="MDB's Bean-specific instance pool can be set with one line in management CLI" effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <xmlfile as="default"
-                    matches="//jboss/container-configurations/container-configuration[@extends='Singleton Message Driven Bean']"
-                    in="jboss.xml">
+                <xmlfile as="default" matches="//jboss/container-configurations/container-configuration[@extends='Singleton Message Driven Bean']" in="jboss.xml">
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Singleton Message Driven BeanMDB's Bean-specific instance pool can be set with one line in management CLI"
-                        effort="0">
+                    <hint message="Singleton Message Driven BeanMDB's Bean-specific instance pool can be set with one line in management CLI" effort="0">
                     </hint>
                 </iteration>
             </perform>
         </rule>
         <rule>
             <when>
-                <xmlfile as="default"
-                    matches="//jboss/container-configurations/container-configuration[@extends='Standard Message Inflow Driven Bean']"
-                    in="jboss.xml">
+                <xmlfile as="default" matches="//jboss/container-configurations/container-configuration[@extends='Standard Message Inflow Driven Bean']" in="jboss.xml">
                 </xmlfile>
             </when>
             <perform>
                 <iteration>
-                    <hint
-                        message="Standard Message Inflow Driven Bean's Bean-specific instance pool can be set with one line in management CLI"
-                        effort="0">
+                    <hint message="Standard Message Inflow Driven Bean's Bean-specific instance pool can be set with one line in management CLI" effort="0">
                     </hint>
                 </iteration>
             </perform>

@@ -11,7 +11,7 @@
             <iteration over="testVariable">
             
                 <hint in="testVariable_instance" message="Rule1">
-                    <link href="http://example.com" description="Description from XML Hint Link" />
+                    <link href="http://example.com" description="Description from XML Hint Link"/>
                 </hint>
                 </iteration>
             </perform>
@@ -24,7 +24,7 @@
             </when>
             <perform>
                 <hint message="Rule2">
-                    <link href="http://example.com" description="Description from XML Hint Link" />
+                    <link href="http://example.com" description="Description from XML Hint Link"/>
                 </hint>
             </perform>
         </rule>

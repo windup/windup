@@ -10,35 +10,35 @@
 
         <rule>
             <when>
-                <true />
+                <true/>
             </when>
             <perform>
-                <log message="test log message" />
+                <log message="test log message"/>
             </perform>
         </rule>
 
         <rule>
             <when>
-                <true />
+                <true/>
             </when>
             <perform>
                 <iteration>
                     <when>
-                        <true />
+                        <true/>
                     </when>
                     <perform>
-                        <log message="test {foo} iteration perform" />
+                        <log message="test {foo} iteration perform"/>
                     </perform>
                     <otherwise>
-                        <log message="test {foo} iteration otherwise" />
+                        <log message="test {foo} iteration otherwise"/>
                     </otherwise>
                 </iteration>
             </perform>
             <otherwise>
-                <log message="test rule {foo} otherwise" />
+                <log message="test rule {foo} otherwise"/>
             </otherwise>
             <where param="foo">
-                <matches pattern="\d+" />
+                <matches pattern="\d+"/>
             </where>
         </rule>
 

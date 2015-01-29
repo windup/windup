@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0"?>
 <ruleset xmlns="http://windup.jboss.org/v1/xml" id=" XmlGlassfishConfig">
     <rules>
         <rule>
@@ -8,7 +8,7 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Glassfish Web Descriptor" effort="3" />
+                    <classification classification="Glassfish Web Descriptor" effort="3"/>
                 </iteration>
             </perform>
         </rule>
