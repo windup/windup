@@ -244,8 +244,11 @@ public class WindupCommand implements UICommand
 
             uiProgressMonitor.done();
 
+            // Provide both the report file path and the URL to access it. 
+            String reportName = windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html";
             return Results.success("Windup report created: "
-                        + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html");
+                        + reportName + System.getProperty("line.separator") 
+                        + "              Access it at this URL: file://" + reportName);
         }
     }
 
