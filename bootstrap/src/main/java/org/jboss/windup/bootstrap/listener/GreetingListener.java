@@ -48,6 +48,12 @@ public class GreetingListener implements ContainerLifecycleListener
     }
 
     @Override
+    public void afterStart(Furnace furnace) throws ContainerException
+    {
+        // Do nothing
+    }
+
+    @Override
     public void beforeStop(Furnace forge) throws ContainerException
     {
         // Do nothing
@@ -70,5 +76,4 @@ public class GreetingListener implements ContainerLifecycleListener
     {
         // Do nothing
     }
-
 }

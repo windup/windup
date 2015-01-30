@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.jboss.windup.exec</groupId>
         <artifactId>windup-exec-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>windup-exec</artifactId>
     <name>Windup Engine - Execution API Addon</name>
 
     <dependencies>
-    
+
         <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
@@ -30,19 +31,16 @@
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -61,7 +59,6 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>

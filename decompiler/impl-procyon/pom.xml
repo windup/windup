@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -20,7 +21,7 @@
     </properties>
 
     <dependencies>
-    
+
         <!-- Local Dependencies -->
         <dependency>
             <groupId>org.bitbucket.mstrobel</groupId>
@@ -47,7 +48,6 @@
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
         </dependency>
 
@@ -55,11 +55,11 @@
         <dependency>
             <groupId>org.jboss.windup.decompiler</groupId>
             <artifactId>decompiler-api</artifactId>
-            <version>${project.version}</version>
             <type>test-jar</type>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- Test jar -->
         <dependency>
             <groupId>org.apache.wicket</groupId>
@@ -98,7 +98,6 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>
