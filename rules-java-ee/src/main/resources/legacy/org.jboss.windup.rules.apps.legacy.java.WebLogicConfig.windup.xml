@@ -77,7 +77,8 @@
             </when>
             <perform>
                 <iteration>
-                    <classification classification="Weblogic ApplicationLifecycleListener, proprietary class, must be migrated." effort="3">
+                    <classification classification="Weblogic ApplicationLifecycleListener, proprietary class, must be migrated." effort="8">
+                        <link href="https://access.redhat.com/articles/1326703" description="Migrate Oracle WebLogic Server ApplicationLifecycleListener Code to Red Hat JBoss Enterprise Application Platform 6"/>
                         <link href="http://www.mastertheboss.com/ejb-3/ejb-31-tutorial" description="Master the JBoss Tutorial: EJB 3.1 Tutorial"/>
                         <link href="http://blog.caucho.com/2009/10/06/servlet-30-tutorial-weblistener-webservlet-webfilter-and-webinitparam/" description="Caucho.com Tutorial: ServletContextListener, @WebListener tutorial"/>
                         <link href="http://www.roseindia.net/servlets/servlet3/WebListener_annotation.shtml" description="Rose India Tutorial: ServletContextListener, @WebListener tutorial"/>
@@ -93,7 +94,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="This class is proprietary to Weblogic, remove." effort="2">
+                    <hint message="This class is proprietary to Weblogic, remove." effort="1">
                     </hint>
                 </iteration>
             </perform>
@@ -107,6 +108,7 @@
             <perform>
                 <iteration>
                     <hint message="Use a javax.servlet.ServletContextListener with @javax.annotation.servlet.WebListener, or EJB 3.1 @javax.ejb.Startup @javax.ejb.Singleton service bean." effort="2">
+                        <link href="https://access.redhat.com/articles/1326703" description="Migrate Oracle WebLogic Server ApplicationLifecycleListener Code to Red Hat JBoss Enterprise Application Platform 6"/>
                     </hint>
                 </iteration>
             </perform>
