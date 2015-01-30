@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.xml.condition;
 /**
  * Intermediate step for constructing {@link XmlFile} instances for a specified ref.
  * 
- * @author mbriskar
  */
 public class XmlFileFrom
 {
@@ -18,13 +17,13 @@ public class XmlFileFrom
     /**
      * Set the xpath of this {@link XmlFile}.
      */
-    public XmlFile matchesXpath(String xpath)
+    public XmlFileXpath matchesXpath(String xpath)
     {
         this.xmlFile.setXpath(xpath);
         return this.xmlFile;
     }
 
-    public XmlFile withDTDPublicId(String regex)
+    public XmlFileDTD withDTDPublicId(String regex)
     {
         this.xmlFile.setPublicId(regex);
         return this.xmlFile;

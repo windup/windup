@@ -34,7 +34,7 @@ public interface XsltTransformationModel extends WindupVertexFrame
     public void setSourceLocation(String location);
 
     /**
-     * Contains the suffix of the result file
+     * Contains the suffix of the result file that is going to be added.
      */
     @Property(EXTENSION)
     public String getExtension();

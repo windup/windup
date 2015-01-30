@@ -31,6 +31,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

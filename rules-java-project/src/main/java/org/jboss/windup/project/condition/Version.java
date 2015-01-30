@@ -1,6 +1,11 @@
 package org.jboss.windup.project.condition;
 
-public class Version {
+/**
+ * Object used to specify the version range
+ * @author mbriskar
+ *
+ */
+public class Version{
 
 	private String from;
 	private String to;

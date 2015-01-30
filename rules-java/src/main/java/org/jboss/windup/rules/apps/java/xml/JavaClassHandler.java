@@ -46,9 +46,7 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
     {
         String type = $(element).attr(ATTR_REFERENCES);
         String as = $(element).attr("as");
-        if(as == null) {
-            as = Iteration.DEFAULT_VARIABLE_LIST_STRING;
-        }
+        String from = $(element).attr("from");
         if (StringUtils.isBlank(type))
         {
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + ATTR_REFERENCES + "' attribute");
@@ -61,8 +59,14 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
             TypeReferenceLocation location = handlerManager.processElement(child);
             locations.add(location);
         }
+        JavaClassBuilder javaClassReferences;
+        if(from !=null) {
+            javaClassReferences=JavaClass.from(from).references(type);
+        } else {
+            javaClassReferences = JavaClass.references(type);
+        }
 
-        JavaClassBuilder javaClassReferences = JavaClass.references(type);
+       
         String namePattern = $(element).attr("in");
         if (!StringUtils.isBlank(namePattern))
         {
@@ -71,7 +75,9 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
 
         JavaClassBuilderAt javaClass = javaClassReferences.at(
                     locations.toArray(new TypeReferenceLocation[locations.size()]));
-        javaClass.as(as);
+        if(as !=null) {
+        	javaClass.as(as);
+        }
         return javaClass;
     }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/v1/xml">
+	<javaclass as="testVariable" references="org.apache.commons.{*}" in="{*}File1">
+               <location>METHOD_CALL</location>
+    </javaclass>
+    <javaclass references="org.apache.commons.{*}" >
+               <location>IMPORT</location>
+               <location>METHOD_CALL</location>
+               <location>INHERITANCE</location>
+    </javaclass>
+     <javaclass as="testVariable" in="{*}File1">
+               <location>METHOD_CALL</location>
+    </javaclass>
+</test>
+            

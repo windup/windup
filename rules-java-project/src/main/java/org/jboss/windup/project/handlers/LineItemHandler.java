@@ -7,6 +7,7 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.project.condition.Version;
 import org.jboss.windup.project.operation.LineItem;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
