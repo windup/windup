@@ -1,0 +1,213 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+<xs:schema targetNamespace="http://windup.jboss.org/v1/xml"
+	xmlns="http://windup.jboss.org/v1/xml" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+
+	<!-- CONDITION DEFINITIONS -->
+
+
+	<!-- JavaClass -->
+	<xs:element name="javaclass">
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element type="xs:string" name="location" minOccurs="0" />
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="references" />
+			<xs:attribute type="xs:string" name="as" use="optional" />
+			<xs:attribute type="xs:string" name="from" use="optional" />
+			<xs:attribute type="xs:string" name="in" use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+	<!-- XmlFile -->
+	<xs:element name="xmlfile">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="namespace" maxOccurs="unbounded"
+					minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute type="xs:string" name="prefix" use="optional" />
+								<xs:attribute type="xs:anyURI" name="uri" use="optional" />
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="as" use="optional" />
+			<xs:attribute type="xs:string" name="xpathResultMatch"
+				use="optional" />
+			<xs:attribute type="xs:string" name="matches" use="optional" />
+			<xs:attribute type="xs:string" name="public-id" use="optional" />
+			<xs:attribute type="xs:string" name="in" use="optional" />
+			<xs:attribute type="xs:string" name="from" use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+
+	<!-- Project -->
+	<xs:element name="project">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="artifact">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute type="xs:string" name="groupId" />
+								<xs:attribute type="xs:string" name="artifactId" />
+								<xs:attribute type="xs:string" name="from" />
+								<xs:attribute type="xs:string" name="to" />
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
+	<!-- OPERATION DEFINITIONS -->
+
+	<!-- Classification -->
+	<xs:element name="classification">
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element name="links" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="link" minOccurs="0" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="classification" />
+			<xs:attribute type="xs:byte" name="effort" use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="link">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute type="xs:anyURI" name="href" />
+					<xs:attribute type="xs:string" name="description" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+
+	<!-- Hint -->
+	<xs:element name="hint">
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element name="links" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="link" minOccurs="0" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="message" use="optional" />
+			<xs:attribute type="xs:byte" name="effort" use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+	<!-- XSLT Transformation -->
+	<xs:element name="xslt">
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element name="xslt-parameter" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute type="xs:string" name="property" />
+								<xs:attribute type="xs:string" name="value" />
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="of" use="optional" />
+			<xs:attribute type="xs:string" name="description" use="optional" />
+			<xs:attribute type="xs:string" name="extension" use="optional" />
+			<xs:attribute type="xs:string" name="template" use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+	<!-- Line Hint -->
+	<xs:element name="lineitem">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute type="xs:string" name="message" use="optional" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+
+	<!-- MAIN BUILDING BLOCKS -->
+	<xs:complexType name="when">
+		<!-- Conditions -->
+		<xs:choice maxOccurs="unbounded">
+			<xs:element ref="javaclass" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="xmlfile" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="project" minOccurs="0" maxOccurs="unbounded" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="iteration">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="when" type="when" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="iteration" type="iteration" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xs:element ref="classification" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="hint" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="xslt" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="lineitem" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="otherwise" type="iteration" minOccurs="0"
+				maxOccurs="1" />
+		</xs:choice>
+		<xs:attribute type="xs:string" name="over" />
+		<!-- <xs:attribute type="xs:string" name="as" /> not supported in handler 
+			yet -->
+	</xs:complexType>
+
+
+
+	<xs:complexType name="rule">
+		<xs:sequence>
+			<xs:element name="when" type="when" />
+			<xs:element name="perform">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="iteration" type="iteration"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:any minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:element name="ruleset">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="rules">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="rule" maxOccurs="unbounded"
+								minOccurs="0" type="rule" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="id" />
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
