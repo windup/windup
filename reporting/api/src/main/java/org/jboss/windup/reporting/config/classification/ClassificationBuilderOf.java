@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.config;
+package org.jboss.windup.reporting.config.classification;
 
 /**
  * Intermediate step for constructing {@link Classification} instances for a specified ref.
@@ -17,7 +17,7 @@ public class ClassificationBuilderOf
     /**
      * Set the text of this {@link Classification}. E.g: "Unparsable XML file." or "Source File"
      */
-    public Classification as(String classification)
+    public ClassificationAs as(String classification)
     {
         this.classification.setClassificationText(classification);
         return this.classification;

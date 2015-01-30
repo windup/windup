@@ -34,7 +34,7 @@ public class ParserContext
     private final Map<HandlerId, ElementHandler<?>> handlers = new HashMap<>();
 
     /**
-     * The addon containing the xml file currently being parsed.
+     * The addon containing the xml file currently being parsed. This is needed mainly because of the classloader that loaded the Addon (XSLTTransformation needs it.)
      */
     private Addon addonContainingInputXML;
     /**

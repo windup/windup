@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/v1/xml">
+	<hint effort="5" message="test message" in="testVariable">
+		<link href="someUrl" description="someDescription"/>
+	</hint>
+	
+	<hint message="test-message">
+		<link href="url1" description="description1"/>
+		<link href="url2" description="description2"/>
+		<link href="url3" description="description3"/>
+	</hint>
+	
+	<hint effort="asadsa" message="test message" in="testVariable">
+		<link href="url1" description="description1"/>
+		<link href="url2" description="description2"/>
+		<link href="url3" description="description3"/>
+	</hint>
+	
+</test>
+            

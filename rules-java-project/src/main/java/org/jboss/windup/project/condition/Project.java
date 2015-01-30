@@ -16,11 +16,21 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * Condition used to search the projects based on {@link Artifact} within the graph.
+ * @author mbriskar
+ *
+ */
 public class Project extends GraphCondition
 {
 
     private Artifact artifact;
 
+    /**
+     * Specify the Artifact for which the condition should search for.
+     * @param artifact
+     * @return
+     */
     public static Project dependsOnArtifact(Artifact artifact)
     {
         Project project = new Project();

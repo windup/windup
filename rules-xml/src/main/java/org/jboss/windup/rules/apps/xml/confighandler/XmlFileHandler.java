@@ -13,6 +13,7 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
+import org.jboss.windup.rules.apps.xml.condition.XmlFileXpath;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.NamespaceEntry;
 import org.ocpsoft.rewrite.config.Condition;
@@ -61,14 +62,14 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
             namespaceMappings.put(namespaceEntry.getPrefix(), namespaceEntry.getNamespaceURI());
         }
         
-        XmlFile xmlFile = XmlFile.matchesXpath(xpath);
-        xmlFile.setPublicId(publicId);
+        XmlFileXpath xmlFile = XmlFile.matchesXpath(xpath);
+        xmlFile.andDTDPublicId(publicId);
         for (Map.Entry<String, String> nsMapping : namespaceMappings.entrySet())
         {
             xmlFile.namespace(nsMapping.getKey(), nsMapping.getValue());
         }
         xmlFile.inFile(inFile);
         xmlFile.as(as);
-        return xmlFile;
+        return (XmlFile)xmlFile;
     }
 }

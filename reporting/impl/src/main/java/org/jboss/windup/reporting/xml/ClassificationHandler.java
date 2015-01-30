@@ -9,8 +9,9 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
-import org.jboss.windup.reporting.config.Classification;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.config.classification.Classification;
+import org.jboss.windup.reporting.config.classification.ClassificationAs;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -41,9 +42,13 @@ public class ClassificationHandler implements ElementHandler<Classification>
                         "Error, 'classification' element must have a non-empty 'classification' attribute (eg, 'Mule ESB Transformer')");
         }
         String description = $(element).attr("description");
+        String of = $(element).attr("of");
         String effortStr = $(element).attr("effort");
 
-        Classification classification = Classification.as(classificationStr);
+        Classification classification = (Classification)Classification.as(classificationStr);
+        if(of !=null) {
+        	classification.setVariableName(of);
+        }
         if (!StringUtils.isBlank(effortStr))
         {
             try
@@ -67,7 +72,6 @@ public class ClassificationHandler implements ElementHandler<Classification>
             Link link = handlerManager.processElement(child);
             classification.with(link);
         }
-
         return classification;
     }
 }

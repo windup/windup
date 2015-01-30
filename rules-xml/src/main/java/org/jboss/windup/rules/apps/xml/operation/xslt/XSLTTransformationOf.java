@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.xml.operation.xslt;
 
-import org.jboss.windup.reporting.config.Classification;
+import org.jboss.windup.reporting.config.classification.Classification;
 
 
 /**
@@ -17,26 +17,37 @@ public class XSLTTransformationOf
         this.transformation = new XSLTTransformation(variable);
     }
     
-    public XSLTTransformation usingFilesystem(String location)
+    /**
+     * Specify the location of the template xslt file.
+     * @param location
+     * @return
+     */
+    public XSLTTransformationFileSystem usingFilesystem(String location)
     {
-        transformation.setSourceLocation(location);
+        transformation.setTemplate(location);
         return transformation;
     }
     
-    public  XSLTTransformation using(String location, ClassLoader classLoader)
+    /**
+     * Specify the relative location of the xslt file along with the classloader
+     * @param location Location of the xslt file
+     * @param classLoader ClassLoader in which the engine should load the location
+     * @return
+     */
+    public  XSLTTransformationLocation using(String location, ClassLoader classLoader)
     {
         // classLoader instance needed to see the file passed in the location
         transformation.setContextClassLoader(classLoader);
-        transformation.setSourceLocation(location);
+        transformation.setTemplate(location);
         return transformation;
     }
 
     /**
      * Set the text of this {@link Classification}. E.g: "Unparsable XML file." or "Source File"
      */
-    public XSLTTransformation using(String location)
+    public XSLTTransformationLocation using(String location)
     {
-        this.transformation.setSourceLocation(location);
+        this.transformation.setTemplate(location);
         return this.transformation;
     }
 }

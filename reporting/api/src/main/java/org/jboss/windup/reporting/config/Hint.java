@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends ParameterizedIterationOperation<FileLocationModel>
+public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink
 {
     private static final Logger log = Logger.getLogger(Hint.class.getName());
 
@@ -47,10 +47,9 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>
     }
 
     /**
-     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be
-     * displayed in the report.
+     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be displayed in the report.
      */
-    public static Hint withText(String text)
+    public static HintText withText(String text)
     {
         Assert.notNull(text, "Hint text must not be null.");
         Hint hint = new Hint();
@@ -84,19 +83,15 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>
         log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this + "] ");
     }
 
-    /**
-     * Specify the effort or content to be displayed in the report.
-     */
+    @Override
     public OperationBuilder withEffort(int effort)
     {
         this.effort = effort;
         return this;
     }
 
-    /**
-     * Add a {@link Link} to this {@link Hint}.
-     */
-    public Hint with(Link link)
+    @Override
+    public HintLink with(Link link)
     {
         this.links.add(link);
         return this;
@@ -120,6 +115,21 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>
         if (links != null && !links.isEmpty())
             result.append(".with(" + links + ")");
         return result.toString();
+    }
+
+    public RegexParameterizedPatternParser getHintText()
+    {
+        return hintTextPattern;
+    }
+
+    public int getEffort()
+    {
+        return effort;
+    }
+
+    public List<Link> getLinks()
+    {
+        return links;
     }
 
     @Override

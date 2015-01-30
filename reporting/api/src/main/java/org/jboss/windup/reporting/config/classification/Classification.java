@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.config;
+package org.jboss.windup.reporting.config.classification;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +14,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.LinkModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
@@ -27,7 +28,8 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class Classification extends ParameterizedIterationOperation<FileModel>
+public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
+            ClassificationDescription, ClassificationLink
 {
     private static final Logger log = Logger.getLogger(Classification.class.getName());
 
@@ -47,9 +49,8 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     }
 
     /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it.
-     * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a
-     * model referencing it.
+     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it. This is mainly to simplify the
+     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
      * 
      */
     @Override
@@ -78,7 +79,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     /**
      * Set the description of this {@link Classification}.
      */
-    public Classification withDescription(String description)
+    public ClassificationDescription withDescription(String description)
     {
         this.descriptionPattern = new RegexParameterizedPatternParser(description);
         return this;
@@ -87,7 +88,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     /**
      * Add a {@link Link} to this {@link Classification}.
      */
-    public Classification with(Link link)
+    public ClassificationLink with(Link link)
     {
         this.links.add(link);
         return this;
@@ -102,7 +103,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     /**
      * Classify the current {@link FileModel} as the given text.
      */
-    public static Classification as(String classification)
+    public static ClassificationAs as(String classification)
     {
         Assert.notNull(classification, "Classification text must not be null.");
         Classification result = new Classification();
@@ -114,8 +115,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
     public void performParameterized(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
         /*
-         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't
-         * want to add another.
+         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
          */
         String description = null;
         if (descriptionPattern != null)
@@ -179,6 +179,26 @@ public class Classification extends ParameterizedIterationOperation<FileModel>
         if (links != null && !links.isEmpty())
             result.append(".with(" + links + ")");
         return result.toString();
+    }
+
+    public List<Link> getLinks()
+    {
+        return links;
+    }
+
+    public RegexParameterizedPatternParser getClassificationPattern()
+    {
+        return classificationPattern;
+    }
+
+    public RegexParameterizedPatternParser getDescriptionPattern()
+    {
+        return descriptionPattern;
+    }
+
+    public int getEffort()
+    {
+        return effort;
     }
 
     @Override
