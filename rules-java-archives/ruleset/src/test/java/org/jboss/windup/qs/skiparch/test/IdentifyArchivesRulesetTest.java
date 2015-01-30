@@ -87,7 +87,7 @@ public class IdentifyArchivesRulesetTest
     @Inject
     private GraphContextFactory contextFactory;
 
-    @Test @Ignore
+    @Test
     public void testJarsAreIdentified()
     {
         try (GraphContext grCtx = contextFactory.create())
