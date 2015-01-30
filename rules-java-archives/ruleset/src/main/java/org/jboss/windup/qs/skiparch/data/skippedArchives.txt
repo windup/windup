@@ -1,0 +1,2 @@
+org.apache.commons.*:*:*
+org.hibernate.*:hibernate-core:3.*~4.*

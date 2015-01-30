@@ -1,0 +1,10 @@
+# G exact match
+org.jboss.windup:*:*:*
+# G prefix
+org.apache.commons.*:*:*
+# A prefix
+org.jboss.bar:bar-*:*:*
+# Version
+org.freemarker.foo:freemarker-core:3.1
+# Version range
+org.hibernate.*:hibernate-core:3.*~4.*

@@ -1,0 +1,1 @@
+11856de4eeea74ce134ef3f910ff8d6f989dab2e org.jboss.windup:windup-bootstrap:2.0.0.Beta7:
