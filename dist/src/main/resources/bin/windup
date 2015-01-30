@@ -181,7 +181,7 @@ if [ -z "$WINDUP_OPTS" ] ; then
   fi
 fi
 
-windup_exec_cmd="\"$JAVACMD\" $WINDUP_DEBUG_ARGS $WINDUP_OPTS \"-Dforge.standalone=true\" \"-Dforge.home=${WINDUP_HOME}\" \
+windup_exec_cmd="\"$JAVACMD\" $WINDUP_DEBUG_ARGS $WINDUP_OPTS \"-Dforge.standalone=true\" \"-Dforge.home=${WINDUP_HOME}\" \"-Dwindup.home=${WINDUP_HOME}\" \
    -cp \"${WINDUP_HOME}/lib/*\" $WINDUP_MAIN_CLASS"
 
 eval $windup_exec_cmd "$QUOTED_ARGS" "$ADDONS_DIR"

@@ -181,7 +181,7 @@ if "%WINDUP_OPTS%" == "" (
   set WINDUP_OPTS_INTERNAL=%WINDUP_OPTS%
 )
 
-%WINDUP_JAVA_EXE% %WINDUP_DEBUG_ARGS% %WINDUP_OPTS_INTERNAL% "-Dforge.standalone=true" "-Dforge.home=%WINDUP_HOME%" ^
+%WINDUP_JAVA_EXE% %WINDUP_DEBUG_ARGS% %WINDUP_OPTS_INTERNAL% "-Dforge.standalone=true" "-Dforge.home=%WINDUP_HOME%" "-Dwindup.home=%WINDUP_HOME%" ^
    -cp ".;%WINDUP_HOME%\lib\*" %WINDUP_MAIN_CLASS% %WINDUP_CMD_LINE_ARGS% %ADDONS_DIR%
 if ERRORLEVEL 1 goto error
 goto end

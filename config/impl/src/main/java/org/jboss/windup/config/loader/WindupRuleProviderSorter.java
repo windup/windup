@@ -22,7 +22,7 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
  * Sorts {@link WindupRuleProvider}s based upon their executeBefore/executeAfter methods.
  *
  * @author jsightler <jesse.sightler@gmail.com>
- * @author Ondrej Zizka <zizka@seznam.cz>
+ * @author Ondrej Zizka <zizka@seznam.com>
  */
 public class WindupRuleProviderSorter
 {

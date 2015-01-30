@@ -69,4 +69,4 @@ public class NodeTypeChangeTest
         return "Person name: " + p.getName() + " " + p.getClass().getSimpleName();
     }
 
-}// class
+}

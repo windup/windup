@@ -49,7 +49,7 @@ public class FileMappingGraphChangedListener implements GraphChangedListener
                         {
                             GraphService.addTypeToModel(event.getGraphContext(), model, type);
                         }
-                        LOG.info("Mapped file [" + model.getFilePath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
+                        LOG.fine("Mapped file [" + model.getFilePath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
                                     + "] types: " + types);
                     }
                 }

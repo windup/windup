@@ -184,6 +184,22 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- Windup Rules - Java - Projects -->
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>rules-java-projects</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Windup Rules - Java - Archives -->
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>rules-java-archives</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- Windup Rules - XML - Basic -->
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>

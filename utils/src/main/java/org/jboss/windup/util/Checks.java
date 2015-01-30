@@ -39,7 +39,6 @@ public class Checks
             throw new IllegalArgumentException(dirDesc + " is a file, expected a directory: " + rootDir.getPath());
     }
 
-
     /**
      * Throws if the given file is null, is not a file or directory, or is an empty directory.
      */
@@ -51,19 +50,19 @@ public class Checks
             throw new IllegalArgumentException(fileDesc + " does not exist: " + fileOrDir.getAbsolutePath());
         if (!(fileOrDir.isDirectory() || fileOrDir.isFile()))
             throw new IllegalArgumentException(fileDesc + " must be a file or a directory: " + fileOrDir.getPath());
-        if (fileOrDir.isDirectory()){
-            if(fileOrDir.list().length == 0)
-            throw new IllegalArgumentException(fileDesc + " is an empty directory: " + fileOrDir.getPath());
+        if (fileOrDir.isDirectory())
+        {
+            if (fileOrDir.list().length == 0)
+                throw new IllegalArgumentException(fileDesc + " is an empty directory: " + fileOrDir.getPath());
         }
     }
-
 
     /**
      * Returns true if the iterable contains at least one item.
      */
-    public static boolean checkNotEmpty(Iterable iterable)
+    public static boolean checkNotEmpty(Iterable<?> iterable)
     {
         return iterable.iterator().hasNext();
     }
 
-}// class
+}

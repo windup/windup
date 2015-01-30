@@ -7,22 +7,22 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("ArchiveModel")
+@TypeValue(ArchiveModel.TYPE)
 public interface ArchiveModel extends FileModel
 {
-    public static String MALFORMED_ARCHIVE= "Malformed archive";
-    
-    
+    public static String TYPE = "ArchiveModel:";
+    public static String ARCHIVE_NAME = TYPE + "archiveName";
+
     @Adjacency(label = "parentArchive", direction = Direction.IN)
     public ArchiveModel getParentArchive();
 
     @Adjacency(label = "parentArchive", direction = Direction.IN)
     public void setParentArchive(ArchiveModel resource);
 
-    @Property("archiveName")
+    @Property(ARCHIVE_NAME)
     public String getArchiveName();
 
-    @Property("archiveName")
+    @Property(ARCHIVE_NAME)
     public void setArchiveName(String archiveName);
 
     @Adjacency(label = "childArchive", direction = Direction.OUT)
