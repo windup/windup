@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <test xmlns="http://windup.jboss.org/v1/xml">
-	<xmlfile in-file=".*" as="testVariable" public-id="public" matches="/abc:project">
+	<xmlfile in=".*" as="testVariable" public-id="public" matches="/abc:project">
        <namespace prefix="abc" uri="http://maven.apache.org/POM/4.0.0" />
 	</xmlfile>
 	
