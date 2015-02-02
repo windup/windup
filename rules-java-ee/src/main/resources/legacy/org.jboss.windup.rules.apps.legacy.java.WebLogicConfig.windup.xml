@@ -147,7 +147,16 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Requires migration effort" effort="1">
+                    <hint effort="1">
+                        <message>
+                            <![CDATA[
+                                Migrate the NonCatalogLogger to Apache Log4j.
+
+                                ```java
+                                Logger LOG = Logger.getLog("Example");
+                                ```
+                        ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>

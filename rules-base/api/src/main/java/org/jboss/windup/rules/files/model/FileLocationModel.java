@@ -2,7 +2,10 @@ package org.jboss.windup.rules.files.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -22,47 +25,62 @@ public interface FileLocationModel extends FileReferenceModel
      * Set the line number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
      */
     @Property(LINE_NUMBER)
-    public void setLineNumber(int lineNumber);
+    void setLineNumber(int lineNumber);
 
     /**
      * Get the line number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
      */
     @Property(LINE_NUMBER)
-    public int getLineNumber();
+    int getLineNumber();
 
     /**
      * Set the column number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
      */
     @Property(COLUMN_NUMBER)
-    public void setColumnNumber(int startPosition);
+    void setColumnNumber(int startPosition);
 
     /**
      * Get the column number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
      */
     @Property(COLUMN_NUMBER)
-    public int getColumnNumber();
+    int getColumnNumber();
 
     /**
      * Set the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel} .
      */
     @Property(LENGTH)
-    public void setLength(int length);
+    void setLength(int length);
 
     /**
      * Get the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel} .
      */
     @Property(LENGTH)
-    public int getLength();
+    int getLength();
 
     /**
      * Gets the snippit referenced by this {@link FileLocationModel}.
      */
     @Property(SOURCE_SNIPPIT)
-    public void setSourceSnippit(String source);
+    void setSourceSnippit(String source);
 
     /**
      * Sets the snippit referenced by this {@link FileLocationModel}.
      */
     @Property(SOURCE_SNIPPIT)
-    public String getSourceSnippit();
+    String getSourceSnippit();
+
+    /**
+     * Gets a human readable description of the location in the file
+     */
+    @JavaHandler
+    String getDescription();
+
+    abstract class Impl implements FileLocationModel, JavaHandlerContext<Vertex>
+    {
+        @Override
+        public String getDescription()
+        {
+            return getSourceSnippit();
+        }
+    }
 }

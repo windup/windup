@@ -58,15 +58,14 @@ public class ReportService extends GraphService<ReportModel>
     }
 
     /**
-     * Gets a unique filename (that has not been used before in the output folder) for this report and sets it on the
-     * report model.
+     * Gets a unique filename (that has not been used before in the output folder) for this report and sets it on the report model.
      */
     public void setUniqueFilename(ReportModel model, String baseFilename, String extension)
     {
-        String filename = WindupPathUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
+        String filename = WindupPathUtil.cleanFileName(baseFilename) + "." + extension;
 
         // FIXME this looks nasty
-        for (int i = 1; usedFilenames.contains(filename.toString()); i++)
+        while (usedFilenames.contains(filename.toString()))
         {
             filename = WindupPathUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
         }

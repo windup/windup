@@ -25,6 +25,11 @@
             <artifactId>joox</artifactId>
             <version>1.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.pegdown</groupId>
+            <artifactId>pegdown</artifactId>
+            <version>1.4.2</version>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>

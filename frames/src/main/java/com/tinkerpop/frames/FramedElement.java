@@ -65,15 +65,22 @@ public class FramedElement implements InvocationHandler {
 
     public Object invoke(final Object proxy, final Method originalMethod, final Object[] arguments) {
         Method method = null;
+        Class<?> methodInterface = null;
         
         // try to find the method on one of the proxy's interfaces
         // (the passed in Method is often from a superclass or from the {@link Proxy} object itself,
         //  so we need to make sure we find the method that the user actually intended)
         for (Class<?> c : proxy.getClass().getInterfaces()) {
+            if (method != null && c.isAssignableFrom(methodInterface)) {
+        	// don't search this class if we already have found a method from a subclass of it
+        	continue;
+            }
+            
             for (Method interfaceMethod : c.getMethods()) {
                 if (compareMethods(originalMethod, interfaceMethod)) {
                     if (interfaceMethod.getAnnotations().length > 0) {
                 	method = interfaceMethod;
+                	methodInterface = c;
                     }
                     break;
                 }

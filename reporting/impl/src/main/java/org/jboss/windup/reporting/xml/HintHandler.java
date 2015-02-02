@@ -5,6 +5,7 @@ import static org.joox.JOOX.$;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
@@ -36,6 +37,8 @@ import org.w3c.dom.Element;
  * &lt;/hint&gt;
  * </pre>
  * 
+ * Also note that markdown formatting is fully supported via the <a href="http://www.pegdown.org/">Pegdown</a> library.
+ * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
 @NamespaceElementHandler(elementName = "hint", namespace = "http://windup.jboss.org/v1/xml")
@@ -50,14 +53,18 @@ public class HintHandler implements ElementHandler<Hint>
 
         if (StringUtils.isBlank(message))
         {
+            StringBuilder messageBuilder = new StringBuilder();
             List<Element> children = $(element).children().get();
             for (Element child : children)
             {
                 if (child.getNodeName().equals("message"))
                 {
-                    message = handlerManager.processElement(child);
+                    messageBuilder.append(handlerManager.processElement(child));
                 }
             }
+            message = messageBuilder.toString();
+            // remove the leading spaces as these can mess with markdown formatting
+            message = trimLeadingAndTrailingSpaces(message);
         }
 
         if (StringUtils.isBlank(message))
@@ -90,6 +97,36 @@ public class HintHandler implements ElementHandler<Hint>
                 hint.with(link);
             }
         }
-        return (Hint)hint;
+        return (Hint) hint;
+    }
+
+    private String trimLeadingAndTrailingSpaces(String markdown)
+    {
+        String lines[] = markdown.split("\\r?\\n");
+        StringBuilder markdownSB = new StringBuilder();
+
+        StringBuilder currentLine = new StringBuilder();
+        for (int i = 0; i < markdown.length(); i++)
+        {
+            char currentChar = markdown.charAt(i);
+            if (currentChar == '\r' || currentChar == '\n')
+            {
+                markdownSB.append(currentLine.toString().trim()).append(SystemUtils.LINE_SEPARATOR);
+                currentLine.setLength(0);
+
+                // skip the next line separator for \r\n cases
+                if (currentChar == '\r' && markdown.length() > (i + 1) && markdown.charAt(i + 1) == '\n')
+                {
+                    i++;
+                }
+            }
+            else
+            {
+                currentLine.append(currentChar);
+            }
+        }
+        markdownSB.append(currentLine);
+
+        return markdownSB.toString();
     }
 }
