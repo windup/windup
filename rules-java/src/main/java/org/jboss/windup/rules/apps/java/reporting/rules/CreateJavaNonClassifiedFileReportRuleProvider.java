@@ -71,6 +71,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends WindupRulePro
         applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Unclassified Files");
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-question-sign");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
