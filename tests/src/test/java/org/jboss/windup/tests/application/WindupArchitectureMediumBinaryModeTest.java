@@ -14,10 +14,12 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.java.ip.CreateStaticIPAddressReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
+import org.jboss.windup.testutil.html.TestStaticIPReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,6 +96,29 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         Assert.assertTrue(warManifestFound);
     }
 
+    private void validateStaticIPReport(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateStaticIPAddressReportRuleProvider.TEMPLATE_REPORT);
+        TestStaticIPReportUtil util = new TestStaticIPReportUtil();
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+        Assert.assertTrue(util
+                    .checkStaticIPInReport(
+                                "Windup1x-javaee-example.war/WEB-INF/lib/wicket-core-1.5.10.jar/org/apache/wicket/protocol/http/mock/MockHttpServletRequest.java",
+                                "Line Number 139, Column Number 25", "127.0.0.1"));
+        Assert.assertTrue(util
+                    .checkStaticIPInReport(
+                                "Windup1x-javaee-example.war/WEB-INF/lib/wicket-core-1.5.10.jar/org/apache/wicket/protocol/http/mock/MockHttpServletRequest.java",
+                                "Line Number 652, Column Number 16", "127.0.0.1"));
+        Assert.assertTrue(util
+                    .checkStaticIPInReport(
+                                "Windup1x-javaee-example.war/WEB-INF/lib/wicket-core-1.5.10.jar/org/apache/wicket/protocol/http/mock/MockHttpServletRequest.java",
+                                "Line Number 655, Column Number 16", "127.0.0.1"));
+    }
+
     /**
      * Validate that the report pages were generated correctly
      */
@@ -112,5 +137,6 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         util.checkFilePathEffort("Windup1x-javaee-example.war", "META-INF/maven/javaee/javaee/pom.properties", 0);
         util.checkFilePathEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar",
                     "org.joda.time.tz.DateTimeZoneBuilder", 32);
+        validateStaticIPReport(context);
     }
 }

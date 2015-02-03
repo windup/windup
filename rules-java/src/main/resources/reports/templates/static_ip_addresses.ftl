@@ -9,14 +9,14 @@
 
 <#macro staticIpFileRenderer reportModel>
     <div class="panel panel-primary">
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered" id="staticIPTable">
             <tr>
                 <th>Path</th>
                 <th>Location</th>
 				<th>IP Address</th>
             </tr>
 
-            <#list reportModel.staticIPLocations.iterator() as staticIpRef>
+            <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
             <tr>
                 <td> <#if staticIpRef.file.prettyPath?has_content> ${staticIpRef.file.prettyPath} </#if> </td>
                 <td> <#if staticIpRef.lineNumber?has_content>Line Number ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Column Number ${staticIpRef.columnNumber} </#if> </td>
