@@ -11,7 +11,6 @@
     <div class="panel panel-primary">
         <table class="table table-striped table-bordered">
             <tr>
-                <th>File</th>
                 <th>Path</th>
                 <th>Location</th>
 				<th>IP Address</th>
@@ -19,8 +18,7 @@
 
             <#list reportModel.staticIPLocations.iterator() as staticIpRef>
             <tr>
-                <td> <#if staticIpRef.file.fileName?has_content> ${staticIpRef.file.fileName} </#if> </td>
-                <td> <#if staticIpRef.file.filePath?has_content> ${staticIpRef.file.filePath} </#if> </td>
+                <td> <#if staticIpRef.file.prettyPath?has_content> ${staticIpRef.file.prettyPath} </#if> </td>
                 <td> <#if staticIpRef.lineNumber?has_content>Line Number ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Column Number ${staticIpRef.columnNumber} </#if> </td>
 				<td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>
             </tr>
