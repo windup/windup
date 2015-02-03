@@ -9,10 +9,12 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.WindupRuleMetadata;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.ServiceLogger;
 import org.ocpsoft.rewrite.bind.Evaluation;
@@ -53,17 +55,41 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         return build(context, ruleProviderFilter);
     }
 
+    /**
+     * Prints all of the {@link RulePhase} objects in the order that they should execute. This is primarily for debug purposes and should be called
+     * before the entire {@link WindupRuleProvider} list is sorted, as this will allow us to print the {@link RulePhase} list without the risk of
+     * user-introduced cycles making the sort impossible.
+     */
+    private void printRulePhases(List<WindupRuleProvider> allProviders)
+    {
+        List<WindupRuleProvider> unsortedPhases = new ArrayList<>();
+        for (WindupRuleProvider provider : allProviders)
+        {
+            if (provider instanceof RulePhase)
+                unsortedPhases.add(provider);
+        }
+        List<WindupRuleProvider> sortedPhases = WindupRuleProviderSorter.sort(unsortedPhases);
+        StringBuilder rulePhaseSB = new StringBuilder();
+        for (WindupRuleProvider phase : sortedPhases)
+        {
+            Class<?> unproxiedClass = Proxies.unwrap(phase).getClass();
+            rulePhaseSB.append("Phase: ").append(unproxiedClass.getSimpleName()).append("\n");
+        }
+        LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
+    }
+
     private List<WindupRuleProvider> getProviders(GraphContext context)
     {
-        List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
+        List<WindupRuleProvider> unsortedProviders = new ArrayList<>();
         for (WindupRuleProviderLoader loader : loaders)
         {
-            allProviders.addAll(loader.getProviders(context));
+            unsortedProviders.addAll(loader.getProviders(context));
         }
+        printRulePhases(unsortedProviders);
 
-        List<WindupRuleProvider> providers = WindupRuleProviderSorter.sort(allProviders);
-        ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, providers);
-        return Collections.unmodifiableList(providers);
+        List<WindupRuleProvider> sortedProviders = WindupRuleProviderSorter.sort(unsortedProviders);
+        ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, sortedProviders);
+        return Collections.unmodifiableList(sortedProviders);
     }
 
     private WindupRuleMetadata build(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
@@ -79,7 +105,7 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
             if (ruleProviderFilter != null)
             {
                 boolean accepted = ruleProviderFilter.accept(provider);
-                LOG.info( (accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleProviderFilter + "]");
+                LOG.info((accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleProviderFilter + "]");
                 if (!accepted)
                     continue;
             }
