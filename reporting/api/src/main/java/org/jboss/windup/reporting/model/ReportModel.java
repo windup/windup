@@ -30,6 +30,7 @@ public interface ReportModel extends WindupVertexFrame
     public static final String TEMPLATE_TYPE = "templateType";
     public static final String TEMPLATE_PATH = "templatePath";
     public static final String REPORT_FILENAME = "reportFilename";
+    public static final String REPORT_ICON_CLASS = "reportIconClass";
     public static final String REPORT_NAME = "reportName";
     public static final String REPORT_SUBDIRECTORY = "reportSubdirectory";
 
@@ -80,6 +81,22 @@ public interface ReportModel extends WindupVertexFrame
     @Property(TEMPLATE_TYPE)
     public TemplateType getTemplateType();
 
+
+    /**
+     * CSS Class for the Report Icon
+     * @return
+     */
+    @Property(REPORT_ICON_CLASS)
+    public String getReportIconClass();
+
+    /**
+     * CSS Class for the Report Icon
+     * @param reportName
+     */
+    @Property(REPORT_ICON_CLASS)
+    public void setReportIconClass(String reportName);
+
+    
     /**
      * The parent report... this could be the root (index) or another level of summary report.
      * 

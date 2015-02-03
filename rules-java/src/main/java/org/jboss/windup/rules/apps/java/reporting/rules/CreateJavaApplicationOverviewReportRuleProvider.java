@@ -73,6 +73,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends WindupRuleP
         applicationReportModel.setReportPriority(100);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName(OVERVIEW);
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-home");
         applicationReportModel.setMainApplicationReport(true);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);

@@ -12,10 +12,9 @@ div.leftColumn {
     float: right;
 }
 
-div.inline-comment-body p:first-child, ul:first-child, ol:first-child {
+div.inline-comment-body p:first-child, div.inline-comment-body ul:first-child, div.inline-comment-body ol:first-child {
        padding-top:0;
 }
-
 
 div.windupHighLevel {
 	overflow: hidden;
