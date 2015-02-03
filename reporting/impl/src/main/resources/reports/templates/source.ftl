@@ -16,102 +16,105 @@
 	  <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
   </head>
   <body role="document">
-    
-    <div class="container-fluid" role="main">
-        <div class="row">
-          <div class="page-header page-header-no-border">
-            <h1>
-              Source Report
-              <span class="slash">/</span>
-              <small style="margin-left: 20px; font-weight: 100;">${reportModel.sourceFileModel.prettyPath}</small>
-            </h1>
-            <div class="navbar navbar-default">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-            </div>
-            <div class="navbar-collapse collapse navbar-responsive-collapse">
-	     <ol class="breadcrumb top-menu">
-		<li><a href="../index.html">All Applications</a></li>
-			<#include "include/breadcrumbs.ftl">
-	     </ol> 
-            </div>
-            <div class="navbar-collapse collapse navbar-responsive-collapse">
-              <ul class="nav navbar-nav">
-                <#include "include/navbar.ftl">
-              </ul>
-            </div><!-- /.nav-collapse -->
-            </div>
-          </div>
-        </div>
-    </div>
-
-
-
-    <div class="container-fluid theme-showcase" role="main">
-
-  <#if reportModel.sourceFileModel.classificationModels.iterator()?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
-    <div class="panel panel-default">
-    	<div class="panel-heading">Information</div>
-    	<div class="panel-body">
-	        <ul>
-	          <li>Estimated Story Points: ${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</li>
-	          <#if getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
-		          <li>
-		            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
-	              		<span class="label label-info">${techTag.name}</span>
-	            	</#list>
-	              </li>
-	          </#if>
-            </ul>
-        
-            <ul>
-              <#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
-	        <#if classificationLineItem.classification??>
-	            <li>
-					${classificationLineItem.classification!""}
-					<#if classificationLineItem.description??>
-						- ${classificationLineItem.description!""}
-					</#if>
-					<#if classificationLineItem.links??>
-					<ul>
-						<#list classificationLineItem.links.iterator() as link>
-							<li>
-								<a href='${link.link}'>${link.description}</a>
-							</li>
-						</#list>
-					</ul>
-				</li>
-			</#if>
-	        <#else>
-	            <#list classificationLineItem.links.iterator() as link>
-					<li>
-						<#if link.description??>
-						 <a href='${link.link}'>${link.description}</a>
-						<#else>
-						<a href='${link.link}'>${link.link}</a>
-					       </#if>
-
-					</li>
-				</#list>	
-	        </#if>
-              </#list>
-            </ul>
+	    
+	<div class="navbar navbar-default navbar-fixed-top">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
 		</div>
-      </div>
-    </#if>  
-    
-    
-
-	<pre id='source'><#t><#rt>
-		${reportModel.sourceBody?html}<#t><#rt>
-	</pre><#t><#rt>
+		<div class="navbar-collapse collapse navbar-responsive-collapse">
+			<ul class="nav navbar-nav">
+				<#include "include/navbar.ftl">
+			</ul>
+		</div><!-- /.nav-collapse -->
+	</div>
 	
-    </div> <!-- /container -->
+	
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<div class="page-header page-header-no-border">
+				<h1>Source Report<span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.sourceFileModel.prettyPath}</small></h1>
+			</div>
+		</div>
+		
+		<div class="row">
+			<!-- Breadcrumbs -->
+			<div class="container-fluid">
+				<ol class="breadcrumb top-menu">
+					<li><a href="../index.html">All Applications</a></li>
+					<#include "include/breadcrumbs.ftl">
+				</ol> 
+			</div>
+			<!-- / Breadcrumbs -->
+		</div>
 
+
+		<div class="row">
+    		<div class="container-fluid theme-showcase" role="main">
+
+			  <#if reportModel.sourceFileModel.classificationModels.iterator()?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
+			    <div class="panel panel-default">
+			    	<div class="panel-heading">Information</div>
+			    	<div class="panel-body">
+				        <ul>
+				          <li>Estimated Story Points: ${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</li>
+				          <#if getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
+					          <li>
+					            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
+				              		<span class="label label-info">${techTag.name}</span>
+				            	</#list>
+				              </li>
+				          </#if>
+			            </ul>
+			        
+			            <ul>
+			              <#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
+				        <#if classificationLineItem.classification??>
+				            <li>
+								${classificationLineItem.classification!""}
+								<#if classificationLineItem.description??>
+									- ${classificationLineItem.description!""}
+								</#if>
+								<#if classificationLineItem.links??>
+								<ul>
+									<#list classificationLineItem.links.iterator() as link>
+										<li>
+											<a href='${link.link}'>${link.description}</a>
+										</li>
+									</#list>
+								</ul>
+							</li>
+						</#if>
+				        <#else>
+				            <#list classificationLineItem.links.iterator() as link>
+								<li>
+									<#if link.description??>
+									 <a href='${link.link}'>${link.description}</a>
+									<#else>
+									<a href='${link.link}'>${link.link}</a>
+								       </#if>
+
+								</li>
+							</#list>	
+				        </#if>
+			              </#list>
+			            </ul>
+					</div>
+			      </div>
+			    </#if>  
+    
+    
+
+				<pre id='source'><#t><#rt>
+					${reportModel.sourceBody?html}<#t><#rt>
+				</pre><#t><#rt>
+	
+    		</div> <!-- /container -->
+    	</div><!-- /row-->
+    </div><!-- /container main-->
     <script src="resources/js/jquery-1.7.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
     
@@ -121,7 +124,7 @@
 	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.java-manifest.js'></script>
 	<script type='text/javascript' src='resources/libraries/sausage/jquery.sausage.min.js'></script>
 
-    
+
 	    
 	<script type='text/javascript'>
 		$(document).ready(function(){
