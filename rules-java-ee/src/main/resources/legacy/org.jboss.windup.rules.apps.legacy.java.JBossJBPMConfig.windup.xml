@@ -516,7 +516,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.getVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+    
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.getVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -529,7 +541,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.setVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                                
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.setVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -542,7 +566,17 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                                
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -555,7 +589,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.getVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                                
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.getVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -568,7 +614,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.setVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                                
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.setVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -581,7 +639,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.getVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                                
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.getVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -594,7 +664,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.setVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.setVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -607,7 +689,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.getVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                                
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.getVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -633,7 +727,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.setVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                        
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.setVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -672,7 +778,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.setVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                    
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.setVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -698,7 +816,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.getVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                    
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.getVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -711,7 +841,19 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Migrate to jBPM 5: org.drools.runtime.process.ProcessContext&#10;&#10;            ```java&#10;            ProcessContext kcontext = new ProcessContext(ksession);&#10;            WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());&#10;            kcontext.setProcessInstance(processInstance);&#10;            kcontext.setVariable(...);&#10;            ```&#10;        ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Migrate to jBPM 5: org.drools.runtime.process.ProcessContext
+                    
+                                ```java
+                                ProcessContext kcontext = new ProcessContext(ksession);
+                                WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(workItem.getProcessInstanceId());
+                                kcontext.setProcessInstance(processInstance);
+                                kcontext.setVariable(...);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
