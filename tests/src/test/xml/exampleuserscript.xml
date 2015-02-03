@@ -10,7 +10,7 @@
         </xmlfile>
       </when>
       <perform>
-        <hint>
+        <hint title="title from user script">
         	<message>User script Container Auth</message>
         </hint>
         <xslt description="User script XSLT Conversion" extension="userscript-converted-example.xml" template="exampleconversion_userdir.xslt"/>

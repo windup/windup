@@ -78,8 +78,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
-     * Used for tracking the time taken by the rules within each RuleProvider. This links from a
-     * {@link WindupRuleProvider} to the ID of a {@link RuleProviderExecutionStatisticsModel}
+     * Used for tracking the time taken by the rules within each RuleProvider. This links from a {@link WindupRuleProvider} to the ID of a
+     * {@link RuleProviderExecutionStatisticsModel}
      */
     private final IdentityHashMap<WindupRuleProvider, Object> timeTakenByProvider = new IdentityHashMap<>();
 
@@ -200,7 +200,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 subContext.setState(RewriteState.EVALUATING);
                 subContext.put(Rule.class, rule);
 
-                event.selectionPush();
+                Variables.instance(event).push();
                 try
                 {
                     for (RuleLifecycleListener listener : listeners)
@@ -275,7 +275,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         event.getGraphContext().getGraph().getBaseGraph().commit();
                     }
 
-                    event.selectionPop();
+                    Variables.instance(event).pop();
 
                     long ruleTimeCompleted = System.currentTimeMillis();
                     if (ruleContext != null)
@@ -509,8 +509,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     /**
-     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and
-     * their results.
+     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and their results.
      */
     public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener)
     {

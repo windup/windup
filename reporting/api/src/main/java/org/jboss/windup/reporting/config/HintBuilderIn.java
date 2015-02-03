@@ -15,6 +15,14 @@ public class HintBuilderIn
     }
 
     /**
+     * Sets the title of the {@link Hint}.
+     */
+    public HintBuilderTitle titled(String title)
+    {
+        return new HintBuilderTitle(title);
+    }
+
+    /**
      * Specify the text or content to be displayed in the report on the line for which the hint is added.
      */
     public HintText withText(String text)

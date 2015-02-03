@@ -202,6 +202,9 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
                     "References annotation 'javax.servlet.annotation.WebServlet'");
         util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "Container");
+        util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "Title for Hint from XML");
+        util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "title from user script");
+
         util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
                     "Method parameter 'javax.servlet.http.HttpServletRequest'");
 
