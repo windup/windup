@@ -65,7 +65,8 @@
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
-            
+        </div>
+        <div class="container-fluid summaryMargin">        	
             <div class='col-md-3 text-right totalSummary'>
                 <div class='totalLoe'>
                     ${getMigrationEffortPoints(projectModel, false)}
@@ -76,7 +77,6 @@
             <div class='col-md-6 pull-right windupPieGraph archiveGraphContainer'>
                 <div id="project_${projectModel.asVertex().getId()?string("0")}_pie" class='windupPieGraph'></div>
             </div>
-            
         </div>
         <table class="table table-striped table-bordered">
           <tr>

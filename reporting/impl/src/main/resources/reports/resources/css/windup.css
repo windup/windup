@@ -7,6 +7,10 @@ body {
   margin:10px;
 }
 
+.summaryMargin {
+	padding:16px;
+	border-bottom:1px solid #CCC;
+}
 .theme-dropdown .dropdown-menu {
   display: block;
   position: static;
