@@ -43,15 +43,8 @@
       </style>
   </head>
   <body role="document">
-    
- <!-- Fixed navbar -->
-    <div class="navbar-fixed-top windup-bar" role="navigation">
-      <div class="container theme-showcase" role="main">
-        <img src="reports/resources/img/windup-logo.png" class="logo"/>
-      </div>
-    </div>
 
-    <div class="container" role="main">
+    <div class="container-fluid" role="main">
         <div class="row">
             <div class="page-header">
                 <h1>Overview <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">Profiled by Windup</small></h1>
@@ -61,7 +54,7 @@
 
 
 
-    <div class="container theme-showcase" role="main">
+    <div class="container-fluid theme-showcase" role="main">
 
         <!-- Table -->
         <table class="table table-striped table-bordered">

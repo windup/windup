@@ -17,15 +17,7 @@
   </head>
   <body role="document">
     
-    <!-- Fixed navbar -->
-    <div class="navbar-fixed-top windup-bar" role="navigation">
-      <div class="container theme-showcase" role="main">
-        <img src="resources/img/windup-logo.png" class="logo"/>
-      </div>
-    </div>
-
-
-    <div class="container" role="main">
+    <div class="container-fluid" role="main">
         <div class="row">
           <div class="page-header page-header-no-border">
             <h1>
@@ -59,7 +51,7 @@
 
 
 
-    <div class="container theme-showcase" role="main">
+    <div class="container-fluid theme-showcase" role="main">
 
   <#if reportModel.sourceFileModel.classificationModels.iterator()?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
     <div class="panel panel-default">

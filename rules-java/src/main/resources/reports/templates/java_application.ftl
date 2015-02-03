@@ -101,83 +101,86 @@
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
   </head>
   <body role="document">
-    
-    <!-- Fixed navbar -->
-    <div class="navbar-fixed-top windup-bar" role="navigation">
-      <div class="container theme-showcase" role="main">
-        <img src="resources/img/windup-logo.png" class="logo"/>
-      </div>
-    </div>
 
-    <div class="container" role="main">
-    <div class="row">
-      <div class="page-header page-header-no-border">
-        <h1>Application Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
-         <div class="navbar navbar-default">
-          <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-        </div>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-	  <ol class="breadcrumb top-menu">
-		<li><a href="../index.html">All Applications</a></li>
-			<#include "include/breadcrumbs.ftl">
-	  </ol> 
-          
-        </div><!-- /.nav-collapse -->
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-          <ul class="nav navbar-nav">
-            <#include "include/navbar.ftl">
-          </ul>
-        </div><!-- /.nav-collapse -->
+	<!-- Navbar -->
+	<div class="navbar navbar-default navbar-fixed-top">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+		
+		<div class="navbar-collapse collapse navbar-responsive-collapse">
+			<ul class="nav navbar-nav">
+			<#include "include/navbar.ftl">
+			</ul>
+		</div><!-- /.nav-collapse -->
+	</div>
+	<!-- / Navbar -->
+
+    <div class="container-fluid" role="main">
+    
+		<div class="row">
+			<div class="page-header page-header-no-border">
+				<h1>Application Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+			</div>
+		</div>
+			
+		<div class="row">
+			<!-- Breadcrumbs -->
+			<div class="container-fluid">
+				<ol class="breadcrumb top-menu">
+					<li><a href="../index.html">All Applications</a></li>
+					<#include "include/breadcrumbs.ftl">
+				</ol> 
+			</div>
+			<!-- / Breadcrumbs -->
+		</div>
+		
+		<div class="row">
+		  <div class='container mainGraphContainer'>
+		    <div class='col-md-3 text-right totalSummary'>
+		      <div class='totalLoe'>
+		        ${getMigrationEffortPoints(reportModel.projectModel, true)}
+		      </div>
+		      <div class='totalDesc'>Story Points</div>
+		    </div>
+		    <div class='col-md-6 pull-right windupPieGraph'>
+		      <div id='application_pie' class='windupPieGraph'>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<div class="row">
+	    	<div class="container-fluid theme-showcase" role="main">
+				<@reportLineRenderer reportModel.applicationReportLines />
+				<@projectModelRenderer reportModel.projectModel />
+	    	</div> <!-- /container -->
+		</div>
+		
 	
-      </div>
-    </div>
-</div>
-
-  <div class='container mainGraphContainer'>
-    <div class='col-md-3 text-right totalSummary'>
-      <div class='totalLoe'>
-        ${getMigrationEffortPoints(reportModel.projectModel, true)}
-      </div>
-      <div class='totalDesc'>Story Points</div>
-    </div>
-    <div class='col-md-6 pull-right windupPieGraph'>
-      <div id='application_pie' class='windupPieGraph'>
-      </div>
-    </div>
-  </div>
-
-    <div class="container theme-showcase" role="main">
-
-
-		<@reportLineRenderer reportModel.applicationReportLines />
-	     <@projectModelRenderer reportModel.projectModel />
-    </div> <!-- /container -->
-
-
-    <script src="resources/js/jquery-1.10.1.min.js"></script>
-    
-    <script src="resources/libraries/flot/jquery.flot.min.js"></script>
-    <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
-    
-    <script src="resources/js/bootstrap.min.js"></script>
-
-    <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie"/>
-    
-    
-    <#macro projectPieRenderer projectModel>
-      <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie"/>
-    
-      <#list projectModel.childProjects.iterator() as childProject>
-        <@projectPieRenderer childProject />
-      </#list>
-    </#macro>
-    
-    <@projectPieRenderer reportModel.projectModel />
-
+	    <script src="resources/js/jquery-1.10.1.min.js"></script>
+	    
+	    <script src="resources/libraries/flot/jquery.flot.min.js"></script>
+	    <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
+	    
+	    <script src="resources/js/bootstrap.min.js"></script>
+	
+	    <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie"/>
+	    
+	    
+	    <#macro projectPieRenderer projectModel>
+	      <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie"/>
+	    
+	      <#list projectModel.childProjects.iterator() as childProject>
+	        <@projectPieRenderer childProject />
+	      </#list>
+	    </#macro>
+	    
+	    <@projectPieRenderer reportModel.projectModel />
+	 </div>
   </body>
 </html>

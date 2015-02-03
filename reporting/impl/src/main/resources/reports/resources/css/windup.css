@@ -1,5 +1,5 @@
 body {
-  padding-top: 120px;
+  padding-top: 30px;
   padding-bottom: 30px;
 }
 
@@ -35,7 +35,7 @@ h3.panel-title span.s {
 }
 
 .page-header h1{
-	font-size:4em;
+	margin:15px;
 }
 
 .top-menu a:hover, a:focus{
@@ -43,10 +43,6 @@ h3.panel-title span.s {
 }
 
 .breadcrumb {
-  color:#ff0000;
-  border-style: none;
-  background-color: #333;
-  font-size: 12px;
 }
 
 .page-header h1 span.slash {
