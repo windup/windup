@@ -93,19 +93,15 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
         GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<IgnoredFileModel>(context,
                     IgnoredFileModel.class);
         Iterable<IgnoredFileModel> allIgnoredFiles = ignoredFilesModelService.findAll();
-        List<IgnoredFileModel> returnIgnoredFiles = new ArrayList<>();
         for (IgnoredFileModel file : allIgnoredFiles)
         {
             List<String> allProjectPaths = getAllFatherProjectPaths(file.getProjectModel());
             if (allProjectPaths.contains(rootProjectModel.getRootFileModel().getFilePath()))
             {
-                returnIgnoredFiles.add(file);
+                ignoredFilesReportModel.addIgnoredFile(file);
             }
         }
-        for (IgnoredFileModel ignored : returnIgnoredFiles)
-        {
-            ignoredFilesReportModel.addIgnoredFile(ignored);
-        }
+       
         for (IgnoredFileRegexModel ignoreRegexModel : javaCfg.getIgnoredFileRegexes())
         {
             ignoredFilesReportModel.addFileRegex(ignoreRegexModel);
