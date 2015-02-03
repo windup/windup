@@ -85,7 +85,6 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <version>2.13.1.Final</version>
                 <executions>
                     <execution>
                         <id>generate-dot</id>
@@ -111,6 +110,20 @@
         </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- Windup BOM -->
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
