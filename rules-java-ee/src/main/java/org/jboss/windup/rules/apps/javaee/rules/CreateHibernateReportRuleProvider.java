@@ -81,6 +81,7 @@ public class CreateHibernateReportRuleProvider extends WindupRuleProvider
         applicationReportModel.setReportPriority(400);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Hibernate Report");
+        applicationReportModel.setReportIconClass("glyphicon hibernate-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_HIBERNATE_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);

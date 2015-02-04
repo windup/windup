@@ -74,3 +74,18 @@ a.anchor {
 	top: -130px;
 	visibility: hidden;
 }
+
+
+
+/** Navigation **/
+.nav .glyphicon {
+	height: 13px;
+	width: 13px;
+}
+.hibernate-nav-logo {
+	background: url(../img/styles/hibernate-small-white-icon.png);
+}
+.ejb-nav-logo {
+	background: url(../img/styles/ejb-small-white-icon.png);
+}
+/** /Navigation **/
