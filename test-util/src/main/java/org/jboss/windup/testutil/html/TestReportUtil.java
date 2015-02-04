@@ -38,22 +38,30 @@ public class TestReportUtil
     /**
      * Checks that the table contains a row with the given first two columns
      */
-    boolean checkValueInTable(WebElement element, String column1Expected, String column2Expected)
+    boolean checkValueInTable(WebElement element, String... columnValues)
     {
         List<WebElement> rowElements = element.findElements(By.xpath(".//tr"));
         boolean foundExpectedResult = false;
         for (WebElement rowElement : rowElements)
         {
-            List<WebElement> td1Elements = rowElement.findElements(By.xpath(".//td[position() = 1]"));
-            List<WebElement> td2Elements = rowElement.findElements(By.xpath(".//td[position() = 2]"));
-            if (td1Elements.size() != 1 || td2Elements.size() != 1)
+            boolean rowMatches = true;
+            for (int i = 0; i < columnValues.length; i++)
             {
-                continue;
+                String expectedValue = columnValues[i];
+                List<WebElement> tdElements = rowElement.findElements(By.xpath(".//td[position() = " + (i + 1) + "]"));
+                if (tdElements.size() != 1)
+                {
+                    rowMatches = false;
+                    break;
+                }
+                String actualValue = tdElements.get(0).getText().trim();
+                if (!actualValue.equals(expectedValue))
+                {
+                    rowMatches = false;
+                    break;
+                }
             }
-
-            String column1 = td1Elements.get(0).getText().trim();
-            String column2 = td2Elements.get(0).getText().trim();
-            if (column1.equals(column1Expected) && column2.equals(column2Expected))
+            if (rowMatches)
             {
                 foundExpectedResult = true;
                 break;

@@ -1,7 +1,5 @@
 package org.jboss.windup.testutil.html;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -46,7 +44,6 @@ public class TestEJBReportUtil extends TestReportUtil
         {
             throw new CheckFailedException("Unable to find ejb beans table element");
         }
-        List<WebElement> rowElements = element.findElements(By.xpath(".//tr"));
         return checkValueInTable(element, beanName, className);
     }
 }
