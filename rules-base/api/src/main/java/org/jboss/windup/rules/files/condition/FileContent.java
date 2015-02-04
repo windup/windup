@@ -192,7 +192,9 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                                     FileLocationModel fileLocationModel = fileLocationService.create();
                                     fileLocationModel.setFile(fileModel);
                                     fileLocationModel.setColumnNumber((int) matchEvent.getColumnNumber());
-                                    fileLocationModel.setLineNumber((int) matchEvent.getLineNumber());
+                                    // increment by one, as the source is 0-based, but the model is 1-based
+                                    int lineNumber = (int) (matchEvent.getLineNumber() + 1);
+                                    fileLocationModel.setLineNumber(lineNumber);
                                     fileLocationModel.setLength(matchedStr.length());
                                     fileLocationModel.setSourceSnippit(matchedStr);
                                     results.add(fileLocationModel);

@@ -27,23 +27,33 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
      * Contains the Java package name
      */
     @Property(PACKAGE_NAME)
-    public String getPackageName();
+    String getPackageName();
 
     /**
      * Contains the Java package name
      */
     @Property(PACKAGE_NAME)
-    public void setPackageName(String packageName);
+    void setPackageName(String packageName);
+
+    /**
+     * Contains the primary {@link JavaClassModel} in the class
+     */
+    void setMainJavaClass(JavaClassModel javaClassModel);
+
+    /**
+     * Contains the primary {@link JavaClassModel} in the class
+     */
+    JavaClassModel getMainJavaClass();
 
     /**
      * Lists the {@link JavaClassModel}s contained within this source file
      */
     @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
-    public Iterable<JavaClassModel> getJavaClasses();
+    Iterable<JavaClassModel> getJavaClasses();
 
     /**
      * Lists the {@link JavaClassModel}s contained within this source file
      */
     @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
-    public void addJavaClass(JavaClassModel javaClassModel);
+    void addJavaClass(JavaClassModel javaClassModel);
 }

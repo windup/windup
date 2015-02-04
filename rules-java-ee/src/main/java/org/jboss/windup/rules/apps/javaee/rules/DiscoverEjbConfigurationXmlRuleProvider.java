@@ -124,7 +124,6 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     private void extractMetadata(GraphContext ctx, XmlFileModel xml, Document doc, String versionInformation)
     {
-        // check the root XML node.
         EjbDeploymentDescriptorModel facet = GraphService.addTypeToModel(ctx, xml, EjbDeploymentDescriptorModel.class);
 
         if (StringUtils.isNotBlank(versionInformation))
@@ -133,7 +132,6 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         }
 
         // process all session beans...
-        //
         for (Element element : $(doc).find("session").get())
         {
             processSessionBeanElement(ctx, facet, element);
@@ -318,6 +316,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         String ejbId = extractAttributeAndTrim(element, "id");
         String displayName = extractChildTagAndTrim(element, "display-name");
         String ejbName = extractChildTagAndTrim(element, "ejb-name");
+        String tableName = extractChildTagAndTrim(element, "table-name");
 
         // get local class.
         String localClz = extractChildTagAndTrim(element, "local");
@@ -349,6 +348,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         entity.setEjbId(ejbId);
         entity.setDisplayName(displayName);
         entity.setBeanName(ejbName);
+        entity.setTableName(tableName);
         entity.setEjbClass(ejb);
         entity.setEjbLocalHome(localHome);
         entity.setEjbLocal(local);

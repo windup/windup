@@ -24,6 +24,19 @@
 	</tr>
 </#macro>
 
+<#macro entityRenderer ejb>
+	<tr>
+	  <td>${ejb.beanName!""}</td>
+	  <td>
+	      <#if ejb.ejbClass??>
+              ${ejb.ejbClass.qualifiedName!""}
+          </#if>
+      </td>
+	  <td>${ejb.tableName!""}</td>
+	  <td>${ejb.persistenceType!""}</td>
+	</tr>
+</#macro>
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -32,8 +45,8 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
   </head>
   <body role="document">
-	
-	
+
+
 	<div class="navbar navbar-default navbar-fixed-top">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
@@ -48,29 +61,29 @@
 			</ul>
 		</div><!-- /.nav-collapse -->
 	</div>
-	
+
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
 				<h1>EJB Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 		        <ol class="breadcrumb top-menu">
 			      <li><a href="../index.html">All Applications</a></li>
 				  <#include "include/breadcrumbs.ftl">
-		        </ol> 
+		        </ol>
           	</div>
           	<!-- / Breadcrumbs -->
 		</div>
-		
+
 		<div class="row">
     		<div class="container-fluid theme-showcase" role="main">
 
-		    <#if !reportModel.relatedResources.mdb.list.iterator()?has_content && !reportModel.relatedResources.stateless.list.iterator()?has_content && !reportModel.relatedResources.stateful.list.iterator()?has_content>
+		    <#if !reportModel.relatedResources.mdb.list.iterator()?has_content && !reportModel.relatedResources.stateless.list.iterator()?has_content && !reportModel.relatedResources.stateful.list.iterator()?has_content && !reportModel.relatedResources.entity.list.iterator()?has_content>
 				<div class="panel panel-primary">
 				    <div class="panel-heading">
 		                <h3 class="panel-title">EJB Report</h3>
@@ -96,7 +109,7 @@
 					</table>
 				</div>
 			</#if>
-	
+
 			<#if reportModel.relatedResources.stateless.list.iterator()?has_content>
 			    <div class="panel panel-primary">
 			        <div class="panel-heading">
@@ -112,7 +125,7 @@
 					</table>
 			    </div>
 		    </#if>
-    
+
 		    <#if reportModel.relatedResources.stateful.list.iterator()?has_content>
 			    <div class="panel panel-primary">
 			        <div class="panel-heading">
@@ -128,9 +141,25 @@
 			        </table>
 			    </div>
 		    </#if>
+
+			<#if reportModel.relatedResources.entity.list.iterator()?has_content>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class="panel-title">Entity Beans</h3>
+					</div>
+					<table class="table table-striped table-bordered" id="entityTable">
+						<tr>
+						<th>Bean Name</th><th>Class</th><th>Table</th><th>Persistence Type</th>
+						</tr>
+						<#list reportModel.relatedResources.entity.list.iterator() as entityBean>
+							<@entityRenderer entityBean/>
+						</#list>
+					</table>
+				</div>
+			</#if>
     	</div> <!-- /container -->
 	</div> <!-- /row-->
-	
+
 	</div><!-- /container main-->
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>

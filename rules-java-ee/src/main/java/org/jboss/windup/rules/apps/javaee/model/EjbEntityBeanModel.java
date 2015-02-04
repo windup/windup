@@ -22,6 +22,7 @@ public interface EjbEntityBeanModel extends EjbBeanBaseModel
     public static final String EJB_REMOTE = "ejbRemote";
     public static final String EJB_LOCAL = "ejbLocal";
     public static final String PERSISTENCE_TYPE = "persistenceType";
+    public static final String TABLE_NAME = "tableName";
 
     /**
      * Contains the Entity Persistence Type
@@ -34,6 +35,18 @@ public interface EjbEntityBeanModel extends EjbBeanBaseModel
      */
     @Property(PERSISTENCE_TYPE)
     public String getPersistenceType();
+
+    /**
+     * Contains the name of the Table used by this Entity
+     */
+    @Property(TABLE_NAME)
+    public void setTableName(String tableName);
+
+    /**
+     * Contains the name of the Table used by this Entity
+     */
+    @Property(TABLE_NAME)
+    public String getTableName();
 
     /**
      * Contains the Session bean's local interface
