@@ -199,9 +199,11 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties");
         util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "Web XML");
-        util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet", "Web Servlet");
-        util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "Container Auth");
-        util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet", "Message from XML Rule");
+        util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
+                    "References annotation 'javax.servlet.annotation.WebServlet'");
+        util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "Container");
+        util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
+                    "Method parameter 'javax.servlet.http.HttpServletRequest'");
 
         XsltTransformationService xsltService = new XsltTransformationService(context);
         Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath().resolve(

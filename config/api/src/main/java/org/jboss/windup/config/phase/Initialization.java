@@ -5,7 +5,6 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link ArchiveExtraction}<br/>
  * Next: {@link Discovery}
  * 
  * <p>
