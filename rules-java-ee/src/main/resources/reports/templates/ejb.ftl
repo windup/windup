@@ -37,7 +37,7 @@
 	  <td>${ejb.beanName!""}</td>
 	  <td>
 	      <#if ejb.ejbClass??>
-			<@renderLinksToClass ejb.ejbClass.qualifiedName/>
+		<@renderLinksToClass ejb.ejbClass.qualifiedName/>
           </#if>
       </td>
 	  <td>${ejb.sessionType!""}</td>

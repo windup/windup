@@ -38,7 +38,12 @@
 	  </td>
 		<td>
 			<#list getTechnologyTagsForFile(fileModel).iterator() as tag>
-		    <@tagRenderer tag>${tag.name}</@tagRenderer>
+		    <@tagRenderer tag>
+		    	<#if tag.version?has_content> ${tag.name} ${tag.version} 
+		    	<#else>
+		    		${tag.name}
+		    	</#if>
+		    </@tagRenderer>
 		  </#list>
 		</td>
 		<td>
