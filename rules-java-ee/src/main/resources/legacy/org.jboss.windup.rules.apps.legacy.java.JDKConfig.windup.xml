@@ -5782,7 +5782,25 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Deprecated By JDK 6. &#10;            This method does not properly convert bytes to characters. As of JDK 1.1, the preferred way to read lines of text is via the BufferedReader.readLine() method. Programs that use the DataInputStream class to read lines can be converted to use the BufferedReader class by replacing code of the form:&#10;            ```java&#10;               DataInputStream d = new DataInputStream(in);&#10;            with:&#10;             BufferedReader d&#10;                  = new BufferedReader(new InputStreamReader(in));&#10;            ```&#10;            ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Deprecated By JDK 6.
+                                        
+                                This method does not properly convert bytes to characters. As of JDK 1.1, the preferred way to read lines of text is via the BufferedReader.readLine() method. Programs that use the DataInputStream class to read lines can be converted to use the BufferedReader class by replacing code of the form:
+                                
+                                ```java
+                                    DataInputStream d = new DataInputStream(in);
+                                ```
+
+                                with:
+             
+                                ```java
+                                BufferedReader d = new BufferedReader(new InputStreamReader(in));
+                                ```
+                           
+                           ]]>
+                        </message>                    
                     </hint>
                 </iteration>
             </perform>
@@ -5795,7 +5813,14 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;            Deprecated By JDK 6. &#10;            As of JDK 5, replaced by Component.setBounds(int, int, int, int).&#10;            Moves and resizes this component.&#10;            ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Deprecated By JDK 6. 
+                                
+                                As of JDK 5, replaced by Component.setBounds(int, int, int, int). Moves and resizes this component.
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
@@ -6055,7 +6080,17 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;                 Deprecated By JDK 6 - As of JDK version 1.1, the preferred way to tokenize an input stream is to convert it into a character stream, for example:&#10;    &#10;                ```java&#10;                    Reader r = new BufferedReader(new InputStreamReader(is));&#10;                    StreamTokenizer st = new StreamTokenizer(r);&#10;                ```&#10;            ]]&gt;" effort="0">
+                    <hint effort="0">
+                        <message>
+                           <![CDATA[
+                                Deprecated By JDK 6 - As of JDK version 1.1, the preferred way to tokenize an input stream is to convert it into a character stream, for example:
+                                
+                                ```java
+                                Reader r = new BufferedReader(new InputStreamReader(is));
+                                StreamTokenizer st = new StreamTokenizer(r);
+                                ```
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>

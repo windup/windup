@@ -135,7 +135,25 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="&lt;![CDATA[&#10;                Ensure that the JNDI Name does not need to change for JBoss&#10;                &#10;                *For Example:*&#10;                &#10;                ```java&#10;                (ConnectionFactory)initialContext.lookup(&quot;weblogic.jms.ConnectionFactory&quot;);&#10;                ```&#10;                &#10;                *should become:*&#10;                &#10;                ```java&#10;                (ConnectionFactory)initialContext.lookup(&quot;/ConnectionFactory&quot;);&#10;                ```&#10;                &#10;                &#10;                ]]&gt;" effort="1">
+                    <hint effort="1">
+                        <message>
+                           <![CDATA[
+                                           Ensure that the JNDI Name does not need to change for JBoss
+                                           
+                                           *For Example:*
+                                                           
+                                           ```java
+                                           (ConnectionFactory)initialContext.lookup("weblogic.jms.ConnectionFactory");
+                                           ```
+                                           
+                                           *should become:*
+                                           
+                                           ```java
+                                           (ConnectionFactory)initialContext.lookup("/ConnectionFactory");
+                                           ```
+                                           
+                           ]]>
+                        </message>
                     </hint>
                 </iteration>
             </perform>
