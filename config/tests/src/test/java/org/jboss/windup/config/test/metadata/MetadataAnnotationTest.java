@@ -1,4 +1,4 @@
-package org.jboss.windup.config.metadata;
+package org.jboss.windup.config.test.metadata;
 
 
 import java.nio.file.Path;
@@ -14,13 +14,10 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.TestJavaExampleRuleProvider;
-import org.jboss.windup.config.TestMavenExampleRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.FileService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -34,36 +31,36 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 @RunWith(Arquillian.class)
 public class MetadataAnnotationTest
 {
+    //private static final Log log = Logging.get(Metada)
+
     @Inject
     private GraphContextFactory grCtxFactory;
 
 
     @Deployment
     @Dependencies({
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
                 @AddonDependency(name = "org.jboss.windup.utils:utils"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-base"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
             .addBeansXML()
-            .addClasses(
-                TestMavenExampleRuleProvider.class,
-                TestJavaExampleRuleProvider.class
-            )
+            .addPackage(org.jboss.windup.config.test.metadata.MetadataAnnotationTest.class.getPackage())
             .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                 AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-base"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java")
             );
         return archive;
     }
-
 
     private DefaultEvaluationContext createEvalContext(GraphRewrite event)
     {
@@ -74,13 +71,13 @@ public class MetadataAnnotationTest
     }
 
 
+
     /**
      * This test runs a provider with metadata in annotations.
-     * Inside of this provider,
-     * @throws Exception
+     * Only those metadata which are present without loading the rule are tested.
      */
     @Test
-    public void testRuleProviderAnnotationDescriptor() throws Exception
+    public void testRuleProviderAnnotationDescriptorViaRuleSubset() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
         try (final GraphContext grCtx = grCtxFactory.create(folder))
@@ -88,9 +85,9 @@ public class MetadataAnnotationTest
             GraphRewrite event = new GraphRewrite(grCtx);
             DefaultEvaluationContext evalCtx = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = grCtx.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfgM = grCtx.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(grCtx);
-            windupCfg.setInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
+            windupCfgM.setInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
 
 
             TestMetadataAnnotationRuleProvider provider = new TestMetadataAnnotationRuleProvider();
@@ -99,6 +96,11 @@ public class MetadataAnnotationTest
 
             RuleSubset.create(conf).perform(event, evalCtx);
         }
+        catch(Exception ex)
+        {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
     }
+
 
 }// class

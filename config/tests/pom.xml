@@ -36,7 +36,14 @@
         <!-- Rules Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>windup-rules-java</artifactId>
+            <artifactId>windup-rules-base</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>rules-java</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
@@ -66,5 +73,13 @@
             <artifactId>arquillian-furnace-classpath</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

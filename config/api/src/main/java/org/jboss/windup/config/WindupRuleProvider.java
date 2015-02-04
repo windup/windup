@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.windup.config.metadata.Rules;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -56,10 +57,13 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     public String getID()
     {
         // TODO: Also take parent classes into account.
-        Rules ann = this.getClass().getAnnotation(Rules.class);
-        if(ann != null && ann.id().isEmpty())
-            return ann.id();
-        return addon.getId().getName() + "." + getClass().getSimpleName();
+        //Rules annotation1 = ((FurnaceProxy) proxy).getOriginalClass().getAnnotation(Rules.class);
+        Rules annotation = Annotations.getAnnotation(this.getClass(), Rules.class);
+
+        if(annotation != null && !annotation.id().isEmpty())
+            return annotation.id();
+
+        return (addon == null ? "" : (addon.getId().getName() + ".")) + getClass().getSimpleName();
     }
 
     /**
@@ -80,26 +84,26 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     /**
      * Specify additional meta-data about the {@link Rule}s instances originating from this {@link WindupRuleProvider}.
      */
-    public void enhanceMetadata(Context context)
+    public void enhanceMetadata(Context rewriteCtx)
     {
         Rules rulesAnnotation = this.getClass().getAnnotation(Rules.class);
         if(rulesAnnotation != null){
             if(rulesAnnotation.categories().length != 0){
                 String cats = StringUtils.join(rulesAnnotation.categories(), ','); // Until WINDUP-402
-                context.put(RuleMetadata.CATEGORY, cats);
+                rewriteCtx.put(RuleMetadata.CATEGORY, cats);
             }
             if(!rulesAnnotation.origin().isEmpty())
-                context.put(RuleMetadata.ORIGIN, rulesAnnotation.origin());
+                rewriteCtx.put(RuleMetadata.ORIGIN, rulesAnnotation.origin());
         }
 
         // If neither annotations nor the Windup core set those, use the defaults.
-        if (!context.containsKey(RuleMetadata.CATEGORY))
-            context.put(RuleMetadata.CATEGORY, DEFAULT_CATEGORY);
-        if (!context.containsKey(RuleMetadata.ORIGIN))
-            context.put(RuleMetadata.ORIGIN, this.getClass().getName());
+        if (!rewriteCtx.containsKey(RuleMetadata.CATEGORY))
+            rewriteCtx.put(RuleMetadata.CATEGORY, DEFAULT_CATEGORY);
+        if (!rewriteCtx.containsKey(RuleMetadata.ORIGIN))
+            rewriteCtx.put(RuleMetadata.ORIGIN, this.getClass().getName());
 
-        if (!context.containsKey(RuleMetadata.RULE_PROVIDER))
-            context.put(RuleMetadata.RULE_PROVIDER, this);
+        if (!rewriteCtx.containsKey(RuleMetadata.RULE_PROVIDER))
+            rewriteCtx.put(RuleMetadata.RULE_PROVIDER, this);
     }
 
     /**

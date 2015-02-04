@@ -1,4 +1,4 @@
-package org.jboss.windup.config.metadata;
+package org.jboss.windup.config.test.metadata;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -12,25 +12,25 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public abstract class TestInsiderRuleProvider extends WindupRuleProvider implements Insider {
-
+public abstract class SingleOpRuleProvider extends WindupRuleProvider {
 
     // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        return ConfigurationBuilder.begin()
-        .addRule()
-        .perform(
-            new GraphOperation()
+        return ConfigurationBuilder.begin().addRule()
+        .perform(new GraphOperation()
             {
                 public void perform(GraphRewrite event, EvaluationContext evCtx)
                 {
-                    call(event, evCtx);
+                    SingleOpRuleProvider.this.perform(event, evCtx);
                 }
             }
         );
     }
     // @formatter:on
+
+
+    abstract void perform(GraphRewrite event, EvaluationContext evCtx);
 
 }// class
