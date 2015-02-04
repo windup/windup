@@ -17,6 +17,11 @@ body {
   margin-bottom: 20px;
 }
 
+.nav i.glyphicon {
+	height: 13px; 
+	width: 13px;
+}
+
 .theme-showcase > p > .btn {
   margin: 5px 0;
 }
