@@ -82,6 +82,7 @@ public class CreateSpringBeanReportRuleProvider extends WindupRuleProvider
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Spring Bean Report");
         applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");
         applicationReportModel.setTemplatePath(TEMPLATE_SPRING_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
