@@ -32,106 +32,106 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
   </head>
   <body role="document">
-    
-    <!-- Fixed navbar -->
-    <div class="navbar-fixed-top windup-bar" role="navigation">
-      <div class="container theme-showcase" role="main">
-        <img src="resources/img/windup-logo.png" class="logo"/>
-      </div>
-    </div>
-
-    <div class="container" role="main">
-      <div class="row">
-        <div class="page-header page-header-no-border">
-          <h1>EJB Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
-          <div class="navbar navbar-default">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-            </div>
-          <div class="navbar-collapse collapse navbar-responsive-collapse">
-	        <ol class="breadcrumb top-menu">
-		      <li><a href="../index.html">All Applications</a></li>
-			  <#include "include/breadcrumbs.ftl">
-	        </ol> 
-          
-          </div><!-- /.nav-collapse -->
-          <div class="navbar-collapse collapse navbar-responsive-collapse">
-            <ul class="nav navbar-nav">
-              <#include "include/navbar.ftl">
-            </ul>
-          </div><!-- /.nav-collapse -->
-      </div>
-    </div>
-
-    <div class="container theme-showcase" role="main">
-
-    <#if !reportModel.relatedResources.mdb.list.iterator()?has_content && !reportModel.relatedResources.stateless.list.iterator()?has_content && !reportModel.relatedResources.stateful.list.iterator()?has_content>
-		<div class="panel panel-primary">
-		    <div class="panel-heading">
-                <h3 class="panel-title">EJB Report</h3>
-            </div>
-            <div class="panel-body">
-                <h3 class="panel-title">No EJBs found to report</h3>
-            </div>
-        </div>
-	</#if>
-
-	<#if reportModel.relatedResources.mdb.list.iterator()?has_content>
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Message Driven Beans</h3>
-        </div>
-			<table class="table table-striped table-bordered" id="mdbTable">
-			<tr>
-				<th>MDB Name</th><th>Class</th><th>Queue</th>
-			</tr>
-			<#list reportModel.relatedResources.mdb.list.iterator() as mdb>
-				<@mdbRenderer mdb />
-			</#list>
-			</table>
-	</div>
-	</#if>
 	
-	<#if reportModel.relatedResources.stateless.list.iterator()?has_content>
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Stateless Session Beans</h3>
-        </div>
-			<table class="table table-striped table-bordered" id="statelessTable">
-			<tr>
-				<th>Bean Name</th><th>Class</th><th>Type</th>
-			</tr>
-			<#list reportModel.relatedResources.stateless.list.iterator() as statelessBean>
-				<@ejbRenderer statelessBean/>
-			</#list>
-			</table>
-    </div>
-    </#if>
+	
+	<div class="navbar navbar-default navbar-fixed-top">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+		<div class="navbar-collapse collapse navbar-responsive-collapse">
+			<ul class="nav navbar-nav">
+			<#include "include/navbar.ftl">
+			</ul>
+		</div><!-- /.nav-collapse -->
+	</div>
+	
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<div class="page-header page-header-no-border">
+				<h1>EJB Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+			</div>
+		</div>
+		
+		<div class="row">
+			<!-- Breadcrumbs -->
+			<div class="container-fluid">
+		        <ol class="breadcrumb top-menu">
+			      <li><a href="../index.html">All Applications</a></li>
+				  <#include "include/breadcrumbs.ftl">
+		        </ol> 
+          	</div>
+          	<!-- / Breadcrumbs -->
+		</div>
+		
+		<div class="row">
+    		<div class="container-fluid theme-showcase" role="main">
+
+		    <#if !reportModel.relatedResources.mdb.list.iterator()?has_content && !reportModel.relatedResources.stateless.list.iterator()?has_content && !reportModel.relatedResources.stateful.list.iterator()?has_content>
+				<div class="panel panel-primary">
+				    <div class="panel-heading">
+		                <h3 class="panel-title">EJB Report</h3>
+		            </div>
+		            <div class="panel-body">
+		                <h3 class="panel-title">No EJBs found to report</h3>
+		            </div>
+		        </div>
+			</#if>
+
+			<#if reportModel.relatedResources.mdb.list.iterator()?has_content>
+			    <div class="panel panel-primary">
+			        <div class="panel-heading">
+			            <h3 class="panel-title">Message Driven Beans</h3>
+			        </div>
+					<table class="table table-striped table-bordered" id="mdbTable">
+						<tr>
+							<th>MDB Name</th><th>Class</th><th>Queue</th>
+						</tr>
+						<#list reportModel.relatedResources.mdb.list.iterator() as mdb>
+							<@mdbRenderer mdb />
+						</#list>
+					</table>
+				</div>
+			</#if>
+	
+			<#if reportModel.relatedResources.stateless.list.iterator()?has_content>
+			    <div class="panel panel-primary">
+			        <div class="panel-heading">
+			            <h3 class="panel-title">Stateless Session Beans</h3>
+			        </div>
+					<table class="table table-striped table-bordered" id="statelessTable">
+						<tr>
+							<th>Bean Name</th><th>Class</th><th>Type</th>
+						</tr>
+						<#list reportModel.relatedResources.stateless.list.iterator() as statelessBean>
+							<@ejbRenderer statelessBean/>
+						</#list>
+					</table>
+			    </div>
+		    </#if>
     
-    <#if reportModel.relatedResources.stateful.list.iterator()?has_content>
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Stateful Session Beans</h3>
-        </div>
-          <table class="table table-striped table-bordered" id="statefulTable">
-            <tr>
-              <th>Bean Name</th><th>Class</th><th>Type</th>
-            </tr>
-			<#list reportModel.relatedResources.stateful.list.iterator() as statefulBean>
-            	<@ejbRenderer statefulBean/>
-            </#list>
-          </table>
-      </div>
-    </#if>
-
-        
-    </div> <!-- /container -->
-
-
+		    <#if reportModel.relatedResources.stateful.list.iterator()?has_content>
+			    <div class="panel panel-primary">
+			        <div class="panel-heading">
+			            <h3 class="panel-title">Stateful Session Beans</h3>
+			        </div>
+			        <table class="table table-striped table-bordered" id="statefulTable">
+			            <tr>
+			              <th>Bean Name</th><th>Class</th><th>Type</th>
+			            </tr>
+						<#list reportModel.relatedResources.stateful.list.iterator() as statefulBean>
+			            	<@ejbRenderer statefulBean/>
+			            </#list>
+			        </table>
+			    </div>
+		    </#if>
+    	</div> <!-- /container -->
+	</div> <!-- /row-->
+	
+	</div><!-- /container main-->
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
   </body>
