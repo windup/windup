@@ -7,6 +7,20 @@
     <span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
 </#macro>
 
+
+<#macro fileSourceLink fileRef name>
+  	<#if fileRef??>
+  		<#assign sourceReportModel = fileModelToSourceReport(fileRef)!>
+  		<#if sourceReportModel.reportFilename??>
+			<a href="${sourceReportModel.reportFilename}"> ${name!""} </a>
+    	<#else>
+	  		${name!""}
+	  	</#if>
+	 <#else>
+	  	${name!""}
+	 </#if>
+</#macro>
+
 <#macro staticIpFileRenderer reportModel>
     <div class="panel panel-primary">
     	<div class="panel-heading">
@@ -15,14 +29,17 @@
 
         <table class="table table-striped table-bordered" id="staticIPTable">
             <tr>
-                <th>Path</th>
+                <th>File</th>
                 <th>Location</th>
 				<th>IP Address</th>
             </tr>
 
             <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
             <tr>
-                <td> <#if staticIpRef.file.prettyPath?has_content> ${staticIpRef.file.prettyPath} </#if> </td>
+                <td>
+                	<#assign fileName = getPrettyPathForFile(staticIpRef.file)!> 
+					<@fileSourceLink staticIpRef.file fileName/>
+                </td>
                 <td> <#if staticIpRef.lineNumber?has_content>Line Number ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Column Number ${staticIpRef.columnNumber} </#if> </td>
 				<td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>
             </tr>

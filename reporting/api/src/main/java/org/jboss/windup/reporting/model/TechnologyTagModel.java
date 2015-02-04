@@ -22,6 +22,7 @@ public interface TechnologyTagModel extends WindupVertexFrame
 
     public static final String TECH_TAG_TO_FILE_MODEL = "techTagToFileModel";
     public static final String NAME = "name";
+    public static final String VERSION = "version";
     public static final String LEVEL = "level";
 
     /**
@@ -36,6 +37,20 @@ public interface TechnologyTagModel extends WindupVertexFrame
     @Property(NAME)
     void setName(String tag);
 
+
+    /**
+     * This should be a short tag representing the technology version (eg, 3.1)
+     */
+    @Property(VERSION)
+    String getVersion();
+
+    /**
+     * This should be a short tag representing the technology (eg, EJB)
+     */
+    @Property(VERSION)
+    void setVersion(String tag);
+    
+    
     /**
      * Contains information about the relative importance of this tag.
      */
