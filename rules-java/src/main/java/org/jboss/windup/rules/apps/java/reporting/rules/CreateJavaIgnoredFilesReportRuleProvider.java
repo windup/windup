@@ -85,6 +85,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
         ignoredFilesReportModel.setReportName(TITLE);
         ignoredFilesReportModel.setMainApplicationReport(false);
         ignoredFilesReportModel.setDisplayInApplicationReportIndex(true);
+        ignoredFilesReportModel.setReportIconClass("glyphicon glyphicon-eye-close");
         ignoredFilesReportModel.setProjectModel(rootProjectModel);
         ignoredFilesReportModel.setTemplatePath(TEMPLATE_REPORT);
         ignoredFilesReportModel.setTemplateType(TemplateType.FREEMARKER);
