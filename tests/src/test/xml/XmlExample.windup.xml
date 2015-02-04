@@ -21,7 +21,7 @@
         </xmlfile>
       </when>
       <perform>
-        <hint>
+        <hint title="Title for Hint from XML">
         	<message>Container Auth</message>
         </hint>
         <xslt description="Example XSLT Conversion" extension="-converted-example.xml" template="/exampleconversion.xsl"/>

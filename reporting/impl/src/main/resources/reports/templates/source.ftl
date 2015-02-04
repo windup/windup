@@ -145,7 +145,7 @@
 						<div class='inline-comment'><#t>
 							<div class='inline-comment-heading'><#t>
 								<strong class='notification ${effortPointsToCssClass(hintLine.effort)}'><#t>
-									${hintLine.fileLocationReference.description?js_string}<#t>
+									${hintLine.title?js_string}<#t>
 								</strong><#t>
 							</div><#t>
 							<div class='inline-comment-body'><#t>

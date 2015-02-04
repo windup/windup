@@ -24,16 +24,6 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
         this.graphContext = context;
     }
 
-    public void selectionPush()
-    {
-        Variables.instance(this).push();
-    }
-
-    public void selectionPop()
-    {
-        Variables.instance(this).pop();
-    }
-
     @Override
     public Flow getFlow()
     {

@@ -24,6 +24,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
 {
     private static final Logger log = Logger.getLogger(Hint.class.getName());
 
+    private RegexParameterizedPatternParser hintTitlePattern;
     private RegexParameterizedPatternParser hintTextPattern;
     private int effort;
     private List<Link> links = new ArrayList<>();
@@ -44,6 +45,11 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     public static HintBuilderIn in(String fileVariable)
     {
         return new HintBuilderIn(fileVariable);
+    }
+
+    public static HintBuilderTitle titled(String title)
+    {
+        return new HintBuilderTitle(title);
     }
 
     /**
@@ -69,6 +75,15 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         hintModel.setFileLocationReference(locationModel);
         hintModel.setFile(locationModel.getFile());
         hintModel.setEffort(effort);
+        if (hintTitlePattern != null)
+        {
+            hintModel.setTitle(hintTitlePattern.getBuilder().build(event, context));
+        }
+        else
+        {
+            // if there is no title, just use the description of the location (eg, 'Constructing com.otherproduct.Foo()')
+            hintModel.setTitle(locationModel.getDescription());
+        }
         hintModel.setHint(hintTextPattern.getBuilder().build(event, context));
 
         GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
@@ -105,11 +120,19 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         this.hintTextPattern = new RegexParameterizedPatternParser(text);
     }
 
+    protected void setTitle(String title)
+    {
+        this.hintTitlePattern = new RegexParameterizedPatternParser(title);
+    }
+
     @Override
     public String toString()
     {
         StringBuilder result = new StringBuilder();
-        result.append("Hint.withText(\"" + hintTextPattern.getPattern() + "\")");
+        result.append("Hint");
+        if (hintTitlePattern != null)
+            result.append(".titled(\"").append(hintTitlePattern.getPattern()).append("\")");
+        result.append(".withText(\"" + hintTextPattern.getPattern() + "\")");
         if (effort != 0)
             result.append(".withEffort(" + effort + ")");
         if (links != null && !links.isEmpty())

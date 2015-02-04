@@ -30,9 +30,9 @@ import org.w3c.dom.Element;
  * Alternatively, the hint can be in its own element. This is primary useful for longer hint content:
  * 
  * <pre>
- * &lt;hint effort="8"&gt;
+ * &lt;hint title="Short description" effort="8"&gt;
  *  &lt;message&gt;
- *          Longer help contents go here
+ *          Longer help contents go here (markdown format is supported)
  *  &lt;/message&gt;
  * &lt;/hint&gt;
  * </pre>
@@ -48,6 +48,7 @@ public class HintHandler implements ElementHandler<Hint>
     @Override
     public Hint processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
+        String title = $(element).attr("title");
         String message = $(element).attr("message");
         String in = $(element).attr("in");
 
@@ -74,7 +75,15 @@ public class HintHandler implements ElementHandler<Hint>
 
         String effortStr = $(element).attr("effort");
 
-        HintText hint = Hint.in(in).withText(message);
+        HintText hint;
+        if (!StringUtils.isBlank(title))
+        {
+            hint = Hint.in(in).titled(title).withText(message);
+        }
+        else
+        {
+            hint = Hint.in(in).withText(message);
+        }
         if (!StringUtils.isBlank(effortStr))
         {
             try
@@ -102,7 +111,6 @@ public class HintHandler implements ElementHandler<Hint>
 
     private String trimLeadingAndTrailingSpaces(String markdown)
     {
-        String lines[] = markdown.split("\\r?\\n");
         StringBuilder markdownSB = new StringBuilder();
 
         StringBuilder currentLine = new StringBuilder();
