@@ -47,7 +47,7 @@
           <ul class='notifications'>
             <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
               <#if hintLine.hint?has_content>
-                <li class='warning'>${hintLine.hint}</li>
+                <li class='warning'>${hintLine.fileLocationReference.description}</li>
               </#if>
             </#list>
           </ul>

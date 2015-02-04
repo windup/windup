@@ -32,8 +32,7 @@ public class DiscoverFilesAndTypesRuleProvider extends WindupRuleProvider
         .when(Query.fromType(FileModel.class)
             .withProperty(FileModel.IS_DIRECTORY, true)
         )
-        .perform(Iteration.over(FileModel.class)
-            .perform(new RecurseDirectoryAndAddFiles()).endIteration()
+        .perform(new RecurseDirectoryAndAddFiles()
         )
 
         .addRule()
@@ -43,8 +42,8 @@ public class DiscoverFilesAndTypesRuleProvider extends WindupRuleProvider
                 QueryPropertyComparisonType.REGEX,
                 ZipUtil.getEndsWithZipRegularExpression())
         )
-        .perform(Iteration.over()
-            .perform(new AddArchiveReferenceInformation()).endIteration()
+        .perform(
+           new AddArchiveReferenceInformation()
         );
     }
     // @formatter:on
