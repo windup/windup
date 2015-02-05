@@ -77,6 +77,7 @@ public class CreateStaticIPAddressReportRuleProvider extends WindupRuleProvider
         applicationReport.setReportName(TITLE);
         applicationReport.setTemplatePath(TEMPLATE_REPORT);
         applicationReport.setDisplayInApplicationReportIndex(true);
+        applicationReport.setReportIconClass("glyphicon glyphicon-map-marker");
         applicationReport.setTemplateType(TemplateType.FREEMARKER);
         applicationReport.setProjectModel(rootProjectModel);
 
