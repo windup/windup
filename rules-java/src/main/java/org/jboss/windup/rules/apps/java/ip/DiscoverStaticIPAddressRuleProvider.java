@@ -31,11 +31,19 @@ public class DiscoverStaticIPAddressRuleProvider extends WindupRuleProvider {
 		return ConfigurationBuilder
 				.begin()
 				.addRule()
+				//for all files ending in java, properties, and xml, 
+				//query for the regular expression {ip}
 				.when(FileContent.matches("{ip}").inFilesNamed("{*}.{type}"))
 				.perform(new AbstractIterationOperation<FileLocationModel>() {
+					//when a result is found, create an inline hint.
+					//reference the inline hint with the static ip marker so that we can query for it
+					//in the static ip report.
 					public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
 						//for all file location models that match the regular expression in the where clause, add the IP Location Model to the graph 
-						GraphService.addTypeToModel(event.getGraphContext(), payload, StaticIPLocationModel.class);
+						StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload, StaticIPLocationModel.class);
+						location.setHint("Static IP: "+location.getSourceSnippit());
+						location.setTitle("Static IP Address");
+						location.setEffort(0);
 					};
 				})
 				.where("ip").matches("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b")
