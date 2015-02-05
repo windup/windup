@@ -23,15 +23,12 @@
             <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
             <tr>
             	<#assign sourceReportModel = fileModelToSourceReport(staticIpRef.file)!>
-            	
                 <td> 
-                	<#if staticIpRef.file.prettyPath?has_content>
-                		<#if sourceReportModel?has_content>
-                			<a href="${sourceReportModel.reportFilename}"> ${staticIpRef.file.prettyPath} </a>
-	                	<#else>
-    	            		${staticIpRef.file.prettyPath}
-        	        	</#if>
-        	        </#if>
+            		<#if sourceReportModel.reportFilename??>
+            			<a href="${sourceReportModel.reportFilename}"> ${getPrettyPathForFile(staticIpRef.file)} </a>
+                	<#else>
+                		${getPrettyPathForFile(staticIpRef.file)}
+    	        	</#if>
                 </td>
                 <td> <#if staticIpRef.lineNumber?has_content>Line Number ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Column Number ${staticIpRef.columnNumber} </#if> </td>
 				<td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>
