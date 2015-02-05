@@ -15,14 +15,21 @@
 
         <table class="table table-striped table-bordered" id="staticIPTable">
             <tr>
-                <th>Path</th>
+                <th>File</th>
                 <th>Location</th>
 				<th>IP Address</th>
             </tr>
 
             <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
             <tr>
-                <td> <#if staticIpRef.file.prettyPath?has_content> ${staticIpRef.file.prettyPath} </#if> </td>
+            	<#assign sourceReportModel = fileModelToSourceReport(staticIpRef.file)!>
+                <td> 
+            		<#if sourceReportModel.reportFilename??>
+            			<a href="${sourceReportModel.reportFilename}"> ${getPrettyPathForFile(staticIpRef.file)} </a>
+                	<#else>
+                		${getPrettyPathForFile(staticIpRef.file)}
+    	        	</#if>
+                </td>
                 <td> <#if staticIpRef.lineNumber?has_content>Line Number ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Column Number ${staticIpRef.columnNumber} </#if> </td>
 				<td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>
             </tr>

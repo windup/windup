@@ -46,7 +46,7 @@ public class CreateHibernateReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query.fromType(WindupConfigurationModel.class);
+        ConditionBuilder applicationProjectModelsFound = Query.fromType(HibernateConfigurationFileModel.class).or(Query.fromType(HibernateEntityModel.class));
 
         AbstractIterationOperation<WindupConfigurationModel> addReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {

@@ -45,8 +45,8 @@ public class CreateSpringBeanReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupConfigurationModel.class);
+    	//only build this when there are spring beans to report.
+        ConditionBuilder applicationProjectModelsFound = Query.fromType(SpringBeanModel.class);
 
         AbstractIterationOperation<WindupConfigurationModel> addReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {

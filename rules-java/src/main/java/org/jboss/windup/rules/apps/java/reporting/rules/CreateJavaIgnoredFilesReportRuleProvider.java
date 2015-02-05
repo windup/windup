@@ -19,6 +19,7 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.IgnoredFilesReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.java.ip.StaticIPLocationModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -46,9 +47,6 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupJavaConfigurationModel.class);
-
         AbstractIterationOperation<WindupJavaConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupJavaConfigurationModel>()
         {
             @Override
@@ -69,7 +67,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(applicationProjectModelsFound)
+                    .when(Query.fromType(IgnoredFilesReportModel.class))
                     .perform(addApplicationReport);
 
     }

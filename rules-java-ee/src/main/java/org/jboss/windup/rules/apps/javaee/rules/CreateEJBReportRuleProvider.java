@@ -45,8 +45,8 @@ public class CreateEJBReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupConfigurationModel.class);
+    	//only build this when there are EJB beans.
+        ConditionBuilder applicationProjectModelsFound = Query.fromType(EjbBeanBaseModel.class);
 
         AbstractIterationOperation<WindupConfigurationModel> addEJBReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {

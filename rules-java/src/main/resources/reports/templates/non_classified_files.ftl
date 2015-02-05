@@ -8,10 +8,15 @@
 </#macro>
 
 <#macro fileModelRenderer fileModel>
+  <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
   <#if fileModel.prettyPathWithinProject?has_content>
   <tr>
     <td>
-         ${getPrettyPathForFile(fileModel)}
+		<#if sourceReportModel.reportFilename??>
+			<a href="${sourceReportModel.reportFilename}"> ${getPrettyPathForFile(fileModel)} </a>
+    	<#else>
+    		${getPrettyPathForFile(fileModel)} 
+    	</#if>
     </td>
     <td>
       <#-- <#list resource.technologyTags as tag>
