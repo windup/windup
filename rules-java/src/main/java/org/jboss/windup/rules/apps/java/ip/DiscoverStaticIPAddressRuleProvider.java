@@ -35,7 +35,10 @@ public class DiscoverStaticIPAddressRuleProvider extends WindupRuleProvider {
 				.perform(new AbstractIterationOperation<FileLocationModel>() {
 					public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
 						//for all file location models that match the regular expression in the where clause, add the IP Location Model to the graph 
-						GraphService.addTypeToModel(event.getGraphContext(), payload, StaticIPLocationModel.class);
+						StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload, StaticIPLocationModel.class);
+						location.setHint("Static IP: "+location.getSourceSnippit());
+						location.setTitle("Static IP Address");
+						location.setEffort(0);
 					};
 				})
 				.where("ip").matches("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b")
