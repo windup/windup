@@ -41,8 +41,9 @@ public class DiscoverStaticIPAddressRuleProvider extends WindupRuleProvider {
 					public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
 						//for all file location models that match the regular expression in the where clause, add the IP Location Model to the graph 
 						StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload, StaticIPLocationModel.class);
-						location.setHint("Static IP: "+location.getSourceSnippit());
-						location.setTitle("Static IP Address");
+						
+						location.setTitle("Static IP: "+location.getSourceSnippit());
+						location.setHint("When migrating environments, static IP addresses may need to be modified or eliminated.");
 						location.setEffort(0);
 					};
 				})
