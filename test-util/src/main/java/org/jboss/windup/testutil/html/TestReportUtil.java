@@ -55,7 +55,7 @@ public class TestReportUtil
                     break;
                 }
                 String actualValue = tdElements.get(0).getText().trim();
-                if (!actualValue.equals(expectedValue))
+                if (!actualValue.trim().equals(expectedValue.trim()))
                 {
                     rowMatches = false;
                     break;

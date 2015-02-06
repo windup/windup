@@ -3,11 +3,25 @@
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
+<#macro fileSourceLink fileRef name>
+  	<#if fileRef?has_content>
+  		<#assign sourceReportModel = fileModelToSourceReport(fileRef)>
+
+  		<#if sourceReportModel.reportFilename??>
+			<a href="${sourceReportModel.reportFilename}"> ${name!""} </a>
+    	<#else>
+	  		${name!""}
+	  	</#if>
+	 <#else>
+	  	${name!""}
+	 </#if>
+</#macro>
+
 <#macro renderLinksToClass fqcn>
 	<#assign sourceFiles = findSourceFilesByClassName(fqcn)>
 	<#if sourceFiles?has_content>
 		<#list sourceFiles as sourceFile>
-			<#assign sourceReportModel = fileModelToSourceReport(sourceFile)!>
+			<#assign sourceReportModel = fileModelToSourceReport(sourceFile)>
 			<a href="${sourceReportModel.reportFilename}">
 				<#if sourceFile_index == 0>
 					${fqcn}
@@ -23,38 +37,42 @@
 
 <#macro mdbRenderer mdb>
 	<tr>
-	<td>${mdb.beanName!""}</td>
-	<td>
-		<@renderLinksToClass mdb.ejbClass.qualifiedName/>
-	</td>
-	<td>${mdb.destination!""}</td>
+    	<td><@fileSourceLink mdb.ejbDeploymentDescriptor!"" mdb.beanName!""/></td>
+    	<td>
+    		<@renderLinksToClass mdb.ejbClass.qualifiedName/>
+    	</td>
+    	<td>${mdb.destination!""}</td>
 	</tr>
 </#macro>
 
 
 <#macro ejbRenderer ejb>
-	<tr>
-	  <td>${ejb.beanName!""}</td>
-	  <td>
-	      <#if ejb.ejbClass??>
-		<@renderLinksToClass ejb.ejbClass.qualifiedName/>
-          </#if>
-      </td>
-	  <td>${ejb.sessionType!""}</td>
-	</tr>
+    <tr>
+        <td>
+            <@fileSourceLink ejb.ejbDeploymentDescriptor!"" ejb.beanName!""/>
+        </td>
+        <td>
+            <#if ejb.ejbClass??>
+                <@renderLinksToClass ejb.ejbClass.qualifiedName/>
+            </#if>
+        </td>
+        <td>${ejb.sessionType!""}</td>
+    </tr>
 </#macro>
 
 <#macro entityRenderer ejb>
-	<tr>
-	  <td>${ejb.beanName!""}</td>
-	  <td>
-	      <#if ejb.ejbClass??>
-			<@renderLinksToClass ejb.ejbClass.qualifiedName/>
-          </#if>
-      </td>
-	  <td>${ejb.tableName!""}</td>
-	  <td>${ejb.persistenceType!""}</td>
-	</tr>
+    <tr>
+        <td>
+            <@fileSourceLink ejb.ejbDeploymentDescriptor!"" ejb.beanName!""/>
+        </td>
+        <td>
+            <#if ejb.ejbClass??>
+                <@renderLinksToClass ejb.ejbClass.qualifiedName/>
+            </#if>
+        </td>
+        <td>${ejb.tableName!""}</td>
+        <td>${ejb.persistenceType!""}</td>
+    </tr>
 </#macro>
 
   <head>

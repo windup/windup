@@ -223,7 +223,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties");
-        util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "Web XML");
+        util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "Web XML 3.0");
         util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
                     "References annotation 'javax.servlet.annotation.WebServlet'");
         util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "Container");

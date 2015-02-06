@@ -9,8 +9,8 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * Represents a technology that is used or implemented by a particular file. For example, this might indicate that a
- * file uses "EJB" or that the file is a Hibernate Configuration File.
+ * Represents a technology that is used or implemented by a particular file. For example, this might indicate that a file uses "EJB" or that the file
+ * is a Hibernate Configuration File.
  * 
  * 
  * @author jsightler <jesse.sightler@gmail.com>
@@ -37,7 +37,6 @@ public interface TechnologyTagModel extends WindupVertexFrame
     @Property(NAME)
     void setName(String tag);
 
-
     /**
      * This should be a short tag representing the technology version (eg, 3.1)
      */
@@ -45,12 +44,11 @@ public interface TechnologyTagModel extends WindupVertexFrame
     String getVersion();
 
     /**
-     * This should be a short tag representing the technology (eg, EJB)
+     * This should be a short tag representing the technology version (eg, 3.1)
      */
     @Property(VERSION)
     void setVersion(String tag);
-    
-    
+
     /**
      * Contains information about the relative importance of this tag.
      */

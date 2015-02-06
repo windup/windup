@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGeneration;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
@@ -14,6 +14,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
@@ -46,17 +47,20 @@ public class CreateHibernateReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query.fromType(HibernateConfigurationFileModel.class).or(Query.fromType(HibernateEntityModel.class));
+        ConditionBuilder applicationProjectModelsFound = Query.fromType(HibernateConfigurationFileModel.class).or(
+                    Query.fromType(HibernateEntityModel.class));
 
-        AbstractIterationOperation<WindupConfigurationModel> addReport = new AbstractIterationOperation<WindupConfigurationModel>()
+        GraphOperation addReport = new GraphOperation()
         {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
+            public void perform(GraphRewrite event, EvaluationContext context)
             {
-                ProjectModel projectModel = payload.getInputPath().getProjectModel();
+                WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+
+                ProjectModel projectModel = windupConfiguration.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + windupConfiguration.getInputPath().getFilePath());
                 }
                 createHibernateReport(event.getGraphContext(), projectModel);
             }

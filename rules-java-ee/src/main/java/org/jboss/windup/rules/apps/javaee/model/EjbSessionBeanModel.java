@@ -69,7 +69,7 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
      */
     @Adjacency(label = EJB_HOME, direction = Direction.OUT)
     public JavaClassModel getEjbHome();
-    
+
     /**
      * References the Deployment Descriptor containing EJB.
      */

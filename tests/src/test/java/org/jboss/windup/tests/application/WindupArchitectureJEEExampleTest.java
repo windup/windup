@@ -170,7 +170,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("jee-example-app-1.0.0.ear/jee-example-services.jar", "META-INF/ejb-jar.xml",
-                    "EJB XML");
+                    "EJB XML 2.1");
 
         validateEJBBeanReport(context);
     }
