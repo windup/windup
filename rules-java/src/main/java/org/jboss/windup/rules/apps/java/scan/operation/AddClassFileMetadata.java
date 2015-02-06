@@ -75,6 +75,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 javaClassModel.setPackageName(packageName);
                 javaClassModel.setQualifiedName(qualifiedName);
                 javaClassModel.setClassFile(payload);
+                javaClassModel.setPublic(bcelJavaClass.isPublic());
 
                 final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
                 if (interfaceNames != null)

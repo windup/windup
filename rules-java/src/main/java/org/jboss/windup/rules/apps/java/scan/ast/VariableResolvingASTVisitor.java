@@ -27,12 +27,14 @@ import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
@@ -51,6 +53,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
@@ -66,12 +69,14 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 {
     private static final Logger LOG = Logging.get(VariableResolvingASTVisitor.class);
 
+    private final GraphService<JavaAnnotationTypeReferenceModel> annotationTypeReferenceService;
     private final JavaClassService javaClassService;
     private final TypeReferenceService typeRefService;
     private final WindupJavaConfigurationService windupJavaCfgService;
 
     public VariableResolvingASTVisitor(GraphContext context)
     {
+        this.annotationTypeReferenceService = new GraphService<>(context, JavaAnnotationTypeReferenceModel.class);
         this.javaClassService = new JavaClassService(context);
         this.typeRefService = new TypeReferenceService(context);
         this.windupJavaCfgService = new WindupJavaConfigurationService(context);
@@ -217,22 +222,27 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         }
     }
 
-    private void processName(Name name, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber, int length)
+    private JavaTypeReferenceModel processName(Name name, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber, int length)
     {
         if (name == null)
-            return;
+            return null;
 
         String sourceString = resolveClassname(name.toString());
-        if (TypeInterestFactory.matchesAny(sourceString, referenceLocation))
+        if (!TypeInterestFactory.matchesAny(sourceString, referenceLocation))
+            return null;
+
+        sourceString = resolveClassname(sourceString);
+
+        JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
+                    lineNumber, columnNumber, length, sourceString);
+        if (TypeReferenceLocation.ANNOTATION == referenceLocation)
         {
-            sourceString = resolveClassname(sourceString);
-
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
-                        lineNumber, columnNumber, length, sourceString);
-
-            LOG.finer("Prefix: " + referenceLocation);
-            LOG.finer("Candidate: " + typeRef);
+            typeRef = this.annotationTypeReferenceService.addTypeToModel(typeRef);
         }
+
+        LOG.finer("Prefix: " + referenceLocation);
+        LOG.finer("Candidate: " + typeRef);
+        return typeRef;
     }
 
     @Override
@@ -334,6 +344,25 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         return true;
     }
 
+    private void addAnnotationValues(JavaAnnotationTypeReferenceModel typeRef, NormalAnnotation node)
+    {
+        @SuppressWarnings("unchecked")
+        List<MemberValuePair> annotationValues = node.values();
+        Map<String, String> annotationValueMap = new HashMap<>();
+        for (MemberValuePair annotationValue : annotationValues)
+        {
+            String key = annotationValue.getName().toString();
+            Expression valueExpression = annotationValue.getValue();
+            String value;
+            if (valueExpression instanceof StringLiteral)
+                value = ((StringLiteral) valueExpression).getLiteralValue();
+            else
+                value = valueExpression.toString();
+            annotationValueMap.put(key, value);
+        }
+        typeRef.setAnnotationValues(annotationValueMap);
+    }
+
     @Override
     public boolean visit(MarkerAnnotation node)
     {
@@ -345,8 +374,10 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(NormalAnnotation node)
     {
-        processName(node.getTypeName(), TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
+        JavaTypeReferenceModel typeRef = processName(node.getTypeName(), TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
                     cu.getColumnNumber(node.getStartPosition()), node.getLength());
+        if (typeRef != null)
+            addAnnotationValues((JavaAnnotationTypeReferenceModel) typeRef, node);
         return super.visit(node);
     }
 

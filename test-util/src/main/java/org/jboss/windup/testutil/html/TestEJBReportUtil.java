@@ -15,13 +15,14 @@ public class TestEJBReportUtil extends TestReportUtil
     {
         MDB,
         STATELESS,
-        STATEFUL
+        STATEFUL,
+        ENTITY
     }
 
     /**
      * Checks that an EJB of the given type and classname is listed
      */
-    public boolean checkBeanInReport(EJBType ejbType, String beanName, String className)
+    public boolean checkBeanInReport(EJBType ejbType, String... columns)
     {
         String tableID;
         switch (ejbType)
@@ -35,6 +36,9 @@ public class TestEJBReportUtil extends TestReportUtil
         case STATEFUL:
             tableID = "statefulTable";
             break;
+        case ENTITY:
+            tableID = "entityTable";
+            break;
         default:
             throw new IllegalArgumentException("Unexpected type: " + ejbType);
         }
@@ -44,6 +48,6 @@ public class TestEJBReportUtil extends TestReportUtil
         {
             throw new CheckFailedException("Unable to find ejb beans table element");
         }
-        return checkValueInTable(element, beanName, className);
+        return checkValueInTable(element, columns);
     }
 }

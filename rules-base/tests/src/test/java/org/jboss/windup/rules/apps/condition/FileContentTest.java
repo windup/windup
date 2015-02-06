@@ -143,30 +143,30 @@ public class FileContentTest
                 System.out.println("Location: " + location);
                 if (location.getFile().getFileName().equals("file1.txt"))
                 {
-                    if (location.getLineNumber() == 0 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file 1."))
+                    if (location.getLineNumber() == 1 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file 1."))
                     {
                         foundFile1Line1 = true;
                     }
-                    else if (location.getLineNumber() == 1 && location.getColumnNumber() == 27 && location.getSourceSnippit().equals("file 1."))
+                    else if (location.getLineNumber() == 2 && location.getColumnNumber() == 27 && location.getSourceSnippit().equals("file 1."))
                     {
                         foundFile1Line2 = true;
                     }
                 }
                 else if (location.getFile().getFileName().equals("file2.txt"))
                 {
-                    if (location.getLineNumber() == 0 && location.getColumnNumber() == 5 && location.getSourceSnippit().equals("file firstline2."))
+                    if (location.getLineNumber() == 1 && location.getColumnNumber() == 5 && location.getSourceSnippit().equals("file firstline2."))
                     {
                         foundFile2Line1 = true;
                     }
-                    else if (location.getLineNumber() == 1 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file #2."))
+                    else if (location.getLineNumber() == 2 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file #2."))
                     {
                         foundFile2Line2 = true;
                     }
-                    else if (location.getLineNumber() == 2 && location.getColumnNumber() == 5 && location.getSourceSnippit().equals("file 2."))
+                    else if (location.getLineNumber() == 3 && location.getColumnNumber() == 5 && location.getSourceSnippit().equals("file 2."))
                     {
                         foundFile2Line3 = true;
                     }
-                    else if (location.getLineNumber() == 3 && location.getColumnNumber() == 0
+                    else if (location.getLineNumber() == 4 && location.getColumnNumber() == 0
                                 && location.getSourceSnippit().equals("file lastline2."))
                     {
                         foundFile2Line4 = true;

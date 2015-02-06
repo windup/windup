@@ -31,7 +31,6 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupRoasterWildcardImportResolver;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.rules.files.FileMapping;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -181,6 +180,7 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
             javaClassModel.setPackageName(packageName);
             javaClassModel.setQualifiedName(qualifiedName);
             javaClassModel.setClassFile(sourceFileModel);
+            javaClassModel.setPublic(javaSource.isPublic());
 
             if (javaSource instanceof InterfaceCapable)
             {
