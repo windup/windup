@@ -7,11 +7,28 @@
   <span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
 </#macro>
 
+
+
+<#macro fileSourceLink fileRef name>
+  	<#if fileRef??>
+  		<#assign sourceReportModel = fileModelToSourceReport(fileRef)!>
+  		<#if sourceReportModel.reportFilename??>
+			<a href="${sourceReportModel.reportFilename}"> ${name!""} </a>
+    	<#else>
+	  		${name!""}
+	  	</#if>
+	 <#else>
+	  	${name!""}
+	 </#if>
+</#macro>
+
+
 <#macro fileModelRenderer fileModel>
   <#if fileModel.prettyPathWithinProject?has_content>
   <tr>
     <td>
-         ${getPrettyPathForFile(fileModel)}
+    	<#assign fileName = getPrettyPathForFile(fileModel)!>
+		<@fileSourceLink fileModel fileName/>    	
     </td>
     <td>
       <#-- <#list resource.technologyTags as tag>
