@@ -3,10 +3,25 @@
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
+<#macro fileSourceLink fileRef name>
+  	<#if fileRef??>
+  		<#assign sourceReportModel = fileModelToSourceReport(fileRef)!>
+  		
+  		<#if sourceReportModel.reportFilename??>
+			<a href="${sourceReportModel.reportFilename}"> ${name!""} </a>
+    	<#else>
+	  		${name!""}
+	  	</#if>
+	 <#else>
+	  	${name!""}
+	 </#if>
+</#macro>
 
 <#macro mdbRenderer mdb>
 	<tr>
-	  <td>${mdb.beanName!""}</td>
+	  <td> 
+	  	<@fileSourceLink mdb.ejbDeploymentDescriptor mdb.beanName/>
+	  </td>
 	  <td>${mdb.ejbClass.qualifiedName!""}</td>
 	  <td>${mdb.destination!""}</td>
 	</tr>
@@ -14,7 +29,10 @@
 
 <#macro ejbRenderer ejb>
 	<tr>
-	  <td>${ejb.beanName!""}</td>
+		
+	  <td>
+	  	<@fileSourceLink ejb.ejbDeploymentDescriptor ejb.beanName/>
+	  </td>
 	  <td>
 	      <#if ejb.ejbClass??>
               ${ejb.ejbClass.qualifiedName!""}

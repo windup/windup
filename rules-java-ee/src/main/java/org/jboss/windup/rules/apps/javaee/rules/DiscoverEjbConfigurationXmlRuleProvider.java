@@ -16,6 +16,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -82,7 +83,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     private void extractMetadata(GraphContext context, XmlFileModel xmlModel, Document doc)
     {
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
-        technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
+        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
 
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null)
@@ -116,6 +117,10 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                         version = NamespaceUtils.extractVersion(ns.getSchemaLocation());
                     }
                 }
+            }
+            
+            if(StringUtils.isNotBlank(version)) {
+            	technologyTag.setVersion(version);
             }
 
             extractMetadata(context, xmlModel, doc, version);
