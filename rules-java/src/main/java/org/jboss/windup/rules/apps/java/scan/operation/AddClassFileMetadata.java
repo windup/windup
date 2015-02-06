@@ -70,7 +70,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 payload.setPackageName(packageName);
 
                 final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-                final JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
+                final JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
                 javaClassModel.setSimpleName(simpleName);
                 javaClassModel.setPackageName(packageName);
                 javaClassModel.setQualifiedName(qualifiedName);
@@ -82,14 +82,14 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 {
                     for (final String iface : interfaceNames)
                     {
-                        JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
+                        JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(iface);
                         javaClassModel.addImplements(interfaceModel);
                     }
                 }
 
                 String superclassName = bcelJavaClass.getSuperclassName();
                 if (!StringUtils.isBlank(superclassName))
-                    javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
+                    javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
 
                 if (javaCfgService.shouldScanPackage(packageName)) // only add these details if this is a scanned package
                 {
@@ -118,7 +118,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                                     return;
                                 }
 
-                                final JavaClassModel clz = javaClassService.getOrCreate(classVal);
+                                final JavaClassModel clz = javaClassService.getOrCreatePhantom(classVal);
                                 javaClassModel.addImport(clz);
                             }
                         });
@@ -150,7 +150,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
         for (int i = 0, j = types.length; i < j; i++)
         {
             Type t = types[i];
-            clz[i] = javaClassService.getOrCreate(t.toString());
+            clz[i] = javaClassService.getOrCreatePhantom(t.toString());
         }
 
         return clz;

@@ -113,7 +113,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 springBeanRef.setSpringBeanName(id);
             }
 
-            JavaClassModel classReference = javaClassService.getOrCreate(clz);
+            JavaClassModel classReference = javaClassService.getOrCreatePhantom(clz);
             springBeanRef.setJavaClass(classReference);
 
             springConfigurationModel.addSpringBeanReference(springBeanRef);

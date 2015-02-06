@@ -23,7 +23,7 @@ import org.jboss.windup.reporting.model.FreeMarkerSourceReportModel;
 import org.jboss.windup.reporting.model.ReportFileModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
-import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
+import org.jboss.windup.reporting.query.FindSourceReportFilesGremlinCriterion;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportModelService;
@@ -62,8 +62,7 @@ public class CreateSourceReportRuleProvider extends WindupRuleProvider
         /*
          * Find all files for which there is at least one classification or blacklist
          */
-        Condition finder = Query.fromType(SourceFileModel.class)
-                    .piped(new FindClassifiedFilesGremlinCriterion());
+        Condition finder = Query.fromType(SourceFileModel.class).piped(new FindSourceReportFilesGremlinCriterion());
 
         GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>()
         {

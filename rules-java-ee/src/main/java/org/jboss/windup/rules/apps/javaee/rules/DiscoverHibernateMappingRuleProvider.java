@@ -130,7 +130,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             }
 
             // get a reference to the Java class.
-            JavaClassModel clz = javaClassService.getOrCreate(clzName);
+            JavaClassModel clz = javaClassService.getOrCreatePhantom(clzName);
 
             // create the hibernate facet.
             HibernateEntityModel hibernateEntity = hibernateEntityService.create();

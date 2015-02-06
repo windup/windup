@@ -16,6 +16,7 @@ import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
@@ -100,6 +101,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
 
     private void extractEJBMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
     {
+        ((SourceFileModel) javaTypeReference.getFile()).setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
@@ -116,6 +118,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
 
     private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
     {
+        ((SourceFileModel) entityTypeReference.getFile()).setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
         JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
         for (WindupVertexFrame annotationTypeReferenceBase : Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST))
@@ -152,6 +155,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
 
     private void extractMessageDrivenMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
     {
+        ((SourceFileModel) javaTypeReference.getFile()).setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);

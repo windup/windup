@@ -17,7 +17,10 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
@@ -199,35 +202,35 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         String localClz = extractChildTagAndTrim(element, "local");
         if (localClz != null)
         {
-            local = javaClassService.getOrCreate(localClz);
+            local = getOrCreatePhantom(javaClassService, localClz);
         }
 
         // get local home class.
         String localHomeClz = extractChildTagAndTrim(element, "local-home");
         if (localHomeClz != null)
         {
-            localHome = javaClassService.getOrCreate(localHomeClz);
+            localHome = getOrCreatePhantom(javaClassService, localHomeClz);
         }
 
         // get home class.
         String homeClz = extractChildTagAndTrim(element, "home");
         if (homeClz != null)
         {
-            home = javaClassService.getOrCreate(homeClz);
+            home = getOrCreatePhantom(javaClassService, homeClz);
         }
 
         // get remote class.
         String remoteClz = extractChildTagAndTrim(element, "remote");
         if (remoteClz != null)
         {
-            remote = javaClassService.getOrCreate(remoteClz);
+            remote = getOrCreatePhantom(javaClassService, remoteClz);
         }
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = javaClassService.getOrCreate(ejbClz);
+            ejb = getOrCreatePhantom(javaClassService, ejbClz);
         }
 
         String sessionType = extractChildTagAndTrim(element, "session-type");
@@ -268,7 +271,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = javaClassService.getOrCreate(ejbClz);
+            ejb = getOrCreatePhantom(javaClassService, ejbClz);
         }
 
         String sessionType = extractChildTagAndTrim(element, "session-type");
@@ -322,21 +325,21 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         String localClz = extractChildTagAndTrim(element, "local");
         if (localClz != null)
         {
-            local = javaClassService.getOrCreate(localClz);
+            local = getOrCreatePhantom(javaClassService, localClz);
         }
 
         // get local home class.
         String localHomeClz = extractChildTagAndTrim(element, "local-home");
         if (localHomeClz != null)
         {
-            localHome = javaClassService.getOrCreate(localHomeClz);
+            localHome = getOrCreatePhantom(javaClassService, localHomeClz);
         }
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = javaClassService.getOrCreate(ejbClz);
+            ejb = getOrCreatePhantom(javaClassService, ejbClz);
         }
 
         String persistenceType = extractChildTagAndTrim(element, "persistence-type");
@@ -388,6 +391,33 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         }
 
         return resources;
+    }
+
+    private JavaClassModel getOrCreatePhantom(JavaClassService service, String fqcn)
+    {
+        JavaClassModel classModel = service.getOrCreatePhantom(fqcn);
+        if (classModel instanceof AmbiguousJavaClassModel)
+        {
+            for (JavaClassModel reference : ((AmbiguousJavaClassModel) classModel).getReferences())
+            {
+                markAsReportReportable(reference);
+            }
+        }
+        else if (!(classModel instanceof PhantomJavaClassModel))
+        {
+            markAsReportReportable(classModel);
+        }
+        return classModel;
+    }
+
+    private void markAsReportReportable(JavaClassModel reference)
+    {
+        JavaSourceFileModel originalSource = reference.getOriginalSource();
+        JavaSourceFileModel decompiledSource = reference.getDecompiledSource();
+        if (originalSource != null)
+            originalSource.setGenerateSourceReport(true);
+        if (decompiledSource != null)
+            decompiledSource.setGenerateSourceReport(true);
     }
 
     private String extractAttributeAndTrim(Element element, String property)

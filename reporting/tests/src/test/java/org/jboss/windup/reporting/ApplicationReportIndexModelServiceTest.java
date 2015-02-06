@@ -15,7 +15,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.service.ProjectModelService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
@@ -57,7 +57,7 @@ public class ApplicationReportIndexModelServiceTest
     {
         try (GraphContext context = factory.create())
         {
-            ProjectModel projectModel = new ProjectModelService(context).create();
+            ProjectModel projectModel = new ProjectService(context).create();
             ApplicationReportService applicationReportService = new ApplicationReportService(context);
 
             ApplicationReportModel m1 = applicationReportService.create();

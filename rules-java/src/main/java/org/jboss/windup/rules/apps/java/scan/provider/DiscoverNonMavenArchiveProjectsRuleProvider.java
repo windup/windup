@@ -16,7 +16,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.ProjectModelService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.util.ZipUtil;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -87,7 +87,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
                             }
                             
                             ProjectModel childProjectModel = null;
-                            ProjectModelService projectModelService = new ProjectModelService(event.getGraphContext());
+                            ProjectService projectModelService = new ProjectService(event.getGraphContext());
                             for (ArchiveModel archiveModel : hierarchy)
                             {
                                 ProjectModel projectModel = archiveModel.getProjectModel();

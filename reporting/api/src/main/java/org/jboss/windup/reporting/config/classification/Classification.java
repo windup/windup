@@ -13,6 +13,7 @@ import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -158,6 +159,8 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
                 return;
             }
         }
+        if (payload instanceof SourceFileModel)
+            ((SourceFileModel) payload).setGenerateSourceReport(true);
         classification.addFileModel(payload);
         log.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
     }
