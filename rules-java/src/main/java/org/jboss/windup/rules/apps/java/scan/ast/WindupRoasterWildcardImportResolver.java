@@ -74,7 +74,7 @@ public class WindupRoasterWildcardImportResolver implements WildcardImportResolv
                     String candidateQualifiedName = wildcardImport + "." + type;
 
                     JavaClassService javaClassService = new JavaClassService(graphContext);
-                    Iterable<JavaClassModel> models = javaClassService.findAllByProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME,
+                    Iterable<JavaClassModel> models = javaClassService.findAllByProperty(JavaClassModel.QUALIFIED_NAME,
                                 candidateQualifiedName);
                     if (models.iterator().hasNext())
                     {

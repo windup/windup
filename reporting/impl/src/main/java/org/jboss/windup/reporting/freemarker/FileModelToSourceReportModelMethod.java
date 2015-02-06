@@ -58,8 +58,7 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
-        SourceReportModel result = sourceReportService
-                    .getSourceReportForFileModel(fileModel);
+        SourceReportModel result = sourceReportService.getSourceReportForFileModel(fileModel);
         ExecutionStatistics.get().end(NAME);
         return result;
     }

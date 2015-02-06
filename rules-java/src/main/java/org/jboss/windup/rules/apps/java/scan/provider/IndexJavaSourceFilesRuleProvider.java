@@ -174,7 +174,7 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
             }
 
             JavaClassService javaClassService = new JavaClassService(context);
-            JavaClassModel javaClassModel = javaClassService.getOrCreate(qualifiedName);
+            JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
             javaClassModel.setOriginalSource(sourceFileModel);
             javaClassModel.setSimpleName(simpleName);
             javaClassModel.setPackageName(packageName);
@@ -190,7 +190,7 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
                 {
                     for (String iface : interfaceNames)
                     {
-                        JavaClassModel interfaceModel = javaClassService.getOrCreate(iface);
+                        JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(iface);
                         javaClassModel.addImplements(interfaceModel);
                     }
                 }
@@ -201,7 +201,7 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
                 Extendable<?> extendable = (Extendable<?>) javaSource;
                 String superclassName = extendable.getSuperType();
                 if (Strings.isNullOrEmpty(superclassName))
-                    javaClassModel.setExtends(javaClassService.getOrCreate(superclassName));
+                    javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
             }
 
             sourceFileModel.addJavaClass(javaClassModel);

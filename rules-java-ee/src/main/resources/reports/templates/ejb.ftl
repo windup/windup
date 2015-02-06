@@ -3,21 +3,41 @@
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
+<#macro renderLinksToClass fqcn>
+	<#assign sourceFiles = findSourceFilesByClassName(fqcn)>
+	<#if sourceFiles?has_content>
+		<#list sourceFiles as sourceFile>
+			<#assign sourceReportModel = fileModelToSourceReport(sourceFile)!>
+			<a href="${sourceReportModel.reportFilename}">
+				<#if sourceFile_index == 0>
+					${fqcn}
+				<#else>
+					(${sourceFile_index + 1})
+				</#if>
+			</a>
+		</#list>
+	<#else>
+		${fqcn!""}
+	</#if>
+</#macro>
 
 <#macro mdbRenderer mdb>
 	<tr>
-	  <td>${mdb.beanName!""}</td>
-	  <td>${mdb.ejbClass.qualifiedName!""}</td>
-	  <td>${mdb.destination!""}</td>
+	<td>${mdb.beanName!""}</td>
+	<td>
+		<@renderLinksToClass mdb.ejbClass.qualifiedName/>
+	</td>
+	<td>${mdb.destination!""}</td>
 	</tr>
 </#macro>
+
 
 <#macro ejbRenderer ejb>
 	<tr>
 	  <td>${ejb.beanName!""}</td>
 	  <td>
 	      <#if ejb.ejbClass??>
-              ${ejb.ejbClass.qualifiedName!""}
+			<@renderLinksToClass ejb.ejbClass.qualifiedName/>
           </#if>
       </td>
 	  <td>${ejb.sessionType!""}</td>
@@ -29,7 +49,7 @@
 	  <td>${ejb.beanName!""}</td>
 	  <td>
 	      <#if ejb.ejbClass??>
-              ${ejb.ejbClass.qualifiedName!""}
+			<@renderLinksToClass ejb.ejbClass.qualifiedName/>
           </#if>
       </td>
 	  <td>${ejb.tableName!""}</td>

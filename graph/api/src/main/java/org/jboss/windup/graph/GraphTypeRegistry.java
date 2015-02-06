@@ -24,6 +24,10 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.AbstractModule;
 import com.tinkerpop.frames.modules.Module;
 
+/**
+ * This is used to provide a registry of {@link WindupVertexFrame} subclasses for integration with Tinkerpop Frames.
+ *
+ */
 @Singleton
 public class GraphTypeRegistry
 {
@@ -35,9 +39,20 @@ public class GraphTypeRegistry
     @Inject
     private GraphTypeManager graphTypeManager;
 
+    /**
+     * Add the provided type to the given {@link Element}.
+     */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
         graphTypeManager.addTypeToElement(kind, element);
+    }
+
+    /**
+     * Remove the provided type from the given {@link Element}.
+     */
+    public void removeTypeFromElement(Class<? extends WindupVertexFrame> kind, Element element)
+    {
+        graphTypeManager.removeTypeFromElement(kind, element);
     }
 
     @PostConstruct

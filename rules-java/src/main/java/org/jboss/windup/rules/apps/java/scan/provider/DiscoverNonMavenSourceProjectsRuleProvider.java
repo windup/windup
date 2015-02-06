@@ -11,7 +11,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.ProjectModelService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -52,7 +52,7 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends WindupRuleProvid
             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
             FileModel mainFileModel = cfg.getInputPath();
 
-            ProjectModelService projectModelService = new ProjectModelService(event.getGraphContext());
+            ProjectService projectModelService = new ProjectService(event.getGraphContext());
             ProjectModel mainProjectModel = mainFileModel.getProjectModel();
             if (mainProjectModel == null)
             {

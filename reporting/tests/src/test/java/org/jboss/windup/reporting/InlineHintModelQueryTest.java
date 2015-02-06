@@ -21,7 +21,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
-import org.jboss.windup.reporting.query.FindClassifiedFilesGremlinCriterion;
+import org.jboss.windup.reporting.query.FindSourceReportFilesGremlinCriterion;
 import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.junit.After;
@@ -125,7 +125,7 @@ public class InlineHintModelQueryTest
         GraphRewrite event = new GraphRewrite(context);
 
         // manually execute this criterion (this just adds things to the pipeline)
-        new FindClassifiedFilesGremlinCriterion().query(event, pipeline);
+        new FindSourceReportFilesGremlinCriterion().query(event, pipeline);
 
         List<FileModel> fileModels = new ArrayList<>();
         for (Vertex v : pipeline)

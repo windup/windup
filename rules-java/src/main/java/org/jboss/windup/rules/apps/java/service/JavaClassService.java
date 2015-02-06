@@ -1,5 +1,8 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -8,6 +11,7 @@ import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.model.JavaParameterModel;
+import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 /**
@@ -23,31 +27,62 @@ public class JavaClassService extends GraphService<JavaClassModel>
     }
 
     /**
-     * Find a {@link JavaClassModel} by the qualified name
+     * Find a {@link JavaClassModel} by the qualified name, returning a single result. If more than one result is available, a
+     * {@link AmbiguousJavaClassModel} reference will be returned.
      */
-    public JavaClassModel getUniqueByName(String qualifiedName) throws NonUniqueResultException
+    public JavaClassModel getByName(String qualifiedName) throws NonUniqueResultException
     {
         ExecutionStatistics.get().begin("getUniqueByName(qualifiedName)");
-        JavaClassModel result = getUniqueByProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME, qualifiedName);
+        JavaClassModel result = resolveByQualifiedName(qualifiedName);
         ExecutionStatistics.get().end("getUniqueByName(qualifiedName)");
         return result;
     }
 
-    public synchronized JavaClassModel getOrCreate(String qualifiedName) throws NonUniqueResultException
+    /**
+     * Indicates that we have found a .class or .java file for the given qualified name. This will either create a new {@link JavaClassModel} or
+     * convert an existing {@link PhantomJavaClassModel} if one exists.
+     */
+    public synchronized JavaClassModel create(String qualifiedName)
     {
-        ExecutionStatistics.get().begin("JavaClassService.getOrCreate(qualifiedName)");
-        JavaClassModel clz = resolveByQualifiedName(qualifiedName);
-
-        if (clz == null)
+        // if a phantom exists, just convert it
+        PhantomJavaClassModel phantom = new GraphService<>(getGraphContext(), PhantomJavaClassModel.class).getUniqueByProperty(
+                    JavaClassModel.QUALIFIED_NAME, qualifiedName);
+        if (phantom != null)
         {
-            clz = (JavaClassModel) this.create();
-            clz.setQualifiedName(qualifiedName);
-            clz.setSimpleName(Types.toSimpleName(qualifiedName));
-            clz.setPackageName(Types.getPackage(qualifiedName));
+            GraphService.removeTypeFromModel(getGraphContext(), phantom, PhantomJavaClassModel.class);
+            return phantom;
         }
+        JavaClassModel javaClassModel = super.create();
+        setPropertiesFromName(javaClassModel, qualifiedName);
+        return javaClassModel;
+    }
 
-        ExecutionStatistics.get().end("JavaClassService.getOrCreate(qualifiedName)");
-        return clz;
+    /**
+     * Gets an existing {@link JavaClassModel}, however if none currently exists, then create a {@link PhantomJavaClassModel}.<br/>
+     * 
+     * This is intended to indicate that we know about a class by reference (for example another class subclasses it, or it is referenced in an XML
+     * file), but we do not yet have a location on the disk for the class (or source) file itself.
+     * 
+     * To create a class (possibly converting a {@link PhantomJavaClassModel} to concrete in the process), use {@link JavaClassService#create(String)}
+     * instead.
+     */
+    public synchronized JavaClassModel getOrCreatePhantom(String qualifiedName)
+    {
+        JavaClassModel result = resolveByQualifiedName(qualifiedName);
+        if (result == null)
+        {
+            // create a phantom
+            result = new GraphService<>(getGraphContext(), PhantomJavaClassModel.class).create();
+            setPropertiesFromName(result, qualifiedName);
+        }
+        return result;
+    }
+
+    private void setPropertiesFromName(JavaClassModel model, String qualifiedName)
+    {
+        model.setQualifiedName(qualifiedName);
+        model.setSimpleName(Types.toSimpleName(qualifiedName));
+        model.setPackageName(Types.getPackage(qualifiedName));
     }
 
     public Iterable<JavaClassModel> findByJavaClassPattern(String regex)
@@ -82,36 +117,44 @@ public class JavaClassService extends GraphService<JavaClassModel>
      * Since {@link JavaClassModel} may actually be ambiguous if multiple copies of the class have been defined, attempt to resolve the unique
      * instance, or return an {@link AmbiguousJavaClassModel} if multiple types exist.
      */
-    public JavaClassModel resolveByQualifiedName(String qualifiedClassName)
+    private JavaClassModel resolveByQualifiedName(String qualifiedClassName)
     {
         ExecutionStatistics.get().begin("JavaClassService.resolveByQualifiedName(qualifiedClassName)");
         try
         {
-            JavaClassModel model = getUniqueByProperty(JavaClassModel.PROPERTY_QUALIFIED_NAME,
+            JavaClassModel model = getUniqueByProperty(JavaClassModel.QUALIFIED_NAME,
                         qualifiedClassName);
             return model;
         }
         catch (NonUniqueResultException e)
         {
             Iterable<JavaClassModel> candidates = findAllByProperty(
-                        JavaClassModel.PROPERTY_QUALIFIED_NAME, qualifiedClassName);
+                        JavaClassModel.QUALIFIED_NAME, qualifiedClassName);
 
+            AmbiguousJavaClassModel ambiguousModel = null;
             for (JavaClassModel candidate : candidates)
             {
                 if (candidate instanceof AmbiguousJavaClassModel)
-                    return candidate;
+                    ambiguousModel = (AmbiguousJavaClassModel) candidate;
             }
 
-            GraphService<AmbiguousJavaClassModel> ambiguousJavaClassModelService = new GraphService<>(
-                        getGraphContext(), AmbiguousJavaClassModel.class);
+            if (ambiguousModel == null)
+            {
+                GraphService<AmbiguousJavaClassModel> ambiguousJavaClassModelService = new GraphService<>(
+                            getGraphContext(), AmbiguousJavaClassModel.class);
+                ambiguousModel = ambiguousJavaClassModelService.create();
+            }
 
-            AmbiguousJavaClassModel ambiguousModel = ambiguousJavaClassModelService.create();
+            Set<JavaClassModel> existingAmbiguousEntries = new HashSet<>();
+            for (JavaClassModel existingAmbiguousClass : ambiguousModel.getReferences())
+            {
+                existingAmbiguousEntries.add(existingAmbiguousClass);
+            }
+
             for (JavaClassModel candidate : candidates)
             {
-                ambiguousModel.setSimpleName(Types.toSimpleName(qualifiedClassName));
-                ambiguousModel.setPackageName(Types.getPackage(qualifiedClassName));
-                ambiguousModel.setQualifiedName(qualifiedClassName);
-                ambiguousModel.addReference(candidate);
+                if (!existingAmbiguousEntries.contains(candidate))
+                    ambiguousModel.addReference(candidate);
             }
             return ambiguousModel;
         }
