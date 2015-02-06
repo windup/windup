@@ -28,8 +28,7 @@ public interface EjbMessageDrivenModel extends EjbBeanBaseModel
      */
     @Property(DESTINATION)
     void setDestination(String destination);
-    
-    
+
     /**
      * References the Deployment Descriptor containing EJB.
      */

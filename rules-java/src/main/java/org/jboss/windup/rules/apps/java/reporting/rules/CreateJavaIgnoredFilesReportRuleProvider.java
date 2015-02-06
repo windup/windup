@@ -19,9 +19,7 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.IgnoredFilesReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
-import org.jboss.windup.rules.apps.java.ip.StaticIPLocationModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -100,7 +98,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
                 ignoredFilesReportModel.addIgnoredFile(file);
             }
         }
-       
+
         for (IgnoredFileRegexModel ignoreRegexModel : javaCfg.getIgnoredFileRegexes())
         {
             ignoredFilesReportModel.addFileRegex(ignoreRegexModel);

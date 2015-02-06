@@ -139,8 +139,8 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         {
             webXmlVersion = StringUtils.replace(webXmlVersion, "_", ".");
             webXml.setSpecificationVersion(webXmlVersion);
-            
-            //set the tag version
+
+            // set the tag version
             technologyTag.setVersion(webXmlVersion);
         }
 

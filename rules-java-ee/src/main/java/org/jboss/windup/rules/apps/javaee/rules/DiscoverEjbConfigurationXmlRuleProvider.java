@@ -121,9 +121,10 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                     }
                 }
             }
-            
-            if(StringUtils.isNotBlank(version)) {
-            	technologyTag.setVersion(version);
+
+            if (StringUtils.isNotBlank(version))
+            {
+                technologyTag.setVersion(version);
             }
 
             extractMetadata(context, xmlModel, doc, version);
