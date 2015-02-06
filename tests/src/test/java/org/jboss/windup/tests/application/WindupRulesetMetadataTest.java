@@ -81,7 +81,7 @@ public class WindupRulesetMetadataTest
             }
         }
 
-        Assert.assertEquals(3, count);
+        Assert.assertEquals(4, count);
         Assert.assertTrue(foundJavaRulesetMeta);
         Assert.assertTrue(foundJavaEERulesetMeta);
         Assert.assertTrue(foundXMLRulesetMeta);

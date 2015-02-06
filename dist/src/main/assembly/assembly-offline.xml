@@ -23,13 +23,24 @@
             <include>**</include>
          </includes>
       </fileSet>
-      
    </fileSets>
 
    <dependencySets>
       <dependencySet>
          <outputDirectory>/lib</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
+         <excludes>
+            <exclude>org.jboss.windup.maven:nexus-indexer-data:zip:*</exclude>
+         </excludes>
+      </dependencySet>
+
+      <dependencySet>
+         <outputDirectory>/cache</outputDirectory>
+         <useProjectArtifact>false</useProjectArtifact>
+         <unpack>true</unpack>
+         <includes>
+            <include>org.jboss.windup.maven:nexus-indexer-data:zip:*</include>
+         </includes>
       </dependencySet>
    </dependencySets>
 

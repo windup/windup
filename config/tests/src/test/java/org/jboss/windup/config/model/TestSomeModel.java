@@ -13,4 +13,4 @@ public interface TestSomeModel extends WindupVertexFrame
 
     
 
-}// class
+}

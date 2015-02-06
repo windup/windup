@@ -2,7 +2,6 @@ package org.jboss.windup.util.exception;
 
 import java.util.List;
 
-
 /**
  * An exception that shows multiple error messages.
  *
@@ -10,6 +9,8 @@ import java.util.List;
  */
 public class WindupMultiException extends WindupException
 {
+    private static final long serialVersionUID = -3660697345119974249L;
+
     public WindupMultiException(String msg, List<Exception> exs)
     {
         super(formatMessage(msg, exs, false));
@@ -18,7 +19,7 @@ public class WindupMultiException extends WindupException
     private static String formatMessage(String msg, List<Exception> exs, boolean prependClassSimpleName)
     {
         StringBuilder sb = new StringBuilder(msg).append("\n");
-        for( Exception ex : exs )
+        for (Exception ex : exs)
         {
             sb.append("\t");
             if (prependClassSimpleName)

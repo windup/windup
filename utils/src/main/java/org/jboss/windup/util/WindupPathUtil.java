@@ -1,79 +1,96 @@
 package org.jboss.windup.util;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
 
 /**
  * Provides useful methods for manipulating filenames (eg, removing illegal chars from files).
  *
  * @author jsightler
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class WindupPathUtil
 {
+    private static final Logger log = Logger.getLogger(WindupPathUtil.class.getName());
+
     /**
-     * The path ~/.windup
+     * The path $USER_HOME/.windup
      */
     public static Path getWindupUserDir()
     {
         String userHome = System.getProperty("user.home");
         if (userHome == null)
-            return null;
+        {
+            Path path = new File("").toPath();
+            log.warning("$USER_HOME not set, using [" + path + "] instead.");
+            return path;
+        }
         return Paths.get(userHome).resolve(".windup");
     }
 
     /**
-     * The path ~/.windup/rules
-     */
-    public static Path getWindupUserRulesDir()
-    {
-        Path windupUserDir = getWindupUserDir();
-        if (windupUserDir == null)
-            return null;
-        return windupUserDir.resolve("rules");
-    }
-
-    /**
-     * The path ~/.windup/ignore
-     */
-    public static Path getWindupIgnoreListDir()
-    {
-        Path windupUserDir = getWindupUserDir();
-        if (windupUserDir == null)
-            return null;
-        return windupUserDir.resolve("ignore");
-    }
-
-    /**
-     * The path WINDUP_HOME
+     * The path $WINDUP_HOME (where Windup is installed.)
      */
     public static Path getWindupHome()
     {
-        String forgeHome = System.getProperty("forge.home");
-        if (forgeHome == null)
-            return null;
-        return Paths.get(forgeHome);
+        String windupHome = System.getProperty("windup.home");
+        if (windupHome == null)
+        {
+            Path path = new File("").toPath();
+            log.warning("$WINDUP_HOME not set, using [" + path + "] instead.");
+            return path;
+        }
+        return Paths.get(windupHome);
     }
 
     /**
-     * The path WINDUP_HOME/rules
+     * The path $USER_HOME/cache
      */
-    public static Path getWindupHomeRules()
+    public static Path getUserCacheDir()
     {
-        Path windupHome = getWindupHome();
-        if (windupHome == null)
-            return null;
-        return windupHome.resolve("rules");
+        return getUserSubdirectory("cache");
     }
 
     /**
-     * The path WINDUP_HOME/ignore
+     * The path $WINDUP_HOME/cache
      */
-    public static Path getWindupHomeIgnoreListDir()
+    public static Path getWindupCacheDir()
     {
-        Path windupHome = getWindupHome();
-        if (windupHome == null)
-            return null;
-        return windupHome.resolve("ignore");
+        return getWindupSubdirectory("cache");
+    }
+
+    /**
+     * The path $USER_HOME/ignore
+     */
+    public static Path getUserIgnoreDir()
+    {
+        return getUserSubdirectory("ignore");
+    }
+
+    /**
+     * The path $WINDUP_HOME/ignore
+     */
+    public static Path getWindupIgnoreDir()
+    {
+        return getWindupSubdirectory("ignore");
+    }
+
+    /**
+     * The path $USER_HOME/rules
+     */
+    public static Path getUserRulesDir()
+    {
+        return getUserSubdirectory("rules");
+    }
+
+    /**
+     * The path $WINDUP_HOME/rules
+     */
+    public static Path getWindupRulesDir()
+    {
+        return getWindupSubdirectory("rules");
     }
 
     /**
@@ -111,5 +128,24 @@ public class WindupPathUtil
             throw new IllegalArgumentException("Not a .class file path: " + classFilePath);
 
         return classFilePath.substring(0, pos).replace('/', '.').replace('\\', '.');
+    }
+
+    /*
+     * Helpers
+     */
+    private static Path getUserSubdirectory(String subdirectory)
+    {
+        Path windupUserDir = getWindupUserDir();
+        if (windupUserDir == null)
+            return null;
+        return windupUserDir.resolve(subdirectory);
+    }
+
+    private static Path getWindupSubdirectory(String subdirectory)
+    {
+        Path windupHome = getWindupHome();
+        if (windupHome == null)
+            return null;
+        return windupHome.resolve(subdirectory);
     }
 }

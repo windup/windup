@@ -50,12 +50,9 @@ public class OverviewReportLineTest
                 @AddonDependency(name = "org.jboss.windup.rexster:rexster", version = "2.0.0-SNAPSHOT"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                /*
-                 * FIXME: Convert the XML addon to complex layout with separate tests/ module to remove this hard-coded version
-                 */
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
-                @AddonDependency(name = "org.jboss.windup.rules:rules-java-project"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules:rules-java-project", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()

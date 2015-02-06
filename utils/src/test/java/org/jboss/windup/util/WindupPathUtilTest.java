@@ -9,13 +9,13 @@ import org.junit.Test;
 
 public class WindupPathUtilTest
 {
-    String forgeHome = null;
+    String windupHome = null;
     String userHome = null;
 
     @Before
     public void before()
     {
-        System.clearProperty("forge.home");
+        System.clearProperty("windup.home");
         userHome = System.clearProperty("user.home");
     }
 
@@ -24,13 +24,13 @@ public class WindupPathUtilTest
     {
         if (userHome != null)
             System.setProperty("user.home", userHome);
-        if (forgeHome != null)
-            System.setProperty("forge.home", forgeHome);
+        if (windupHome != null)
+            System.setProperty("windup.home", windupHome);
     }
 
     private String setWindupHome(String path)
     {
-        return System.setProperty("forge.home", path);
+        return System.setProperty("windup.home", path);
     }
 
     private String setUserHome(String path)
@@ -45,7 +45,7 @@ public class WindupPathUtilTest
     @Test
     public void testWindupHome()
     {
-        Assert.assertNull(WindupPathUtil.getWindupHome());
+        Assert.assertEquals(Paths.get(""), WindupPathUtil.getWindupHome());
         setWindupHome("/foo");
         Assert.assertEquals(Paths.get("/foo"), WindupPathUtil.getWindupHome());
     }
@@ -53,32 +53,32 @@ public class WindupPathUtilTest
     @Test
     public void testWindupHomeRules()
     {
-        Assert.assertNull(WindupPathUtil.getWindupHomeRules());
+        Assert.assertEquals(Paths.get("rules"), WindupPathUtil.getWindupRulesDir());
         setWindupHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", "rules"), WindupPathUtil.getWindupHomeRules());
+        Assert.assertEquals(Paths.get("/foo", "rules"), WindupPathUtil.getWindupRulesDir());
     }
 
     @Test
     public void testWindupHomeIgnoreListDir()
     {
-        Assert.assertNull(WindupPathUtil.getWindupHomeIgnoreListDir());
+        Assert.assertEquals(Paths.get("ignore"), WindupPathUtil.getWindupIgnoreDir());
         setWindupHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", "ignore"), WindupPathUtil.getWindupHomeIgnoreListDir());
+        Assert.assertEquals(Paths.get("/foo", "ignore"), WindupPathUtil.getWindupIgnoreDir());
     }
 
     @Test
     public void testWindupUserDir()
     {
-        Assert.assertNull(WindupPathUtil.getWindupUserDir());
+        Assert.assertEquals(Paths.get(""), WindupPathUtil.getWindupUserDir());
         setUserHome("/foo");
         Assert.assertEquals(Paths.get("/foo", ".windup"), WindupPathUtil.getWindupUserDir());
     }
 
     @Test
-    public void testWindupIgnoreListDir()
+    public void testWindupIgnoreDir()
     {
-        Assert.assertNull(WindupPathUtil.getWindupIgnoreListDir());
+        Assert.assertEquals(Paths.get("ignore"), WindupPathUtil.getUserIgnoreDir());
         setUserHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", ".windup", "ignore"), WindupPathUtil.getWindupIgnoreListDir());
+        Assert.assertEquals(Paths.get("/foo", ".windup", "ignore"), WindupPathUtil.getUserIgnoreDir());
     }
 }

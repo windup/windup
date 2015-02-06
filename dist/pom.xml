@@ -18,6 +18,10 @@
     <name>Windup - Distribution Build</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <version.nexus.index>1</version.nexus.index>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -41,6 +45,7 @@
                                 <addonId>org.jboss.windup:ui,${project.version}</addonId>
                                 <addonId>org.jboss.windup.rexster:rexster,${project.version}</addonId>
                                 <addonId>org.jboss.windup.rules.apps:rules-java,${project.version}</addonId>
+                                <addonId>org.jboss.windup.rules.apps:rules-java-project,${project.version}</addonId>
                                 <addonId>org.jboss.windup.rules.apps:rules-java-ee,${project.version}</addonId>
                             </addonIds>
                         </configuration>
@@ -76,6 +81,14 @@
             <artifactId>windup-bootstrap</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.windup.maven</groupId>
+            <artifactId>nexus-indexer-data</artifactId>
+            <version>${version.nexus.index}</version>
+            <type>zip</type>
+        </dependency>
+
     </dependencies>
 
     <profiles>

@@ -299,8 +299,8 @@ public class WindupCommandTest
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
 
-                Path expectedUserHomeRulesDir = WindupPathUtil.getWindupUserRulesDir();
-                Path expectedWindupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
+                Path expectedUserHomeRulesDir = WindupPathUtil.getUserRulesDir();
+                Path expectedWindupHomeRulesDir = WindupPathUtil.getWindupRulesDir();
 
                 boolean foundUserSpecifiedPath = false;
                 boolean foundUserHomeDirRulesPath = false;
@@ -358,7 +358,7 @@ public class WindupCommandTest
 
                 setupController(controller, outputFile, reportPath);
 
-                Path expectedUserHomeRulesDir = WindupPathUtil.getWindupUserRulesDir();
+                Path expectedUserHomeRulesDir = WindupPathUtil.getUserRulesDir();
                 expectedUserHomeRulesDir.toFile().mkdirs();
                 controller.setValueFor("userRulesDirectory", expectedUserHomeRulesDir.toFile());
 
@@ -374,7 +374,7 @@ public class WindupCommandTest
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
 
-                Path expectedWindupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
+                Path expectedWindupHomeRulesDir = WindupPathUtil.getWindupRulesDir();
 
                 boolean foundUserHomeDirRulesPath = false;
                 boolean foundWindupHomeDirRulesPath = false;
@@ -449,8 +449,8 @@ public class WindupCommandTest
 
                 Iterable<Path> allIgnoreDirectories = windupConfiguration.getAllIgnoreDirectories();
 
-                Path expectedUserHomeIgnoreDir = WindupPathUtil.getWindupIgnoreListDir();
-                Path expectedWindupHomeIgnoreDir = WindupPathUtil.getWindupHomeIgnoreListDir();
+                Path expectedUserHomeIgnoreDir = WindupPathUtil.getUserIgnoreDir();
+                Path expectedWindupHomeIgnoreDir = WindupPathUtil.getWindupIgnoreDir();
 
                 boolean foundUserSpecifiedPath = false;
                 boolean foundUserHomeDirIgnorePath = false;

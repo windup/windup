@@ -9,7 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.jboss.windup.rules</groupId>
+    <groupId>org.jboss.windup.rules.apps</groupId>
     <artifactId>rules-java-project</artifactId>
 
     <name>Windup Rules - Project</name>

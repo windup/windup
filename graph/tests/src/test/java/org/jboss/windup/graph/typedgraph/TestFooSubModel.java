@@ -31,4 +31,4 @@ public interface TestFooSubModel extends TestFooModel
             return "subclass";
         }
     }
-}// class
+}

@@ -1,0 +1,14 @@
+# GroupId exact match
+org.jboss.windup:*:*:*
+
+# GroupId prefix
+org.apache.commons.*:*:*
+
+# ArtifactId prefix with wildcard version and GroupId 
+org.jboss.bar:bar-*:*:*
+
+# Version
+org.freemarker.foo:freemarker-core:3.1
+
+# Version range
+org.hibernate.*:hibernate-core:[3.0,5.0)

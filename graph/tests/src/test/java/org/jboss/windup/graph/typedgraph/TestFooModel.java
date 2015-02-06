@@ -43,4 +43,4 @@ public interface TestFooModel extends ResourceModel
             return "base";
         }
     }
-}// class
+}
