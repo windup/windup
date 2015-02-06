@@ -19,10 +19,8 @@
 
 <#macro mdbRenderer mdb>
 	<tr>
-	  <td> 
-	  	<@fileSourceLink mdb.ejbDeploymentDescriptor mdb.beanName/>
-	  </td>
-	  <td>${mdb.ejbClass.qualifiedName!""}</td>
+	  <td><@fileSourceLink mdb.ejbDeploymentDescriptor mdb.beanName/></td>
+	  <td><@fileSourceLink mdb.ejbClass.classFile mdb.ejbClass.qualifiedName/></td>
 	  <td>${mdb.destination!""}</td>
 	</tr>
 </#macro>
@@ -35,7 +33,7 @@
 	  </td>
 	  <td>
 	      <#if ejb.ejbClass??>
-              ${ejb.ejbClass.qualifiedName!""}
+	      	<@fileSourceLink ejb.ejbClass.classFile ejb.ejbClass.qualifiedName/>
           </#if>
       </td>
 	  <td>${ejb.sessionType!""}</td>
