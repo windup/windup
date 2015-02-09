@@ -13,6 +13,7 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
+import org.jboss.windup.rules.apps.xml.condition.XmlFileResult;
 import org.jboss.windup.rules.apps.xml.condition.XmlFileXpath;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.NamespaceEntry;
@@ -44,6 +45,7 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
         String xpath = $(element).attr("matches");
         String as = $(element).attr("as");
         String publicId = $(element).attr("public-id");
+        String resultMatch = $(element).attr("xpathResultMatch");
         if(as == null) {
             as = Iteration.DEFAULT_VARIABLE_LIST_STRING;
         }
@@ -51,7 +53,7 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
         {
             throw new WindupException("Error, 'xmlfile' element must have a non-empty 'matches' or public-id attribute");
         }
-        String inFile = $(element).attr("in-file");
+        String inFile = $(element).attr("in");
         
         Map<String, String> namespaceMappings = new HashMap<>();
 
@@ -62,7 +64,11 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
             namespaceMappings.put(namespaceEntry.getPrefix(), namespaceEntry.getNamespaceURI());
         }
         
+       
         XmlFileXpath xmlFile = XmlFile.matchesXpath(xpath);
+        if(resultMatch !=null) {
+            xmlFile.resultMatches(resultMatch);
+        }
         xmlFile.andDTDPublicId(publicId);
         for (Map.Entry<String, String> nsMapping : namespaceMappings.entrySet())
         {
