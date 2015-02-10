@@ -68,7 +68,9 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
         {
             xmlFile.namespace(nsMapping.getKey(), nsMapping.getValue());
         }
-        xmlFile.inFile(inFile);
+        if(inFile !=null) {
+            xmlFile.inFile(inFile);
+        }
         xmlFile.as(as);
         return (XmlFile)xmlFile;
     }
