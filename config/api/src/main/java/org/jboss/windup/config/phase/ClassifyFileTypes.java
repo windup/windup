@@ -6,7 +6,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 
 /**
  * Previous: {@link ArchiveMetadataExtraction}<br/>
- * Next: {@link Decompilation}<br/>
+ * Next: {@link DiscoverProjectStructure}<br/>
  * 
  * <p>
  * This scans files and attaches metadata to them. For example, this may find all of the Java files in an application and mark them as Java, or it may

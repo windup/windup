@@ -127,7 +127,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
         GraphService<ClassificationModel> classificationService = new GraphService<ClassificationModel>(graphContext,
                     ClassificationModel.class);
         ClassificationModel classification = classificationService.getUniqueByProperty(
-                    ClassificationModel.PROPERTY_CLASSIFICATION, text);
+                    ClassificationModel.CLASSIFICATION, text);
 
         if (classification == null)
         {

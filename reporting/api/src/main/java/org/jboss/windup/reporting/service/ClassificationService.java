@@ -39,7 +39,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         int classificationEffort = 0;
         for (Vertex v : classificationPipeline)
         {
-            Integer migrationEffort = v.getProperty(ClassificationModel.PROPERTY_EFFORT);
+            Integer migrationEffort = v.getProperty(ClassificationModel.EFFORT);
             if (migrationEffort != null)
             {
                 classificationEffort += migrationEffort;
@@ -65,7 +65,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         int classificationEffort = 0;
         for (Vertex v : classificationPipeline)
         {
-            Integer migrationEffort = v.getProperty(ClassificationModel.PROPERTY_EFFORT);
+            Integer migrationEffort = v.getProperty(ClassificationModel.EFFORT);
             if (migrationEffort != null)
             {
                 classificationEffort += migrationEffort;
@@ -89,7 +89,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     public ClassificationModel attachClassification(FileModel fileModel, String classificationText, String description)
     {
         ClassificationModel model = getUnique(getTypedQuery()
-                    .has(ClassificationModel.PROPERTY_CLASSIFICATION, classificationText));
+                    .has(ClassificationModel.CLASSIFICATION, classificationText));
         if (model == null)
         {
             model = create();

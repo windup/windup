@@ -1,15 +1,12 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.util.List;
-
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
-import org.jboss.windup.config.phase.Implicit;
+import org.jboss.windup.config.phase.ClassifyFileTypes;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.binary.DecompileArchivesRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.scan.operation.AddClassFileMetadata;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -24,19 +21,7 @@ public class IndexJavaClassFilesRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return Implicit.class;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(UnzipArchivesToOutputRuleProvider.class, DiscoverArchiveTypesRuleProvider.class);
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
-    {
-        return asClassList(DecompileArchivesRuleProvider.class);
+        return ClassifyFileTypes.class;
     }
 
     // @formatter:off
