@@ -52,7 +52,7 @@ public class FileMappingHandler implements ElementHandler<Void>
             List<Class<? extends WindupVertexFrame>> matchingTypes = new ArrayList<>();
             for (Class<? extends WindupVertexFrame> modelType : typeManager.getRegisteredTypes())
             {
-                if (modelType.getName().equals(name) || modelType.getSimpleName().equals(name + "Model") || modelType.getSimpleName().equals(name))
+                if (modelType.getName().equals(name) || modelType.getSimpleName().equals(name + ".class") || modelType.getSimpleName().equals(name + "Model") || modelType.getSimpleName().equals(name))
                 {
                     matchingTypes.add(modelType);
                 }
