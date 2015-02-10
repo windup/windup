@@ -17,7 +17,9 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
+import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
 import org.jboss.windup.rules.apps.maven.dao.MavenModelService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.Logging;
@@ -31,6 +33,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Discover Maven pom files and build a {@link MavenProjectModel} containing this metadata.
+ */
 public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
@@ -59,8 +64,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
             {
-                GraphContext graphContext = event.getGraphContext();
-                MavenProjectModel mavenProjectModel = extractMavenProjectModel(graphContext, payload);
+                MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, payload);
                 if (mavenProjectModel != null)
                 {
                     ArchiveModel archiveModel = payload.getParentArchive();
@@ -87,8 +91,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                     {
                         // add the parent file
                         File parentFile = payload.asFile().getParentFile();
-                        FileModel parentFileModel = new FileService(graphContext).findByPath(parentFile
-                                    .getAbsolutePath());
+                        FileModel parentFileModel = new FileService(event.getGraphContext()).findByPath(parentFile.getAbsolutePath());
                         if (parentFileModel != null)
                         {
                             parentFileModel.setProjectModel(mavenProjectModel);
@@ -144,7 +147,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
         }
     }
 
-    public MavenProjectModel extractMavenProjectModel(GraphContext context, XmlFileModel xmlResourceModel)
+    public MavenProjectModel extractMavenProjectModel(GraphRewrite event, XmlFileModel xmlResourceModel)
     {
         File myFile = xmlResourceModel.asFile();
         Document document = xmlResourceModel.asDocument();
@@ -152,6 +155,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
         // modelVersion
         String modelVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:modelVersion", namespaces);
         String name = XmlUtil.xpathExtract(document, "/pom:project/pom:name", namespaces);
+        String organization = XmlUtil.xpathExtract(document, "/pom:project/pom:organization", namespaces);
         String description = XmlUtil.xpathExtract(document, "/pom:project/pom:description", namespaces);
         String url = XmlUtil.xpathExtract(document, "/pom:project/pom:url", namespaces);
 
@@ -173,7 +177,12 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             version = parentVersion;
         }
 
-        MavenModelService mavenModelService = new MavenModelService(context);
+        if (StringUtils.isBlank(organization))
+        {
+            organization = PackageNameMapping.getOrganizationForPackage(event, groupId);
+        }
+
+        MavenModelService mavenModelService = new MavenModelService(event.getGraphContext());
         MavenProjectModel mavenProjectModel = mavenModelService.findByGroupArtifactVersion(groupId, artifactId,
                     version);
         if (mavenProjectModel == null)
@@ -205,6 +214,10 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
 
         mavenProjectModel.setName(getReadableNameForProject(name, groupId, artifactId, version));
 
+        if (StringUtils.isNotBlank(organization))
+        {
+            mavenProjectModel.setOrganization(organization);
+        }
         if (StringUtils.isNotBlank(description))
         {
             mavenProjectModel.setDescription(StringUtils.trim(description));
@@ -265,7 +278,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                     dependency.setName(getReadableNameForProject(null, dependencyGroupId, dependencyArtifactId,
                                 dependencyVersion));
                 }
-                ProjectDependencyModel projectDep = context.getFramed().addVertex(null, ProjectDependencyModel.class);
+                ProjectDependencyModel projectDep = new GraphService<>(event.getGraphContext(), ProjectDependencyModel.class).create();
                 projectDep.setClassifier(dependencyClassifier);
                 projectDep.setScope(dependencyScope);
                 projectDep.setType(dependencyType);
