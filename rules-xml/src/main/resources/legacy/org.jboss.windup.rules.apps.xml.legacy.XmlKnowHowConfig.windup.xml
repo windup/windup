@@ -3,7 +3,7 @@
     <rules>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasource/@pool-name" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//datasource/@pool-name" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -15,7 +15,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasource/@jndi-name" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//datasource/@jndi-name" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -27,7 +27,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasource/@jta" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//datasource/@jta" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -39,7 +39,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasource/@spy" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//datasource/@spy" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -51,7 +51,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasource/@use-ccm" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//datasource/@use-ccm" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -63,7 +63,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//connection-url" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//connection-url" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -75,7 +75,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//driver-class" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//driver-class" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -87,7 +87,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//new-connection-sql" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//new-connection-sql" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -99,7 +99,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//min-pool-size" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//min-pool-size" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -111,7 +111,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//max-pool-size" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//max-pool-size" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -123,7 +123,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//prefill" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//prefill" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -135,7 +135,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//use-strict-min" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//use-strict-min" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -147,7 +147,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//transaction-isolation" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//transaction-isolation" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -159,7 +159,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//flush-strategy" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//flush-strategy" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -171,7 +171,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//user-name" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//user-name" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -183,7 +183,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//password" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//password" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -195,7 +195,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//background-validation" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//background-validation" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -207,7 +207,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//use-fast-fail" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//use-fast-fail" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -219,7 +219,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//idle-timeout-minutes" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//idle-timeout-minutes" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -231,7 +231,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//xa-resource-timeout" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//xa-resource-timeout" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -243,7 +243,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//track-statements" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//track-statements" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -255,7 +255,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//prepared-statement-cache-size" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//prepared-statement-cache-size" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -267,7 +267,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//check-valid-connection-sql" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//check-valid-connection-sql" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -279,7 +279,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//validate-on-match" in=".*ds-eap6.xml">
+                <xmlfile as="default" matches="//validate-on-match" in="{*}ds-eap6.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -291,7 +291,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:postgres')]" in=".*-ds.xml">
+                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:postgres')]" in="{*}-ds.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -303,7 +303,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:oracle')]" in=".*-ds.xml">
+                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:oracle')]" in="{*}-ds.xml">
                 </xmlfile>
             </when>
             <perform>
@@ -315,7 +315,7 @@
         </rule>
         <rule>
             <when>
-                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:sqlserver')]" in=".*-ds.xml">
+                <xmlfile as="default" matches="//datasources/local-tx-datasource/connection-url[contains(text(),'jdbc:sqlserver')]" in="{*}-ds.xml">
                 </xmlfile>
             </when>
             <perform>
