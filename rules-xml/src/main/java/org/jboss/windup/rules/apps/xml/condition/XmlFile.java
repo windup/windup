@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
@@ -74,12 +75,13 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
     private String xpathString;
     private XPathExpression compiledXPath;
     private Map<String, String> namespaces = new HashMap<>();
-    private String fileName;
     private String publicId;
     private String xpathResultMatch;
 
     // just to extract required parameter names
     private RegexParameterizedPatternParser xpathPattern;
+
+    private RegexParameterizedPatternParser fileNamePattern;
 
     public void setXpathResultMatch(String xpathResultMatch)
     {
@@ -146,7 +148,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
      */
     public XmlFileIn inFile(String fileName)
     {
-        this.fileName = fileName;
+        this.fileNamePattern = new RegexParameterizedPatternParser(fileName);
         return this;
     }
 
@@ -164,9 +166,9 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
         return compiledXPath;
     }
 
-    public String getInFile()
+    public RegexParameterizedPatternParser getInFilePattern()
     {
-        return fileName;
+        return fileNamePattern;
     }
 
     public String getPublicId()
@@ -331,9 +333,13 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
                             + ")");
             }
 
-            if (fileName != null && !fileName.equals(""))
+            if (fileNamePattern != null)
             {
-                if (!xml.getFileName().matches(fileName))
+                final ParameterStore store = DefaultParameterStore.getInstance(context);
+                Pattern compiledPattern = fileNamePattern.getCompiledPattern(store);
+                String pattern = compiledPattern.pattern();
+                String fileName = xml.getFileName();
+                if (!fileName.matches(pattern))
                 {
                     continue;
                 }
@@ -444,9 +450,9 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
         {
             builder.append(".matches(" + xpathString + ")");
         }
-        if (fileName != null)
+        if (fileNamePattern != null)
         {
-            builder.append(".inFile(" + fileName + ")");
+            builder.append(".inFile(" + fileNamePattern.toString() + ")");
         }
         if (publicId != null)
         {
