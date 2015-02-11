@@ -48,7 +48,7 @@ public class TestReportUtil
             for (int i = 0; i < columnValues.length; i++)
             {
                 String expectedValue = columnValues[i];
-                List<WebElement> tdElements = rowElement.findElements(By.xpath(".//td[position() = " + (i + 1) + "]"));
+                List<WebElement> tdElements = rowElement.findElements(By.xpath(".//td[position() = " + (i + 1) + "]")); 
                 if (tdElements.size() != 1)
                 {
                     rowMatches = false;

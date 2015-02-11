@@ -85,17 +85,39 @@ public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
                     })
                     .withId(ruleIDPrefix + "_MessageDrivenRule")
                     .addRule()
-                    .when(JavaClass.references("javax.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS)
-                                .or(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST)))
+                    .when(JavaClass.references("javax.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS))
                     .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                     {
                         @Override
                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                         {
-                            extractEntityBeanMetadata(event, payload);
+                            extractEntityBeanMetadata(event, context, payload);
                         }
                     }).endIteration())
-                    .withId(ruleIDPrefix + "_EntityBeanRule");
+                    .withId(ruleIDPrefix + "_EntityBeanRule")
+                    .addRule()
+                    .when(JavaClass.references("javax.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS))
+                    .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            extractEntityBeanMetadata(event, context, payload);
+                        }
+                    }).endIteration())
+                    .withId(ruleIDPrefix + "_EntityBeanRule")
+                    // the next rule is just a hack to have this match registered
+                    .addRule()
+                    .when(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST))
+                    .perform(Iteration.over(TABLE_ANNOTATIONS_LIST).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            // do nothing, just register the JavaClass condition in TypeInterestFactory
+                        }
+                    }).endIteration())
+                    .withId(ruleIDPrefix + "_EntityBeanRule2");
 
     }
 
@@ -116,18 +138,24 @@ public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
         sessionBean.setSessionType(sessionType);
     }
 
-    private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
+    private void extractEntityBeanMetadata(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel entityTypeReference)
     {
         ((SourceFileModel) entityTypeReference.getFile()).setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
         JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
-        for (WindupVertexFrame annotationTypeReferenceBase : Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST))
+        //TODO: this should be somehow cleaned, calling condition inside perform is not a good way
+        JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST).evaluate(event, context);
+        Iterable<? extends WindupVertexFrame> tableAnnotations = Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST);
+        if (tableAnnotations != null)
         {
-            JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
-            if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
+            for (WindupVertexFrame annotationTypeReferenceBase : tableAnnotations)
             {
-                tableAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReference;
-                break;
+                JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
+                if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
+                {
+                    tableAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReference;
+                    break;
+                }
             }
         }
 

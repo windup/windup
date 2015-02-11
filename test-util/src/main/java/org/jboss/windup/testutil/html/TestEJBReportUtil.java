@@ -20,7 +20,7 @@ public class TestEJBReportUtil extends TestReportUtil
     }
 
     /**
-     * Checks that an EJB of the given type and classname is listed
+     * Checks that an EJB of the given type and classname is listed with given columns in the table
      */
     public boolean checkBeanInReport(EJBType ejbType, String... columns)
     {

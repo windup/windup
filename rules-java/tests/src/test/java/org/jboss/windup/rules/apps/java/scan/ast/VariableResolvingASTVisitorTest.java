@@ -67,7 +67,7 @@ public class VariableResolvingASTVisitorTest
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath("src/test/java/org/jboss/windup/rules/apps/java/scan/ast/VariableResolvingASTVisitorTest.java");
 
-            ASTParser parser = ASTParser.newParser(AST.JLS3);
+            ASTParser parser = ASTParser.newParser(AST.JLS8);
             parser.setBindingsRecovery(true);
             parser.setResolveBindings(true);
             try

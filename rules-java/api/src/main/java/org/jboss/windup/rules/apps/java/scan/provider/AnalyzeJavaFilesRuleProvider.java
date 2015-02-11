@@ -2,6 +2,10 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.AST;
@@ -16,6 +20,9 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.VariableResolvingASTVisitor;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
@@ -67,9 +74,39 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
                     return;
                 }
 
-                ASTParser parser = ASTParser.newParser(AST.JLS3);
-                parser.setBindingsRecovery(true);
+                ASTParser parser = ASTParser.newParser(AST.JLS8);
+                GraphService<JavaSourceFileModel> service = new GraphService<JavaSourceFileModel>(event.getGraphContext(), JavaSourceFileModel.class);
+                Iterable<JavaSourceFileModel> findAll = service.findAll();
+                Set<String> javaFilePaths = new HashSet<String>();
+                for (JavaSourceFileModel javaFile : findAll)
+                {
+                    FileModel rootSourceFolder = javaFile.getRootSourceFolder();
+                    if (rootSourceFolder != null)
+                    {
+                        javaFilePaths.add(rootSourceFolder.getFilePath());
+                    }
+                }
+                // TODO: May be adding even the project
+                GraphService<JarArchiveModel> libraryService = new GraphService<JarArchiveModel>(event.getGraphContext(), JarArchiveModel.class);
+                Iterable<JarArchiveModel> libraries = libraryService.findAll();
+                List<String> librariesPaths = new ArrayList<String>();
+                for (JarArchiveModel library : libraries)
+                {
+                    if (library.getUnzippedDirectory() != null)
+                    {
+                        librariesPaths.add(library.getUnzippedDirectory().getFilePath());
+                    }
+                    else
+                    {
+                        librariesPaths.add(library.getFilePath());
+                    }
+
+                }
+                parser.setEnvironment(librariesPaths.toArray(new String[librariesPaths.size()]),
+                            javaFilePaths.toArray(new String[javaFilePaths.size()]), null, true);
+                parser.setBindingsRecovery(false);
                 parser.setResolveBindings(true);
+                parser.setUnitName(payload.getFileName());
                 File sourceFile = payload.asFile();
                 try
                 {
@@ -82,7 +119,6 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
                                 + e.getMessage(), e);
                 }
                 parser.setKind(ASTParser.K_COMPILATION_UNIT);
-
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFile");
                 final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
                 ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.parseFile");
