@@ -10,7 +10,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 
 /**
  * Executes only the given rule with all it's dependencies and pre-phases.
- * 
+ *
  * @author mbriskar
  *
  */
@@ -48,7 +48,7 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<WindupRu
             int otherExecutionIndex = ruleProvider.getExecutionIndex();
             if (otherExecutionIndex <= typeExecutionIndex)
             {
-                LOG.info("Accepting provider: " + type.getID());
+                LOG.fine("Accepting provider: " + type.getID());
                 // is in the pre-phase
                 return true;
             }
@@ -58,7 +58,7 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<WindupRu
                 List<String> executeAfterIDs = ruleProvider.getExecuteAfterIDs();
                 if ((executeAfter.contains(type.getClass())) || executeAfterIDs.contains(type.getID()))
                 {
-                    LOG.info("Accepting provider: " + type.getID());
+                    LOG.fine("Accepting provider: " + type.getID());
                     // is a dependency and are in the same phase
                     return true;
                 }
@@ -66,19 +66,20 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<WindupRu
                 {
                     if (ruleProviderClassAfter.isAssignableFrom(type.getClass()))
                     {
-                        LOG.info("Accepting provider: " + type.getID());
+                        LOG.fine("Accepting provider: " + type.getID());
                         return true;
                     }
                 }
                 if (ruleProvider.getClass().isAssignableFrom(type.getClass()))
                 {
-                    LOG.info("Accepting provider: " + type.getID());
+                    LOG.fine("Accepting provider: " + type.getID());
                     // is the given rule provider
                     return true;
                 }
             }
         }
-        LOG.info("Skipping provider: " + type.getID());
+        
+        LOG.fine("Skipping provider: " + type.getID());
         return false;
     }
 

@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -292,8 +294,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     listener.afterRuleExecutionFailed(event, subContext, rule, ex);
                 }
                 String exMsg = "Error encountered while evaluating rule: " + rule;
-                String logMsg = exMsg + "\n" + ex.getMessage();
-                log.severe(logMsg);
+                String logMsg = exMsg + "\n" + StringUtils.defaultString(ex.getMessage(), "(Exception message is not set)");
+                log.log(Level.SEVERE, logMsg, ex);
                 if (ruleContext != null)
                 {
                     Object origin = ruleContext.get(RuleMetadata.ORIGIN);

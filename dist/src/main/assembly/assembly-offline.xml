@@ -35,7 +35,7 @@
       </dependencySet>
 
       <dependencySet>
-         <outputDirectory>/cache</outputDirectory>
+         <outputDirectory>/cache/nexus-indexer-data/</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
          <unpack>true</unpack>
          <includes>

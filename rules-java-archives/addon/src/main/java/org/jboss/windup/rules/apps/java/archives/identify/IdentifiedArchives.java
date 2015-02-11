@@ -53,8 +53,7 @@ public class IdentifiedArchives
                     continue;
                 String[] parts = StringUtils.split(line, ' ');
                 if (parts.length < 2)
-                    throw new IllegalArgumentException("Expected 'SHA1 GROUP_ID:ARTIFACT_ID:VERSION[:COORDINATE]', but was [" + line + "] in ["
-                                + file + "]");
+                    throw new IllegalArgumentException("Expected 'SHA1 GROUP_ID:ARTIFACT_ID:[PACKAGING:[COORDINATE:]]VERSION', but was: \n" + line + "\n\tin [" + file + "]");
 
                 addMapping(parts[0], parts[1]);
             }

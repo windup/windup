@@ -4,6 +4,7 @@
 
     <properties>
         <version.forge>2.14.0.Final</version.forge>
+        <version.nexus.index>2-SNAPSHOT</version.nexus.index>
     </properties>
 
     <!-- Does NOT use windup-parent - this is a BOM. -->
@@ -20,6 +21,7 @@
     <packaging>pom</packaging>
 
     <name>Windup Rulesets BOM</name>
+
 
     <dependencyManagement>
         <dependencies>
@@ -199,6 +201,14 @@
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
+            <!-- Windup Rules - Java - Archives - Data bundle. -->
+            <dependency>
+                <groupId>org.jboss.windup.maven</groupId>
+                <artifactId>nexus-indexer-data</artifactId>
+                <type>zip</type>
+                <version>${version.nexus.index}</version>
+            </dependency>
+
 
             <!-- Windup Rules - XML - Basic -->
             <dependency>

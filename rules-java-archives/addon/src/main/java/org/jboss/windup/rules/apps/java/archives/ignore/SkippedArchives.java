@@ -76,9 +76,10 @@ public class SkippedArchives
 
         VersionRange version = null;
 
-        if (parts[2].matches("\\*"))
+        if (parts[2].equals("*"))
             version = new EmptyVersionRange();
-        else if (parts[2].matches("^(\\[|\\()[^,]+(,?[^,]+)+(\\]|\\))$"))
+        //  Range - (1.0,2.0]  or [1.0,2.0) etc.
+        else if (parts[2].matches("^(\\[|\\()[^,]+(,[^,]+)?(\\]|\\))$"))
             version = Versions.parseMultipleVersionRange(parts[2]);
         else
             version = new SingleVersionRange(new SingleVersion(parts[2]));
@@ -123,7 +124,7 @@ public class SkippedArchives
     {
         if ("*".equals(pattern))
             return true;
-        
+
         if(pattern == value)
             return true;
 
