@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id="XmlFileMappings">
+    <rules>
+           <file-mapping from=".*\.tld$" to="XmlFileModel"/>
+           <file-mapping from=".*\.bpel$" to="XmlFileModel"/>
+           <file-mapping from=".*\.wsdl$" to="XmlFileModel"/>
+           <file-mapping from=".*\.wsdd$" to="XmlFileModel"/>
+           <file-mapping from=".*\.bpelex$" to="XmlFileModel"/>
+           <file-mapping from=".*\.mon$" to="XmlFileModel"/>
+           <file-mapping from=".*\.xmi$" to="XmlFileModel"/>
+           <file-mapping from=".*\.export$" to="XmlFileModel"/>
+           <file-mapping from=".*\.import$" to="XmlFileModel"/>
+           <file-mapping from=".*\.bcfg$" to="XmlFileModel"/>
+           <file-mapping from=".*\.map$" to="XmlFileModel"/>
+           <file-mapping from=".*\.brg$" to="XmlFileModel"/>
+           <file-mapping from=".*\.brgt$" to="XmlFileModel"/>
+           <file-mapping from=".*\.ruleset$" to="XmlFileModel"/>
+           <file-mapping from=".*\.module$" to="XmlFileModel"/>
+           <file-mapping from=".*\.modulex$" to="XmlFileModel"/>
+           <file-mapping from=".*\.composite$" to="XmlFileModel"/>
+           <file-mapping from=".*\.requirements$" to="XmlFileModel"/>
+    </rules>
+</ruleset>
+
