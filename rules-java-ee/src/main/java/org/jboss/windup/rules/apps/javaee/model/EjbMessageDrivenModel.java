@@ -1,5 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
@@ -26,4 +28,11 @@ public interface EjbMessageDrivenModel extends EjbBeanBaseModel
      */
     @Property(DESTINATION)
     void setDestination(String destination);
+
+    /**
+     * References the Deployment Descriptor containing EJB.
+     */
+    @Adjacency(label = EjbDeploymentDescriptorModel.MESSAGE_DRIVEN, direction = Direction.IN)
+    public EjbDeploymentDescriptorModel getEjbDeploymentDescriptor();
+
 }

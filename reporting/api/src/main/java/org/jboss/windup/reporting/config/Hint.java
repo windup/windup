@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.LinkModel;
@@ -95,6 +96,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             hintModel.addLink(linkModel);
         }
 
+        if (locationModel.getFile() instanceof SourceFileModel)
+            ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
         log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this + "] ");
     }
 

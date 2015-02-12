@@ -63,6 +63,36 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     }
 
     /**
+     * Remove the given type from the provided {@link Element}.
+     */
+    public void removeTypeFromElement(Class<? extends VertexFrame> kind, Element element)
+    {
+        StandardVertex v = GraphTypeManager.asTitanVertex(element);
+        Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
+        if (typeHoldingTypeField == null)
+            return;
+
+        TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
+        if (typeValueAnnotation == null)
+            return;
+
+        String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
+        String typeValue = typeValueAnnotation.value();
+        v.removeProperty(typeFieldName);
+
+        for (TitanProperty existingType : v.getProperties(typeFieldName))
+        {
+            if (!existingType.getValue().toString().equals(typeValue))
+            {
+                v.addProperty(typeFieldName, existingType.getValue());
+            }
+        }
+
+        v.addProperty(typeFieldName, typeValue);
+        addSuperclassType(kind, element);
+    }
+
+    /**
      * Adds the type value to the field denoting which type the element represents.
      */
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
@@ -79,9 +109,9 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
 
-        for (TitanProperty existingTypes : v.getProperties(typeFieldName))
+        for (TitanProperty existingType : v.getProperties(typeFieldName))
         {
-            if (existingTypes.getValue().toString().equals(typeValue))
+            if (existingType.getValue().toString().equals(typeValue))
             {
                 // this is already in the list, so just exit now
                 return;

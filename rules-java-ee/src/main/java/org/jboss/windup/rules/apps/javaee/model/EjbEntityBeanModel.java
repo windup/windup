@@ -95,4 +95,11 @@ public interface EjbEntityBeanModel extends EjbBeanBaseModel
      */
     @Adjacency(label = EJB_HOME, direction = Direction.OUT)
     public JavaClassModel getEjbHome();
+
+    /**
+     * References the Deployment Descriptor containing EJB.
+     */
+    @Adjacency(label = EjbDeploymentDescriptorModel.EJB_ENTITY_BEAN, direction = Direction.IN)
+    public EjbDeploymentDescriptorModel getEjbDeploymentDescriptor();
+
 }

@@ -93,15 +93,21 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
                 continue;
             }
             Iterable<InlineHintModel> hintIterable = inlineHintService.getHintsForFile(fileModel);
-            if (hintIterable.iterator().hasNext())
+            for (InlineHintModel hint : hintIterable)
             {
                 foundHintedFile = true;
                 if (pkg.startsWith("org.apache.wicket.application"))
                 {
                     foundAppHintedFile = true;
                 }
+                else if (hint.getDescription().equals("127.0.0.1") && fileModel.getFileName().equals("MockHttpServletRequest.java"))
+                {
+                    // these are ok (results of a ip address scan that is file based, rather than package based
+                }
                 else
                 {
+                    System.out.println("Unexpected hinted file found: " + fileModel.getFilePath() + " hint: " + hint.getTitle() + " desc: "
+                                + hint.getDescription());
                     foundNonAppHintedFile = true;
                 }
             }

@@ -261,7 +261,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             pipeline.as("result")
                         .out(FileReferenceModel.FILE_MODEL)
                         .out(JavaSourceFileModel.JAVA_CLASS_MODEL)
-                        .has(JavaClassModel.PROPERTY_QUALIFIED_NAME,
+                        .has(JavaClassModel.QUALIFIED_NAME,
                                     regexPredicate,
                                     compiledTypeFilterPattern.pattern())
                         .back("result");

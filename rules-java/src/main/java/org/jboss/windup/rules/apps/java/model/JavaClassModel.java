@@ -25,7 +25,7 @@ public interface JavaClassModel extends WindupVertexFrame
     public static final String EXTENDS = "extends";
     public static final String IMPORTS = "imports";
     public static final String TYPE = "JavaClassResource";
-    public static final String PROPERTY_QUALIFIED_NAME = "qualifiedName";
+    public static final String QUALIFIED_NAME = "qualifiedName";
     public static final String CLASS_NAME = "className";
     public static final String PACKAGE_NAME = "packageName";
     public static final String IS_PUBLIC = "isPublic";
@@ -61,14 +61,14 @@ public interface JavaClassModel extends WindupVertexFrame
     /**
      * Contains the fully qualified name of the class
      */
-    @Property(PROPERTY_QUALIFIED_NAME)
-    String getQualifiedName();
+    @Property(QUALIFIED_NAME)
+    public String getQualifiedName();
 
     /**
      * Contains the fully qualified name of the class
      */
-    @Property(PROPERTY_QUALIFIED_NAME)
-    void setQualifiedName(String qualifiedName);
+    @Property(QUALIFIED_NAME)
+    public void setQualifiedName(String qualifiedName);
 
     /**
      * Contains the class' package name

@@ -791,7 +791,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                     String candidateQualifiedName = wildcardImport + "." + sourceClassname;
 
                     Iterable<JavaClassModel> models = javaClassService.findAllByProperty(
-                                JavaClassModel.PROPERTY_QUALIFIED_NAME, candidateQualifiedName);
+                                JavaClassModel.QUALIFIED_NAME, candidateQualifiedName);
                     if (models.iterator().hasNext())
                     {
                         // we found it... put it in the map and return the result

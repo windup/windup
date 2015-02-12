@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGeneration;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
@@ -14,6 +14,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
@@ -22,8 +23,6 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
-import org.jboss.windup.util.exception.WindupException;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -45,33 +44,29 @@ public class CreateEJBReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupConfigurationModel.class);
-
-        AbstractIterationOperation<WindupConfigurationModel> addEJBReport = new AbstractIterationOperation<WindupConfigurationModel>()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
-            {
-                ProjectModel projectModel = payload.getInputPath().getProjectModel();
-                if (projectModel == null)
-                {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
-                }
-                createEJBReport(event.getGraphContext(), projectModel);
-            }
-
-            @Override
-            public String toString()
-            {
-                return "CreateEJBReport";
-            }
-        };
-
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(applicationProjectModelsFound)
-                    .perform(addEJBReport);
+                    .when(Query.fromType(EjbBeanBaseModel.class))
+                    .perform(new GraphOperation()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context)
+                        {
+                            // configuration of current execution
+                            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+
+                            // reference to input project model
+                            ProjectModel projectModel = configurationModel.getInputPath().getProjectModel();
+                            createEJBReport(event.getGraphContext(), projectModel);
+                        }
+
+                        @Override
+                        public String toString()
+                        {
+                            return "CreateEJBReport";
+                        }
+                    });
+
     }
 
     private void createEJBReport(GraphContext context, ProjectModel projectModel)

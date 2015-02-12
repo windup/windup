@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGeneration;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
@@ -14,6 +14,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
@@ -45,18 +46,19 @@ public class CreateSpringBeanReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupConfigurationModel.class);
+        // only build this when there are spring beans to report.
+        ConditionBuilder applicationProjectModelsFound = Query.fromType(SpringBeanModel.class);
 
-        AbstractIterationOperation<WindupConfigurationModel> addReport = new AbstractIterationOperation<WindupConfigurationModel>()
+        GraphOperation addReport = new GraphOperation()
         {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
+            public void perform(GraphRewrite event, EvaluationContext context)
             {
-                ProjectModel projectModel = payload.getInputPath().getProjectModel();
+                WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                ProjectModel projectModel = windupConfiguration.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + windupConfiguration.getInputPath().getFilePath());
                 }
                 createSpringBeanReport(event.getGraphContext(), projectModel);
             }
@@ -81,6 +83,7 @@ public class CreateSpringBeanReportRuleProvider extends WindupRuleProvider
         applicationReportModel.setReportPriority(500);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Spring Bean Report");
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");
         applicationReportModel.setTemplatePath(TEMPLATE_SPRING_REPORT);

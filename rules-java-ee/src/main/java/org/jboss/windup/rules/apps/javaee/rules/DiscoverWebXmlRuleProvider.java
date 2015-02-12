@@ -14,6 +14,7 @@ import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
@@ -125,7 +126,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     private void addWebXmlMetadata(GraphContext context, XmlFileModel xml, Document doc)
     {
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
-        technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
+        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
 
         String webXmlVersion = getVersion(xml, doc);
@@ -138,6 +139,9 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         {
             webXmlVersion = StringUtils.replace(webXmlVersion, "_", ".");
             webXml.setSpecificationVersion(webXmlVersion);
+
+            // set the tag version
+            technologyTag.setVersion(webXmlVersion);
         }
 
         String displayName = $(doc).child("display-name").text();

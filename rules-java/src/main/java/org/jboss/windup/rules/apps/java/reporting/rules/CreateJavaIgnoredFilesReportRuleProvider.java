@@ -20,7 +20,6 @@ import org.jboss.windup.reporting.model.IgnoredFilesReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -46,9 +45,6 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupJavaConfigurationModel.class);
-
         AbstractIterationOperation<WindupJavaConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupJavaConfigurationModel>()
         {
             @Override
@@ -69,7 +65,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(applicationProjectModelsFound)
+                    .when(Query.fromType(IgnoredFilesReportModel.class))
                     .perform(addApplicationReport);
 
     }
@@ -102,7 +98,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
                 ignoredFilesReportModel.addIgnoredFile(file);
             }
         }
-       
+
         for (IgnoredFileRegexModel ignoreRegexModel : javaCfg.getIgnoredFileRegexes())
         {
             ignoredFilesReportModel.addFileRegex(ignoreRegexModel);
