@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
         <artifactId>rules-base-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.1.0.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     
