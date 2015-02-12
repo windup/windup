@@ -14,65 +14,92 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author jsightler
  * 
  */
-@TypeValue("MavenFacet")
+@TypeValue(MavenProjectModel.TYPE)
 public interface MavenProjectModel extends ProjectModel
 {
-    public static final String PROPERTY_URL = "url";
-    public static final String PROPERTY_ARTIFACT_ID = "artifactId";
-    public static final String PROPERTY_GROUP_ID = "groupId";
-    public static final String PROPERTY_SPECIFICATION_VERSION = "specificationVersion";
-    public static final String PROPERTY_MAVEN_IDENTIFIER = "mavenIdentifier";
-
-    @Adjacency(label = "parentMavenPOM", direction = Direction.OUT)
-    public MavenProjectModel getParentMavenPOM();
-
-    @Adjacency(label = "parentMavenPOM", direction = Direction.OUT)
-    public void setParentMavenPOM(MavenProjectModel parentMavenProject);
-
-    @Adjacency(label = "parentMavenPOM", direction = Direction.IN)
-    public Iterable<MavenProjectModel> getMavenChildProjects();
-
-    @Adjacency(label = "mavenPom", direction = Direction.OUT)
-    public Iterable<XmlFileModel> getMavenPom();
-
-    @Adjacency(label = "mavenPom", direction = Direction.OUT)
-    public void addMavenPom(XmlFileModel pom);
+    public static final String MAVEN_POM = "mavenPom";
+    public static final String PARENT_MAVEN_POM = "parentMavenPOM";
+    public static final String TYPE = "MavenFacet";
+    public static final String ARTIFACT_ID = "artifactId";
+    public static final String GROUP_ID = "groupId";
+    public static final String SPECIFICATION_VERSION = "specificationVersion";
+    public static final String MAVEN_IDENTIFIER = "mavenIdentifier";
 
     /**
-     * The full maven id (groupid, artifactid, and version)
-     * 
+     * Contains the parent POM (if available).
      */
-    @Property(PROPERTY_MAVEN_IDENTIFIER)
-    public String getMavenIdentifier();
-
-    @Property(PROPERTY_MAVEN_IDENTIFIER)
-    public void setMavenIdentifier(String identifier);
+    @Adjacency(label = PARENT_MAVEN_POM, direction = Direction.OUT)
+    MavenProjectModel getParentMavenPOM();
 
     /**
-     * The Maven specification version
-     * 
+     * Contains the parent POM (if available).
      */
-    @Property(PROPERTY_SPECIFICATION_VERSION)
-    public String getSpecificationVersion();
+    @Adjacency(label = PARENT_MAVEN_POM, direction = Direction.OUT)
+    void setParentMavenPOM(MavenProjectModel parentMavenProject);
 
-    @Property(PROPERTY_SPECIFICATION_VERSION)
-    public void setSpecificationVersion(String version);
+    /**
+     * Gets projects that have this POM set as their maven parent
+     */
+    @Adjacency(label = PARENT_MAVEN_POM, direction = Direction.IN)
+    Iterable<MavenProjectModel> getMavenChildProjects();
 
-    @Property(PROPERTY_GROUP_ID)
-    public String getGroupId();
+    /**
+     * Contains the maven pom {@link XmlFileModel}.
+     */
+    @Adjacency(label = MAVEN_POM, direction = Direction.OUT)
+    Iterable<XmlFileModel> getMavenPom();
 
-    @Property(PROPERTY_GROUP_ID)
-    public void setGroupId(String version);
+    /**
+     * Contains the maven pom {@link XmlFileModel}.
+     */
+    @Adjacency(label = MAVEN_POM, direction = Direction.OUT)
+    void addMavenPom(XmlFileModel pom);
 
-    @Property(PROPERTY_ARTIFACT_ID)
-    public String getArtifactId();
+    /**
+     * The full maven id (groupid, artifactid, and version).
+     */
+    @Property(MAVEN_IDENTIFIER)
+    String getMavenIdentifier();
 
-    @Property(PROPERTY_ARTIFACT_ID)
-    public void setArtifactId(String artifactId);
+    /**
+     * The full maven id (groupid, artifactid, and version).
+     */
+    @Property(MAVEN_IDENTIFIER)
+    void setMavenIdentifier(String identifier);
 
-    @Property(PROPERTY_URL)
-    public String getURL();
+    /**
+     * The Maven specification version.
+     */
+    @Property(SPECIFICATION_VERSION)
+    String getSpecificationVersion();
 
-    @Property(PROPERTY_URL)
-    public void setURL(String url);
+    /**
+     * The Maven specification version.
+     */
+    @Property(SPECIFICATION_VERSION)
+    void setSpecificationVersion(String version);
+
+    /**
+     * Contains the maven group id.
+     */
+    @Property(GROUP_ID)
+    String getGroupId();
+
+    /**
+     * Contains the maven group id.
+     */
+    @Property(GROUP_ID)
+    void setGroupId(String version);
+
+    /**
+     * Contains the maven artifact id.
+     */
+    @Property(ARTIFACT_ID)
+    String getArtifactId();
+
+    /**
+     * Contains the maven artifact id.
+     */
+    @Property(ARTIFACT_ID)
+    void setArtifactId(String artifactId);
 }

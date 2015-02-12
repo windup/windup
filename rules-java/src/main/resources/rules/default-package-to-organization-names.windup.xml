@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/v1/xml" id="DefaultPackageToVendorNames">
+    <package-mapping from="bea" to="Weblogic" />
+    <package-mapping from="com\.bea" to="Weblogic" />
+    <package-mapping from="com\.weblogic" to="Weblogic" />
+    <package-mapping from="weblogic" to="Weblogic" />
+    <package-mapping from="oracle" to="Weblogic" />
+
+    <package-mapping from="ilog" to="IBM" />
+    <package-mapping from="ibm" to="IBM" />
+    <package-mapping from="com\.ibm" to="IBM" />
+    <package-mapping from="websphere" to="IBM" />
+
+    <package-mapping from="com\.iona" to="Iona" />
+    <package-mapping from="com\.lombardi" to="Lombardi" />
+    <package-mapping from="com\.sonic" to="Progress" />
+    <package-mapping from="com\.sybase" to="Sybase" />
+    <package-mapping from="sybase" to="Sybase" />
+
+    <package-mapping from="com\.tangosol" to="Tangosol" />
+    <package-mapping from="com\.tibco" to="Tibco" />
+
+    <package-mapping from="commonj" to="Commonj" />
+
+    <package-mapping from="java\." to="Sun" />
+    <package-mapping from="com\.sun" to="Sun" />
+    <package-mapping from="javax" to="Sun" />
+
+    <package-mapping from="mx4j" to="MX4J" />
+
+    <package-mapping from="net\.sf\.hibernate" to="JBoss" />
+    <package-mapping from="org\.jboss" to="JBoss" />
+    <package-mapping from="org\.ajax4jsf" to="JBoss" />
+    <package-mapping from="org\.hibernate" to="JBoss" />
+    <package-mapping from="org\.jgroups" to="JBoss" />
+    <package-mapping from="org\.modeshape" to="JBoss" />
+    <package-mapping from="org\.drools" to="JBoss" />
+    <package-mapping from="org\.jbpm" to="JBoss" />
+    <package-mapping from="org\.hornetq" to="JBoss" />
+
+    <package-mapping from="org\.quartz" to="Quartz" />
+
+    <package-mapping from="com\.opensymphony" to="Open Symphony" />
+
+    <package-mapping from="org\.apache" to="Apache" />
+
+    <package-mapping from="org\.mule" to="Mule ESB" />
+
+    <package-mapping from="org\.springframework" to="Spring" />
+
+    <package-mapping from="org\.postgresql" to="Postgres" />
+
+    <package-mapping from="com\.mysql" to="MySQL" />
+
+    <package-mapping from="org\.hsqldb" to="HypersonicDB" />
+
+    <package-mapping from="microsoft" to="Microsoft" />
+
+    <package-mapping from="org\.xml\.sax" to="Oagis" />
+
+    <package-mapping from="com\.thoughtworks" to="Thoughtworks" />
+
+    <package-mapping from="org\.w3c" to="W3C" />
+
+    <package-mapping from="org\.osoa" to="OSOA" />
+
+    <package-mapping from="org\.mvel" to="MVEL" />
+
+    <package-mapping from="org\.codehaus" to="Codehaus" />
+
+    <package-mapping from="net\.sf" to="Sourceforge" />
+    <package-mapping from="net\.sourceforge" to="Sourceforge" />
+
+    <package-mapping from="org\.dom4j" to="DOM4J" />
+
+    <package-mapping from="edu\.oswego\.cs\.dl\.util\.concurrent" to="OSWego Util Concurrent" />
+    <package-mapping from="edu\.emory\.mathcs\.backport\.java\.util" to="Backport Util Concurrent" />
+
+    <package-mapping from="com\.adobe" to="Adobe" />
+    <package-mapping from="coldfusion" to="Adobe" />
+    <package-mapping from="flex\.graphics" to="Adobe" />
+    <package-mapping from="flex\.management" to="Adobe" />
+    <package-mapping from="flex\.messaging" to="Adobe" />
+
+    <package-mapping from="com\.google" to="Google" />
+    <package-mapping from="org\.eclipse" to="Eclipse Foundation" />
+    <package-mapping from="org\.mozilla" to="Mozilla Foundation" />
+
+    <package-mapping from="org\.bouncycastle" to="Bouncy Castle" />
+    <package-mapping from="com\.wso2" to="WSO2" />
+    <package-mapping from="com\.sap" to="SAP" />
+    <package-mapping from="com\.businessobjects" to="SAP" />
+    <package-mapping from="com\.mchange" to="Machinery For Change" />
+
+    <package-mapping from="com\.atlassian" to="Atlassian" />
+    <package-mapping from="atlassian" to="Atlassian" />
+
+    <package-mapping from="net\.sf" to="SourceForge" />
+
+    <package-mapping from="org\.scannotation" to="Scannotation" />
+    <package-mapping from="org\.slf4j" to="SLF4J" />
+    <package-mapping from="org\.joda" to="Joda Time" />
+    <package-mapping from="freemarker" to="Freemarker" />
+
+    <package-mapping from="org\.milyn" to="Milyn" />
+
+    <package-mapping from="junit" to="JUnit" />
+    <package-mapping from="org\.junit" to="JUnit" />
+
+
+    <package-mapping from="org\.jdom" to="JDOM" />
+    <package-mapping from="org\.jfree" to="JFree" />
+
+    <package-mapping from="com\.google" to="Google" />
+    <package-mapping from="com\.yahoo" to="Yahoo" />
+
+    <package-mapping from="org\.antlr" to="Antlr" />
+
+</ruleset>

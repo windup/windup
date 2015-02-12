@@ -37,7 +37,7 @@ public class MavenModelService extends GraphService<MavenProjectModel>
     public MavenProjectModel findByGroupArtifactVersion(String groupId, String artifactId, String version)
     {
         String key = generateMavenKey(groupId, artifactId, version);
-        MavenProjectModel facet = this.getUniqueByProperty(MavenProjectModel.PROPERTY_MAVEN_IDENTIFIER, key);
+        MavenProjectModel facet = this.getUniqueByProperty(MavenProjectModel.MAVEN_IDENTIFIER, key);
 
         return facet;
     }

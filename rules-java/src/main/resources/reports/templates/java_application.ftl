@@ -23,7 +23,7 @@
             </#list>
         </table>
     </div>
-	
+
  </#if>
 </#macro>
 
@@ -71,17 +71,45 @@
         <div class="panel-heading">
             <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
         </div>
-        <div class="container-fluid summaryMargin">        	
+        <div class="container-fluid summaryMargin">
             <div class='col-md-3 text-right totalSummary'>
                 <div class='totalLoe'>
                     ${getMigrationEffortPoints(projectModel, false)}
                 </div>
                 <div class='totalDesc'>Story Points</div>
             </div>
-            
+
             <div class='col-md-6 pull-right windupPieGraph archiveGraphContainer'>
                 <div id="project_${projectModel.asVertex().getId()?string("0")}_pie" class='windupPieGraph'></div>
             </div>
+
+			<div class="col-md-6 pull-right">
+				<table class="table">
+					<tr>
+						<th>Organization</th>
+						<th>Version</th>
+						<th>Link</th>
+					</tr>
+					<tr>
+						<td>${projectModel.organization!"Unknown"}</td>
+						<td>${projectModel.name!""}</td>
+						<td>
+							<#if projectModel.url?has_content>
+								<a href="${projectModel.url}">Project Site</a>
+							</#if>
+						</td>
+					</tr>
+					<tr>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td colspan="3">
+							${projectModel.description!""}
+						</td>
+					</tr>
+				</table>
+			</div>
+
         </div>
         <table class="table table-striped table-bordered">
           <tr>
@@ -116,7 +144,7 @@
 				<span class="icon-bar"></span>
 			</button>
 		</div>
-		
+
 		<div class="navbar-collapse collapse navbar-responsive-collapse">
 			<ul class="nav navbar-nav">
 			<#include "include/navbar.ftl">
@@ -126,24 +154,24 @@
 	<!-- / Navbar -->
 
     <div class="container-fluid" role="main">
-    
+
 		<div class="row">
 			<div class="page-header page-header-no-border">
 				<h1>Application Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
 			</div>
 		</div>
-			
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 				<ol class="breadcrumb top-menu">
 					<li><a href="../index.html">All Applications</a></li>
 					<#include "include/breadcrumbs.ftl">
-				</ol> 
+				</ol>
 			</div>
 			<!-- / Breadcrumbs -->
 		</div>
-		
+
 		<div class="row">
 		  <div class='container mainGraphContainer'>
 		    <div class='col-md-3 text-right totalSummary'>
@@ -158,33 +186,33 @@
 		    </div>
 		  </div>
 		</div>
-		
+
 		<div class="row">
 	    	<div class="container-fluid theme-showcase" role="main">
 				<@reportLineRenderer reportModel.applicationReportLines />
 				<@projectModelRenderer reportModel.projectModel />
 	    	</div> <!-- /container -->
 		</div>
-		
-	
+
+
 	    <script src="resources/js/jquery-1.10.1.min.js"></script>
-	    
+
 	    <script src="resources/libraries/flot/jquery.flot.min.js"></script>
 	    <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
-	    
+
 	    <script src="resources/js/bootstrap.min.js"></script>
-	
+
 	    <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie"/>
-	    
-	    
+
+
 	    <#macro projectPieRenderer projectModel>
 	      <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie"/>
-	    
+
 	      <#list projectModel.childProjects.iterator() as childProject>
 	        <@projectPieRenderer childProject />
 	      </#list>
 	    </#macro>
-	    
+
 	    <@projectPieRenderer reportModel.projectModel />
 	 </div>
   </body>
