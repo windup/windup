@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>rules-java-archives</artifactId>
-    <name>Windup Ruleset: Archive Identification - Addon</name>
+    <name>Windup Rules - Archive Identification Addon</name>
 
     <dependencies>
 

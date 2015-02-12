@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>rules-java-archives-tests</artifactId>
-    <name>Windup Ruleset: Archive Identification - Tests</name>
+    <name>Windup Rules - Archive Identification Tests</name>
 
     <dependencies>
 

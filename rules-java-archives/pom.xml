@@ -14,7 +14,7 @@
     <artifactId>rules-java-archives-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>Windup Ruleset: Archive Identification - Parent</name>
+    <name>Windup Rules - Archive Identification Parent</name>
 
     <modules>
         <module>addon</module>

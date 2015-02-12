@@ -2,7 +2,9 @@ package org.jboss.windup.config.loader;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -17,6 +19,7 @@ import org.jboss.windup.config.metadata.WindupRuleMetadata;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.ServiceLogger;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.bind.Evaluation;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionVisit;
@@ -78,6 +81,32 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
     }
 
+    private void checkForDuplicates(List<WindupRuleProvider> providers)
+    {
+        // using a map so that we can easily pull out the previous value later (in the case of a duplicate)
+        Map<WindupRuleProvider, WindupRuleProvider> dupeSet = new HashMap<>(providers.size());
+        for (WindupRuleProvider provider : providers)
+        {
+            WindupRuleProvider previousProvider = dupeSet.get(provider);
+            if (previousProvider != null)
+            {
+                String typeMessage;
+                if (previousProvider.getClass().equals(provider.getClass()))
+                {
+                    typeMessage = " (type: " + Proxies.unwrapProxyClassName(provider.getClass()) + ")";
+                }
+                else
+                {
+                    typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " and "
+                                + Proxies.unwrapProxyClassName(provider.getClass()) + ")";
+                }
+
+                throw new WindupException("Found two providers with the same id: " + provider.getID() + typeMessage);
+            }
+            dupeSet.put(provider, provider);
+        }
+    }
+
     private List<WindupRuleProvider> getProviders(GraphContext context)
     {
         List<WindupRuleProvider> unsortedProviders = new ArrayList<>();
@@ -85,10 +114,14 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         {
             unsortedProviders.addAll(loader.getProviders(context));
         }
+
+        checkForDuplicates(unsortedProviders);
+
         printRulePhases(unsortedProviders);
 
         List<WindupRuleProvider> sortedProviders = WindupRuleProviderSorter.sort(unsortedProviders);
         ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, sortedProviders);
+
         return Collections.unmodifiableList(sortedProviders);
     }
 
