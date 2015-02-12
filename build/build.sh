@@ -5,7 +5,7 @@ scriptPath=`readlink -f "$scriptPath"`
 scriptDir=`dirname $scriptPath`
 
 SETTINGS="-s $scriptDir/settings.xml"
-GAtoCheck="org.jboss.windup:ui"
+GAtoCheck="org.jboss.windup.ui:windup-ui"
 
 localRepo=""
 for val in "$@"

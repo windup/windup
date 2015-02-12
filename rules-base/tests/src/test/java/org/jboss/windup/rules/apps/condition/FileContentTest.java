@@ -54,8 +54,8 @@ public class FileContentTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -68,8 +68,8 @@ public class FileContentTest
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config-xml"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-base"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
 

@@ -4,17 +4,16 @@
 
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
-        <artifactId>rules-base-parent</artifactId>
+        <artifactId>windup-rules-base-parent</artifactId>
         <version>2.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>rules-base-tests</artifactId>
+    <artifactId>windup-rules-base-tests</artifactId>
 
     <name>Windup Rules - Base Rules Tests</name>
 
     <dependencies>
-    
+
         <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
@@ -50,14 +49,14 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-base</artifactId>
+            <artifactId>windup-rules-base</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-java</artifactId>
+            <artifactId>windup-rules-java</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
