@@ -19,9 +19,9 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
+import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.jboss.windup.util.exception.WindupException;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -77,7 +77,7 @@ public class XmlFileHandlerTest
         // verify xmlfile
         Assert.assertEquals(null, xmlFile.getInputVariablesName());
         Assert.assertEquals("public", xmlFile.getPublicId());
-        Assert.assertEquals("{*}", xmlFile.getInFilePattern().getPattern());
+        Assert.assertEquals(".*", xmlFile.getInFilePattern().getPattern());
         Assert.assertEquals("/abc:project", xmlFile.getXpathString());
 
         Element secondXmlFile = xmlFileList.get(1);
