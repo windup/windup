@@ -3,7 +3,7 @@
     <rules>
         <rule>
             <when>
-                <xmlfile matches="/abc:project" in=".*" as="testVariable">
+                <xmlfile matches="/abc:project" in="{*}" as="testVariable">
                     <namespace prefix="abc" uri="http://maven.apache.org/POM/4.0.0"/>
                 </xmlfile>
             </when>
