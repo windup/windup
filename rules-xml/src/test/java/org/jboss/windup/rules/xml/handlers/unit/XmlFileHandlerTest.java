@@ -77,7 +77,7 @@ public class XmlFileHandlerTest
         // verify xmlfile
         Assert.assertEquals(null, xmlFile.getInputVariablesName());
         Assert.assertEquals("public", xmlFile.getPublicId());
-        Assert.assertEquals(".*", xmlFile.getInFile());
+        Assert.assertEquals("{*}", xmlFile.getInFilePattern().getPattern());
         Assert.assertEquals("/abc:project", xmlFile.getXpathString());
 
         Element secondXmlFile = xmlFileList.get(1);
@@ -85,7 +85,7 @@ public class XmlFileHandlerTest
         // verify xmlfile
         Assert.assertEquals(null, xmlFile.getInputVariablesName());
         Assert.assertEquals("public", xmlFile.getPublicId());
-        Assert.assertEquals(null, xmlFile.getInFile());
+        Assert.assertEquals(null, xmlFile.getInFilePattern());
         Assert.assertEquals(null, xmlFile.getXpathString());
     }
 
