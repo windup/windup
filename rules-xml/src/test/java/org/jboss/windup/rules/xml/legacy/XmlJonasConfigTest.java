@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.tests;
+package org.jboss.windup.rules.xml.legacy;
 
 import static org.junit.Assert.fail;
 
@@ -117,7 +117,7 @@ public class XmlJonasConfigTest
             {
                 fail("No Jonas Web Descriptor classification found, even though there is an xml file");
             }
-            Assert.assertEquals(2, classifications.size());
+            Assert.assertEquals(1, classifications.size());
 
         }
     }
