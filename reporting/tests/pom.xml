@@ -6,7 +6,6 @@
         <groupId>org.jboss.windup.reporting</groupId>
         <artifactId>windup-reporting-parent</artifactId>
         <version>2.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>windup-reporting-tests</artifactId>
@@ -25,17 +24,27 @@
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config</artifactId>
-            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config-xml</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-base-api</artifactId>
-            <version>${project.version}</version>
+            <artifactId>windup-rules-java</artifactId>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-base-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
         <!-- Furnace Container -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>

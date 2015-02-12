@@ -4,9 +4,8 @@
 
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
-        <artifactId>rules-java-archives-parent</artifactId>
+        <artifactId>windup-rules-java-archives-parent</artifactId>
         <version>2.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>rules-java-archives-tests</artifactId>
@@ -19,7 +18,7 @@
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-java-archives</artifactId>
+            <artifactId>windup-rules-java-archives</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
 
@@ -54,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-java</artifactId>
+            <artifactId>windup-rules-java</artifactId>
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
@@ -73,41 +72,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jboss.forge.furnace</groupId>
-                <artifactId>furnace-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-dot</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>generate-dot</goal>
-                        </goals>
-                        <configuration>
-                            <attach>true</attach>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create-forge-addon</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>forge-addon</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

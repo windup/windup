@@ -87,7 +87,7 @@
 
             <!-- Windup Extension - Config - Groovy -->
             <dependency>
-                <groupId>org.jboss.windup.ext</groupId>
+                <groupId>org.jboss.windup.config</groupId>
                 <artifactId>windup-config-groovy</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
@@ -97,6 +97,7 @@
             <dependency>
                 <groupId>org.jboss.windup.decompiler</groupId>
                 <artifactId>decompiler-api</artifactId>
+                <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
 
@@ -150,18 +151,18 @@
             <!-- Windup Rules Base -->
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-base</artifactId>
+                <artifactId>windup-rules-base</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-base-api</artifactId>
+                <artifactId>windup-rules-base-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-base-impl</artifactId>
+                <artifactId>windup-rules-base-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -171,7 +172,7 @@
             <!-- Windup Rules - Java EE - Basic -->
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-java-ee</artifactId>
+                <artifactId>windup-rules-java-ee</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
@@ -179,15 +180,25 @@
             <!-- Windup Rules - Java - Basic -->
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-java</artifactId>
+                <artifactId>windup-rules-java</artifactId>
                 <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>windup-rules-java-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>windup-rules-java-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- Windup Rules - Java - Projects -->
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-java-projects</artifactId>
+                <artifactId>windup-rules-java-project</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
@@ -195,7 +206,7 @@
             <!-- Windup Rules - Java - Archives -->
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-java-archives</artifactId>
+                <artifactId>windup-rules-java-archives</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
@@ -203,7 +214,7 @@
             <!-- Windup Rules - XML - Basic -->
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-xml</artifactId>
+                <artifactId>windup-rules-xml</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
@@ -218,8 +229,8 @@
 
             <!-- Windup Engine - UI -->
             <dependency>
-                <groupId>org.jboss.windup</groupId>
-                <artifactId>ui</artifactId>
+                <groupId>org.jboss.windup.ui</groupId>
+                <artifactId>windup-ui</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
@@ -235,6 +246,3 @@
         </dependencies>
     </dependencyManagement>
 </project>
-
-
-

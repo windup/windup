@@ -6,117 +6,16 @@
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
         <version>2.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.jboss.windup.rules.apps</groupId>
-    <artifactId>rules-tattletale</artifactId>
+    <artifactId>windup-rules-tattletale-parent</artifactId>
+    <packaging>pom</packaging>
 
-    <name>Windup Rules - Tattletale</name>
+    <name>Windup Rules - Tattletale Parent</name>
 
-    <dependencies>
-    
-        <!-- Local Dependencies -->
-        <dependency>
-            <groupId>org.jboss.tattletale</groupId>
-            <artifactId>tattletale</artifactId>
-            <version>1.2.0.Beta2</version>
-        </dependency>
-
-        <!-- Addon Dependencies -->
-        <dependency>
-            <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>utils</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>windup-reporting</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Furnace Container -->
-        <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-
-	<!-- Test Dependencies -->
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>furnace-test-harness</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>arquillian-furnace-classpath</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.exec</groupId>
-            <artifactId>windup-exec</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-
-        <plugins>
-            <plugin>
-                <groupId>org.jboss.forge.furnace</groupId>
-                <artifactId>furnace-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-dot</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>generate-dot</goal>
-                        </goals>
-                        <configuration>
-                            <attach>true</attach>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create-forge-addon</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>forge-addon</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
+    <modules>
+        <module>addon</module>
+        <module>tests</module>
+    </modules>
 </project>

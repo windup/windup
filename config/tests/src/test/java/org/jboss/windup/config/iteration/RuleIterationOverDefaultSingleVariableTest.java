@@ -49,7 +49,7 @@ public class RuleIterationOverDefaultSingleVariableTest
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -64,7 +64,7 @@ public class RuleIterationOverDefaultSingleVariableTest
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;

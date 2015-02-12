@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>org.jboss.windup.rules.apps</groupId>
-    <artifactId>rules-java-archives-parent</artifactId>
+    <artifactId>windup-rules-java-archives-parent</artifactId>
     <packaging>pom</packaging>
 
     <name>Windup Rules - Archive Identification Parent</name>
