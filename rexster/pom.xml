@@ -7,114 +7,47 @@
         <version>2.2.0-SNAPSHOT</version>
     </parent>
     <groupId>org.jboss.windup.rexster</groupId>
-    <artifactId>rexster</artifactId>
+    <artifactId>windup-rexster-parent</artifactId>
+    <packaging>pom</packaging>
 
-    <name>Windup Engine - Rexster</name>
+    <name>Windup Engine - Rexster Parent</name>
 
-    <dependencies>
+    <modules>
+        <module>addon</module>
+        <module>tests</module>
+    </modules>
 
-        <!-- Local Dependencies -->
-        <dependency>
-            <groupId>com.tinkerpop.rexster</groupId>
-            <artifactId>rexster-server</artifactId>
-            <version>2.5.0</version>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.tinkerpop.blueprints</groupId>
-                    <artifactId>blueprints-core	</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.googlecode.json-simple</groupId>
-                    <artifactId>json-simple</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.jettison</groupId>
-                    <artifactId>jettison</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.2</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-            <version>1.0</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
-            <optional>true</optional>
-        </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Addon dependencies -->
+            <dependency>
+                <groupId>org.jboss.windup.rexster</groupId>
+                <artifactId>windup-rexster</artifactId>
+                <version>${project.version}</version>
+                <classifier>forge-addon</classifier>
+            </dependency>
 
-        <!-- Addon Dependencies -->
-        <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>simple</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Test Dependencies -->
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>furnace-test-harness</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>arquillian-furnace-classpath</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.exec</groupId>
-            <artifactId>windup-exec</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <!-- Forge addon creation -->
-            <plugin>
-                <groupId>org.jboss.forge.furnace</groupId>
-                <artifactId>furnace-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-dot</id>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create-forge-addon</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>forge-addon</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+            <!-- Local Dependencies -->
+            <dependency>
+                <groupId>com.tinkerpop.rexster</groupId>
+                <artifactId>rexster-server</artifactId>
+                <version>2.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>jsr250-api</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>20090211</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

@@ -6,7 +6,6 @@
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
         <version>2.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.jboss.windup.rules.apps</groupId>
@@ -39,7 +38,7 @@
 
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>rules-java</artifactId>
+            <artifactId>windup-rules-java</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -52,12 +51,6 @@
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-xml</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.ext</groupId>
-            <artifactId>windup-config-groovy</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
