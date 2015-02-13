@@ -83,6 +83,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-bom</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.windup.maven</groupId>
             <artifactId>nexus-indexer-data</artifactId>
             <version>${version.nexus.index}</version>
