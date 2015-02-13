@@ -3,6 +3,8 @@ package org.jboss.windup.rules.apps.java.config;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,10 +52,14 @@ public class CopyJavaConfigToGraphRuleProvider extends WindupRuleProvider
             {
                 Map<String, Object> config = event.getGraphContext().getOptionMap();
                 Boolean sourceMode = (Boolean) config.get(SourceModeOption.NAME);
+
                 @SuppressWarnings("unchecked")
                 List<String> includeJavaPackages = (List<String>) config.get(ScanPackagesOption.NAME);
+
                 @SuppressWarnings("unchecked")
-                final List<String> excludeJavaPackages = new ArrayList<>((List<String>) config.get(ExcludePackagesOption.NAME));
+                final List<String> excludedPackages = (List<String>) config.get(ExcludePackagesOption.NAME);
+                final List<String> excludeJavaPackages =
+                        excludedPackages == null ? new ArrayList() : new ArrayList(excludedPackages);
 
                 Predicate<File> predicate = new FileSuffixPredicate("\\.package-ignore\\.txt");
                 Visitor<File> visitor = new Visitor<File>()
