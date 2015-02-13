@@ -87,7 +87,7 @@
 
             <!-- Windup Extension - Config - Groovy -->
             <dependency>
-                <groupId>org.jboss.windup.ext</groupId>
+                <groupId>org.jboss.windup.config</groupId>
                 <artifactId>windup-config-groovy</artifactId>
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
@@ -179,8 +179,18 @@
             <!-- Windup Rules - Java - Basic -->
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>
-                <artifactId>rules-java</artifactId>
+                <artifactId>windup-rules-java</artifactId>
                 <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>windup-rules-java-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>windup-rules-java-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
