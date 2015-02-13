@@ -9,7 +9,7 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class Implicit extends RulePhase
+public class Dependent extends RulePhase
 {
 
 }

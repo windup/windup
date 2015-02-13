@@ -33,13 +33,13 @@ public abstract class RulePhase extends WindupRuleProvider
     }
 
     /**
-     * This returns {@link Implicit} as that phase has no executeBefore/executeAfter conditions of its own. The phase should provide it's own
+     * This returns {@link Dependent} as that phase has no executeBefore/executeAfter conditions of its own. The phase should provide it's own
      * dependencies and not a recursive "getPhase()" so returning a value that has no dependencies of its own is necessary here.
      */
     @Override
     public final Class<? extends RulePhase> getPhase()
     {
-        return Implicit.class;
+        return Dependent.class;
     }
 
     /**
