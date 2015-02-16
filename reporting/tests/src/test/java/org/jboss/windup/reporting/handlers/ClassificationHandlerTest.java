@@ -18,7 +18,6 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.parser.ParserContext;
-import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.util.exception.WindupException;
@@ -37,8 +36,8 @@ public class ClassificationHandlerTest
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java", version = "2.0.0-SNAPSHOT"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml", version = "2.0.0-SNAPSHOT"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
     public static ForgeArchive getDeployment()
@@ -49,7 +48,7 @@ public class ClassificationHandlerTest
                     .addClass(HintHandlerTest.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config-xml"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));

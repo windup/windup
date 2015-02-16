@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.windup.ui</groupId>
+        <artifactId>windup-ui-parent</artifactId>
+        <version>2.2.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>windup-ui-tests</artifactId>
+    <name>Windup Engine - UI Tests</name>
+
+    <dependencies>
+        <!-- Addon Dependencies -->
+        <dependency>
+            <groupId>org.jboss.windup.ui</groupId>
+            <artifactId>windup-ui</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        
+        
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>resources</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Furnace Container -->
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>furnace-test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui-test-harness</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-furnace-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+</project>

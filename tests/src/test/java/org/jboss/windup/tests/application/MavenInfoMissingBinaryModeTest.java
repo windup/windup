@@ -19,8 +19,8 @@ public class MavenInfoMissingBinaryModeTest extends WindupArchitectureTest
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:rules-java"),
-                @AddonDependency(name = "org.jboss.windup.ext:windup-config-groovy"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
     public static ForgeArchive getDeployment()
@@ -32,8 +32,8 @@ public class MavenInfoMissingBinaryModeTest extends WindupArchitectureTest
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.ext:windup-config-groovy"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-groovy"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;
