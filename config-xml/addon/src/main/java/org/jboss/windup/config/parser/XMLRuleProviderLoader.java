@@ -28,6 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -91,7 +92,9 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
                     parser.setAddonContainingInputXML(addon);
 
                     parser.processElement(doc.getDocumentElement());
-                    providers.addAll(parser.getRuleProviders());
+                    List<WindupRuleProvider> parsedProviders = parser.getRuleProviders();
+                    setOrigin(parsedProviders, resource);
+                    providers.addAll(parsedProviders);
                 }
                 catch (Exception e)
                 {
@@ -116,7 +119,9 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
                     parser.setXmlInputPath(Paths.get(userRulesPath));
 
                     parser.processElement(doc.getDocumentElement());
-                    providers.addAll(parser.getRuleProviders());
+                    List<WindupRuleProvider> parsedProviders = parser.getRuleProviders();
+                    setOrigin(parsedProviders, resource);
+                    providers.addAll(parsedProviders);
                 }
                 catch (Exception e)
                 {
@@ -127,6 +132,17 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
         }
 
         return providers;
+    }
+
+    private void setOrigin(List<WindupRuleProvider> providers, URL resource)
+    {
+        for (WindupRuleProvider provider : providers)
+        {
+            if (provider instanceof WindupRuleProviderBuilder)
+            {
+                ((WindupRuleProviderBuilder) provider).setOrigin(resource.toExternalForm());
+            }
+        }
     }
 
     private Map<Addon, List<URL>> getAddonWindupXmlFiles()

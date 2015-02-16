@@ -89,19 +89,26 @@ public class LoadGroovyRulesTest
                 allProviders.addAll(loader.getProviders(context));
             }
 
-            boolean foundScriptPath = false;
+            boolean foundRuleProviderOrigin = false;
+            boolean foundRuleOrigin = false;
             for (WindupRuleProvider provider : allProviders)
             {
+                String providerOrigin = provider.getOrigin();
+                if (providerOrigin.contains(EXAMPLE_GROOVY_FILE))
+                {
+                    foundRuleProviderOrigin = true;
+                }
+
                 Context ruleContext = RuleBuilder.define();
                 provider.enhanceMetadata(ruleContext);
-                String origin = ((String) ruleContext.get(RuleMetadata.ORIGIN));
-                if (origin.contains(EXAMPLE_GROOVY_FILE))
+                String ruleOrigin = ((String) ruleContext.get(RuleMetadata.ORIGIN));
+                if (ruleOrigin.contains(EXAMPLE_GROOVY_FILE))
                 {
-                    foundScriptPath = true;
-                    break;
+                    foundRuleOrigin = true;
                 }
             }
-            Assert.assertTrue("Script path should have been set in Rule Metatada", foundScriptPath);
+            Assert.assertTrue("Script path should have been set in Rule Metatada", foundRuleOrigin);
+            Assert.assertTrue("Script path should have been set in Rule Provider Metatada", foundRuleProviderOrigin);
             Assert.assertTrue(allProviders.size() > 0);
             context.getGraph().getBaseGraph().commit();
         }

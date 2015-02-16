@@ -11,12 +11,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.loader.WindupRuleLoader;
-import org.jboss.windup.config.phase.ArchiveExtraction;
-import org.jboss.windup.config.phase.MigrationRules;
-import org.jboss.windup.config.phase.RulePhase;
+import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
@@ -29,7 +26,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 @RunWith(Arquillian.class)
-public class WindupConfigurationLoaderTest
+public class WindupRuleProviderLoaderTest
 {
 
     @Deployment
@@ -53,44 +50,39 @@ public class WindupConfigurationLoaderTest
     @Inject
     private GraphContextFactory factory;
     @Inject
-    private WindupRuleLoader loader;
+    private Imported<WindupRuleProviderLoader> loaders;
 
     @Test
     public void testRuleProviderWithFilter() throws IOException
     {
         try (GraphContext context = factory.create())
         {
-            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
-            {
-                @Override
-                public boolean accept(WindupRuleProvider arg0)
-                {
-                    return arg0.getPhase() == MigrationRules.class;
-                }
-            };
+            boolean foundProvider1 = false;
+            boolean foundProvider2 = false;
 
-            GraphRewrite event = new GraphRewrite(context);
-            Configuration configuration1 = loader.loadConfiguration(context, predicate).getConfiguration();
-            boolean found1 = false;
-            boolean found2 = false;
-            for (Rule rule : configuration1.getRules())
+            for (WindupRuleProviderLoader loader : loaders)
             {
-                if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
+                for (WindupRuleProvider provider : loader.getProviders(context))
                 {
-                    found1 = true;
-                }
-                else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName()))
-                {
-                    found2 = true;
+                    if (provider instanceof TestRuleProvider1)
+                    {
+                        Assert.assertEquals("_DEFAULT_:org.jboss.windup.config.WindupRuleProviderLoaderTest.TestRuleProvider1", provider.getOrigin());
+                        foundProvider1 = true;
+                    }
+                    else if (provider instanceof TestRuleProvider2)
+                    {
+                        Assert.assertEquals("_DEFAULT_:org.jboss.windup.config.WindupRuleProviderLoaderTest.TestRuleProvider2", provider.getOrigin());
+                        foundProvider2 = true;
+                    }
                 }
             }
-            Assert.assertTrue(found1);
-            Assert.assertFalse(found2);
+            Assert.assertTrue(foundProvider1);
+            Assert.assertTrue(foundProvider2);
         }
     }
 
     @Singleton
-    public static class TestRuleProvider1Phase extends WindupRuleProvider
+    public static class TestRuleProvider1 extends WindupRuleProvider
     {
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -113,7 +105,7 @@ public class WindupConfigurationLoaderTest
                             @Override
                             public String getId()
                             {
-                                return TestRuleProvider1Phase.class.getSimpleName();
+                                return TestRuleProvider1.class.getSimpleName();
                             }
                         });
 
@@ -121,13 +113,8 @@ public class WindupConfigurationLoaderTest
     }
 
     @Singleton
-    public static class TestRuleProvider2Phase extends WindupRuleProvider
+    public static class TestRuleProvider2 extends WindupRuleProvider
     {
-        @Override
-        public Class<? extends RulePhase> getPhase()
-        {
-            return ArchiveExtraction.class;
-        }
 
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -135,7 +122,6 @@ public class WindupConfigurationLoaderTest
             return ConfigurationBuilder.begin()
                         .addRule(new Rule()
                         {
-
                             @Override
                             public void perform(Rewrite event, EvaluationContext context)
                             {
@@ -150,7 +136,7 @@ public class WindupConfigurationLoaderTest
                             @Override
                             public String getId()
                             {
-                                return TestRuleProvider2Phase.class.getSimpleName();
+                                return TestRuleProvider2.class.getSimpleName();
                             }
                         });
 

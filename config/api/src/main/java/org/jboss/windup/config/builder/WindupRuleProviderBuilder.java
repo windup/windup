@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.phase.RulePhase;
@@ -31,6 +32,7 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
             WindupRuleProviderBuilderAddDependencies
 {
     private String id;
+    private String origin;
     private Class<? extends RulePhase> rulePhase = WindupRuleProvider.DEFAULT_PHASE;
 
     private List<String> executeAfterIDs = new ArrayList<>();
@@ -176,6 +178,17 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     public List<String> getExecuteBeforeIDs()
     {
         return executeBeforeIDs;
+    }
+
+    @Override
+    public String getOrigin()
+    {
+        return StringUtils.isNotBlank(origin) ? origin : super.getOrigin();
+    }
+
+    public void setOrigin(String origin)
+    {
+        this.origin = origin;
     }
 
     @Override

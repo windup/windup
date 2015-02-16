@@ -32,6 +32,7 @@ import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -61,7 +62,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
     private FurnaceClasspathScanner scanner;
     @Inject
     private Furnace furnace;
-    
+
     @Inject
     private Imported<GroovyConfigMethod> methods;
 
@@ -69,22 +70,14 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
     @SuppressWarnings("unchecked")
     public List<WindupRuleProvider> getProviders(final GraphContext context)
     {
-        final List<WindupRuleProvider> ruleProviders = new ArrayList<WindupRuleProvider>();
+        final List<WindupRuleProvider> results = new ArrayList<WindupRuleProvider>();
 
         Binding binding = new Binding();
-        binding.setVariable("windupRuleProviderBuilders", ruleProviders);
         binding.setVariable("supportFunctions", new HashMap<>());
         binding.setVariable("graphContext", context);
 
         GroovyConfigContext configContext = new GroovyConfigContext()
         {
-
-            @Override
-            public void addRuleProvider(WindupRuleProvider provider)
-            {
-                ruleProviders.add(provider);
-            }
-
             @Override
             public GraphContext getGraphContext()
             {
@@ -102,12 +95,13 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         ClassLoader loader = getCompositeClassloader();
         GroovyShell shell = new GroovyShell(loader, binding, config);
 
-        //import all the support functions defined in a separate groovy file
+        // import all the support functions defined in a separate groovy file
         try (InputStream supportFuncsIS = getClass().getResourceAsStream(
                     "/org/jboss/windup/addon/groovy/WindupGroovySupportFunctions.groovy"))
         {
             InputStreamReader isr = new InputStreamReader(supportFuncsIS);
             shell.evaluate(isr);
+
         }
         catch (Exception e)
         {
@@ -125,8 +119,21 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         {
             try (Reader reader = new InputStreamReader(resource.openStream()))
             {
+                List<WindupRuleProvider> ruleProviders = new ArrayList<>();
+                binding.setVariable("windupRuleProviderBuilders", ruleProviders);
+
                 binding.setVariable(CURRENT_WINDUP_SCRIPT, resource.toExternalForm());
                 shell.evaluate(reader);
+
+                List<WindupRuleProvider> providers = (List<WindupRuleProvider>) binding.getVariable("windupRuleProviderBuilders");
+                for (WindupRuleProvider provider : providers)
+                {
+                    if (provider instanceof WindupRuleProviderBuilder)
+                    {
+                        ((WindupRuleProviderBuilder) provider).setOrigin(resource.toExternalForm());
+                    }
+                    results.add(provider);
+                }
             }
             catch (Exception e)
             {
@@ -134,10 +141,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
             }
         }
 
-        List<WindupRuleProvider> providers = (List<WindupRuleProvider>) binding
-                    .getVariable("windupRuleProviderBuilders");
-
-        return providers;
+        return results;
     }
 
     private ClassLoader getCompositeClassloader()
@@ -149,15 +153,17 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
             public boolean accept(Addon addon)
             {
                 Set<AddonDependency> dependencies = addon.getDependencies();
-                boolean found=false;
-                for(AddonDependency dependency : dependencies) {
-                 // TODO this should only accept addons that depend on windup-config-groovy or whatever we call that
-                    if (dependency.getDependency().getId().getName().contains("groovy")) {
+                boolean found = false;
+                for (AddonDependency dependency : dependencies)
+                {
+                    // TODO this should only accept addons that depend on windup-config-groovy or whatever we call that
+                    if (dependency.getDependency().getId().getName().contains("groovy"))
+                    {
                         return true;
                     }
                 }
                 return false;
-                
+
             }
         };
 

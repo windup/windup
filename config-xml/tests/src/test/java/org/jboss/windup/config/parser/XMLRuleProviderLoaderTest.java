@@ -77,6 +77,7 @@ public class XMLRuleProviderLoaderTest
             String id = provider.getID();
             Assert.assertEquals("testruleprovider", id);
             Assert.assertEquals(Discovery.class, provider.getPhase());
+            Assert.assertTrue(provider.getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
             List<Rule> rules = provider.getConfiguration(graphContext).getRules();
             Assert.assertEquals(3, rules.size());
 
