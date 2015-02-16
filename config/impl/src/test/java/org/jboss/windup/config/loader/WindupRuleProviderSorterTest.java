@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.Implicit;
+import org.jboss.windup.config.phase.Dependent;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.exception.WindupMultiStringException;
@@ -117,7 +117,7 @@ public class WindupRuleProviderSorterTest
         }
     }
 
-    private class WCPPhaseImplicitClass2 extends WindupRuleProvider
+    private class WCPPhaseDependentClass2 extends WindupRuleProvider
     {
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
@@ -136,7 +136,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return Implicit.class;
+            return Dependent.class;
         }
 
         @Override
@@ -148,7 +148,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public String toString()
         {
-            return "PhaseImplicitClass2";
+            return "PhaseDependentClass2";
         }
 
         @Override
@@ -231,7 +231,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public List<String> getExecuteAfterIDs()
         {
-            return Arrays.asList(new String[] { "WCPImplicitPhase2Step2" });
+            return Arrays.asList(new String[] { "WCPDependentPhase2Step2" });
         }
 
         @Override
@@ -358,12 +358,12 @@ public class WindupRuleProviderSorterTest
         }
     }
 
-    private class WCPImplicitPhase2Step2 extends WindupRuleProvider
+    private class WCPDependentPhase2Step2 extends WindupRuleProvider
     {
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return Implicit.class;
+            return Dependent.class;
         }
 
         @Override
@@ -387,7 +387,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public String toString()
         {
-            return "WCPImplicitPhase2Step2";
+            return "WCPDependentPhase2Step2";
         }
 
         @Override
@@ -414,10 +414,10 @@ public class WindupRuleProviderSorterTest
     {
         WindupRuleProvider v1 = new WCPPhase1Class1();
         WindupRuleProvider v2 = new WCPPhase1Class2();
-        WindupRuleProvider vI = new WCPPhaseImplicitClass2();
+        WindupRuleProvider vI = new WCPPhaseDependentClass2();
         WindupRuleProvider v3 = new WCPPhase1Class3();
         WindupRuleProvider v4 = new WCPPhase2Class1();
-        WindupRuleProvider v5 = new WCPImplicitPhase2Step2();
+        WindupRuleProvider v5 = new WCPDependentPhase2Step2();
         WindupRuleProvider v6 = new WCPPhase2Class3();
         WindupRuleProvider v7 = new WCPPhase2Class4();
         List<WindupRuleProvider> ruleProviders = new ArrayList<>();
@@ -520,7 +520,7 @@ public class WindupRuleProviderSorterTest
         WindupRuleProvider v2 = new WCPPhase1Class2();
         WindupRuleProvider v3 = new WCPPhase1Class3();
         WindupRuleProvider v4 = new WCPPhase2Class1();
-        WindupRuleProvider v5 = new WCPImplicitPhase2Step2();
+        WindupRuleProvider v5 = new WCPDependentPhase2Step2();
         WindupRuleProvider v6 = new WCPPhase2Class3();
         WindupRuleProvider v7 = new WCPPhase2Class4();
         WindupRuleProvider acceptablePhaseDep = new WCPAcceptableCrossPhaseDep();
