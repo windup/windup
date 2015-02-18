@@ -19,7 +19,6 @@ docs/reference/src/main/docbook/en-US/version_info.xml
 .factorypath
 atlassian-ide-plugin.xml
 .externalToolBuilders
-/graph/tests/src/test/java/org/jboss/windup/graph/test/polymorf/SubtypeQueryTest.java
 *.orig
 /localRepo/
 /utils/nb-configuration.xml
