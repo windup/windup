@@ -13,7 +13,7 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
-import org.jboss.windup.rules.apps.xml.condition.XmlFileResult;
+import org.jboss.windup.rules.apps.xml.condition.XmlFileFrom;
 import org.jboss.windup.rules.apps.xml.condition.XmlFileXpath;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.NamespaceEntry;
@@ -44,9 +44,11 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
     {
         String xpath = $(element).attr("matches");
         String as = $(element).attr("as");
+        String from = $(element).attr("from");
         String publicId = $(element).attr("public-id");
         String resultMatch = $(element).attr("xpathResultMatch");
-        if(as == null) {
+        if (as == null)
+        {
             as = Iteration.DEFAULT_VARIABLE_LIST_STRING;
         }
         if (StringUtils.isBlank(xpath) && StringUtils.isBlank(publicId))
@@ -54,7 +56,7 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
             throw new WindupException("Error, 'xmlfile' element must have a non-empty 'matches' or public-id attribute");
         }
         String inFile = $(element).attr("in");
-        
+
         Map<String, String> namespaceMappings = new HashMap<>();
 
         List<Element> children = $(element).children("namespace").get();
@@ -63,10 +65,20 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
             NamespaceEntry namespaceEntry = handlerManager.processElement(child);
             namespaceMappings.put(namespaceEntry.getPrefix(), namespaceEntry.getNamespaceURI());
         }
-        
-       
-        XmlFileXpath xmlFile = XmlFile.matchesXpath(xpath);
-        if(resultMatch !=null) {
+
+        XmlFileXpath xmlFile;
+        if (StringUtils.isNotBlank(from))
+        {
+            XmlFileFrom xmlFileFrom = XmlFile.from(from);
+            xmlFile = xmlFileFrom.matchesXpath(xpath);
+        }
+        else
+        {
+            xmlFile = XmlFile.matchesXpath(xpath);
+        }
+
+        if (resultMatch != null)
+        {
             xmlFile.resultMatches(resultMatch);
         }
         xmlFile.andDTDPublicId(publicId);
@@ -74,10 +86,11 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
         {
             xmlFile.namespace(nsMapping.getKey(), nsMapping.getValue());
         }
-        if(inFile !=null) {
+        if (inFile != null)
+        {
             xmlFile.inFile(inFile);
         }
         xmlFile.as(as);
-        return (XmlFile)xmlFile;
+        return (XmlFile) xmlFile;
     }
 }

@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
@@ -23,6 +24,8 @@ public class RuleHandler implements ElementHandler<Void>
     {
         ConfigurationRuleBuilder rule = (ConfigurationRuleBuilder) context.getBuilder().addRule();
         context.setRule(rule);
+
+        String id = $(element).attr("id");
 
         List<Element> children = $(element).children().get();
         for (Element child : children)
@@ -47,6 +50,12 @@ public class RuleHandler implements ElementHandler<Void>
                 break;
             }
         }
+
+        if (StringUtils.isNotBlank(id))
+        {
+            rule.withId(id);
+        }
+
         return null;
     }
 
