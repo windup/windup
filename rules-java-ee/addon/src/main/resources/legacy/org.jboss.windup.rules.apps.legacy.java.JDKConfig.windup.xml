@@ -1219,7 +1219,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array { ImageInputStream.class }." effort="0">
+                    <hint message="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array \{ ImageInputStream.class \}." effort="0">
                     </hint>
                 </iteration>
             </perform>
@@ -1232,7 +1232,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array { ImageOutputStream.class }." effort="0">
+                    <hint message="Deprecated By JDK 6. Instead of using this field, directly create the equivalent array \{ ImageOutputStream.class \}." effort="0">
                     </hint>
                 </iteration>
             </perform>
