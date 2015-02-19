@@ -199,11 +199,15 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
     @Override
     public Set<String> getRequiredParameterNames()
     {
-        if (this.xpathPattern == null)
+        Set<String> result = new HashSet<>();
+        if (this.xpathPattern != null )
         {
-            return Collections.emptySet();
+            result.addAll(xpathPattern.getRequiredParameterNames());
         }
-        Set<String> result = new HashSet<>(this.xpathPattern.getRequiredParameterNames());
+        if (this.fileNamePattern != null)
+        {
+            result.addAll(fileNamePattern.getRequiredParameterNames());
+        }
         return result;
     }
 
@@ -315,7 +319,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
         {
             allXmls = Variables.instance(event).findVariable(getInputVariablesName());
         }
-
+        Set<String> xmlCache = new HashSet<String>();
         for (WindupVertexFrame iterated : allXmls)
         {
             final XmlFileModel xml;
@@ -331,6 +335,13 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
             {
                 throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString()
                             + ")");
+            }
+            
+            //in case of taking a result of other XmlFile condition as input, multiple FileReferenceModels may reference the same XmlFileModel.
+            if(xmlCache.contains(xml.getFilePath())) {
+                continue;
+            } else {
+                xmlCache.add(xml.getFilePath());
             }
 
             if (fileNamePattern != null)
@@ -548,4 +559,5 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
             return true;
         }
     }
+
 }

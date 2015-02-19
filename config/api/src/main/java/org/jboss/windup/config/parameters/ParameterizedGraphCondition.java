@@ -44,7 +44,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
         ParameterValueStore previousValueStore = DefaultParameterValueStore.getInstance(context);
         try
         {
-            if (valueStores.isEmpty())
+            if (valueStores.isEmpty() || getRequiredParameterNames().isEmpty())
             {
                 FrameCreationContext frameCreationContext = new FrameCreationContext()
                 {
@@ -55,6 +55,11 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                     @Override
                     public void beginNew(Map<String, Iterable<? extends WindupVertexFrame>> variables)
                     {
+                        if (valueStores.get(current).isEmpty())
+                        {
+                            //clean previous if nothing was submitted in the valuestore
+                            rollback();
+                        }
                         ParameterValueStore clone = clone(original);
                         this.current = clone;
                         context.put(ParameterValueStore.class, clone);

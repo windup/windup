@@ -8,6 +8,7 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 /**
  * Used during
  * {@link ParameterizedGraphCondition#evaluateAndPopulateValueStores(org.jboss.windup.config.GraphRewrite, org.ocpsoft.rewrite.context.EvaluationContext, FrameCreationContext)}
+ * Used for accessing the ParameterValueStore within conditions
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
