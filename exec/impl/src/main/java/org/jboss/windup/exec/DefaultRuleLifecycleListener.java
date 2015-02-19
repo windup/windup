@@ -1,5 +1,7 @@
 package org.jboss.windup.exec;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.windup.config.GraphRewrite;
@@ -15,6 +17,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @Vetoed
 class DefaultRuleLifecycleListener implements RuleLifecycleListener
 {
+    private static Logger log = Logger.getLogger(DefaultRuleLifecycleListener.class.getName());
 
     private final WindupProgressMonitor progressMonitor;
     private final Configuration configuration;
@@ -34,7 +37,17 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     @Override
     public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
     {
-        progressMonitor.subTask(RuleUtils.prettyPrintRule(rule));
+        String ruleDescription;
+        try
+        {
+            ruleDescription = RuleUtils.prettyPrintRule(rule);
+        }
+        catch (Exception ex)
+        {
+            log.log(Level.SEVERE, "Failed prettyPrinting a rule: " + ex.getMessage(), ex);
+            ruleDescription = rule.getId();
+        }
+        progressMonitor.subTask(ruleDescription);
     }
 
     @Override

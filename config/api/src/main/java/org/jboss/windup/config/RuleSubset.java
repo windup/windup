@@ -307,9 +307,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         exMsg += "\n  Defined in: " + location;
                 }
                 throw new WindupException(exMsg, ex);
-
             }
-        }
+        }// for each Rule
 
         for (RuleLifecycleListener listener : listeners)
         {

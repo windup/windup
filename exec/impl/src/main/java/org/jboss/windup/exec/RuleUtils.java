@@ -8,7 +8,7 @@ import org.ocpsoft.rewrite.context.Context;
 
 /**
  * Utils for the Rules. Will be likely moved to Windup Utils.
- * 
+ *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 public class RuleUtils {
@@ -18,24 +18,30 @@ public class RuleUtils {
      */
     public static String prettyPrintRule(Rule rule)
     {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         if (rule instanceof Context)
         {
             final Context ctx = (Context) rule;
             WindupRuleProvider ruleProvider = (WindupRuleProvider) ctx.get(RuleMetadata.RULE_PROVIDER);
             if (ruleProvider != null)
             {
-                builder.append(ruleProvider.getPhase()).append(" - ");
-                builder.append(ruleProvider.getID()).append(" ");
+                sb.append(ruleProvider.getPhase()).append(" - ");
+                sb.append(ruleProvider.getID()).append(' ');
             }
 
-            String category = (String) ctx.get(RuleMetadata.CATEGORY);
-            if (category != null)
-                builder.append("[").append(category).append("] ");
+            Object categories = ctx.get(RuleMetadata.CATEGORY);
+            if (categories instanceof String )
+                sb.append('[').append(categories).append("] ");
+            else if (categories instanceof Iterable)
+            {
+                sb.append('[');
+                for(Object cat : (Iterable) categories)
+                    sb.append(cat).append(", ");
+                sb.append("] ");
+            }
         }
 
-        return builder.append(rule.getId()).toString();
+        return sb.append(rule.getId()).toString();
     }
-    
 
 }

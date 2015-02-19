@@ -29,6 +29,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.util.Arrays;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -50,7 +51,7 @@ public class TestJavaExampleRuleProvider extends WindupRuleProvider
     public void enhanceMetadata(Context context)
     {
         super.enhanceMetadata(context);
-        context.put(RuleMetadata.CATEGORY, "Java");
+        context.put(RuleMetadata.CATEGORY, Arrays.asList("Java"));
     }
 
     // @formatter:off

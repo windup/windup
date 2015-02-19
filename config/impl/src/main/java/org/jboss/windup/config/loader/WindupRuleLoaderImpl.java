@@ -1,8 +1,11 @@
 package org.jboss.windup.config.loader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +18,8 @@ import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.WindupRuleMetadata;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
@@ -151,8 +156,9 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
             for (final Rule rule : rules)
             {
                 i++;
+
                 if (rule instanceof Context)
-                    provider.enhanceMetadata((Context) rule);
+                    processRuleMetadata(rule, provider);
 
                 if (rule instanceof RuleBuilder && StringUtils.isBlank(rule.getId()))
                 {
@@ -201,4 +207,61 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         String provID = provider.getID().replace("org.jboss.windup.rules.", "w:");
         return "GeneratedID_" + provID + "_" + idx;
     }
+
+
+    /**
+     * Processes metadata - collects them from various sources (API alternatives),
+     * validates and normalizes them.
+     */
+    private void processRuleMetadata(Rule rule, WindupRuleProvider provider)
+    {
+        final Context ctx = (Context) rule;
+
+        provider.enhanceMetadata(ctx);
+
+        normalizeRuleMetadata(rule);
+        assert ctx.get(RuleMetadata.CATEGORY) instanceof Set;
+
+        Set<String> categories = (Set<String>) ctx.get(RuleMetadata.CATEGORY);
+        categories.addAll(provider.getCategories());
+    }
+
+
+    /**
+     * Converts metadata to a normalized form (i.e. coma-separated String to Collection etc.
+     */
+    private static void normalizeRuleMetadata(Rule rule)
+    {
+        if (!(rule instanceof Context))
+            return;
+
+        Context ctx = (Context) rule;
+        Object category = ctx.get(RuleMetadata.CATEGORY);
+
+        if (category == null)
+        {
+            ctx.put(RuleMetadata.CATEGORY, new HashSet());
+            return;
+        }
+
+        if (category instanceof String)
+            category = ((String)category).split(WindupRuleProviderBuilder.TAGS_SPLIT_PATTERN);
+
+        if (category instanceof String[])
+            category = Arrays.asList((String[]) category);
+
+        if (category instanceof Collection && !(category instanceof Set))
+        {
+            HashSet categoriesSet = new HashSet();
+            for (Object catItem : (Collection) category)
+                if (!(catItem instanceof String))
+                    throw new WindupException("Rule categories may only contain strings, but contains: " + catItem.getClass().getSimpleName());
+                else if ("".equals(catItem))
+                    continue;
+                else
+                    categoriesSet.add(((String)catItem).trim());
+            ctx.put(RuleMetadata.CATEGORY, categoriesSet);
+        }
+    }
+
 }

@@ -7,6 +7,7 @@
 package org.jboss.windup.config;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.ocpsoft.rewrite.context.Context;
  * execution.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Ondrej Zizka
  */
 public abstract class WindupRuleProvider implements ConfigurationProvider<GraphContext>
 {
@@ -37,8 +39,8 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     private int executionIndex;
 
     /**
-     * Provides descriptive information indicating where this rule provider was located (eg, a path to a groovy file on disk, or an addon coordinate
-     * and class name).
+     * Provides descriptive information indicating where this rule provider was located
+     * (eg, a path to a groovy file on disk, or an addon coordinate and class name).
      */
     public String getOrigin()
     {
@@ -51,7 +53,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
      */
     public String getID()
     {
-        return addon.getId().getName() + "." + getClass().getSimpleName();
+        return addon.getId().getName() + "!" + getClass().getSimpleName();
     }
 
     /**
@@ -66,16 +68,29 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
 
     /**
      * Specify additional meta-data about the {@link Rule} instances originating from this {@link WindupRuleProvider}.
+     *
+     * Default implementation sets the RuleMetadata.RULE_PROVIDER to this RuleProvider's object
+     * and RuleMetadata.ORIGIN to the name of this RuleProvider.
      */
     public void enhanceMetadata(Context context)
     {
-        if (!context.containsKey(RuleMetadata.CATEGORY))
-            context.put(RuleMetadata.CATEGORY, "Uncategorized");
         if (!context.containsKey(RuleMetadata.ORIGIN))
             context.put(RuleMetadata.ORIGIN, this.getClass().getName());
+
         if (!context.containsKey(RuleMetadata.RULE_PROVIDER))
             context.put(RuleMetadata.RULE_PROVIDER, this);
     }
+
+    /**
+     * Specify this RuleProvider's categories;
+     * DOES NOT necessarily define RuleProvider's categories - intended for overloading.
+     */
+    public Collection<String> getCategories()
+    {
+        return Collections.EMPTY_SET;
+    }
+
+
 
     /**
      * Returns a list of {@link WindupRuleProvider} classes that should execute before the {@link Rule}s in this {@link WindupRuleProvider}.

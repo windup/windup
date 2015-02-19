@@ -21,6 +21,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.util.Arrays;
 
 public class TestGremlinQueryOnlyRuleProvider extends WindupRuleProvider
 {
@@ -36,7 +37,7 @@ public class TestGremlinQueryOnlyRuleProvider extends WindupRuleProvider
     public void enhanceMetadata(Context context)
     {
         super.enhanceMetadata(context);
-        context.put(RuleMetadata.CATEGORY, "Java");
+        context.put(RuleMetadata.CATEGORY, Arrays.asList("Java"));
     }
 
     // @formatter:off
@@ -66,7 +67,7 @@ public class TestGremlinQueryOnlyRuleProvider extends WindupRuleProvider
                             boolean match =firstString.contains(second);
                             return match;
                         }
-                        
+
                     }, JavaMethodModel.TYPE);
                 }
             }).as("javaMethods")
