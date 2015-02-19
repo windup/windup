@@ -315,7 +315,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
         {
             allXmls = Variables.instance(event).findVariable(getInputVariablesName());
         }
-
+        Set<String> xmlCache = new HashSet<String>();
         for (WindupVertexFrame iterated : allXmls)
         {
             final XmlFileModel xml;
@@ -331,6 +331,13 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
             {
                 throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString()
                             + ")");
+            }
+            
+            // the cache is here to support nester conditions where one xmlFile may produce file locations placed in the same file
+            if(xmlCache.contains(xml.getFilePath())) {
+                continue;
+            } else {
+                xmlCache.add(xml.getFilePath());
             }
 
             if (fileNamePattern != null)

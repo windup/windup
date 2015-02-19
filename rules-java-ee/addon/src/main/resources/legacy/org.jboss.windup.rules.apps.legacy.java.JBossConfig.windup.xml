@@ -34,7 +34,7 @@
             </when>
             <perform>
                 <iteration>
-                    <hint message="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns({@JoinColumn" effort="0">
+                    <hint message="If migrating from JBoss 4, ensure @JoinColumn is replaced with @JoinColumns(\{@JoinColumn" effort="0">
                     </hint>
                 </iteration>
             </perform>
