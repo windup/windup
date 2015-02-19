@@ -1,6 +1,5 @@
 package org.jboss.windup.ext.groovy;
 
-import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 
 /**
@@ -11,11 +10,6 @@ import org.jboss.windup.graph.GraphContext;
  */
 public interface GroovyConfigContext
 {
-    /**
-     * Add a {@link WindupRuleProvider}.
-     */
-    void addRuleProvider(WindupRuleProvider provider);
-
     /**
      * Get the {@link GraphContext}
      */

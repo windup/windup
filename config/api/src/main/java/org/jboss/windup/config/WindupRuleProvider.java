@@ -37,6 +37,15 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
     private int executionIndex;
 
     /**
+     * Provides descriptive information indicating where this rule provider was located (eg, a path to a groovy file on disk, or an addon coordinate
+     * and class name).
+     */
+    public String getOrigin()
+    {
+        return addon.getId().getName() + ":" + getClass().getCanonicalName();
+    }
+
+    /**
      * Returns a unique identifier for this particular rule provider. The default is based on the addon and classname, but this can be overridden in
      * subclasses to provide a more readable name.
      */
@@ -165,6 +174,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
         return result;
     }
 
+    @Override
     public int hashCode()
     {
         return getID().hashCode();
