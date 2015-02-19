@@ -69,31 +69,16 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
                         "nonclassifiedfiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.html");
             Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBean_java\\.html");
-            Path loginFilterPath = resolveChildPath(reportsDirectory, "LoginFilter_java\\.html");
-            Path loginEventPublisherPath = resolveChildPath(reportsDirectory, "LogEventPublisher_java\\.html");
-            Path authenticationFilterPath = resolveChildPath(reportsDirectory, "AuthenticateFilter_java\\.html");
-            Path webStartupListenerPath = resolveChildPath(reportsDirectory,
-                        "AnvilWebStartupListener_java\\.html");
-            Path webLifecycleListenerPath = resolveChildPath(reportsDirectory,
-                        "AnvilWebLifecycleListener_java\\.html");
 
             Assert.assertTrue(indexPath.toFile().exists());
             Assert.assertTrue(appReportPath.toFile().exists());
             Assert.assertTrue(appNonClassifiedReportPath.toFile().exists());
             Assert.assertTrue(productCatalogBeanPath.toFile().exists());
-            Assert.assertTrue(loginFilterPath.toFile().exists());
-            Assert.assertTrue(loginEventPublisherPath.toFile().exists());
-            Assert.assertTrue(authenticationFilterPath.toFile().exists());
-            Assert.assertTrue(webStartupListenerPath.toFile().exists());
-            Assert.assertTrue(webLifecycleListenerPath.toFile().exists());
 
             String appReportContent = new String(Files.readAllBytes(appReportPath));
-            String webListenerContent = new String(Files.readAllBytes(webLifecycleListenerPath));
 
             Assert.assertTrue(appReportContent
-                        .contains("com.acme.anvil.listener.AnvilWebLifecycleListener"));
-            Assert.assertTrue(webListenerContent
-                        .contains("This class is proprietary to Weblogic, remove."));
+                        .contains("Used only to support migration activities."));
         }
     }
 

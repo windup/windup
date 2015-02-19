@@ -42,6 +42,15 @@
             <include>org.jboss.windup.maven:nexus-indexer-data:zip:*</include>
          </includes>
       </dependencySet>
+
+      <dependencySet>
+         <outputDirectory>/rules</outputDirectory>
+         <useProjectArtifact>false</useProjectArtifact>
+         <unpack>true</unpack>
+         <includes>
+            <include>org.jboss.windup.rules:windup-rulesets:jar:*</include>
+         </includes>
+      </dependencySet>
    </dependencySets>
 
 </assembly>
