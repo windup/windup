@@ -15,9 +15,7 @@ import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.ocpsoft.rewrite.param.DefaultParameterStore;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
-import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 import org.ocpsoft.rewrite.param.Parameterized;
 
@@ -44,7 +42,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
         ParameterValueStore previousValueStore = DefaultParameterValueStore.getInstance(context);
         try
         {
-            if (valueStores.isEmpty())
+            if (valueStores.isEmpty() || getRequiredParameterNames().isEmpty())
             {
                 FrameCreationContext frameCreationContext = new FrameCreationContext()
                 {
@@ -55,6 +53,11 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                     @Override
                     public void beginNew(Map<String, Iterable<? extends WindupVertexFrame>> variables)
                     {
+                        if (valueStores != null && current != null && valueStores.get(current) != null && valueStores.get(current).isEmpty())
+                        {
+                            // clean previous if nothing was submitted in the valuestore
+                            rollback();
+                        }
                         ParameterValueStore clone = clone(original);
                         this.current = clone;
                         context.put(ParameterValueStore.class, clone);
@@ -123,7 +126,6 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                             .entrySet())
                 {
                     ParameterValueStore valueStore = entry.getKey();
-                    ParameterStore store = DefaultParameterStore.getInstance(context);
                     Map<String, Iterable<? extends WindupVertexFrame>> variables = entry.getValue();
                     try
                     {
