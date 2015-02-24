@@ -40,8 +40,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link InlineHintModel}s associated with the provided
-     * {@link FileModel}.
+     * Returns the total effort points in all of the {@link InlineHintModel}s associated with the provided {@link FileModel}.
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {

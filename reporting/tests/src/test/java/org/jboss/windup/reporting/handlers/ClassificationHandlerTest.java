@@ -20,6 +20,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.classification.Classification;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class ClassificationHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testJavaClassCondition() throws Exception
+    public void testClassificationParsing() throws Exception
     {
         ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(CLASSIFICATION_XML_FILE);
@@ -71,6 +72,7 @@ public class ClassificationHandlerTest
         Element firstClassification = classificationList.get(0);
         Classification classification = parser.<Classification> processElement(firstClassification);
 
+        Assert.assertEquals(Severity.WARNING, classification.getSeverity());
         Assert.assertEquals("testVariable", classification.getVariableName());
         Assert.assertEquals(5, classification.getEffort());
         Assert.assertEquals("test message", classification.getClassificationPattern().toString());
@@ -83,6 +85,7 @@ public class ClassificationHandlerTest
         Element secondClassification = classificationList.get(1);
         classification = parser.<Classification> processElement(secondClassification);
         Assert.assertEquals(null, classification.getVariableName());
+        Assert.assertEquals(Severity.INFO, classification.getSeverity());
         Assert.assertEquals(0, classification.getEffort());
         Assert.assertEquals("test-message", classification.getClassificationPattern().toString());
         Assert.assertEquals(null, classification.getDescriptionPattern());

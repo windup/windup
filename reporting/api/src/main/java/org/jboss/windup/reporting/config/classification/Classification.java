@@ -18,6 +18,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.LinkModel;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -30,14 +31,16 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
-            ClassificationDescription, ClassificationLink
+            ClassificationDescription, ClassificationLink, ClassificationSeverity
 {
+    public static final Severity DEFAULT_SEVERITY = Severity.WARNING;
     private static final Logger log = Logger.getLogger(Classification.class.getName());
 
     private List<Link> links = new ArrayList<>();
     private RegexParameterizedPatternParser classificationPattern;
     private RegexParameterizedPatternParser descriptionPattern;
     private int effort;
+    private Severity severity = DEFAULT_SEVERITY;
 
     Classification(String variable)
     {
@@ -75,6 +78,24 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     public static ClassificationBuilderOf of(String variable)
     {
         return new ClassificationBuilderOf(variable);
+    }
+
+    /**
+     * Gets the configured {@link Severity} level.
+     */
+    public Severity getSeverity()
+    {
+        return severity;
+    }
+
+    /**
+     * Sets the {@link Severity} to a non-default level.
+     */
+    @Override
+    public ClassificationSeverity withSeverity(Severity severity)
+    {
+        this.severity = severity;
+        return this;
     }
 
     /**
@@ -133,6 +154,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
         {
             classification = classificationService.create();
             classification.setEffort(effort);
+            classification.setSeverity(severity);
             classification.setDescription(description);
             classification.setClassifiation(text);
 

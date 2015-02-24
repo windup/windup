@@ -12,6 +12,7 @@ import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.LinkModel;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -21,13 +22,16 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink
+public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintSeverity
 {
     private static final Logger log = Logger.getLogger(Hint.class.getName());
+
+    public static final Severity DEFAULT_SEVERITY = Severity.WARNING;
 
     private RegexParameterizedPatternParser hintTitlePattern;
     private RegexParameterizedPatternParser hintTextPattern;
     private int effort;
+    private Severity severity = DEFAULT_SEVERITY;
     private List<Link> links = new ArrayList<>();
 
     protected Hint(String variable)
@@ -48,9 +52,27 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         return new HintBuilderIn(fileVariable);
     }
 
+    /**
+     * Create a new {@link Hint} with the specified title.
+     */
     public static HintBuilderTitle titled(String title)
     {
         return new HintBuilderTitle(title);
+    }
+
+    @Override
+    public HintSeverity withSeverity(Severity severity)
+    {
+        this.severity = severity;
+        return this;
+    }
+
+    /**
+     * Returns the currently set {@link Severity}.
+     */
+    public Severity getSeverity()
+    {
+        return severity;
     }
 
     /**

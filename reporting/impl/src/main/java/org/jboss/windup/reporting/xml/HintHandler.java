@@ -14,6 +14,7 @@ import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.HintText;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.classification.Classification;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -23,11 +24,11 @@ import org.w3c.dom.Element;
  * Expected format:
  * 
  * <pre>
- * &lt;hint message="hint" effort="8"&gt;
+ * &lt;hint message="hint" effort="8" severity="INFO"&gt;
  * &lt;/hint&gt;
  * </pre>
  * 
- * Alternatively, the hint can be in its own element. This is primary useful for longer hint content:
+ * Alternatively, the hint message can be in its own element. This is primary useful for longer hint content:
  * 
  * <pre>
  * &lt;hint title="Short description" effort="8"&gt;
@@ -49,6 +50,7 @@ public class HintHandler implements ElementHandler<Hint>
     public Hint processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
         String title = $(element).attr("title");
+        String severityStr = $(element).attr("severity");
         String message = $(element).attr("message");
         String in = $(element).attr("in");
 
@@ -84,6 +86,13 @@ public class HintHandler implements ElementHandler<Hint>
         {
             hint = Hint.in(in).withText(message);
         }
+
+        if (StringUtils.isNotBlank(severityStr))
+        {
+            Severity severity = Severity.valueOf(severityStr);
+            hint.withSeverity(severity);
+        }
+
         if (!StringUtils.isBlank(effortStr))
         {
             try

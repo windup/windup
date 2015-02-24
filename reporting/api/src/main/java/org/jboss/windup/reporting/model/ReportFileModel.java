@@ -10,8 +10,7 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * Extends the file model with some convenience accessors for getting to {@link InlineHintModel} and other reporting
- * related data.
+ * Extends the file model with some convenience accessors for getting to {@link InlineHintModel} and other reporting related data.
  */
 @TypeValue(ReportFileModel.TYPE)
 public interface ReportFileModel extends FileModel
