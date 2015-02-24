@@ -2,11 +2,16 @@ package org.jboss.windup.config.parser;
 
 import static org.joox.JOOX.$;
 
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
@@ -19,11 +24,12 @@ import org.jboss.windup.util.Annotations;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderPerform;
 import org.ocpsoft.rewrite.config.ConfigurationRuleParameterWhere;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Handles maintaining the list of handlers associated with each tag/namespace pair, as well as selecting the right
- * handler for element. This also maintains the current {@link WindupRuleProviderBuilder} being constructed.
+ * Handles maintaining the list of handlers associated with each tag/namespace pair, as well as selecting the right handler for element. This also
+ * maintains the current {@link WindupRuleProviderBuilder} being constructed.
  */
 public class ParserContext
 {
@@ -34,15 +40,18 @@ public class ParserContext
     private final Map<HandlerId, ElementHandler<?>> handlers = new HashMap<>();
 
     /**
-     * The addon containing the xml file currently being parsed. This is needed mainly because of the classloader that loaded the Addon (XSLTTransformation needs it.)
+     * The addon containing the xml file currently being parsed. This is needed mainly because of the classloader that loaded the Addon
+     * (XSLTTransformation needs it.)
      */
     private Addon addonContainingInputXML;
     /**
-     * The folder containing the xml file currently being parse. This should be the root folder from which any other
-     * resource lookups should be based. Eg, it may be the user scripts folder.
+     * The folder containing the xml file currently being parse. This should be the root folder from which any other resource lookups should be based.
+     * Eg, it may be the user scripts folder.
      * 
      * If this is set, it should take precedent over the Addon for resource lookups.
      */
+    private Path xmlInputRootPath;
+
     private Path xmlInputPath;
 
     /**
@@ -87,6 +96,36 @@ public class ParserContext
         }
         throw new ConfigurationException("No Handler registered for element named [" + tagName
                     + "] in namespace: [" + namespace + "]");
+    }
+
+    /**
+     * Processes the XML document at the provided {@link URL} and returns a result from the namespace element handlers.
+     */
+    public <T> T processDocument(URI uri) throws ConfigurationException
+    {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        dbFactory.setNamespaceAware(true);
+        DocumentBuilder dBuilder = null;
+
+        try
+        {
+            dBuilder = dbFactory.newDocumentBuilder();
+        }
+        catch (Exception e)
+        {
+            throw new WindupException("Failed to build xml parser due to: " + e.getMessage(), e);
+        }
+
+        try
+        {
+            Document doc = dBuilder.parse(uri.toString());
+            return processElement(doc.getDocumentElement());
+        }
+        catch (Exception e)
+        {
+            throw new WindupException("Failed to parse document at: " + uri + ", due to: " + e.getMessage(), e);
+        }
+
     }
 
     /**
@@ -170,10 +209,7 @@ public class ParserContext
     }
 
     /**
-     * The folder containing the xml file currently being parse. This should be the root folder from which any other
-     * resource lookups should be based. Eg, it may be the user scripts folder.
-     * 
-     * If this is set, it should take precedent over the Addon for resource lookups.
+     * The path to the rule xml file itself (eg, /path/to/rule.windup.xml).
      */
     public void setXmlInputPath(Path xmlInputPath)
     {
@@ -181,13 +217,32 @@ public class ParserContext
     }
 
     /**
-     * The folder containing the xml file currently being parse. This should be the root folder from which any other
-     * resource lookups should be based. Eg, it may be the user scripts folder.
-     * 
-     * If this is set, it should take precedent over the Addon for resource lookups.
+     * The path to the rule xml file itself (eg, /path/to/rule.windup.xml).
      */
     public Path getXmlInputPath()
     {
-        return xmlInputPath;
+        return this.xmlInputPath;
+    }
+
+    /**
+     * The folder containing the xml file currently being parsed. This should be the root folder from which any other resource lookups should be
+     * based. Eg, it may be the user scripts folder.
+     * 
+     * If this is set, it should take precedent over the Addon for resource lookups.
+     */
+    public void setXmlInputRootPath(Path xmlRootInputPath)
+    {
+        this.xmlInputRootPath = xmlRootInputPath;
+    }
+
+    /**
+     * The folder containing the xml file currently being parsed. This should be the root folder from which any other resource lookups should be
+     * based. Eg, it may be the user scripts folder.
+     * 
+     * If this is set, it should take precedent over the Addon for resource lookups.
+     */
+    public Path getXmlInputRootPath()
+    {
+        return xmlInputRootPath;
     }
 }

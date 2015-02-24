@@ -93,12 +93,12 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
                 String typeMessage;
                 if (previousProvider.getClass().equals(provider.getClass()))
                 {
-                    typeMessage = " (type: " + Proxies.unwrapProxyClassName(provider.getClass()) + ")";
+                    typeMessage = " (type: " + previousProvider.getOrigin() + " and " + provider.getOrigin() + ")";
                 }
                 else
                 {
-                    typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " and "
-                                + Proxies.unwrapProxyClassName(provider.getClass()) + ")";
+                    typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " at " + previousProvider.getOrigin()
+                                + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + provider.getOrigin() + ")";
                 }
 
                 throw new WindupException("Found two providers with the same id: " + provider.getID() + typeMessage);

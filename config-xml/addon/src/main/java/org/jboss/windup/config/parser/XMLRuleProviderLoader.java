@@ -116,7 +116,8 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
                     ParserContext parser = new ParserContext(furnace);
 
                     String userRulesPath = userRulesFileModel.getFilePath();
-                    parser.setXmlInputPath(Paths.get(userRulesPath));
+                    parser.setXmlInputPath(Paths.get(resource.toURI()));
+                    parser.setXmlInputRootPath(Paths.get(userRulesPath));
 
                     parser.processElement(doc.getDocumentElement());
                     List<WindupRuleProvider> parsedProviders = parser.getRuleProviders();

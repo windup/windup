@@ -2,8 +2,8 @@ package org.jboss.windup.rules.apps.xml.confighandler;
 
 import static org.joox.JOOX.$;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +15,6 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
 import org.jboss.windup.util.exception.WindupException;
-import org.jboss.windup.util.xml.NamespaceEntry;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
 
@@ -64,7 +63,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             parameters.put(param.getKey(), param.getValue());
         }
 
-        Path pathContainingXml = handlerManager.getXmlInputPath();
+        Path pathContainingXml = handlerManager.getXmlInputRootPath();
         if (pathContainingXml != null)
         {
             String fullPath;
@@ -74,18 +73,30 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             }
             else
             {
-                fullPath = pathContainingXml.resolve(template).toAbsolutePath().toString();
+                Path path = pathContainingXml.resolve(template).toAbsolutePath();
+
+                // If we can't find it at the default location, try relative to the rule xml file itself
+                if (!Files.exists(path))
+                {
+                    // This contains the parent of the rule itself (eg, /path/to/rules/rule.windup.xml would result in /path/to/rules/)
+                    Path rulesParentPath = handlerManager.getXmlInputPath().getParent();
+                    fullPath = rulesParentPath.resolve(template).normalize().toAbsolutePath().toString();
+                }
+                else
+                {
+                    fullPath = path.normalize().toString();
+                }
             }
             if (of != null)
             {
-                return (XSLTTransformation)XSLTTransformation
+                return (XSLTTransformation) XSLTTransformation
                             .of(of)
                             .usingFilesystem(fullPath)
                             .withDescription(description)
                             .withExtension(extension)
                             .withParameters(parameters);
             }
-            return (XSLTTransformation)XSLTTransformation
+            return (XSLTTransformation) XSLTTransformation
                         .usingFilesystem(fullPath)
                         .withDescription(description)
                         .withExtension(extension)
@@ -96,7 +107,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             ClassLoader xmlFileAddonClassLoader = handlerManager.getAddonContainingInputXML().getClassLoader();
             if (of != null)
             {
-                return (XSLTTransformation)XSLTTransformation
+                return (XSLTTransformation) XSLTTransformation
                             .of(of)
                             .using(template, xmlFileAddonClassLoader)
                             .withDescription(description)
