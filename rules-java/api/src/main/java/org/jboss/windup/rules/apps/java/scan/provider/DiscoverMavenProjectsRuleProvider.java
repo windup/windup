@@ -68,7 +68,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                 if (mavenProjectModel != null)
                 {
                     ArchiveModel archiveModel = payload.getParentArchive();
-                    if (archiveModel != null)
+                    if (archiveModel != null && !isAlreadyMavenProject(archiveModel))
                     {
                         archiveModel.setProjectModel(mavenProjectModel);
 
@@ -92,7 +92,7 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
                         // add the parent file
                         File parentFile = payload.asFile().getParentFile();
                         FileModel parentFileModel = new FileService(event.getGraphContext()).findByPath(parentFile.getAbsolutePath());
-                        if (parentFileModel != null)
+                        if (parentFileModel != null && !isAlreadyMavenProject(parentFileModel))
                         {
                             parentFileModel.setProjectModel(mavenProjectModel);
                             mavenProjectModel.addFileModel(parentFileModel);
@@ -121,6 +121,17 @@ public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
             .when(fileWhen)
             .perform(evaluatePomFiles);
         // @formatter:on
+    }
+
+    /**
+     * This method is here so that the caller can know not to try to reset the project model for an archive (or directory) if the archive (or
+     * directory) is already a maven project.
+     * 
+     * This can sometimes help in cases in which an archive includes multiple poms in its META-INF.
+     */
+    private boolean isAlreadyMavenProject(FileModel fileModel)
+    {
+        return fileModel.getProjectModel() != null && fileModel.getProjectModel() instanceof MavenProjectModel;
     }
 
     private void addFilesToModel(MavenProjectModel mavenProjectModel, FileModel fileModel)
