@@ -166,13 +166,13 @@ public interface ProjectModel extends WindupVertexFrame
     Iterable<ProjectDependencyModel> getDependencies();
 
     /**
-     * Project dependencies, as well as metadata about those deps.
+     * Retrieve all files contained within the project.
      */
     @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
     Iterable<FileModel> getFileModels();
 
     /**
-     * Project dependencies, as well as metadata about those deps.
+     * Add a file model to the project.
      */
     @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
     void addFileModel(FileModel fileModel);
