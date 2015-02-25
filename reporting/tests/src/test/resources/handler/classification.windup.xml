@@ -4,7 +4,7 @@
 		<link href="someUrl" description="someDescription"/>
 	</classification>
 	
-	<classification classification="test-message">
+	<classification classification="test-message" severity='INFO'>
 		<link href="url1" description="description1"/>
 		<link href="url2" description="description2"/>
 		<link href="url3" description="description3"/>

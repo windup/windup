@@ -20,6 +20,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class HintHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testJavaClassCondition() throws Exception
+    public void testHintHandler() throws Exception
     {
         ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(HINT_XML_FILE);
@@ -74,6 +75,7 @@ public class HintHandlerTest
 
         Assert.assertEquals("testVariable", hint.getVariableName());
         Assert.assertEquals(5, hint.getEffort());
+        Assert.assertEquals(Severity.WARNING, hint.getSeverity());
         Assert.assertEquals("test message", hint.getHintText().toString());
         Assert.assertEquals(1, hint.getLinks().size());
         List<Link> links = hint.getLinks();
@@ -84,6 +86,7 @@ public class HintHandlerTest
         hint = parser.<Hint> processElement(secondHint);
         Assert.assertEquals(null, hint.getVariableName());
         Assert.assertEquals(0, hint.getEffort());
+        Assert.assertEquals(Severity.INFO, hint.getSeverity());
         Assert.assertEquals("test-message", hint.getHintText().toString());
         Assert.assertEquals(3, hint.getLinks().size());
         links = hint.getLinks();

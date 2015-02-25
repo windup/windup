@@ -11,7 +11,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.config.classification.ClassificationAs;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -44,12 +44,14 @@ public class ClassificationHandler implements ElementHandler<Classification>
         String description = $(element).attr("description");
         String of = $(element).attr("of");
         String effortStr = $(element).attr("effort");
+        String severityStr = $(element).attr("severity");
 
-        Classification classification = (Classification)Classification.as(classificationStr);
-        if(of !=null) {
-        	classification.setVariableName(of);
+        Classification classification = (Classification) Classification.as(classificationStr);
+        if (of != null)
+        {
+            classification.setVariableName(of);
         }
-        if (!StringUtils.isBlank(effortStr))
+        if (StringUtils.isNotBlank(effortStr))
         {
             try
             {
@@ -61,7 +63,14 @@ public class ClassificationHandler implements ElementHandler<Classification>
                 throw new WindupException("Could not parse effort level: " + effortStr + " as an integer!");
             }
         }
-        if (!StringUtils.isBlank(description))
+
+        if (StringUtils.isNotBlank(severityStr))
+        {
+            Severity severity = Severity.valueOf(severityStr);
+            classification.withSeverity(severity);
+        }
+
+        if (StringUtils.isNotBlank(description))
         {
             classification.withDescription(description);
         }

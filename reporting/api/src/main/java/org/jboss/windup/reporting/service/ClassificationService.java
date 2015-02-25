@@ -25,8 +25,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided
-     * {@link FileModel}.
+     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided {@link FileModel}.
      * 
      */
     public int getMigrationEffortPoints(FileModel fileModel)
@@ -49,8 +48,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this
-     * project.
+     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this project.
      * 
      * If set to recursive, then also include the effort points from child projects.
      * 
@@ -82,9 +80,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided
-     * {@link FileModel}. If an existing Model exists with the provided classificationText, that one will be used
-     * instead.
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
+     * exists with the provided classificationText, that one will be used instead.
      */
     public ClassificationModel attachClassification(FileModel fileModel, String classificationText, String description)
     {

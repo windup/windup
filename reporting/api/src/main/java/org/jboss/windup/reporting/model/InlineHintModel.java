@@ -16,13 +16,15 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(InlineHintModel.TYPE)
 public interface InlineHintModel extends FileLocationModel
 {
-    public static final String TYPE = "Inlinehintmodel";
-    public static final String TITLE = "windupreporting:title";
-    public static final String HINT = "windupreporting:hint";
-    public static final String RULE_ID = "windupreporting:ruleID";
-    public static final String EFFORT = "windupreporting:effort";
-    public static final String LINKS = "windupreporting:links";
-    public static final String FILE_LOCATION_REFERENCE = "windupreporting:fileLocationReference";
+    static final String TYPE = "InlineHintModel";
+    static final String TYPE_PREFIX = TYPE + ":";
+    static final String TITLE = TYPE_PREFIX + "title";
+    static final String HINT = TYPE_PREFIX + "hint";
+    static final String SEVERITY = TYPE_PREFIX + "severity";
+    static final String RULE_ID = TYPE_PREFIX + "ruleID";
+    static final String EFFORT = TYPE_PREFIX + "effort";
+    static final String LINKS = TYPE_PREFIX + "links";
+    static final String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
 
     /**
      * A short descriptive text describing the problem covered by this hint
@@ -47,6 +49,18 @@ public interface InlineHintModel extends FileLocationModel
      */
     @Property(HINT)
     String getHint();
+
+    /**
+     * Contains a severity level that may be used to indicate to the user the severity level of a problem.
+     */
+    @Property(SEVERITY)
+    void setSeverity(Severity severity);
+
+    /**
+     * Contains a severity level that may be used to indicate to the user the severity level of a problem.
+     */
+    @Property(SEVERITY)
+    Severity getSeverity();
 
     /**
      * Sets the original {@link FileLocationModel} associated with this {@link InlineHintModel}

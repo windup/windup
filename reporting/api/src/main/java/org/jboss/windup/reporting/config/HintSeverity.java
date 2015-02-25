@@ -4,14 +4,13 @@ import org.jboss.windup.reporting.model.Severity;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
- * One of the builder interfaces of Hint operation.
+ * This is {@link Hint} after the {@link Severity} has been set.
  * 
- * @author mbriskar
+ * @author jsightler
  *
  */
-public interface HintText
+public interface HintSeverity
 {
-
     /**
      * Provide a link describing the topic more precisely
      * 
@@ -29,8 +28,4 @@ public interface HintText
      */
     OperationBuilder withEffort(int effort);
 
-    /**
-     * Specifies the {@link Severity} level. This will default to {@link Hint#DEFAULT_SEVERITY} if not set here.
-     */
-    HintSeverity withSeverity(Severity severity);
 }
