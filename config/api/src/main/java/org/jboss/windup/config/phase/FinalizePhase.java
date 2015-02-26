@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link PostReportRendering}<br/>
- * Next: {@link PostFinalize}
+ * Previous: {@link PostReportRenderingPhase}<br/>
+ * Next: {@link PostFinalizePhase}
  * 
  * <p>
  * This occurs at the end of execution. {@link Rule}s in this phase are responsible for any cleanup of resources that may have been opened during
@@ -16,11 +16,11 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class Finalize extends RulePhase
+public class FinalizePhase extends RulePhase
 {
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(PostReportRendering.class);
+        return asClassList(PostReportRenderingPhase.class);
     }
 }

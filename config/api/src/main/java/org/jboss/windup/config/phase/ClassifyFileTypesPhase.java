@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link ArchiveMetadataExtraction}<br/>
- * Next: {@link DiscoverProjectStructure}<br/>
+ * Previous: {@link ArchiveMetadataExtractionPhase}<br/>
+ * Next: {@link DiscoverProjectStructurePhase}<br/>
  * 
  * <p>
  * This scans files and attaches metadata to them. For example, this may find all of the Java files in an application and mark them as Java, or it may
@@ -15,12 +15,12 @@ import org.jboss.windup.config.WindupRuleProvider;
  * .
  *
  */
-public class ClassifyFileTypes extends RulePhase
+public class ClassifyFileTypesPhase extends RulePhase
 {
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(ArchiveMetadataExtraction.class);
+        return asClassList(ArchiveMetadataExtractionPhase.class);
     }
 
 }

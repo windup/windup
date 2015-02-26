@@ -5,7 +5,7 @@ import java.util.List;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.phase.DiscoverProjectStructure;
+import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -27,7 +27,7 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends WindupRuleProvid
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return DiscoverProjectStructure.class;
+        return DiscoverProjectStructurePhase.class;
     }
 
     @Override

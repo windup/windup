@@ -23,9 +23,9 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
-import org.jboss.windup.config.phase.InitialAnalysis;
-import org.jboss.windup.config.phase.MigrationRules;
-import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.InitialAnalysisPhase;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -108,8 +108,8 @@ public class FileContentTest
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return (provider.getPhase() != ReportGeneration.class) &&
-                                (provider.getPhase() != MigrationRules.class);
+                    return (provider.getPhase() != ReportGenerationPhase.class) &&
+                                (provider.getPhase() != MigrationRulesPhase.class);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -195,7 +195,7 @@ public class FileContentTest
         @Override
         public Class<? extends org.jboss.windup.config.phase.RulePhase> getPhase()
         {
-            return InitialAnalysis.class;
+            return InitialAnalysisPhase.class;
         }
 
         @Override

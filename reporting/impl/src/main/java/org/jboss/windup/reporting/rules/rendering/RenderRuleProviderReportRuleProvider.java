@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.PostFinalize;
+import org.jboss.windup.config.phase.PostFinalizePhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
@@ -30,7 +30,7 @@ public class RenderRuleProviderReportRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return PostFinalize.class;
+        return PostFinalizePhase.class;
     }
 
     @Override

@@ -13,7 +13,7 @@ import org.jboss.windup.config.graph.TypeOperation;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.phase.Discovery;
+import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -33,7 +33,7 @@ public class TestMavenExampleRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return Discovery.class;
+        return DiscoveryPhase.class;
     }
 
     // @formatter:off

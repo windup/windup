@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.Dependent;
+import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -19,7 +19,7 @@ public class JavaFileMappingRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return Dependent.class;
+        return DependentPhase.class;
     }
 
     @Override

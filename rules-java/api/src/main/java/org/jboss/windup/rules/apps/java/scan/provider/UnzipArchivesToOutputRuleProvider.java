@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
-import org.jboss.windup.config.phase.ArchiveExtraction;
+import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -24,7 +24,7 @@ public class UnzipArchivesToOutputRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ArchiveExtraction.class;
+        return ArchiveExtractionPhase.class;
     }
 
     @Override

@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link Discovery}<br/>
- * Next: {@link ArchiveMetadataExtraction}
+ * Previous: {@link DiscoveryPhase}<br/>
+ * Next: {@link ArchiveMetadataExtractionPhase}
  * 
  * <p>
  * Unzipping of any input files (such as an incoming ear file) occur during this phase.
@@ -15,11 +15,11 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class ArchiveExtraction extends RulePhase
+public class ArchiveExtractionPhase extends RulePhase
 {
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(Discovery.class);
+        return asClassList(DiscoveryPhase.class);
     }
 }

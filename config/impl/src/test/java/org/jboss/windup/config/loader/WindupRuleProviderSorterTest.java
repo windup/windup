@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.Dependent;
+import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.exception.WindupMultiStringException;
@@ -136,7 +136,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return Dependent.class;
+            return DependentPhase.class;
         }
 
         @Override
@@ -363,7 +363,7 @@ public class WindupRuleProviderSorterTest
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return Dependent.class;
+            return DependentPhase.class;
         }
 
         @Override

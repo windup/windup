@@ -24,7 +24,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
@@ -211,7 +211,7 @@ public class JavaIgnoreRegexesTest
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return InitialAnalysis.class;
+            return InitialAnalysisPhase.class;
         }
 
         @Override

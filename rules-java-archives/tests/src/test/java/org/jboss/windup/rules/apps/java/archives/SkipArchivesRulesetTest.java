@@ -18,10 +18,10 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.Decompilation;
-import org.jboss.windup.config.phase.MigrationRules;
-import org.jboss.windup.config.phase.ReportGeneration;
-import org.jboss.windup.config.phase.ReportRendering;
+import org.jboss.windup.config.phase.DecompilationPhase;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
@@ -101,10 +101,10 @@ public class SkipArchivesRulesetTest
                 @Override
                 public boolean accept(WindupRuleProvider type)
                 {
-                    return !(type.getPhase().isAssignableFrom(ReportGeneration.class))
-                                && !(type.getPhase().isAssignableFrom(ReportRendering.class))
-                                && !(type.getPhase().isAssignableFrom(Decompilation.class))
-                                && !(type.getPhase().isAssignableFrom(MigrationRules.class));
+                    return !(type.getPhase().isAssignableFrom(ReportGenerationPhase.class))
+                                && !(type.getPhase().isAssignableFrom(ReportRenderingPhase.class))
+                                && !(type.getPhase().isAssignableFrom(DecompilationPhase.class))
+                                && !(type.getPhase().isAssignableFrom(MigrationRulesPhase.class));
                 }
             });
 

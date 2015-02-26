@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link ArchiveExtraction}<br />
- * Next: {@link ClassifyFileTypes}
+ * Previous: {@link ArchiveExtractionPhase}<br />
+ * Next: {@link ClassifyFileTypesPhase}
  * 
  * <p>
  * Occurs immediately after archive extraction. This handles things like calculating checksums for archives or determining the specific type of
@@ -14,11 +14,11 @@ import org.jboss.windup.config.WindupRuleProvider;
  * </p>
  *
  */
-public class ArchiveMetadataExtraction extends RulePhase
+public class ArchiveMetadataExtractionPhase extends RulePhase
 {
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(ArchiveExtraction.class);
+        return asClassList(ArchiveExtractionPhase.class);
     }
 }

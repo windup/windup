@@ -14,7 +14,7 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphRule;
 import org.jboss.windup.config.PreRulesetEvaluation;
-import org.jboss.windup.config.phase.ArchiveMetadataExtraction;
+import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -25,7 +25,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Maps file extensions to {@link WindupVertexFrame} types. Mappings are always applied during the
- * {@link ArchiveMetadataExtraction} phase, no matter where this rule appears in the pipeline. The following example
+ * {@link ArchiveMetadataExtractionPhase} phase, no matter where this rule appears in the pipeline. The following example
  * demonstrates how to match files ending with *.xml to a frame type:
  * 
  * <pre>

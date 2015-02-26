@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.MigrationRules;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
@@ -29,7 +29,7 @@ import org.ocpsoft.rewrite.context.Context;
  */
 public abstract class WindupRuleProvider implements ConfigurationProvider<GraphContext>
 {
-    public static final Class<? extends RulePhase> DEFAULT_PHASE = MigrationRules.class;
+    public static final Class<? extends RulePhase> DEFAULT_PHASE = MigrationRulesPhase.class;
 
     @Inject
     private Addon addon;

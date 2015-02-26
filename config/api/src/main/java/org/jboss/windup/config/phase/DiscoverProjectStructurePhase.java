@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link ClassifyFileTypes}<br/>
- * Next: {@link Decompilation}
+ * Previous: {@link ClassifyFileTypesPhase}<br/>
+ * Next: {@link DecompilationPhase}
  *
  * <p>
  * Discovering of the project structure of the input application will occur during this phase. This will discover which files are in which project
@@ -16,12 +16,12 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class DiscoverProjectStructure extends RulePhase
+public class DiscoverProjectStructurePhase extends RulePhase
 {
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(ClassifyFileTypes.class);
+        return asClassList(ClassifyFileTypesPhase.class);
     }
 }

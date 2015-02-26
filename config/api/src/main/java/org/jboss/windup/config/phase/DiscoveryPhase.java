@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link Initialization}<br/>
- * Next: {@link ArchiveExtraction}
+ * Previous: {@link InitializationPhase}<br/>
+ * Next: {@link ArchiveExtractionPhase}
  * 
  * <p>
  * This discovers files from the input (for example, find all of the files in the input directory).
@@ -15,12 +15,12 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class Discovery extends RulePhase
+public class DiscoveryPhase extends RulePhase
 {
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(Initialization.class);
+        return asClassList(InitializationPhase.class);
     }
 }

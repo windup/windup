@@ -22,9 +22,9 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.MigrationRules;
-import org.jboss.windup.config.phase.PostMigrationRules;
-import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.config.phase.PostMigrationRulesPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -123,8 +123,8 @@ public class XmlFileParameterizedTest
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return (provider.getPhase() != ReportGeneration.class) &&
-                                (provider.getPhase() != MigrationRules.class);
+                    return (provider.getPhase() != ReportGenerationPhase.class) &&
+                                (provider.getPhase() != MigrationRulesPhase.class);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -217,7 +217,7 @@ public class XmlFileParameterizedTest
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return PostMigrationRules.class;
+            return PostMigrationRulesPhase.class;
         }
 
         // @formatter:off

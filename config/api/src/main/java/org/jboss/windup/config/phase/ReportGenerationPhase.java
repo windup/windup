@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link PreReportGeneration}<br/>
- * Next: {@link PostReportGeneration}
+ * Previous: {@link PreReportGenerationPhase}<br/>
+ * Next: {@link PostReportGenerationPhase}
  * 
  * <p>
  * During this phase, report information will be gathered and stored in the graph.
@@ -15,12 +15,12 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class ReportGeneration extends RulePhase
+public class ReportGenerationPhase extends RulePhase
 {
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(PreReportGeneration.class);
+        return asClassList(PreReportGenerationPhase.class);
     }
 }

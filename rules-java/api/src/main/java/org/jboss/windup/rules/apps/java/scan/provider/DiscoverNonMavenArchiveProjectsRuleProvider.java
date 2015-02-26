@@ -9,7 +9,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.DiscoverProjectStructure;
+import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -32,7 +32,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return DiscoverProjectStructure.class;
+        return DiscoverProjectStructurePhase.class;
     }
 
     @Override

@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.tattletale;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -24,7 +24,7 @@ public class CreateTattletaleReportLinkRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ReportGeneration.class;
+        return ReportGenerationPhase.class;
     }
 
     @Override

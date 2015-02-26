@@ -14,7 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.phase.PostFinalize;
+import org.jboss.windup.config.phase.PostFinalizePhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -43,7 +43,7 @@ public class ExecutionTimeReportRuleProvider extends WindupRuleProvider
     {
         // this is basically a reporting rule, but we execute it during finalize in order
         // to also report on the time it took to generate reports
-        return PostFinalize.class;
+        return PostFinalizePhase.class;
     }
 
     @Override

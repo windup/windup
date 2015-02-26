@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -43,7 +43,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return InitialAnalysis.class;
+        return InitialAnalysisPhase.class;
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
-import org.jboss.windup.config.phase.ReportRendering;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -32,7 +32,7 @@ public class RenderReportRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ReportRendering.class;
+        return ReportRenderingPhase.class;
     }
 
     // @formatter:off

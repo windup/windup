@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.ip;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.MigrationRules;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -23,7 +23,7 @@ public class DiscoverStaticIPAddressRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return MigrationRules.class;
+        return MigrationRulesPhase.class;
     }
 
     @Override

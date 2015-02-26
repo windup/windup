@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -46,7 +46,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return InitialAnalysis.class;
+        return InitialAnalysisPhase.class;
     }
 
     @Override
