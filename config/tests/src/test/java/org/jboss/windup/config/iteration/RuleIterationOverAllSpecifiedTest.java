@@ -23,7 +23,9 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.rules.files.FileMapping;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -194,7 +196,12 @@ public class RuleIterationOverAllSpecifiedTest
                                             }
                                         }
                                     })
-                                    .endIteration()
+                                    .endIteration().and(
+                                                RuleSubset.create(
+                                                            ConfigurationBuilder.begin().addRule(FileMapping.from("adsfsd").to(FileModel.class))
+                                                )
+                                                )
+                                                
                         );
             return configuration;
         }

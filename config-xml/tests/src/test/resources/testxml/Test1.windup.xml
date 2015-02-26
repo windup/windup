@@ -41,6 +41,19 @@
                 <matches pattern="\d+"/>
             </where>
         </rule>
+        
+        <rule id="withNested">
+            <when><true/></when>
+            <perform>
+                <log message="mainperform"/>
+                <rule>
+                    <when><true/></when>
+                    <perform>
+                        <log message="subsetperform"/>
+                    </perform>
+                </rule>
+            </perform>
+        </rule>
 
     </rules>
 </ruleset>

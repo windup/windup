@@ -79,7 +79,7 @@ public class XMLRuleProviderLoaderTest
             Assert.assertEquals(Discovery.class, provider.getPhase());
             Assert.assertTrue(provider.getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
             List<Rule> rules = provider.getConfiguration(graphContext).getRules();
-            Assert.assertEquals(3, rules.size());
+            Assert.assertEquals(4, rules.size());
 
             RuleBuilder rule1 = (RuleBuilder) rules.get(0);
             checkRule1(rule1);
@@ -89,6 +89,9 @@ public class XMLRuleProviderLoaderTest
 
             RuleBuilder rule2_otherwise = (RuleBuilder) rules.get(2);
             checkRule2_Otherwise(rule2_otherwise);
+
+            RuleBuilder rule3 = (RuleBuilder) rules.get(3);
+            checkRule3(rule3);
         }
     }
 
@@ -163,5 +166,27 @@ public class XMLRuleProviderLoaderTest
         LOG.info("Op Builder is: " + opBuilderStr);
 
         Assert.assertTrue(opBuilderStr.contains("LOG[INFO, test rule {foo} otherwise]"));
+    }
+
+    private void checkRule3(RuleBuilder rule)
+    {
+        // check the conditions
+        List<Condition> conditions = rule.getConditions();
+        Assert.assertEquals(1, conditions.size());
+        Condition condition = conditions.get(0);
+        Assert.assertTrue(condition instanceof And);
+        And and = (And) condition;
+        Assert.assertEquals(1, and.getConditions().size());
+        Assert.assertTrue(and.getConditions().get(0) instanceof True);
+
+        // check the operations
+        List<Operation> operations = rule.getOperations();
+        Assert.assertEquals(1, operations.size());
+        Assert.assertTrue(operations.get(0) instanceof DefaultOperationBuilder);
+        DefaultOperationBuilder opBuilder = (DefaultOperationBuilder) operations.get(0);
+        String opBuilderStr = opBuilder.toString();
+
+        Assert.assertTrue(opBuilderStr.contains("LOG[INFO, subsetperform"));
+        Assert.assertTrue(opBuilderStr.contains("and(RuleSubset.create"));
     }
 }

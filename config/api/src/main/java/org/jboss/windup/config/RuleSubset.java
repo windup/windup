@@ -543,4 +543,10 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     {
         return config == null ? null : config.getRules();
     }
+
+    @Override
+    public String toString()
+    {
+        return "RuleSubset.create(" + this.config + ")";
+    }
 }

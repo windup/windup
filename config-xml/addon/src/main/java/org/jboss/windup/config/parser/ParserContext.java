@@ -22,7 +22,7 @@ import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.util.Annotations;
 import org.jboss.windup.util.exception.WindupException;
-import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderPerform;
+import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleParameterWhere;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,7 +35,7 @@ public class ParserContext
 {
     private List<WindupRuleProvider> ruleProviders = new ArrayList<>();
     private WindupRuleProviderBuilder builder;
-    private ConfigurationRuleBuilderPerform rule;
+    private ConfigurationRuleBuilder rule;
     private ConfigurationRuleParameterWhere where;
     private final Map<HandlerId, ElementHandler<?>> handlers = new HashMap<>();
 
@@ -177,17 +177,17 @@ public class ParserContext
     }
 
     /**
-     * Gets the current Rule
+     * Sets the current Rule
      */
-    public void setRule(ConfigurationRuleBuilderPerform rule)
+    public void setRule(ConfigurationRuleBuilder rule)
     {
         this.rule = rule;
     }
 
     /**
-     * Sets the current Rule
+     * Gets the current Rule
      */
-    public ConfigurationRuleBuilderPerform getRule()
+    public ConfigurationRuleBuilder getRule()
     {
         return rule;
     }
