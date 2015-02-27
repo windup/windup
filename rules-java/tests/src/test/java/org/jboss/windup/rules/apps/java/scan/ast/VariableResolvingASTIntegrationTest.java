@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,7 +20,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -89,8 +87,6 @@ public class VariableResolvingASTIntegrationTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            context.getGraph().getBaseGraph().commit();
-
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
                         JavaClassTestRuleProvider.class));
@@ -104,8 +100,6 @@ public class VariableResolvingASTIntegrationTest
             GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context, JavaTypeReferenceModel.class);
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
-
-           
             Assert.assertEquals(2, provider.getMyAclassTypeDeclaration());
             Assert.assertEquals(1, provider.getInterfaceCall());
         }

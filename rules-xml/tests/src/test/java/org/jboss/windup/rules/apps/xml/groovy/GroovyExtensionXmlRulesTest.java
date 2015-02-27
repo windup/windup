@@ -121,8 +121,12 @@ public class GroovyExtensionXmlRulesTest
             for (ClassificationModel model : classifications)
             {
                 String classification = model.getClassification();
-                String string = classification.toString();
-                Assert.assertNotNull(string);
+                System.out.println("Classification: " + classification + " of file(s): ");
+                for (FileModel fileModel : model.getFileModels())
+                {
+                    System.out.println("\tFile Path: " + fileModel.getFilePath());
+                }
+                Assert.assertNotNull(classification);
             }
             Assert.assertEquals(1, classifications.size());
 

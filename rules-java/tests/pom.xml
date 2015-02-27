@@ -29,21 +29,18 @@
         <dependency>
             <groupId>org.jboss.windup.decompiler</groupId>
             <artifactId>decompiler-procyon</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-base</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java-archives</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -51,48 +48,41 @@
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-xml</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-groovy</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-xml</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
             <artifactId>windup-reporting</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>

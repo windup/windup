@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -8,7 +9,6 @@
         <version>2.2.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.jboss.windup.rules.apps</groupId>
     <artifactId>windup-rules-java-api</artifactId>
 
     <name>Windup Rules - Java - Basic API</name>
@@ -16,9 +16,9 @@
     <dependencies>
         <!-- Local Dependencies -->
         <dependency>
-            <groupId>org.sonatype.tycho</groupId>
+            <groupId>org.eclipse.tycho</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.5.1.v_972_R35x</version>
+            <version>3.10.0.v20140604-1726</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.core</groupId>

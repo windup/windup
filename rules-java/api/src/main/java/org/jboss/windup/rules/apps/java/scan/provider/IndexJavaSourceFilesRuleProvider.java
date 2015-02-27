@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,6 +24,8 @@ import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -32,6 +35,7 @@ import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupRoasterWildcardImportResolver;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.WindupPathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -165,6 +169,15 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
             String packageName = javaSource.getPackage();
             // set the package name to the parsed value
             sourceFileModel.setPackageName(packageName);
+
+            // set the root path of this source file (if possible)
+            Path rootSourcePath = WindupPathUtil.getRootFolderForSource(sourceFileModel.asFile().toPath(), packageName);
+            if (rootSourcePath != null)
+            {
+                FileModel rootSourceFileModel = new FileService(context).createByFilePath(rootSourcePath.toString());
+                sourceFileModel.setRootSourceFolder(rootSourceFileModel);
+            }
+
             String qualifiedName = javaSource.getQualifiedName();
 
             String simpleName = qualifiedName;

@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Provides useful methods for manipulating filenames (eg, removing illegal chars from files).
  *
@@ -94,8 +96,8 @@ public class WindupPathUtil
     }
 
     /**
-     * Conservative approach to insuring that a given filename only contains characters that are legal for use in
-     * filenames on the disk. Other characters are replaced with underscore _ .
+     * Conservative approach to insuring that a given filename only contains characters that are legal for use in filenames on the disk. Other
+     * characters are replaced with underscore _ .
      */
     public static String cleanFileName(String badFileName)
     {
@@ -115,8 +117,7 @@ public class WindupPathUtil
     }
 
     /**
-     * Converts a path to a class file (like "foo/bar/My.class" or "foo\\bar\\My.class") to a fully qualified class name
-     * (like "foo.bar.My").
+     * Converts a path to a class file (like "foo/bar/My.class" or "foo\\bar\\My.class") to a fully qualified class name (like "foo.bar.My").
      */
     public static String classFilePathToClassname(String classFilePath)
     {
@@ -128,6 +129,34 @@ public class WindupPathUtil
             throw new IllegalArgumentException("Not a .class file path: " + classFilePath);
 
         return classFilePath.substring(0, pos).replace('/', '.').replace('\\', '.');
+    }
+
+    /**
+     * Returns the root path for this source file, based upon the package name.
+     * 
+     * For example, if path is "/project/src/main/java/org/example/Foo.java" and the package is "org.example", then this should return
+     * "/project/src/main/java".
+     * 
+     * Returns null if the folder structure does not match the package name.
+     */
+    public static Path getRootFolderForSource(Path sourceFilePath, String packageName)
+    {
+        if (packageName == null || packageName.trim().equals(""))
+        {
+            return sourceFilePath.getParent();
+        }
+        String[] packageNameComponents = packageName.split("\\.");
+        Path currentPath = sourceFilePath.getParent();
+        for (int i = packageNameComponents.length; i > 0; i--)
+        {
+            String packageComponent = packageNameComponents[i - 1];
+            if (!StringUtils.equals(packageComponent, currentPath.getFileName().toString()))
+            {
+                return null;
+            }
+            currentPath = currentPath.getParent();
+        }
+        return currentPath;
     }
 
     /*
