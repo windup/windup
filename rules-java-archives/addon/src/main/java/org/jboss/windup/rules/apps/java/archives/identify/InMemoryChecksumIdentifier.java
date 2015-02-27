@@ -46,16 +46,18 @@ public class InMemoryChecksumIdentifier implements ChecksumIdentifier
     {
         try (FileInputStream inputStream = new FileInputStream(file))
         {
-            LineIterator it = IOUtils.lineIterator(inputStream, "UTF-8");
-            while (it.hasNext())
+            LineIterator iterator = IOUtils.lineIterator(inputStream, "UTF-8");
+            int lineNumber = 0;
+            while (iterator.hasNext())
             {
-                String line = it.next();
+                lineNumber++;
+                String line = iterator.next();
                 if (line.startsWith("#") || line.trim().isEmpty())
                     continue;
                 String[] parts = StringUtils.split(line, ' ');
                 if (parts.length < 2)
-                    throw new IllegalArgumentException("Expected 'SHA1 GROUP_ID:ARTIFACT_ID:[PACKAGING:[COORDINATE:]]VERSION', but was: \n" + line
-                                + "\n\tin [" + file + "]");
+                    throw new IllegalArgumentException("Expected 'SHA1 GROUP_ID:ARTIFACT_ID:[PACKAGING:[COORDINATE:]]VERSION', but was: [" + line
+                                + "] in [" + file + "] at line [" + lineNumber + "]");
 
                 addMapping(parts[0], parts[1]);
             }
