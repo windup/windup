@@ -24,8 +24,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.PostMigrationRules;
-import org.jboss.windup.config.phase.ReportGeneration;
+import org.jboss.windup.config.phase.PostMigrationRulesPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -115,7 +115,7 @@ public class XMLTransformationTest
                 @Override
                 public boolean accept(WindupRuleProvider provider)
                 {
-                    return provider.getPhase() != ReportGeneration.class;
+                    return provider.getPhase() != ReportGenerationPhase.class;
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -160,7 +160,7 @@ public class XMLTransformationTest
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return PostMigrationRules.class;
+            return PostMigrationRulesPhase.class;
         }
 
         // @formatter:off

@@ -18,7 +18,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.ClassifyFileTypes;
+import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -52,7 +52,7 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ClassifyFileTypes.class;
+        return ClassifyFileTypesPhase.class;
     }
 
     @Override

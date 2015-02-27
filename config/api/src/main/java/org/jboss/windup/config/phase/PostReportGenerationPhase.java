@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link ReportGeneration}<br/>
- * Next: {@link ReportRendering}
+ * Previous: {@link ReportGenerationPhase}<br/>
+ * Next: {@link ReportRenderingPhase}
  * 
  * <p>
  * This occurs immediately after the main tasks of report generation. This can be used to generate reports that will need data from all of the other
@@ -16,11 +16,11 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class PostReportGeneration extends RulePhase
+public class PostReportGenerationPhase extends RulePhase
 {
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(ReportGeneration.class);
+        return asClassList(ReportGenerationPhase.class);
     }
 }

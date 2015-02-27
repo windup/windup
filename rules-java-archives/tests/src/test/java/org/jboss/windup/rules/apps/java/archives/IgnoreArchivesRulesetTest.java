@@ -18,8 +18,11 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.Decompilation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
+import org.jboss.windup.config.phase.DecompilationPhase;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
@@ -118,10 +121,17 @@ public class IgnoreArchivesRulesetTest
                 @Override
                 public boolean accept(WindupRuleProvider rules)
                 {
+<<<<<<< HEAD:rules-java-archives/tests/src/test/java/org/jboss/windup/rules/apps/java/archives/IgnoreArchivesRulesetTest.java
                     return (rules instanceof ArchiveIdentificationConfigLoadingRuleProvider
                                 || rules instanceof IgnoredArchivesConfigLoadingRuleProvider
                                 || discoverRuleDeps.accept(rules))
                                 && !rules.getPhase().isAssignableFrom(Decompilation.class);
+=======
+                    return !(type.getPhase().isAssignableFrom(ReportGenerationPhase.class))
+                                && !(type.getPhase().isAssignableFrom(ReportRenderingPhase.class))
+                                && !(type.getPhase().isAssignableFrom(DecompilationPhase.class))
+                                && !(type.getPhase().isAssignableFrom(MigrationRulesPhase.class));
+>>>>>>> 4b112c7ada1299b60ed226750b566afe30e1aea2:rules-java-archives/tests/src/test/java/org/jboss/windup/rules/apps/java/archives/SkipArchivesRulesetTest.java
                 }
             });
 

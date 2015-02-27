@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.ReportRendering;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -32,7 +32,7 @@ public class RenderOverviewPageRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ReportRendering.class;
+        return ReportRenderingPhase.class;
     }
 
     // @formatter:off

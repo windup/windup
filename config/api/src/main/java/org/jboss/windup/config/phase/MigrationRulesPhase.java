@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link InitialAnalysis}<br/>
- * Next: {@link PostMigrationRules}
+ * Previous: {@link InitialAnalysisPhase}<br/>
+ * Next: {@link PostMigrationRulesPhase}
  * 
  * <p>
  * Most {@link Rule}s will go in this {@link RulePhase}. These include {@link Rule}s that detect code in the source application (or server) that will
@@ -16,12 +16,12 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class MigrationRules extends RulePhase
+public class MigrationRulesPhase extends RulePhase
 {
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(InitialAnalysis.class);
+        return asClassList(InitialAnalysisPhase.class);
     }
 }

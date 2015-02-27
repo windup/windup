@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link ReportRendering}<br/>
- * Next: {@link Finalize}
+ * Previous: {@link ReportRenderingPhase}<br/>
+ * Next: {@link FinalizePhase}
  * 
  * <p>
  * This occurs immediately after reports have been rendered. It can be used to render any reports that need to execute last. One possible use is to
@@ -16,12 +16,12 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class PostReportRendering extends RulePhase
+public class PostReportRenderingPhase extends RulePhase
 {
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(ReportRendering.class);
+        return asClassList(ReportRenderingPhase.class);
     }
 }

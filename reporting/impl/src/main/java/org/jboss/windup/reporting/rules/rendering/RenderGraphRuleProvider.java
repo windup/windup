@@ -7,7 +7,7 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.phase.PostReportRendering;
+import org.jboss.windup.config.phase.PostReportRenderingPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.renderer.GraphRenderer;
@@ -31,7 +31,7 @@ public class RenderGraphRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return PostReportRendering.class;
+        return PostReportRenderingPhase.class;
     }
 
     @Override

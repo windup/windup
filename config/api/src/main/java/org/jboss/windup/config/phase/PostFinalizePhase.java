@@ -5,7 +5,7 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link Finalize}
+ * Previous: {@link FinalizePhase}
  * 
  * <p>
  * This occurs immediately after finalize. This is an ideal place to put {@link Rule}s that would like to be the absolute last things to fire.
@@ -20,12 +20,12 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class PostFinalize extends RulePhase
+public class PostFinalizePhase extends RulePhase
 {
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(Finalize.class);
+        return asClassList(FinalizePhase.class);
     }
 }

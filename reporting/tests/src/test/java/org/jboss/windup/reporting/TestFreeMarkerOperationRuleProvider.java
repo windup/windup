@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.ReportRendering;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
@@ -20,7 +20,7 @@ public class TestFreeMarkerOperationRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ReportRendering.class;
+        return ReportRenderingPhase.class;
     }
 
     public Configuration getConfiguration(GraphContext context)

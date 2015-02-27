@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link DiscoverProjectStructure}<br/>
- * Next: {@link InitialAnalysis}
+ * Previous: {@link DiscoverProjectStructurePhase}<br/>
+ * Next: {@link InitialAnalysisPhase}
  * 
  * <p>
  * Any required decompilation of an input application would occur during this phase.
@@ -15,12 +15,12 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class Decompilation extends RulePhase
+public class DecompilationPhase extends RulePhase
 {
 
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(DiscoverProjectStructure.class);
+        return asClassList(DiscoverProjectStructurePhase.class);
     }
 }

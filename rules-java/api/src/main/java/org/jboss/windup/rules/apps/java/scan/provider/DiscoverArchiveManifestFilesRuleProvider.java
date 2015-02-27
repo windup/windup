@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.phase.ArchiveMetadataExtraction;
+import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -38,7 +38,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ArchiveMetadataExtraction.class;
+        return ArchiveMetadataExtractionPhase.class;
     }
 
     @Override

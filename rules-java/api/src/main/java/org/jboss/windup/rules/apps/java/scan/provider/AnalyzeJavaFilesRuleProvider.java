@@ -12,7 +12,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.InitialAnalysis;
+import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -35,7 +35,7 @@ public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return InitialAnalysis.class;
+        return InitialAnalysisPhase.class;
     }
 
     // @formatter:off

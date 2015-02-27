@@ -14,8 +14,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.WindupRuleLoader;
-import org.jboss.windup.config.phase.ArchiveExtraction;
-import org.jboss.windup.config.phase.MigrationRules;
+import org.jboss.windup.config.phase.ArchiveExtractionPhase;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -65,7 +65,7 @@ public class WindupRuleLoaderTest
                 @Override
                 public boolean accept(WindupRuleProvider arg0)
                 {
-                    return arg0.getPhase() == MigrationRules.class;
+                    return arg0.getPhase() == MigrationRulesPhase.class;
                 }
             };
 
@@ -126,7 +126,7 @@ public class WindupRuleLoaderTest
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return ArchiveExtraction.class;
+            return ArchiveExtractionPhase.class;
         }
 
         @Override

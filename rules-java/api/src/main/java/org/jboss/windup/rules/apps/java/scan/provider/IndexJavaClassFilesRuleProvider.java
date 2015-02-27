@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
-import org.jboss.windup.config.phase.ClassifyFileTypes;
+import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -21,7 +21,7 @@ public class IndexJavaClassFilesRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ClassifyFileTypes.class;
+        return ClassifyFileTypesPhase.class;
     }
 
     // @formatter:off

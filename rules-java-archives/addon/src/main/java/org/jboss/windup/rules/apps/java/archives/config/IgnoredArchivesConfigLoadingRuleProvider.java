@@ -7,7 +7,7 @@ import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.phase.Initialization;
+import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
@@ -33,7 +33,7 @@ public class IgnoredArchivesConfigLoadingRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return Initialization.class;
+        return InitializationPhase.class;
     }
 
     @Override

@@ -21,9 +21,9 @@ import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.MigrationRules;
-import org.jboss.windup.config.phase.ReportGeneration;
-import org.jboss.windup.config.phase.ReportRendering;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -123,15 +123,15 @@ public class GroovyExtensionJavaRulesTest
                     @Override
                     public boolean accept(WindupRuleProvider provider)
                     {
-                        if (provider.getPhase().equals(MigrationRules.class))
+                        if (provider.getPhase().equals(MigrationRulesPhase.class))
                         {
                             return false;
                         }
-                        if (provider.getPhase().equals(ReportGeneration.class))
+                        if (provider.getPhase().equals(ReportGenerationPhase.class))
                         {
                             return false;
                         }
-                        if (provider.getPhase().equals(ReportRendering.class))
+                        if (provider.getPhase().equals(ReportRenderingPhase.class))
                         {
                             return false;
                         }

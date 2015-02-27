@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.Discovery;
+import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
@@ -45,7 +45,7 @@ public class TestWindupConfigurationExampleRuleProvider extends WindupRuleProvid
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return Discovery.class;
+        return DiscoveryPhase.class;
     }
 
     // @formatter:off

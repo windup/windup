@@ -3,7 +3,7 @@
 
     <!-- This defaults to MIGRATION_RULES, set a non-default value for test purposes -->
     <phase>
-        Discovery
+        DiscoveryPhase
     </phase>
 
     <rules>

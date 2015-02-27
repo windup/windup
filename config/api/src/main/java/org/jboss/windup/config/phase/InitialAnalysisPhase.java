@@ -5,8 +5,8 @@ import java.util.List;
 import org.jboss.windup.config.WindupRuleProvider;
 
 /**
- * Previous: {@link Decompilation}<br/>
- * Next: {@link MigrationRules}
+ * Previous: {@link DecompilationPhase}<br/>
+ * Next: {@link MigrationRulesPhase}
  * 
  * <p>
  * This phase occurs after the application has been unzipped, files have been discovered (including basic filetype information), and the project
@@ -17,11 +17,11 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author jsightler
  *
  */
-public class InitialAnalysis extends RulePhase
+public class InitialAnalysisPhase extends RulePhase
 {
     @Override
     public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
     {
-        return asClassList(Decompilation.class);
+        return asClassList(DecompilationPhase.class);
     }
 }

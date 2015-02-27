@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.Discovery;
+import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
@@ -24,7 +24,7 @@ public class DiscoverFilesAndTypesRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return Discovery.class;
+        return DiscoveryPhase.class;
     }
 
     // @formatter:off

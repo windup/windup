@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.phase.ClassifyFileTypes;
+import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -29,7 +29,7 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ClassifyFileTypes.class;
+        return ClassifyFileTypesPhase.class;
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.DiscoverProjectStructure;
+import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
@@ -25,7 +25,7 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return DiscoverProjectStructure.class;
+        return DiscoverProjectStructurePhase.class;
     }
 
     @Override

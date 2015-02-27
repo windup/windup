@@ -20,7 +20,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
-import org.jboss.windup.config.phase.PostMigrationRules;
+import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -143,7 +143,7 @@ public class OverviewReportLineTest
         @Override
         public Class<? extends RulePhase> getPhase()
         {
-            return PostMigrationRules.class;
+            return PostMigrationRulesPhase.class;
         }
 
         public void addMatchCount()

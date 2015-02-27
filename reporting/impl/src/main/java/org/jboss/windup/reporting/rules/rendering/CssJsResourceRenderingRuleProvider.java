@@ -27,7 +27,7 @@ import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.phase.ReportRendering;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -48,7 +48,7 @@ public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return ReportRendering.class;
+        return ReportRenderingPhase.class;
     }
 
     @Override
