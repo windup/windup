@@ -18,19 +18,17 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
+import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.archives.config.ArchiveIdentificationConfigLoadingRuleProvider;
-import org.jboss.windup.rules.apps.java.archives.config.IgnoredArchivesConfigLoadingRuleProvider;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeChecksumIdentifier;
 import org.jboss.windup.rules.apps.java.archives.identify.InMemoryChecksumIdentifier;
 import org.jboss.windup.rules.apps.java.archives.identify.SortedFileChecksumIdentifier;
@@ -119,19 +117,12 @@ public class IgnoreArchivesRulesetTest
                             new RuleProviderWithDependenciesPredicate(DiscoverFilesAndTypesRuleProvider.class);
 
                 @Override
-                public boolean accept(WindupRuleProvider rules)
+                public boolean accept(WindupRuleProvider provider)
                 {
-<<<<<<< HEAD:rules-java-archives/tests/src/test/java/org/jboss/windup/rules/apps/java/archives/IgnoreArchivesRulesetTest.java
-                    return (rules instanceof ArchiveIdentificationConfigLoadingRuleProvider
-                                || rules instanceof IgnoredArchivesConfigLoadingRuleProvider
-                                || discoverRuleDeps.accept(rules))
-                                && !rules.getPhase().isAssignableFrom(Decompilation.class);
-=======
-                    return !(type.getPhase().isAssignableFrom(ReportGenerationPhase.class))
-                                && !(type.getPhase().isAssignableFrom(ReportRenderingPhase.class))
-                                && !(type.getPhase().isAssignableFrom(DecompilationPhase.class))
-                                && !(type.getPhase().isAssignableFrom(MigrationRulesPhase.class));
->>>>>>> 4b112c7ada1299b60ed226750b566afe30e1aea2:rules-java-archives/tests/src/test/java/org/jboss/windup/rules/apps/java/archives/SkipArchivesRulesetTest.java
+                    return !(provider.getPhase().isAssignableFrom(ReportGenerationPhase.class))
+                                && !(provider.getPhase().isAssignableFrom(ReportRenderingPhase.class))
+                                && !(provider.getPhase().isAssignableFrom(DecompilationPhase.class))
+                                && !(provider.getPhase().isAssignableFrom(MigrationRulesPhase.class));
                 }
             });
 
