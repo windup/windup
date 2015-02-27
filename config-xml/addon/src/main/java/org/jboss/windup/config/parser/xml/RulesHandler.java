@@ -12,15 +12,15 @@ import org.w3c.dom.Element;
 @NamespaceElementHandler(elementName = "rules", namespace = "http://windup.jboss.org/v1/xml")
 public class RulesHandler implements ElementHandler<Void>
 {
-   @Override
-   public Void processElement(ParserContext handlerManager, Element element)
-   {
-      List<Element> children = $(element).children().get();
-      for (Element child : children)
-      {
-         handlerManager.processElement(child);
-      }
-      return null;
-   }
+    @Override
+    public Void processElement(ParserContext handlerManager, Element element)
+    {
+        List<Element> children = $(element).children().get();
+        for (Element child : children)
+        {
+            handlerManager.processElement(child);
+        }
+        return null;
+    }
 
 }

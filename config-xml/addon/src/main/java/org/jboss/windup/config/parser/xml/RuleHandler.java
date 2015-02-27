@@ -25,6 +25,17 @@ public class RuleHandler implements ElementHandler<Void>
         ConfigurationRuleBuilder rule = (ConfigurationRuleBuilder) context.getBuilder().addRule();
         context.setRule(rule);
 
+        processRuleElement(context, rule, element);
+
+        return null;
+    }
+
+    /**
+     * Processes all of the elements within a rule and attaches this data to the passed in rule. For example, this will process all of the "when",
+     * "perform", and "otherwise" elements.
+     */
+    public static void processRuleElement(ParserContext context, ConfigurationRuleBuilder rule, Element element)
+    {
         String id = $(element).attr("id");
 
         List<Element> children = $(element).children().get();
@@ -56,7 +67,5 @@ public class RuleHandler implements ElementHandler<Void>
             rule.withId(id);
         }
 
-        return null;
     }
-
 }
