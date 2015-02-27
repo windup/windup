@@ -35,6 +35,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -161,10 +162,14 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
 
     private boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy evaluationStrategy)
     {
-        QueryBuilderFrom query = Query.fromType(JavaTypeReferenceModel.class);
+        QueryBuilderFrom query;
         if (!StringUtils.isBlank(getInputVariablesName()))
         {
             query = Query.from(getInputVariablesName());
+        }
+        else
+        {
+            query = Query.fromType(JavaTypeReferenceModel.class);
         }
 
         final ParameterStore store = DefaultParameterStore.getInstance(context);
@@ -230,9 +235,9 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             }
             catch (Exception e)
             {
-                return false;
+                throw new WindupException("Failed to set result variable \"" + getVarname() + "\" due to: " + e.getMessage(), e);
             }
-            return true;
+            return !allFrameResults.isEmpty();
         }
         return false;
     }
@@ -267,7 +272,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                         .back("result");
         }
     }
-    
+
     @Override
     public Set<String> getRequiredParameterNames()
     {

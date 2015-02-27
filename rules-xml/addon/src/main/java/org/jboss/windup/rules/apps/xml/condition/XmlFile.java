@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -55,10 +54,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Handles matching on {@link XmlFileModel} objects and creating {@link XmlTypeReferenceModel} objects on the matching
- * nodes.
+ * Handles matching on {@link XmlFileModel} objects and creating {@link XmlTypeReferenceModel} objects on the matching nodes.
  */
-public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,XmlFileIn,XmlFileNamespace,XmlFileResult,XmlFileXpath
+public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, XmlFileIn, XmlFileNamespace, XmlFileResult, XmlFileXpath
 {
     private static final Logger LOG = Logging.get(XmlFile.class);
 
@@ -116,7 +114,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
     {
         return new XmlFile(xpath);
     }
-    
+
     public XmlFileDTD andDTDPublicId(String publicIdRegex)
     {
         this.publicId = publicIdRegex;
@@ -200,7 +198,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
     public Set<String> getRequiredParameterNames()
     {
         Set<String> result = new HashSet<>();
-        if (this.xpathPattern != null )
+        if (this.xpathPattern != null)
         {
             result.addAll(xpathPattern.getRequiredParameterNames());
         }
@@ -227,14 +225,14 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
             private LinkedHashMap<String, List<WindupVertexFrame>> variables;
 
             @Override
-            @SuppressWarnings("rawtypes")
             public void modelMatched()
             {
                 this.variables = new LinkedHashMap<String, List<WindupVertexFrame>>();
-                frameCreationContext.beginNew((Map) variables);
+                frameCreationContext.beginNew((Map) this.variables);
             }
 
             @Override
+            @SuppressWarnings("rawtypes")
             public void modelSubmitted(WindupVertexFrame model)
             {
                 Maps.addListValue(this.variables, getVarname(), model);
@@ -250,7 +248,11 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
             @Override
             public void modelSubmissionRejected()
             {
-                frameCreationContext.rollback();
+                if (variables != null)
+                {
+                    this.variables = null;
+                    frameCreationContext.rollback();
+                }
             }
         });
     }
@@ -336,11 +338,14 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
                 throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString()
                             + ")");
             }
-            
-            //in case of taking a result of other XmlFile condition as input, multiple FileReferenceModels may reference the same XmlFileModel.
-            if(xmlCache.contains(xml.getFilePath())) {
+
+            // in case of taking a result of other XmlFile condition as input, multiple FileReferenceModels may reference the same XmlFileModel.
+            if (xmlCache.contains(xml.getFilePath()))
+            {
                 continue;
-            } else {
+            }
+            else
+            {
                 xmlCache.add(xml.getFilePath());
             }
 
@@ -423,6 +428,10 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
             }
         }
         Variables.instance(event).setVariable(getOutputVariablesName(), resultLocations);
+
+        // reject the last one... this is because we essentially always end up with a blank frame at the end (yes, it's a hack)
+        evaluationStrategy.modelSubmissionRejected();
+
         ExecutionStatistics.get().end("XmlFile.evaluate");
         return !resultLocations.isEmpty();
     }
@@ -469,7 +478,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
         {
             builder.append(".withDTDPublicId(" + publicId + ")");
         }
-        builder.append(".as(" + getInputVariablesName() + ")");
+        builder.append(".as(" + getOutputVariablesName() + ")");
         return builder.toString();
     }
 
@@ -541,6 +550,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
                 }
                 resultLocations.add(fileLocation);
 
+                evaluationStrategy.modelSubmissionRejected();
                 evaluationStrategy.modelMatched();
                 for (Map.Entry<String, String> entry : paramMatchCache.getVariables(frameIdx).entrySet())
                 {
@@ -548,10 +558,10 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD,X
                     String value = entry.getValue();
                     if (!evaluationStrategy.submitValue(param, value))
                     {
+                        evaluationStrategy.modelSubmissionRejected();
                         return false;
                     }
                 }
-
                 evaluationStrategy.modelSubmitted(fileLocation);
                 evaluationStrategy.modelMatched();
             }
