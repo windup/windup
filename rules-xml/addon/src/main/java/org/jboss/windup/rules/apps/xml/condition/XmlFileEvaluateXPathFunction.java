@@ -26,10 +26,6 @@ class XmlFileEvaluateXPathFunction implements XPathFunction
         int frameIdx = ((Double) args.get(0)).intValue();
         boolean expressionResult = (Boolean) args.get(1);
         LOG.fine("evaluate(" + frameIdx + ", " + expressionResult + ")");
-        if (!expressionResult)
-        {
-            evaluationStrategy.modelSubmissionRejected();
-        }
         return expressionResult;
     }
 }

@@ -21,6 +21,7 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRules;
 import org.jboss.windup.config.phase.PostMigrationRules;
@@ -35,6 +36,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
@@ -45,10 +47,11 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * The scenarios in this file cover multiple parameterization scenarios involving a only xml files.
+ * This tests a scenario that combines a parameter from an XML file with a Java class. This should match only one of the two Java files in the source
+ * directory.
  */
 @RunWith(Arquillian.class)
-public class XmlFileParameterizedTest
+public class XmlAndJavaParameterizedTest
 {
     @Deployment
     @Dependencies({
@@ -68,6 +71,7 @@ public class XmlFileParameterizedTest
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-xml"),
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -86,24 +90,7 @@ public class XmlFileParameterizedTest
     private GraphContextFactory factory;
 
     @Test
-    public void testXmlParams() throws IOException
-    {
-        _doTestXmlParams("Found value:");
-    }
-
-    @Test
-    public void testXmlParamsDangling() throws IOException
-    {
-        _doTestXmlParams("Found dangling value:");
-    }
-
-    @Test
-    public void testXmlParamsMultiCondition() throws IOException
-    {
-        _doTestXmlParams("Found dual value:");
-    }
-
-    public void _doTestXmlParams(String prefix) throws IOException
+    public void testXmlAndJavaSearchParams() throws IOException
     {
         try (GraphContext context = factory.create())
         {
@@ -137,78 +124,16 @@ public class XmlFileParameterizedTest
             processor.execute(windupConfiguration);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
-            boolean found1 = false;
-            boolean found2 = false;
-            boolean found3 = false;
-            boolean found4 = false;
-            boolean foundWrongValue = false;
-            boolean found5 = false;
-            boolean found6 = false;
-            boolean found7 = false;
-            boolean found8 = false;
-            boolean found9 = false;
-            boolean found10 = false;
+            int count = 0;
             for (InlineHintModel model : hintService.findAll())
             {
                 String text = model.getHint();
+                System.out.println("Model: " + text + ", full: " + model);
                 Assert.assertNotNull(text);
-                if (text.equals(prefix + " 1"))
-                {
-                    found1 = true;
-                }
-                else if (text.equals(prefix + " 2"))
-                {
-                    found2 = true;
-                }
-                else if (text.equals(prefix + " 3"))
-                {
-                    found3 = true;
-                }
-                else if (text.equals(prefix + " 4"))
-                {
-                    found4 = true;
-                }
-                else if (text.equals(prefix + " wrongvalue"))
-                {
-                    foundWrongValue = true;
-                }
-                else if (text.equals(prefix + " 5"))
-                {
-                    found5 = true;
-                }
-                else if (text.equals(prefix + " 6"))
-                {
-                    found6 = true;
-                }
-                else if (text.equals(prefix + " 7"))
-                {
-                    found7 = true;
-                }
-                else if (text.equals(prefix + " 8"))
-                {
-                    found8 = true;
-                }
-                else if (text.equals(prefix + " 9"))
-                {
-                    found9 = true;
-                }
-                else if (text.equals(prefix + " 10"))
-                {
-                    found10 = true;
-                }
-                System.out.println("Model: " + model.getHint() + ", full: " + model);
+                Assert.assertEquals("Found value: ParameterizationSampleJavaClass", text);
+                count++;
             }
-            Assert.assertTrue(found1);
-            Assert.assertTrue(found2);
-            Assert.assertTrue(found3);
-            Assert.assertFalse(found4);
-            Assert.assertFalse(foundWrongValue);
-            Assert.assertTrue(found5);
-            Assert.assertTrue(found6);
-            Assert.assertTrue(found7);
-            Assert.assertFalse(found8);
-            Assert.assertTrue(found9);
-            Assert.assertTrue(found10);
+            Assert.assertEquals(1, count);
         }
     }
 
@@ -239,33 +164,20 @@ public class XmlFileParameterizedTest
                         .begin()
                         .addRule()
                         .when(XmlFile.matchesXpath(
-                                        "/root" + 
-                                        "/row[windup:matches(index/text(), '{index}')]" + 
-                                        "/@indexAtt[windup:matches(self::node(), '{index}')]"
-                                    )
+                                        "/javaclasses" + 
+                                        "/javaclass[windup:matches(text(), '{classname}')]"
+                                    ).as("javaclassnamesfromxml")
+                              .and(
+                                  JavaClass.references("{classname}")
+                                           .as("javaClasses")
+                              )
                         )
-                        .perform(Hint.withText("Found value: {index}").withEffort(2)
-                                     .and(addTypeRefToList))
-                                     
-                                     
-                        .addRule()
-                        .when(
-                                    XmlFile.matchesXpath(
-                                        "//row[windup:matches(index/text(), '{index}')]" + 
-                                        "//@indexAtt[windup:matches(self::node(), '{index}')]"
-                                    )
-                        )
-                        .perform(Hint.withText("Found dangling value: {index}").withEffort(2)
-                                     .and(addTypeRefToList))
-                                     
-                                     
-                        .addRule()
-                        .when(
-                                    XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]")
-                                    .and(XmlFile.matchesXpath("//@indexAtt[windup:matches(self::node(), '{index}')]"))
-                        )
-                        .perform(Hint.withText("Found dual value: {index}").withEffort(2)
-                                     .and(addTypeRefToList));
+                        .perform(
+                            Iteration.over("javaClasses").perform(
+                                    Hint.withText("Found value: {classname}").withEffort(2)
+                                     .and(addTypeRefToList)
+                             ).endIteration()
+                         );
         }
         // @formatter:on
 
