@@ -1,6 +1,11 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -28,8 +33,8 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     }
 
     /**
-     * Adds the provided tag to the provided {@link FileModel}. If a {@link TechnologyTagModel} cannot be found with the
-     * provided name, then one will be created.
+     * Adds the provided tag to the provided {@link FileModel}. If a {@link TechnologyTagModel} cannot be found with the provided name, then one will
+     * be created.
      */
     public TechnologyTagModel addTagToFileModel(FileModel fileModel, String tagName, TechnologyTagLevel level)
     {
@@ -47,15 +52,35 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     }
 
     /**
-     * Return an {@link Iterable} containing all {@link TechnologyTagModel}s that are directly associated with the
-     * provided {@link FileModel}.
+     * Return an {@link Iterable} containing all {@link TechnologyTagModel}s that are directly associated with the provided {@link FileModel}.
      */
-    public Iterable<TechnologyTagModel> findTechnologyTagsForFile(FileModel fm)
+    public Iterable<TechnologyTagModel> findTechnologyTagsForFile(FileModel fileModel)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fm.asVertex());
-        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL)
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
-        return new FramedVertexIterable<TechnologyTagModel>(getGraphContext().getFramed(), pipeline,
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
+        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
+        return new FramedVertexIterable<TechnologyTagModel>(getGraphContext().getFramed(), pipeline, TechnologyTagModel.class);
+    }
+
+    /**
+     * Return an {@link Iterable} containing all {@link TechnologyTagModel}s that are directly associated with the provided {@link ProjectModel}.
+     */
+    public Iterable<TechnologyTagModel> findTechnologyTagsForProject(ProjectModel projectModel)
+    {
+        Set<TechnologyTagModel> results = new HashSet<>();
+
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
+        pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
+        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
+
+        Iterable<TechnologyTagModel> modelIterable = new FramedVertexIterable<TechnologyTagModel>(getGraphContext().getFramed(), pipeline,
                     TechnologyTagModel.class);
+        results.addAll(Iterators.asSet(modelIterable));
+
+        for (ProjectModel childProjectModel : projectModel.getChildProjects())
+        {
+            results.addAll(Iterators.asSet(findTechnologyTagsForProject(childProjectModel)));
+        }
+
+        return results;
     }
 }
