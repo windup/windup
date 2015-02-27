@@ -56,10 +56,43 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.windup.maven</groupId>
+            <artifactId>nexus-indexer-data</artifactId>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Copy test data. -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>test.copy-nexus-data</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.windup.maven</groupId>
+                                    <artifactId>nexus-indexer-data</artifactId>
+                                    <version>${version.nexus.index}</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/test-nexus-data</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Create a Forge Addon. -->
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>

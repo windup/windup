@@ -14,21 +14,22 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
- * Used to identify JAR files. Maps SHA1 hashes to a {@link Coordinate}.
+ * In-memory implementation of {@link ChecksumIdentifier}.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class IdentifiedArchives
+public class InMemoryChecksumIdentifier implements ChecksumIdentifier
 {
-    private static final Map<String, String> map = new TreeMap<>();
+    private final Map<String, String> map = new TreeMap<>();
 
-    public static Coordinate getCoordinateFromSHA1(String sha1Hash)
+    @Override
+    public Coordinate getCoordinate(String checksum)
     {
-        if (sha1Hash == null)
+        if (checksum == null)
             return null;
 
-        String coordinate = map.get(sha1Hash);
+        String coordinate = map.get(checksum);
 
         if (coordinate == null)
             return null;
@@ -36,12 +37,12 @@ public class IdentifiedArchives
         return CoordinateBuilder.create(coordinate);
     }
 
-    public static void addMapping(String sha1, String coordinate)
+    public void addMapping(String checksum, String coordinate)
     {
-        map.put(sha1, coordinate);
+        map.put(checksum, coordinate);
     }
 
-    public static void addMappingsFrom(File file)
+    public void addMappingsFrom(File file)
     {
         try (FileInputStream inputStream = new FileInputStream(file))
         {
@@ -53,8 +54,8 @@ public class IdentifiedArchives
                     continue;
                 String[] parts = StringUtils.split(line, ' ');
                 if (parts.length < 2)
-                    throw new IllegalArgumentException("Expected 'SHA1 GROUP_ID:ARTIFACT_ID:VERSION[:COORDINATE]', but was [" + line + "] in ["
-                                + file + "]");
+                    throw new IllegalArgumentException("Expected 'SHA1 GROUP_ID:ARTIFACT_ID:[PACKAGING:[COORDINATE:]]VERSION', but was: \n" + line
+                                + "\n\tin [" + file + "]");
 
                 addMapping(parts[0], parts[1]);
             }
@@ -64,4 +65,5 @@ public class IdentifiedArchives
             throw new WindupException("Failed to load SHA1 to " + Coordinate.class.getSimpleName() + " definitions from [" + file + "]", e);
         }
     }
+
 }

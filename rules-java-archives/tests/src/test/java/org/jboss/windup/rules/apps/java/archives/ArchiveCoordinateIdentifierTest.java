@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
-import org.jboss.windup.rules.apps.java.archives.identify.IdentifiedArchives;
+import org.jboss.windup.rules.apps.java.archives.identify.InMemoryChecksumIdentifier;
 import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -15,17 +15,19 @@ import org.junit.Test;
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ArchiveGAVIdentifierTest
+public class ArchiveCoordinateIdentifierTest
 {
     private static final String DATA_PATH = "src/test/resources/";
     private static final File SKIPLIST_FILE = new File(DATA_PATH + "/skippedArchives.txt");
+
+    InMemoryChecksumIdentifier identifier = new InMemoryChecksumIdentifier();
 
     @Test
     public void testIdentifyArchive() throws IOException
     {
         final File mappingFile = new File(DATA_PATH + "/test.archive-metadata.txt");
-        IdentifiedArchives.addMappingsFrom(mappingFile);
-        Coordinate gav = IdentifiedArchives.getCoordinateFromSHA1("11856de4eeea74ce134ef3f910ff8d6f989dab2e");
+        identifier.addMappingsFrom(mappingFile);
+        Coordinate gav = identifier.getCoordinate("11856de4eeea74ce134ef3f910ff8d6f989dab2e");
         Assert.assertNotNull("IdentifiedArchives.getGAVFromSHA1 returned something", gav);
         Assert.assertEquals("org.jboss.windup", gav.getGroupId());
         Assert.assertEquals("windup-bootstrap", gav.getArtifactId());

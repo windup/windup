@@ -8,7 +8,7 @@
         <version>2.2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>rules-java-archives-tests</artifactId>
+    <artifactId>windup-rules-java-archives-tests</artifactId>
     <name>Windup Rules - Archive Identification Tests</name>
 
     <dependencies>

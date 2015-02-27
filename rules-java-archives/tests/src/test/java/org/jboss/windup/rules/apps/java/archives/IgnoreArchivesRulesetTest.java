@@ -19,20 +19,23 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.phase.Decompilation;
-import org.jboss.windup.config.phase.MigrationRules;
-import org.jboss.windup.config.phase.ReportGeneration;
-import org.jboss.windup.config.phase.ReportRendering;
+import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.archives.identify.IdentifiedArchives;
+import org.jboss.windup.rules.apps.java.archives.config.ArchiveIdentificationConfigLoadingRuleProvider;
+import org.jboss.windup.rules.apps.java.archives.config.IgnoredArchivesConfigLoadingRuleProvider;
+import org.jboss.windup.rules.apps.java.archives.identify.CompositeChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.InMemoryChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.SortedFileChecksumIdentifier;
 import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.rules.apps.java.scan.provider.DiscoverFilesAndTypesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,11 +45,12 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class SkipArchivesRulesetTest
+public class IgnoreArchivesRulesetTest
 {
     private static final Path INPUT_PATH = new File("").getAbsoluteFile().toPath().getParent().getParent()
                 .resolve("test-files/jee-example-app-1.0.0.ear");
     private static final Path OUTPUT_PATH = Paths.get("target/WindupReport");
+    public static final String LOG4J_COORDINATE = "log4j:log4j:::1.2.6";
 
     @Deployment
     @Dependencies({
@@ -56,7 +60,7 @@ public class SkipArchivesRulesetTest
                 @AddonDependency(name = "org.jboss.windup.utils:utils"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
@@ -80,6 +84,9 @@ public class SkipArchivesRulesetTest
     @Inject
     private GraphContextFactory contextFactory;
 
+    @Inject
+    private CompositeChecksumIdentifier identifier;
+
     @Test
     public void testSkippedArchivesFound() throws Exception
     {
@@ -87,42 +94,58 @@ public class SkipArchivesRulesetTest
         {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 
-            String log4jCoordinate = "log4j:log4j:4.11";
-            IdentifiedArchives.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", log4jCoordinate);
+            InMemoryChecksumIdentifier inMemoryIdentifier = new InMemoryChecksumIdentifier();
+            inMemoryIdentifier.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", LOG4J_COORDINATE);
+
+            SortedFileChecksumIdentifier sortedFileIdentifier = new SortedFileChecksumIdentifier(
+                        new File("src/test/resources/testArchiveMapping.txt"));
+
+            identifier.addIdentifier(inMemoryIdentifier);
+            identifier.addIdentifier(sortedFileIdentifier);
+
             SkippedArchives.add("log4j:*:*");
 
-            WindupConfiguration wc = new WindupConfiguration();
-            wc.setGraphContext(graphContext);
-            wc.setInputPath(INPUT_PATH);
-            wc.setOutputDirectory(OUTPUT_PATH);
-            wc.setOptionValue(OverwriteOption.NAME, true);
-            wc.setRuleProviderFilter(new Predicate<WindupRuleProvider>()
+            WindupConfiguration config = new WindupConfiguration();
+            config.setGraphContext(graphContext);
+            config.setInputPath(INPUT_PATH);
+            config.setOutputDirectory(OUTPUT_PATH);
+            config.setOptionValue(OverwriteOption.NAME, true);
+            config.setRuleProviderFilter(new Predicate<WindupRuleProvider>()
             {
+                private RuleProviderWithDependenciesPredicate discoverRuleDeps =
+                            new RuleProviderWithDependenciesPredicate(DiscoverFilesAndTypesRuleProvider.class);
+
                 @Override
-                public boolean accept(WindupRuleProvider type)
+                public boolean accept(WindupRuleProvider rules)
                 {
-                    return !(type.getPhase().isAssignableFrom(ReportGeneration.class))
-                                && !(type.getPhase().isAssignableFrom(ReportRendering.class))
-                                && !(type.getPhase().isAssignableFrom(Decompilation.class))
-                                && !(type.getPhase().isAssignableFrom(MigrationRules.class));
+                    return (rules instanceof ArchiveIdentificationConfigLoadingRuleProvider
+                                || rules instanceof IgnoredArchivesConfigLoadingRuleProvider
+                                || discoverRuleDeps.accept(rules))
+                                && !rules.getPhase().isAssignableFrom(Decompilation.class);
                 }
             });
 
-            processor.execute(wc);
+            processor.execute(config);
 
             GraphService<IgnoredArchiveModel> archiveService = new GraphService<>(graphContext, IgnoredArchiveModel.class);
             Iterable<IgnoredArchiveModel> archives = archiveService.findAllByProperty(IgnoredArchiveModel.FILE_NAME, "log4j-1.2.6.jar");
+            Assert.assertTrue(archives.iterator().hasNext());
             for (IgnoredArchiveModel archive : archives)
             {
+                Assert.assertNotNull(archive);
+                Assert.assertTrue(archive instanceof IdentifiedArchiveModel);
                 ArchiveCoordinateModel archiveCoordinate = ((IdentifiedArchiveModel) archive).getCoordinate();
                 Assert.assertNotNull(archiveCoordinate);
 
-                final Coordinate expected = CoordinateBuilder.create(log4jCoordinate);
-                Assert.assertEquals(expected, CoordinateBuilder.create()
+                final Coordinate expected = CoordinateBuilder.create(LOG4J_COORDINATE);
+                final CoordinateBuilder actual = CoordinateBuilder.create()
                             .setGroupId(archiveCoordinate.getGroupId())
                             .setArtifactId(archiveCoordinate.getArtifactId())
+                            .setPackaging(archiveCoordinate.getPackaging())
                             .setClassifier(archiveCoordinate.getClassifier())
-                            .setVersion(archiveCoordinate.getVersion()));
+                            .setVersion(archiveCoordinate.getVersion());
+
+                Assert.assertEquals(expected.toString(), actual.toString());
             }
         }
     }

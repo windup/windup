@@ -7,11 +7,11 @@ import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.archives.identify.IdentifiedArchives;
+import org.jboss.windup.rules.apps.java.archives.identify.ChecksumIdentifier;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
@@ -24,18 +24,28 @@ import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListene
 /**
  * {@link GraphChangedListener} responsible for identifying {@link ArchiveModel} instances when they are added to the
  * graph.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class ArchiveIdentificationGraphChangedListener implements GraphChangedListener
 {
-    private static final Logger log = Logger.getLogger(ArchiveIdentificationGraphChangedListener.class.getSimpleName());
+    private static final Logger log = Logger.getLogger(ArchiveIdentificationGraphChangedListener.class.getName());
 
-    private GraphRewrite event;
+    private final ChecksumIdentifier identifier;
 
-    public ArchiveIdentificationGraphChangedListener(GraphRewrite event)
+    private GraphContext context;
+
+    public ArchiveIdentificationGraphChangedListener setGraphContext(GraphContext context)
     {
-        this.event = event;
+        this.context = context;
+        return this;
+    }
+
+    public ArchiveIdentificationGraphChangedListener(GraphContext context, ChecksumIdentifier identifier)
+    {
+        this.identifier = identifier;
+        this.context = context;
     }
 
     @Override
@@ -43,18 +53,18 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
     {
         if (ArchiveModel.ARCHIVE_NAME.equals(key))
         {
-            ArchiveService archiveService = new ArchiveService(event.getGraphContext());
+            ArchiveService archiveService = new ArchiveService(context);
             ArchiveModel archive = archiveService.frame(vertex);
 
             setArchiveHashes(archive);
 
-            Coordinate coordinate = IdentifiedArchives.getCoordinateFromSHA1(archive.getSHA1Hash());
+            Coordinate coordinate = identifier.getCoordinate(archive.getSHA1Hash());
             if (coordinate != null)
             {
                 log.info("Identified archive: [" + archive.getFilePath() + "] as [" + coordinate + "] will not be unzipped or analyzed.");
                 IdentifiedArchiveModel identifiedArchive = GraphService
-                            .addTypeToModel(event.getGraphContext(), archive, IdentifiedArchiveModel.class);
-                ArchiveCoordinateModel coordinateModel = new GraphService<>(event.getGraphContext(), ArchiveCoordinateModel.class).create();
+                            .addTypeToModel(context, archive, IdentifiedArchiveModel.class);
+                ArchiveCoordinateModel coordinateModel = new GraphService<>(context, ArchiveCoordinateModel.class).create();
 
                 coordinateModel.setArtifactId(coordinate.getArtifactId());
                 coordinateModel.setGroupId(coordinate.getGroupId());
@@ -62,12 +72,12 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
                 coordinateModel.setClassifier(coordinate.getClassifier());
 
                 identifiedArchive.setCoordinate(coordinateModel);
-                IgnoredArchiveModel ignoredArchive = GraphService.addTypeToModel(event.getGraphContext(), archive, IgnoredArchiveModel.class);
+                IgnoredArchiveModel ignoredArchive = GraphService.addTypeToModel(context, archive, IgnoredArchiveModel.class);
                 ignoredArchive.setIgnoredRegex("Known open-source library");
             }
             else
             {
-                log.info("Failed to identify archive: " + archive.getFilePath());
+                log.info("Archive not identified: " + archive.getFilePath());
             }
         }
     }

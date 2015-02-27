@@ -29,7 +29,8 @@ import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.archives.identify.IdentifiedArchives;
+import org.jboss.windup.rules.apps.java.archives.identify.CompositeChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.InMemoryChecksumIdentifier;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.junit.Assert;
@@ -46,6 +47,7 @@ public class IdentifyArchivesRulesetTest
     private static final Path INPUT_PATH = new File("").getAbsoluteFile().toPath().getParent().getParent()
                 .resolve("test-files/jee-example-app-1.0.0.ear");
     private static final Path OUTPUT_PATH = Paths.get("target/WindupReport");
+    private static final String LOG4J_COORDINATE = "log4j:log4j:4.11";
 
     @Deployment
     @Dependencies({
@@ -78,6 +80,9 @@ public class IdentifyArchivesRulesetTest
     @Inject
     private GraphContextFactory contextFactory;
 
+    @Inject
+    private CompositeChecksumIdentifier identifier;
+
     @Test
     public void testJarsAreIdentified() throws Exception
     {
@@ -85,8 +90,9 @@ public class IdentifyArchivesRulesetTest
         {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 
-            String log4jCoordinate = "log4j:log4j:4.11";
-            IdentifiedArchives.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", log4jCoordinate);
+            InMemoryChecksumIdentifier inMemoryIdentifier = new InMemoryChecksumIdentifier();
+            inMemoryIdentifier.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", LOG4J_COORDINATE);
+            identifier.addIdentifier(inMemoryIdentifier);
 
             WindupConfiguration wc = new WindupConfiguration();
             wc.setGraphContext(graphContext);
@@ -115,7 +121,7 @@ public class IdentifyArchivesRulesetTest
                 ArchiveCoordinateModel archiveCoordinate = archive.getCoordinate();
                 Assert.assertNotNull(archiveCoordinate);
 
-                final Coordinate expected = CoordinateBuilder.create(log4jCoordinate);
+                final Coordinate expected = CoordinateBuilder.create(LOG4J_COORDINATE);
                 Assert.assertEquals(expected, CoordinateBuilder.create()
                             .setGroupId(archiveCoordinate.getGroupId())
                             .setArtifactId(archiveCoordinate.getArtifactId())
