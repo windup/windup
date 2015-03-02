@@ -370,8 +370,16 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                 }
                 else if (xpathString == null)
                 {
-                    // if the xpath is not set and therefore we have the result already
                     evaluationStrategy.modelMatched();
+                    // if the xpath is not set and therefore we have the result already
+                    if (fileNamePattern != null)
+                    {
+                        if (!fileNamePattern.parse(xml.getFileName()).submit(event, context))
+                        {
+                            evaluationStrategy.modelSubmissionRejected();
+                            continue;
+                        }
+                    }
                     evaluationStrategy.modelSubmitted(xml);
                     resultLocations.add(xml);
                 }
@@ -393,7 +401,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                     this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "evaluate", new XmlFileEvaluateXPathFunction(evaluationStrategy));
                     this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "matches", new XmlFileMatchesXPathFunction(context, store,
                                 paramMatchCache, event));
-                    this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "persist", new XmlFilePersistXPathFunction(graphContext, xml,
+                    this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "persist", new XmlFilePersistXPathFunction(event, context, xml,
                                 evaluationStrategy, store, paramMatchCache, resultLocations));
 
                     if (compiledXPath == null)
@@ -424,13 +432,13 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                      * This actually does the work.
                      */
                     XmlUtil.xpathNodeList(document, compiledXPath);
+                    evaluationStrategy.modelSubmissionRejected();
                 }
             }
         }
         Variables.instance(event).setVariable(getOutputVariablesName(), resultLocations);
 
         // reject the last one... this is because we essentially always end up with a blank frame at the end (yes, it's a hack)
-        evaluationStrategy.modelSubmissionRejected();
 
         ExecutionStatistics.get().end("XmlFile.evaluate");
         return !resultLocations.isEmpty();
@@ -484,17 +492,20 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
 
     final class XmlFilePersistXPathFunction implements XPathFunction
     {
-        private final GraphContext graphContext;
+        private final GraphRewrite event;
+        private final EvaluationContext context;
         private final XmlFileModel xml;
         private final XmlFileEvaluationStrategy evaluationStrategy;
         private final ParameterStore store;
         private final XmlFileParameterMatchCache paramMatchCache;
         private final List<WindupVertexFrame> resultLocations;
 
-        XmlFilePersistXPathFunction(GraphContext graphContext, XmlFileModel xml, XmlFileEvaluationStrategy evaluationStrategy, ParameterStore store,
+        XmlFilePersistXPathFunction(GraphRewrite event, EvaluationContext context, XmlFileModel xml, XmlFileEvaluationStrategy evaluationStrategy,
+                    ParameterStore store,
                     XmlFileParameterMatchCache paramMatchCache, List<WindupVertexFrame> resultLocations)
         {
-            this.graphContext = graphContext;
+            this.event = event;
+            this.context = context;
             this.xml = xml;
             this.evaluationStrategy = evaluationStrategy;
             this.store = store;
@@ -527,7 +538,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                             LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
 
                 GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<XmlTypeReferenceModel>(
-                            graphContext,
+                            event.getGraphContext(),
                             XmlTypeReferenceModel.class);
                 XmlTypeReferenceModel fileLocation = fileLocationService.create();
                 String sourceSnippit = XmlUtil.nodeToString(node);
@@ -538,7 +549,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                 fileLocation.setFile(xml);
                 fileLocation.setXpath(xpathString);
                 GraphService<NamespaceMetaModel> metaModelService = new GraphService<NamespaceMetaModel>(
-                            graphContext,
+                            event.getGraphContext(),
                             NamespaceMetaModel.class);
                 for (Map.Entry<String, String> namespace : namespaces.entrySet())
                 {
@@ -552,6 +563,15 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
 
                 evaluationStrategy.modelSubmissionRejected();
                 evaluationStrategy.modelMatched();
+                if (fileNamePattern != null)
+                {
+                    if (!fileNamePattern.parse(xml.getFileName()).submit(event, context))
+                    {
+                        evaluationStrategy.modelSubmissionRejected();
+                        continue;
+                    }
+                }
+
                 for (Map.Entry<String, String> entry : paramMatchCache.getVariables(frameIdx).entrySet())
                 {
                     Parameter<?> param = store.get(entry.getKey());
