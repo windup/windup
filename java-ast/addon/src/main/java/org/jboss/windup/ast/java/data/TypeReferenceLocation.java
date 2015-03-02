@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.scan.ast;
+package org.jboss.windup.ast.java.data;
 
 /**
  * Designates a location where a given {@link JavaTypeReferenceModel} was found in a Java source file.
@@ -8,7 +8,7 @@ package org.jboss.windup.rules.apps.java.scan.ast;
 public enum TypeReferenceLocation
 {
     /**
-     *  A Java class imports the type.
+     * A Java class imports the type.
      */
     IMPORT("Import of"),
     /**
@@ -20,15 +20,15 @@ public enum TypeReferenceLocation
      */
     METHOD("Declares method"),
     /**
-     * A Java class inherits the type reference.
+     * A Java class inherits the specified type.
      */
     INHERITANCE("Inherits type"),
     /**
-     * A Java class constructs the type reference.
+     * A Java class constructs the specified type.
      */
     CONSTRUCTOR_CALL("Constructing type"),
     /**
-     * A Java class calls the referenced method.
+     * A Java class calls the specified method.
      */
     METHOD_CALL("Calls method"),
     /**
@@ -40,35 +40,35 @@ public enum TypeReferenceLocation
      */
     ANNOTATION("References annotation"),
     /**
-     * A Java class returns the type reference.
+     * A Java class returns the specified type.
      */
     RETURN_TYPE("Returns type"),
     /**
-     * A Java class is an instance of the type reference.
+     * A Java class is an instance of the specified type.
      */
     INSTANCE_OF("Instance of type"),
     /**
-     * A Java class declares it throws the type reference.
+     * A Java class declares that it may throw the specified type.
      */
     THROWS_METHOD_DECLARATION("Throws"),
     /**
-     * A method in the Java class throws the type reference.
+     * A method in the Java class throws the an instance of the specified type.
      */
     THROW_STATEMENT("Throw"),
     /**
-     * A Java class method catches the type reference.
+     * A Java class method catches the specified type.
      */
     CATCH_EXCEPTION_STATEMENT("Catches exception"),
     /**
-     * A Java class declares a field of the type reference.
+     * A Java class declares a field of the specified type.
      */
     FIELD_DECLARATION("Declares field"),
     /**
-     * A Java class declares a variable of the type reference.
+     * A Java class declares a variable of the specified type.
      */
     VARIABLE_DECLARATION("Declares variable"),
     /**
-     * A Java class implements the type reference.
+     * A Java class implements the specified type.
      */
     IMPLEMENTS_TYPE("Implements type");
 

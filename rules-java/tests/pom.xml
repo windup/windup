@@ -10,7 +10,7 @@
 
     <artifactId>windup-rules-java-tests</artifactId>
 
-    <name>Windup Rules - Java - Basic</name>
+    <name>Windup Rules - Java - Basic Tests</name>
 
     <dependencies>
 

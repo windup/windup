@@ -1,16 +1,7 @@
-/*
- * Copyright (c) 2013 Red Hat, Inc. and/or its affiliates.
- *  
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
- *  
- *  Contributors:
- *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
- */
-package org.jboss.windup.rules.apps.java.scan.ast;
+package org.jboss.windup.ast.java;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,10 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
@@ -34,7 +26,6 @@ import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
@@ -55,43 +46,23 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
-import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
-import org.jboss.windup.util.Logging;
+import org.jboss.windup.ast.java.data.JavaClassReference;
+import org.jboss.windup.ast.java.data.JavaClassReferences;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 
 /**
- * Runs through the source code and checks "type" uses against the blacklisted class entries.
+ * Provides the ability to parse a Java file and return a {@link JavaClassReferences} object containing the fully qualified names of all of the
+ * contained references.
  * 
- * @author bradsdavis
- * @author jsightle
- * @author lincolnthree
- * @author mbriskar
- * @author ozizka
+ * @author jsightler
+ *
  */
-public class VariableResolvingASTVisitor extends ASTVisitor
+public class JavaASTProcessor extends ASTVisitor
 {
-    private static final Logger LOG = Logging.get(VariableResolvingASTVisitor.class);
-
-    private final GraphService<JavaAnnotationTypeReferenceModel> annotationTypeReferenceService;
-    private final JavaClassService javaClassService;
-    private final TypeReferenceService typeRefService;
-    private final WindupJavaConfigurationService windupJavaCfgService;
-
-    public VariableResolvingASTVisitor(GraphContext context)
-    {
-        this.annotationTypeReferenceService = new GraphService<>(context, JavaAnnotationTypeReferenceModel.class);
-        this.javaClassService = new JavaClassService(context);
-        this.typeRefService = new TypeReferenceService(context);
-        this.windupJavaCfgService = new WindupJavaConfigurationService(context);
-    }
-
-    private CompilationUnit cu;
-    private String fqcn;
+    private final WildcardImportResolver wildcardImportResolver;
+    private final CompilationUnit cu;
+    private final String fqcn;
+    private final Path javaFile;
 
     /**
      * Contains all wildcard imports (import com.example.*) lines from the source file.
@@ -121,12 +92,58 @@ public class VariableResolvingASTVisitor extends ASTVisitor
      */
     private final Map<String, String> nameInstance = new HashMap<String, String>();
 
-    private FileModel fileModel;
+    private JavaClassReferences javaClassReferences = new JavaClassReferences();
 
-    public void init(CompilationUnit cu, FileModel fileModel)
+    /**
+     * Processes a java file using the default {@link WildcardImportResolver}.
+     * 
+     * See also: {@see JavaASTProcessor#analyzeJavaFile(WildcardImportResolver, Set, Set, Path)}
+     */
+    public static JavaClassReferences analyzeJavaFile(Set<String> libraryPaths, Set<String> sourcePaths, Path sourceFile)
     {
+        return analyzeJavaFile(new NoopWildcardImportResolver(), libraryPaths, sourcePaths, sourceFile);
+    }
+
+    /**
+     * Parses the provided file, using the given libraryPaths and sourcePaths as context. The libraries may be either jar files or references to
+     * directories containing class files.
+     * 
+     * The sourcePaths must be a reference to the top level directory for sources (eg, for a file src/main/java/org/example/Foo.java, the source path
+     * would be src/main/java).
+     * 
+     * The wildcard resolver provides a fallback for processing wildcard imports that the underlying parser was unable to resolve.
+     */
+    public static JavaClassReferences analyzeJavaFile(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths,
+                Path sourceFile)
+    {
+        String fileName = sourceFile.getFileName().toString();
+        ASTParser parser = ASTParser.newParser(AST.JLS8);
+
+        parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]), sourcePaths.toArray(new String[sourcePaths.size()]),
+                    null, true);
+        parser.setBindingsRecovery(false);
+        parser.setResolveBindings(true);
+        parser.setUnitName(fileName);
+        try
+        {
+            parser.setSource(FileUtils.readFileToString(sourceFile.toFile()).toCharArray());
+        }
+        catch (IOException e)
+        {
+            throw new JavaASTException("Failed to get source for file: " + sourceFile.toString() + " due to: " + e.getMessage(), e);
+        }
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+
+        JavaASTProcessor processor = new JavaASTProcessor(importResolver, cu, sourceFile);
+        return processor.getJavaClassReferences();
+    }
+
+    private JavaASTProcessor(WildcardImportResolver importResolver, CompilationUnit cu, Path javaFile)
+    {
+        this.wildcardImportResolver = importResolver;
         this.cu = cu;
-        this.fileModel = fileModel;
+        this.javaFile = javaFile;
         this.wildcardImports.clear();
         this.classNameLookedUp.clear();
         this.classNameToFQCN.clear();
@@ -151,76 +168,61 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                 this.fqcn = packageName + "." + className;
             }
 
-            // add all customer package type as references
-            if (windupJavaCfgService.shouldScanPackage(packageName))
+            this.javaClassReferences.addReference(new JavaClassReference(this.fqcn, TypeReferenceLocation.TYPE, cu.getLineNumber(typeDeclaration
+                        .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength()));
+
+            Type superclassType = typeDeclaration.getSuperclassType();
+            ITypeBinding resolveBinding = null;
+            if (superclassType != null)
             {
-                typeRefService.createTypeReference(fileModel, TypeReferenceLocation.TYPE, cu.getLineNumber(typeDeclaration.getStartPosition()),
-                            cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), this.fqcn);
-
-                Type superclassType = typeDeclaration.getSuperclassType();
-                ITypeBinding resolveBinding = null;
-                if (superclassType != null)
-                {
-                    resolveBinding = superclassType.resolveBinding();
-                }
-
-                while (resolveBinding != null)
-                {
-                    if (superclassType.resolveBinding() != null)
-                    {
-                        typeRefService.createTypeReference(fileModel, TypeReferenceLocation.TYPE,
-                                    cu.getLineNumber(typeDeclaration.getStartPosition()),
-                                    cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), resolveBinding.getQualifiedName());
-                    }
-                    resolveBinding = resolveBinding.getSuperclass();
-                }
+                resolveBinding = superclassType.resolveBinding();
             }
 
-            this.names.add("this");
-            this.nameInstance.put("this", fqcn);
+            while (resolveBinding != null)
+            {
+                if (superclassType.resolveBinding() != null)
+                {
+                    this.javaClassReferences.addReference(new JavaClassReference(resolveBinding.getQualifiedName(), TypeReferenceLocation.TYPE, cu
+                                .getLineNumber(typeDeclaration
+                                            .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength()));
+                }
+                resolveBinding = resolveBinding.getSuperclass();
+            }
         }
+        else
+        {
+            this.fqcn = null;
+        }
+
+        this.names.add("this");
+        this.nameInstance.put("this", fqcn);
+
+        cu.accept(this);
+    }
+
+    public JavaClassReferences getJavaClassReferences()
+    {
+        return this.javaClassReferences;
     }
 
     private void processConstructor(ConstructorType interest, int lineNumber, int columnNumber, int length)
     {
         String text = interest.toString();
-        if (TypeInterestFactory.matchesAny(text, TypeReferenceLocation.CONSTRUCTOR_CALL))
-        {
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
-                        TypeReferenceLocation.CONSTRUCTOR_CALL,
-                        lineNumber, columnNumber, length, text);
-
-            LOG.finer("Candidate: " + typeRef);
-        }
+        this.javaClassReferences.addReference(new JavaClassReference(text, TypeReferenceLocation.CONSTRUCTOR_CALL, lineNumber, columnNumber, length));
     }
 
     private void processMethod(MethodType interest, int lineNumber, int columnNumber, int length)
     {
         String text = interest.toString();
-        if (TypeInterestFactory.matchesAny(text, TypeReferenceLocation.METHOD_CALL))
-        {
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
-                        TypeReferenceLocation.METHOD_CALL,
-                        lineNumber, columnNumber, length, text);
-
-            LOG.finer("Candidate: " + typeRef);
-        }
+        this.javaClassReferences.addReference(new JavaClassReference(text, TypeReferenceLocation.METHOD_CALL, lineNumber, columnNumber, length));
     }
 
     private void processImport(String interest, int lineNumber, int columnNumber, int length)
     {
-        if (TypeInterestFactory.matchesAny(interest, TypeReferenceLocation.IMPORT))
-        {
-
-            JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel,
-                        TypeReferenceLocation.IMPORT,
-                        lineNumber, columnNumber, length, interest.toString());
-
-            LOG.finer("Candidate: " + typeRef);
-        }
+        this.javaClassReferences.addReference(new JavaClassReference(interest, TypeReferenceLocation.IMPORT, lineNumber, columnNumber, length));
     }
 
-    private JavaTypeReferenceModel processTypeBinding(ITypeBinding type, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
+    private JavaClassReference processTypeBinding(ITypeBinding type, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
                 int length)
     {
         if (type == null)
@@ -233,7 +235,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     /**
      * The method determines if the type can be resolved and if not, will try to guess the qualified name using the information from the imports.
      */
-    private JavaTypeReferenceModel processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length)
+    private JavaClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length)
     {
         if (type == null)
             return null;
@@ -251,25 +253,14 @@ public class VariableResolvingASTVisitor extends ASTVisitor
 
     }
 
-    private JavaTypeReferenceModel processTypeAsString(String sourceString, TypeReferenceLocation referenceLocation, int lineNumber,
-                int columnNumber,
-                int length)
+    private JavaClassReference processTypeAsString(String sourceString, TypeReferenceLocation referenceLocation, int lineNumber,
+                int columnNumber, int length)
     {
         if (sourceString == null)
             return null;
 
-        if (!TypeInterestFactory.matchesAny(sourceString, referenceLocation))
-            return null;
-
-        JavaTypeReferenceModel typeRef = typeRefService.createTypeReference(fileModel, referenceLocation,
-                    lineNumber, columnNumber, length, sourceString);
-        if (TypeReferenceLocation.ANNOTATION == referenceLocation)
-        {
-            typeRef = this.annotationTypeReferenceService.addTypeToModel(typeRef);
-        }
-
-        LOG.finer("Prefix: " + referenceLocation);
-        LOG.finer("Candidate: " + typeRef);
+        JavaClassReference typeRef = new JavaClassReference(sourceString, referenceLocation, lineNumber, columnNumber, length);
+        this.javaClassReferences.addReference(typeRef);
         return typeRef;
     }
 
@@ -316,7 +307,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             for (Type type : throwsTypes)
             {
-                processType(type,TypeReferenceLocation.THROWS_METHOD_DECLARATION,
+                processType(type, TypeReferenceLocation.THROWS_METHOD_DECLARATION,
                             cu.getLineNumber(node.getStartPosition()),
                             cu.getColumnNumber(type.getStartPosition()), type.getLength());
             }
@@ -393,7 +384,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
      * @param typeRef
      * @param node
      */
-    private void addAnnotationValues(JavaAnnotationTypeReferenceModel typeRef, NormalAnnotation node)
+    private void addAnnotationValues(JavaClassReference typeRef, NormalAnnotation node)
     {
         @SuppressWarnings("unchecked")
         List<MemberValuePair> annotationValues = node.values();
@@ -435,7 +426,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     public boolean visit(NormalAnnotation node)
     {
         ITypeBinding resolveTypeBinding = node.resolveTypeBinding();
-        JavaTypeReferenceModel typeRef;
+        JavaClassReference typeRef;
         if (resolveTypeBinding != null)
         {
             typeRef = processTypeBinding(node.resolveTypeBinding(), TypeReferenceLocation.ANNOTATION,
@@ -452,7 +443,7 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         }
         if (typeRef != null)
             // provide parameters of the annotation
-            addAnnotationValues((JavaAnnotationTypeReferenceModel) typeRef, node);
+            addAnnotationValues(typeRef, node);
         return super.visit(node);
     }
 
@@ -511,10 +502,6 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                             }
                         }
                     }
-                    else
-                    {
-                        LOG.finer("" + clzInterface);
-                    }
                 }
             }
         }
@@ -530,10 +517,6 @@ public class VariableResolvingASTVisitor extends ASTVisitor
                                 cu.getColumnNumber(node.getStartPosition()), node.getLength());
                     resolvedSuperClass = resolvedSuperClass.getSuperclass();
                 }
-            }
-            else
-            {
-                LOG.finer("" + clzSuperClasses);
             }
         }
 
@@ -554,9 +537,9 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             this.names.add(frag.getName().getIdentifier());
             this.nameInstance.put(frag.getName().toString(), nodeType.toString());
         }
-        processType(node.getType(),TypeReferenceLocation.VARIABLE_DECLARATION,
-                        cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+        processType(node.getType(), TypeReferenceLocation.VARIABLE_DECLARATION,
+                    cu.getLineNumber(node.getStartPosition()),
+                    cu.getColumnNumber(node.getStartPosition()), node.getLength());
         return super.visit(node);
     }
 
@@ -568,10 +551,10 @@ public class VariableResolvingASTVisitor extends ASTVisitor
         {
             wildcardImports.add(name);
 
-            Iterable<JavaClassModel> classModels = javaClassService.findByJavaPackage(name);
-            for (JavaClassModel classModel : classModels)
+            String[] resolvedNames = this.wildcardImportResolver.resolve(name);
+            for (String resolvedName : resolvedNames)
             {
-                processImport(classModel.getQualifiedName(), cu.getLineNumber(node.getName().getStartPosition()),
+                processImport(resolvedName, cu.getLineNumber(node.getName().getStartPosition()),
                             cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength());
             }
         }
@@ -687,7 +670,6 @@ public class VariableResolvingASTVisitor extends ASTVisitor
     @Override
     public boolean visit(PackageDeclaration node)
     {
-        LOG.finer("Found package: " + node.getName().toString());
         return super.visit(node);
     }
 
@@ -952,7 +934,6 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             }
             else
             {
-                LOG.finer("Unable to determine type: " + o.getClass() + ReflectionToStringBuilder.toString(o));
                 resolvedParams.add("Undefined");
             }
         }
@@ -983,20 +964,12 @@ public class VariableResolvingASTVisitor extends ASTVisitor
             }
             else
             {
-                // if this name has not been resolved before, go ahead and resolve it from the graph (if possible)
                 classNameLookedUp.add(sourceClassname);
-                // search every wildcard import for this name
-                for (String wildcardImport : wildcardImports)
+                String resolvedClassName = this.wildcardImportResolver.resolve(this.wildcardImports, sourceClassname);
+                if (resolvedClassName != null)
                 {
-                    String candidateQualifiedName = wildcardImport + "." + sourceClassname;
-                    Iterable<JavaClassModel> models = javaClassService.findAllByProperty(
-                                JavaClassModel.QUALIFIED_NAME, candidateQualifiedName);
-                    if (models.iterator().hasNext())
-                    {
-                        // we found it... put it in the map and return the result
-                        classNameToFQCN.put(sourceClassname, candidateQualifiedName);
-                        return candidateQualifiedName;
-                    }
+                    classNameToFQCN.put(sourceClassname, resolvedClassName);
+                    return resolvedClassName;
                 }
                 // nothing was found, so just return the original value
                 return sourceClassname;

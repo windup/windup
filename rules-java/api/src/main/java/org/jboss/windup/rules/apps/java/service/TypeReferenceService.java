@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -10,7 +11,6 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.util.ExecutionStatistics;
 

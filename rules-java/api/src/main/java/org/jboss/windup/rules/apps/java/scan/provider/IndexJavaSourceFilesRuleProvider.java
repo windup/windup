@@ -32,7 +32,7 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
-import org.jboss.windup.rules.apps.java.scan.ast.WindupRoasterWildcardImportResolver;
+import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.WindupPathUtil;
@@ -80,7 +80,7 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
-            WindupRoasterWildcardImportResolver.setGraphContext(event.getGraphContext());
+            WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
             try
             {
                 TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
@@ -146,7 +146,7 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
             }
             finally
             {
-                WindupRoasterWildcardImportResolver.setGraphContext(null);
+                WindupWildcardImportResolver.setGraphContext(null);
             }
         }
 
@@ -170,7 +170,9 @@ public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
             // set the package name to the parsed value
             sourceFileModel.setPackageName(packageName);
 
-            // set the root path of this source file (if possible)
+            // Set the root path of this source file (if possible). As this could be coming from user-provided source, it
+            // is possible that the path will not match the package name. In this case, we will likely end up with a null
+            // root path.
             Path rootSourcePath = WindupPathUtil.getRootFolderForSource(sourceFileModel.asFile().toPath(), packageName);
             if (rootSourcePath != null)
             {

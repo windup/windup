@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 
 import com.tinkerpop.blueprints.Vertex;

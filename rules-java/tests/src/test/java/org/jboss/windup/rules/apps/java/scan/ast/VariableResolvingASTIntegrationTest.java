@@ -19,6 +19,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.operation.Iteration;

@@ -111,6 +111,14 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- Windup Java AST -->
+            <dependency>
+                <groupId>org.jboss.windup.ast</groupId>
+                <artifactId>windup-java-ast</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- Windup Engine - Execution API Addon -->
             <dependency>
                 <groupId>org.jboss.windup.exec</groupId>

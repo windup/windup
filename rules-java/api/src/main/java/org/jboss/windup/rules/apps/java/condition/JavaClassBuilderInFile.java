@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.condition;
 
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;

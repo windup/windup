@@ -228,7 +228,9 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
 
-                            // set the root path of this source file (if possible)
+                            // Set the root path of this source file (if possible). Procyon should always be placing the file
+                            // into a location that is appropriate for the package name, so this should always yield
+                            // a non-null root path.
                             Path rootSourcePath = WindupPathUtil.getRootFolderForSource(decompiledSourceFileModel.asFile().toPath(),
                                         classModel.getPackageName());
                             if (rootSourcePath != null)

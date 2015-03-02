@@ -3,11 +3,11 @@ package org.jboss.windup.rules.apps.java.xml;
 import static org.joox.JOOX.$;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 

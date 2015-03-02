@@ -115,6 +115,7 @@ public class JavaClassXmlRulesTest
             for (JavaTypeReferenceModel ref : typeReferences)
             {
                 String sourceSnippit = ref.getSourceSnippit();
+                System.out.println("Ref: " + ref);
                 Assert.assertTrue(sourceSnippit.contains("org.apache.commons")
                             || sourceSnippit.contains("org.jboss.windup.rules.java.JavaClassTestFile"));
                 count++;

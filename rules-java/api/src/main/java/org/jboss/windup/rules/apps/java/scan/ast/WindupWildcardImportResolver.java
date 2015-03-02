@@ -1,7 +1,9 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +19,7 @@ import org.jboss.windup.rules.apps.java.service.JavaClassService;
  * Provides a wildcard resolver for imports that attempts to search the graph for related types
  *
  */
-public class WindupRoasterWildcardImportResolver implements WildcardImportResolver
+public class WindupWildcardImportResolver implements WildcardImportResolver, org.jboss.windup.ast.java.WildcardImportResolver
 {
     private static ThreadLocal<GraphContext> graphContextTL = new ThreadLocal<>();
 
@@ -33,14 +35,9 @@ public class WindupRoasterWildcardImportResolver implements WildcardImportResolv
     private final Set<String> classNameLookedUp = new HashSet<>();
 
     @Override
-    public String resolve(JavaType<?> source, String type)
+    public String resolve(List<String> wildcardImports, String type)
     {
         GraphContext graphContext = getGraphContext();
-        if (graphContext == null)
-        {
-            return type;
-        }
-
         // If the type contains a "." assume that it is fully qualified.
         // FIXME - This is a carryover from the original Windup code, and I don't think
         // that this assumption is valid.
@@ -65,28 +62,56 @@ public class WindupRoasterWildcardImportResolver implements WildcardImportResolv
             classNameLookedUp.add(type);
 
             // search every wildcard import for this name
-            Importer<?> importer = (Importer<?>) source;
-            for (Import importDeclaration : importer.getImports())
+            for (String wildcardImport : wildcardImports)
             {
-                if (importDeclaration.isWildcard())
-                {
-                    String wildcardImport = importDeclaration.getQualifiedName();
-                    String candidateQualifiedName = wildcardImport + "." + type;
+                String candidateQualifiedName = wildcardImport + "." + type;
 
-                    JavaClassService javaClassService = new JavaClassService(graphContext);
-                    Iterable<JavaClassModel> models = javaClassService.findAllByProperty(JavaClassModel.QUALIFIED_NAME,
-                                candidateQualifiedName);
-                    if (models.iterator().hasNext())
-                    {
-                        // we found it... put it in the map and return the result
-                        classNameToFQCN.put(type, candidateQualifiedName);
-                        return candidateQualifiedName;
-                    }
+                JavaClassService javaClassService = new JavaClassService(graphContext);
+                Iterable<JavaClassModel> models = javaClassService.findAllByProperty(JavaClassModel.QUALIFIED_NAME,
+                            candidateQualifiedName);
+                if (models.iterator().hasNext())
+                {
+                    classNameToFQCN.put(type, candidateQualifiedName);
+                    return candidateQualifiedName;
                 }
             }
             // nothing was found, so just return the original value
             return type;
         }
+    }
+
+    @Override
+    public String[] resolve(String wildcardImportPackageName)
+    {
+        JavaClassService javaClassService = new JavaClassService(getGraphContext());
+        Iterable<JavaClassModel> classModels = javaClassService.findByJavaPackage(wildcardImportPackageName);
+        List<String> results = new ArrayList<>();
+        for (JavaClassModel classModel : classModels)
+        {
+            results.add(classModel.getQualifiedName());
+        }
+        return results.toArray(new String[results.size()]);
+    }
+
+    @Override
+    public String resolve(JavaType<?> source, String type)
+    {
+        GraphContext graphContext = getGraphContext();
+        if (graphContext == null)
+        {
+            return type;
+        }
+
+        Importer<?> importer = (Importer<?>) source;
+        List<String> wildcardImports = new ArrayList<>();
+        for (Import importDeclaration : importer.getImports())
+        {
+            if (importDeclaration.isWildcard())
+            {
+                wildcardImports.add(importDeclaration.getQualifiedName());
+            }
+        }
+        return resolve(wildcardImports, type);
     }
 
     private GraphContext getGraphContext()
