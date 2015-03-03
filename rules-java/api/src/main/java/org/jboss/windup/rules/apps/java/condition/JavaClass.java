@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.EvaluationStrategy;
@@ -33,7 +34,6 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;

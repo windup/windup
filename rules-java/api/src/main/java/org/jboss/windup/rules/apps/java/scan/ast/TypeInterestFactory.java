@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 

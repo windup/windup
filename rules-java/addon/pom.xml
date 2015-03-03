@@ -8,7 +8,6 @@
         <version>2.2.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.jboss.windup.rules.apps</groupId>
     <artifactId>windup-rules-java</artifactId>
 
     <name>Windup Rules - Java - Basic</name>
@@ -32,6 +31,12 @@
             <artifactId>decompiler-procyon</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.ast</groupId>
+            <artifactId>windup-java-ast</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>

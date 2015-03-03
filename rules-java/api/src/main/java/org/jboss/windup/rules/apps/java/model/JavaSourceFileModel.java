@@ -22,6 +22,25 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
     public static final String TYPE = "JavaSourceFileModel";
     public static final String PACKAGE_NAME = "packageName";
     public static final String JAVA_CLASS_MODEL = "javaClass";
+    public static final String ROOT_SOURCE_FOLDER = "rootSourceFolder";
+
+    /**
+     * This is the "root" directory for this source file.
+     * 
+     * For example, if you have a file at "/project/src/main/java/org/example/Foo.java" then this would point the directory "/project/src/main/java".
+     * 
+     */
+    @Adjacency(label = ROOT_SOURCE_FOLDER, direction = Direction.OUT)
+    FileModel getRootSourceFolder();
+
+    /**
+     * This is the "root" directory for this source file.
+     * 
+     * For example, if you have a file at "/project/src/main/java/org/example/Foo.java" then this would point the directory "/project/src/main/java".
+     * 
+     */
+    @Adjacency(label = ROOT_SOURCE_FOLDER, direction = Direction.OUT)
+    void setRootSourceFolder(FileModel fileModel);
 
     /**
      * Contains the Java package name

@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.WindupRuleProvider;
@@ -25,7 +26,6 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;

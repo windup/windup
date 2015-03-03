@@ -115,11 +115,12 @@ public class JavaClassXmlRulesTest
             for (JavaTypeReferenceModel ref : typeReferences)
             {
                 String sourceSnippit = ref.getSourceSnippit();
+                System.out.println("Ref: " + ref);
                 Assert.assertTrue(sourceSnippit.contains("org.apache.commons")
                             || sourceSnippit.contains("org.jboss.windup.rules.java.JavaClassTestFile"));
                 count++;
             }
-            Assert.assertEquals(7, count);
+            Assert.assertEquals(13, count);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             Iterable<InlineHintModel> hints = hintService.findAll();
@@ -138,7 +139,7 @@ public class JavaClassXmlRulesTest
                 if (hint.getHint().contains("Rule2"))
                     count++;
             }
-            Assert.assertEquals(1, count);
+            Assert.assertEquals(3, count);
         }
     }
 

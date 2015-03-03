@@ -9,7 +9,7 @@ import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.rules.apps.java.condition.JavaClass
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeReferenceLocation;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 
 ruleSet("Example Servlet Rule")
