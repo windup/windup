@@ -47,7 +47,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class JavaClassTest
+public class JavaClassSourceMatchTest
 {
     @Deployment
     @Dependencies({
@@ -62,7 +62,7 @@ public class JavaClassTest
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addClass(JavaClassTestRuleProvider.class)
-                    .addClass(JavaClassTest.class)
+                    .addClass(JavaClassSourceMatchTest.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -132,16 +132,18 @@ public class JavaClassTest
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
-            Assert.assertEquals(4, provider.getFirstRuleMatchCount());
-            Assert.assertEquals(2, provider.getSecondRuleMatchCount());
+            Assert.assertEquals(1, provider.getFirstRuleMatchCount());
+            Assert.assertEquals(1, provider.getSecondRuleMatchCount());
+            Assert.assertEquals(1, provider.getThirdRuleMatchCount());
+            Assert.assertEquals(1, provider.getFourthRuleMatchCount());
         }
     }
-    
+
     /**
      * Testing that .from() and .as() sets the right variable
      */
     @Test
-    public void testJavaClassInputOutputVariables() 
+    public void testJavaClassInputOutputVariables()
     {
         JavaClass as = (JavaClass) JavaClass.from("input").references("abc").as("output");
         Assert.assertEquals("input", as.getInputVariablesName());
@@ -159,40 +161,60 @@ public class JavaClassTest
     {
         private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
+        private int thirdRuleMatchCount = 0;
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
+        private int fourthRuleMatchCount = 0;
 
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()
-            .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT)
-            ).perform(
-                Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+            .addRule().when(JavaClass.references("org.jboss.windup.graph.model.resource.FileModel.setFilePath{*}").matchesSource("{*}/JavaHintsClassificationsTest.java{*}").inType("{*}").at(TypeReferenceLocation.METHOD_CALL))
+            .perform( Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                        {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                 {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        firstRuleMatchCount++;
-                        log.info("First rule matched: " + payload.getFile().getFilePath());
-                    }
-                }).endIteration()
-            )
-                    
-            .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}JavaClassTestFile1").at(TypeReferenceLocation.IMPORT)
-            ).perform(
-                Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    firstRuleMatchCount++;
+                }
+            }).endIteration())
+            .addRule()
+            .when(JavaClass.references("org.jboss.windup.rules.java.JavaClassTestFile1.testJavaClassCondition()").matchesSource("{*}{line}{*}").inType("{*}").at(TypeReferenceLocation.METHOD))
+            .perform( Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                        {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                 {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        secondRuleMatchCount++;
-                    }
-                }).endIteration()
-            );
+                    secondRuleMatchCount++;
+                }
+            }).endIteration())
+            .where("line").matches("testJavaClassCondition\\(\\) throws IOException, InstantiationException")
+            
+            .addRule()
+            .when(JavaClass.references("org.jboss.windup.exec.configuration.WindupConfiguration.setRuleProviderFilter{*}").matchesSource("{*}{line}{*}").at(TypeReferenceLocation.METHOD_CALL))
+            .perform( Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                        {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                {
+                    thirdRuleMatchCount++;
+                }
+            }).endIteration())
+            .where("line").matches(".setRuleProviderFilter\\(new")
+            .addRule()
+            .when(JavaClass.references("org.jboss.windup.rules.java.JavaClassTestFile2").matchesSource("{*}{line}{*}").at(TypeReferenceLocation.TYPE))
+            .perform( Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                        {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                {
+                    fourthRuleMatchCount++;
+                }
+            }).endIteration())
+            .where("line").matches("public class JavaClassTestFile2")
+            ;
         }
         // @formatter:on
 
@@ -205,7 +227,17 @@ public class JavaClassTest
         {
             return secondRuleMatchCount;
         }
+
+        public int getThirdRuleMatchCount()
+        {
+            return thirdRuleMatchCount;
+        }
         
+        public int getFourthRuleMatchCount()
+        {
+            return fourthRuleMatchCount;
+        }
+
         @Override
         public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
         {

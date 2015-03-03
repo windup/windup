@@ -107,7 +107,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
 
         String ejbName = annotationTypeReference.getAnnotationValues().get("name");
-        String sessionType = javaTypeReference.getSourceSnippit().substring(javaTypeReference.getSourceSnippit().lastIndexOf(".") + 1);
+        String sessionType = javaTypeReference.getResolvedSourceSnippit().substring(javaTypeReference.getResolvedSourceSnippit().lastIndexOf(".") + 1);
 
         Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();

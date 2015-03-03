@@ -18,7 +18,20 @@ public interface JavaTypeReferenceModel extends FileLocationModel
 
     public static final String TYPE = "JavaTypeReference";
     public static final String REFERENCE_TYPE = "referenceType";
+    public static final String RESOLVED_SOURCE_SNIPPIT = "resolvedSourceSnippit";
 
+    /**
+     * Gets the snippit referenced by this {@link FileLocationModel}.
+     */
+    @Property(RESOLVED_SOURCE_SNIPPIT)
+    void setResolvedSourceSnippit(String source);
+
+    /**
+     * Sets the snippit referenced by this {@link FileLocationModel}.
+     */
+    @Property(RESOLVED_SOURCE_SNIPPIT)
+    String getResolvedSourceSnippit();
+    
     /**
      * Contains the {@link TypeReferenceLocation} location referred to by this {@link Vertex}.
      */
@@ -44,7 +57,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
         {
             TypeReferenceLocation location = getReferenceLocation();
 
-            return location.toReadablePrefix() + " '" + getSourceSnippit() + "'";
+            return location.toReadablePrefix() + " '" + getResolvedSourceSnippit() + "'";
         }
     }
 }

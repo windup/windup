@@ -53,7 +53,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * {@link GraphCondition} that matches Vertices in the graph based upon the provided parameters.
  */
 public class JavaClass extends ParameterizedGraphCondition implements JavaClassBuilder, JavaClassBuilderAt,
-            JavaClassBuilderInFile
+            JavaClassBuilderInFile, JavaClassBuilderLineMatch
 {
     private static final AtomicInteger numberCreated = new AtomicInteger(0);
 
@@ -61,6 +61,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     private List<TypeReferenceLocation> locations = Collections.emptyList();
 
     private RegexParameterizedPatternParser referencePattern;
+    private RegexParameterizedPatternParser lineMatchPattern;
     private RegexParameterizedPatternParser typeFilterPattern;
 
     private JavaClass(String referencePattern)
@@ -91,6 +92,12 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     public JavaClassBuilderInFile inType(String typeFilterPattern)
     {
         this.typeFilterPattern = new RegexParameterizedPatternParser(typeFilterPattern);
+        return this;
+    }
+
+    public JavaClassBuilderLineMatch matchesSource(String lineMatchRegex)
+    {
+        this.lineMatchPattern = new RegexParameterizedPatternParser(lineMatchRegex);
         return this;
     }
 
@@ -175,9 +182,13 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         final ParameterStore store = DefaultParameterStore.getInstance(context);
         final Pattern compiledPattern = referencePattern.getCompiledPattern(store);
 
-        query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX,
+        query.withProperty(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX,
                     compiledPattern.pattern());
-
+        if(lineMatchPattern !=null) {
+            final Pattern compiledLineMatchPattern = lineMatchPattern.getCompiledPattern(store);
+            query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX,
+                        compiledLineMatchPattern.pattern());
+        }
         String uuid = UUID.randomUUID().toString();
         query.as(uuid);
 
@@ -209,7 +220,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                     {
                         JavaTypeReferenceModel model = (JavaTypeReferenceModel) frame;
                         ParameterizedPatternResult referenceResult = referencePattern.parse(model
-                                    .getSourceSnippit());
+                                    .getResolvedSourceSnippit());
                         if (referenceResult.matches())
                         {
                             evaluationStrategy.modelMatched();
@@ -279,6 +290,8 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         Set<String> result = new HashSet<>(referencePattern.getRequiredParameterNames());
         if (typeFilterPattern != null)
             result.addAll(typeFilterPattern.getRequiredParameterNames());
+        if (lineMatchPattern != null)
+            result.addAll(lineMatchPattern.getRequiredParameterNames());
         return result;
     }
 
@@ -344,4 +357,5 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     {
         return typeFilterPattern;
     }
+    
 }

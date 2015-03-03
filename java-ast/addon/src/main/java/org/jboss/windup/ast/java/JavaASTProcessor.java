@@ -1,6 +1,10 @@
 package org.jboss.windup.ast.java;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,7 +85,6 @@ public class JavaASTProcessor extends ASTVisitor
      * Contains a map of class short names (eg, MyClass) to qualified names (eg, com.example.MyClass)
      */
     private final Map<String, String> classNameToFQCN = new HashMap<>();
-
     /**
      * Maintains a set of all variable names that have been resolved
      */
@@ -167,9 +170,9 @@ public class JavaASTProcessor extends ASTVisitor
             {
                 this.fqcn = packageName + "." + className;
             }
-
             this.javaClassReferences.addReference(new JavaClassReference(this.fqcn, TypeReferenceLocation.TYPE, cu.getLineNumber(typeDeclaration
-                        .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength()));
+                        .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), extractDefinitionLine(typeDeclaration
+                        .toString())));
 
             Type superclassType = typeDeclaration.getSuperclassType();
             ITypeBinding resolveBinding = null;
@@ -184,7 +187,8 @@ public class JavaASTProcessor extends ASTVisitor
                 {
                     this.javaClassReferences.addReference(new JavaClassReference(resolveBinding.getQualifiedName(), TypeReferenceLocation.TYPE, cu
                                 .getLineNumber(typeDeclaration
-                                            .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength()));
+                                            .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength(),
+                                extractDefinitionLine(typeDeclaration.toString())));
                 }
                 resolveBinding = resolveBinding.getSuperclass();
             }
@@ -200,66 +204,83 @@ public class JavaASTProcessor extends ASTVisitor
         cu.accept(this);
     }
 
+    private String extractDefinitionLine(String typeDeclaration)
+    {
+        String typeLine = "";
+        String[] lines = typeDeclaration.split("\n");
+        for (String line : lines)
+        {
+            typeLine = line;
+            if (line.contains("{"))
+            {
+                break;
+            }
+        }
+        return typeLine;
+    }
+
     public JavaClassReferences getJavaClassReferences()
     {
         return this.javaClassReferences;
     }
 
-    private void processConstructor(ConstructorType interest, int lineNumber, int columnNumber, int length)
+    private void processConstructor(ConstructorType interest, int lineNumber, int columnNumber, int length, String line)
     {
         String text = interest.toString();
-        this.javaClassReferences.addReference(new JavaClassReference(text, TypeReferenceLocation.CONSTRUCTOR_CALL, lineNumber, columnNumber, length));
+        this.javaClassReferences.addReference(new JavaClassReference(text, TypeReferenceLocation.CONSTRUCTOR_CALL, lineNumber, columnNumber, length,
+                    line));
     }
 
-    private void processMethod(MethodType interest, int lineNumber, int columnNumber, int length)
+    private void processMethod(MethodType interest, TypeReferenceLocation location, int lineNumber, int columnNumber, int length, String line)
     {
         String text = interest.toString();
-        this.javaClassReferences.addReference(new JavaClassReference(text, TypeReferenceLocation.METHOD_CALL, lineNumber, columnNumber, length));
+        this.javaClassReferences.addReference(new JavaClassReference(text, location, lineNumber, columnNumber, length, line));
     }
 
-    private void processImport(String interest, int lineNumber, int columnNumber, int length)
+    private void processImport(String interest, int lineNumber, int columnNumber, int length, String line)
     {
-        this.javaClassReferences.addReference(new JavaClassReference(interest, TypeReferenceLocation.IMPORT, lineNumber, columnNumber, length));
+        this.javaClassReferences.addReference(new JavaClassReference(interest, TypeReferenceLocation.IMPORT, lineNumber, columnNumber, length, line));
     }
 
     private JavaClassReference processTypeBinding(ITypeBinding type, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
-                int length)
+                int length, String line)
     {
         if (type == null)
             return null;
-
         String sourceString = type.getQualifiedName();
-        return processTypeAsString(sourceString, referenceLocation, lineNumber, columnNumber, length);
+        return processTypeAsString(sourceString, referenceLocation, lineNumber, columnNumber, length, line);
     }
 
     /**
      * The method determines if the type can be resolved and if not, will try to guess the qualified name using the information from the imports.
      */
-    private JavaClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length)
+    private JavaClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length,
+                String line)
     {
         if (type == null)
             return null;
+        
         ITypeBinding resolveBinding = type.resolveBinding();
         if (resolveBinding == null)
         {
             return processTypeAsString(resolveClassname(type.toString()), typeReferenceLocation, lineNumber,
-                        columnNumber, length);
+                        columnNumber, length, line);
         }
         else
         {
             return processTypeBinding(type.resolveBinding(), typeReferenceLocation, lineNumber,
-                        columnNumber, length);
+                        columnNumber, length, line);
         }
 
     }
 
     private JavaClassReference processTypeAsString(String sourceString, TypeReferenceLocation referenceLocation, int lineNumber,
-                int columnNumber, int length)
+                int columnNumber, int length, String line)
     {
         if (sourceString == null)
             return null;
-
-        JavaClassReference typeRef = new JavaClassReference(sourceString, referenceLocation, lineNumber, columnNumber, length);
+        line = line.replaceAll("(\\n)|(\\r)", "");
+        JavaClassReference typeRef = new JavaClassReference(sourceString, referenceLocation, lineNumber, columnNumber, length, line);
         this.javaClassReferences.addReference(typeRef);
         return typeRef;
     }
@@ -267,7 +288,7 @@ public class JavaASTProcessor extends ASTVisitor
     @Override
     public boolean visit(MethodDeclaration node)
     {
-        // get a method's return type.
+        //register method return type
         IMethodBinding resolveBinding = node.resolveBinding();
         ITypeBinding returnType = null;
         if (resolveBinding != null)
@@ -277,15 +298,16 @@ public class JavaASTProcessor extends ASTVisitor
         if (returnType != null)
         {
             processTypeBinding(returnType, TypeReferenceLocation.RETURN_TYPE, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
         }
         else
         {
             Type methodReturnType = node.getReturnType2();
             processType(methodReturnType, TypeReferenceLocation.RETURN_TYPE, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
         }
-
+        // register parameters and register them for next processing
+        List<String> qualifiedArguments = new ArrayList<String>();
         @SuppressWarnings("unchecked")
         List<SingleVariableDeclaration> parameters = (List<SingleVariableDeclaration>) node.parameters();
         if (parameters != null)
@@ -295,12 +317,13 @@ public class JavaASTProcessor extends ASTVisitor
                 this.names.add(type.getName().toString());
                 String typeName = type.getType().toString();
                 typeName = resolveClassname(typeName);
+                qualifiedArguments.add(typeName);
                 this.nameInstance.put(type.getName().toString(), typeName);
                 processType(type.getType(), TypeReferenceLocation.METHOD_PARAMETER, cu.getLineNumber(node.getStartPosition()),
-                            cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                            cu.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
             }
         }
-
+        // register thow declarations
         @SuppressWarnings("unchecked")
         List<Type> throwsTypes = node.thrownExceptionTypes();
         if (throwsTypes != null)
@@ -309,10 +332,14 @@ public class JavaASTProcessor extends ASTVisitor
             {
                 processType(type, TypeReferenceLocation.THROWS_METHOD_DECLARATION,
                             cu.getLineNumber(node.getStartPosition()),
-                            cu.getColumnNumber(type.getStartPosition()), type.getLength());
+                            cu.getColumnNumber(type.getStartPosition()), type.getLength(), extractDefinitionLine(node.toString()));
             }
         }
 
+        // register method declaration
+        MethodType methodCall = new MethodType(nameInstance.get("this"), node.getName().toString(), qualifiedArguments);
+        processMethod(methodCall, TypeReferenceLocation.METHOD, cu.getLineNumber(node.getName().getStartPosition()),
+                    cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), extractDefinitionLine(node.toString()));
         return super.visit(node);
     }
 
@@ -320,8 +347,8 @@ public class JavaASTProcessor extends ASTVisitor
     public boolean visit(InstanceofExpression node)
     {
         Type type = node.getRightOperand();
-        processTypeBinding(type.resolveBinding(), TypeReferenceLocation.INSTANCE_OF, cu.getLineNumber(node.getStartPosition()),
-                    cu.getColumnNumber(type.getStartPosition()), type.getLength());
+        processType(type, TypeReferenceLocation.INSTANCE_OF, cu.getLineNumber(node.getStartPosition()),
+                    cu.getColumnNumber(type.getStartPosition()), type.getLength(), node.toString());
 
         return super.visit(node);
     }
@@ -333,7 +360,7 @@ public class JavaASTProcessor extends ASTVisitor
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
             Type type = cic.getType();
             processType(type, TypeReferenceLocation.THROW_STATEMENT, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(cic.getStartPosition()), cic.getLength());
+                        cu.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
         }
 
         return super.visit(node);
@@ -343,7 +370,7 @@ public class JavaASTProcessor extends ASTVisitor
     {
         Type catchType = node.getException().getType();
         processType(catchType, TypeReferenceLocation.CATCH_EXCEPTION_STATEMENT, cu.getLineNumber(node.getStartPosition()),
-                    cu.getColumnNumber(catchType.getStartPosition()), catchType.getLength());
+                    cu.getColumnNumber(catchType.getStartPosition()), catchType.getLength(), node.toString());
 
         return super.visit(node);
     }
@@ -355,7 +382,7 @@ public class JavaASTProcessor extends ASTVisitor
         {
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
             processTypeBinding(cic.getType().resolveBinding(), TypeReferenceLocation.CONSTRUCTOR_CALL, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(cic.getStartPosition()), cic.getLength());
+                        cu.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
         }
         return super.visit(node);
     }
@@ -373,7 +400,7 @@ public class JavaASTProcessor extends ASTVisitor
             this.nameInstance.put(frag.getName().toString(), nodeType.toString());
 
             processTypeBinding(node.getType().resolveBinding(), TypeReferenceLocation.FIELD_DECLARATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         }
         return true;
     }
@@ -410,13 +437,13 @@ public class JavaASTProcessor extends ASTVisitor
         if (resolveTypeBinding != null)
         {
             processTypeBinding(resolveTypeBinding, TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(cu.getStartPosition()), cu.getLength());
+                        cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), node.toString());
         }
         else
         {
             String resolved = resolveClassname(node.getTypeName().toString());
             processTypeAsString(resolved, TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(cu.getStartPosition()), cu.getLength());
+                        cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), node.toString());
         }
 
         return super.visit(node);
@@ -431,7 +458,7 @@ public class JavaASTProcessor extends ASTVisitor
         {
             typeRef = processTypeBinding(node.resolveTypeBinding(), TypeReferenceLocation.ANNOTATION,
                         cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         }
         else
         {
@@ -439,7 +466,7 @@ public class JavaASTProcessor extends ASTVisitor
             String resolved = resolveClassname(name);
             typeRef = processTypeAsString(resolved, TypeReferenceLocation.ANNOTATION,
                         cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         }
         if (typeRef != null)
             // provide parameters of the annotation
@@ -455,14 +482,14 @@ public class JavaASTProcessor extends ASTVisitor
         if (resolveTypeBinding != null)
         {
             processTypeBinding(resolveTypeBinding, TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         }
         else
         {
             String name = node.getTypeName().toString();
             String resolved = resolveClassname(name);
             processTypeAsString(resolved, TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         }
 
         return super.visit(node);
@@ -491,7 +518,7 @@ public class JavaASTProcessor extends ASTVisitor
                             resolvedSuperInterface = stack.pop();
                             processTypeBinding(resolvedSuperInterface, TypeReferenceLocation.IMPLEMENTS_TYPE,
                                         cu.getLineNumber(node.getStartPosition()),
-                                        cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
                             if (resolvedSuperInterface != null)
                             {
                                 ITypeBinding[] interfaces = resolvedSuperInterface.getInterfaces();
@@ -514,7 +541,7 @@ public class JavaASTProcessor extends ASTVisitor
                 while (resolvedSuperClass != null && !resolvedSuperClass.getQualifiedName().equals("java.lang.Object"))
                 {
                     processTypeBinding(resolvedSuperClass, TypeReferenceLocation.INHERITANCE, cu.getLineNumber(node.getStartPosition()),
-                                cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                                cu.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
                     resolvedSuperClass = resolvedSuperClass.getSuperclass();
                 }
             }
@@ -539,7 +566,7 @@ public class JavaASTProcessor extends ASTVisitor
         }
         processType(node.getType(), TypeReferenceLocation.VARIABLE_DECLARATION,
                     cu.getLineNumber(node.getStartPosition()),
-                    cu.getColumnNumber(node.getStartPosition()), node.getLength());
+                    cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         return super.visit(node);
     }
 
@@ -555,7 +582,7 @@ public class JavaASTProcessor extends ASTVisitor
             for (String resolvedName : resolvedNames)
             {
                 processImport(resolvedName, cu.getLineNumber(node.getName().getStartPosition()),
-                            cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength());
+                            cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString());
             }
         }
         else
@@ -564,7 +591,7 @@ public class JavaASTProcessor extends ASTVisitor
             classNameLookedUp.add(clzName);
             classNameToFQCN.put(clzName, name);
             processImport(name, cu.getLineNumber(node.getName().getStartPosition()),
-                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength());
+                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString());
         }
 
         return super.visit(node);
@@ -660,8 +687,8 @@ public class JavaASTProcessor extends ASTVisitor
         for (String qualifiedInstance : qualifiedInstances)
         {
             MethodType methodCall = new MethodType(qualifiedInstance, node.getName().toString(), argumentsQualified);
-            processMethod(methodCall, cu.getLineNumber(node.getName().getStartPosition()),
-                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength());
+            processMethod(methodCall, TypeReferenceLocation.METHOD_CALL, cu.getLineNumber(node.getName().getStartPosition()),
+                        cu.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString());
         }
 
         return super.visit(node);
@@ -719,7 +746,7 @@ public class JavaASTProcessor extends ASTVisitor
 
         ConstructorType resolvedConstructor = new ConstructorType(qualifiedClass, constructorMethodQualifiedArguments);
         processConstructor(resolvedConstructor, cu.getLineNumber(node.getType().getStartPosition()),
-                    cu.getColumnNumber(node.getType().getStartPosition()), node.getType().getLength());
+                    cu.getColumnNumber(node.getType().getStartPosition()), node.getType().getLength(), node.toString());
 
         return super.visit(node);
     }
