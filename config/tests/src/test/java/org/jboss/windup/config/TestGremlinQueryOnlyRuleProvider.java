@@ -3,10 +3,10 @@ package org.jboss.windup.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
@@ -24,10 +24,10 @@ public class TestGremlinQueryOnlyRuleProvider extends AbstractRuleProvider
 {
     private final List<JavaMethodModel> results = new ArrayList<>();
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public TestGremlinQueryOnlyRuleProvider()
     {
-        return DiscoveryPhase.class;
+        super(MetadataBuilder.forProvider(TestGremlinQueryOnlyRuleProvider.class, "TestGremlinQueryOnlyRuleProvider")
+                    .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off
@@ -53,6 +53,7 @@ public class TestGremlinQueryOnlyRuleProvider extends AbstractRuleProvider
                         @Override
                         public boolean evaluate(Object first, Object second)
                         {
+                            @SuppressWarnings("unchecked")
                             List<String> firstString =(List<String>)first;
                             boolean match =firstString.contains(second);
                             return match;

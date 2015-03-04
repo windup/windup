@@ -74,10 +74,10 @@ public class XMLRuleProviderLoaderTest
             Assert.assertTrue(providers.size() == 1);
 
             AbstractRuleProvider provider = providers.get(0);
-            String id = provider.getID();
+            String id = provider.getMetadata().getID();
             Assert.assertEquals("testruleprovider", id);
-            Assert.assertEquals(DiscoveryPhase.class, provider.getPhase());
-            Assert.assertTrue(provider.getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
+            Assert.assertEquals(DiscoveryPhase.class, provider.getMetadata().getPhase());
+            Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
             List<Rule> rules = provider.getConfiguration(graphContext).getRules();
             Assert.assertEquals(4, rules.size());
 

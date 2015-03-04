@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -19,16 +19,16 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class TestIterationPayloadTestRuleProvider extends AbstractRuleProvider
 {
+    public TestIterationPayloadTestRuleProvider()
+    {
+        super(MetadataBuilder.forProvider(TestIterationPayloadTestRuleProvider.class)
+                    .setPhase(DiscoveryPhase.class));
+    }
+
     private Set<TestParentModel> parents = new HashSet<>();
     private Set<TestChildModel> children = new HashSet<>();
     private List<TestParentModel> allParents = new ArrayList<>();
     private List<TestChildModel> allChildren = new ArrayList<>();
-
-    @Override
-    public Class<? extends RulePhase> getPhase()
-    {
-        return DiscoveryPhase.class;
-    }
 
     public int getChildCount()
     {

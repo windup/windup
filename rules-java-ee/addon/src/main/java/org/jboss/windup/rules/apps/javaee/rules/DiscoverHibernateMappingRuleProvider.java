@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -44,10 +44,10 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
 
     private static final String hibernateRegex = "(?i).*hibernate.mapping.*";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverHibernateMappingRuleProvider()
     {
-        return InitialAnalysisPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverHibernateMappingRuleProvider.class)
+                    .setPhase(InitialAnalysisPhase.class));
     }
 
     @Override

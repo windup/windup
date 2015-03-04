@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.exception.ConfigurationException;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
@@ -16,6 +15,7 @@ import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilder;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderAt;
 import org.jboss.windup.util.exception.WindupException;
+import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
 
 /**
@@ -39,7 +39,6 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
     public static final String ELEM_NAME = "javaclass";
     private static final String ATTR_REFERENCES = "references";
 
-
     @Override
     public JavaClassBuilderAt processElement(ParserContext handlerManager, Element element)
                 throws ConfigurationException
@@ -60,13 +59,15 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
             locations.add(location);
         }
         JavaClassBuilder javaClassReferences;
-        if(from !=null) {
-            javaClassReferences=JavaClass.from(from).references(type);
-        } else {
+        if (from != null)
+        {
+            javaClassReferences = JavaClass.from(from).references(type);
+        }
+        else
+        {
             javaClassReferences = JavaClass.references(type);
         }
 
-       
         String namePattern = $(element).attr("in");
         if (!StringUtils.isBlank(namePattern))
         {
@@ -75,8 +76,9 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
 
         JavaClassBuilderAt javaClass = javaClassReferences.at(
                     locations.toArray(new TypeReferenceLocation[locations.size()]));
-        if(as !=null) {
-        	javaClass.as(as);
+        if (as != null)
+        {
+            javaClass.as(as);
         }
         return javaClass;
     }

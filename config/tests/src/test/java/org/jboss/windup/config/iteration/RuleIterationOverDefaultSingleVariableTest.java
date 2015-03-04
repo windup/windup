@@ -12,11 +12,12 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.Variables;
-import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
@@ -144,6 +145,11 @@ public class RuleIterationOverDefaultSingleVariableTest
 
     public class TestRuleIterationOverDefaultSingleVariableProvider extends AbstractRuleProvider
     {
+        public TestRuleIterationOverDefaultSingleVariableProvider()
+        {
+            super(MetadataBuilder.forProvider(TestRuleIterationOverDefaultSingleVariableProvider.class));
+        }
+
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -198,11 +204,17 @@ public class RuleIterationOverDefaultSingleVariableTest
                         );
             return configuration;
         }
+        // @formatter:on
 
     }
-    
+
     public class TestRuleIterationOverDefaultSingleVariableWithExceptionProvider extends AbstractRuleProvider
     {
+        public TestRuleIterationOverDefaultSingleVariableWithExceptionProvider()
+        {
+            super(MetadataBuilder.forProvider(TestRuleIterationOverDefaultSingleVariableWithExceptionProvider.class));
+        }
+
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -229,6 +241,7 @@ public class RuleIterationOverDefaultSingleVariableTest
                         );
             return configuration;
         }
+        // @formatter:on
 
     }
 

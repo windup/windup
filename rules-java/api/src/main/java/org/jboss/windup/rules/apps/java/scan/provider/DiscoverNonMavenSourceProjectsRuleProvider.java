@@ -1,12 +1,10 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.util.List;
-
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -24,16 +22,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProvider
 {
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverNonMavenSourceProjectsRuleProvider()
     {
-        return DiscoverProjectStructurePhase.class;
-    }
-
-    @Override
-    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DiscoverNonMavenArchiveProjectsRuleProvider.class);
+        super(MetadataBuilder.forProvider(DiscoverNonMavenSourceProjectsRuleProvider.class)
+                    .setPhase(DiscoverProjectStructurePhase.class)
+                    .addExecuteAfter(DiscoverNonMavenArchiveProjectsRuleProvider.class));
     }
 
     @Override
@@ -79,7 +72,8 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
                 }
                 else if (childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
                 {
-                    // if the child has a project, but the project doesn't have a parent, associate it with the root project
+                    // if the child has a project, but the project doesn't have a parent, associate it with the root
+                    // project
                     childFile.getProjectModel().setParentProject(projectModel);
                 }
                 addProjectToChildFiles(childFile, projectModel);

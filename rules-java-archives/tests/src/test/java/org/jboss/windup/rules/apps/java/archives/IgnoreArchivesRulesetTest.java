@@ -17,12 +17,11 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
-import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
@@ -36,7 +35,6 @@ import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
-import org.jboss.windup.rules.apps.java.scan.provider.DiscoverFilesAndTypesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -111,18 +109,15 @@ public class IgnoreArchivesRulesetTest
             config.setInputPath(INPUT_PATH);
             config.setOutputDirectory(OUTPUT_PATH);
             config.setOptionValue(OverwriteOption.NAME, true);
-            config.setRuleProviderFilter(new Predicate<AbstractRuleProvider>()
+            config.setRuleProviderFilter(new Predicate<RuleProvider>()
             {
-                private RuleProviderWithDependenciesPredicate discoverRuleDeps =
-                            new RuleProviderWithDependenciesPredicate(DiscoverFilesAndTypesRuleProvider.class);
-
                 @Override
-                public boolean accept(AbstractRuleProvider provider)
+                public boolean accept(RuleProvider provider)
                 {
-                    return !(provider.getPhase().isAssignableFrom(ReportGenerationPhase.class))
-                                && !(provider.getPhase().isAssignableFrom(ReportRenderingPhase.class))
-                                && !(provider.getPhase().isAssignableFrom(DecompilationPhase.class))
-                                && !(provider.getPhase().isAssignableFrom(MigrationRulesPhase.class));
+                    return !(provider.getMetadata().getPhase().isAssignableFrom(ReportGenerationPhase.class))
+                                && !(provider.getMetadata().getPhase().isAssignableFrom(ReportRenderingPhase.class))
+                                && !(provider.getMetadata().getPhase().isAssignableFrom(DecompilationPhase.class))
+                                && !(provider.getMetadata().getPhase().isAssignableFrom(MigrationRulesPhase.class));
                 }
             });
 

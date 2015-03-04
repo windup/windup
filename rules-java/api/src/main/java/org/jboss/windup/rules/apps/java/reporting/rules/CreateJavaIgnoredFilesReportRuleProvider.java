@@ -3,11 +3,11 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -35,10 +35,10 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     public static final String TITLE = "Ignored Files";
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public CreateJavaIgnoredFilesReportRuleProvider()
     {
-        return ReportGenerationPhase.class;
+        super(MetadataBuilder.forProvider(CreateJavaIgnoredFilesReportRuleProvider.class)
+                    .setPhase(ReportGenerationPhase.class));
     }
 
     // @formatter:off

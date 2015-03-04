@@ -17,7 +17,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -87,12 +87,12 @@ public class GatherIgnoredFilesTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<AbstractRuleProvider> predicate = new Predicate<AbstractRuleProvider>()
+            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
             {
                 @Override
-                public boolean accept(AbstractRuleProvider provider)
+                public boolean accept(RuleProvider provider)
                 {
-                    return provider.getPhase() != ReportGenerationPhase.class;
+                    return provider.getMetadata().getPhase() != ReportGenerationPhase.class;
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()

@@ -19,9 +19,8 @@ import java.util.regex.PatternSyntaxException;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitializationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -34,7 +33,8 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Read and add all the ignore regexes (when a file matches the regex, it will not be scanned by windup) that are present in the windup runtime.
+ * Read and add all the ignore regexes (when a file matches the regex, it will not be scanned by windup) that are
+ * present in the windup runtime.
  * 
  * @author mbriskar
  *
@@ -45,15 +45,11 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
     private final String IGNORE_FILE_EXTENSION = "windup-ignore.txt";
     private static final Logger log = Logger.getLogger(GatherIgnoredFileNamesRuleProvider.class.getName());
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public GatherIgnoredFileNamesRuleProvider()
     {
-        return InitializationPhase.class;
-    }
-
-    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(CopyJavaConfigToGraphRuleProvider.class);
+        super(MetadataBuilder.forProvider(GatherIgnoredFileNamesRuleProvider.class)
+                    .setPhase(InitializationPhase.class)
+                    .addExecuteAfter(CopyJavaConfigToGraphRuleProvider.class));
     }
 
     @Override

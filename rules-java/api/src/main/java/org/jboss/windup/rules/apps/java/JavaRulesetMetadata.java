@@ -1,6 +1,9 @@
 package org.jboss.windup.rules.apps.java;
 
-import org.jboss.windup.config.metadata.RulesetMetadata;
+import javax.inject.Inject;
+
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.windup.config.metadata.AbstractRulesetMetadata;
 
 /**
  * MetadataBuilder for the Java Rules addon.
@@ -8,12 +11,18 @@ import org.jboss.windup.config.metadata.RulesetMetadata;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class JavaRulesetMetadata implements RulesetMetadata
+public class JavaRulesetMetadata extends AbstractRulesetMetadata
 {
     public static final String RULE_SET_ID = "CoreJavaRules";
 
+    @Inject
+    public JavaRulesetMetadata(Addon addon)
+    {
+        super(addon);
+    }
+
     @Override
-    public String getRuleSetID()
+    public String getID()
     {
         return RULE_SET_ID;
     }

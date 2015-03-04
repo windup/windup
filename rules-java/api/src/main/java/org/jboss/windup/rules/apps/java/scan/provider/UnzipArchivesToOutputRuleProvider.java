@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.phase.ArchiveExtractionPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -21,10 +21,10 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  */
 public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
 {
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public UnzipArchivesToOutputRuleProvider()
     {
-        return ArchiveExtractionPhase.class;
+        super(MetadataBuilder.forProvider(UnzipArchivesToOutputRuleProvider.class)
+                    .setPhase(ArchiveExtractionPhase.class));
     }
 
     @Override

@@ -2,8 +2,8 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -26,10 +26,10 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     private static final String TECH_TAG = "Properties";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverPropertiesFilesRuleProvider()
     {
-        return ClassifyFileTypesPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverPropertiesFilesRuleProvider.class)
+                    .setPhase(ClassifyFileTypesPhase.class));
     }
 
     @Override

@@ -3,9 +3,9 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import javax.inject.Inject;
 
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphTypeManager;
@@ -19,10 +19,10 @@ public class DiscoverArchiveTypesRuleProvider extends AbstractRuleProvider
     @Inject
     private GraphTypeManager graphTypeManager;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverArchiveTypesRuleProvider()
     {
-        return ArchiveMetadataExtractionPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverArchiveTypesRuleProvider.class)
+                    .setPhase(ArchiveMetadataExtractionPhase.class));
     }
 
     // @formatter:off

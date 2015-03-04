@@ -45,9 +45,9 @@ public class RuleProviderHandler implements ElementHandler<Void>
             switch ($(child).tag())
             {
             case "execute-after":
-                builder.getExecuteAfterIDs().add(result.toString());
+                builder.getMetadata().getExecuteAfterIDs().add(result.toString());
             case "execute-before":
-                builder.getExecuteBeforeIDs().add(result.toString());
+                builder.getMetadata().getExecuteBeforeIDs().add(result.toString());
             }
         }
         context.addRuleProvider(builder);

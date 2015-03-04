@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.java.ip;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.files.condition.FileContent;
@@ -20,10 +20,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
 {
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverStaticIPAddressRuleProvider()
     {
-        return MigrationRulesPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverStaticIPAddressRuleProvider.class)
+                    .setPhase(MigrationRulesPhase.class));
     }
 
     @Override
@@ -42,7 +42,8 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                         // in the static ip report.
                         public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
                         {
-                            // for all file location models that match the regular expression in the where clause, add the IP Location Model to the
+                            // for all file location models that match the regular expression in the where clause, add
+                            // the IP Location Model to the
                             // graph
                             StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
                                         StaticIPLocationModel.class);

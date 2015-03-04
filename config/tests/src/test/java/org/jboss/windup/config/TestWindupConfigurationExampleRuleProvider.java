@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -42,10 +42,10 @@ public class TestWindupConfigurationExampleRuleProvider extends AbstractRuleProv
 
     private WindupConfigurationModel config;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public TestWindupConfigurationExampleRuleProvider()
     {
-        return DiscoveryPhase.class;
+        super(MetadataBuilder.forProvider(TestWindupConfigurationExampleRuleProvider.class, "TestWindupConfigurationExampleRuleProvider")
+                    .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off

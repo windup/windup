@@ -11,12 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
@@ -34,10 +34,10 @@ public class TestXmlExampleRuleProvider1 extends AbstractRuleProvider
     final Set<String> xmlRootNames = new HashSet<>();
     private final Set<String> excludedXmlRootNames = new HashSet<>();
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public TestXmlExampleRuleProvider1()
     {
-        return DiscoveryPhase.class;
+        super(MetadataBuilder.forProvider(TestXmlExampleRuleProvider1.class, "TestXmlExampleRuleProvider1")
+                    .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off

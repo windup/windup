@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -53,10 +53,10 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverEjbConfigurationXmlRuleProvider()
     {
-        return InitialAnalysisPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverEjbConfigurationXmlRuleProvider.class)
+                    .setPhase(InitialAnalysisPhase.class));
     }
 
     @Override

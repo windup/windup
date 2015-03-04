@@ -14,9 +14,9 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.WindupRuleLoader;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
@@ -60,16 +60,15 @@ public class WindupRuleLoaderTest
     {
         try (GraphContext context = factory.create())
         {
-            Predicate<AbstractRuleProvider> predicate = new Predicate<AbstractRuleProvider>()
+            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
             {
                 @Override
-                public boolean accept(AbstractRuleProvider arg0)
+                public boolean accept(RuleProvider provider)
                 {
-                    return arg0.getPhase() == MigrationRulesPhase.class;
+                    return provider.getMetadata().getPhase() == MigrationRulesPhase.class;
                 }
             };
 
-            GraphRewrite event = new GraphRewrite(context);
             Configuration configuration1 = loader.loadConfiguration(context, predicate).getConfiguration();
             boolean found1 = false;
             boolean found2 = false;
@@ -92,13 +91,17 @@ public class WindupRuleLoaderTest
     @Singleton
     public static class TestRuleProvider1Phase extends AbstractRuleProvider
     {
+        public TestRuleProvider1Phase()
+        {
+            super(MetadataBuilder.forProvider(TestRuleProvider1Phase.class, "TestRuleProvider1Phase"));
+        }
+
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()
                         .addRule(new Rule()
                         {
-
                             @Override
                             public void perform(Rewrite event, EvaluationContext context)
                             {
@@ -116,17 +119,16 @@ public class WindupRuleLoaderTest
                                 return TestRuleProvider1Phase.class.getSimpleName();
                             }
                         });
-
         }
     }
 
     @Singleton
     public static class TestRuleProvider2Phase extends AbstractRuleProvider
     {
-        @Override
-        public Class<? extends RulePhase> getPhase()
+        public TestRuleProvider2Phase()
         {
-            return ArchiveExtractionPhase.class;
+            super(MetadataBuilder.forProvider(TestRuleProvider2Phase.class, "TestRuleProvider2Phase")
+                        .setPhase(ArchiveExtractionPhase.class));
         }
 
         @Override
@@ -135,7 +137,6 @@ public class WindupRuleLoaderTest
             return ConfigurationBuilder.begin()
                         .addRule(new Rule()
                         {
-
                             @Override
                             public void perform(Rewrite event, EvaluationContext context)
                             {
@@ -153,7 +154,6 @@ public class WindupRuleLoaderTest
                                 return TestRuleProvider2Phase.class.getSimpleName();
                             }
                         });
-
         }
     }
 }

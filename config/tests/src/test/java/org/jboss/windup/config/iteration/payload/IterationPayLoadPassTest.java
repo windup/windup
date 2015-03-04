@@ -12,12 +12,13 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.iteration.TestSimple1Model;
 import org.jboss.windup.config.iteration.TestSimple2Model;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
@@ -83,7 +84,7 @@ public class IterationPayLoadPassTest
         try (final GraphContext context = factory.create(folder))
         {
 
-            TestPayloadModel vertex = context.getFramed().addVertex(null, TestPayloadModel.class);
+            context.getFramed().addVertex(null, TestPayloadModel.class);
             context.getFramed().addVertex(null, TestPayloadModel.class);
             context.getFramed().addVertex(null, TestPayloadModel.class);
 
@@ -111,7 +112,7 @@ public class IterationPayLoadPassTest
         try (final GraphContext context = factory.create(folder))
         {
 
-            TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
+            context.getFramed().addVertex(null, TestSimple1Model.class);
             context.getFramed().addVertex(null, TestSimple2Model.class);
             context.getFramed().addVertex(null, TestSimple2Model.class);
 
@@ -134,6 +135,11 @@ public class IterationPayLoadPassTest
 
     public class TestIterationPayLoadPassProvider extends AbstractRuleProvider
     {
+        public TestIterationPayLoadPassProvider()
+        {
+            super(MetadataBuilder.forProvider(TestIterationPayLoadPassProvider.class));
+        }
+
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -157,11 +163,17 @@ public class IterationPayLoadPassTest
                         );
             return configuration;
         }
+        // @formatter:on
 
     }
 
     public class TestIterationPayLoadNotPassProvider extends AbstractRuleProvider
     {
+        public TestIterationPayLoadNotPassProvider()
+        {
+            super(MetadataBuilder.forProvider(TestIterationPayLoadNotPassProvider.class));
+        }
+
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -191,6 +203,7 @@ public class IterationPayLoadPassTest
                         );
             return configuration;
         }
+        // @formatter:on
 
     }
 

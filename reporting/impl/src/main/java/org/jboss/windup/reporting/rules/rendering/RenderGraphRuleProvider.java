@@ -4,11 +4,11 @@ import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostReportRenderingPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.renderer.GraphRenderer;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -28,10 +28,10 @@ public class RenderGraphRuleProvider extends AbstractRuleProvider
     @Inject
     private Imported<GraphRenderer> renderers;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public RenderGraphRuleProvider()
     {
-        return PostReportRenderingPhase.class;
+        super(MetadataBuilder.forProvider(RenderGraphRuleProvider.class)
+                    .setPhase(PostReportRenderingPhase.class));
     }
 
     @Override

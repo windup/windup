@@ -23,14 +23,15 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -107,13 +108,13 @@ public class XMLFileNestedConditionTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<AbstractRuleProvider> predicate = new Predicate<AbstractRuleProvider>()
+            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
             {
                 @Override
-                public boolean accept(AbstractRuleProvider provider)
+                public boolean accept(RuleProvider provider)
                 {
-                    return (provider.getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getPhase() != MigrationRulesPhase.class);
+                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
+                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -147,10 +148,9 @@ public class XMLFileNestedConditionTest
     {
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
-        @Override
-        public Class<? extends RulePhase> getPhase()
+        public TestXMLNestedXmlFileRuleProvider()
         {
-            return PostMigrationRulesPhase.class;
+            super(MetadataBuilder.forProvider(TestXMLNestedXmlFileRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
         }
 
         // @formatter:off

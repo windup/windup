@@ -12,10 +12,11 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
@@ -150,6 +151,11 @@ public class RuleIterationOverTypesTest
 
     public class TestRuleIterationOverTypesProvider extends AbstractRuleProvider
     {
+        public TestRuleIterationOverTypesProvider()
+        {
+            super(MetadataBuilder.forProvider(TestRuleIterationOverTypesProvider.class));
+        }
+
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -185,11 +191,17 @@ public class RuleIterationOverTypesTest
             );
             return configuration;
         }
+        // @formatter:on
 
     }
-    
+
     public class TestRuleIterationOverTypesWithExceptionProvider extends AbstractRuleProvider
     {
+        public TestRuleIterationOverTypesWithExceptionProvider()
+        {
+            super(MetadataBuilder.forProvider(TestRuleIterationOverTypesWithExceptionProvider.class));
+        }
+
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -210,6 +222,7 @@ public class RuleIterationOverTypesTest
             );
             return configuration;
         }
+        // @formatter:on
 
     }
 

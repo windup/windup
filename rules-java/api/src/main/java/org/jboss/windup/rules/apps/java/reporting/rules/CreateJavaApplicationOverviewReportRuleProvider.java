@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -25,10 +25,10 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
     public static final String OVERVIEW = "Overview";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public CreateJavaApplicationOverviewReportRuleProvider()
     {
-        return ReportGenerationPhase.class;
+        super(MetadataBuilder.forProvider(CreateJavaApplicationOverviewReportRuleProvider.class)
+                    .setPhase(ReportGenerationPhase.class));
     }
 
     // @formatter:off

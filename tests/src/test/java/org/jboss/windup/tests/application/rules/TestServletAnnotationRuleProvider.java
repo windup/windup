@@ -20,7 +20,7 @@ public class TestServletAnnotationRuleProvider extends AbstractRuleProvider
 {
     public TestServletAnnotationRuleProvider()
     {
-        super(MetadataBuilder.forProvider(TestServletAnnotationRuleProvider.class, "TSARP"));
+        super(MetadataBuilder.forProvider(TestServletAnnotationRuleProvider.class));
     }
 
     @Override

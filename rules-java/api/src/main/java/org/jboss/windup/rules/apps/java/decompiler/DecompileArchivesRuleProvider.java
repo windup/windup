@@ -1,12 +1,12 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.Log;
 import org.jboss.windup.config.phase.DecompilationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
@@ -24,10 +24,11 @@ import com.tinkerpop.pipes.PipeFunction;
 
 public class DecompileArchivesRuleProvider extends AbstractRuleProvider
 {
-    @Override
-    public Class<? extends RulePhase> getPhase()
+
+    public DecompileArchivesRuleProvider()
     {
-        return DecompilationPhase.class;
+        super(MetadataBuilder.forProvider(DecompileArchivesRuleProvider.class)
+                    .setPhase(DecompilationPhase.class));
     }
 
     // @formatter:off
@@ -49,8 +50,8 @@ public class DecompileArchivesRuleProvider extends AbstractRuleProvider
     // @formatter:on
 
     /**
-     * A Gremlin criterion that only passes along Vertices with Java Classes that appear to be interesting (in the package list that we are interested
-     * in).
+     * A Gremlin criterion that only passes along Vertices with Java Classes that appear to be interesting (in the
+     * package list that we are interested in).
      */
     private class ShouldDecompileCriterion implements QueryGremlinCriterion
     {

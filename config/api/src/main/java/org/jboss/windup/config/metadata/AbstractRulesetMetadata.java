@@ -8,7 +8,6 @@ import org.jboss.forge.furnace.addons.Addon;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class AbstractRulesetMetadata extends AbstractMetadata
-
 {
     /**
      * Construct a new {@link AbstractRulesetMetadata} instance.

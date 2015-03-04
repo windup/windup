@@ -3,14 +3,14 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -23,22 +23,18 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for them.
+ * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for
+ * them.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRuleProvider
 {
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverNonMavenArchiveProjectsRuleProvider()
     {
-        return DiscoverProjectStructurePhase.class;
-    }
-
-    @Override
-    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DiscoverMavenProjectsRuleProvider.class);
+        super(MetadataBuilder.forProvider(DiscoverNonMavenArchiveProjectsRuleProvider.class)
+                    .setPhase(DiscoverProjectStructurePhase.class)
+                    .addExecuteAfter(DiscoverMavenProjectsRuleProvider.class));
     }
 
     @Override

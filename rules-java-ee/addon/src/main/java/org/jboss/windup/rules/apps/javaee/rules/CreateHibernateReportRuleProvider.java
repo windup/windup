@@ -3,11 +3,11 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -38,10 +38,10 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_HIBERNATE_REPORT = "/reports/templates/hibernate.ftl";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public CreateHibernateReportRuleProvider()
     {
-        return ReportGenerationPhase.class;
+        super(MetadataBuilder.forProvider(CreateHibernateReportRuleProvider.class, "Create Hibernate Report")
+                    .setPhase(ReportGenerationPhase.class));
     }
 
     @Override

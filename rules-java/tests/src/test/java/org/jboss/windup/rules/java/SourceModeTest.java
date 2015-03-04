@@ -16,8 +16,9 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
@@ -159,6 +160,10 @@ public class SourceModeTest
     @Singleton
     public static class SourceModeTestRuleProvider extends AbstractRuleProvider
     {
+        public SourceModeTestRuleProvider()
+        {
+            super(MetadataBuilder.forProvider(SourceModeTestRuleProvider.class));
+        }
 
         // @formatter:off
         @Override

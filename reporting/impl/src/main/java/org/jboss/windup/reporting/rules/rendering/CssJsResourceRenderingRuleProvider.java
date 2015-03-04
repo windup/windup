@@ -24,11 +24,11 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -39,17 +39,16 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
 {
+    public CssJsResourceRenderingRuleProvider()
+    {
+        super(MetadataBuilder.forProvider(CssJsResourceRenderingRuleProvider.class)
+                    .setPhase(ReportRenderingPhase.class));
+    }
 
     @Inject
     private Addon addon;
     @Inject
     private Furnace furnace;
-
-    @Override
-    public Class<? extends RulePhase> getPhase()
-    {
-        return ReportRenderingPhase.class;
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

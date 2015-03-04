@@ -1,20 +1,20 @@
 package org.jboss.windup.reporting.rules.rendering;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.PostFinalizePhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.config.Rule;
 
 /**
- * Renders a report of all {@link AbstractRuleProvider}s that were loaded by Windup, as well as the results of each {@link Rule} execution.
+ * Renders a report of all {@link AbstractRuleProvider}s that were loaded by Windup, as well as the results of each
+ * {@link Rule} execution.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  *
@@ -27,16 +27,11 @@ public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider
     @Inject
     private Furnace furnace;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public RenderRuleProviderReportRuleProvider()
     {
-        return PostFinalizePhase.class;
-    }
-
-    @Override
-    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(ExecutionTimeReportRuleProvider.class);
+        super(MetadataBuilder.forProvider(RenderRuleProviderReportRuleProvider.class)
+                    .setPhase(PostFinalizePhase.class)
+                    .addExecuteAfter(ExecutionTimeReportRuleProvider.class));
     }
 
     @Override

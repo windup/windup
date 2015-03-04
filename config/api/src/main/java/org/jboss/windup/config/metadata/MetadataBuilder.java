@@ -33,6 +33,16 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     }
 
     /**
+     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link Addon} and {@link RuleProvider}
+     * type, using the provided parameters to seed sensible defaults.
+     */
+    public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType)
+    {
+        Assert.notNull(implementationType, "Rule provider Implementation type must not be null.");
+        return new MetadataBuilder(implementationType, implementationType.getSimpleName());
+    }
+
+    /**
      * Create a new {@link RuleProviderMetadata} builder instance for the given {@link Addon}, {@link RuleProvider}
      * type, and {@link String} ID, using the provided parameters to seed sensible defaults.
      */

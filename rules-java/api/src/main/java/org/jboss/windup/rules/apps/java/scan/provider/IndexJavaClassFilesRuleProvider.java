@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -18,10 +18,10 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  */
 public class IndexJavaClassFilesRuleProvider extends AbstractRuleProvider
 {
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public IndexJavaClassFilesRuleProvider()
     {
-        return ClassifyFileTypesPhase.class;
+        super(MetadataBuilder.forProvider(IndexJavaClassFilesRuleProvider.class)
+                    .setPhase(ClassifyFileTypesPhase.class));
     }
 
     // @formatter:off

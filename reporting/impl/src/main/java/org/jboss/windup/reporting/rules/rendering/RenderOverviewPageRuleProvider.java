@@ -4,8 +4,8 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
@@ -29,10 +29,10 @@ public class RenderOverviewPageRuleProvider extends AbstractRuleProvider
     @Inject
     private Furnace furnace;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public RenderOverviewPageRuleProvider()
     {
-        return ReportRenderingPhase.class;
+        super(MetadataBuilder.forProvider(RenderOverviewPageRuleProvider.class)
+                    .setPhase(ReportRenderingPhase.class));
     }
 
     // @formatter:off

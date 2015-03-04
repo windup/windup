@@ -17,11 +17,11 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -140,10 +140,10 @@ public class OverviewReportLineTest
 
         private int matchCount;
 
-        @Override
-        public Class<? extends RulePhase> getPhase()
+        public TestProjectProvider()
         {
-            return PostMigrationRulesPhase.class;
+            super(MetadataBuilder.forProvider(TestProjectProvider.class)
+                        .setPhase(PostMigrationRulesPhase.class));
         }
 
         public void addMatchCount()

@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -46,10 +46,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         namespaces.put("pom", "http://maven.apache.org/POM/4.0.0");
     }
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverMavenProjectsRuleProvider()
     {
-        return DiscoverProjectStructurePhase.class;
+        super(MetadataBuilder.forProvider(DiscoverMavenProjectsRuleProvider.class)
+                    .setPhase(DiscoverProjectStructurePhase.class));
     }
 
     @Override
@@ -124,8 +124,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     }
 
     /**
-     * This method is here so that the caller can know not to try to reset the project model for an archive (or directory) if the archive (or
-     * directory) is already a maven project.
+     * This method is here so that the caller can know not to try to reset the project model for an archive (or
+     * directory) if the archive (or directory) is already a maven project.
      * 
      * This can sometimes help in cases in which an archive includes multiple poms in its META-INF.
      */
@@ -324,7 +324,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     {
         if (StringUtils.startsWith(property, "${"))
         {
-            // is property...
             String propertyName = StringUtils.removeStart(property, "${");
             propertyName = StringUtils.removeEnd(propertyName, "}");
 

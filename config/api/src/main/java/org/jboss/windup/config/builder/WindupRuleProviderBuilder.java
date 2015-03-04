@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
@@ -36,9 +35,9 @@ public final class WindupRuleProviderBuilder extends AbstractRuleProvider implem
     /**
      * Begin creating a new dynamic {@link AbstractRuleProvider}.
      */
-    public static WindupRuleProviderBuilder begin(Class<? extends RuleProvider> implementationType, String id)
+    public static WindupRuleProviderBuilder begin(String id)
     {
-        MetadataBuilder builder = MetadataBuilder.forProvider(implementationType, id);
+        MetadataBuilder builder = MetadataBuilder.forProvider(WindupRuleProviderBuilder.class, id);
         return new WindupRuleProviderBuilder(builder).setMetadataBuilder(builder);
     }
 

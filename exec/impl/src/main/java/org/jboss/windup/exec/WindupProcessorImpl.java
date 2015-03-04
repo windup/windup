@@ -85,11 +85,11 @@ public class WindupProcessorImpl implements WindupProcessor
 
         final GraphRewrite event = new GraphRewrite(context);
 
-        LoadedRules ruleMetadata = windupConfigurationLoader.loadConfiguration(context,
+        LoadedRules loadedRules = windupConfigurationLoader.loadConfiguration(context,
                     windupConfiguration.getRuleProviderFilter());
-        event.getRewriteContext().put(LoadedRules.class, ruleMetadata);
+        event.getRewriteContext().put(LoadedRules.class, loadedRules);
 
-        Configuration rules = ruleMetadata.getConfiguration();
+        Configuration rules = loadedRules.getConfiguration();
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
         if (windupConfiguration.getProgressMonitor() != null)

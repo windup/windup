@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Visitor;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
 import org.jboss.windup.util.Logging;
@@ -30,10 +30,10 @@ public class IgnoredArchivesConfigLoadingRuleProvider extends AbstractRuleProvid
 {
     private static final Logger log = Logging.get(IgnoredArchivesConfigLoadingRuleProvider.class);
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public IgnoredArchivesConfigLoadingRuleProvider()
     {
-        return InitializationPhase.class;
+        super(MetadataBuilder.forProvider(IgnoredArchivesConfigLoadingRuleProvider.class)
+                    .setPhase(InitializationPhase.class));
     }
 
     @Override

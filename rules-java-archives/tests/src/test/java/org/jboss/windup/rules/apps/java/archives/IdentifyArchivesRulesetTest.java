@@ -17,7 +17,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -99,16 +99,16 @@ public class IdentifyArchivesRulesetTest
             wc.setInputPath(INPUT_PATH);
             wc.setOutputDirectory(OUTPUT_PATH);
             wc.setOptionValue(OverwriteOption.NAME, true);
-            wc.setRuleProviderFilter(new Predicate<AbstractRuleProvider>()
+            wc.setRuleProviderFilter(new Predicate<RuleProvider>()
             {
                 @Override
-                public boolean accept(AbstractRuleProvider type)
+                public boolean accept(RuleProvider type)
                 {
-                    return !(type.getPhase().isAssignableFrom(ReportGenerationPhase.class))
-                                && !(type.getPhase().isAssignableFrom(ReportRenderingPhase.class))
-                                && !(type.getPhase().isAssignableFrom(DecompilationPhase.class))
-                                && !(type.getPhase().isAssignableFrom(ArchiveExtractionPhase.class))
-                                && !(type.getPhase().isAssignableFrom(MigrationRulesPhase.class));
+                    return !(type.getMetadata().getPhase().isAssignableFrom(ReportGenerationPhase.class))
+                                && !(type.getMetadata().getPhase().isAssignableFrom(ReportRenderingPhase.class))
+                                && !(type.getMetadata().getPhase().isAssignableFrom(DecompilationPhase.class))
+                                && !(type.getMetadata().getPhase().isAssignableFrom(ArchiveExtractionPhase.class))
+                                && !(type.getMetadata().getPhase().isAssignableFrom(MigrationRulesPhase.class));
                 }
             });
 

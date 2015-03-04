@@ -20,7 +20,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
@@ -117,21 +117,21 @@ public class GroovyExtensionJavaRulesTest
 
             try
             {
-                Predicate<AbstractRuleProvider> predicate = new Predicate<AbstractRuleProvider>()
+                Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
                 {
 
                     @Override
-                    public boolean accept(AbstractRuleProvider provider)
+                    public boolean accept(RuleProvider provider)
                     {
-                        if (provider.getPhase().equals(MigrationRulesPhase.class))
+                        if (provider.getMetadata().getPhase().equals(MigrationRulesPhase.class))
                         {
                             return false;
                         }
-                        if (provider.getPhase().equals(ReportGenerationPhase.class))
+                        if (provider.getMetadata().getPhase().equals(ReportGenerationPhase.class))
                         {
                             return false;
                         }
-                        if (provider.getPhase().equals(ReportRenderingPhase.class))
+                        if (provider.getMetadata().getPhase().equals(ReportRenderingPhase.class))
                         {
                             return false;
                         }

@@ -24,9 +24,10 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -85,9 +86,6 @@ public class XMLTransformationTest
     @Inject
     private GraphContextFactory factory;
 
-    @Inject
-    private TestXMLTransformationRuleProvider provider;
-
     @Test
     public void testXSLTTransformation() throws IOException
     {
@@ -110,12 +108,12 @@ public class XMLTransformationTest
                         XsltTransformationModel.class);
             Assert.assertFalse(transformationService.findAll().iterator().hasNext());
 
-            Predicate<AbstractRuleProvider> predicate = new Predicate<AbstractRuleProvider>()
+            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
             {
                 @Override
-                public boolean accept(AbstractRuleProvider provider)
+                public boolean accept(RuleProvider provider)
                 {
-                    return provider.getPhase() != ReportGenerationPhase.class;
+                    return provider.getMetadata().getPhase() != ReportGenerationPhase.class;
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -157,10 +155,9 @@ public class XMLTransformationTest
 
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
-        @Override
-        public Class<? extends RulePhase> getPhase()
+        public TestXMLTransformationRuleProvider()
         {
-            return PostMigrationRulesPhase.class;
+            super(MetadataBuilder.forProvider(TestXMLTransformationRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
         }
 
         // @formatter:off

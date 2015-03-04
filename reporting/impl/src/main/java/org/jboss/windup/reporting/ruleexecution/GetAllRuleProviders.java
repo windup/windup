@@ -2,8 +2,9 @@ package org.jboss.windup.reporting.ruleexecution;
 
 import java.util.List;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.LoadedRules;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -48,7 +49,7 @@ public class GetAllRuleProviders implements WindupFreeMarkerMethod
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);
-        List<AbstractRuleProvider> result = LoadedRules.instance(this.event).getProviders();
+        List<RuleProvider> result = LoadedRules.instance(this.event).getProviders();
         ExecutionStatistics.get().end(NAME);
         return result;
     }

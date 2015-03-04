@@ -3,12 +3,12 @@ package org.jboss.windup.reporting.rules.rendering;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerIterationOperation;
@@ -29,10 +29,10 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
     @Inject
     private Furnace furnace;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public RenderReportRuleProvider()
     {
-        return ReportRenderingPhase.class;
+        super(MetadataBuilder.forProvider(RenderReportRuleProvider.class)
+                    .setPhase(ReportRenderingPhase.class));
     }
 
     // @formatter:off
