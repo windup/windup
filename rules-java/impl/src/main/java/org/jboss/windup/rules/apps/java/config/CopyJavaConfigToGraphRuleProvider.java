@@ -11,7 +11,7 @@ import org.apache.commons.io.LineIterator;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -31,7 +31,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Copies configuration data from {@link GraphContext#getOptionMap()} to the graph itself for easy use by other {@link Rule}s.
  *
  */
-public class CopyJavaConfigToGraphRuleProvider extends WindupRuleProvider
+public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()

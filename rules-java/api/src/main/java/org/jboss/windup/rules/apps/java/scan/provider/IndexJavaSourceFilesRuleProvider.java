@@ -17,7 +17,7 @@ import org.jboss.forge.roaster.model.Extendable;
 import org.jboss.forge.roaster.model.InterfaceCapable;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -46,7 +46,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public class IndexJavaSourceFilesRuleProvider extends WindupRuleProvider
+public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logging.get(IndexJavaSourceFilesRuleProvider.class);
 

@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 
 import org.jboss.tattletale.Main;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -16,7 +16,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class TattletaleRuleProvider extends WindupRuleProvider
+public class TattletaleRuleProvider extends AbstractRuleProvider
 {
     private static final String TATTLETALE_REPORT_SUBDIR = "tattletale";
 

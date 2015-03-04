@@ -1,9 +1,5 @@
 package org.jboss.windup.config.phase;
 
-import java.util.List;
-
-import org.jboss.windup.config.WindupRuleProvider;
-
 /**
  * Previous: {@link InitializationPhase}<br/>
  * Next: {@link ArchiveExtractionPhase}
@@ -17,10 +13,20 @@ import org.jboss.windup.config.WindupRuleProvider;
  */
 public class DiscoveryPhase extends RulePhase
 {
+    public DiscoveryPhase()
+    {
+        super(DiscoveryPhase.class);
+    }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public Class<? extends RulePhase> getExecuteAfter()
     {
-        return asClassList(InitializationPhase.class);
+        return InitializationPhase.class;
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteBefore()
+    {
+        return null;
     }
 }

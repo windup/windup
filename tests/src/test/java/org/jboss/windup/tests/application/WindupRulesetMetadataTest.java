@@ -10,7 +10,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupRulesetMetadata;
+import org.jboss.windup.config.metadata.RulesetMetadata;
 import org.jboss.windup.rules.apps.java.JavaRulesetMetadata;
 import org.jboss.windup.rules.apps.legacy.java.JavaEERulesetMetadata;
 import org.jboss.windup.rules.apps.xml.XmlRulesetMetadata;
@@ -49,7 +49,7 @@ public class WindupRulesetMetadataTest
     }
 
     @Inject
-    private Imported<WindupRulesetMetadata> ruleMetadata;
+    private Imported<RulesetMetadata> ruleMetadata;
 
     @Test
     public void testRuleMetadata()
@@ -60,7 +60,7 @@ public class WindupRulesetMetadataTest
         boolean foundJavaRulesetMeta = false;
         boolean foundJavaEERulesetMeta = false;
         boolean foundXMLRulesetMeta = false;
-        for (WindupRulesetMetadata m : this.ruleMetadata)
+        for (RulesetMetadata m : this.ruleMetadata)
         {
             count++;
 

@@ -1,16 +1,14 @@
 package org.jboss.windup.config.phase;
 
-import java.util.List;
-
-import org.jboss.windup.config.WindupRuleProvider;
+import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Previous: {@link InitialAnalysisPhase}<br/>
  * Next: {@link PostMigrationRulesPhase}
  * 
  * <p>
- * Most {@link Rule}s will go in this {@link RulePhase}. These include {@link Rule}s that detect code in the source application (or server) that will
- * need to be changed and produce metadata to be reported on regarding these changes.
+ * Most {@link Rule}s will go in this {@link RulePhase}. These include {@link Rule}s that detect code in the source
+ * application (or server) that will need to be changed and produce metadata to be reported on regarding these changes.
  * </p>
  * 
  * @author jsightler
@@ -18,10 +16,20 @@ import org.jboss.windup.config.WindupRuleProvider;
  */
 public class MigrationRulesPhase extends RulePhase
 {
+    public MigrationRulesPhase()
+    {
+        super(MigrationRulesPhase.class);
+    }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public Class<? extends RulePhase> getExecuteAfter()
     {
-        return asClassList(InitialAnalysisPhase.class);
+        return InitialAnalysisPhase.class;
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteBefore()
+    {
+        return null;
     }
 }

@@ -25,7 +25,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -37,7 +37,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CssJsResourceRenderingRuleProvider extends WindupRuleProvider
+public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
 {
 
     @Inject

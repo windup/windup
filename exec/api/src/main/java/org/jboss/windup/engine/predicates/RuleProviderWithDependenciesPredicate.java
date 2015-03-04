@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
 
 /**
  * Executes only the given rule with all it's dependencies and pre-phases.
@@ -14,25 +15,25 @@ import org.jboss.windup.config.WindupRuleProvider;
  * @author mbriskar
  *
  */
-public class RuleProviderWithDependenciesPredicate implements Predicate<WindupRuleProvider>
+public class RuleProviderWithDependenciesPredicate implements Predicate<AbstractRuleProvider>
 {
     private static Logger LOG = Logger.getLogger(RuleProviderWithDependenciesPredicate.class.getName());
 
-    private List<WindupRuleProvider> ruleProviders;
+    private List<AbstractRuleProvider> ruleProviders;
 
     @SuppressWarnings("unchecked")
-    public RuleProviderWithDependenciesPredicate(Class<? extends WindupRuleProvider> ruleProviderClass)
+    public RuleProviderWithDependenciesPredicate(Class<? extends AbstractRuleProvider> ruleProviderClass)
                 throws InstantiationException, IllegalAccessException
     {
-        ruleProviders = (List<WindupRuleProvider>) Collections.singletonList(ruleProviderClass.newInstance());
+        ruleProviders = (List<AbstractRuleProvider>) Collections.singletonList(ruleProviderClass.newInstance());
     }
 
     @SafeVarargs
-    public RuleProviderWithDependenciesPredicate(Class<? extends WindupRuleProvider>... ruleProviderClass)
+    public RuleProviderWithDependenciesPredicate(Class<? extends AbstractRuleProvider>... ruleProviderClass)
                 throws InstantiationException, IllegalAccessException
     {
         ruleProviders = new ArrayList<>(ruleProviderClass.length);
-        for (Class<? extends WindupRuleProvider> clz : ruleProviderClass)
+        for (Class<? extends AbstractRuleProvider> clz : ruleProviderClass)
         {
             ruleProviders.add(clz.newInstance());
         }
@@ -40,46 +41,46 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<WindupRu
     }
 
     @Override
-    public boolean accept(WindupRuleProvider type)
+    public boolean accept(AbstractRuleProvider type)
     {
         int typeExecutionIndex = type.getExecutionIndex();
-        for (WindupRuleProvider ruleProvider : this.ruleProviders)
+        for (AbstractRuleProvider ruleProvider : this.ruleProviders)
         {
             int otherExecutionIndex = ruleProvider.getExecutionIndex();
             if (otherExecutionIndex <= typeExecutionIndex)
             {
-                LOG.fine("Accepting provider: " + type.getID());
                 // is in the pre-phase
+                LOG.fine("Accepting provider: " + type.getMetadata().getID());
                 return true;
             }
             else
             {
-                List<Class<? extends WindupRuleProvider>> executeAfter = ruleProvider.getExecuteAfter();
-                List<String> executeAfterIDs = ruleProvider.getExecuteAfterIDs();
-                if ((executeAfter.contains(type.getClass())) || executeAfterIDs.contains(type.getID()))
+                List<Class<? extends RuleProvider>> executeAfter = ruleProvider.getMetadata().getExecuteAfter();
+                List<String> executeAfterIDs = ruleProvider.getMetadata().getExecuteAfterIDs();
+                if ((executeAfter.contains(type.getClass())) || executeAfterIDs.contains(type.getMetadata().getID()))
                 {
-                    LOG.fine("Accepting provider: " + type.getID());
                     // is a dependency and are in the same phase
+                    LOG.fine("Accepting provider: " + type.getMetadata().getID());
                     return true;
                 }
-                for (Class<? extends WindupRuleProvider> ruleProviderClassAfter : executeAfter)
+                for (Class<? extends RuleProvider> ruleProviderClassAfter : executeAfter)
                 {
                     if (ruleProviderClassAfter.isAssignableFrom(type.getClass()))
                     {
-                        LOG.fine("Accepting provider: " + type.getID());
+                        LOG.fine("Accepting provider: " + type.getMetadata().getID());
                         return true;
                     }
                 }
                 if (ruleProvider.getClass().isAssignableFrom(type.getClass()))
                 {
-                    LOG.fine("Accepting provider: " + type.getID());
                     // is the given rule provider
+                    LOG.fine("Accepting provider: " + type.getMetadata().getID());
                     return true;
                 }
             }
         }
-        
-        LOG.fine("Skipping provider: " + type.getID());
+
+        LOG.fine("Skipping provider: " + type.getMetadata().getID());
         return false;
     }
 

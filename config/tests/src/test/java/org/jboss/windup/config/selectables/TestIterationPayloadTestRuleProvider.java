@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
@@ -17,7 +17,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class TestIterationPayloadTestRuleProvider extends WindupRuleProvider
+public class TestIterationPayloadTestRuleProvider extends AbstractRuleProvider
 {
     private Set<TestParentModel> parents = new HashSet<>();
     private Set<TestChildModel> children = new HashSet<>();

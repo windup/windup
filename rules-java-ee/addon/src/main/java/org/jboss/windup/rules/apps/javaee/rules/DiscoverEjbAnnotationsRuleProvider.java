@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -38,7 +38,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
  */
-public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
+public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logging.get(DiscoverEjbAnnotationsRuleProvider.class);
 
@@ -46,7 +46,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
     private static final String TABLE_ANNOTATIONS_LIST = "tableAnnotations";
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
     {
         return asClassList(AnalyzeJavaFilesRuleProvider.class);
     }

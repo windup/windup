@@ -1,15 +1,13 @@
 package org.jboss.windup.config.builder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -17,86 +15,82 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderWithMetadata;
 import org.ocpsoft.rewrite.config.Rule;
-import org.ocpsoft.rewrite.context.Context;
 
 /**
- * Used to construct new dynamic {@link WindupRuleProvider} instances.
+ * Used to construct new dynamic {@link AbstractRuleProvider} instances.
  * 
  * @author jsightler
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public final class WindupRuleProviderBuilder extends WindupRuleProvider implements
+public final class WindupRuleProviderBuilder extends AbstractRuleProvider implements
             WindupRuleProviderBuilderSetPhase,
             WindupRuleProviderBuilderMetadataSetPhase,
             WindupRuleProviderBuilderAddDependencies
 {
-    private String id;
-    private String origin;
-    private Class<? extends RulePhase> rulePhase = WindupRuleProvider.DEFAULT_PHASE;
-
-    private List<String> executeAfterIDs = new ArrayList<>();
-    private List<Class<? extends WindupRuleProvider>> executeAfterTypes = new ArrayList<>();
-    private List<String> executeBeforeIDs = new ArrayList<>();
-    private List<Class<? extends WindupRuleProvider>> executeBeforeTypes = new ArrayList<>();
-
     private Map<Object, Object> ruleMetadata = new HashMap<>();
+
     private ConfigurationBuilder configurationBuilder;
-    private Predicate<Context> metadataEnhancer;
+    private MetadataBuilder metadata;
 
     /**
-     * Begin creating a new dynamic {@link WindupRuleProvider}.
+     * Begin creating a new dynamic {@link AbstractRuleProvider}.
      */
-    public static WindupRuleProviderBuilder begin(String id)
+    public static WindupRuleProviderBuilder begin(Class<? extends RuleProvider> implementationType, String id)
     {
-        return new WindupRuleProviderBuilder(id);
+        MetadataBuilder builder = MetadataBuilder.forProvider(implementationType, id);
+        return new WindupRuleProviderBuilder(builder).setMetadataBuilder(builder);
     }
 
-    private WindupRuleProviderBuilder(String id)
+    private WindupRuleProviderBuilder(MetadataBuilder builder)
     {
-        this.id = id;
+        super(builder);
         configurationBuilder = ConfigurationBuilder.begin();
     }
 
-    @Override
-    public WindupRuleProviderBuilderMetadataSetPhase setMetadataEnhancer(Predicate<Context> enhancer)
+    private WindupRuleProviderBuilder setMetadataBuilder(MetadataBuilder builder)
     {
-        this.metadataEnhancer = enhancer;
+        this.metadata = builder;
         return this;
+    }
+
+    public void setOrigin(String origin)
+    {
+        metadata.setOrigin(origin);
     }
 
     @Override
     public WindupRuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase)
     {
-        this.rulePhase = phase;
+        metadata.setPhase(phase);
         return this;
     }
 
     @Override
     public WindupRuleProviderBuilderAddDependencies addExecuteAfter(String id)
     {
-        executeAfterIDs.add(id);
+        metadata.addExecuteAfterId(id);
         return this;
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies addExecuteAfter(Class<? extends WindupRuleProvider> type)
+    public WindupRuleProviderBuilderAddDependencies addExecuteAfter(Class<? extends AbstractRuleProvider> type)
     {
-        executeAfterTypes.add(type);
+        metadata.addExecuteAfter(type);
         return this;
     }
 
     @Override
     public WindupRuleProviderBuilderAddDependencies addExecuteBefore(String id)
     {
-        executeBeforeIDs.add(id);
+        metadata.addExecuteBeforeId(id);
         return this;
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies addExecuteBefore(Class<? extends WindupRuleProvider> type)
+    public WindupRuleProviderBuilderAddDependencies addExecuteBefore(Class<? extends AbstractRuleProvider> type)
     {
-        executeBeforeTypes.add(type);
+        metadata.addExecuteBefore(type);
         return this;
     }
 
@@ -137,63 +131,8 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     }
 
     @Override
-    public void enhanceMetadata(Context context)
-    {
-        super.enhanceMetadata(context);
-        if (this.metadataEnhancer != null)
-            metadataEnhancer.accept(context);
-    }
-
-    @Override
-    public String getID()
-    {
-        return id;
-    }
-
-    @Override
-    public Class<? extends RulePhase> getPhase()
-    {
-        return rulePhase;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return executeAfterTypes;
-    }
-
-    @Override
-    public List<String> getExecuteAfterIDs()
-    {
-        return executeAfterIDs;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteBefore()
-    {
-        return executeBeforeTypes;
-    }
-
-    @Override
-    public List<String> getExecuteBeforeIDs()
-    {
-        return executeBeforeIDs;
-    }
-
-    @Override
-    public String getOrigin()
-    {
-        return StringUtils.isNotBlank(origin) ? origin : super.getOrigin();
-    }
-
-    public void setOrigin(String origin)
-    {
-        this.origin = origin;
-    }
-
-    @Override
     public String toString()
     {
-        return this.getID();
+        return super.toString();
     }
 }

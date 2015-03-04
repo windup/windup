@@ -23,7 +23,7 @@ import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -204,7 +204,7 @@ public class JavaHintsClassificationsTest
     }
 
     @Singleton
-    public static class TestHintsClassificationsTestRuleProvider extends WindupRuleProvider
+    public static class TestHintsClassificationsTestRuleProvider extends AbstractRuleProvider
     {
         private Set<JavaTypeReferenceModel> typeReferences = new HashSet<>();
 
@@ -215,7 +215,7 @@ public class JavaHintsClassificationsTest
         }
 
         @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+        public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
         {
             return asClassList(AnalyzeJavaFilesRuleProvider.class, IndexJavaSourceFilesRuleProvider.class);
         }

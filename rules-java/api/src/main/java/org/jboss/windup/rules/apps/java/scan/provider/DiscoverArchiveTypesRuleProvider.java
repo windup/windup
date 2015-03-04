@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -14,7 +14,7 @@ import org.jboss.windup.rules.apps.java.scan.operation.ConfigureArchiveTypes;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-public class DiscoverArchiveTypesRuleProvider extends WindupRuleProvider
+public class DiscoverArchiveTypesRuleProvider extends AbstractRuleProvider
 {
     @Inject
     private GraphTypeManager graphTypeManager;

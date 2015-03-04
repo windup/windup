@@ -1,16 +1,15 @@
 package org.jboss.windup.config.phase;
 
-import java.util.List;
-
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Previous: {@link PostReportRenderingPhase}<br/>
  * Next: {@link PostFinalizePhase}
  * 
  * <p>
- * This occurs at the end of execution. {@link Rule}s in this phase are responsible for any cleanup of resources that may have been opened during
- * {@link Rule}s from earlier {@link WindupRuleProvider}s.
+ * This occurs at the end of execution. {@link Rule}s in this phase are responsible for any cleanup of resources that
+ * may have been opened during {@link Rule}s from earlier {@link AbstractRuleProvider}s.
  * </p>
  * 
  * @author jsightler
@@ -18,9 +17,20 @@ import org.jboss.windup.config.WindupRuleProvider;
  */
 public class FinalizePhase extends RulePhase
 {
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public FinalizePhase()
     {
-        return asClassList(PostReportRenderingPhase.class);
+        super(FinalizePhase.class);
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteAfter()
+    {
+        return PostReportRenderingPhase.class;
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteBefore()
+    {
+        return null;
     }
 }

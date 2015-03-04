@@ -1,8 +1,5 @@
 package org.jboss.windup.config.phase;
 
-import java.util.List;
-
-import org.jboss.windup.config.WindupRuleProvider;
 
 /**
  * Previous: {@link DiscoverProjectStructurePhase}<br/>
@@ -18,9 +15,20 @@ import org.jboss.windup.config.WindupRuleProvider;
 public class DecompilationPhase extends RulePhase
 {
 
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public DecompilationPhase()
     {
-        return asClassList(DiscoverProjectStructurePhase.class);
+        super(DecompilationPhase.class);
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteAfter()
+    {
+        return DiscoverProjectStructurePhase.class;
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteBefore()
+    {
+        return null;
     }
 }

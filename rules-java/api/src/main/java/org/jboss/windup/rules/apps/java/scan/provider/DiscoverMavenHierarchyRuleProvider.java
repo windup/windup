@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -18,7 +18,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
+public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
@@ -29,7 +29,7 @@ public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
     {
         return asClassList(DiscoverMavenProjectsRuleProvider.class);
     }

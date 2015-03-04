@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.ip;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -18,7 +18,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-public class DiscoverStaticIPAddressRuleProvider extends WindupRuleProvider
+public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()

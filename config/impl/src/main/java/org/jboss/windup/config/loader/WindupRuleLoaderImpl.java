@@ -14,8 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.metadata.WindupRuleMetadata;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.metadata.AbstractMetadata;
+import org.jboss.windup.config.metadata.LoadedRules;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.ServiceLogger;
@@ -32,7 +33,6 @@ import org.ocpsoft.rewrite.config.ParameterizedConditionVisitor;
 import org.ocpsoft.rewrite.config.ParameterizedOperationVisitor;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleBuilder;
-import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.param.ConfigurableParameter;
 import org.ocpsoft.rewrite.param.DefaultParameter;
 import org.ocpsoft.rewrite.param.Parameter;
@@ -53,27 +53,27 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
     }
 
     @Override
-    public WindupRuleMetadata loadConfiguration(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
+    public LoadedRules loadConfiguration(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
     {
         return build(context, ruleProviderFilter);
     }
 
     /**
-     * Prints all of the {@link RulePhase} objects in the order that they should execute. This is primarily for debug purposes and should be called
-     * before the entire {@link WindupRuleProvider} list is sorted, as this will allow us to print the {@link RulePhase} list without the risk of
-     * user-introduced cycles making the sort impossible.
+     * Prints all of the {@link RulePhase} objects in the order that they should execute. This is primarily for debug
+     * purposes and should be called before the entire {@link RuleProvider} list is sorted, as this will allow us to
+     * print the {@link RulePhase} list without the risk of user-introduced cycles making the sort impossible.
      */
-    private void printRulePhases(List<WindupRuleProvider> allProviders)
+    private void printRulePhases(List<RuleProvider> allProviders)
     {
-        List<WindupRuleProvider> unsortedPhases = new ArrayList<>();
-        for (WindupRuleProvider provider : allProviders)
+        List<RuleProvider> unsortedPhases = new ArrayList<>();
+        for (RuleProvider provider : allProviders)
         {
             if (provider instanceof RulePhase)
                 unsortedPhases.add(provider);
         }
-        List<WindupRuleProvider> sortedPhases = WindupRuleProviderSorter.sort(unsortedPhases);
+        List<RuleProvider> sortedPhases = WindupRuleProviderSorter.sort(unsortedPhases);
         StringBuilder rulePhaseSB = new StringBuilder();
-        for (WindupRuleProvider phase : sortedPhases)
+        for (RuleProvider phase : sortedPhases)
         {
             Class<?> unproxiedClass = Proxies.unwrap(phase).getClass();
             rulePhaseSB.append("Phase: ").append(unproxiedClass.getSimpleName()).append("\n");
@@ -81,59 +81,63 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
     }
 
-    private void checkForDuplicates(List<WindupRuleProvider> providers)
+    private void checkForDuplicateProviders(List<RuleProvider> providers)
     {
-        // using a map so that we can easily pull out the previous value later (in the case of a duplicate)
-        Map<WindupRuleProvider, WindupRuleProvider> dupeSet = new HashMap<>(providers.size());
-        for (WindupRuleProvider provider : providers)
+        /*
+         * We are using a map so that we can easily pull out the previous value later (in the case of a duplicate)
+         */
+        Map<RuleProvider, RuleProvider> duplicates = new HashMap<>(providers.size());
+        for (RuleProvider provider : providers)
         {
-            WindupRuleProvider previousProvider = dupeSet.get(provider);
+            RuleProvider previousProvider = duplicates.get(provider);
             if (previousProvider != null)
             {
                 String typeMessage;
+                String currentProviderOrigin = provider.getMetadata().getOrigin();
+                String previousProviderOrigin = previousProvider.getMetadata().getOrigin();
                 if (previousProvider.getClass().equals(provider.getClass()))
                 {
-                    typeMessage = " (type: " + previousProvider.getOrigin() + " and " + provider.getOrigin() + ")";
+                    typeMessage = " (type: " + previousProviderOrigin + " and " + currentProviderOrigin + ")";
                 }
                 else
                 {
-                    typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " at " + previousProvider.getOrigin()
-                                + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + provider.getOrigin() + ")";
+                    typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " at " + previousProviderOrigin
+                                + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + currentProviderOrigin + ")";
                 }
 
-                throw new WindupException("Found two providers with the same id: " + provider.getID() + typeMessage);
+                throw new WindupException("Found two providers with the same id: " + provider.getMetadata().getID() + typeMessage);
             }
-            dupeSet.put(provider, provider);
+            duplicates.put(provider, provider);
         }
     }
 
-    private List<WindupRuleProvider> getProviders(GraphContext context)
+    private List<RuleProvider> getProviders(GraphContext context)
     {
-        List<WindupRuleProvider> unsortedProviders = new ArrayList<>();
+        List<RuleProvider> unsortedProviders = new ArrayList<>();
         for (WindupRuleProviderLoader loader : loaders)
         {
             unsortedProviders.addAll(loader.getProviders(context));
         }
 
-        checkForDuplicates(unsortedProviders);
+        checkForDuplicateProviders(unsortedProviders);
 
         printRulePhases(unsortedProviders);
 
-        List<WindupRuleProvider> sortedProviders = WindupRuleProviderSorter.sort(unsortedProviders);
-        ServiceLogger.logLoadedServices(LOG, WindupRuleProvider.class, sortedProviders);
+        List<RuleProvider> sortedProviders = WindupRuleProviderSorter.sort(unsortedProviders);
+        ServiceLogger.logLoadedServices(LOG, RuleProvider.class, sortedProviders);
 
         return Collections.unmodifiableList(sortedProviders);
     }
 
-    private WindupRuleMetadata build(GraphContext context, Predicate<WindupRuleProvider> ruleProviderFilter)
+    private LoadedRules build(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
     {
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
 
-        List<WindupRuleProvider> providers = getProviders(context);
-        WindupRuleMetadata executionMetadata = new WindupRuleMetadata();
+        List<RuleProvider> providers = getProviders(context);
+        LoadedRules executionMetadata = new LoadedRules();
         executionMetadata.setProviders(providers);
-        for (WindupRuleProvider provider : providers)
+        for (RuleProvider provider : providers)
         {
             if (ruleProviderFilter != null)
             {
@@ -151,8 +155,11 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
             for (final Rule rule : rules)
             {
                 i++;
-                if (rule instanceof Context)
-                    provider.enhanceMetadata((Context) rule);
+
+                if (provider.getMetadata() instanceof AbstractMetadata)
+                {
+                    ((AbstractMetadata) provider.getMetadata()).enhanceRuleMetadata(rule);
+                }
 
                 if (rule instanceof RuleBuilder && StringUtils.isBlank(rule.getId()))
                 {
@@ -196,9 +203,9 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         return executionMetadata;
     }
 
-    private String generatedRuleID(WindupRuleProvider provider, Rule rule, int idx)
+    private String generatedRuleID(RuleProvider provider, Rule rule, int idx)
     {
-        String provID = provider.getID().replace("org.jboss.windup.rules.", "w:");
+        String provID = provider.getMetadata().getID().replace("org.jboss.windup.rules.", "w:");
         return "GeneratedID_" + provID + "_" + idx;
     }
 }

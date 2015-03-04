@@ -34,7 +34,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class TestWindupConfigurationExampleRuleProvider extends WindupRuleProvider
+public class TestWindupConfigurationExampleRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(TestWindupConfigurationExampleRuleProvider.class);
 

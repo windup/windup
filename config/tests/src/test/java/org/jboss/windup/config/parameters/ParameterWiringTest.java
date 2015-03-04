@@ -18,7 +18,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
@@ -111,7 +111,7 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider extends WindupRuleProvider
+    private static class ParameterWiringTestRuleProvider extends AbstractRuleProvider
     {
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();
@@ -211,7 +211,7 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider2 extends WindupRuleProvider
+    private static class ParameterWiringTestRuleProvider2 extends AbstractRuleProvider
     {
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();
@@ -342,7 +342,7 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider3 extends WindupRuleProvider
+    private static class ParameterWiringTestRuleProvider3 extends AbstractRuleProvider
     {
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();
@@ -436,7 +436,7 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider4 extends WindupRuleProvider
+    private static class ParameterWiringTestRuleProvider4 extends AbstractRuleProvider
     {
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();

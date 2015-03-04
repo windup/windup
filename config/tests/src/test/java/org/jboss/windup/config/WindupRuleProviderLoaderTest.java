@@ -62,7 +62,7 @@ public class WindupRuleProviderLoaderTest
 
             for (WindupRuleProviderLoader loader : loaders)
             {
-                for (WindupRuleProvider provider : loader.getProviders(context))
+                for (AbstractRuleProvider provider : loader.getProviders(context))
                 {
                     if (provider instanceof TestRuleProvider1)
                     {
@@ -82,7 +82,7 @@ public class WindupRuleProviderLoaderTest
     }
 
     @Singleton
-    public static class TestRuleProvider1 extends WindupRuleProvider
+    public static class TestRuleProvider1 extends AbstractRuleProvider
     {
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -113,7 +113,7 @@ public class WindupRuleProviderLoaderTest
     }
 
     @Singleton
-    public static class TestRuleProvider2 extends WindupRuleProvider
+    public static class TestRuleProvider2 extends AbstractRuleProvider
     {
 
         @Override

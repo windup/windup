@@ -19,7 +19,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.IteratingRuleProvider;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
@@ -51,7 +51,7 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
         return InitializationPhase.class;
     }
 
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
     {
         return asClassList(CopyJavaConfigToGraphRuleProvider.class);
     }

@@ -1,5 +1,5 @@
 import org.jboss.windup.config.builder.WindupRuleProviderBuilder
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.RuleMetadataTypes;
 import org.jboss.windup.ext.groovy.GroovyWindupRuleProviderLoader;
 import org.jboss.forge.furnace.util.Predicate
 import org.ocpsoft.rewrite.context.Context;

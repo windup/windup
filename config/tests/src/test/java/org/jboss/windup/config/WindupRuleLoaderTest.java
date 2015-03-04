@@ -60,10 +60,10 @@ public class WindupRuleLoaderTest
     {
         try (GraphContext context = factory.create())
         {
-            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+            Predicate<AbstractRuleProvider> predicate = new Predicate<AbstractRuleProvider>()
             {
                 @Override
-                public boolean accept(WindupRuleProvider arg0)
+                public boolean accept(AbstractRuleProvider arg0)
                 {
                     return arg0.getPhase() == MigrationRulesPhase.class;
                 }
@@ -90,7 +90,7 @@ public class WindupRuleLoaderTest
     }
 
     @Singleton
-    public static class TestRuleProvider1Phase extends WindupRuleProvider
+    public static class TestRuleProvider1Phase extends AbstractRuleProvider
     {
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -121,7 +121,7 @@ public class WindupRuleLoaderTest
     }
 
     @Singleton
-    public static class TestRuleProvider2Phase extends WindupRuleProvider
+    public static class TestRuleProvider2Phase extends AbstractRuleProvider
     {
         @Override
         public Class<? extends RulePhase> getPhase()

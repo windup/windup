@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -22,7 +22,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public class DiscoverNonMavenSourceProjectsRuleProvider extends WindupRuleProvider
+public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()
@@ -31,7 +31,7 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends WindupRuleProvid
     }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
     {
         return asClassList(DiscoverNonMavenArchiveProjectsRuleProvider.class);
     }

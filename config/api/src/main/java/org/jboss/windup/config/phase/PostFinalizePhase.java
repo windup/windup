@@ -1,19 +1,18 @@
 package org.jboss.windup.config.phase;
 
-import java.util.List;
-
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Previous: {@link FinalizePhase}
  * 
  * <p>
- * This occurs immediately after finalize. This is an ideal place to put {@link Rule}s that would like to be the absolute last things to fire.
- * Examples:
+ * This occurs immediately after finalize. This is an ideal place to put {@link Rule}s that would like to be the
+ * absolute last things to fire. Examples:
  * 
  * <ul>
  * <li>Reporting on the execution time of previous rules</li>
- * <li>Reporting on all of the rules that have executed and which {@link WindupRuleProvider}s executed them</li>
+ * <li>Reporting on all of the rules that have executed and which {@link AbstractRuleProvider}s executed them</li>
  * </ul>
  * </p>
  * 
@@ -22,10 +21,20 @@ import org.jboss.windup.config.WindupRuleProvider;
  */
 public class PostFinalizePhase extends RulePhase
 {
+    public PostFinalizePhase()
+    {
+        super(PostFinalizePhase.class);
+    }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public Class<? extends RulePhase> getExecuteAfter()
     {
-        return asClassList(FinalizePhase.class);
+        return FinalizePhase.class;
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteBefore()
+    {
+        return null;
     }
 }

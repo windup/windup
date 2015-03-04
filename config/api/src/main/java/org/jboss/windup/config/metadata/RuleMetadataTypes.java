@@ -5,13 +5,8 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public enum RuleMetadata
+public enum RuleMetadataTypes
 {
-    /**
-     * The {@link Rule} category.
-     */
-    CATEGORY,
-
     /**
      * The {@link WinupRuleProvider} that originated this rule
      */

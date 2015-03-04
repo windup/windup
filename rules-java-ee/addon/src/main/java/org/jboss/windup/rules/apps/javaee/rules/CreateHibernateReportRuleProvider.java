@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -34,7 +34,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report of Hibernate files within the application (eg, session configuration or entity lists).
  *
  */
-public class CreateHibernateReportRuleProvider extends WindupRuleProvider
+public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_HIBERNATE_REPORT = "/reports/templates/hibernate.ftl";
 

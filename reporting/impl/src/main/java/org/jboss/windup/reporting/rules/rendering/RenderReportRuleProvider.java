@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
@@ -24,7 +24,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class RenderReportRuleProvider extends WindupRuleProvider
+public class RenderReportRuleProvider extends AbstractRuleProvider
 {
     @Inject
     private Furnace furnace;

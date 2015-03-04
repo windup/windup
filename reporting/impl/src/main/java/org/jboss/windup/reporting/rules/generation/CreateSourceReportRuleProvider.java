@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
@@ -41,7 +41,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class CreateSourceReportRuleProvider extends WindupRuleProvider
+public class CreateSourceReportRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logging.get(CreateSourceReportRuleProvider.class);
     private static final String TEMPLATE = "/reports/templates/source.ftl";

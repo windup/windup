@@ -1,6 +1,6 @@
 package org.jboss.windup.config.builder;
 
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
 import org.ocpsoft.rewrite.config.Rule;
 
@@ -19,7 +19,7 @@ public interface WindupRuleProviderBuilderAddDependencies
     /**
      * Indicates that the current ruleset should execute after the ruleset with the type
      */
-    public WindupRuleProviderBuilderAddDependencies addExecuteAfter(Class<? extends WindupRuleProvider> type);
+    public WindupRuleProviderBuilderAddDependencies addExecuteAfter(Class<? extends AbstractRuleProvider> type);
 
     /**
      * Indicates that the current ruleset should execute before the ruleset with the given id
@@ -29,7 +29,7 @@ public interface WindupRuleProviderBuilderAddDependencies
     /**
      * Indicates that the current ruleset should execute before the ruleset with the type
      */
-    public WindupRuleProviderBuilderAddDependencies addExecuteBefore(Class<? extends WindupRuleProvider> type);
+    public WindupRuleProviderBuilderAddDependencies addExecuteBefore(Class<? extends AbstractRuleProvider> type);
 
     /**
      * Begin defining a {@link Rule} instance.

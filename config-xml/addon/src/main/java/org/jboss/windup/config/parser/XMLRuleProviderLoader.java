@@ -27,7 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
 import org.jboss.windup.config.loader.WindupRuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
@@ -41,7 +41,7 @@ import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 import org.w3c.dom.Document;
 
 /**
- * This {@link WindupRuleProviderLoader} searches for and loads {@link WindupRuleProvider}s from XML files that within all addons, with filenames that
+ * This {@link WindupRuleProviderLoader} searches for and loads {@link AbstractRuleProvider}s from XML files that within all addons, with filenames that
  * end in ".windup.xml".
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -61,9 +61,9 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
     private FurnaceClasspathScanner scanner;
 
     @Override
-    public List<WindupRuleProvider> getProviders(GraphContext context)
+    public List<AbstractRuleProvider> getProviders(GraphContext context)
     {
-        List<WindupRuleProvider> providers = new ArrayList<>();
+        List<AbstractRuleProvider> providers = new ArrayList<>();
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
@@ -92,7 +92,7 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
                     parser.setAddonContainingInputXML(addon);
 
                     parser.processElement(doc.getDocumentElement());
-                    List<WindupRuleProvider> parsedProviders = parser.getRuleProviders();
+                    List<AbstractRuleProvider> parsedProviders = parser.getRuleProviders();
                     setOrigin(parsedProviders, resource);
                     providers.addAll(parsedProviders);
                 }
@@ -120,7 +120,7 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
                     parser.setXmlInputRootPath(Paths.get(userRulesPath));
 
                     parser.processElement(doc.getDocumentElement());
-                    List<WindupRuleProvider> parsedProviders = parser.getRuleProviders();
+                    List<AbstractRuleProvider> parsedProviders = parser.getRuleProviders();
                     setOrigin(parsedProviders, resource);
                     providers.addAll(parsedProviders);
                 }
@@ -135,9 +135,9 @@ public class XMLRuleProviderLoader implements WindupRuleProviderLoader
         return providers;
     }
 
-    private void setOrigin(List<WindupRuleProvider> providers, URL resource)
+    private void setOrigin(List<AbstractRuleProvider> providers, URL resource)
     {
-        for (WindupRuleProvider provider : providers)
+        for (AbstractRuleProvider provider : providers)
         {
             if (provider instanceof WindupRuleProviderBuilder)
             {

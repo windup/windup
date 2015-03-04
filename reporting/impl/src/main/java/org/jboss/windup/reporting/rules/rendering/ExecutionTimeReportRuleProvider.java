@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostFinalizePhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -36,7 +36,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class ExecutionTimeReportRuleProvider extends WindupRuleProvider
+public class ExecutionTimeReportRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()

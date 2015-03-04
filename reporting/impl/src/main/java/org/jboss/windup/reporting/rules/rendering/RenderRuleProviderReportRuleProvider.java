@@ -5,7 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.phase.PostFinalizePhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
@@ -14,12 +14,12 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 /**
- * Renders a report of all {@link WindupRuleProvider}s that were loaded by Windup, as well as the results of each {@link Rule} execution.
+ * Renders a report of all {@link AbstractRuleProvider}s that were loaded by Windup, as well as the results of each {@link Rule} execution.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  *
  */
-public class RenderRuleProviderReportRuleProvider extends WindupRuleProvider
+public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider
 {
     private static final String OUTPUT_FILENAME = "windup_ruleproviders.html";
     private static final String TEMPLATE = "/reports/templates/ruleprovidersummary.ftl";
@@ -34,7 +34,7 @@ public class RenderRuleProviderReportRuleProvider extends WindupRuleProvider
     }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
     {
         return asClassList(ExecutionTimeReportRuleProvider.class);
     }

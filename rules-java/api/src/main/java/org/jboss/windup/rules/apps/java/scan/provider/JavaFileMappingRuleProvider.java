@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
@@ -14,7 +14,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * Discovers .class files from the applications being analyzed.
  *
  */
-public class JavaFileMappingRuleProvider extends WindupRuleProvider
+public class JavaFileMappingRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()

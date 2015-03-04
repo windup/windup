@@ -18,7 +18,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -135,7 +135,7 @@ public class OverviewReportLineTest
     }
 
     @Singleton
-    public static class TestProjectProvider extends WindupRuleProvider
+    public static class TestProjectProvider extends AbstractRuleProvider
     {
 
         private int matchCount;

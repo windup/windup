@@ -15,7 +15,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.iteration.TestSimple1Model;
 import org.jboss.windup.config.iteration.TestSimple2Model;
 import org.jboss.windup.config.operation.Iteration;
@@ -132,7 +132,7 @@ public class IterationPayLoadPassTest
         }
     }
 
-    public class TestIterationPayLoadPassProvider extends WindupRuleProvider
+    public class TestIterationPayLoadPassProvider extends AbstractRuleProvider
     {
         // @formatter:off
         @Override
@@ -160,7 +160,7 @@ public class IterationPayLoadPassTest
 
     }
 
-    public class TestIterationPayLoadNotPassProvider extends WindupRuleProvider
+    public class TestIterationPayLoadNotPassProvider extends AbstractRuleProvider
     {
         // @formatter:off
         @Override

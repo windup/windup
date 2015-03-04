@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.Log;
@@ -22,7 +22,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
-public class DecompileArchivesRuleProvider extends WindupRuleProvider
+public class DecompileArchivesRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()

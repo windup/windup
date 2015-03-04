@@ -17,7 +17,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupConfigurationOption;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
@@ -39,7 +39,7 @@ public class WindupConfiguration
     private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
     private static final String DEFAULT_USER_IGNORE_DIRECTORIES_OPTION = "defaultUserIgnorePaths";
 
-    private Predicate<WindupRuleProvider> ruleProviderFilter;
+    private Predicate<AbstractRuleProvider> ruleProviderFilter;
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
     private Map<String, Object> configurationOptions = new HashMap<>();
 
@@ -284,7 +284,7 @@ public class WindupConfiguration
         return this;
     }
 
-    public Predicate<WindupRuleProvider> getRuleProviderFilter()
+    public Predicate<AbstractRuleProvider> getRuleProviderFilter()
     {
         return ruleProviderFilter;
     }
@@ -292,7 +292,7 @@ public class WindupConfiguration
     /**
      * A filter to limit which rule providers' rules will be executed.
      */
-    public WindupConfiguration setRuleProviderFilter(Predicate<WindupRuleProvider> ruleProviderFilter)
+    public WindupConfiguration setRuleProviderFilter(Predicate<AbstractRuleProvider> ruleProviderFilter)
     {
         this.ruleProviderFilter = ruleProviderFilter;
         return this;

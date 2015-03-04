@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.rules.generation;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -13,7 +13,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CreateFreeMarkerMethodReportRuleProvider extends WindupRuleProvider
+public class CreateFreeMarkerMethodReportRuleProvider extends AbstractRuleProvider
 {
     private static final String TEMPLATE = "/reports/templates/windupfreemarkerfunctions.ftl";
     private static final String REPORT_NAME = "Windup FreeMarker Function Report";

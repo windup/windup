@@ -17,7 +17,7 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.util.Annotations;
@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
  */
 public class ParserContext
 {
-    private List<WindupRuleProvider> ruleProviders = new ArrayList<>();
+    private List<AbstractRuleProvider> ruleProviders = new ArrayList<>();
     private WindupRuleProviderBuilder builder;
     private ConfigurationRuleBuilder rule;
     private ConfigurationRuleParameterWhere where;
@@ -131,15 +131,15 @@ public class ParserContext
     /**
      * Gets a {@link List} of all {@link RuleProviders} found so far.
      */
-    public List<WindupRuleProvider> getRuleProviders()
+    public List<AbstractRuleProvider> getRuleProviders()
     {
         return this.ruleProviders;
     }
 
     /**
-     * Adds the constructed {@link WindupRuleProvider}.
+     * Adds the constructed {@link AbstractRuleProvider}.
      */
-    public void addRuleProvider(WindupRuleProvider provider)
+    public void addRuleProvider(AbstractRuleProvider provider)
     {
         this.ruleProviders.add(provider);
     }

@@ -1,5 +1,6 @@
 package org.jboss.windup.config;
 
+import org.jboss.windup.config.metadata.RuleProviderMetadata;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -9,13 +10,23 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * This provides a simplified way to extend {@link WindupRuleProvider} for cases where the rule simply needs to provide
- * some query, and wants to execute a function over each resulting row.
+ * This provides a simplified way to extend {@link AbstractRuleProvider} for cases where the rule simply needs to
+ * provide some query, and wants to execute a function over each resulting row.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFrame> extends WindupRuleProvider
+public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFrame> extends AbstractRuleProvider
 {
+    public IteratingRuleProvider(Class<? extends RuleProvider> implementationType, String id)
+    {
+        super(implementationType, id);
+    }
+
+    public IteratingRuleProvider(RuleProviderMetadata metadata)
+    {
+        super(metadata);
+    }
+
     /**
      * Gets the condition for the {@link Configuration}'s "when" clause.
      */

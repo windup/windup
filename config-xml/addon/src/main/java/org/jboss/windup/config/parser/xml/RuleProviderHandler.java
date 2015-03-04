@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
@@ -16,7 +16,7 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parses a "ruleset" element, and uses it to create a new {@link WindupRuleProvider}
+ * Parses a "ruleset" element, and uses it to create a new {@link AbstractRuleProvider}
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */

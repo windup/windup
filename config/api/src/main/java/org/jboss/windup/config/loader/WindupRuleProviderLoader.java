@@ -2,7 +2,7 @@ package org.jboss.windup.config.loader;
 
 import java.util.List;
 
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 
 /**
@@ -15,7 +15,7 @@ import org.jboss.windup.graph.GraphContext;
 public interface WindupRuleProviderLoader
 {
     /**
-     * Return all {@link WindupRuleProvider} instances that are relevant for this loader.
+     * Return all {@link AbstractRuleProvider} instances that are relevant for this loader.
      */
-    public List<WindupRuleProvider> getProviders(GraphContext context);
+    public List<AbstractRuleProvider> getProviders(GraphContext context);
 }

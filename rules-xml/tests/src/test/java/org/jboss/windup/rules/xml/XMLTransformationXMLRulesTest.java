@@ -20,7 +20,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -95,10 +95,10 @@ public class XMLTransformationXMLRulesTest
             pm.setRootFileModel(inputPath);
 
             Assert.assertFalse(transformationService.findAll().iterator().hasNext());
-            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+            Predicate<AbstractRuleProvider> predicate = new Predicate<AbstractRuleProvider>()
             {
                 @Override
-                public boolean accept(WindupRuleProvider provider)
+                public boolean accept(AbstractRuleProvider provider)
                 {
                     return provider.getPhase() != ReportGenerationPhase.class;
                 }

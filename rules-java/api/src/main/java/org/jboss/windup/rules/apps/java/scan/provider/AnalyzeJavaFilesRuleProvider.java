@@ -10,7 +10,7 @@ import org.jboss.windup.ast.java.data.JavaClassReference;
 import org.jboss.windup.ast.java.data.JavaClassReferences;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
@@ -37,7 +37,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Scan the Java Source code files and store the used type information from them.
  * 
  */
-public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
+public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
 
     @Override

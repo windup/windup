@@ -15,7 +15,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
@@ -113,7 +113,7 @@ public class RuleIterationOverDefaultListVariableTest
         }
     }
 
-    public class TestRuleIterationOverDefaultListVariableProvider extends WindupRuleProvider
+    public class TestRuleIterationOverDefaultListVariableProvider extends AbstractRuleProvider
     {
         // @formatter:off
         @Override

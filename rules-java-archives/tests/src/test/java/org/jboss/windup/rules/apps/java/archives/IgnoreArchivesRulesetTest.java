@@ -17,7 +17,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -111,13 +111,13 @@ public class IgnoreArchivesRulesetTest
             config.setInputPath(INPUT_PATH);
             config.setOutputDirectory(OUTPUT_PATH);
             config.setOptionValue(OverwriteOption.NAME, true);
-            config.setRuleProviderFilter(new Predicate<WindupRuleProvider>()
+            config.setRuleProviderFilter(new Predicate<AbstractRuleProvider>()
             {
                 private RuleProviderWithDependenciesPredicate discoverRuleDeps =
                             new RuleProviderWithDependenciesPredicate(DiscoverFilesAndTypesRuleProvider.class);
 
                 @Override
-                public boolean accept(WindupRuleProvider provider)
+                public boolean accept(AbstractRuleProvider provider)
                 {
                     return !(provider.getPhase().isAssignableFrom(ReportGenerationPhase.class))
                                 && !(provider.getPhase().isAssignableFrom(ReportRenderingPhase.class))

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationFilter;
@@ -27,7 +27,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvider
+public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()
@@ -36,7 +36,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends WindupRuleProvi
     }
 
     @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
     {
         return asClassList(DiscoverMavenProjectsRuleProvider.class);
     }

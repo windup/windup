@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 /**
  * Discover Maven pom files and build a {@link MavenProjectModel} containing this metadata.
  */
-public class DiscoverMavenProjectsRuleProvider extends WindupRuleProvider
+public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 

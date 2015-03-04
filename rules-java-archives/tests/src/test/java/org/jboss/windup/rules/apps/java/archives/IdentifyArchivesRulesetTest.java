@@ -17,7 +17,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -99,10 +99,10 @@ public class IdentifyArchivesRulesetTest
             wc.setInputPath(INPUT_PATH);
             wc.setOutputDirectory(OUTPUT_PATH);
             wc.setOptionValue(OverwriteOption.NAME, true);
-            wc.setRuleProviderFilter(new Predicate<WindupRuleProvider>()
+            wc.setRuleProviderFilter(new Predicate<AbstractRuleProvider>()
             {
                 @Override
-                public boolean accept(WindupRuleProvider type)
+                public boolean accept(AbstractRuleProvider type)
                 {
                     return !(type.getPhase().isAssignableFrom(ReportGenerationPhase.class))
                                 && !(type.getPhase().isAssignableFrom(ReportRenderingPhase.class))

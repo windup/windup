@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.rules;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public class AttachApplicationReportsToIndexRuleProvider extends WindupRuleProvider
+public class AttachApplicationReportsToIndexRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Class<? extends RulePhase> getPhase()

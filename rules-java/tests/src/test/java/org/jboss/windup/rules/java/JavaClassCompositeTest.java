@@ -21,7 +21,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
@@ -141,7 +141,7 @@ public class JavaClassCompositeTest
     }
 
     @Singleton
-    public static class JavaCompositeClassTestRuleProvider extends WindupRuleProvider
+    public static class JavaCompositeClassTestRuleProvider extends AbstractRuleProvider
     {
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
@@ -194,7 +194,7 @@ public class JavaClassCompositeTest
         }
 
         @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+        public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
         {
             return asClassList(AnalyzeJavaFilesRuleProvider.class);
         }

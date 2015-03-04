@@ -23,7 +23,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
@@ -155,7 +155,7 @@ public class JavaClassTest
     }
 
     @Singleton
-    public static class JavaClassTestRuleProvider extends WindupRuleProvider
+    public static class JavaClassTestRuleProvider extends AbstractRuleProvider
     {
         private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
@@ -207,7 +207,7 @@ public class JavaClassTest
         }
 
         @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+        public List<Class<? extends AbstractRuleProvider>> getExecuteAfter()
         {
             return asClassList(AnalyzeJavaFilesRuleProvider.class);
         }

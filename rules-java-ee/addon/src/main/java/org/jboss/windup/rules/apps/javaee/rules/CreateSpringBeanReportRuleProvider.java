@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -33,7 +33,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report on the spring configuration (spring beans, etc).
  *
  */
-public class CreateSpringBeanReportRuleProvider extends WindupRuleProvider
+public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_SPRING_REPORT = "/reports/templates/spring.ftl";
 

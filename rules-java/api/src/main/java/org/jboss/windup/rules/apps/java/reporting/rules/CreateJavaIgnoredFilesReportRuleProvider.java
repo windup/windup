@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -30,7 +30,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author mbriskar
  *
  */
-public class CreateJavaIgnoredFilesReportRuleProvider extends WindupRuleProvider
+public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TITLE = "Ignored Files";
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";

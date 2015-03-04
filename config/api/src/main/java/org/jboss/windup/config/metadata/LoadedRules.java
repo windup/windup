@@ -5,61 +5,60 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
- * Maintains metadata regarding the {@link Rule}s and {@link WindupRuleProvider}s that have been loaded by Windup.
+ * Maintains a link between all {@link Rule} and {@link RuleProvider} instances that have been loaded by Windup.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
- *
  */
-public class WindupRuleMetadata
+public class LoadedRules
 {
-    private final List<WindupRuleProvider> providers = new ArrayList<>();
-    private final IdentityHashMap<WindupRuleProvider, List<Rule>> providersToRules = new IdentityHashMap<>();
+    private final List<RuleProvider> providers = new ArrayList<>();
+    private final IdentityHashMap<RuleProvider, List<Rule>> providersToRules = new IdentityHashMap<>();
     private Configuration configuration;
 
     /**
-     * Gets the current instance of {@link WindupRuleMetadata}.
+     * Gets the current instance of {@link LoadedRules}.
      */
-    public static WindupRuleMetadata instance(GraphRewrite event)
+    public static LoadedRules instance(GraphRewrite event)
     {
-        WindupRuleMetadata instance = (WindupRuleMetadata) event.getRewriteContext().get(WindupRuleMetadata.class);
+        LoadedRules instance = (LoadedRules) event.getRewriteContext().get(LoadedRules.class);
         return instance;
     }
 
     /**
-     * Sets the list of loaded {@link WindupRuleProvider}s.
+     * Sets the list of loaded {@link RuleProvider}s.
      */
-    public void setProviders(List<WindupRuleProvider> providers)
+    public void setProviders(List<RuleProvider> providers)
     {
         this.providers.clear();
         this.providers.addAll(providers);
     }
 
     /**
-     * Gets the list of loaded {@link WindupRuleProvider}s as an immutable {@link List}.
+     * Gets the list of loaded {@link RuleProvider}s as an immutable {@link List}.
      */
-    public List<WindupRuleProvider> getProviders()
+    public List<RuleProvider> getProviders()
     {
         return Collections.unmodifiableList(providers);
     }
 
     /**
-     * Sets the {@link List} of {@link Rule}s that were loaded from the given {@link WindupRuleProvider}.
+     * Sets the {@link List} of {@link Rule}s that were loaded from the given {@link RuleProvider}.
      */
-    public void setRules(WindupRuleProvider provider, List<Rule> rules)
+    public void setRules(RuleProvider provider, List<Rule> rules)
     {
         providersToRules.put(provider, rules);
     }
 
     /**
-     * Gets all of the {@link Rule}s that were loaded by the given {@link WindupRuleProvider}.
+     * Gets all of the {@link Rule}s that were loaded by the given {@link RuleProvider}.
      */
-    public List<Rule> getRules(WindupRuleProvider provider)
+    public List<Rule> getRules(RuleProvider provider)
     {
         List<Rule> rules = providersToRules.get(provider);
         if (rules == null)

@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -35,7 +35,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-public class DiscoverXmlFilesRuleProvider extends WindupRuleProvider
+public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getSimpleName());
 
