@@ -19,21 +19,21 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProv
 {
     private static Logger LOG = Logger.getLogger(RuleProviderWithDependenciesPredicate.class.getName());
 
-    private List<AbstractRuleProvider> ruleProviders;
+    private List<RuleProvider> ruleProviders;
 
     @SuppressWarnings("unchecked")
     public RuleProviderWithDependenciesPredicate(Class<? extends RuleProvider> ruleProviderClass)
                 throws InstantiationException, IllegalAccessException
     {
-        ruleProviders = (List<AbstractRuleProvider>) Collections.singletonList(ruleProviderClass.newInstance());
+        ruleProviders = (List<RuleProvider>) Collections.singletonList(ruleProviderClass.newInstance());
     }
 
     @SafeVarargs
-    public RuleProviderWithDependenciesPredicate(Class<? extends AbstractRuleProvider>... ruleProviderClass)
+    public RuleProviderWithDependenciesPredicate(Class<? extends RuleProvider>... ruleProviderClass)
                 throws InstantiationException, IllegalAccessException
     {
         ruleProviders = new ArrayList<>(ruleProviderClass.length);
-        for (Class<? extends AbstractRuleProvider> clz : ruleProviderClass)
+        for (Class<? extends RuleProvider> clz : ruleProviderClass)
         {
             ruleProviders.add(clz.newInstance());
         }
@@ -45,10 +45,11 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProv
     {
         if (type instanceof AbstractRuleProvider)
         {
+            // FIXME This execution index API needs to be exposed publicly or handled via another pattern.
             int typeExecutionIndex = ((AbstractRuleProvider) type).getExecutionIndex();
-            for (AbstractRuleProvider ruleProvider : this.ruleProviders)
+            for (RuleProvider ruleProvider : this.ruleProviders)
             {
-                int otherExecutionIndex = ruleProvider.getExecutionIndex();
+                int otherExecutionIndex = ((AbstractRuleProvider) ruleProvider).getExecutionIndex();
                 if (otherExecutionIndex <= typeExecutionIndex)
                 {
                     // is in the pre-phase
