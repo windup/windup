@@ -52,7 +52,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
     public void setVariableName(String variableName)
     {
         this.variableName = variableName;
-    };
+    }
 
     public boolean hasVariableNameSet()
     {

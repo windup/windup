@@ -63,7 +63,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                         {
                             extractEJBMetadata(event, payload);
-                        };
+                        }
                     })
                     .where("annotationType").matches("Stateless|Stateful")
                     .withId(ruleIDPrefix + "_StatelessAndStatefulRule")

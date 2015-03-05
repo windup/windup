@@ -100,7 +100,7 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
         File file = filePath.toFile();
         if (file.exists())
         {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file));)
+            try (BufferedReader reader = new BufferedReader(new FileReader(file)))
             {
                 String line = null;
                 while ((line = reader.readLine()) != null)

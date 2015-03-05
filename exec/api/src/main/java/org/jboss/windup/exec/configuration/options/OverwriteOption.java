@@ -1,6 +1,6 @@
 package org.jboss.windup.exec.configuration.options;
 
-import org.jboss.windup.config.AbstractWindupConfigurationOption;
+import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
@@ -10,7 +10,7 @@ import org.jboss.windup.config.ValidationResult;
  * @author jsightler
  *
  */
-public class OverwriteOption extends AbstractWindupConfigurationOption
+public class OverwriteOption extends AbstractConfigurationOption
 {
     public static final String NAME = "overwrite";
 

@@ -193,7 +193,7 @@ public class Variables
                 {
                     if (!type.isAssignableFrom(frame.getClass()))
                     {
-                        continue;
+                        break;
                     }
                 }
                 // now we know all the frames are of the chosen type

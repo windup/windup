@@ -27,15 +27,15 @@ public interface RuleProviderMetadata extends RulesetMetadata
     /**
      * Return the {@link RulePhase} in which {@link Rule} instances from this {@link RuleProvider} should be executed.
      * <p>
-     * The default phase is {@link RulePhase#MIGRATION_RULES}.
+     * The default phase is {@link org.jboss.windup.config.phase.MigrationRulesPhase}.
      */
     public Class<? extends RulePhase> getPhase();
 
     /**
-     * Returns a list of {@link RuleProvider} classes that should execute before the {@link Rule} instances in this
-     * corresponding {@link RuleProvider}.
+     * Returns a list of {@link RuleProvider} classes that should execute before the {@link Rule} instances in this corresponding {@link RuleProvider}
+     * .
      *
-     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteAfterID}).
+     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteAfterIDs}).
      */
     public List<Class<? extends RuleProvider>> getExecuteAfter();
 
@@ -52,10 +52,9 @@ public interface RuleProviderMetadata extends RulesetMetadata
     public List<String> getExecuteAfterIDs();
 
     /**
-     * Returns a list of {@link RuleProvider} classes that should execute after the {@link Rule}s in this
-     * {@link RuleProvider}.
+     * Returns a list of {@link RuleProvider} classes that should execute after the {@link Rule}s in this {@link RuleProvider}.
      *
-     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeID}).
+     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeIDs}).
      */
     public List<Class<? extends RuleProvider>> getExecuteBefore();
 

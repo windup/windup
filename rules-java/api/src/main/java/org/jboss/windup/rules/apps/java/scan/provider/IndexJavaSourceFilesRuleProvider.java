@@ -35,7 +35,7 @@ import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.Logging;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -173,7 +173,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             // Set the root path of this source file (if possible). As this could be coming from user-provided source, it
             // is possible that the path will not match the package name. In this case, we will likely end up with a null
             // root path.
-            Path rootSourcePath = WindupPathUtil.getRootFolderForSource(sourceFileModel.asFile().toPath(), packageName);
+            Path rootSourcePath = PathUtil.getRootFolderForSource(sourceFileModel.asFile().toPath(), packageName);
             if (rootSourcePath != null)
             {
                 FileModel rootSourceFileModel = new FileService(context).createByFilePath(rootSourcePath.toString());

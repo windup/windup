@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.java.config;
 
-import org.jboss.windup.config.AbstractWindupConfigurationOption;
+import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
-public class ExcludePackagesOption extends AbstractWindupConfigurationOption
+public class ExcludePackagesOption extends AbstractConfigurationOption
 {
 
     public static final String NAME = "excludePackages";

@@ -13,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
  * @author jsightler
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class WindupPathUtil
+public class PathUtil
 {
-    private static final Logger log = Logger.getLogger(WindupPathUtil.class.getName());
+    private static final Logger log = Logger.getLogger(PathUtil.class.getName());
 
     /**
      * The path $USER_HOME/.windup

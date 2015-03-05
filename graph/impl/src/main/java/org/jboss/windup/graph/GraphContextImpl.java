@@ -89,7 +89,6 @@ public class GraphContextImpl implements GraphContext
             confProps.put(key, conf.getProperty(key));
         }
 
-        System.out.println("Properties: " + confProps);
         if (!afterInitializationListeners.isUnsatisfied())
         {
             for (AfterGraphInitializationListener listener : afterInitializationListeners)

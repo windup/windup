@@ -37,7 +37,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.ui.WindupCommand;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +46,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class WindupCommandTest
 {
-
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
@@ -298,8 +297,8 @@ public class WindupCommandTest
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
 
-                Path expectedUserHomeRulesDir = WindupPathUtil.getUserRulesDir();
-                Path expectedWindupHomeRulesDir = WindupPathUtil.getWindupRulesDir();
+                Path expectedUserHomeRulesDir = PathUtil.getUserRulesDir();
+                Path expectedWindupHomeRulesDir = PathUtil.getWindupRulesDir();
 
                 boolean foundUserSpecifiedPath = false;
                 boolean foundUserHomeDirRulesPath = false;
@@ -357,7 +356,7 @@ public class WindupCommandTest
 
                 setupController(controller, outputFile, reportPath);
 
-                Path expectedUserHomeRulesDir = WindupPathUtil.getUserRulesDir();
+                Path expectedUserHomeRulesDir = PathUtil.getUserRulesDir();
                 expectedUserHomeRulesDir.toFile().mkdirs();
                 controller.setValueFor("userRulesDirectory", expectedUserHomeRulesDir.toFile());
 
@@ -373,7 +372,7 @@ public class WindupCommandTest
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
 
-                Path expectedWindupHomeRulesDir = WindupPathUtil.getWindupRulesDir();
+                Path expectedWindupHomeRulesDir = PathUtil.getWindupRulesDir();
 
                 boolean foundUserHomeDirRulesPath = false;
                 boolean foundWindupHomeDirRulesPath = false;
@@ -448,8 +447,8 @@ public class WindupCommandTest
 
                 Iterable<Path> allIgnoreDirectories = windupConfiguration.getAllIgnoreDirectories();
 
-                Path expectedUserHomeIgnoreDir = WindupPathUtil.getUserIgnoreDir();
-                Path expectedWindupHomeIgnoreDir = WindupPathUtil.getWindupIgnoreDir();
+                Path expectedUserHomeIgnoreDir = PathUtil.getUserIgnoreDir();
+                Path expectedWindupHomeIgnoreDir = PathUtil.getWindupIgnoreDir();
 
                 boolean foundUserSpecifiedPath = false;
                 boolean foundUserHomeDirIgnorePath = false;
@@ -495,7 +494,6 @@ public class WindupCommandTest
                 FileUtils.deleteDirectory(reportPath);
             }
         }
-
     }
 
     private void setupController(CommandController controller, File inputFile, File outputFile) throws Exception

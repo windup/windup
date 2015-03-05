@@ -34,7 +34,7 @@ import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -231,7 +231,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                             // Set the root path of this source file (if possible). Procyon should always be placing the file
                             // into a location that is appropriate for the package name, so this should always yield
                             // a non-null root path.
-                            Path rootSourcePath = WindupPathUtil.getRootFolderForSource(decompiledSourceFileModel.asFile().toPath(),
+                            Path rootSourcePath = PathUtil.getRootFolderForSource(decompiledSourceFileModel.asFile().toPath(),
                                         classModel.getPackageName());
                             if (rootSourcePath != null)
                             {

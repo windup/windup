@@ -5,10 +5,6 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeField;
-import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-
 public class TypeRegistryTest {
 	@Test(expected = IllegalArgumentException.class) public void noAnotations() {
 		//You can't register interfaces when there is no @TypeField on it or on any of the parents:
@@ -77,19 +73,48 @@ public class TypeRegistryTest {
 		assertNull(reg.getType(X.class, "A"));
 	}
 	
-	public static interface Empty {};
-	public static @TypeField("type") interface Abstract extends Empty {};
-	public static @TypeField("type") interface Abstract2 {};
-	public static interface SubAbstract extends Abstract {};
-	
-	
-    public static @TypeValue("multipleTypeField") @TypeField("type") interface MultipleTypeField extends Abstract{};
-    public static @TypeValue("multipleTypeFieldChildren") interface MultipleTypeFieldInParents extends Abstract, Abstract2{};
+    public static interface Empty
+    {
+    }
 
-	public static @TypeValue("A") interface A extends Abstract {};
-	public static @TypeValue("B") interface B extends Abstract {};
-	public static @TypeValue("C") interface C extends A, B {}; // diamond shape inheritance diagram (multiple paths from C to Abstract)
+    public static @TypeField("type") interface Abstract extends Empty
+    {
+    }
+
+    public static @TypeField("type") interface Abstract2
+    {
+    }
+
+    public static interface SubAbstract extends Abstract
+    {
+    }
 	
-	public static @TypeValue("X") @TypeField("what") interface X {};
-	public static @TypeValue("Y") interface Y extends X {};
+	
+    public static @TypeValue("multipleTypeField") @TypeField("type") interface MultipleTypeField extends Abstract
+    {
+    }
+
+    public static @TypeValue("multipleTypeFieldChildren") interface MultipleTypeFieldInParents extends Abstract, Abstract2
+    {
+    }
+
+    public static @TypeValue("A") interface A extends Abstract
+    {
+    }
+
+    public static @TypeValue("B") interface B extends Abstract
+    {
+    }
+
+    public static @TypeValue("C") interface C extends A, B
+    {
+    } // diamond shape inheritance diagram (multiple paths from C to Abstract)
+	
+    public static @TypeValue("X") @TypeField("what") interface X
+    {
+    }
+
+    public static @TypeValue("Y") interface Y extends X
+    {
+    }
 }

@@ -17,9 +17,9 @@ public class NamespaceService extends GraphService<NamespaceMetaModel>
                     .has("namespaceURI", namespaceURI).has("schemaLocation", schemaLocation)
                     .vertices(NamespaceMetaModel.class);
 
-        for (NamespaceMetaModel result : results)
+        if (results.iterator().hasNext())
         {
-            return result;
+            return results.iterator().next();
         }
 
         // otherwise, create it.
