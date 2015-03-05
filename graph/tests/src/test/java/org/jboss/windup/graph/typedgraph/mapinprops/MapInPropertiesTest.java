@@ -30,7 +30,7 @@ public class MapInPropertiesTest
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.utils:utils"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
@@ -42,7 +42,7 @@ public class MapInPropertiesTest
                     .addPackage("org.jboss.windup.graph.typedgraph.mapinprops")
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
+                                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
         return archive;

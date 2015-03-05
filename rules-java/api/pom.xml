@@ -83,7 +83,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>utils</artifactId>
+            <artifactId>windup-utils</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
