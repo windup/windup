@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.config;
 
-import org.jboss.windup.config.AbstractWindupConfigurationOption;
+import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
@@ -9,7 +9,7 @@ import org.jboss.windup.config.ValidationResult;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public class ScanPackagesOption extends AbstractWindupConfigurationOption
+public class ScanPackagesOption extends AbstractConfigurationOption
 {
     public static final String NAME = "packages";
 

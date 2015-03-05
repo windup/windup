@@ -51,7 +51,7 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                             location.setTitle("Static IP: " + location.getSourceSnippit());
                             location.setHint("When migrating environments, static IP addresses may need to be modified or eliminated.");
                             location.setEffort(0);
-                        };
+                        }
                     })
                     .where("ip").matches("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b")
                     .where("type").matches("java|properties|xml");

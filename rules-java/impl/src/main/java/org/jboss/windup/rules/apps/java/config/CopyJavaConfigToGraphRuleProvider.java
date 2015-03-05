@@ -18,7 +18,7 @@ import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.file.FileSuffixPredicate;
 import org.jboss.windup.util.file.FileVisit;
@@ -28,8 +28,7 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Copies configuration data from {@link GraphContext#getOptionMap()} to the graph itself for easy use by other
- * {@link Rule}s.
+ * Copies configuration data from {@link GraphContext#getOptionMap()} to the graph itself for easy use by other {@link Rule}s.
  *
  */
 public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
@@ -86,8 +85,8 @@ public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
                     }
                 };
 
-                FileVisit.visit(WindupPathUtil.getUserIgnoreDir().toFile(), predicate, visitor);
-                FileVisit.visit(WindupPathUtil.getWindupIgnoreDir().toFile(), predicate, visitor);
+                FileVisit.visit(PathUtil.getUserIgnoreDir().toFile(), predicate, visitor);
+                FileVisit.visit(PathUtil.getWindupIgnoreDir().toFile(), predicate, visitor);
 
                 WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(event
                             .getGraphContext());

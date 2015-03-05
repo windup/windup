@@ -19,7 +19,10 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
 public interface Person extends NamedObject {
-    enum Gender {FEMALE, MALE};
+    enum Gender
+    {
+        FEMALE, MALE
+    }
 
     @Property("age")
     public Integer getAge();

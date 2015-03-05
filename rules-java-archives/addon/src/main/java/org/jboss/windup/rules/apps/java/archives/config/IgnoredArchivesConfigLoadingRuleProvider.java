@@ -12,7 +12,7 @@ import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
 import org.jboss.windup.util.Logging;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.file.FileSuffixPredicate;
 import org.jboss.windup.util.file.FileVisit;
@@ -62,8 +62,8 @@ public class IgnoredArchivesConfigLoadingRuleProvider extends AbstractRuleProvid
                 };
 
                 FileSuffixPredicate predicate = new FileSuffixPredicate("\\.archive-ignore\\.txt");
-                FileVisit.visit(WindupPathUtil.getUserIgnoreDir().toFile(), predicate, visitor);
-                FileVisit.visit(WindupPathUtil.getWindupIgnoreDir().toFile(), predicate, visitor);
+                FileVisit.visit(PathUtil.getUserIgnoreDir().toFile(), predicate, visitor);
+                FileVisit.visit(PathUtil.getWindupIgnoreDir().toFile(), predicate, visitor);
             }
         });
         return config;

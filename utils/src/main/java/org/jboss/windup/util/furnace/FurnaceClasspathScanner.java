@@ -21,7 +21,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.AddonFilters;
 import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -105,7 +105,7 @@ public class FurnaceClasspathScanner
             // Then try to load the classes.
             for (String discoveredFilename : discoveredFileNames)
             {
-                String clsName = WindupPathUtil.classFilePathToClassname(discoveredFilename);
+                String clsName = PathUtil.classFilePathToClassname(discoveredFilename);
                 try
                 {
                     Class<?> clazz = addon.getClassLoader().loadClass(clsName);

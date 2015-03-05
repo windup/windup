@@ -73,7 +73,7 @@ public class InMemoryFrameTest
                 numberFound++;
                 TestFooModel framed = (TestFooModel) context.getFramed().frame(v, WindupVertexFrame.class);
 
-                Assert.assertTrue(framed instanceof TestFooModel);
+                Assert.assertNotNull(framed);
                 Assert.assertEquals("prop1", framed.getProp1());
                 Assert.assertEquals("prop2", framed.getProp2());
                 Assert.assertEquals("prop3", framed.getProp3());

@@ -74,11 +74,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     private boolean isWebXml(XmlFileModel xml, Document doc)
     {
         // check it's doctype against the known doctype.
-        if (xml.getDoctype() != null && !processDoctypeMatches(xml.getDoctype()))
-        {
-            return false;
-        }
-        return true;
+        return !(xml.getDoctype() != null && !processDoctypeMatches(xml.getDoctype()));
     }
 
     private String getVersion(XmlFileModel xml, Document doc)
