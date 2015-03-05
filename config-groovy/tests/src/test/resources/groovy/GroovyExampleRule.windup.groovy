@@ -21,5 +21,4 @@ ruleSet("ExampleGroovyRule").setPhase(MigrationRulesPhase.class)
             }
         }
     )
-    .withMetadata(RuleMetadata.CATEGORY, "Basic")
-    
+    .withMetadata(RuleMetadata.TAGS, "Basic")

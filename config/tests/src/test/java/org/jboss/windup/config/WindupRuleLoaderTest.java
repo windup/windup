@@ -19,6 +19,7 @@ import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.test.utils.PhaseRuleProviderFilter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,24 +35,26 @@ public class WindupRuleLoaderTest
 
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            )
+            .addClasses(PhaseRuleProviderFilter.class);
         return archive;
     }
 
     @Inject
     private GraphContextFactory factory;
+
     @Inject
     private WindupRuleLoader loader;
 
@@ -60,29 +63,19 @@ public class WindupRuleLoaderTest
     {
         try (GraphContext context = factory.create())
         {
-            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
-            {
-                @Override
-                public boolean accept(WindupRuleProvider arg0)
-                {
-                    return arg0.getPhase() == MigrationRulesPhase.class;
-                }
-            };
+            Predicate<WindupRuleProvider> predicate = new PhaseRuleProviderFilter(MigrationRulesPhase.class);
 
             GraphRewrite event = new GraphRewrite(context);
             Configuration configuration1 = loader.loadConfiguration(context, predicate).getConfiguration();
+
             boolean found1 = false;
             boolean found2 = false;
             for (Rule rule : configuration1.getRules())
             {
                 if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
-                {
                     found1 = true;
-                }
                 else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName()))
-                {
                     found2 = true;
-                }
             }
             Assert.assertTrue(found1);
             Assert.assertFalse(found2);
@@ -133,27 +126,42 @@ public class WindupRuleLoaderTest
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()
-                        .addRule(new Rule()
-                        {
+            .addRule(new Rule()
+            {
+                @Override
+                public void perform(Rewrite event, EvaluationContext context)
+                {
+                }
 
-                            @Override
-                            public void perform(Rewrite event, EvaluationContext context)
-                            {
-                            }
+                @Override
+                public boolean evaluate(Rewrite event, EvaluationContext context)
+                {
+                    return true;
+                }
 
-                            @Override
-                            public boolean evaluate(Rewrite event, EvaluationContext context)
-                            {
-                                return true;
-                            }
+                @Override
+                public String getId()
+                {
+                    return TestRuleProvider2Phase.class.getSimpleName();
+                }
+            });
+        }
+    }
 
-                            @Override
-                            public String getId()
-                            {
-                                return TestRuleProvider2Phase.class.getSimpleName();
-                            }
-                        });
 
+    private static class PhaseRuleProviderFilterX implements Predicate<WindupRuleProvider>
+    {
+        private final Class<MigrationRulesPhase> phase;
+
+        public PhaseRuleProviderFilterX(Class<MigrationRulesPhase> phase)
+        {
+            this.phase = phase;
+        }
+
+        @Override
+        public boolean accept(WindupRuleProvider arg0)
+        {
+            return arg0.getPhase() == phase;
         }
     }
 }

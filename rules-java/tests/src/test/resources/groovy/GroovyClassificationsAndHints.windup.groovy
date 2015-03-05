@@ -25,5 +25,5 @@ ruleSet("ExampleJavaGroovy").setPhase(PostMigrationRulesPhase.class)
                     .and(Hint.withText("Furnace type references imply that the client code must be run within a Furnace container.")
                              .withEffort(8))
     )
-    .withMetadata(RuleMetadata.CATEGORY, "Basic")
-    
+    .withMetadata(RuleMetadata.TAGS, "Basic")
+

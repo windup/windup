@@ -1,7 +1,10 @@
 package org.jboss.windup.config.builder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +13,7 @@ import javax.enterprise.inject.Vetoed;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -21,9 +25,10 @@ import org.ocpsoft.rewrite.context.Context;
 
 /**
  * Used to construct new dynamic {@link WindupRuleProvider} instances.
- * 
+ *
  * @author jsightler
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 @Vetoed
 public final class WindupRuleProviderBuilder extends WindupRuleProvider implements
@@ -42,7 +47,12 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
 
     private Map<Object, Object> ruleMetadata = new HashMap<>();
     private ConfigurationBuilder configurationBuilder;
+
+    // TODO: Add javadoc.
     private Predicate<Context> metadataEnhancer;
+
+    public static final String TAGS_SPLIT_PATTERN = "\\s*,\\s*+";
+
 
     /**
      * Begin creating a new dynamic {@link WindupRuleProvider}.
@@ -100,9 +110,39 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
         return this;
     }
 
+    /**
+     * Data passed to withMetadata() are passed to the individual rules defined within this provider.
+     */
     public WindupRuleProviderBuilderAddDependencies withMetadata(Object key, Object value)
     {
+        // Tags passed as a string converted to a list.
+        if(key == RuleMetadata.TAGS && value instanceof String)
+            value = new HashSet(Arrays.asList((String)value));
+
         ruleMetadata.put(key, value);
+        return this;
+    }
+
+    /**
+     * Can be called multiple times.
+     */
+    public WindupRuleProviderBuilderAddDependencies hasTag(String tag){
+        if(!(ruleMetadata.get(RuleMetadata.TAGS) instanceof Collection))
+            ruleMetadata.put(RuleMetadata.TAGS, new HashSet(Arrays.asList(tag)));
+        else
+            ((Collection)ruleMetadata.get(RuleMetadata.TAGS)).add(tag);
+        return this;
+    }
+
+    /**
+     * Can be called multiple times.
+     */
+    public WindupRuleProviderBuilderAddDependencies hasAnyOfTags(String comaSeparatedTags){
+        List<String> parts = Arrays.asList(comaSeparatedTags.split(TAGS_SPLIT_PATTERN));
+        if(ruleMetadata.get(RuleMetadata.TAGS) instanceof Collection)
+            ((Collection)ruleMetadata.get(RuleMetadata.TAGS)).addAll(parts);
+        else
+            ruleMetadata.put(RuleMetadata.TAGS, parts);
         return this;
     }
 

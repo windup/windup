@@ -39,5 +39,5 @@ ruleSet("ExampleBlacklistRule").setPhase(RulePhase.MIGRATION_RULES)
             }
         )
     )
-    .withMetadata(RuleMetadata.CATEGORY, "Java")
-    
+    .withMetadata(RuleMetadata.TAGS, "Java")
+
