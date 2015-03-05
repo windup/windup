@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 /**
  * Handles parsing the "rule" element to add rules to the current ruleset.
  */
-@NamespaceElementHandler(elementName = "rule", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "rule", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class RuleHandler implements ElementHandler<Void>
 {
     @Override

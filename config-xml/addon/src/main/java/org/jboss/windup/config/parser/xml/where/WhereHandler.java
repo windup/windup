@@ -7,6 +7,7 @@ import java.util.List;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderPerform;
 import org.ocpsoft.rewrite.config.ConfigurationRuleParameterWhere;
 import org.w3c.dom.Element;
@@ -14,7 +15,7 @@ import org.w3c.dom.Element;
 /**
  * Parses any {@link ConfigurationRuleParameterWhere} elements that may be in this ruleset.
  */
-@NamespaceElementHandler(elementName = "where", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "where", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class WhereHandler implements ElementHandler<Void>
 {
     @Override

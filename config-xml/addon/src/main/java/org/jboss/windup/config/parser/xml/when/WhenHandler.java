@@ -8,6 +8,7 @@ import java.util.List;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
@@ -15,7 +16,7 @@ import org.w3c.dom.Element;
 /**
  * Parses the "when" element, which will contain {@link Condition} that will be combined together via {@link And}.
  */
-@NamespaceElementHandler(elementName = "when", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "when", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class WhenHandler implements ElementHandler<And>
 {
     @Override

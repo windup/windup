@@ -356,6 +356,14 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
 
         return this;
     }
+    
+    public MetadataBuilder addTag(String tag) 
+    {
+        if (!StringUtils.isBlank(tag)) {
+            this.tags.add(tag.trim());
+        }
+        return this;
+    }
 
     @Override
     public Set<String> getTags()

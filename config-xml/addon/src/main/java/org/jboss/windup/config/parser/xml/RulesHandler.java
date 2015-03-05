@@ -9,7 +9,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "rules", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "rules", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class RulesHandler implements ElementHandler<Void>
 {
     @Override
