@@ -22,13 +22,17 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-impl</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>utils</artifactId>
-            <version>${project.version}</version>
+            <artifactId>windup-utils</artifactId>
        	    <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -37,7 +41,6 @@
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-base</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -51,7 +54,6 @@
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java-api</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 

@@ -5,14 +5,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.phase.Implicit;
+import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.RulePhase;
+
 
 /**
  * A descriptor for {@link WindupRuleProvider} metadata. Can be overridden by overriding methods of {@link WindupRuleProvider}
  * like <code>getExecuteAfter()</code>, <code>getExecuteAfterIDs()</code>, <code>getID()</code> or <code>enhanceMetadata()</code>.
  *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -30,8 +31,7 @@ public @interface Rules
      * <p>
      * The default phase is {@link RulePhase#MIGRATION_RULES}.
      */
-    //RulePhase phase() default WindupRuleProvider.DEFAULT_PHASE;
-    Class<? extends RulePhase> phase() default Implicit.class;
+    Class<? extends RulePhase> phase() default DependentPhase.class;
 
 
     /**
@@ -48,10 +48,8 @@ public @interface Rules
      * {@link WindupRuleProvider}.
      *
      * This is returned as a list of Rules IDs in order to support extensions that cannot depend on each other via class
- names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
- IDs.
-
- For specifying Java-based rules, getExecuteAfter is preferred.
+     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own IDs.
+     * For specifying Java-based rules, getExecuteAfter is preferred.
      */
     String[] afterIDs() default {};
 
@@ -70,10 +68,8 @@ public @interface Rules
      * {@link WindupRuleProvider}.
      *
      * This is returned as a list of Rules IDs in order to support extensions that cannot depend on each other via class
- names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
- IDs.
-
- For specifying Java-based rules, getExecuteBefore is preferred.
+     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own IDs.
+     * For specifying Java-based rules, getExecuteBefore is preferred.
      */
     String[] beforeIDs() default {};
 

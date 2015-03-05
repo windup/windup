@@ -46,7 +46,7 @@
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>utils</artifactId>
+            <artifactId>windup-utils</artifactId>
             <version>${project.version}</version>
        	    <classifier>forge-addon</classifier>
             <scope>provided</scope>

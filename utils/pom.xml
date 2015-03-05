@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>org.jboss.windup.utils</groupId>
-    <artifactId>utils</artifactId>
+    <artifactId>windup-utils</artifactId>
 
     <name>Windup Engine - Utils</name>
 

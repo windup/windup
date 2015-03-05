@@ -11,7 +11,7 @@ import org.jboss.windup.config.WindupRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.Rules;
 import org.jboss.windup.config.metadata.WindupRuleMetadata;
-import org.jboss.windup.config.phase.Implicit;
+import org.jboss.windup.config.phase.DependentPhase;
 import org.junit.Assert;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -22,7 +22,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 @Rules( id = "myRule1",
-    phase = Implicit.class,
+    phase = DependentPhase.class,
     after = { Test1EarlierRules.class },
     before = { Test2LaterRules.class },
     categories = {"java", "security"}
@@ -33,17 +33,19 @@ public class TestMetadataAnnotationExecRuleProvider extends SingleOpRuleProvider
     public void perform(GraphRewrite event, EvaluationContext evCtx)
     {
         Assert.assertEquals("myRule1", this.getID());
-        Assert.assertEquals(Implicit.class.getName(), this.getPhase().getName());
+        Assert.assertEquals(DependentPhase.class.getName(), this.getPhase().getName());
 
         Assert.assertFalse("@Rules after is not empty", this.getExecuteAfter().isEmpty());
         Assert.assertTrue("@Rules after = {Test1EarlierRules.class}", this.getExecuteAfter().contains(Test1EarlierRules.class));
 
         WindupRuleMetadata wrm = (WindupRuleMetadata) event.getRewriteContext().get(WindupRuleMetadata.class);
         Assert.assertNotNull("event.getRewriteContext()[WindupRuleMetadata.class] is not null", wrm);
-        for(WindupRuleProvider provider : wrm.getProviders())
-        {
-            if(provider.getClass().equals(TestMetadataAnnotationExecRuleProvider.class))
-                continue;
+
+        found: {
+            for(WindupRuleProvider provider : wrm.getProviders())
+                if(provider.getClass().equals(TestMetadataAnnotationExecRuleProvider.class))
+                    break found;
+            Assert.fail("Provider not found: " + TestMetadataAnnotationExecRuleProvider.class.getSimpleName());
         }
 
         Object cat = event.getRewriteContext().get(RuleMetadata.CATEGORY);

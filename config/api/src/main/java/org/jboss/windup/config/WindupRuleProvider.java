@@ -32,7 +32,6 @@ import org.ocpsoft.rewrite.context.Context;
 public abstract class WindupRuleProvider implements ConfigurationProvider<GraphContext>
 {
     public static final Class<? extends RulePhase> DEFAULT_PHASE = MigrationRulesPhase.class;
-    public static final Class<? extends RulePhase> DEFAULT_PHASE = MigrationRules.class;
     private static final String DEFAULT_CATEGORY = "Uncategorized";
 
 
@@ -98,7 +97,7 @@ public abstract class WindupRuleProvider implements ConfigurationProvider<GraphC
 
         // If neither annotations nor the Windup core set those, use the defaults.
         if (!rewriteCtx.containsKey(RuleMetadata.CATEGORY))
-            rewriteCtx.put(RuleMetadata.CATEGORY, DEFAULT_CATEGORY);
+            rewriteCtx.put(RuleMetadata.CATEGORY, Collections.EMPTY_SET);
         if (!rewriteCtx.containsKey(RuleMetadata.ORIGIN))
             rewriteCtx.put(RuleMetadata.ORIGIN, this.getClass().getName());
 

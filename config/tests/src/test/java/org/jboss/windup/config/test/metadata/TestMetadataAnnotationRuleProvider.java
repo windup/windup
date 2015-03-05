@@ -7,9 +7,8 @@
 package org.jboss.windup.config.test.metadata;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.Rules;
-import org.jboss.windup.config.phase.Implicit;
+import org.jboss.windup.config.phase.DependentPhase;
 import org.junit.Assert;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -19,8 +18,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-@Rules( id = "myRule1",
-    phase = Implicit.class,
+@Rules(id = "myRule1",
+    phase = DependentPhase.class,
     after = { Test1EarlierRules.class },
     before = { Test2LaterRules.class },
     categories = {"java", "security"}
@@ -31,7 +30,7 @@ public class TestMetadataAnnotationRuleProvider extends SingleOpRuleProvider
     public void perform(GraphRewrite event, EvaluationContext evCtx)
     {
         Assert.assertEquals("myRule1", this.getID());
-        Assert.assertEquals(Implicit.class.getName(), this.getPhase().getName());
+        Assert.assertEquals(DependentPhase.class.getName(), this.getPhase().getName());
 
         Assert.assertFalse("@Rules after is not empty", this.getExecuteAfter().isEmpty());
         Assert.assertTrue("@Rules after = {Test1EarlierRules.class}", this.getExecuteAfter().contains(Test1EarlierRules.class));
