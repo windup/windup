@@ -68,64 +68,64 @@ public class CategoriesTest
 
 
     @Test
-    public void testUnsetCategory() throws IOException
+    public void testUnsetTags() throws IOException
     {
-        testProvider(TestCategoryUnsetRuleProvider.class, "");
+        testProvider(TestTagsUnsetRuleProvider.class, "");
     }
 
     @Test
-    public void testNoCategory() throws IOException
+    public void testNoTags() throws IOException
     {
-        testProvider(TestCategoryEmptyRuleProvider.class, "");
+        testProvider(TestTagsEmptyRuleProvider.class, "");
     }
 
     @Test
-    public void test1Category() throws IOException
+    public void test1Tags() throws IOException
     {
-        testProvider(TestCategory1RuleProvider.class, "Foo");
+        testProvider(TestTags1RuleProvider.class, "Foo");
     }
 
     @Test
-    public void test2Category() throws IOException
+    public void test2Tags() throws IOException
     {
-        testProvider(TestCategory2RuleProvider.class, "Foo, Bar");
+        testProvider(TestTags2RuleProvider.class, "Foo, Bar");
     }
 
     @Test
-    public void testEnhanceUnsetCategory() throws IOException
+    public void testEnhanceUnsetTags() throws IOException
     {
-        testProvider(TestCategoryEnhanceUnsetProvider.class, "");
+        testProvider(TestTagsEnhanceUnsetProvider.class, "");
     }
 
     @Test
-    public void testEnhanceEmptyCategory() throws IOException
+    public void testEnhanceEmptyTags() throws IOException
     {
-        testProvider(TestCategoryEnhanceEmptyProvider.class, "");
+        testProvider(TestTagsEnhanceEmptyProvider.class, "");
     }
 
     @Test
-    public void testEnhanceStringCategory() throws IOException
+    public void testEnhanceStringTags() throws IOException
     {
-        testProvider(TestCategoryEnhanceStringRuleProvider.class, "Foo");
+        testProvider(TestTagsEnhanceStringRuleProvider.class, "Foo");
     }
 
     @Test
-    public void testEnhanceJoinedCategory() throws IOException
+    public void testEnhanceJoinedTags() throws IOException
     {
-        testProvider(TestCategoryEnhanceJoinedStringRuleProvider.class, "Foo, Bar");
+        testProvider(TestTagsEnhanceJoinedStringRuleProvider.class, "Foo, Bar");
     }
 
     @Test
-    public void testEnhanceCollectionCategory() throws IOException
+    public void testEnhanceCollectionTags() throws IOException
     {
-            testProvider(TestCategoryEnhanceCollectionRuleProvider.class, "Foo, Bar");
+            testProvider(TestTagsEnhanceCollectionRuleProvider.class, "Foo, Bar");
     }
 
 
 
     private void testProvider(final Class<? extends WindupRuleProvider> provider, final String expectedCatsStr) throws IOException
     {
-        String name = TestCategoryUnsetRuleProvider.class.getSimpleName();
+        String name = TestTagsUnsetRuleProvider.class.getSimpleName();
 
         //final Set<String> expectedCats = new HashSet(Arrays.asList(expectedCatsStr.split("\\s*,\\s*+")));
         final Set<String> expectedCats = new HashSet(Arrays.asList(StringUtils.split(expectedCatsStr, ", ")));
@@ -142,13 +142,13 @@ public class CategoriesTest
             Assert.assertTrue("Rule instanceof Context", conf.getRules().get(0) instanceof Context);
             Context subRule = (Context) conf.getRules().get(0);
 
-            Object category = subRule.get(RuleMetadata.CATEGORY);
-            Assert.assertTrue("CATEGORY is set in the Context: " + category, category != null);
-            Assert.assertTrue("Category is a Set: " + category.getClass(), category instanceof Set);
-            Set<String> cats = (Set<String>)category;
-            Assert.assertEquals("" + expectedCats.size() + " categories in " + name, expectedCats.size(), cats.size());
+            Object tag = subRule.get(RuleMetadata.TAGS);
+            Assert.assertTrue("TAGS is set in the Context: " + tag, tag != null);
+            Assert.assertTrue("Tags is a Set: " + tag.getClass(), tag instanceof Set);
+            Set<String> cats = (Set<String>)tag;
+            Assert.assertEquals("" + expectedCats.size() + " tags in " + name, expectedCats.size(), cats.size());
             for (String expCat : expectedCats)
-                Assert.assertTrue(name + " has category " + expCat, cats.contains(expCat));
+                Assert.assertTrue(name + " has tag " + expCat, cats.contains(expCat));
         }
         catch(Exception ex) {
             if(ex instanceof InvocationTargetException)
@@ -161,7 +161,7 @@ public class CategoriesTest
 
     // RuleProviders
 
-    public static class TestCategoryUnsetRuleProvider extends TestCategoryRuleProviderBase
+    public static class TestTagsUnsetRuleProvider extends TestTagsRuleProviderBase
     {
         @Override
         public Collection<String> getCategories()
@@ -170,7 +170,7 @@ public class CategoriesTest
         }
     }
 
-    public static class TestCategoryEmptyRuleProvider extends TestCategoryRuleProviderBase
+    public static class TestTagsEmptyRuleProvider extends TestTagsRuleProviderBase
     {
         @Override
         public Collection<String> getCategories()
@@ -179,7 +179,7 @@ public class CategoriesTest
         }
     }
 
-    public static class TestCategory1RuleProvider extends TestCategoryRuleProviderBase
+    public static class TestTags1RuleProvider extends TestTagsRuleProviderBase
     {
         @Override
         public Collection<String> getCategories()
@@ -188,7 +188,7 @@ public class CategoriesTest
         }
     }
 
-    public static class TestCategory2RuleProvider extends TestCategoryRuleProviderBase
+    public static class TestTags2RuleProvider extends TestTagsRuleProviderBase
     {
         @Override
         public Collection<String> getCategories()
@@ -197,47 +197,47 @@ public class CategoriesTest
         }
     }
 
-    public static class TestCategoryEnhanceStringRuleProvider extends TestCategoryRuleProviderBase
+    public static class TestTagsEnhanceStringRuleProvider extends TestTagsRuleProviderBase
     {
         @Override
         public void enhanceMetadata(Context context)
         {
             super.enhanceMetadata(context);
-            context.put(RuleMetadata.CATEGORY, "Foo");
+            context.put(RuleMetadata.TAGS, "Foo");
         }
     }
 
-    public static class TestCategoryEnhanceJoinedStringRuleProvider extends TestCategoryRuleProviderBase
+    public static class TestTagsEnhanceJoinedStringRuleProvider extends TestTagsRuleProviderBase
     {
         @Override
         public void enhanceMetadata(Context context)
         {
             super.enhanceMetadata(context);
-            context.put(RuleMetadata.CATEGORY, "Foo, Bar");
+            context.put(RuleMetadata.TAGS, "Foo, Bar");
         }
     }
 
-    public static class TestCategoryEnhanceCollectionRuleProvider extends TestCategoryRuleProviderBase
+    public static class TestTagsEnhanceCollectionRuleProvider extends TestTagsRuleProviderBase
     {
         @Override
         public void enhanceMetadata(Context context)
         {
             super.enhanceMetadata(context);
-            context.put(RuleMetadata.CATEGORY, Arrays.asList("Foo", "Bar"));
+            context.put(RuleMetadata.TAGS, Arrays.asList("Foo", "Bar"));
         }
     }
 
-    public static class TestCategoryEnhanceEmptyProvider extends TestCategoryRuleProviderBase
+    public static class TestTagsEnhanceEmptyProvider extends TestTagsRuleProviderBase
     {
         @Override
         public void enhanceMetadata(Context context)
         {
             super.enhanceMetadata(context);
-            context.put(RuleMetadata.CATEGORY, "");
+            context.put(RuleMetadata.TAGS, "");
         }
     }
 
-    public static class TestCategoryEnhanceUnsetProvider extends TestCategoryRuleProviderBase
+    public static class TestTagsEnhanceUnsetProvider extends TestTagsRuleProviderBase
     {
         @Override
         public void enhanceMetadata(Context context)
@@ -248,7 +248,7 @@ public class CategoriesTest
 
 
     // A base for those above.
-    public static class TestCategoryRuleProviderBase extends WindupRuleProvider
+    public static class TestTagsRuleProviderBase extends WindupRuleProvider
     {
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -275,6 +275,6 @@ public class CategoriesTest
 
             });
         }
-    }// TestCategoryRuleProviderBase
+    }// TestTagsRuleProviderBase
 
 }

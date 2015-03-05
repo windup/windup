@@ -53,7 +53,7 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
 
     public static final String TAGS_SPLIT_PATTERN = "\\s*,\\s*+";
 
-    
+
     /**
      * Begin creating a new dynamic {@link WindupRuleProvider}.
      */
@@ -115,8 +115,8 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
      */
     public WindupRuleProviderBuilderAddDependencies withMetadata(Object key, Object value)
     {
-        // Category passed as a string converted to a list.
-        if(key == RuleMetadata.CATEGORY && value instanceof String)
+        // Tags passed as a string converted to a list.
+        if(key == RuleMetadata.TAGS && value instanceof String)
             value = new HashSet(Arrays.asList((String)value));
 
         ruleMetadata.put(key, value);
@@ -126,23 +126,23 @@ public final class WindupRuleProviderBuilder extends WindupRuleProvider implemen
     /**
      * Can be called multiple times.
      */
-    public WindupRuleProviderBuilderAddDependencies inCategory(String category){
-        if(!(ruleMetadata.get(RuleMetadata.CATEGORY) instanceof Collection))
-            ruleMetadata.put(RuleMetadata.CATEGORY, new HashSet(Arrays.asList(category)));
+    public WindupRuleProviderBuilderAddDependencies hasTag(String tag){
+        if(!(ruleMetadata.get(RuleMetadata.TAGS) instanceof Collection))
+            ruleMetadata.put(RuleMetadata.TAGS, new HashSet(Arrays.asList(tag)));
         else
-            ((Collection)ruleMetadata.get(RuleMetadata.CATEGORY)).add(category);
+            ((Collection)ruleMetadata.get(RuleMetadata.TAGS)).add(tag);
         return this;
     }
 
     /**
      * Can be called multiple times.
      */
-    public WindupRuleProviderBuilderAddDependencies inCategories(String categories){
-        List<String> parts = Arrays.asList(categories.split(TAGS_SPLIT_PATTERN));
-        if(ruleMetadata.get(RuleMetadata.CATEGORY) instanceof Collection)
-            ((Collection)ruleMetadata.get(RuleMetadata.CATEGORY)).addAll(parts);
+    public WindupRuleProviderBuilderAddDependencies hasAnyOfTags(String comaSeparatedTags){
+        List<String> parts = Arrays.asList(comaSeparatedTags.split(TAGS_SPLIT_PATTERN));
+        if(ruleMetadata.get(RuleMetadata.TAGS) instanceof Collection)
+            ((Collection)ruleMetadata.get(RuleMetadata.TAGS)).addAll(parts);
         else
-            ruleMetadata.put(RuleMetadata.CATEGORY, parts);
+            ruleMetadata.put(RuleMetadata.TAGS, parts);
         return this;
     }
 

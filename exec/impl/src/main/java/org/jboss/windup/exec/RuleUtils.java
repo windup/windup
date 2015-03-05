@@ -29,7 +29,7 @@ public class RuleUtils {
                 sb.append(ruleProvider.getID()).append(' ');
             }
 
-            Object categories = ctx.get(RuleMetadata.CATEGORY);
+            Object categories = ctx.get(RuleMetadata.TAGS);
             if (categories instanceof String )
                 sb.append('[').append(categories).append("] ");
             else if (categories instanceof Iterable)

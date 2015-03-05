@@ -8,9 +8,9 @@ import org.ocpsoft.rewrite.config.Rule;
 public enum RuleMetadata
 {
     /**
-     * The {@link Rule} category.
+     * The {@link Rule} tags.
      */
-    CATEGORY,
+    TAGS,
 
     /**
      * The {@link WinupRuleProvider} that originated this rule
@@ -24,7 +24,7 @@ public enum RuleMetadata
 
     /**
      * Whether or not to call commit after each {@link Rule} execution.
-     * 
+     *
      * The default behavior (if this is not set) is to autocommit after each rule execution.
      */
     AUTO_COMMIT,

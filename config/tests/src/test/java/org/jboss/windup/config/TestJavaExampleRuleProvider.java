@@ -51,7 +51,7 @@ public class TestJavaExampleRuleProvider extends WindupRuleProvider
     public void enhanceMetadata(Context context)
     {
         super.enhanceMetadata(context);
-        context.put(RuleMetadata.CATEGORY, Arrays.asList("Java"));
+        context.put(RuleMetadata.TAGS, Arrays.asList("Java"));
     }
 
     // @formatter:off

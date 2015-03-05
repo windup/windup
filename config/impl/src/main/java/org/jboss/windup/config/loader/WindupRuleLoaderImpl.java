@@ -220,9 +220,9 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
         provider.enhanceMetadata(ctx);
 
         normalizeRuleMetadata(rule);
-        assert ctx.get(RuleMetadata.CATEGORY) instanceof Set;
+        assert ctx.get(RuleMetadata.TAGS) instanceof Set;
 
-        Set<String> categories = (Set<String>) ctx.get(RuleMetadata.CATEGORY);
+        Set<String> categories = (Set<String>) ctx.get(RuleMetadata.TAGS);
         categories.addAll(provider.getCategories());
     }
 
@@ -236,31 +236,31 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
             return;
 
         Context ctx = (Context) rule;
-        Object category = ctx.get(RuleMetadata.CATEGORY);
+        Object tags = ctx.get(RuleMetadata.TAGS);
 
-        if (category == null)
+        if (tags == null)
         {
-            ctx.put(RuleMetadata.CATEGORY, new HashSet());
+            ctx.put(RuleMetadata.TAGS, new HashSet());
             return;
         }
 
-        if (category instanceof String)
-            category = ((String)category).split(WindupRuleProviderBuilder.TAGS_SPLIT_PATTERN);
+        if (tags instanceof String)
+            tags = ((String)tags).split(WindupRuleProviderBuilder.TAGS_SPLIT_PATTERN);
 
-        if (category instanceof String[])
-            category = Arrays.asList((String[]) category);
+        if (tags instanceof String[])
+            tags = Arrays.asList((String[]) tags);
 
-        if (category instanceof Collection && !(category instanceof Set))
+        if (tags instanceof Collection && !(tags instanceof Set))
         {
-            HashSet categoriesSet = new HashSet();
-            for (Object catItem : (Collection) category)
-                if (!(catItem instanceof String))
-                    throw new WindupException("Rule categories may only contain strings, but contains: " + catItem.getClass().getSimpleName());
-                else if ("".equals(catItem))
+            HashSet tagsSet = new HashSet();
+            for (Object tagItem : (Collection) tags)
+                if (!(tagItem instanceof String))
+                    throw new WindupException("Rule tags may only contain strings, but contains: " + tagItem.getClass().getSimpleName());
+                else if ("".equals(tagItem))
                     continue;
                 else
-                    categoriesSet.add(((String)catItem).trim());
-            ctx.put(RuleMetadata.CATEGORY, categoriesSet);
+                    tagsSet.add(((String)tagItem).trim());
+            ctx.put(RuleMetadata.TAGS, tagsSet);
         }
     }
 
