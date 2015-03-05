@@ -53,7 +53,7 @@ public class WindupCommandTest
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.utils:utils"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
     })
     public static ForgeArchive getDeployment()
@@ -68,7 +68,7 @@ public class WindupCommandTest
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
                                 AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
+                                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                 AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
                     );

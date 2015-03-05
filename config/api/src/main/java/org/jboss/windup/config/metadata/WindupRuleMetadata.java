@@ -12,9 +12,8 @@ import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Maintains metadata regarding the {@link Rule}s and {@link WindupRuleProvider}s that have been loaded by Windup.
- * 
- * @author jsightler <jesse.sightler@gmail.com>
  *
+ * @author jsightler <jesse.sightler@gmail.com>
  */
 public class WindupRuleMetadata
 {
