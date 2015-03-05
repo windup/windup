@@ -86,7 +86,6 @@
         <module>tests</module>
         <module>test-util</module>
         <module>bootstrap</module>
-        <module>dist</module>
     </modules>
 
     <dependencyManagement>
@@ -168,6 +167,22 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>non-release</id>
+            <activation>
+                <property>
+                    <name>!performRelease</name>
+                </property>
+            </activation>
+            <modules>
+                <!--
+                    Only include this module in non-release builds
+                    (as it can trigger a circular dependency in release builds)
+                -->
+                <module>dist</module>
+            </modules>
+        </profile>
+
         <profile>
             <id>cleanup</id>
             <build>
