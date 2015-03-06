@@ -7,9 +7,11 @@
 package org.jboss.windup.config;
 
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
 
 /**
@@ -50,6 +52,24 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
     public boolean handles(Object payload)
     {
         return payload instanceof GraphContext;
+    }
+
+    /**
+     * Specify additional meta-data to individual {@link Rule} instances originating from the corresponding
+     * {@link RuleProvider} instance.
+     */
+    public static void enhanceRuleMetadata(RuleProvider provider, Rule rule)
+    {
+        if (rule instanceof Context)
+        {
+            Context context = (Context) rule;
+            if (!context.containsKey(RuleMetadata.ORIGIN))
+                context.put(RuleMetadata.ORIGIN, provider.getMetadata().getOrigin());
+            if (!context.containsKey(RuleMetadata.RULE_PROVIDER))
+                context.put(RuleMetadata.RULE_PROVIDER, provider);
+            if (!context.containsKey(RuleMetadata.TAGS))
+                context.put(RuleMetadata.TAGS, provider.getMetadata().getTags());
+        }
     }
 
     @Override

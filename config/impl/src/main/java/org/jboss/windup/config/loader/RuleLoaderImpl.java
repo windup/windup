@@ -14,9 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.metadata.AbstractMetadata;
-import org.jboss.windup.config.metadata.LoadedRules;
+import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.ServiceLogger;
@@ -41,19 +41,19 @@ import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
 
-public class WindupRuleLoaderImpl implements WindupRuleLoader
+public class RuleLoaderImpl implements WindupRuleLoader
 {
-    public static Logger LOG = Logger.getLogger(WindupRuleLoaderImpl.class.getName());
+    public static Logger LOG = Logger.getLogger(RuleLoaderImpl.class.getName());
 
     @Inject
-    private Imported<WindupRuleProviderLoader> loaders;
+    private Imported<RuleProviderLoader> loaders;
 
-    public WindupRuleLoaderImpl()
+    public RuleLoaderImpl()
     {
     }
 
     @Override
-    public LoadedRules loadConfiguration(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
+    public RuleProviderRegistry loadConfiguration(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
     {
         return build(context, ruleProviderFilter);
     }
@@ -71,7 +71,7 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
             if (provider instanceof RulePhase)
                 unsortedPhases.add(provider);
         }
-        List<RuleProvider> sortedPhases = WindupRuleProviderSorter.sort(unsortedPhases);
+        List<RuleProvider> sortedPhases = RuleProviderSorter.sort(unsortedPhases);
         StringBuilder rulePhaseSB = new StringBuilder();
         for (RuleProvider phase : sortedPhases)
         {
@@ -114,7 +114,7 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
     private List<RuleProvider> getProviders(GraphContext context)
     {
         List<RuleProvider> unsortedProviders = new ArrayList<>();
-        for (WindupRuleProviderLoader loader : loaders)
+        for (RuleProviderLoader loader : loaders)
         {
             unsortedProviders.addAll(loader.getProviders(context));
         }
@@ -123,19 +123,19 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
 
         printRulePhases(unsortedProviders);
 
-        List<RuleProvider> sortedProviders = WindupRuleProviderSorter.sort(unsortedProviders);
+        List<RuleProvider> sortedProviders = RuleProviderSorter.sort(unsortedProviders);
         ServiceLogger.logLoadedServices(LOG, RuleProvider.class, sortedProviders);
 
         return Collections.unmodifiableList(sortedProviders);
     }
 
-    private LoadedRules build(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
+    private RuleProviderRegistry build(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
     {
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
 
         List<RuleProvider> providers = getProviders(context);
-        LoadedRules executionMetadata = new LoadedRules();
+        RuleProviderRegistry executionMetadata = new RuleProviderRegistry();
         executionMetadata.setProviders(providers);
         for (RuleProvider provider : providers)
         {
@@ -156,10 +156,7 @@ public class WindupRuleLoaderImpl implements WindupRuleLoader
             {
                 i++;
 
-                if (provider.getMetadata() instanceof AbstractMetadata)
-                {
-                    ((AbstractMetadata) provider.getMetadata()).enhanceRuleMetadata(rule);
-                }
+                AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
 
                 if (rule instanceof RuleBuilder && StringUtils.isBlank(rule.getId()))
                 {

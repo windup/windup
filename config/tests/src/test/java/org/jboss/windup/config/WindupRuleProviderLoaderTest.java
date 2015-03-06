@@ -13,7 +13,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.loader.WindupRuleProviderLoader;
+import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -51,7 +51,7 @@ public class WindupRuleProviderLoaderTest
     @Inject
     private GraphContextFactory factory;
     @Inject
-    private Imported<WindupRuleProviderLoader> loaders;
+    private Imported<RuleProviderLoader> loaders;
 
     @Test
     public void testRuleProviderWithFilter() throws IOException
@@ -61,20 +61,22 @@ public class WindupRuleProviderLoaderTest
             boolean foundProvider1 = false;
             boolean foundProvider2 = false;
 
-            for (WindupRuleProviderLoader loader : loaders)
+            for (RuleProviderLoader loader : loaders)
             {
-                for (AbstractRuleProvider provider : loader.getProviders(context))
+                for (RuleProvider provider : loader.getProviders(context))
                 {
                     if (provider instanceof TestRuleProvider1)
                     {
-                        Assert.assertEquals("_DEFAULT_:org.jboss.windup.config.WindupRuleProviderLoaderTest.TestRuleProvider1", provider
-                                    .getMetadata().getOrigin());
+                        Assert.assertTrue(provider.getMetadata().getOrigin()
+                                    .contains("org.jboss.windup.config.WindupRuleProviderLoaderTest$TestRuleProvider1"));
+                        Assert.assertTrue(provider.getMetadata().getOrigin().contains("_DEFAULT_"));
                         foundProvider1 = true;
                     }
                     else if (provider instanceof TestRuleProvider2)
                     {
-                        Assert.assertEquals("_DEFAULT_:org.jboss.windup.config.WindupRuleProviderLoaderTest.TestRuleProvider2", provider
-                                    .getMetadata().getOrigin());
+                        Assert.assertTrue(provider.getMetadata().getOrigin()
+                                    .contains("org.jboss.windup.config.WindupRuleProviderLoaderTest$TestRuleProvider2"));
+                        Assert.assertTrue(provider.getMetadata().getOrigin().contains("_DEFAULT_"));
                         foundProvider2 = true;
                     }
                 }

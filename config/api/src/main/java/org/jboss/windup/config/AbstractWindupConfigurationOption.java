@@ -1,12 +1,12 @@
 package org.jboss.windup.config;
 
 /**
- * Provides a base class for sharing default functionality between {@link WindupConfigurationOption}s.
+ * Provides a base class for sharing default functionality between {@link ConfigurationOption}s.
  *
  * @author jsightler <jesse.sightler@gmail.com>
  * @author ozizka
  */
-public abstract class AbstractWindupConfigurationOption implements WindupConfigurationOption
+public abstract class AbstractWindupConfigurationOption implements ConfigurationOption
 {
     @Override
     public int getPriority()

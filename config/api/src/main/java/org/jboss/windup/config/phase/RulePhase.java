@@ -45,7 +45,7 @@ public abstract class RulePhase extends AbstractRuleProvider
     @Override
     public final RuleProviderMetadata getMetadata()
     {
-        return MetadataBuilder.forProvider(nextPhase, thisPhase.getSimpleName())
+        return MetadataBuilder.forProvider(thisPhase, thisPhase.getSimpleName())
 
                     /**
                      * We set {@link DependentPhase} because it has no executeBefore/executeAfter conditions of its own.

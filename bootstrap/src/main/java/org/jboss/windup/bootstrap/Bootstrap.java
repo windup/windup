@@ -31,7 +31,7 @@ import org.jboss.forge.furnace.versions.EmptyVersion;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.windup.bootstrap.listener.GreetingListener;
-import org.jboss.windup.config.WindupConfigurationOption;
+import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 /**
@@ -185,7 +185,7 @@ public class Bootstrap
 
         addReposToFurnace(furnace, mutableRepos, immutableRepos);
 
-        Iterable<WindupConfigurationOption> knownWindupArgs = getKnownWindupArgs(furnace);
+        Iterable<ConfigurationOption> knownWindupArgs = getKnownWindupArgs(furnace);
 
         // add them again (since starting/stopping furnace destroyed them)
         addReposToFurnace(furnace, mutableRepos, immutableRepos);
@@ -304,9 +304,9 @@ public class Bootstrap
         }
     }
 
-    private static boolean isWindupArg(Iterable<WindupConfigurationOption> availableOptions, String arg)
+    private static boolean isWindupArg(Iterable<ConfigurationOption> availableOptions, String arg)
     {
-        for (WindupConfigurationOption availableOption : availableOptions)
+        for (ConfigurationOption availableOption : availableOptions)
         {
             if (arg.equals("--" + availableOption.getName()))
             {
@@ -335,7 +335,7 @@ public class Bootstrap
         furnace.setArgs(args);
     }
 
-    private static String getHelpMessage(Iterable<WindupConfigurationOption> windupOptions)
+    private static String getHelpMessage(Iterable<ConfigurationOption> windupOptions)
     {
         StringBuilder sb = new StringBuilder();
         sb.append("Usage: windup [OPTION]... PARAMETER ... \n");
@@ -343,7 +343,7 @@ public class Bootstrap
         sb.append("\n");
 
         sb.append("\nWindup Options:\n");
-        for (WindupConfigurationOption option : windupOptions)
+        for (ConfigurationOption option : windupOptions)
         {
             sb.append("--").append(option.getName()).append("\n");
             sb.append("\t").append(option.getDescription()).append("\n");
@@ -477,7 +477,7 @@ public class Bootstrap
         }
     }
 
-    private static Iterable<WindupConfigurationOption> getKnownWindupArgs(Furnace furnace)
+    private static Iterable<ConfigurationOption> getKnownWindupArgs(Furnace furnace)
     {
         startFurnaceAsyncAndReturnWhenStarted(furnace);
         try

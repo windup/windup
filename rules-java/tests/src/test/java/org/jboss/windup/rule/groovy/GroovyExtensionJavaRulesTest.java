@@ -88,7 +88,6 @@ public class GroovyExtensionJavaRulesTest
 
             Assert.assertNotNull(context);
 
-            // Output dir.
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
                         "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());

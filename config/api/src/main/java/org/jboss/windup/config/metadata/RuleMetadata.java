@@ -5,7 +5,7 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public enum RuleMetadataTypes
+public enum RuleMetadata
 {
     /**
      * The {@link WinupRuleProvider} that originated this rule
@@ -16,6 +16,11 @@ public enum RuleMetadataTypes
      * The {@link Rule} origin.
      */
     ORIGIN,
+
+    /**
+     * The tags describing this {@link Rule}.
+     */
+    TAGS,
 
     /**
      * Whether or not to call commit after each {@link Rule} execution.

@@ -9,11 +9,11 @@ package org.jboss.windup.config;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.windup.config.graph.TypeOperation;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.graph.TypeOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;

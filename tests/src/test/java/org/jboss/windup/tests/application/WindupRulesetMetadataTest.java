@@ -64,20 +64,17 @@ public class WindupRulesetMetadataTest
         {
             count++;
 
-            if (m instanceof JavaRulesetMetadata)
+            if (JavaRulesetMetadata.RULE_SET_ID.equals(m.getID()))
             {
                 foundJavaRulesetMeta = true;
-                Assert.assertEquals(JavaRulesetMetadata.RULE_SET_ID, m.getOrigin());
             }
-            else if (m instanceof JavaEERulesetMetadata)
+            else if (JavaEERulesetMetadata.RULE_SET_ID.equals(m.getID()))
             {
                 foundJavaEERulesetMeta = true;
-                Assert.assertEquals(JavaEERulesetMetadata.RULE_SET_ID, m.getID());
             }
-            else if (m instanceof XmlRulesetMetadata)
+            else if (XmlRulesetMetadata.RULE_SET_ID.equals(m.getID()))
             {
                 foundXMLRulesetMeta = true;
-                Assert.assertEquals(XmlRulesetMetadata.RULE_SET_ID, m.getID());
             }
         }
 

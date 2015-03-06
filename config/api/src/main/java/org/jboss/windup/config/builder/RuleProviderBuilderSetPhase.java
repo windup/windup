@@ -7,10 +7,10 @@ import org.jboss.windup.config.phase.RulePhase;
  * @author jsightler
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface WindupRuleProviderBuilderMetadataSetPhase
+public interface RuleProviderBuilderSetPhase
 {
     /**
      * Set the {@link RulePhase} for this {@link AbstractRuleProvider}
      */
-    WindupRuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase);
+    RuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase);
 }

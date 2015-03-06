@@ -15,7 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.ocpsoft.rewrite.config.Configuration;
 
-public class WindupRuleProviderSorterTest
+public class RuleProviderSorterTest
 {
     private class Phase1 extends RulePhase
     {
@@ -101,13 +101,13 @@ public class WindupRuleProviderSorterTest
     {
         public WCPPhase1Class1()
         {
-            super(MetadataBuilder.forProvider(WCPPhase1Class1.class, "Phase1Class1")
+            super(MetadataBuilder.forProvider(WCPPhase1Class1.class)
                         .setPhase(Phase1.class));
         }
 
         public WCPPhase1Class1(Class<? extends RuleProvider> dependency)
         {
-            super(MetadataBuilder.forProvider(WCPPhase1Class1.class, "Phase1Class1")
+            super(MetadataBuilder.forProvider(WCPPhase1Class1.class)
                         .addExecuteAfter(dependency)
                         .setPhase(Phase1.class));
         }
@@ -123,7 +123,7 @@ public class WindupRuleProviderSorterTest
     {
         public WCPPhase1Class2()
         {
-            super(MetadataBuilder.forProvider(WCPPhase1Class2.class, "Phase1Class2")
+            super(MetadataBuilder.forProvider(WCPPhase1Class2.class)
                         .setPhase(Phase1.class)
                         .addExecuteAfter(WCPPhase1Class1.class));
         }
@@ -139,7 +139,7 @@ public class WindupRuleProviderSorterTest
     {
         public WCPPhaseDependentClass2()
         {
-            super(MetadataBuilder.forProvider(WCPPhaseDependentClass2.class, "PhaseDependentClass2")
+            super(MetadataBuilder.forProvider(WCPPhaseDependentClass2.class)
                         .addExecuteAfter(WCPPhase1Class2.class));
         }
 
@@ -148,19 +148,14 @@ public class WindupRuleProviderSorterTest
         {
             return null;
         }
-
-        @Override
-        public String toString()
-        {
-            return "PhaseDependentClass2";
-        }
     }
 
     private class WCPPhase1Class3 extends AbstractRuleProvider
     {
         public WCPPhase1Class3()
         {
-            super(MetadataBuilder.forProvider(WCPPhase1Class3.class, "Phase1Class3")
+            super(MetadataBuilder.forProvider(WCPPhase1Class3.class)
+                        .addExecuteAfter(WCPPhase1Class2.class)
                         .setPhase(Phase1.class));
         }
 
@@ -175,7 +170,7 @@ public class WindupRuleProviderSorterTest
     {
         public WCPPhase2Class1()
         {
-            super(MetadataBuilder.forProvider(WCPPhase2Class1.class, "Phase2Class1")
+            super(MetadataBuilder.forProvider(WCPPhase2Class1.class)
                         .setPhase(Phase2.class));
         }
 
@@ -191,7 +186,7 @@ public class WindupRuleProviderSorterTest
     {
         public WCPPhase2Class3()
         {
-            super(MetadataBuilder.forProvider(WCPPhase2Class3.class, "Phase2Class3")
+            super(MetadataBuilder.forProvider(WCPPhase2Class3.class)
                         .addExecuteAfterId("WCPDependentPhase2Step2")
                         .setPhase(Phase2.class));
         }
@@ -207,8 +202,8 @@ public class WindupRuleProviderSorterTest
     {
         public WCPPhase2Class4()
         {
-            super(MetadataBuilder.forProvider(WCPPhase2Class4.class, "Phase2Class4")
-                        .addExecuteAfterId("WCPDependentPhase2Step2")
+            super(MetadataBuilder.forProvider(WCPPhase2Class4.class)
+                        .addExecuteAfterId("WCPPhase2Class3")
                         .setPhase(Phase2.class));
         }
 
@@ -223,7 +218,7 @@ public class WindupRuleProviderSorterTest
     {
         public WCPPhase1WrongPhaseDep()
         {
-            super(MetadataBuilder.forProvider(WCPPhase1WrongPhaseDep.class, "Phase1WrongPhaseDep")
+            super(MetadataBuilder.forProvider(WCPPhase1WrongPhaseDep.class)
                         .addExecuteAfter(WCPPhase2Class1.class)
                         .setPhase(Phase1.class));
         }
@@ -239,7 +234,7 @@ public class WindupRuleProviderSorterTest
     {
         public WCPAcceptableCrossPhaseDep()
         {
-            super(MetadataBuilder.forProvider(WCPAcceptableCrossPhaseDep.class, "Phase1AcceptableCrossPhaseDep")
+            super(MetadataBuilder.forProvider(WCPAcceptableCrossPhaseDep.class)
                         .addExecuteAfter(WCPPhase2Class1.class)
                         .setPhase(Phase3.class));
         }
@@ -255,9 +250,9 @@ public class WindupRuleProviderSorterTest
     {
         public WCPDependentPhase2Step2()
         {
-            super(MetadataBuilder.forProvider(WCPDependentPhase2Step2.class, "WCPDependentPhase2Step2")
-                        .addExecuteBefore(WCPPhase2Class3.class)
+            super(MetadataBuilder.forProvider(WCPDependentPhase2Step2.class)
                         .addExecuteAfter(WCPPhase2Class1.class)
+                        .addExecuteBefore(WCPPhase2Class3.class)
                         .setPhase(DependentPhase.class));
         }
 
@@ -302,30 +297,31 @@ public class WindupRuleProviderSorterTest
         ruleProviders.add(v1);
         ruleProviders.addAll(getPhases());
 
-        List<RuleProvider> sortedRCPListUnmodifiable = WindupRuleProviderSorter.sort(ruleProviders);
-        System.out.println("Results With Phases:  " + sortedRCPListUnmodifiable);
-        List<RuleProvider> sortedRCPList = new ArrayList<>(sortedRCPListUnmodifiable);
+        List<RuleProvider> sortedRuleProviders = new ArrayList<>(RuleProviderSorter.sort(ruleProviders));
+        System.out.println("Results With Phases:  " + sortedRuleProviders);
 
-        // remove phases (this makes asserting on the results easier)
-        ListIterator<RuleProvider> sortedRCPLI = sortedRCPList.listIterator();
-        while (sortedRCPLI.hasNext())
+        /*
+         * Remove phases (this makes asserting on the results easier)
+         */
+        ListIterator<RuleProvider> iterator = sortedRuleProviders.listIterator();
+        while (iterator.hasNext())
         {
-            RuleProvider p = sortedRCPLI.next();
+            RuleProvider p = iterator.next();
             if (p instanceof RulePhase)
             {
-                sortedRCPLI.remove();
+                iterator.remove();
             }
         }
-        System.out.println("Results without Phases:  " + sortedRCPList);
+        System.out.println("Results without Phases:  " + sortedRuleProviders);
 
-        Assert.assertEquals(v1, sortedRCPList.get(0));
-        Assert.assertEquals(v2, sortedRCPList.get(1));
-        Assert.assertEquals(vI, sortedRCPList.get(2));
-        Assert.assertEquals(v3, sortedRCPList.get(3));
-        Assert.assertEquals(v4, sortedRCPList.get(4));
-        Assert.assertEquals(v5, sortedRCPList.get(5));
-        Assert.assertEquals(v6, sortedRCPList.get(6));
-        Assert.assertEquals(v7, sortedRCPList.get(7));
+        Assert.assertEquals(v1, sortedRuleProviders.get(0));
+        Assert.assertEquals(v2, sortedRuleProviders.get(1));
+        Assert.assertEquals(vI, sortedRuleProviders.get(2));
+        Assert.assertEquals(v3, sortedRuleProviders.get(3));
+        Assert.assertEquals(v4, sortedRuleProviders.get(4));
+        Assert.assertEquals(v5, sortedRuleProviders.get(5));
+        Assert.assertEquals(v6, sortedRuleProviders.get(6));
+        Assert.assertEquals(v7, sortedRuleProviders.get(7));
     }
 
     @Test
@@ -343,7 +339,7 @@ public class WindupRuleProviderSorterTest
 
         try
         {
-            WindupRuleProviderSorter.sort(ruleProviders);
+            RuleProviderSorter.sort(ruleProviders);
             Assert.fail("No cycles detected");
         }
         catch (RuntimeException e)
@@ -374,7 +370,7 @@ public class WindupRuleProviderSorterTest
 
         try
         {
-            WindupRuleProviderSorter.sort(ruleProviders);
+            RuleProviderSorter.sort(ruleProviders);
             Assert.fail("No improper phase dependencies detected!");
         }
         catch (IncorrectPhaseDependencyException | WindupMultiStringException e)
@@ -407,7 +403,7 @@ public class WindupRuleProviderSorterTest
 
         try
         {
-            WindupRuleProviderSorter.sort(ruleProviders);
+            RuleProviderSorter.sort(ruleProviders);
         }
         catch (IncorrectPhaseDependencyException e)
         {
@@ -422,7 +418,7 @@ public class WindupRuleProviderSorterTest
         List<RuleProvider> ruleProviders = new ArrayList<>();
         ruleProviders.addAll(getPhases());
 
-        List<RuleProvider> results = WindupRuleProviderSorter.sort(ruleProviders);
+        List<RuleProvider> results = RuleProviderSorter.sort(ruleProviders);
         Assert.assertEquals(4, results.size());
 
         int row = 0;

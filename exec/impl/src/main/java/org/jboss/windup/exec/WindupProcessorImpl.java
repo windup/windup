@@ -13,7 +13,7 @@ import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.loader.WindupRuleLoader;
-import org.jboss.windup.config.metadata.LoadedRules;
+import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -85,9 +85,9 @@ public class WindupProcessorImpl implements WindupProcessor
 
         final GraphRewrite event = new GraphRewrite(context);
 
-        LoadedRules loadedRules = windupConfigurationLoader.loadConfiguration(context,
+        RuleProviderRegistry loadedRules = windupConfigurationLoader.loadConfiguration(context,
                     windupConfiguration.getRuleProviderFilter());
-        event.getRewriteContext().put(LoadedRules.class, loadedRules);
+        event.getRewriteContext().put(RuleProviderRegistry.class, loadedRules);
 
         Configuration rules = loadedRules.getConfiguration();
 

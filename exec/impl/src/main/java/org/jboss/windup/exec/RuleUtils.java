@@ -1,7 +1,7 @@
 package org.jboss.windup.exec;
 
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.metadata.RuleMetadataTypes;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 
@@ -22,7 +22,7 @@ public class RuleUtils
         if (rule instanceof Context)
         {
             final Context ctx = (Context) rule;
-            AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ctx.get(RuleMetadataTypes.RULE_PROVIDER);
+            AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ctx.get(RuleMetadata.RULE_PROVIDER);
             if (ruleProvider != null)
             {
                 builder.append(ruleProvider.getMetadata().getPhase()).append(" - ");

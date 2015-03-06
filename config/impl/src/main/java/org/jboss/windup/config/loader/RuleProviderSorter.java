@@ -25,7 +25,7 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
  * @author jsightler <jesse.sightler@gmail.com>
  * @author Ondrej Zizka <zizka@seznam.com>
  */
-public class WindupRuleProviderSorter
+public class RuleProviderSorter
 {
     /**
      * All {@link RuleProvider}s
@@ -42,7 +42,7 @@ public class WindupRuleProviderSorter
      */
     private final Map<String, RuleProvider> idToProviderMap = new HashMap<>();
 
-    private WindupRuleProviderSorter(List<RuleProvider> providers)
+    private RuleProviderSorter(List<RuleProvider> providers)
     {
         this.providers = new ArrayList<>(providers);
         initializeLookupCaches();
@@ -54,7 +54,7 @@ public class WindupRuleProviderSorter
      */
     public static List<RuleProvider> sort(List<RuleProvider> providers)
     {
-        WindupRuleProviderSorter sorter = new WindupRuleProviderSorter(providers);
+        RuleProviderSorter sorter = new RuleProviderSorter(providers);
         return sorter.getProviders();
     }
 
@@ -71,7 +71,6 @@ public class WindupRuleProviderSorter
      */
     private void initializeLookupCaches()
     {
-        // Initialize lookup maps
         for (RuleProvider provider : providers)
         {
             Class<? extends RuleProvider> unproxiedClass = unwrapType(provider.getClass());
@@ -85,25 +84,20 @@ public class WindupRuleProviderSorter
      */
     private void sort()
     {
-        // Build a directed graph based upon the dependencies
-        DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> g = new DefaultDirectedWeightedGraph<>(
+        DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> graph = new DefaultDirectedWeightedGraph<>(
                     DefaultEdge.class);
 
-        // Add initial vertices to the graph
-        // Initialize lookup maps
         for (RuleProvider provider : providers)
         {
-            g.addVertex(provider);
+            graph.addVertex(provider);
         }
 
-        addProviderRelationships(g);
+        addProviderRelationships(graph);
 
-        checkForCycles(g);
+        checkForCycles(graph);
 
-        // create the final results list
         List<RuleProvider> result = new ArrayList<RuleProvider>(this.providers.size());
-        // use topological ordering to make it all the right order
-        TopologicalOrderIterator<RuleProvider, DefaultEdge> iterator = new TopologicalOrderIterator<>(g);
+        TopologicalOrderIterator<RuleProvider, DefaultEdge> iterator = new TopologicalOrderIterator<>(graph);
         while (iterator.hasNext())
         {
             RuleProvider provider = iterator.next();
@@ -123,7 +117,7 @@ public class WindupRuleProviderSorter
     /**
      * Add edges between {@link WinduPRuleProvider}s based upon their dependency relationships.
      */
-    private void addProviderRelationships(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> g)
+    private void addProviderRelationships(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> graph)
     {
         linkRulePhases();
 
@@ -133,40 +127,40 @@ public class WindupRuleProviderSorter
 
             List<String> errors = new LinkedList<>();
 
-            // add connections to ruleproviders that should execute before this one
             for (Class<? extends RuleProvider> clz : provider.getMetadata().getExecuteAfter())
             {
-                addExecuteAfterRelationship(g, provider, errors, clz);
+                // add connections to ruleproviders that should execute before this one
+                addExecuteAfterRelationship(graph, provider, errors, clz);
             }
 
             if (phaseProvider != null)
             {
                 if (provider.getMetadata().getPhase() != Proxies.unwrap(provider).getClass())
-                    addExecuteAfterRelationship(g, provider, errors, provider.getMetadata().getPhase());
+                    addExecuteAfterRelationship(graph, provider, errors, provider.getMetadata().getPhase());
 
                 for (Class<? extends RuleProvider> clz : phaseProvider.getMetadata().getExecuteAfter())
                 {
-                    addExecuteAfterRelationship(g, provider, errors, clz);
+                    addExecuteAfterRelationship(graph, provider, errors, clz);
                 }
             }
 
-            // add connections to ruleproviders that should execute after this one
             for (Class<? extends RuleProvider> clz : provider.getMetadata().getExecuteBefore())
             {
-                addExecuteBeforeRelationship(g, provider, errors, clz);
+                // add connections to ruleproviders that should execute after this one
+                addExecuteBeforeRelationship(graph, provider, errors, clz);
             }
 
             if (phaseProvider != null)
             {
                 for (Class<? extends RuleProvider> clz : phaseProvider.getMetadata().getExecuteBefore())
                 {
-                    addExecuteBeforeRelationship(g, provider, errors, clz);
+                    addExecuteBeforeRelationship(graph, provider, errors, clz);
                 }
             }
 
-            // add connections to ruleproviders that should execute before this one (by String ID)
             for (String depID : provider.getMetadata().getExecuteAfterIDs())
             {
+                // add connections to ruleproviders that should execute before this one (by String ID)
                 RuleProvider otherProvider = getByID(depID);
                 if (otherProvider == null)
                 {
@@ -174,12 +168,12 @@ public class WindupRuleProviderSorter
                                 + depID + " but this provider could not be found.");
                 }
                 else
-                    g.addEdge(otherProvider, provider);
+                    graph.addEdge(otherProvider, provider);
             }
 
-            // add connections to ruleproviders that should execute before this one (by String ID)
             for (String depID : provider.getMetadata().getExecuteBeforeIDs())
             {
+                // add connections to ruleproviders that should execute before this one (by String ID)
                 RuleProvider otherProvider = getByID(depID);
                 if (otherProvider == null)
                 {
@@ -187,10 +181,9 @@ public class WindupRuleProviderSorter
                                 + depID + " but this provider could not be found.");
                 }
                 else
-                    g.addEdge(provider, otherProvider);
+                    graph.addEdge(provider, otherProvider);
             }
 
-            // Report the errors.
             if (!errors.isEmpty())
                 throw new WindupMultiStringException("Some rules to be executed before or after were not found:", errors);
 
@@ -242,7 +235,7 @@ public class WindupRuleProviderSorter
         }
     }
 
-    private void addExecuteBeforeRelationship(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> g, RuleProvider provider,
+    private void addExecuteBeforeRelationship(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> graph, RuleProvider provider,
                 List<String> errors, Class<? extends RuleProvider> clz)
     {
         RuleProvider otherProvider = getByClass(clz);
@@ -252,10 +245,10 @@ public class WindupRuleProviderSorter
                         + clz.getName() + " but this class could not be found.");
         }
         else
-            g.addEdge(provider, otherProvider);
+            graph.addEdge(provider, otherProvider);
     }
 
-    private void addExecuteAfterRelationship(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> g, RuleProvider provider,
+    private void addExecuteAfterRelationship(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> graph, RuleProvider provider,
                 List<String> errors, Class<? extends RuleProvider> clz)
     {
         RuleProvider otherProvider = getByClass(clz);
@@ -265,15 +258,15 @@ public class WindupRuleProviderSorter
                         + clz.getName() + " but this class could not be found.");
         }
         else
-            g.addEdge(otherProvider, provider);
+            graph.addEdge(otherProvider, provider);
     }
 
     /**
      * Use the jgrapht cycle checker to detect any cycles in the provided dependency graph.
      */
-    private void checkForCycles(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> g)
+    private void checkForCycles(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> graph)
     {
-        CycleDetector<RuleProvider, DefaultEdge> cycleDetector = new CycleDetector<>(g);
+        CycleDetector<RuleProvider, DefaultEdge> cycleDetector = new CycleDetector<>(graph);
 
         if (cycleDetector.detectCycles())
         {

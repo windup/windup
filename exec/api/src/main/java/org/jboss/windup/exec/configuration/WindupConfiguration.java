@@ -17,7 +17,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.WindupConfigurationOption;
+import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
@@ -72,27 +72,27 @@ public class WindupConfiguration
     }
 
     /**
-     * Returns all of the {@link WindupConfigurationOption} in all currently available {@link Addon}s.
+     * Returns all of the {@link ConfigurationOption} in all currently available {@link Addon}s.
      */
-    public static Iterable<WindupConfigurationOption> getWindupConfigurationOptions()
+    public static Iterable<ConfigurationOption> getWindupConfigurationOptions()
     {
         return getWindupConfigurationOptions(FurnaceHolder.getFurnace());
     }
 
     /**
-     * Returns all of the {@link WindupConfigurationOption} in all currently available {@link Addon}s.
+     * Returns all of the {@link ConfigurationOption} in all currently available {@link Addon}s.
      */
-    public static Iterable<WindupConfigurationOption> getWindupConfigurationOptions(Furnace furnace)
+    public static Iterable<ConfigurationOption> getWindupConfigurationOptions(Furnace furnace)
     {
-        List<WindupConfigurationOption> results = new ArrayList<>();
-        for (WindupConfigurationOption option : furnace.getAddonRegistry().getServices(WindupConfigurationOption.class))
+        List<ConfigurationOption> results = new ArrayList<>();
+        for (ConfigurationOption option : furnace.getAddonRegistry().getServices(ConfigurationOption.class))
         {
             results.add(option);
         }
-        Collections.sort(results, new Comparator<WindupConfigurationOption>()
+        Collections.sort(results, new Comparator<ConfigurationOption>()
         {
             @Override
-            public int compare(WindupConfigurationOption o1, WindupConfigurationOption o2)
+            public int compare(ConfigurationOption o1, ConfigurationOption o2)
             {
                 return o2.getPriority() - o1.getPriority();
             }
@@ -101,9 +101,9 @@ public class WindupConfiguration
     }
 
     /**
-     * Returns all of the {@link WindupConfigurationOption} in the specified {@link Addon}.
+     * Returns all of the {@link ConfigurationOption} in the specified {@link Addon}.
      */
-    public static Iterable<WindupConfigurationOption> getWindupConfigurationOptions(Addon addon)
+    public static Iterable<ConfigurationOption> getWindupConfigurationOptions(Addon addon)
     {
         IdentityHashMap<ClassLoader, Addon> classLoaderToAddon = new IdentityHashMap<>();
         for (Addon loadedAddon : FurnaceHolder.getAddonRegistry().getAddons())
@@ -111,10 +111,10 @@ public class WindupConfiguration
             classLoaderToAddon.put(loadedAddon.getClassLoader(), loadedAddon);
         }
 
-        List<WindupConfigurationOption> results = new ArrayList<>();
-        Imported<WindupConfigurationOption> options = FurnaceHolder.getAddonRegistry()
-                    .getServices(WindupConfigurationOption.class);
-        for (WindupConfigurationOption option : options)
+        List<ConfigurationOption> results = new ArrayList<>();
+        Imported<ConfigurationOption> options = FurnaceHolder.getAddonRegistry()
+                    .getServices(ConfigurationOption.class);
+        for (ConfigurationOption option : options)
         {
             ClassLoader optionClassLoader = option.getClass().getClassLoader();
             Addon optionAddon = classLoaderToAddon.get(optionClassLoader);

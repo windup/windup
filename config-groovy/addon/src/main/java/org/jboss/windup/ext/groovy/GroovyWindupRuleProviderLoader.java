@@ -32,8 +32,9 @@ import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
-import org.jboss.windup.config.loader.WindupRuleProviderLoader;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.builder.RuleProviderBuilder;
+import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -50,7 +51,7 @@ import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
  * @author jsightler <jesse.sightler@gmail.com>
  *
  */
-public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
+public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
 {
     private static final Logger LOG = Logging.get(GroovyWindupRuleProviderLoader.class);
 
@@ -68,9 +69,9 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<AbstractRuleProvider> getProviders(final GraphContext context)
+    public List<RuleProvider> getProviders(final GraphContext context)
     {
-        final List<AbstractRuleProvider> results = new ArrayList<AbstractRuleProvider>();
+        final List<RuleProvider> results = new ArrayList<>();
 
         Binding binding = new Binding();
         binding.setVariable("supportFunctions", new HashMap<>());
@@ -115,6 +116,7 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         }
         binding.setVariable("supportFunctions", null);
 
+        String scriptPath = null;
         for (URL resource : getScripts(context))
         {
             try (Reader reader = new InputStreamReader(resource.openStream()))
@@ -122,22 +124,23 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
                 List<AbstractRuleProvider> ruleProviders = new ArrayList<>();
                 binding.setVariable("windupRuleProviderBuilders", ruleProviders);
 
-                binding.setVariable(CURRENT_WINDUP_SCRIPT, resource.toExternalForm());
+                scriptPath = resource.toExternalForm();
+                binding.setVariable(CURRENT_WINDUP_SCRIPT, scriptPath);
                 shell.evaluate(reader);
 
                 List<AbstractRuleProvider> providers = (List<AbstractRuleProvider>) binding.getVariable("windupRuleProviderBuilders");
                 for (AbstractRuleProvider provider : providers)
                 {
-                    if (provider instanceof WindupRuleProviderBuilder)
+                    if (provider instanceof RuleProviderBuilder)
                     {
-                        ((WindupRuleProviderBuilder) provider).setOrigin(resource.toExternalForm());
+                        ((RuleProviderBuilder) provider).setOrigin(scriptPath);
                     }
                     results.add(provider);
                 }
             }
             catch (Exception e)
             {
-                throw new WindupException("Failed to evaluate configuration: ", e);
+                throw new WindupException("Failed to evaluate configuration from script [" + scriptPath + "]: ", e);
             }
         }
 

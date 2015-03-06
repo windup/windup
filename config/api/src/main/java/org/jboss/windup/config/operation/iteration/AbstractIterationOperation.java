@@ -1,4 +1,4 @@
-package org.jboss.windup.config.operation.ruleelement;
+package org.jboss.windup.config.operation.iteration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;

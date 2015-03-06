@@ -8,7 +8,7 @@ import java.util.Map;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.metadata.LoadedRules;
+import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -41,7 +41,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
      */
     public List<RuleExecutionInformation> getRuleExecutionInformation(AbstractRuleProvider provider)
     {
-        LoadedRules ruleExecutionMetadata = LoadedRules.instance(event);
+        RuleProviderRegistry ruleExecutionMetadata = RuleProviderRegistry.instance(event);
         List<Rule> rules = ruleExecutionMetadata.getRules(provider);
 
         List<RuleExecutionInformation> allRuleExecutions = new ArrayList<>();

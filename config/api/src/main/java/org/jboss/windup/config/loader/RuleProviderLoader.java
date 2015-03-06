@@ -3,6 +3,7 @@ package org.jboss.windup.config.loader;
 import java.util.List;
 
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.graph.GraphContext;
 
 /**
@@ -12,10 +13,10 @@ import org.jboss.windup.graph.GraphContext;
  * @author jsightler
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface WindupRuleProviderLoader
+public interface RuleProviderLoader
 {
     /**
      * Return all {@link AbstractRuleProvider} instances that are relevant for this loader.
      */
-    public List<AbstractRuleProvider> getProviders(GraphContext context);
+    public List<RuleProvider> getProviders(GraphContext context);
 }

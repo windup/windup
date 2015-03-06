@@ -15,18 +15,18 @@ import org.ocpsoft.rewrite.config.Rule;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-public class LoadedRules
+public class RuleProviderRegistry
 {
     private final List<RuleProvider> providers = new ArrayList<>();
     private final IdentityHashMap<RuleProvider, List<Rule>> providersToRules = new IdentityHashMap<>();
     private Configuration configuration;
 
     /**
-     * Gets the current instance of {@link LoadedRules}.
+     * Gets the current instance of {@link RuleProviderRegistry}.
      */
-    public static LoadedRules instance(GraphRewrite event)
+    public static RuleProviderRegistry instance(GraphRewrite event)
     {
-        LoadedRules instance = (LoadedRules) event.getRewriteContext().get(LoadedRules.class);
+        RuleProviderRegistry instance = (RuleProviderRegistry) event.getRewriteContext().get(RuleProviderRegistry.class);
         return instance;
     }
 

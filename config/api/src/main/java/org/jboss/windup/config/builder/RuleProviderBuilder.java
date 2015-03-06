@@ -1,8 +1,5 @@
 package org.jboss.windup.config.builder;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -12,7 +9,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
-import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderWithMetadata;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
@@ -22,32 +18,30 @@ import org.ocpsoft.rewrite.config.Rule;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public final class WindupRuleProviderBuilder extends AbstractRuleProvider implements
-            WindupRuleProviderBuilderSetPhase,
-            WindupRuleProviderBuilderMetadataSetPhase,
-            WindupRuleProviderBuilderAddDependencies
+public final class RuleProviderBuilder extends AbstractRuleProvider implements
+            RuleProviderBuilderSetPhase,
+            RuleProviderBuilderMetadataSetPhase,
+            RuleProviderBuilderAddDependencies
 {
-    private Map<Object, Object> ruleMetadata = new HashMap<>();
-
     private ConfigurationBuilder configurationBuilder;
     private MetadataBuilder metadata;
 
     /**
      * Begin creating a new dynamic {@link AbstractRuleProvider}.
      */
-    public static WindupRuleProviderBuilder begin(String id)
+    public static RuleProviderBuilder begin(String id)
     {
-        MetadataBuilder builder = MetadataBuilder.forProvider(WindupRuleProviderBuilder.class, id);
-        return new WindupRuleProviderBuilder(builder).setMetadataBuilder(builder);
+        MetadataBuilder builder = MetadataBuilder.forProvider(RuleProviderBuilder.class, id);
+        return new RuleProviderBuilder(builder).setMetadataBuilder(builder);
     }
 
-    private WindupRuleProviderBuilder(MetadataBuilder builder)
+    private RuleProviderBuilder(MetadataBuilder builder)
     {
         super(builder);
         configurationBuilder = ConfigurationBuilder.begin();
     }
 
-    private WindupRuleProviderBuilder setMetadataBuilder(MetadataBuilder builder)
+    private RuleProviderBuilder setMetadataBuilder(MetadataBuilder builder)
     {
         this.metadata = builder;
         return this;
@@ -59,43 +53,37 @@ public final class WindupRuleProviderBuilder extends AbstractRuleProvider implem
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase)
+    public RuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase)
     {
         metadata.setPhase(phase);
         return this;
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies addExecuteAfter(String id)
+    public RuleProviderBuilderAddDependencies addExecuteAfter(String id)
     {
         metadata.addExecuteAfterId(id);
         return this;
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies addExecuteAfter(Class<? extends AbstractRuleProvider> type)
+    public RuleProviderBuilderAddDependencies addExecuteAfter(Class<? extends AbstractRuleProvider> type)
     {
         metadata.addExecuteAfter(type);
         return this;
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies addExecuteBefore(String id)
+    public RuleProviderBuilderAddDependencies addExecuteBefore(String id)
     {
         metadata.addExecuteBeforeId(id);
         return this;
     }
 
     @Override
-    public WindupRuleProviderBuilderAddDependencies addExecuteBefore(Class<? extends AbstractRuleProvider> type)
+    public RuleProviderBuilderAddDependencies addExecuteBefore(Class<? extends AbstractRuleProvider> type)
     {
         metadata.addExecuteBefore(type);
-        return this;
-    }
-
-    public WindupRuleProviderBuilderAddDependencies withMetadata(Object key, Object value)
-    {
-        ruleMetadata.put(key, value);
         return this;
     }
 
@@ -103,11 +91,6 @@ public final class WindupRuleProviderBuilder extends AbstractRuleProvider implem
     public ConfigurationRuleBuilderCustom addRule()
     {
         ConfigurationRuleBuilderCustom rule = configurationBuilder.addRule();
-        ConfigurationRuleBuilderWithMetadata ruleWithMetadata = (ConfigurationRuleBuilderWithMetadata) rule;
-        for (Map.Entry<Object, Object> metadataEntry : ruleMetadata.entrySet())
-        {
-            ruleWithMetadata.withMetadata(metadataEntry.getKey(), metadataEntry.getValue());
-        }
         return rule;
     }
 
@@ -115,11 +98,6 @@ public final class WindupRuleProviderBuilder extends AbstractRuleProvider implem
     public ConfigurationRuleBuilderCustom addRule(Rule rule)
     {
         ConfigurationRuleBuilderCustom wrapped = configurationBuilder.addRule(rule);
-        ConfigurationRuleBuilderWithMetadata ruleWithMetadata = (ConfigurationRuleBuilderWithMetadata) wrapped;
-        for (Map.Entry<Object, Object> metadataEntry : ruleMetadata.entrySet())
-        {
-            ruleWithMetadata.withMetadata(metadataEntry.getKey(), metadataEntry.getValue());
-        }
         return wrapped;
     }
 

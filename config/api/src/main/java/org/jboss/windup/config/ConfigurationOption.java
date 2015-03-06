@@ -7,7 +7,7 @@ package org.jboss.windup.config;
  * @author jsightler <jesse.sightler@gmail.com>
  * @author Ondrej Zizka
  */
-public interface WindupConfigurationOption
+public interface ConfigurationOption
 {
     /**
      * Returns the name of the parameter. This should be a short name that is suitable for use in a command line parameter (for example, "packages" or

@@ -1,7 +1,7 @@
 package org.jboss.windup.config;
 
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.ConditionBuilder;

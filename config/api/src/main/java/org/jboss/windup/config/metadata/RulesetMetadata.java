@@ -1,6 +1,7 @@
 package org.jboss.windup.config.metadata;
 
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.RuleProvider;
@@ -74,4 +75,9 @@ public interface RulesetMetadata
      * For specifying Java-based rules, {@link #getExecuteBefore()} is preferred.
      */
     public List<String> getExecuteBeforeIDs();
+
+    /**
+     * Return the {@link Set} of tags by which this {@link RulesetMetadata} is classified.
+     */
+    public Set<String> getTags();
 }

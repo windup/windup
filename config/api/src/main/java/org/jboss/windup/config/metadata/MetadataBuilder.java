@@ -1,8 +1,11 @@
 package org.jboss.windup.config.metadata;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.RuleProvider;
@@ -25,6 +28,7 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     private List<String> executeAfterIDs = new ArrayList<>();
     private List<Class<? extends RuleProvider>> executeBefore = new ArrayList<>();
     private List<String> executeBeforeIDs = new ArrayList<>();
+    private Set<String> tags = new HashSet<>();
 
     private MetadataBuilder(Class<? extends RuleProvider> implementationType, String providerId)
     {
@@ -39,7 +43,7 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType)
     {
         Assert.notNull(implementationType, "Rule provider Implementation type must not be null.");
-        return new MetadataBuilder(implementationType, implementationType.getSimpleName());
+        return forProvider(implementationType, implementationType.getSimpleName());
     }
 
     /**
@@ -51,7 +55,8 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
         Assert.notNull(implementationType, "Rule provider Implementation type must not be null.");
         Assert.notNull(providerId, "Rule provider ID must not be null.");
 
-        return new MetadataBuilder(implementationType, providerId);
+        return new MetadataBuilder(implementationType, providerId)
+                    .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
     }
 
     @Override
@@ -248,5 +253,27 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
             executeBeforeIDs.add(id);
         }
         return this;
+    }
+
+    public MetadataBuilder addTags(String tag, String... tags)
+    {
+        if (!StringUtils.isBlank(tag))
+            this.tags.add(tag.trim());
+
+        if (tags != null)
+        {
+            for (String t : tags)
+            {
+                if (!StringUtils.isBlank(t))
+                    this.tags.add(t.trim());
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public Set<String> getTags()
+    {
+        return this.tags.isEmpty() ? super.getTags() : this.tags;
     }
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
+import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
@@ -34,7 +34,7 @@ public class RuleProviderHandler implements ElementHandler<Void>
         {
             id = generateDefaultID();
         }
-        WindupRuleProviderBuilder builder = WindupRuleProviderBuilder.begin(id);
+        RuleProviderBuilder builder = RuleProviderBuilder.begin(id);
         context.setBuilder(builder);
 
         List<Element> children = $(element).children().get();
