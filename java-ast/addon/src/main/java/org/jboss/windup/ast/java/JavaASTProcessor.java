@@ -1,10 +1,6 @@
 package org.jboss.windup.ast.java;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,14 +11,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -40,6 +40,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -48,21 +49,28 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.jboss.windup.ast.java.data.JavaClassReference;
-import org.jboss.windup.ast.java.data.JavaClassReferences;
+import org.jboss.windup.ast.java.data.ClassReference;
+import org.jboss.windup.ast.java.data.ClassReferences;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.ast.java.data.annotations.AnnotationArrayValue;
+import org.jboss.windup.ast.java.data.annotations.AnnotationClassReference;
+import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
+import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 
 /**
- * Provides the ability to parse a Java file and return a {@link JavaClassReferences} object containing the fully qualified names of all of the
- * contained references.
+ * Provides the ability to parse a Java file and return a {@link ClassReferences} object containing the fully qualified names of all of the contained
+ * references.
  * 
  * @author jsightler
  *
  */
 public class JavaASTProcessor extends ASTVisitor
 {
+    private static Logger LOG = Logger.getLogger(JavaASTProcessor.class.getName());
+
     private final WildcardImportResolver wildcardImportResolver;
     private final CompilationUnit cu;
     private final String fqcn;
@@ -95,14 +103,14 @@ public class JavaASTProcessor extends ASTVisitor
      */
     private final Map<String, String> nameInstance = new HashMap<String, String>();
 
-    private JavaClassReferences javaClassReferences = new JavaClassReferences();
+    private ClassReferences classReferences = new ClassReferences();
 
     /**
      * Processes a java file using the default {@link WildcardImportResolver}.
      * 
      * See also: {@see JavaASTProcessor#analyzeJavaFile(WildcardImportResolver, Set, Set, Path)}
      */
-    public static JavaClassReferences analyzeJavaFile(Set<String> libraryPaths, Set<String> sourcePaths, Path sourceFile)
+    public static ClassReferences analyzeJavaFile(Set<String> libraryPaths, Set<String> sourcePaths, Path sourceFile)
     {
         return analyzeJavaFile(new NoopWildcardImportResolver(), libraryPaths, sourcePaths, sourceFile);
     }
@@ -116,7 +124,7 @@ public class JavaASTProcessor extends ASTVisitor
      * 
      * The wildcard resolver provides a fallback for processing wildcard imports that the underlying parser was unable to resolve.
      */
-    public static JavaClassReferences analyzeJavaFile(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths,
+    public static ClassReferences analyzeJavaFile(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths,
                 Path sourceFile)
     {
         String fileName = sourceFile.getFileName().toString();
@@ -170,7 +178,7 @@ public class JavaASTProcessor extends ASTVisitor
             {
                 this.fqcn = packageName + "." + className;
             }
-            this.javaClassReferences.addReference(new JavaClassReference(this.fqcn, TypeReferenceLocation.TYPE, cu.getLineNumber(typeDeclaration
+            this.classReferences.addReference(new ClassReference(this.fqcn, TypeReferenceLocation.TYPE, cu.getLineNumber(typeDeclaration
                         .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), extractDefinitionLine(typeDeclaration
                         .toString())));
 
@@ -185,7 +193,7 @@ public class JavaASTProcessor extends ASTVisitor
             {
                 if (superclassType.resolveBinding() != null)
                 {
-                    this.javaClassReferences.addReference(new JavaClassReference(resolveBinding.getQualifiedName(), TypeReferenceLocation.TYPE, cu
+                    this.classReferences.addReference(new ClassReference(resolveBinding.getQualifiedName(), TypeReferenceLocation.TYPE, cu
                                 .getLineNumber(typeDeclaration
                                             .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength(),
                                 extractDefinitionLine(typeDeclaration.toString())));
@@ -219,30 +227,30 @@ public class JavaASTProcessor extends ASTVisitor
         return typeLine;
     }
 
-    public JavaClassReferences getJavaClassReferences()
+    public ClassReferences getJavaClassReferences()
     {
-        return this.javaClassReferences;
+        return this.classReferences;
     }
 
     private void processConstructor(ConstructorType interest, int lineNumber, int columnNumber, int length, String line)
     {
         String text = interest.toString();
-        this.javaClassReferences.addReference(new JavaClassReference(text, TypeReferenceLocation.CONSTRUCTOR_CALL, lineNumber, columnNumber, length,
+        this.classReferences.addReference(new ClassReference(text, TypeReferenceLocation.CONSTRUCTOR_CALL, lineNumber, columnNumber, length,
                     line));
     }
 
     private void processMethod(MethodType interest, TypeReferenceLocation location, int lineNumber, int columnNumber, int length, String line)
     {
         String text = interest.toString();
-        this.javaClassReferences.addReference(new JavaClassReference(text, location, lineNumber, columnNumber, length, line));
+        this.classReferences.addReference(new ClassReference(text, location, lineNumber, columnNumber, length, line));
     }
 
     private void processImport(String interest, int lineNumber, int columnNumber, int length, String line)
     {
-        this.javaClassReferences.addReference(new JavaClassReference(interest, TypeReferenceLocation.IMPORT, lineNumber, columnNumber, length, line));
+        this.classReferences.addReference(new ClassReference(interest, TypeReferenceLocation.IMPORT, lineNumber, columnNumber, length, line));
     }
 
-    private JavaClassReference processTypeBinding(ITypeBinding type, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
+    private ClassReference processTypeBinding(ITypeBinding type, TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
                 int length, String line)
     {
         if (type == null)
@@ -254,7 +262,7 @@ public class JavaASTProcessor extends ASTVisitor
     /**
      * The method determines if the type can be resolved and if not, will try to guess the qualified name using the information from the imports.
      */
-    private JavaClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length,
+    private ClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length,
                 String line)
     {
         if (type == null)
@@ -274,14 +282,14 @@ public class JavaASTProcessor extends ASTVisitor
 
     }
 
-    private JavaClassReference processTypeAsString(String sourceString, TypeReferenceLocation referenceLocation, int lineNumber,
+    private ClassReference processTypeAsString(String sourceString, TypeReferenceLocation referenceLocation, int lineNumber,
                 int columnNumber, int length, String line)
     {
         if (sourceString == null)
             return null;
         line = line.replaceAll("(\\n)|(\\r)", "");
-        JavaClassReference typeRef = new JavaClassReference(sourceString, referenceLocation, lineNumber, columnNumber, length, line);
-        this.javaClassReferences.addReference(typeRef);
+        ClassReference typeRef = new ClassReference(sourceString, referenceLocation, lineNumber, columnNumber, length, line);
+        this.classReferences.addReference(typeRef);
         return typeRef;
     }
 
@@ -405,94 +413,189 @@ public class JavaASTProcessor extends ASTVisitor
         return true;
     }
 
+    private AnnotationValue getAnnotationValueForExpression(Expression expression)
+    {
+        AnnotationValue value;
+        if (expression instanceof BooleanLiteral)
+            value = new AnnotationLiteralValue(boolean.class, ((BooleanLiteral) expression).booleanValue());
+        else if (expression instanceof CharacterLiteral)
+            value = new AnnotationLiteralValue(char.class, ((CharacterLiteral) expression).charValue());
+        else if (expression instanceof NumberLiteral)
+        {
+            ITypeBinding binding = expression.resolveTypeBinding();
+            value = new AnnotationLiteralValue(resolveLiteralType(binding), ((NumberLiteral) expression).resolveConstantExpressionValue());
+        }
+        else if (expression instanceof TypeLiteral)
+            value = new AnnotationLiteralValue(Class.class, ((TypeLiteral) expression).resolveConstantExpressionValue());
+        else if (expression instanceof StringLiteral)
+            value = new AnnotationLiteralValue(String.class, ((StringLiteral) expression).getLiteralValue());
+        else if (expression instanceof NormalAnnotation)
+            value = processAnnotation((NormalAnnotation) expression);
+        else if (expression instanceof ArrayInitializer)
+        {
+            ArrayInitializer arrayInitializer = (ArrayInitializer) expression;
+            List<AnnotationValue> arrayValues = new ArrayList<>(arrayInitializer.expressions().size());
+            for (Object arrayExpression : arrayInitializer.expressions())
+            {
+                arrayValues.add(getAnnotationValueForExpression((Expression) arrayExpression));
+            }
+            value = new AnnotationArrayValue(arrayValues);
+        }
+        else if (expression instanceof QualifiedName)
+        {
+            QualifiedName qualifiedName = (QualifiedName) expression;
+            Object expressionValue = qualifiedName.resolveConstantExpressionValue();
+            if (expressionValue == null)
+            {
+                value = new AnnotationLiteralValue(String.class, qualifiedName.toString());
+            }
+            else
+            {
+                Class<?> expressionType = expressionValue.getClass();
+                value = new AnnotationLiteralValue(expressionType, expressionValue);
+            }
+        }
+        else if (expression instanceof CastExpression)
+        {
+            CastExpression cast = (CastExpression) expression;
+            AnnotationValue castExpressionValue = getAnnotationValueForExpression(cast.getExpression());
+            if (castExpressionValue instanceof AnnotationLiteralValue)
+            {
+                AnnotationLiteralValue literalValue = (AnnotationLiteralValue) castExpressionValue;
+                Class<?> type = resolveLiteralType(cast.getType().resolveBinding());
+                value = new AnnotationLiteralValue(type, literalValue.getLiteralValue());
+            }
+            else
+            {
+                value = castExpressionValue;
+            }
+        }
+        else if (expression instanceof SimpleName)
+        {
+            SimpleName simpleName = (SimpleName) expression;
+            ITypeBinding binding = simpleName.resolveTypeBinding();
+            if (binding == null)
+            {
+                value = new AnnotationLiteralValue(String.class, simpleName.toString());
+            }
+            else
+            {
+                Object expressionValue = simpleName.resolveConstantExpressionValue();
+                Class<?> expressionType = expressionValue == null ? null : expressionValue.getClass();
+                value = new AnnotationLiteralValue(expressionType, expressionValue);
+            }
+        }
+        else
+        {
+            LOG.warning("Unexpected type: " + expression.getClass().getCanonicalName() + " in file: " + this.javaFile
+                        + " just attempting to use it as a string value");
+            value = new AnnotationLiteralValue(String.class, expression == null ? null : expression.toString());
+        }
+        return value;
+
+    }
+
     /**
      * Adds parameters contained in the annotation into the annotation type reference
      * 
      * @param typeRef
      * @param node
      */
-    private void addAnnotationValues(JavaClassReference typeRef, NormalAnnotation node)
+    private void addAnnotationValues(AnnotationClassReference typeRef, Annotation node)
     {
-        @SuppressWarnings("unchecked")
-        List<MemberValuePair> annotationValues = node.values();
-        Map<String, String> annotationValueMap = new HashMap<>();
-        for (MemberValuePair annotationValue : annotationValues)
+        Map<String, AnnotationValue> annotationValueMap = new HashMap<>();
+        if (node instanceof SingleMemberAnnotation)
         {
-            String key = annotationValue.getName().toString();
-            Expression valueExpression = annotationValue.getValue();
-            String value;
-            if (valueExpression instanceof StringLiteral)
-                value = ((StringLiteral) valueExpression).getLiteralValue();
-            else
-                value = valueExpression.toString();
-            annotationValueMap.put(key, value);
+            SingleMemberAnnotation singleMemberAnnotation = (SingleMemberAnnotation) node;
+            AnnotationValue value = getAnnotationValueForExpression(singleMemberAnnotation.getValue());
+            annotationValueMap.put("value", value);
+        }
+        else if (node instanceof NormalAnnotation)
+        {
+            @SuppressWarnings("unchecked")
+            List<MemberValuePair> annotationValues = ((NormalAnnotation) node).values();
+            for (MemberValuePair annotationValue : annotationValues)
+            {
+                String key = annotationValue.getName().toString();
+                Expression expression = annotationValue.getValue();
+                AnnotationValue value = getAnnotationValueForExpression(expression);
+                annotationValueMap.put(key, value);
+            }
         }
         typeRef.setAnnotationValues(annotationValueMap);
     }
 
-    @Override
-    public boolean visit(MarkerAnnotation node)
+    private Class<?> resolveLiteralType(ITypeBinding binding)
     {
-        ITypeBinding resolveTypeBinding = node.resolveTypeBinding();
-        if (resolveTypeBinding != null)
+        switch (binding.getName())
         {
-            processTypeBinding(resolveTypeBinding, TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), node.toString());
+        case "byte":
+            return byte.class;
+        case "short":
+            return short.class;
+        case "int":
+            return int.class;
+        case "long":
+            return long.class;
+        case "float":
+            return float.class;
+        case "double":
+            return double.class;
+        case "boolean":
+            return boolean.class;
+        case "char":
+            return char.class;
+        default:
+            throw new JavaASTException("Unrecognized literal type: " + binding.getName());
         }
-        else
-        {
-            String resolved = resolveClassname(node.getTypeName().toString());
-            processTypeAsString(resolved, TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), node.toString());
-        }
+    }
 
-        return super.visit(node);
+    private AnnotationClassReference processAnnotation(Annotation node)
+    {
+        ITypeBinding typeBinding = node.resolveTypeBinding();
+        AnnotationClassReference reference;
+        String qualifiedName;
+        if (typeBinding != null)
+            qualifiedName = typeBinding.getQualifiedName();
+        else
+            qualifiedName = resolveClassname(node.getTypeName().toString());
+
+        reference = new AnnotationClassReference(
+                    qualifiedName,
+                    cu.getLineNumber(node.getStartPosition()),
+                    cu.getColumnNumber(node.getStartPosition()),
+                    node.getLength(),
+                    node.toString());
+
+        addAnnotationValues(reference, node);
+
+        return reference;
     }
 
     @Override
     public boolean visit(NormalAnnotation node)
     {
-        ITypeBinding resolveTypeBinding = node.resolveTypeBinding();
-        JavaClassReference typeRef;
-        if (resolveTypeBinding != null)
-        {
-            typeRef = processTypeBinding(node.resolveTypeBinding(), TypeReferenceLocation.ANNOTATION,
-                        cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
-        }
-        else
-        {
-            String name = node.getTypeName().toString();
-            String resolved = resolveClassname(name);
-            typeRef = processTypeAsString(resolved, TypeReferenceLocation.ANNOTATION,
-                        cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
-        }
-        if (typeRef != null)
-            // provide parameters of the annotation
-            addAnnotationValues(typeRef, node);
-        return super.visit(node);
+        AnnotationClassReference reference = processAnnotation(node);
+        this.classReferences.addReference(reference);
+
+        // false to avoid recursively processing nested annotations (our code already handles that)
+        return false;
     }
 
     @Override
     public boolean visit(SingleMemberAnnotation node)
     {
-        // field annotation
-        ITypeBinding resolveTypeBinding = node.resolveTypeBinding();
-        if (resolveTypeBinding != null)
-        {
-            processTypeBinding(resolveTypeBinding, TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
-        }
-        else
-        {
-            String name = node.getTypeName().toString();
-            String resolved = resolveClassname(name);
-            processTypeAsString(resolved, TypeReferenceLocation.ANNOTATION, cu.getLineNumber(node.getStartPosition()),
-                        cu.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
-        }
+        AnnotationClassReference reference = processAnnotation(node);
+        this.classReferences.addReference(reference);
+        return false;
+    }
 
-        return super.visit(node);
+    @Override
+    public boolean visit(MarkerAnnotation node)
+    {
+        AnnotationClassReference reference = processAnnotation(node);
+        this.classReferences.addReference(reference);
+        return false;
     }
 
     public boolean visit(TypeDeclaration node)

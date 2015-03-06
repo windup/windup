@@ -103,7 +103,6 @@ public class JavaHandlerModule implements Module {
 		config.addFrameInitializer(new JavaFrameInitializer(this));
 		return baseGraph;
 	}
-
 	
 	Class<?> getHandlerClass(Class<?> frameClass)
 			throws ClassNotFoundException {
@@ -111,6 +110,9 @@ public class JavaHandlerModule implements Module {
 				.getAnnotation(JavaHandlerClass.class);
 		if (handlerClass != null) {
 			return handlerClass.value();
+		}
+		if (frameClass.getClassLoader() == null) {
+		    throw new ClassNotFoundException("FrameClass: " + frameClass.getCanonicalName() + " getClassLoader() returned null... no $Impl can be found in this case!");
 		}
 		return frameClass.getClassLoader().loadClass(
 				frameClass.getName() + "$Impl");

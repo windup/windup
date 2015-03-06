@@ -1,9 +1,5 @@
 package org.jboss.windup.ast.java.data;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Contains a name that has been referenced by the Java source file. This can include the qualified name (for example, com.example.data.Foo) as well
  * as information about the reference. Information includes indicating where the reference was found within the file (line, column, and length) as
@@ -12,20 +8,19 @@ import java.util.Map;
  * @author jsightler
  *
  */
-public class JavaClassReference
+public class ClassReference
 {
     private final String qualifiedName;
     private final int lineNumber;
     private final int column;
     private final int length;
-    private Map<String, String> annotationValues = new HashMap<>();
     private final TypeReferenceLocation location;
     private String line;
 
     /**
-     * Creates the {@link JavaClassReference} with the given qualfiedName, location, lineNumber, column, and length.
+     * Creates the {@link ClassReference} with the given qualfiedName, location, lineNumber, column, and length.
      */
-    public JavaClassReference(String qualifiedName, TypeReferenceLocation location, int lineNumber, int column, int length, String line)
+    public ClassReference(String qualifiedName, TypeReferenceLocation location, int lineNumber, int column, int length, String line)
     {
         this.qualifiedName = qualifiedName;
         this.location = location;
@@ -86,32 +81,11 @@ public class JavaClassReference
         return location;
     }
 
-    /**
-     * If the item found is the use of an Annotation, then this will contain a map with the values used by the annotation.
-     * 
-     * Nested values are not currently supported here.
-     */
-    public void setAnnotationValues(Map<String, String> annotationValues)
-    {
-        this.annotationValues = annotationValues;
-    }
-
-    /**
-     * If the item found is the use of an Annotation, then this will contain a map with the values used by the annotation.
-     * 
-     * Nested values are not currently supported here.
-     */
-    public Map<String, String> getAnnotationValues()
-    {
-        return Collections.unmodifiableMap(annotationValues);
-    }
-
     @Override
     public int hashCode()
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((annotationValues == null) ? 0 : annotationValues.hashCode());
         result = prime * result + column;
         result = prime * result + length;
         result = prime * result + lineNumber;
@@ -129,14 +103,7 @@ public class JavaClassReference
             return false;
         if (getClass() != obj.getClass())
             return false;
-        JavaClassReference other = (JavaClassReference) obj;
-        if (annotationValues == null)
-        {
-            if (other.annotationValues != null)
-                return false;
-        }
-        else if (!annotationValues.equals(other.annotationValues))
-            return false;
+        ClassReference other = (ClassReference) obj;
         if (column != other.column)
             return false;
         if (length != other.length)
@@ -167,7 +134,7 @@ public class JavaClassReference
     @Override
     public String toString()
     {
-        return "JavaClassReference [qualifiedName=" + qualifiedName + ", lineNumber=" + lineNumber + ", column=" + column + ", length=" + length
-                    + ", annotationValues=" + annotationValues + ", location=" + location +  ", line=" + line + "]";
+        return "ClassReference [qualifiedName=" + qualifiedName + ", lineNumber=" + lineNumber + ", column=" + column + ", length=" + length
+                    + ", location=" + location + ", line=" + line + "]";
     }
 }

@@ -1,7 +1,7 @@
 package org.jboss.windup.ast.java.data;
 
 /**
- * Designates a location where a given {@link JavaTypeReferenceModel} was found in a Java source file.
+ * Designates a location where a given {@link org.jboss.windup.ast.java.data.ClassReference} was found in a Java source file.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
