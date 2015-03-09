@@ -1,12 +1,15 @@
 package org.jboss.windup.config.metadata;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.RulePhase;
@@ -42,8 +45,13 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
      */
     public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType)
     {
-        Assert.notNull(implementationType, "Rule provider Implementation type must not be null.");
-        return forProvider(implementationType, implementationType.getSimpleName());
+        String id = implementationType.getSimpleName();
+
+        Metadata metadata = Annotations.getAnnotation(implementationType, Metadata.class);
+        if (metadata != null && !metadata.id().isEmpty())
+            id = metadata.id();
+
+        return forProvider(implementationType, id);
     }
 
     /**
@@ -55,8 +63,37 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
         Assert.notNull(implementationType, "Rule provider Implementation type must not be null.");
         Assert.notNull(providerId, "Rule provider ID must not be null.");
 
-        return new MetadataBuilder(implementationType, providerId)
+        MetadataBuilder builder = new MetadataBuilder(implementationType, providerId)
                     .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
+
+        Metadata metadata = Annotations.getAnnotation(implementationType, Metadata.class);
+        if (metadata != null)
+        {
+            Class<? extends RuleProvider>[] after = metadata.after();
+            if (after.length > 0)
+                builder.setExecuteAfter(Arrays.asList(after));
+
+            String[] afterIDs = metadata.afterIDs();
+            if (afterIDs.length > 0)
+                builder.setExecuteAfterIDs(Arrays.asList(afterIDs));
+
+            Class<? extends RuleProvider>[] before = metadata.before();
+            if (before.length > 0)
+                builder.setExecuteBefore(Arrays.asList(before));
+
+            String[] beforeIDs = metadata.beforeIDs();
+            if (beforeIDs.length > 0)
+                builder.setExecuteBeforeIDs(Arrays.asList(beforeIDs));
+
+            builder.setPhase(metadata.phase());
+
+            String[] tags = metadata.tags();
+            if (tags.length > 0)
+                builder.setTags(Arrays.asList(tags));
+
+        }
+
+        return builder;
     }
 
     @Override
@@ -275,5 +312,13 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     public Set<String> getTags()
     {
         return this.tags.isEmpty() ? super.getTags() : this.tags;
+    }
+
+    public void setTags(List<String> tags)
+    {
+        if (tags == null)
+            this.tags = new HashSet<>();
+        else
+            this.tags = Collections.unmodifiableSet(new HashSet<>(tags));
     }
 }

@@ -6,7 +6,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.metadata.AbstractRulesetMetadata;
 
 /**
- * MetadataBuilder for the XML Rules addon.
+ * MetadataBuilder for the XML Metadata addon.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  * 

@@ -17,10 +17,10 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
-import org.jboss.windup.util.Annotations;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleParameterWhere;
@@ -28,8 +28,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Handles maintaining the list of handlers associated with each tag/namespace pair, as well as selecting the right handler for element. This also
- * maintains the current {@link RuleProviderBuilder} being constructed.
+ * Handles maintaining the list of handlers associated with each tag/namespace pair, as well as selecting the right
+ * handler for element. This also maintains the current {@link RuleProviderBuilder} being constructed.
  */
 public class ParserContext
 {
@@ -40,13 +40,13 @@ public class ParserContext
     private final Map<HandlerId, ElementHandler<?>> handlers = new HashMap<>();
 
     /**
-     * The addon containing the xml file currently being parsed. This is needed mainly because of the classloader that loaded the Addon
-     * (XSLTTransformation needs it.)
+     * The addon containing the xml file currently being parsed. This is needed mainly because of the classloader that
+     * loaded the Addon (XSLTTransformation needs it.)
      */
     private Addon addonContainingInputXML;
     /**
-     * The folder containing the xml file currently being parse. This should be the root folder from which any other resource lookups should be based.
-     * Eg, it may be the user scripts folder.
+     * The folder containing the xml file currently being parse. This should be the root folder from which any other
+     * resource lookups should be based. Eg, it may be the user scripts folder.
      * 
      * If this is set, it should take precedent over the Addon for resource lookups.
      */
@@ -225,8 +225,8 @@ public class ParserContext
     }
 
     /**
-     * The folder containing the xml file currently being parsed. This should be the root folder from which any other resource lookups should be
-     * based. Eg, it may be the user scripts folder.
+     * The folder containing the xml file currently being parsed. This should be the root folder from which any other
+     * resource lookups should be based. Eg, it may be the user scripts folder.
      * 
      * If this is set, it should take precedent over the Addon for resource lookups.
      */
@@ -236,8 +236,8 @@ public class ParserContext
     }
 
     /**
-     * The folder containing the xml file currently being parsed. This should be the root folder from which any other resource lookups should be
-     * based. Eg, it may be the user scripts folder.
+     * The folder containing the xml file currently being parsed. This should be the root folder from which any other
+     * resource lookups should be based. Eg, it may be the user scripts folder.
      * 
      * If this is set, it should take precedent over the Addon for resource lookups.
      */

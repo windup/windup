@@ -1,11 +1,11 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
+import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;

@@ -1,5 +1,8 @@
-package org.jboss.windup.config;
+package org.jboss.windup.config.ruleprovider;
 
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
@@ -17,14 +20,20 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFrame> extends AbstractRuleProvider
 {
-    public IteratingRuleProvider(Class<? extends RuleProvider> implementationType, String id)
+
+    public IteratingRuleProvider()
     {
-        super(implementationType, id);
+        super();
     }
 
     public IteratingRuleProvider(RuleProviderMetadata metadata)
     {
         super(metadata);
+    }
+
+    public IteratingRuleProvider(Class<? extends RuleProvider> implementationType, String id)
+    {
+        super(implementationType, id);
     }
 
     /**

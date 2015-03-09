@@ -6,7 +6,7 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 
 /**
- * Utils for the Rules. Will be likely moved to Windup Utils.
+ * Utils for the Metadata. Will be likely moved to Windup Utils.
  * 
  * @author Ondrej Zizka, ozizka at redhat.com
  */

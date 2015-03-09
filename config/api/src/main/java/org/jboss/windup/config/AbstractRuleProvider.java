@@ -6,6 +6,8 @@
  */
 package org.jboss.windup.config;
 
+import org.jboss.forge.furnace.util.Annotations;
+import org.jboss.windup.config.metadata.Metadata;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
@@ -24,6 +26,16 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
 {
     private int executionIndex;
     private RuleProviderMetadata metadata;
+
+    public AbstractRuleProvider()
+    {
+        if (!Annotations.isAnnotationPresent(getClass(), Metadata.class))
+        {
+            throw new IllegalStateException(getClass().getName() + " must either specify @" + Metadata.class.getName()
+                        + " or call a constructor and provide " + RuleProviderMetadata.class.getName());
+        }
+        this.metadata = MetadataBuilder.forProvider(getClass());
+    }
 
     /**
      * Create a new {@link AbstractRuleProvider} instance using the given {@link RuleProviderMetadata}.

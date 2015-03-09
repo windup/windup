@@ -41,7 +41,7 @@ import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
 
-public class RuleLoaderImpl implements WindupRuleLoader
+public class RuleLoaderImpl implements RuleLoader
 {
     public static Logger LOG = Logger.getLogger(RuleLoaderImpl.class.getName());
 
@@ -135,8 +135,8 @@ public class RuleLoaderImpl implements WindupRuleLoader
         ConfigurationBuilder result = ConfigurationBuilder.begin();
 
         List<RuleProvider> providers = getProviders(context);
-        RuleProviderRegistry executionMetadata = new RuleProviderRegistry();
-        executionMetadata.setProviders(providers);
+        RuleProviderRegistry registry = new RuleProviderRegistry();
+        registry.setProviders(providers);
         for (RuleProvider provider : providers)
         {
             if (ruleProviderFilter != null)
@@ -149,7 +149,7 @@ public class RuleLoaderImpl implements WindupRuleLoader
 
             Configuration cfg = provider.getConfiguration(context);
             List<Rule> rules = cfg.getRules();
-            executionMetadata.setRules(provider, rules);
+            registry.setRules(provider, rules);
 
             int i = 0;
             for (final Rule rule : rules)
@@ -196,8 +196,8 @@ public class RuleLoaderImpl implements WindupRuleLoader
             }
         }
 
-        executionMetadata.setConfiguration(result);
-        return executionMetadata;
+        registry.setConfiguration(result);
+        return registry;
     }
 
     private String generatedRuleID(RuleProvider provider, Rule rule, int idx)

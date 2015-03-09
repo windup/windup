@@ -8,10 +8,10 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.ArchiveService;

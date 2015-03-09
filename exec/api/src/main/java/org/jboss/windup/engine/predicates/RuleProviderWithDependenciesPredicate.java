@@ -20,8 +20,8 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProv
 
     private List<RuleProvider> ruleProviders;
 
-    @SuppressWarnings("unchecked")
-    public RuleProviderWithDependenciesPredicate(Class<? extends RuleProvider> providerType, Class<? extends RuleProvider>... providerTypes)
+    @SafeVarargs
+    public RuleProviderWithDependenciesPredicate(Class<? extends RuleProvider> provider, Class<? extends RuleProvider>... providers)
                 throws InstantiationException, IllegalAccessException
     {
         /*
@@ -29,8 +29,8 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProv
          * request an instance from Furance.
          */
         ruleProviders = new ArrayList<>();
-        ruleProviders.add(providerType.newInstance());
-        for (Class<? extends RuleProvider> clazz : providerTypes)
+        ruleProviders.add(provider.newInstance());
+        for (Class<? extends RuleProvider> clazz : providers)
         {
             ruleProviders.add(clazz.newInstance());
         }

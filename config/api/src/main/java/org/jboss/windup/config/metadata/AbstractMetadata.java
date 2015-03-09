@@ -1,10 +1,12 @@
 package org.jboss.windup.config.metadata;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -105,5 +107,24 @@ public class AbstractMetadata extends ContextBase implements RulesetMetadata
         else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    @Override
+    public boolean hasTags(String tag, String... tags)
+    {
+        Set<String> expected = new HashSet<>();
+        if (!Strings.isNullOrEmpty(tag))
+            expected.add(tag);
+
+        if (tags != null)
+        {
+            for (String t : tags)
+            {
+                if (!Strings.isNullOrEmpty(tag))
+                    expected.add(t);
+            }
+        }
+
+        return getTags().containsAll(expected);
     }
 }

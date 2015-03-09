@@ -80,4 +80,9 @@ public interface RulesetMetadata
      * Return the {@link Set} of tags by which this {@link RulesetMetadata} is classified.
      */
     public Set<String> getTags();
+
+    /**
+     * Return <code>true</code> if this {@link RulesetMetadata} contains all of the given tags.
+     */
+    boolean hasTags(String tag, String... tags);
 }

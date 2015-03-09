@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.IteratingRuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;

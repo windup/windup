@@ -27,13 +27,13 @@ public class UserRulesDirectoryOption extends AbstractPathConfigurationOption
     @Override
     public String getLabel()
     {
-        return "User Rules Directory";
+        return "User Metadata Directory";
     }
 
     @Override
     public String getDescription()
     {
-        return "User Rules Directory (Search pattern: *.windup.groovy and *.windup.xml)";
+        return "User Metadata Directory (Search pattern: *.windup.groovy and *.windup.xml)";
     }
 
     @Override

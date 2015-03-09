@@ -1,4 +1,4 @@
-package org.jboss.windup.config;
+package org.jboss.windup.config.metadata;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +15,9 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.loader.WindupRuleLoader;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
@@ -62,7 +64,7 @@ public class RuleMetadataCategoriesTest
     private GraphContextFactory factory;
 
     @Inject
-    private WindupRuleLoader loader;
+    private RuleLoader loader;
 
     @Test
     public void testUnsetTags() throws IOException

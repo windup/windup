@@ -13,7 +13,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.loader.WindupRuleLoader;
+import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -53,7 +53,7 @@ public class WindupRuleLoaderTest
     @Inject
     private GraphContextFactory factory;
     @Inject
-    private WindupRuleLoader loader;
+    private RuleLoader loader;
 
     @Test
     public void testRuleProviderWithFilter() throws IOException
