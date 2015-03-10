@@ -26,7 +26,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleProviderLoader;
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -106,7 +106,7 @@ public class LoadGroovyRulesTest
 
                 AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
 
-                String ruleOrigin = ((String) ruleContext.get(RuleMetadata.ORIGIN));
+                String ruleOrigin = ((String) ruleContext.get(RuleMetadataType.ORIGIN));
                 if (ruleOrigin.contains(EXAMPLE_GROOVY_FILE))
                 {
                     foundRuleOrigin = true;
@@ -163,7 +163,7 @@ public class LoadGroovyRulesTest
 
                     AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
 
-                    String origin = ((String) ruleContext.get(RuleMetadata.ORIGIN));
+                    String origin = ((String) ruleContext.get(RuleMetadataType.ORIGIN));
 
                     if (origin.endsWith("ExampleUserFile.windup.groovy"))
                     {

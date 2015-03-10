@@ -6,20 +6,19 @@ import org.jboss.windup.config.ruleprovider.SingleRuleProvider;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- *
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class Test2LaterRules extends SingleRuleProvider
+public class MetadataTestRuleProvider2 extends SingleRuleProvider
 {
-    public Test2LaterRules()
+    public MetadataTestRuleProvider2()
     {
-        super(MetadataBuilder.forProvider(Test2LaterRules.class).setPhase(DependentPhase.class));
+        super(MetadataBuilder.forProvider(MetadataTestRuleProvider2.class).setPhase(DependentPhase.class));
     }
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-        MetadataTestExecutedProviders.executedProvider(this);
+        ExecutedProviders.executedProvider(this);
     }
 }

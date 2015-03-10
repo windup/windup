@@ -1,7 +1,5 @@
 package org.jboss.windup.config.metadata;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,13 +16,9 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleLoader;
-import org.jboss.windup.config.metadata.MetadataBuilder;
-import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.metadata.RuleProviderMetadata;
 import org.jboss.windup.engine.predicates.EnumeratedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,15 +29,17 @@ import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
+/**
+ * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 @RunWith(Arquillian.class)
-public class RuleMetadataCategoriesTest
+public class TagsMetadataTest
 {
 
     @Deployment
     @Dependencies({
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.utils:utils"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
     })
     public static ForgeArchive getDeployment()
@@ -53,8 +49,6 @@ public class RuleMetadataCategoriesTest
                     .addPackage(EnumeratedRuleProviderPredicate.class.getPackage())
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                                AddonDependencyEntry.create("org.jboss.windup.utils:utils"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config")
                     );
         return archive;
@@ -67,30 +61,30 @@ public class RuleMetadataCategoriesTest
     private RuleLoader loader;
 
     @Test
-    public void testUnsetTags() throws IOException
+    public void testUnsetTags() throws Exception
     {
         testProvider(TestTagsUnsetRuleProvider.class);
     }
 
     @Test
-    public void testNoTags() throws IOException
+    public void testNoTags() throws Exception
     {
         testProvider(TestTagsEmptyRuleProvider.class);
     }
 
     @Test
-    public void test1Tags() throws IOException
+    public void test1Tags() throws Exception
     {
         testProvider(TestTags1RuleProvider.class, "Foo");
     }
 
     @Test
-    public void test2Tags() throws IOException
+    public void test2Tags() throws Exception
     {
         testProvider(TestTags2RuleProvider.class, "Foo", "Bar");
     }
 
-    private void testProvider(final Class<? extends RuleProvider> provider, final String... expectedTags) throws IOException
+    private void testProvider(final Class<? extends RuleProvider> provider, final String... expectedTags) throws Exception
     {
         Set<String> expected;
         if (expectedTags == null)
@@ -118,7 +112,7 @@ public class RuleMetadataCategoriesTest
             Context rule = (Context) config.getRules().get(0);
 
             @SuppressWarnings("unchecked")
-            Set<String> tags = (Set<String>) rule.get(RuleMetadata.TAGS);
+            Set<String> tags = (Set<String>) rule.get(RuleMetadataType.TAGS);
             Assert.assertNotNull(tags);
             Assert.assertTrue(tags instanceof Set);
             Assert.assertEquals(expected.size(), tags.size());
@@ -126,12 +120,6 @@ public class RuleMetadataCategoriesTest
             {
                 Assert.assertTrue(tags.contains(tag));
             }
-        }
-        catch (Exception ex)
-        {
-            if (ex instanceof InvocationTargetException)
-                throw new WindupException("" + ((InvocationTargetException) ex).getTargetException(), ex);
-            throw ex;
         }
     }
 

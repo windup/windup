@@ -1,8 +1,5 @@
 package org.jboss.windup.rules.apps.java.archives;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.metadata.AbstractRulesetMetadata;
 
 /**
@@ -14,15 +11,8 @@ public class ArchiveIdentificationRulesetMetadata extends AbstractRulesetMetadat
 {
     public static final String RULE_SET_ID = "JavaArchiveIdentification";
 
-    @Inject
-    public ArchiveIdentificationRulesetMetadata(Addon addon)
+    public ArchiveIdentificationRulesetMetadata()
     {
-        super(addon);
-    }
-
-    @Override
-    public String getID()
-    {
-        return RULE_SET_ID;
+        super(RULE_SET_ID);
     }
 }

@@ -7,9 +7,9 @@
 package org.jboss.windup.config;
 
 import org.jboss.forge.furnace.util.Annotations;
-import org.jboss.windup.config.metadata.Metadata;
-import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Rule;
@@ -29,9 +29,9 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
 
     public AbstractRuleProvider()
     {
-        if (!Annotations.isAnnotationPresent(getClass(), Metadata.class))
+        if (!Annotations.isAnnotationPresent(getClass(), RuleMetadata.class))
         {
-            throw new IllegalStateException(getClass().getName() + " must either specify @" + Metadata.class.getName()
+            throw new IllegalStateException(getClass().getName() + " must either specify @" + RuleMetadata.class.getName()
                         + " or call a constructor and provide " + RuleProviderMetadata.class.getName());
         }
         this.metadata = MetadataBuilder.forProvider(getClass());
@@ -75,12 +75,12 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
         if (rule instanceof Context)
         {
             Context context = (Context) rule;
-            if (!context.containsKey(RuleMetadata.ORIGIN))
-                context.put(RuleMetadata.ORIGIN, provider.getMetadata().getOrigin());
-            if (!context.containsKey(RuleMetadata.RULE_PROVIDER))
-                context.put(RuleMetadata.RULE_PROVIDER, provider);
-            if (!context.containsKey(RuleMetadata.TAGS))
-                context.put(RuleMetadata.TAGS, provider.getMetadata().getTags());
+            if (!context.containsKey(RuleMetadataType.ORIGIN))
+                context.put(RuleMetadataType.ORIGIN, provider.getMetadata().getOrigin());
+            if (!context.containsKey(RuleMetadataType.RULE_PROVIDER))
+                context.put(RuleMetadataType.RULE_PROVIDER, provider);
+            if (!context.containsKey(RuleMetadataType.TAGS))
+                context.put(RuleMetadataType.TAGS, provider.getMetadata().getTags());
         }
     }
 

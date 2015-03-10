@@ -10,7 +10,7 @@ import org.jboss.windup.config.RuleProvider;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MetadataTestExecutedProviders
+public class ExecutedProviders
 {
     private static List<RuleProvider> providers = new ArrayList<>();
 
@@ -23,5 +23,4 @@ public class MetadataTestExecutedProviders
     {
         return providers;
     }
-
 }

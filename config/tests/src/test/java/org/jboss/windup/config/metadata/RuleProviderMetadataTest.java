@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class MetadataAnnotationExecTest
+public class RuleProviderMetadataTest
 {
 
     @Deployment
@@ -38,11 +38,10 @@ public class MetadataAnnotationExecTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClasses(MetadataTestExecutedProviders.class,
-                                Test1EarlierRules.class,
-                                Test2LaterRules.class,
-                                TestMetadataAnnotationExecRuleProvider.class,
-                                TestMetadataAnnotationRuleProvider.class)
+                    .addClasses(ExecutedProviders.class,
+                                MetadataTestRuleProvider1.class,
+                                MetadataTestRuleProvider2.class,
+                                MetadataTestRuleProvider4.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
@@ -66,13 +65,13 @@ public class MetadataAnnotationExecTest
             windupConfig.setGraphContext(context);
 
             windupConfig.setRuleProviderFilter(
-                        new RuleProviderWithDependenciesPredicate(TestMetadataAnnotationExecRuleProvider.class));
+                        new RuleProviderWithDependenciesPredicate(MetadataTestRuleProvider4.class));
             windupConfig.setInputPath(Paths.get("src/test/resources/empty.war"));
             windupConfig.setOutputDirectory(Paths.get("target/WindupReport"));
 
             processor.execute(windupConfig);
 
-            Assert.assertEquals(4, MetadataTestExecutedProviders.getProviders().size());
+            Assert.assertEquals(3, ExecutedProviders.getProviders().size());
         }
     }
 }

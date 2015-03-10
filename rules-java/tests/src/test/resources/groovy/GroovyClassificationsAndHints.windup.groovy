@@ -3,7 +3,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;

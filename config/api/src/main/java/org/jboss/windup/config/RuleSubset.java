@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
@@ -111,7 +111,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
      */
     private void logTimeTakenByRuleProvider(GraphContext graphContext, Context context, int ruleIndex, int timeTaken)
     {
-        AbstractRuleProvider ruleProvider = (AbstractRuleProvider) context.get(RuleMetadata.RULE_PROVIDER);
+        AbstractRuleProvider ruleProvider = (AbstractRuleProvider) context.get(RuleMetadataType.RULE_PROVIDER);
         if (ruleProvider == null)
             return;
 
@@ -221,7 +221,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                             continue;
 
                         subContext.setState(RewriteState.PERFORMING);
-                        final Object ruleProviderDesc = ((RuleBuilder) rule).get(RuleMetadata.RULE_PROVIDER);
+                        final Object ruleProviderDesc = ((RuleBuilder) rule).get(RuleMetadataType.RULE_PROVIDER);
                         log.info("Rule [" + ruleProviderDesc + "] matched and will be performed.");
 
                         for (RuleLifecycleListener listener : listeners)
@@ -268,9 +268,9 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 finally
                 {
                     boolean autocommit = true;
-                    if (ruleContext != null && ruleContext.containsKey(RuleMetadata.AUTO_COMMIT))
+                    if (ruleContext != null && ruleContext.containsKey(RuleMetadataType.AUTO_COMMIT))
                     {
-                        autocommit = (Boolean) ruleContext.get(RuleMetadata.AUTO_COMMIT);
+                        autocommit = (Boolean) ruleContext.get(RuleMetadataType.AUTO_COMMIT);
                     }
                     if (autocommit)
                     {
@@ -298,7 +298,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 log.log(Level.SEVERE, logMsg, ex);
                 if (ruleContext != null)
                 {
-                    Object origin = ruleContext.get(RuleMetadata.ORIGIN);
+                    Object origin = ruleContext.get(RuleMetadataType.ORIGIN);
                     if (origin != null)
                         exMsg += "\n  From: " + origin;
 

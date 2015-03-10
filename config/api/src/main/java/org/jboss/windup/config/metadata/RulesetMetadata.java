@@ -1,11 +1,10 @@
 package org.jboss.windup.config.metadata;
 
-import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.phase.RulePhase;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
@@ -30,53 +29,6 @@ public interface RulesetMetadata
     public String getOrigin();
 
     /**
-     * Return the {@link RulePhase} in which {@link Rule} instances from this {@link RuleProvider} should be executed.
-     * <p>
-     * The default phase is {@link RulePhase#MIGRATION_RULES}.
-     */
-    public Class<? extends RulePhase> getPhase();
-
-    /**
-     * Returns a list of {@link RuleProvider} classes that should execute before the {@link Rule} instances in this
-     * corresponding {@link RuleProvider}.
-     *
-     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteAfterID}).
-     */
-    public List<Class<? extends RuleProvider>> getExecuteAfter();
-
-    /**
-     * Returns a list of the {@link RuleProvider} classes that should execute before the {@link Rule}s in this
-     * {@link RuleProvider}.
-     *
-     * This is returned as a list of {@link Rule} IDs in order to support extensions that cannot depend on each other
-     * via class names. For example, in the case of the Groovy rules extension, a single class covers many rules with
-     * their own IDs.
-     *
-     * For specifying Java-based rules, {@link #getExecuteAfter()} is preferred.
-     */
-    public List<String> getExecuteAfterIDs();
-
-    /**
-     * Returns a list of {@link RuleProvider} classes that should execute after the {@link Rule}s in this
-     * {@link RuleProvider}.
-     *
-     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeID}).
-     */
-    public List<Class<? extends RuleProvider>> getExecuteBefore();
-
-    /**
-     * Returns a list of the {@link RuleProvider} classes that should execute after the {@link Rule}s in this
-     * {@link RuleProvider}.
-     *
-     * This is returned as a list of {@link Rule} IDs in order to support extensions that cannot depend on each other
-     * via {@link Class} names. For example, in the case of the Groovy rules extension, a single class covers many rules
-     * with their own IDs.
-     *
-     * For specifying Java-based rules, {@link #getExecuteBefore()} is preferred.
-     */
-    public List<String> getExecuteBeforeIDs();
-
-    /**
      * Return the {@link Set} of tags by which this {@link RulesetMetadata} is classified.
      */
     public Set<String> getTags();
@@ -85,4 +37,23 @@ public interface RulesetMetadata
      * Return <code>true</code> if this {@link RulesetMetadata} contains all of the given tags.
      */
     boolean hasTags(String tag, String... tags);
+
+    /**
+     * Return the {@link Set} of source {@link TechnologyReference} instances to which this {@link RuleProvider} is
+     * related.
+     */
+    Set<TechnologyReference> getSourceTechnologies();
+
+    /**
+     * Return the {@link Set} of target {@link TechnologyReference} instances to which this {@link RuleProvider} is
+     * related.
+     */
+    Set<TechnologyReference> getTargetTechnologies();
+
+    /**
+     * Return the {@link Set} of {@link Addon}s required to run this rule-set. (<b>Note:</b> This is typically only used
+     * in situations where rules are provided externally - such as XML - whereas in Java, the {@link Addon} will already
+     * define its dependencies on other addons directly.)
+     */
+    Set<AddonId> getRequiredAddons();
 }

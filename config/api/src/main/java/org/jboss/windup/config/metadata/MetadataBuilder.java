@@ -9,20 +9,33 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleProviderLoader;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Fluent builder for creating {@link RuleProviderMetadata} instances. Provides sensible defaults using given required
  * values.
+ * <p>
+ * If {@link RulesetMetadata} is available in the {@link Addon} in which this {@link MetadataBuilder} was constructed,
+ * this will inherit values from {@link RulesetMetadata} for {@link #getTags()}, {@link #getSourceTechnologies()},
+ * {@link #getTargetTechnologies()} and {@link #getRequiredAddons()}.
+ * <p>
+ * Inherited metadata is specified by {@link #setRulesetMetadata(RulesetMetadata)}, and is typically performed by the
+ * {@link RuleProviderLoader} implementation.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MetadataBuilder extends AbstractMetadata implements RuleProviderMetadata
+public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProviderMetadata
 {
+    public static final Class<? extends RulePhase> DEFAULT_PHASE = MigrationRulesPhase.class;
+
     private Class<? extends RuleProvider> implementationType;
     private String origin;
     private Class<? extends RulePhase> phase;
@@ -32,6 +45,10 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     private List<Class<? extends RuleProvider>> executeBefore = new ArrayList<>();
     private List<String> executeBeforeIDs = new ArrayList<>();
     private Set<String> tags = new HashSet<>();
+    private Set<TechnologyReference> sourceTechnologies = new HashSet<>();
+    private Set<TechnologyReference> targetTechnologies = new HashSet<>();
+    private Set<AddonId> requiredAddons = new HashSet<>();
+    private RulesetMetadata parent = new AbstractRulesetMetadata("NULL");
 
     private MetadataBuilder(Class<? extends RuleProvider> implementationType, String providerId)
     {
@@ -40,14 +57,14 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     }
 
     /**
-     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link Addon} and {@link RuleProvider}
-     * type, using the provided parameters to seed sensible defaults.
+     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link RuleProvider} type, using the
+     * provided parameters and {@link RulesetMetadata} to seed sensible defaults.
      */
     public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType)
     {
         String id = implementationType.getSimpleName();
 
-        Metadata metadata = Annotations.getAnnotation(implementationType, Metadata.class);
+        RuleMetadata metadata = Annotations.getAnnotation(implementationType, RuleMetadata.class);
         if (metadata != null && !metadata.id().isEmpty())
             id = metadata.id();
 
@@ -55,8 +72,8 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     }
 
     /**
-     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link Addon}, {@link RuleProvider}
-     * type, and {@link String} ID, using the provided parameters to seed sensible defaults.
+     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link RuleProvider} type, and
+     * {@link String} ID, using the provided parameters and {@link RulesetMetadata} to seed sensible defaults.
      */
     public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType, String providerId)
     {
@@ -66,7 +83,7 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
         MetadataBuilder builder = new MetadataBuilder(implementationType, providerId)
                     .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
 
-        Metadata metadata = Annotations.getAnnotation(implementationType, Metadata.class);
+        RuleMetadata metadata = Annotations.getAnnotation(implementationType, RuleMetadata.class);
         if (metadata != null)
         {
             Class<? extends RuleProvider>[] after = metadata.after();
@@ -91,6 +108,28 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
             if (tags.length > 0)
                 builder.setTags(Arrays.asList(tags));
 
+            Technology[] sourceTechnologies = metadata.sourceTechnologies();
+            if (sourceTechnologies.length > 0)
+            {
+                for (Technology technology : sourceTechnologies)
+                {
+                    builder.addSourceTechnology(new TechnologyReference(
+                                technology.id(),
+                                Versions.parseVersionRange(technology.versionRange())));
+                }
+            }
+
+            Technology[] targetTechnologies = metadata.targetTechnologies();
+            if (targetTechnologies.length > 0)
+            {
+                for (Technology technology : targetTechnologies)
+                {
+                    builder.addTargetTechnology(new TechnologyReference(
+                                technology.id(),
+                                Versions.parseVersionRange(technology.versionRange())));
+                }
+            }
+
         }
 
         return builder;
@@ -102,9 +141,20 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
         return implementationType;
     }
 
-    /*
-     * Overrides from superclass.
-     */
+    @Override
+    public RulesetMetadata getRulesetMetadata()
+    {
+        return parent;
+    }
+
+    public MetadataBuilder setRulesetMetadata(RulesetMetadata parent)
+    {
+        if (parent != null)
+            this.parent = parent;
+
+        return this;
+    }
+
     @Override
     public String getOrigin()
     {
@@ -124,7 +174,7 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     @Override
     public Class<? extends RulePhase> getPhase()
     {
-        return phase == null ? super.getPhase() : phase;
+        return phase == null ? DEFAULT_PHASE : phase;
     }
 
     /**
@@ -142,7 +192,7 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     @Override
     public List<Class<? extends RuleProvider>> getExecuteAfter()
     {
-        return executeAfter == null ? super.getExecuteAfter() : executeAfter;
+        return Collections.unmodifiableList(executeAfter);
     }
 
     /**
@@ -176,7 +226,7 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     @Override
     public List<String> getExecuteAfterIDs()
     {
-        return executeAfterIDs == null ? super.getExecuteAfterIDs() : executeAfterIDs;
+        return Collections.unmodifiableList(executeAfterIDs);
     }
 
     /**
@@ -219,7 +269,7 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     @Override
     public List<Class<? extends RuleProvider>> getExecuteBefore()
     {
-        return executeBefore == null ? super.getExecuteBefore() : executeBefore;
+        return Collections.unmodifiableList(executeBefore);
     }
 
     /**
@@ -252,7 +302,7 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
     @Override
     public List<String> getExecuteBeforeIDs()
     {
-        return executeBeforeIDs == null ? super.getExecuteBeforeIDs() : executeBeforeIDs;
+        return Collections.unmodifiableList(executeBeforeIDs);
     }
 
     /**
@@ -292,6 +342,11 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
         return this;
     }
 
+    /**
+     * Add to the {@link Set} of tags by which this {@link RulesetMetadata} is classified.
+     * <p>
+     * Inherits from {@link RulesetMetadata#getTags()} if available.
+     */
     public MetadataBuilder addTags(String tag, String... tags)
     {
         if (!StringUtils.isBlank(tag))
@@ -305,20 +360,107 @@ public class MetadataBuilder extends AbstractMetadata implements RuleProviderMet
                     this.tags.add(t.trim());
             }
         }
+
         return this;
     }
 
     @Override
     public Set<String> getTags()
     {
-        return this.tags.isEmpty() ? super.getTags() : this.tags;
+        return join(this.tags, parent.getTags(), super.getTags());
     }
 
-    public void setTags(List<String> tags)
+    /**
+     * Set the tags by which this {@link RulesetMetadata} is classified.
+     * <p>
+     * Inherits from {@link RulesetMetadata#getTags()} if available.
+     */
+    public MetadataBuilder setTags(List<String> tags)
     {
         if (tags == null)
             this.tags = new HashSet<>();
         else
             this.tags = Collections.unmodifiableSet(new HashSet<>(tags));
+
+        return this;
+    }
+
+    @Override
+    public Set<TechnologyReference> getSourceTechnologies()
+    {
+        return join(sourceTechnologies, super.getSourceTechnologies(), parent.getSourceTechnologies());
+    }
+
+    /**
+     * Add to the {@link Set} of source {@link TechnologyReference} instances to which this {@link RuleProvider} is
+     * related.
+     * <p>
+     * Inherits from {@link RulesetMetadata#getSourceTechnologies()} if available.
+     */
+    public MetadataBuilder addSourceTechnology(TechnologyReference reference)
+    {
+        if (reference != null)
+            sourceTechnologies.add(reference);
+
+        return this;
+    }
+
+    @Override
+    public Set<TechnologyReference> getTargetTechnologies()
+    {
+        return join(targetTechnologies, super.getTargetTechnologies(), parent.getTargetTechnologies());
+    }
+
+    /**
+     * Add to the {@link Set} of target {@link TechnologyReference} instances to which this {@link RuleProvider} is
+     * related.
+     * <p>
+     * Inherits from {@link RulesetMetadata#getTargetTechnologies()} if available.
+     */
+    public MetadataBuilder addTargetTechnology(TechnologyReference reference)
+    {
+        if (reference != null)
+            targetTechnologies.add(reference);
+
+        return this;
+    }
+
+    @Override
+    public Set<AddonId> getRequiredAddons()
+    {
+        return join(requiredAddons, super.getRequiredAddons(), parent.getRequiredAddons());
+    }
+
+    /**
+     * Add to the {@link Set} of {@link Addon}s required to run this rule-set. (<b>Note:</b> This is typically only used
+     * in situations where rules are provided externally - such as XML - whereas in Java, the {@link Addon} will already
+     * define its dependencies on other addons directly.)
+     * <p>
+     * Inherits from {@link RulesetMetadata#getRequiredAddons()} if available.
+     */
+    public MetadataBuilder addRequiredAddon(AddonId reference)
+    {
+        if (reference != null)
+            requiredAddons.add(reference);
+
+        return this;
+    }
+
+    /**
+     * Join N sets.
+     */
+    @SafeVarargs
+    private final <T> Set<T> join(Set<T>... sets)
+    {
+        Set<T> result = new HashSet<>();
+        if (sets != null)
+        {
+            for (Set<T> set : sets)
+            {
+                if (set != null)
+                    result.addAll(set);
+            }
+        }
+        return result;
     }
 }

@@ -1,8 +1,5 @@
 package org.jboss.windup.rules.apps.legacy.java;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.metadata.AbstractRulesetMetadata;
 import org.jboss.windup.config.metadata.RulesetMetadata;
 
@@ -16,15 +13,8 @@ public class JavaEERulesetMetadata extends AbstractRulesetMetadata implements Ru
 {
     public static final String RULE_SET_ID = "CoreJavaEERules";
 
-    @Inject
-    public JavaEERulesetMetadata(Addon addon)
+    public JavaEERulesetMetadata()
     {
-        super(addon);
-    }
-
-    @Override
-    public String getID()
-    {
-        return RULE_SET_ID;
+        super(RULE_SET_ID);
     }
 }
