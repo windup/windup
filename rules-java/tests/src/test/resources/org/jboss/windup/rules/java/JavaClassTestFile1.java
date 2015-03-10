@@ -1,10 +1,12 @@
 package org.jboss.windup.rules.java;
 
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 @RunWith(Arquillian.class)
 public class JavaClassTestFile1

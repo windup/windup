@@ -20,17 +20,29 @@ public class JavaClassReference
     private final int length;
     private Map<String, String> annotationValues = new HashMap<>();
     private final TypeReferenceLocation location;
+    private String line;
 
     /**
      * Creates the {@link JavaClassReference} with the given qualfiedName, location, lineNumber, column, and length.
      */
-    public JavaClassReference(String qualifiedName, TypeReferenceLocation location, int lineNumber, int column, int length)
+    public JavaClassReference(String qualifiedName, TypeReferenceLocation location, int lineNumber, int column, int length, String line)
     {
         this.qualifiedName = qualifiedName;
         this.location = location;
         this.lineNumber = lineNumber;
         this.column = column;
         this.length = length;
+        this.line= line;
+    }
+
+    public String getLine()
+    {
+        return line;
+    }
+
+    public void setLine(String line)
+    {
+        this.line = line;
     }
 
     /**
@@ -131,6 +143,15 @@ public class JavaClassReference
             return false;
         if (lineNumber != other.lineNumber)
             return false;
+        if(line == null) {
+            if(other.line!=null) {
+                return false;
+            }
+        } else {
+            if(!line.equals(other.line)) {
+                return false;
+            }
+        }
         if (location != other.location)
             return false;
         if (qualifiedName == null)
@@ -147,6 +168,6 @@ public class JavaClassReference
     public String toString()
     {
         return "JavaClassReference [qualifiedName=" + qualifiedName + ", lineNumber=" + lineNumber + ", column=" + column + ", length=" + length
-                    + ", annotationValues=" + annotationValues + ", location=" + location + "]";
+                    + ", annotationValues=" + annotationValues + ", location=" + location +  ", line=" + line + "]";
     }
 }
