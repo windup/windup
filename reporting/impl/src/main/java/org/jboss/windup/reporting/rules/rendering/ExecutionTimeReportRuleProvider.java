@@ -11,11 +11,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostFinalizePhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
@@ -30,20 +30,22 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Produces a simple text report of how long each RuleProvider's rule took to execute, the time spent in each phase, and any other timing data that
- * was been stored in {@link ExecutionStatistics}.
+ * Produces a simple text report of how long each RuleProvider's rule took to execute, the time spent in each phase, and
+ * any other timing data that was been stored in {@link ExecutionStatistics}.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class ExecutionTimeReportRuleProvider extends WindupRuleProvider
+public class ExecutionTimeReportRuleProvider extends AbstractRuleProvider
 {
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public ExecutionTimeReportRuleProvider()
     {
-        // this is basically a reporting rule, but we execute it during finalize in order
-        // to also report on the time it took to generate reports
-        return PostFinalizePhase.class;
+        super(MetadataBuilder.forProvider(ExecutionTimeReportRuleProvider.class)
+                    /*
+                     * this is basically a reporting rule, but we execute it during finalize in order to also report on
+                     * the time it took to generate reports
+                     */
+                    .setPhase(PostFinalizePhase.class));
     }
 
     @Override

@@ -3,26 +3,26 @@ package org.jboss.windup.ui;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.windup.config.WindupConfigurationOption;
+import org.jboss.windup.config.ConfigurationOption;
 
 /**
- * An adapter between {@link WindupConfigurationOption#getDefaultValue()} default values, and
+ * An adapter between {@link ConfigurationOption#getDefaultValue()} default values, and
  * {@link UIInput#setDefaultValue(Callable)}
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DefaultValueAdapter<T> implements Callable<T>
 {
-    private WindupConfigurationOption option;
+    private ConfigurationOption option;
     private Class<T> expectedType;
 
-    public DefaultValueAdapter(WindupConfigurationOption option, Class<T> expectedType)
+    public DefaultValueAdapter(ConfigurationOption option, Class<T> expectedType)
     {
         this.option = option;
         this.expectedType = expectedType;
     }
 
-    public DefaultValueAdapter(WindupConfigurationOption option)
+    public DefaultValueAdapter(ConfigurationOption option)
     {
         this(option, null);
     }

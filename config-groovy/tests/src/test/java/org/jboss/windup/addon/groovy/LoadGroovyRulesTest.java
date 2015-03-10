@@ -23,9 +23,10 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.loader.WindupRuleProviderLoader;
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleProviderLoader;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -34,6 +35,7 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleBuilder;
 import org.ocpsoft.rewrite.context.Context;
 
@@ -78,30 +80,33 @@ public class LoadGroovyRulesTest
         try (GraphContext context = factory.create())
         {
 
-            Imported<WindupRuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
-                        WindupRuleProviderLoader.class);
+            Imported<RuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
+                        RuleProviderLoader.class);
 
             Assert.assertNotNull(loaders);
 
-            List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
-            for (WindupRuleProviderLoader loader : loaders)
+            List<RuleProvider> allProviders = new ArrayList<>();
+            for (RuleProviderLoader loader : loaders)
             {
                 allProviders.addAll(loader.getProviders(context));
             }
 
             boolean foundRuleProviderOrigin = false;
             boolean foundRuleOrigin = false;
-            for (WindupRuleProvider provider : allProviders)
+            for (RuleProvider provider : allProviders)
             {
-                String providerOrigin = provider.getOrigin();
+                String providerOrigin = provider.getMetadata().getOrigin();
                 if (providerOrigin.contains(EXAMPLE_GROOVY_FILE))
                 {
                     foundRuleProviderOrigin = true;
                 }
 
-                Context ruleContext = RuleBuilder.define();
-                provider.enhanceMetadata(ruleContext);
-                String ruleOrigin = ((String) ruleContext.get(RuleMetadata.ORIGIN));
+                Rule rule = RuleBuilder.define();
+                Context ruleContext = (Context) rule;
+
+                AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
+
+                String ruleOrigin = ((String) ruleContext.get(RuleMetadataType.ORIGIN));
                 if (ruleOrigin.contains(EXAMPLE_GROOVY_FILE))
                 {
                     foundRuleOrigin = true;
@@ -139,26 +144,30 @@ public class LoadGroovyRulesTest
                 FileService fileModelService = new FileService(context);
                 cfg.addUserRulesPath(fileModelService.createByFilePath(userRulesPath.toAbsolutePath().toString()));
 
-                Imported<WindupRuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
-                            WindupRuleProviderLoader.class);
+                Imported<RuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
+                            RuleProviderLoader.class);
 
                 Assert.assertNotNull(loaders);
 
-                List<WindupRuleProvider> allProviders = new ArrayList<WindupRuleProvider>();
-                for (WindupRuleProviderLoader loader : loaders)
+                List<RuleProvider> allProviders = new ArrayList<>();
+                for (RuleProviderLoader loader : loaders)
                 {
                     allProviders.addAll(loader.getProviders(context));
                 }
 
                 boolean foundScriptPath = false;
-                for (WindupRuleProvider provider : allProviders)
+                for (RuleProvider provider : allProviders)
                 {
-                    Context ruleContext = RuleBuilder.define();
-                    provider.enhanceMetadata(ruleContext);
-                    String origin = ((String) ruleContext.get(RuleMetadata.ORIGIN));
-                    // make sure we found the one from the user dir
+                    Rule rule = RuleBuilder.define();
+                    Context ruleContext = (Context) rule;
+
+                    AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
+
+                    String origin = ((String) ruleContext.get(RuleMetadataType.ORIGIN));
+
                     if (origin.endsWith("ExampleUserFile.windup.groovy"))
                     {
+                        // make sure we found the one from the user dir
                         foundScriptPath = true;
                         break;
                     }

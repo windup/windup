@@ -9,11 +9,11 @@ package org.jboss.windup.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.phase.DiscoveryPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
@@ -25,14 +25,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class TestXmlExampleRuleProvider2 extends WindupRuleProvider
+public class TestXmlExampleRuleProvider2 extends AbstractRuleProvider
 {
     final List<TestXmlMetaFacetModel> typeSearchResults = new ArrayList<>();
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public TestXmlExampleRuleProvider2()
     {
-        return DiscoveryPhase.class;
+        super(MetadataBuilder.forProvider(TestXmlExampleRuleProvider2.class, "TestXmlExampleRuleProvider2")
+                    .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off

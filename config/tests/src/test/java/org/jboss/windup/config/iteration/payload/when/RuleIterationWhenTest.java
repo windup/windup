@@ -12,13 +12,14 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -117,8 +118,12 @@ public class RuleIterationWhenTest
         }
     }
 
-    public class TestWhenProvider extends WindupRuleProvider
+    public class TestWhenProvider extends AbstractRuleProvider
     {
+        public TestWhenProvider()
+        {
+            super(MetadataBuilder.forProvider(TestWhenProvider.class));
+        }
 
         private int matchCount = 0;
         private int tripleCondition = 0;

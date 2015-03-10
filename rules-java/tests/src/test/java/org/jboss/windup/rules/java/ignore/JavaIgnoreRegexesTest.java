@@ -23,8 +23,9 @@ import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
@@ -46,6 +47,7 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.provider.IndexJavaSourceFilesRuleProvider;
+import org.jboss.windup.rules.java.SourceModeTest.SourceModeTestRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,7 +70,7 @@ public class JavaIgnoreRegexesTest
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(TestHintsClassificationsTestRuleProvider.class)
+                    .addClass(JavaIgnoreRegexesTestRuleProvider.class)
                     .addAsAddonDependencies(
                                 AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
                                 AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
@@ -81,7 +83,7 @@ public class JavaIgnoreRegexesTest
     }
 
     @Inject
-    private TestHintsClassificationsTestRuleProvider provider;
+    private JavaIgnoreRegexesTestRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -131,7 +133,7 @@ public class JavaIgnoreRegexesTest
                             .setGraphContext(context)
                             .setRuleProviderFilter(
                                         new RuleProviderWithDependenciesPredicate(
-                                                    TestHintsClassificationsTestRuleProvider.class))
+                                                    JavaIgnoreRegexesTestRuleProvider.class))
                             .setInputPath(Paths.get(inputPath))
                             .setOutputDirectory(outputPath)
                             .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
@@ -204,20 +206,16 @@ public class JavaIgnoreRegexesTest
     }
 
     @Singleton
-    public static class TestHintsClassificationsTestRuleProvider extends WindupRuleProvider
+    public static class JavaIgnoreRegexesTestRuleProvider extends AbstractRuleProvider
     {
         private Set<JavaTypeReferenceModel> typeReferences = new HashSet<>();
 
-        @Override
-        public Class<? extends RulePhase> getPhase()
+        public JavaIgnoreRegexesTestRuleProvider()
         {
-            return InitialAnalysisPhase.class;
-        }
-
-        @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-        {
-            return asClassList(AnalyzeJavaFilesRuleProvider.class, IndexJavaSourceFilesRuleProvider.class);
+            super(MetadataBuilder.forProvider(JavaIgnoreRegexesTestRuleProvider.class)
+                        .setPhase(InitialAnalysisPhase.class)
+                        .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class)
+                        .addExecuteAfter(IndexJavaSourceFilesRuleProvider.class));
         }
 
         // @formatter:off

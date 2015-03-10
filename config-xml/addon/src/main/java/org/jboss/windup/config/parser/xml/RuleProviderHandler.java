@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
@@ -16,7 +16,7 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parses a "ruleset" element, and uses it to create a new {@link WindupRuleProvider}
+ * Parses a "ruleset" element, and uses it to create a new {@link AbstractRuleProvider}
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
@@ -34,7 +34,7 @@ public class RuleProviderHandler implements ElementHandler<Void>
         {
             id = generateDefaultID();
         }
-        WindupRuleProviderBuilder builder = WindupRuleProviderBuilder.begin(id);
+        RuleProviderBuilder builder = RuleProviderBuilder.begin(id);
         context.setBuilder(builder);
 
         List<Element> children = $(element).children().get();
@@ -45,9 +45,9 @@ public class RuleProviderHandler implements ElementHandler<Void>
             switch ($(child).tag())
             {
             case "execute-after":
-                builder.getExecuteAfterIDs().add(result.toString());
+                builder.getMetadata().getExecuteAfterIDs().add(result.toString());
             case "execute-before":
-                builder.getExecuteBeforeIDs().add(result.toString());
+                builder.getMetadata().getExecuteBeforeIDs().add(result.toString());
             }
         }
         context.addRuleProvider(builder);

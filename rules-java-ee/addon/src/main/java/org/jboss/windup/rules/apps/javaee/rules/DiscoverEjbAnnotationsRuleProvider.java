@@ -1,19 +1,18 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -38,23 +37,18 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
  */
-public class DiscoverEjbAnnotationsRuleProvider extends WindupRuleProvider
+public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logging.get(DiscoverEjbAnnotationsRuleProvider.class);
 
     private static final String ENTITY_ANNOTATIONS = "entityAnnotations";
     private static final String TABLE_ANNOTATIONS_LIST = "tableAnnotations";
 
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public DiscoverEjbAnnotationsRuleProvider()
     {
-        return asClassList(AnalyzeJavaFilesRuleProvider.class);
-    }
-
-    @Override
-    public Class<? extends RulePhase> getPhase()
-    {
-        return InitialAnalysisPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverEjbAnnotationsRuleProvider.class)
+                    .setPhase(InitialAnalysisPhase.class)
+                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
     }
 
     @Override

@@ -6,11 +6,11 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.util.Visitor;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeChecksumIdentifier;
 import org.jboss.windup.rules.apps.java.archives.identify.SortedFileChecksumIdentifier;
@@ -29,14 +29,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ArchiveIdentificationConfigLoadingRuleProvider extends WindupRuleProvider
+public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRuleProvider
 {
     private static final Logger log = Logging.get(ArchiveIdentificationConfigLoadingRuleProvider.class);
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public ArchiveIdentificationConfigLoadingRuleProvider()
     {
-        return InitializationPhase.class;
+        super(MetadataBuilder.forProvider(ArchiveIdentificationConfigLoadingRuleProvider.class)
+                    .setPhase(InitializationPhase.class));
     }
 
     @Inject

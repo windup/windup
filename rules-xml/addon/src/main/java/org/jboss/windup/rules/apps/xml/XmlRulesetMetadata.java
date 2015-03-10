@@ -1,20 +1,18 @@
 package org.jboss.windup.rules.apps.xml;
 
-import org.jboss.windup.config.WindupRulesetMetadata;
+import org.jboss.windup.config.metadata.AbstractRulesetMetadata;
 
 /**
  * Metadata for the XML Rules addon.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
- * 
  */
-public class XmlRulesetMetadata implements WindupRulesetMetadata
+public class XmlRulesetMetadata extends AbstractRulesetMetadata
 {
     public static final String RULE_SET_ID = "CoreXMLRules";
 
-    @Override
-    public String getRuleSetID()
+    public XmlRulesetMetadata()
     {
-        return RULE_SET_ID;
+        super(RULE_SET_ID);
     }
 }

@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.ruleexecution;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
 
@@ -32,7 +32,7 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes a parameter of type " + WindupRuleProvider.class.getSimpleName() + " and returns a List<"
+        return "Takes a parameter of type " + AbstractRuleProvider.class.getSimpleName() + " and returns a List<"
                     + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current Windup execution.";
     }
 
@@ -42,10 +42,10 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
-            throw new TemplateModelException("Error, method expects one argument (WindupRuleProvider)");
+            throw new TemplateModelException("Error, method expects one argument (AbstractRuleProvider)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
-        WindupRuleProvider ruleProvider = (WindupRuleProvider) stringModelArg.getWrappedObject();
+        AbstractRuleProvider ruleProvider = (AbstractRuleProvider) stringModelArg.getWrappedObject();
         List<RuleExecutionInformation> result = RuleExecutionResultsListener.instance(this.event).getRuleExecutionInformation(ruleProvider);
         ExecutionStatistics.get().begin(NAME);
         return result;

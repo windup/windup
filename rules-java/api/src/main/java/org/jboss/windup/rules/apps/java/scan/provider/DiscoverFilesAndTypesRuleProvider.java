@@ -1,9 +1,9 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.DiscoveryPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -19,12 +19,12 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-public class DiscoverFilesAndTypesRuleProvider extends WindupRuleProvider
+public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
 {
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverFilesAndTypesRuleProvider()
     {
-        return DiscoveryPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverFilesAndTypesRuleProvider.class)
+                    .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off

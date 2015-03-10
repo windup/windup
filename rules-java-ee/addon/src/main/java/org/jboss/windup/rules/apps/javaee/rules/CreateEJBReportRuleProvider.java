@@ -3,11 +3,11 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -31,14 +31,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report of EJB data (eg, a list of EJB session beans).
  *
  */
-public class CreateEJBReportRuleProvider extends WindupRuleProvider
+public class CreateEJBReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/ejb.ftl";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public CreateEJBReportRuleProvider()
     {
-        return ReportGenerationPhase.class;
+        super(MetadataBuilder.forProvider(CreateEJBReportRuleProvider.class, "Create EJB Report")
+                    .setPhase(ReportGenerationPhase.class));
     }
 
     @Override
@@ -111,6 +111,7 @@ public class CreateEJBReportRuleProvider extends WindupRuleProvider
                 }
             }
         }
+
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(4);
         additionalData.put("entity", entityList);
         additionalData.put("mdb", mdbList);
@@ -118,7 +119,6 @@ public class CreateEJBReportRuleProvider extends WindupRuleProvider
         additionalData.put("stateful", statefulList);
         applicationReportModel.setRelatedResource(additionalData);
 
-        // Set the filename for the report
         ReportService reportService = new ReportService(context);
         reportService.setUniqueFilename(applicationReportModel, "ejbreport_" + projectModel.getName(), "html");
     }

@@ -22,13 +22,14 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -108,13 +109,13 @@ public class XMLHintsClassificationsTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
             {
                 @Override
-                public boolean accept(WindupRuleProvider provider)
+                public boolean accept(RuleProvider provider)
                 {
-                    return (provider.getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getPhase() != MigrationRulesPhase.class);
+                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
+                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -144,14 +145,13 @@ public class XMLHintsClassificationsTest
     }
 
     @Singleton
-    public static class TestXMLHintsClassificationsRuleProvider extends WindupRuleProvider
+    public static class TestXMLHintsClassificationsRuleProvider extends AbstractRuleProvider
     {
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
-        @Override
-        public Class<? extends RulePhase> getPhase()
+        public TestXMLHintsClassificationsRuleProvider()
         {
-            return PostMigrationRulesPhase.class;
+            super(MetadataBuilder.forProvider(TestXMLHintsClassificationsRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
         }
 
         // @formatter:off

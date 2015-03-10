@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -34,7 +34,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class TestWindupConfigurationExampleRuleProvider extends WindupRuleProvider
+public class TestWindupConfigurationExampleRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(TestWindupConfigurationExampleRuleProvider.class);
 
@@ -42,10 +42,10 @@ public class TestWindupConfigurationExampleRuleProvider extends WindupRuleProvid
 
     private WindupConfigurationModel config;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public TestWindupConfigurationExampleRuleProvider()
     {
-        return DiscoveryPhase.class;
+        super(MetadataBuilder.forProvider(TestWindupConfigurationExampleRuleProvider.class, "TestWindupConfigurationExampleRuleProvider")
+                    .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off

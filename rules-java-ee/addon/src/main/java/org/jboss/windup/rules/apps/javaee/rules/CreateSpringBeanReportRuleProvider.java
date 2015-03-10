@@ -3,11 +3,11 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -21,7 +21,6 @@ import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
-import org.jboss.windup.rules.apps.javaee.service.HibernateEntityService;
 import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -33,14 +32,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report on the spring configuration (spring beans, etc).
  *
  */
-public class CreateSpringBeanReportRuleProvider extends WindupRuleProvider
+public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_SPRING_REPORT = "/reports/templates/spring.ftl";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public CreateSpringBeanReportRuleProvider()
     {
-        return ReportGenerationPhase.class;
+        super(MetadataBuilder.forProvider(CreateSpringBeanReportRuleProvider.class, "Create Spring Bean Report")
+                    .setPhase(ReportGenerationPhase.class));
     }
 
     @Override
@@ -90,7 +89,6 @@ public class CreateSpringBeanReportRuleProvider extends WindupRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         SpringBeanService springBeanService = new SpringBeanService(context);
-        HibernateEntityService hibernateEntityService = new HibernateEntityService(context);
         GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
 
         WindupVertexListModel springBeanList = listService.create();

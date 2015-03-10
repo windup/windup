@@ -3,11 +3,11 @@ package org.jboss.windup.rules.apps.java.ip;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -29,15 +29,15 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-public class CreateStaticIPAddressReportRuleProvider extends WindupRuleProvider
+public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvider
 {
     private static final String TITLE = "Static IP Addresses";
     public static final String TEMPLATE_REPORT = "/reports/templates/static_ip_addresses.ftl";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public CreateStaticIPAddressReportRuleProvider()
     {
-        return ReportGenerationPhase.class;
+        super(MetadataBuilder.forProvider(CreateStaticIPAddressReportRuleProvider.class)
+                    .setPhase(ReportGenerationPhase.class));
     }
 
     @Override

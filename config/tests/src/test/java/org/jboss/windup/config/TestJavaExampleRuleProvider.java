@@ -10,11 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -24,7 +23,6 @@ import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -34,23 +32,16 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public class TestJavaExampleRuleProvider extends WindupRuleProvider
+public class TestJavaExampleRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(TestJavaExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public TestJavaExampleRuleProvider()
     {
-        return DiscoveryPhase.class;
-    }
-
-    @Override
-    public void enhanceMetadata(Context context)
-    {
-        super.enhanceMetadata(context);
-        context.put(RuleMetadata.CATEGORY, "Java");
+        super(MetadataBuilder.forProvider(TestJavaExampleRuleProvider.class, "TestJavaExampleRuleProvider")
+                    .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off

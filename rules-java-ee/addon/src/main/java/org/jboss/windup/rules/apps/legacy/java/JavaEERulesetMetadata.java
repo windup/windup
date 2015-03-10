@@ -1,17 +1,20 @@
 package org.jboss.windup.rules.apps.legacy.java;
-import org.jboss.windup.config.WindupRulesetMetadata;
+
+import org.jboss.windup.config.metadata.AbstractRulesetMetadata;
+import org.jboss.windup.config.metadata.RulesetMetadata;
+
 /**
-* Basic metadata for the Java EE rule addon.
-*
-* @author jsightler <jesse.sightler@gmail.com>
-*
-*/
-public class JavaEERulesetMetadata implements WindupRulesetMetadata
+ * Basic metadata for the Java EE rule addon.
+ *
+ * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
+public class JavaEERulesetMetadata extends AbstractRulesetMetadata implements RulesetMetadata
 {
-public static final String RULE_SET_ID = "CoreJavaEERules";
-@Override
-public String getRuleSetID()
-{
-return RULE_SET_ID;
-}
+    public static final String RULE_SET_ID = "CoreJavaEERules";
+
+    public JavaEERulesetMetadata()
+    {
+        super(RULE_SET_ID);
+    }
 }

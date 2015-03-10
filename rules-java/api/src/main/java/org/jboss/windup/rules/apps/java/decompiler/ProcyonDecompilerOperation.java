@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.decompiler.api.DecompilationException;
 import org.jboss.windup.decompiler.api.DecompilationFailure;
 import org.jboss.windup.decompiler.api.DecompilationListener;

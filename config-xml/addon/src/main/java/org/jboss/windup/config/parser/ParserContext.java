@@ -17,10 +17,10 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
+import org.jboss.forge.furnace.util.Annotations;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
-import org.jboss.windup.util.Annotations;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleParameterWhere;
@@ -28,25 +28,25 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Handles maintaining the list of handlers associated with each tag/namespace pair, as well as selecting the right handler for element. This also
- * maintains the current {@link WindupRuleProviderBuilder} being constructed.
+ * Handles maintaining the list of handlers associated with each tag/namespace pair, as well as selecting the right
+ * handler for element. This also maintains the current {@link RuleProviderBuilder} being constructed.
  */
 public class ParserContext
 {
-    private List<WindupRuleProvider> ruleProviders = new ArrayList<>();
-    private WindupRuleProviderBuilder builder;
+    private List<AbstractRuleProvider> ruleProviders = new ArrayList<>();
+    private RuleProviderBuilder builder;
     private ConfigurationRuleBuilder rule;
     private ConfigurationRuleParameterWhere where;
     private final Map<HandlerId, ElementHandler<?>> handlers = new HashMap<>();
 
     /**
-     * The addon containing the xml file currently being parsed. This is needed mainly because of the classloader that loaded the Addon
-     * (XSLTTransformation needs it.)
+     * The addon containing the xml file currently being parsed. This is needed mainly because of the classloader that
+     * loaded the Addon (XSLTTransformation needs it.)
      */
     private Addon addonContainingInputXML;
     /**
-     * The folder containing the xml file currently being parse. This should be the root folder from which any other resource lookups should be based.
-     * Eg, it may be the user scripts folder.
+     * The folder containing the xml file currently being parse. This should be the root folder from which any other
+     * resource lookups should be based. Eg, it may be the user scripts folder.
      * 
      * If this is set, it should take precedent over the Addon for resource lookups.
      */
@@ -131,31 +131,31 @@ public class ParserContext
     /**
      * Gets a {@link List} of all {@link RuleProviders} found so far.
      */
-    public List<WindupRuleProvider> getRuleProviders()
+    public List<AbstractRuleProvider> getRuleProviders()
     {
         return this.ruleProviders;
     }
 
     /**
-     * Adds the constructed {@link WindupRuleProvider}.
+     * Adds the constructed {@link AbstractRuleProvider}.
      */
-    public void addRuleProvider(WindupRuleProvider provider)
+    public void addRuleProvider(AbstractRuleProvider provider)
     {
         this.ruleProviders.add(provider);
     }
 
     /**
-     * Gets the {@link WindupRuleProviderBuilder} that is currently in the process of being built.
+     * Gets the {@link RuleProviderBuilder} that is currently in the process of being built.
      */
-    public WindupRuleProviderBuilder getBuilder()
+    public RuleProviderBuilder getBuilder()
     {
         return builder;
     }
 
     /**
-     * Sets the {@link WindupRuleProviderBuilder} that is currently in the process of being built.
+     * Sets the {@link RuleProviderBuilder} that is currently in the process of being built.
      */
-    public void setBuilder(WindupRuleProviderBuilder builder)
+    public void setBuilder(RuleProviderBuilder builder)
     {
         this.builder = builder;
     }
@@ -225,8 +225,8 @@ public class ParserContext
     }
 
     /**
-     * The folder containing the xml file currently being parsed. This should be the root folder from which any other resource lookups should be
-     * based. Eg, it may be the user scripts folder.
+     * The folder containing the xml file currently being parsed. This should be the root folder from which any other
+     * resource lookups should be based. Eg, it may be the user scripts folder.
      * 
      * If this is set, it should take precedent over the Addon for resource lookups.
      */
@@ -236,8 +236,8 @@ public class ParserContext
     }
 
     /**
-     * The folder containing the xml file currently being parsed. This should be the root folder from which any other resource lookups should be
-     * based. Eg, it may be the user scripts folder.
+     * The folder containing the xml file currently being parsed. This should be the root folder from which any other
+     * resource lookups should be based. Eg, it may be the user scripts folder.
      * 
      * If this is set, it should take precedent over the Addon for resource lookups.
      */

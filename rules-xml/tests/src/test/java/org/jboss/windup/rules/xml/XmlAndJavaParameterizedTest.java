@@ -19,14 +19,15 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -47,8 +48,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * This tests a scenario that combines a parameter from an XML file with a Java class. This should match only one of the two Java files in the source
- * directory.
+ * This tests a scenario that combines a parameter from an XML file with a Java class. This should match only one of the
+ * two Java files in the source directory.
  */
 @RunWith(Arquillian.class)
 public class XmlAndJavaParameterizedTest
@@ -81,9 +82,6 @@ public class XmlAndJavaParameterizedTest
     }
 
     @Inject
-    private TestParameterizedXmlRuleProvider provider;
-
-    @Inject
     private WindupProcessor processor;
 
     @Inject
@@ -107,13 +105,13 @@ public class XmlAndJavaParameterizedTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
             {
                 @Override
-                public boolean accept(WindupRuleProvider provider)
+                public boolean accept(RuleProvider provider)
                 {
-                    return (provider.getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getPhase() != MigrationRulesPhase.class);
+                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
+                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -137,14 +135,13 @@ public class XmlAndJavaParameterizedTest
         }
     }
 
-    public static class TestParameterizedXmlRuleProvider extends WindupRuleProvider
+    public static class TestParameterizedXmlRuleProvider extends AbstractRuleProvider
     {
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
-        @Override
-        public Class<? extends RulePhase> getPhase()
+        public TestParameterizedXmlRuleProvider()
         {
-            return PostMigrationRulesPhase.class;
+            super(MetadataBuilder.forProvider(TestParameterizedXmlRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
         }
 
         // @formatter:off

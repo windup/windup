@@ -15,12 +15,13 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
@@ -111,8 +112,13 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider extends WindupRuleProvider
+    private static class ParameterWiringTestRuleProvider extends AbstractRuleProvider
     {
+        public ParameterWiringTestRuleProvider()
+        {
+            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider.class));
+        }
+
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();
 
@@ -211,8 +217,13 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider2 extends WindupRuleProvider
+    private static class ParameterWiringTestRuleProvider2 extends AbstractRuleProvider
     {
+        public ParameterWiringTestRuleProvider2()
+        {
+            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider2.class));
+        }
+
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();
         private List<String> resultParameterValues = new ArrayList<>();
@@ -342,10 +353,15 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider3 extends WindupRuleProvider
+    private static class ParameterWiringTestRuleProvider3 extends AbstractRuleProvider
     {
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();
+
+        public ParameterWiringTestRuleProvider3()
+        {
+            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider3.class));
+        }
 
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -436,10 +452,15 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider4 extends WindupRuleProvider
+    private static class ParameterWiringTestRuleProvider4 extends AbstractRuleProvider
     {
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();
+
+        public ParameterWiringTestRuleProvider4()
+        {
+            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider4.class));
+        }
 
         @Override
         public Configuration getConfiguration(GraphContext context)

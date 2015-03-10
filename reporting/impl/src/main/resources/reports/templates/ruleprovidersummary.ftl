@@ -42,12 +42,12 @@
 				<#list getAllRuleProviders() as ruleProvider>
 	                <#if isRulePhase(ruleProvider)>
 	                    <div class="panel-heading">
-	                        <h3 class="panel-title">Phase: ${ruleProvider.ID}</h3>
+	                        <h3 class="panel-title">Phase: ${ruleProvider.metadata.ID}</h3>
 					    </div>
 	                <#else>
 					<div class="panel-heading">
-					    <h3 class="panel-title">${ruleProvider.ID}</h3>
-					    Phase: ${ruleProvider.phase.simpleName}
+					    <h3 class="panel-title">${ruleProvider.metadata.ID}</h3>
+					    Phase: ${ruleProvider.metadata.phase.simpleName}
 					</div>
 					<table class="table table-striped table-bordered">
 					  	<tr>

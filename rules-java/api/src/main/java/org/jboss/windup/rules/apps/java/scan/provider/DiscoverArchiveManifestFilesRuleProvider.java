@@ -8,10 +8,10 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.IteratingRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.ArchiveService;
@@ -35,10 +35,10 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     private static final String TECH_TAG = "Manifest";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverArchiveManifestFilesRuleProvider()
     {
-        return ArchiveMetadataExtractionPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverArchiveManifestFilesRuleProvider.class)
+                    .setPhase(ArchiveMetadataExtractionPhase.class));
     }
 
     @Override

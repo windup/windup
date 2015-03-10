@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,10 +19,11 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -141,10 +141,16 @@ public class JavaClassCompositeTest
     }
 
     @Singleton
-    public static class JavaCompositeClassTestRuleProvider extends WindupRuleProvider
+    public static class JavaCompositeClassTestRuleProvider extends AbstractRuleProvider
     {
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
+
+        public JavaCompositeClassTestRuleProvider()
+        {
+            super(MetadataBuilder.forProvider(JavaCompositeClassTestRuleProvider.class)
+                        .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
+        }
 
         // @formatter:off
         @Override
@@ -191,12 +197,6 @@ public class JavaClassCompositeTest
         public int getSecondRuleMatchCount()
         {
             return secondRuleMatchCount;
-        }
-
-        @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-        {
-            return asClassList(AnalyzeJavaFilesRuleProvider.class);
         }
     }
 }

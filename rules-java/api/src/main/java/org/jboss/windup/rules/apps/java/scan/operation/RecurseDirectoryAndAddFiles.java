@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.operation;
 import java.io.File;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.ocpsoft.rewrite.context.EvaluationContext;

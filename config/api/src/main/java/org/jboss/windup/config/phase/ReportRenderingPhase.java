@@ -1,9 +1,5 @@
 package org.jboss.windup.config.phase;
 
-import java.util.List;
-
-import org.jboss.windup.config.WindupRuleProvider;
-
 /**
  * Previous: {@link PostReportGenerationPhase}<br/>
  * Next: {@link PostReportRenderingPhase}
@@ -17,9 +13,20 @@ import org.jboss.windup.config.WindupRuleProvider;
  */
 public class ReportRenderingPhase extends RulePhase
 {
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
+    public ReportRenderingPhase()
     {
-        return asClassList(PostReportGenerationPhase.class);
+        super(ReportRenderingPhase.class);
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteAfter()
+    {
+        return PostReportGenerationPhase.class;
+    }
+
+    @Override
+    public Class<? extends RulePhase> getExecuteBefore()
+    {
+        return null;
     }
 }

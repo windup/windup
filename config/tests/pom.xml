@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -21,15 +22,14 @@
             <classifier>forge-addon</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config-impl</artifactId>
-            <scope>provided</scope>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec</artifactId>
+            <classifier>forge-addon</classifier>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>utils</artifactId>
-            <version>${project.version}</version>
-       	    <classifier>forge-addon</classifier>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
 
@@ -37,14 +37,12 @@
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java-api</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 

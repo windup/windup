@@ -27,7 +27,7 @@ public class UserRulesDirectoryOption extends AbstractPathConfigurationOption
     @Override
     public String getLabel()
     {
-        return "User Rules Directory";
+        return "User Metadata Directory";
     }
 
     @Override

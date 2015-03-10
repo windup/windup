@@ -20,8 +20,10 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -103,13 +105,13 @@ public class FileContentTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<WindupRuleProvider> predicate = new Predicate<WindupRuleProvider>()
+            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
             {
                 @Override
-                public boolean accept(WindupRuleProvider provider)
+                public boolean accept(RuleProvider provider)
                 {
-                    return (provider.getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getPhase() != MigrationRulesPhase.class);
+                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
+                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
                 }
             };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
@@ -187,15 +189,15 @@ public class FileContentTest
     }
 
     @Singleton
-    public static class FileContentTestRuleProvider extends WindupRuleProvider
+    public static class FileContentTestRuleProvider extends AbstractRuleProvider
     {
         private List<String> rule1ResultStrings = new ArrayList<>();
         private List<FileLocationModel> rule1ResultModels = new ArrayList<>();
 
-        @Override
-        public Class<? extends org.jboss.windup.config.phase.RulePhase> getPhase()
+        public FileContentTestRuleProvider()
         {
-            return InitialAnalysisPhase.class;
+            super(MetadataBuilder.forProvider(FileContentTestRuleProvider.class)
+                        .setPhase(InitialAnalysisPhase.class));
         }
 
         @Override

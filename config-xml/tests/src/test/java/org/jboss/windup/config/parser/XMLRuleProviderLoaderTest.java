@@ -13,7 +13,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -69,15 +69,15 @@ public class XMLRuleProviderLoaderTest
 
         try (GraphContext graphContext = graphContextFactory.create())
         {
-            List<WindupRuleProvider> providers = loader.getProviders(graphContext);
+            List<RuleProvider> providers = loader.getProviders(graphContext);
             Assert.assertNotNull(providers);
             Assert.assertTrue(providers.size() == 1);
 
-            WindupRuleProvider provider = providers.get(0);
-            String id = provider.getID();
+            RuleProvider provider = providers.get(0);
+            String id = provider.getMetadata().getID();
             Assert.assertEquals("testruleprovider", id);
-            Assert.assertEquals(DiscoveryPhase.class, provider.getPhase());
-            Assert.assertTrue(provider.getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
+            Assert.assertEquals(DiscoveryPhase.class, provider.getMetadata().getPhase());
+            Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
             List<Rule> rules = provider.getConfiguration(graphContext).getRules();
             Assert.assertEquals(4, rules.size());
 

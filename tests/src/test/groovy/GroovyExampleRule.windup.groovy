@@ -3,7 +3,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.metadata.RuleMetadata
+import org.jboss.windup.config.metadata.RuleMetadataType
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
@@ -13,7 +13,6 @@ import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 
 ruleSet("Example Servlet Rule")
-    .withMetadata(RuleMetadata.CATEGORY, "Java")
     .addRule()
     .when(JavaClass.references("javax.servlet.annotation.WebServlet").at(TypeReferenceLocation.ANNOTATION))
     .perform(

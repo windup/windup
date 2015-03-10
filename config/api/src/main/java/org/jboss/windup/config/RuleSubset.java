@@ -25,10 +25,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
@@ -80,10 +80,10 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
-     * Used for tracking the time taken by the rules within each RuleProvider. This links from a {@link WindupRuleProvider} to the ID of a
-     * {@link RuleProviderExecutionStatisticsModel}
+     * Used for tracking the time taken by the rules within each RuleProvider. This links from a
+     * {@link AbstractRuleProvider} to the ID of a {@link RuleProviderExecutionStatisticsModel}
      */
-    private final IdentityHashMap<WindupRuleProvider, Object> timeTakenByProvider = new IdentityHashMap<>();
+    private final IdentityHashMap<AbstractRuleProvider, Object> timeTakenByProvider = new IdentityHashMap<>();
 
     /**
      * Used for tracking the time taken by each phase of execution. This links from a {@link RulePhase} to the ID of a
@@ -111,7 +111,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
      */
     private void logTimeTakenByRuleProvider(GraphContext graphContext, Context context, int ruleIndex, int timeTaken)
     {
-        WindupRuleProvider ruleProvider = (WindupRuleProvider) context.get(RuleMetadata.RULE_PROVIDER);
+        AbstractRuleProvider ruleProvider = (AbstractRuleProvider) context.get(RuleMetadataType.RULE_PROVIDER);
         if (ruleProvider == null)
             return;
 
@@ -120,7 +120,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             RuleProviderExecutionStatisticsModel model = new RuleProviderExecutionStatisticsService(graphContext)
                         .create();
             model.setRuleIndex(ruleIndex);
-            model.setRuleProviderID(ruleProvider.getID());
+            model.setRuleProviderID(ruleProvider.getMetadata().getID());
             model.setTimeTaken(timeTaken);
 
             timeTakenByProvider.put(ruleProvider, model.asVertex().getId());
@@ -132,7 +132,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             int prevTimeTaken = model.getTimeTaken();
             model.setTimeTaken(prevTimeTaken + timeTaken);
         }
-        logTimeTakenByPhase(graphContext, ruleProvider.getPhase(), timeTaken);
+        logTimeTakenByPhase(graphContext, ruleProvider.getMetadata().getPhase(), timeTaken);
     }
 
     /**
@@ -221,7 +221,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                             continue;
 
                         subContext.setState(RewriteState.PERFORMING);
-                        final Object ruleProviderDesc = ((RuleBuilder) rule).get(RuleMetadata.RULE_PROVIDER);
+                        final Object ruleProviderDesc = ((RuleBuilder) rule).get(RuleMetadataType.RULE_PROVIDER);
                         log.info("Rule [" + ruleProviderDesc + "] matched and will be performed.");
 
                         for (RuleLifecycleListener listener : listeners)
@@ -268,9 +268,9 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 finally
                 {
                     boolean autocommit = true;
-                    if (ruleContext != null && ruleContext.containsKey(RuleMetadata.AUTO_COMMIT))
+                    if (ruleContext != null && ruleContext.containsKey(RuleMetadataType.AUTO_COMMIT))
                     {
-                        autocommit = (Boolean) ruleContext.get(RuleMetadata.AUTO_COMMIT);
+                        autocommit = (Boolean) ruleContext.get(RuleMetadataType.AUTO_COMMIT);
                     }
                     if (autocommit)
                     {
@@ -298,7 +298,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 log.log(Level.SEVERE, logMsg, ex);
                 if (ruleContext != null)
                 {
-                    Object origin = ruleContext.get(RuleMetadata.ORIGIN);
+                    Object origin = ruleContext.get(RuleMetadataType.ORIGIN);
                     if (origin != null)
                         exMsg += "\n  From: " + origin;
 
@@ -511,7 +511,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     /**
-     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and their results.
+     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and
+     * their results.
      */
     public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener)
     {

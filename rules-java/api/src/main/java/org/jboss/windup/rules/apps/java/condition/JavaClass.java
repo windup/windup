@@ -57,7 +57,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
 {
     private static final AtomicInteger numberCreated = new AtomicInteger(0);
 
-    private final String uniqueID; // maintains a unique identifier for each
+    private final String uniqueID;
     private List<TypeReferenceLocation> locations = Collections.emptyList();
 
     private RegexParameterizedPatternParser referencePattern;

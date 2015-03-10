@@ -35,7 +35,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.windup.config.ValidationResult;
-import org.jboss.windup.config.WindupConfigurationOption;
+import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -54,7 +54,7 @@ import org.jboss.windup.util.WindupPathUtil;
  */
 public class WindupCommand implements UICommand
 {
-    private LinkedHashMap<WindupConfigurationOption, InputComponent<?, ?>> inputOptions = new LinkedHashMap<>();
+    private LinkedHashMap<ConfigurationOption, InputComponent<?, ?>> inputOptions = new LinkedHashMap<>();
 
     @Inject
     private InputComponentFactory componentFactory;
@@ -146,7 +146,7 @@ public class WindupCommand implements UICommand
     @Override
     public void validate(UIValidationContext context)
     {
-        for (Entry<WindupConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
+        for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
             Object value = getValueForInput(entry.getValue());
             ValidationResult result = entry.getKey().validate(value);
@@ -162,7 +162,7 @@ public class WindupCommand implements UICommand
     public Result execute(UIExecutionContext context) throws Exception
     {
         WindupConfiguration windupConfiguration = new WindupConfiguration();
-        for (Entry<WindupConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
+        for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
             String key = entry.getKey().getName();
             Object value = getValueForInput(entry.getValue());
@@ -264,7 +264,7 @@ public class WindupCommand implements UICommand
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void initializeConfigurationOptionComponents(UIBuilder builder)
     {
-        for (final WindupConfigurationOption option : WindupConfiguration.getWindupConfigurationOptions())
+        for (final ConfigurationOption option : WindupConfiguration.getWindupConfigurationOptions())
         {
             InputComponent<?, ?> inputComponent = null;
             switch (option.getUIType())
@@ -332,9 +332,9 @@ public class WindupCommand implements UICommand
         }
     }
 
-    private InputComponent<?, ?> getInputForOption(Class<? extends WindupConfigurationOption> option)
+    private InputComponent<?, ?> getInputForOption(Class<? extends ConfigurationOption> option)
     {
-        for (Entry<WindupConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
+        for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
             if (option.isAssignableFrom(entry.getKey().getClass()))
             {

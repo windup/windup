@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.context.EvaluationContext;

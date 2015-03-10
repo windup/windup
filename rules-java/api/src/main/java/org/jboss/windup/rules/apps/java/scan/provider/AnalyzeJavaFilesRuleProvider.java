@@ -9,13 +9,13 @@ import org.jboss.windup.ast.java.JavaASTProcessor;
 import org.jboss.windup.ast.java.data.JavaClassReference;
 import org.jboss.windup.ast.java.data.JavaClassReferences;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -37,13 +37,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Scan the Java Source code files and store the used type information from them.
  * 
  */
-public class AnalyzeJavaFilesRuleProvider extends WindupRuleProvider
+public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
-
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public AnalyzeJavaFilesRuleProvider()
     {
-        return InitialAnalysisPhase.class;
+        super(MetadataBuilder.forProvider(AnalyzeJavaFilesRuleProvider.class)
+                    .setPhase(InitialAnalysisPhase.class));
     }
 
     // @formatter:off

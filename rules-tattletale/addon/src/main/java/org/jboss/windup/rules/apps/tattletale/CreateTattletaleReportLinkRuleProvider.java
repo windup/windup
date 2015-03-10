@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.tattletale;
 
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -17,14 +17,14 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CreateTattletaleReportLinkRuleProvider extends WindupRuleProvider
+public class CreateTattletaleReportLinkRuleProvider extends AbstractRuleProvider
 {
     private static final String TATTLETALE_INDEX_HTML = "tattletale/index.html";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public CreateTattletaleReportLinkRuleProvider()
     {
-        return ReportGenerationPhase.class;
+        super(MetadataBuilder.forProvider(CreateTattletaleReportLinkRuleProvider.class)
+                    .setPhase(ReportGenerationPhase.class));
     }
 
     @Override

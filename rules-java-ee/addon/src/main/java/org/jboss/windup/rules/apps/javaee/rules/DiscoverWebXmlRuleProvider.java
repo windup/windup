@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.IteratingRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
@@ -43,10 +43,10 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
 
     private static final String dtdRegex = "(?i).*web.application.*";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverWebXmlRuleProvider()
     {
-        return InitialAnalysisPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverWebXmlRuleProvider.class)
+                    .setPhase(InitialAnalysisPhase.class));
     }
 
     @Override

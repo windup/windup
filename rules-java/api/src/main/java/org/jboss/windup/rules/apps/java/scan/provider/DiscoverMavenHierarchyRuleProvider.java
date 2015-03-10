@@ -1,13 +1,12 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.util.List;
 import java.util.logging.Logger;
 
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -18,20 +17,15 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class DiscoverMavenHierarchyRuleProvider extends WindupRuleProvider
+public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverMavenHierarchyRuleProvider()
     {
-        return DiscoverProjectStructurePhase.class;
-    }
-
-    @Override
-    public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-    {
-        return asClassList(DiscoverMavenProjectsRuleProvider.class);
+        super(MetadataBuilder.forProvider(DiscoverMavenHierarchyRuleProvider.class)
+                    .setPhase(DiscoverProjectStructurePhase.class)
+                    .addExecuteAfter(DiscoverMavenProjectsRuleProvider.class));
     }
 
     @Override

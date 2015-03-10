@@ -22,11 +22,11 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.operation.ruleelement.AbstractIterationOperation;
+import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -204,20 +204,16 @@ public class JavaHintsClassificationsTest
     }
 
     @Singleton
-    public static class TestHintsClassificationsTestRuleProvider extends WindupRuleProvider
+    public static class TestHintsClassificationsTestRuleProvider extends AbstractRuleProvider
     {
         private Set<JavaTypeReferenceModel> typeReferences = new HashSet<>();
 
-        @Override
-        public Class<? extends RulePhase> getPhase()
+        public TestHintsClassificationsTestRuleProvider()
         {
-            return InitialAnalysisPhase.class;
-        }
-
-        @Override
-        public List<Class<? extends WindupRuleProvider>> getExecuteAfter()
-        {
-            return asClassList(AnalyzeJavaFilesRuleProvider.class, IndexJavaSourceFilesRuleProvider.class);
+            super(MetadataBuilder.forProvider(TestHintsClassificationsTestRuleProvider.class)
+                        .setPhase(InitialAnalysisPhase.class)
+                        .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class)
+                        .addExecuteAfter(IndexJavaSourceFilesRuleProvider.class));
         }
 
         // @formatter:off

@@ -8,10 +8,10 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.IteratingRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -40,10 +40,10 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
     private static final String TECH_TAG = "Spring XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverSpringConfigurationFilesRuleProvider()
     {
-        return InitialAnalysisPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverSpringConfigurationFilesRuleProvider.class)
+                    .setPhase(InitialAnalysisPhase.class));
     }
 
     @Override

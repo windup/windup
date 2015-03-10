@@ -9,11 +9,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.IteratingRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
+import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -35,7 +35,8 @@ import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata into the graph.
+ * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata
+ * into the graph.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  * 
@@ -47,10 +48,10 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
     private static final String hibernateRegex = "(?i).*hibernate.configuration.*";
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public DiscoverHibernateConfigurationRuleProvider()
     {
-        return InitialAnalysisPhase.class;
+        super(MetadataBuilder.forProvider(DiscoverHibernateConfigurationRuleProvider.class)
+                    .setPhase(InitialAnalysisPhase.class));
     }
 
     @Override

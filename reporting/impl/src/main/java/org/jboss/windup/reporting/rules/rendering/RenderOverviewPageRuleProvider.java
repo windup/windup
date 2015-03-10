@@ -3,9 +3,9 @@ package org.jboss.windup.reporting.rules.rendering;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.windup.config.WindupRuleProvider;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
-import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * @author jsightler <jesse.sightler@gmail.com>
  * 
  */
-public class RenderOverviewPageRuleProvider extends WindupRuleProvider
+public class RenderOverviewPageRuleProvider extends AbstractRuleProvider
 {
     private static final String VAR_APPLICATION_REPORTS = "applicationReports";
     private static final String OUTPUT_FILENAME = "../index.html";
@@ -29,10 +29,10 @@ public class RenderOverviewPageRuleProvider extends WindupRuleProvider
     @Inject
     private Furnace furnace;
 
-    @Override
-    public Class<? extends RulePhase> getPhase()
+    public RenderOverviewPageRuleProvider()
     {
-        return ReportRenderingPhase.class;
+        super(MetadataBuilder.forProvider(RenderOverviewPageRuleProvider.class)
+                    .setPhase(ReportRenderingPhase.class));
     }
 
     // @formatter:off

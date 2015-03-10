@@ -31,9 +31,10 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.windup.config.WindupRuleProvider;
-import org.jboss.windup.config.builder.WindupRuleProviderBuilder;
-import org.jboss.windup.config.loader.WindupRuleProviderLoader;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.builder.RuleProviderBuilder;
+import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -44,13 +45,13 @@ import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 /**
- * Loads files with the specified extension (specified in {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_EXTENSION} ), interprets them as Groovy
- * scripts, and returns the resulting {@link WindupRuleProvider}s.
+ * Loads files with the specified extension (specified in {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_EXTENSION}
+ * ), interprets them as Groovy scripts, and returns the resulting {@link AbstractRuleProvider}s.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  *
  */
-public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
+public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
 {
     private static final Logger LOG = Logging.get(GroovyWindupRuleProviderLoader.class);
 
@@ -68,9 +69,9 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<WindupRuleProvider> getProviders(final GraphContext context)
+    public List<RuleProvider> getProviders(final GraphContext context)
     {
-        final List<WindupRuleProvider> results = new ArrayList<WindupRuleProvider>();
+        final List<RuleProvider> results = new ArrayList<>();
 
         Binding binding = new Binding();
         binding.setVariable("supportFunctions", new HashMap<>());
@@ -115,29 +116,31 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
         }
         binding.setVariable("supportFunctions", null);
 
+        String scriptPath = null;
         for (URL resource : getScripts(context))
         {
             try (Reader reader = new InputStreamReader(resource.openStream()))
             {
-                List<WindupRuleProvider> ruleProviders = new ArrayList<>();
+                List<AbstractRuleProvider> ruleProviders = new ArrayList<>();
                 binding.setVariable("windupRuleProviderBuilders", ruleProviders);
 
-                binding.setVariable(CURRENT_WINDUP_SCRIPT, resource.toExternalForm());
+                scriptPath = resource.toExternalForm();
+                binding.setVariable(CURRENT_WINDUP_SCRIPT, scriptPath);
                 shell.evaluate(reader);
 
-                List<WindupRuleProvider> providers = (List<WindupRuleProvider>) binding.getVariable("windupRuleProviderBuilders");
-                for (WindupRuleProvider provider : providers)
+                List<AbstractRuleProvider> providers = (List<AbstractRuleProvider>) binding.getVariable("windupRuleProviderBuilders");
+                for (AbstractRuleProvider provider : providers)
                 {
-                    if (provider instanceof WindupRuleProviderBuilder)
+                    if (provider instanceof RuleProviderBuilder)
                     {
-                        ((WindupRuleProviderBuilder) provider).setOrigin(resource.toExternalForm());
+                        ((RuleProviderBuilder) provider).setOrigin(scriptPath);
                     }
                     results.add(provider);
                 }
             }
             catch (Exception e)
             {
-                throw new WindupException("Failed to evaluate configuration: ", e);
+                throw new WindupException("Failed to evaluate configuration from script [" + scriptPath + "]: ", e);
             }
         }
 
@@ -153,7 +156,6 @@ public class GroovyWindupRuleProviderLoader implements WindupRuleProviderLoader
             public boolean accept(Addon addon)
             {
                 Set<AddonDependency> dependencies = addon.getDependencies();
-                boolean found = false;
                 for (AddonDependency dependency : dependencies)
                 {
                     // TODO this should only accept addons that depend on windup-config-groovy or whatever we call that

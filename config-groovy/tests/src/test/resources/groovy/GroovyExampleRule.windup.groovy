@@ -1,7 +1,7 @@
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.True;
@@ -21,5 +21,5 @@ ruleSet("ExampleGroovyRule").setPhase(MigrationRulesPhase.class)
             }
         }
     )
-    .withMetadata(RuleMetadata.CATEGORY, "Basic")
+    .withMetadata(RuleMetadataType.TAGS, "Basic")
     
