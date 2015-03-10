@@ -82,9 +82,9 @@ public class TypeReferenceServiceTest
         f2.setFilePath("/f2");
 
         JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
-                    "com.example.Class1");
+                    "com.example.Class1", "@Class1");
         JavaTypeReferenceModel t2 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
-                    "com.example.Class1");
+                    "com.example.Class1", "@Class1");
 
         InlineHintModel b1 = inlineHintService.create();
         InlineHintModel b1b = inlineHintService.create();

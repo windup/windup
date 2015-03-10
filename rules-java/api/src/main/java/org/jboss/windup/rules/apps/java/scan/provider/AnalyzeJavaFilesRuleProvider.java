@@ -117,7 +117,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                     || TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
                         {
                             JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(payload, reference.getLocation(),
-                                        reference.getLineNumber(), reference.getColumn(), reference.getLength(), reference.getQualifiedName());
+                                        reference.getLineNumber(), reference.getColumn(), reference.getLength(), reference.getQualifiedName(),reference.getLine());
                             if (reference.getLocation() == TypeReferenceLocation.ANNOTATION)
                             {
                                 addAnnotationValues(event.getGraphContext(), typeReference, reference.getAnnotationValues());

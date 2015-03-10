@@ -5,6 +5,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.RandomStringUtils2;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Callables;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 @RunWith(Arquillian.class)
 public class JavaClassTestFile2
@@ -67,7 +68,7 @@ public class JavaClassTestFile2
             pm.setRootFileModel(inputPathFrame);
 
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputPath + "/JavaHintsClassificationsTest.java");
+            fileModel.setFilePath(inputPath + "/JavaHintsClassificationsTest2.java");
             fileModel.setProjectModel(pm);
 
             pm.addFileModel(inputPathFrame);
