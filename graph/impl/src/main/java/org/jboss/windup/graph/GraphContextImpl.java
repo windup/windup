@@ -142,24 +142,39 @@ public class GraphContextImpl implements GraphContext
 
     private void initializeTitanManagement(TitanGraph titanGraph)
     {
-        // TODO: This has to load dynamically.
+        // TODO: This has to load dynamically. WINDUP-198
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
-        String[] keys = new String[] { "namespaceURI", "schemaLocation", "publicId", "rootTagName",
-                    "systemId", "qualifiedName", "filePath", "mavenIdentifier", "packageName", "classification" };
+        // We need to hard-code the property names here since we can't depend on rulesets' addons.
+        String[] keys = new String[] {
+            // rules/apps/xml/model/NamespaceMetaModel
+            "namespaceURI",
+            "schemaLocation",
+            // rules/apps/xml/model/XmlFileModel
+            "rootTagName",
+            // rules/apps/java/model/JavaClassModel
+            "qualifiedName",
+            // graph/model/resource/FileModel
+            "filePath",
+            // rules/apps/java/model/project/MavenProjectModel
+            "mavenIdentifier",
+            // JavaClassModel, JavaClassFileModel, JavaSourceFileModel, PackageModel - possible collision!
+            "packageName",
+
+            "DoctypeMeta:publicId", "DoctypeMeta:systemId",
+            "ClassificationModel:classification"
+        };
 
         TitanManagement mgmt = titanGraph.getManagementSystem();
 
         for (String key : keys)
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
-                        .make();
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
             mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
         for (String key : new String[] { "referenceSourceSnippit" })
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE)
-                        .make();
+            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
             mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
         }
 
@@ -196,7 +211,7 @@ public class GraphContextImpl implements GraphContext
         // turn on a db-cache that persists across txn boundaries, but make it relatively small
         conf.setProperty("cache.db-cache", true);
         conf.setProperty("cache.db-cache-clean-wait", 0);
-        conf.setProperty("cache.db-cache-size", .05);
+        conf.setProperty("cache.db-cache-size", .09);
         conf.setProperty("cache.db-cache-time", 0);
 
         conf.setProperty("index.search.backend", "lucene");
