@@ -306,10 +306,14 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     if (location != null)
                         exMsg += "\n  Defined in: " + location;
                 }
-                throw new WindupException(exMsg, ex);
 
+                Object fatal_ = ruleContext.get(RuleMetadataType.TREAT_EXCEPTIONS_AS_FATAL);
+                if (fatal_ instanceof Boolean && ((Boolean)fatal_).booleanValue())
+                    throw new WindupException(exMsg, ex);
+                // If the exception is not fatal, some RuleLifecycleListener#afterRuleExecutionFailed() will take care.
             }
-        }
+
+        }// for each Rule
 
         for (RuleLifecycleListener listener : listeners)
         {
