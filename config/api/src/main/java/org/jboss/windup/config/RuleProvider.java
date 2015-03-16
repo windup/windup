@@ -6,8 +6,8 @@ import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
- * A windup-specific implementation of {@link ConfigurationProvider}. Provides {@link Rule} instances and relevant
- * {@link RuleProviderMetadata} for those {@link Rule} instances.
+ * A windup-specific implementation of {@link ConfigurationProvider}. Provides {@link Rule} instances and relevant {@link RuleProviderMetadata} for
+ * those {@link Rule} instances.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

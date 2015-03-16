@@ -40,7 +40,7 @@ public class WindupProcessorImpl implements WindupProcessor
     private static Logger LOG = Logging.get(WindupProcessorImpl.class);
 
     @Inject
-    private RuleLoader windupConfigurationLoader;
+    private RuleLoader ruleLoader;
 
     @Inject
     private Imported<RuleLifecycleListener> listeners;
@@ -85,7 +85,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
         final GraphRewrite event = new GraphRewrite(context);
 
-        RuleProviderRegistry providerRegistry = windupConfigurationLoader.loadConfiguration(context,
+        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(context,
                     windupConfiguration.getRuleProviderFilter());
         event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
 

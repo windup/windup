@@ -32,7 +32,7 @@ public class PhaseHandler implements ElementHandler<Void>
         Class<? extends RulePhase> phase = getPhases().get(classNameToKey(phaseStr));
         if (phase == null)
         {
-            throw new IllegalArgumentException("Unrecognized phase \"" + phase + "\"");
+            throw new IllegalArgumentException("Unrecognized phase \"" + phaseStr + "\"");
         }
         context.getBuilder().setPhase(phase);
         return null;

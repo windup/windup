@@ -15,7 +15,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeChecksumIdentifier;
 import org.jboss.windup.rules.apps.java.archives.identify.SortedFileChecksumIdentifier;
 import org.jboss.windup.util.Logging;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.file.FileSuffixPredicate;
 import org.jboss.windup.util.file.FileVisit;
@@ -68,8 +68,8 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
                 };
 
                 FileSuffixPredicate predicate = new FileSuffixPredicate("\\.archive-metadata\\.txt");
-                FileVisit.visit(WindupPathUtil.getUserCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
-                FileVisit.visit(WindupPathUtil.getWindupCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
+                FileVisit.visit(PathUtil.getUserCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
+                FileVisit.visit(PathUtil.getWindupCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
             }
         });
         return config;

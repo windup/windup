@@ -1,13 +1,13 @@
 package org.jboss.windup.exec.configuration.options;
 
-import org.jboss.windup.config.AbstractWindupConfigurationOption;
+import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
 /**
  * Indicates that all operations should function in "Offline" mode (without accessing the internet).
  */
-public class OfflineModeOption extends AbstractWindupConfigurationOption
+public class OfflineModeOption extends AbstractConfigurationOption
 {
     public static final String NAME = "offline";
 

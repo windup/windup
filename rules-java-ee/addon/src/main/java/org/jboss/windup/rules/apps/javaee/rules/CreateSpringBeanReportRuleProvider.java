@@ -3,9 +3,11 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.forge.furnace.versions.EmptyVersionRange;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -39,7 +41,7 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
     public CreateSpringBeanReportRuleProvider()
     {
         super(MetadataBuilder.forProvider(CreateSpringBeanReportRuleProvider.class, "Create Spring Bean Report")
-                    .setPhase(ReportGenerationPhase.class));
+                    .setPhase(ReportGenerationPhase.class).addSourceTechnology(new TechnologyReference("Spring", new EmptyVersionRange())));
     }
 
     @Override

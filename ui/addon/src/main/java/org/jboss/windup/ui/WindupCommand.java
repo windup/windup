@@ -34,8 +34,8 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.validate.UIValidator;
-import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -44,7 +44,7 @@ import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 
 /**
  * Provides a basic Forge UI implementation for running Windup from within a {@link UIProvider}.
@@ -169,7 +169,7 @@ public class WindupCommand implements UICommand
             windupConfiguration.setOptionValue(key, value);
         }
 
-        Path userRulesDir = WindupPathUtil.getUserRulesDir();
+        Path userRulesDir = PathUtil.getUserRulesDir();
         if (userRulesDir != null && !Files.isDirectory(userRulesDir))
         {
             Files.createDirectories(userRulesDir);
@@ -179,7 +179,7 @@ public class WindupCommand implements UICommand
             windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
         }
 
-        Path userIgnoreDir = WindupPathUtil.getUserIgnoreDir();
+        Path userIgnoreDir = PathUtil.getUserIgnoreDir();
         if (userIgnoreDir != null && !Files.isDirectory(userIgnoreDir))
         {
             Files.createDirectories(userIgnoreDir);
@@ -189,7 +189,7 @@ public class WindupCommand implements UICommand
             windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
         }
 
-        Path windupHomeRulesDir = WindupPathUtil.getWindupRulesDir();
+        Path windupHomeRulesDir = PathUtil.getWindupRulesDir();
         if (windupHomeRulesDir != null && !Files.isDirectory(windupHomeRulesDir))
         {
             Files.createDirectories(windupHomeRulesDir);
@@ -199,7 +199,7 @@ public class WindupCommand implements UICommand
             windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
         }
 
-        Path windupHomeIgnoreDir = WindupPathUtil.getWindupIgnoreDir();
+        Path windupHomeIgnoreDir = PathUtil.getWindupIgnoreDir();
         if (windupHomeIgnoreDir != null && !Files.isDirectory(windupHomeIgnoreDir))
         {
             Files.createDirectories(windupHomeIgnoreDir);
@@ -286,6 +286,7 @@ public class WindupCommand implements UICommand
             case SELECT_MANY:
             {
                 UISelectMany<?> selectMany = componentFactory.createSelectMany(option.getName(), option.getType());
+                selectMany.setValueChoices((Iterable) option.getAvailableValues());
                 selectMany.setDefaultValue(new DefaultValueAdapter(option, Iterable.class));
                 inputComponent = selectMany;
                 break;
@@ -293,6 +294,7 @@ public class WindupCommand implements UICommand
             case SELECT_ONE:
             {
                 UISelectOne<?> selectOne = componentFactory.createSelectOne(option.getName(), option.getType());
+                selectOne.setValueChoices((Iterable) option.getAvailableValues());
                 selectOne.setDefaultValue(new DefaultValueAdapter(option));
                 inputComponent = selectOne;
                 break;

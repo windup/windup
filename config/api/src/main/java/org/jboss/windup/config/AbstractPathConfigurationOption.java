@@ -5,13 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Provides a base for validating {@link ConfigurationOption}s of type {@link File}. This uses the results of
- * {@link ConfigurationOption#getUIType()} to determine whether to validate as a file or as a directory.
+ * Provides a base for validating {@link ConfigurationOption}s of type {@link File}. This uses the results of {@link ConfigurationOption#getUIType()}
+ * to determine whether to validate as a file or as a directory.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  *
  */
-public abstract class AbstractPathConfigurationOption extends AbstractWindupConfigurationOption
+public abstract class AbstractPathConfigurationOption extends AbstractConfigurationOption
 {
     private boolean mustExist = false;
 

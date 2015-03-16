@@ -1,17 +1,33 @@
 package org.jboss.windup.config;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * Provides a base class for sharing default functionality between {@link ConfigurationOption}s.
  *
  * @author jsightler <jesse.sightler@gmail.com>
  * @author ozizka
  */
-public abstract class AbstractWindupConfigurationOption implements ConfigurationOption
+public abstract class AbstractConfigurationOption implements ConfigurationOption
 {
+    private Collection<?> availableValues = Collections.emptyList();
+
     @Override
     public int getPriority()
     {
         return 0;
+    }
+
+    @Override
+    public Collection<?> getAvailableValues()
+    {
+        return availableValues;
+    }
+
+    protected void setAvailableValues(Collection<?> availableValues)
+    {
+        this.availableValues = availableValues;
     }
 
     @Override

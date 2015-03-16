@@ -14,7 +14,7 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * Used to construct new dynamic {@link AbstractRuleProvider} instances.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jess Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed

@@ -20,15 +20,13 @@ import org.jboss.windup.config.phase.RulePhase;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
- * Fluent builder for creating {@link RuleProviderMetadata} instances. Provides sensible defaults using given required
- * values.
+ * Fluent builder for creating {@link RuleProviderMetadata} instances. Provides sensible defaults using given required values.
  * <p>
- * If {@link RulesetMetadata} is available in the {@link Addon} in which this {@link MetadataBuilder} was constructed,
- * this will inherit values from {@link RulesetMetadata} for {@link #getTags()}, {@link #getSourceTechnologies()},
- * {@link #getTargetTechnologies()} and {@link #getRequiredAddons()}.
+ * If {@link RulesetMetadata} is available in the {@link Addon} in which this {@link MetadataBuilder} was constructed, this will inherit values from
+ * {@link RulesetMetadata} for {@link #getTags()}, {@link #getSourceTechnologies()}, {@link #getTargetTechnologies()} and {@link #getRequiredAddons()}.
  * <p>
- * Inherited metadata is specified by {@link #setRulesetMetadata(RulesetMetadata)}, and is typically performed by the
- * {@link RuleProviderLoader} implementation.
+ * Inherited metadata is specified by {@link #setRulesetMetadata(RulesetMetadata)}, and is typically performed by the {@link RuleProviderLoader}
+ * implementation.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -57,8 +55,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link RuleProvider} type, using the
-     * provided parameters and {@link RulesetMetadata} to seed sensible defaults.
+     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link RuleProvider} type, using the provided parameters and
+     * {@link RulesetMetadata} to seed sensible defaults.
      */
     public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType)
     {
@@ -72,8 +70,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link RuleProvider} type, and
-     * {@link String} ID, using the provided parameters and {@link RulesetMetadata} to seed sensible defaults.
+     * Create a new {@link RuleProviderMetadata} builder instance for the given {@link RuleProvider} type, and {@link String} ID, using the provided
+     * parameters and {@link RulesetMetadata} to seed sensible defaults.
      */
     public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType, String providerId)
     {
@@ -162,8 +160,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Set the descriptive information indicating where the corresponding {@link RuleProvider} instance is located (eg,
-     * a path to an XML file on disk, or an {@link Addon} coordinate and class name).
+     * Set the descriptive information indicating where the corresponding {@link RuleProvider} instance is located (eg, a path to an XML file on disk,
+     * or an {@link Addon} coordinate and class name).
      */
     public MetadataBuilder setOrigin(String origin)
     {
@@ -178,10 +176,9 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Set the {@link RulePhase} in which the {@link Rule} instances from the corresponding {@link RuleProvider}
-     * instance should be executed.
+     * Set the {@link RulePhase} in which the {@link Rule} instances from the corresponding {@link RuleProvider} instance should be executed.
      * <p>
-     * The default phase is {@link RulePhase#MIGRATION_RULES}.
+     * The default phase is {@link org.jboss.windup.config.phase.MigrationRulesPhase}.
      */
     public MetadataBuilder setPhase(Class<? extends RulePhase> phase)
     {
@@ -196,11 +193,11 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Set the list of {@link RuleProvider} classes that should execute before the {@link Rule} instances in the
-     * corresponding {@link RuleProvider} instance.
+     * Set the list of {@link RuleProvider} classes that should execute before the {@link Rule} instances in the corresponding {@link RuleProvider}
+     * instance.
      *
      * <p>
-     * {@link RuleProvider} references can also be specified based on id ({@link #getExecuteAfterID}).
+     * {@link RuleProvider} references can also be specified based on id ({@link #getExecuteAfterIDs}).
      */
     public MetadataBuilder setExecuteAfter(List<Class<? extends RuleProvider>> executeAfter)
     {
@@ -209,10 +206,10 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Ad an entry to the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in
-     * the corresponding {@link RuleProvider} instance.
+     * Ad an entry to the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in the corresponding
+     * {@link RuleProvider} instance.
      *
-     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeID}).
+     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeIDs}).
      */
     public MetadataBuilder addExecuteAfter(Class<? extends RuleProvider> type)
     {
@@ -230,13 +227,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Set the list of the {@link RuleProvider} classes that should execute before the {@link Rule} instances in the
-     * corresponding {@link RuleProvider} instance.
+     * Set the list of the {@link RuleProvider} classes that should execute before the {@link Rule} instances in the corresponding
+     * {@link RuleProvider} instance.
      *
      * <p>
-     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
-     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
-     * IDs.
+     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
+     * case of the Groovy rules extension, a single class covers many rules with their own IDs.
      *
      * For specifying Java-based rules, {@link #getExecuteAfter()} is preferred.
      */
@@ -247,13 +243,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Add an entry to the list of the {@link RuleProvider} classes that should execute before the {@link Rule}
-     * instances in the corresponding {@link RuleProvider} instance.
+     * Add an entry to the list of the {@link RuleProvider} classes that should execute before the {@link Rule} instances in the corresponding
+     * {@link RuleProvider} instance.
      *
      * <p>
-     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
-     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
-     * IDs.
+     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
+     * case of the Groovy rules extension, a single class covers many rules with their own IDs.
      *
      * For specifying Java-based rules, {@link #getExecuteAfter()} is preferred.
      */
@@ -273,10 +268,10 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Set the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in the
-     * corresponding {@link RuleProvider} instance.
+     * Set the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in the corresponding {@link RuleProvider}
+     * instance.
      *
-     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeID}).
+     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeIDs}).
      */
     public MetadataBuilder setExecuteBefore(List<Class<? extends RuleProvider>> executeBefore)
     {
@@ -285,10 +280,10 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Ad an entry to the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in
-     * the corresponding {@link RuleProvider} instance.
+     * Ad an entry to the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in the corresponding
+     * {@link RuleProvider} instance.
      *
-     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeID}).
+     * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeIDs}).
      */
     public MetadataBuilder addExecuteBefore(Class<? extends RuleProvider> type)
     {
@@ -306,13 +301,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Set the list of the {@link RuleProvider} classes that should execute after the {@link Rule} instances in the
-     * corresponding {@link RuleProvider} instance.
+     * Set the list of the {@link RuleProvider} classes that should execute after the {@link Rule} instances in the corresponding {@link RuleProvider}
+     * instance.
      *
      * <p>
-     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
-     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
-     * IDs.
+     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
+     * case of the Groovy rules extension, a single class covers many rules with their own IDs.
      *
      * For specifying Java-based rules, {@link #getExecuteBefore()} is preferred.
      */
@@ -323,13 +317,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Add to the list of the {@link RuleProvider} classes that should execute after the {@link Rule} instances in the
-     * corresponding {@link RuleProvider} instance.
+     * Add to the list of the {@link RuleProvider} classes that should execute after the {@link Rule} instances in the corresponding
+     * {@link RuleProvider} instance.
      *
      * <p>
-     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class
-     * names. For example, in the case of the Groovy rules extension, a single class covers many rules with their own
-     * IDs.
+     * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
+     * case of the Groovy rules extension, a single class covers many rules with their own IDs.
      *
      * For specifying Java-based rules, {@link #getExecuteBefore()} is preferred.
      */
@@ -392,8 +385,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Add to the {@link Set} of source {@link TechnologyReference} instances to which this {@link RuleProvider} is
-     * related.
+     * Add to the {@link Set} of source {@link TechnologyReference} instances to which this {@link RuleProvider} is related.
      * <p>
      * Inherits from {@link RulesetMetadata#getSourceTechnologies()} if available.
      */
@@ -412,8 +404,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Add to the {@link Set} of target {@link TechnologyReference} instances to which this {@link RuleProvider} is
-     * related.
+     * Add to the {@link Set} of target {@link TechnologyReference} instances to which this {@link RuleProvider} is related.
      * <p>
      * Inherits from {@link RulesetMetadata#getTargetTechnologies()} if available.
      */
@@ -432,9 +423,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     /**
-     * Add to the {@link Set} of {@link Addon}s required to run this rule-set. (<b>Note:</b> This is typically only used
-     * in situations where rules are provided externally - such as XML - whereas in Java, the {@link Addon} will already
-     * define its dependencies on other addons directly.)
+     * Add to the {@link Set} of {@link Addon}s required to run this rule-set. (<b>Note:</b> This is typically only used in situations where rules are
+     * provided externally - such as XML - whereas in Java, the {@link Addon} will already define its dependencies on other addons directly.)
      * <p>
      * Inherits from {@link RulesetMetadata#getRequiredAddons()} if available.
      */

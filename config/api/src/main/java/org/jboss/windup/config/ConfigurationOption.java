@@ -1,5 +1,7 @@
 package org.jboss.windup.config;
 
+import java.util.Collection;
+
 /**
  * Specifies details regarding a particular configuraiton option that can be passed into the Windup executor. This information is used by the UI to
  * determine the available options for running Windup.
@@ -44,6 +46,11 @@ public interface ConfigurationOption
      * Default value for this option (if not set by user).
      */
     Object getDefaultValue();
+
+    /**
+     * Returns an ordered list of available values. This is intended for use with {@link InputType#SELECT_MANY} and {@link InputType#SELECT_ONE}.
+     */
+    Collection<?> getAvailableValues();
 
     /**
      * Validate the user indicated value and return the result.

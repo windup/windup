@@ -7,8 +7,8 @@
 package org.jboss.windup.config;
 
 import org.jboss.forge.furnace.util.Annotations;
-import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
 import org.jboss.windup.graph.GraphContext;
@@ -17,8 +17,8 @@ import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
 
 /**
- * {@link AbstractRuleProvider} provides metadata, and a list of {@link Rule} objects that are then evaluated by the
- * {@link RuleSubet} during Windup execution.
+ * {@link AbstractRuleProvider} provides metadata, and a list of {@link Rule} objects that are then evaluated by the {@link RuleSubset} during Windup
+ * execution.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -46,8 +46,7 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
     }
 
     /**
-     * Create a new {@link AbstractRuleProvider} instance using the given parameters to construct default
-     * {@link RuleProviderMetadata}.
+     * Create a new {@link AbstractRuleProvider} instance using the given parameters to construct default {@link RuleProviderMetadata}.
      */
     public AbstractRuleProvider(Class<? extends RuleProvider> implementationType, String id)
     {
@@ -67,8 +66,7 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
     }
 
     /**
-     * Specify additional meta-data to individual {@link Rule} instances originating from the corresponding
-     * {@link RuleProvider} instance.
+     * Specify additional meta-data to individual {@link Rule} instances originating from the corresponding {@link RuleProvider} instance.
      */
     public static void enhanceRuleMetadata(RuleProvider provider, Rule rule)
     {

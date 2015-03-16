@@ -21,5 +21,5 @@ public enum Severity
     /**
      * Indicates that this problem is critically important and must be fixed in order to effectively complete the migration.
      */
-    CRITICAL;
+    CRITICAL
 }
