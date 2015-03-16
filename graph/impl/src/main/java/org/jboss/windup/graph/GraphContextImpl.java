@@ -77,7 +77,7 @@ public class GraphContextImpl implements GraphContext
         fireListeners();
         return this;
     }
-    
+
     private void fireListeners() {
         Imported<AfterGraphInitializationListener> afterInitializationListeners = furnace.getAddonRegistry().getServices(
                     AfterGraphInitializationListener.class);
@@ -98,7 +98,7 @@ public class GraphContextImpl implements GraphContext
             }
         }
     }
-    
+
     private void createFramed(TitanGraph titanGraph) {
         this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
         this.batchGraph = new BatchGraph<TitanGraph>(titanGraph, 1000L);
@@ -188,6 +188,10 @@ public class GraphContextImpl implements GraphContext
         // the performance decrease seems to be minimal.
         conf.setProperty("storage.berkeleydb.cache-percentage", 1);
 
+        // Increase storage write buffer since we basically do a large bulk load during the first phases.
+        // See http://s3.thinkaurelius.com/docs/titan/current/bulk-loading.html
+        conf.setProperty("storage.buffer-size", "4096");
+
         //
         // turn on a db-cache that persists across txn boundaries, but make it relatively small
         conf.setProperty("cache.db-cache", true);
@@ -216,7 +220,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void close()
     {
-        //TODO: This is probably not the same instance as the one gained using AfterGraphInitializationListener interface 
+        //TODO: This is probably not the same instance as the one gained using AfterGraphInitializationListener interface
         Imported<BeforeGraphCloseListener> beforeCloseListeners = furnace.getAddonRegistry().getServices(
                     BeforeGraphCloseListener.class);
         for(BeforeGraphCloseListener listener : beforeCloseListeners) {
