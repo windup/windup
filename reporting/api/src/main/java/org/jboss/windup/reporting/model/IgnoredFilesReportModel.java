@@ -1,6 +1,5 @@
 package org.jboss.windup.reporting.model;
 
-import java.util.List;
 
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;

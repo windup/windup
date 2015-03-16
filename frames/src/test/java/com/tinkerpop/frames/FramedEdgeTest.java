@@ -11,7 +11,6 @@ import com.tinkerpop.frames.domain.incidences.CreatedBy;
 import com.tinkerpop.frames.domain.incidences.CreatedInfo;
 import com.tinkerpop.frames.domain.incidences.Knows;
 import com.tinkerpop.frames.domain.incidences.WeightedEdge;
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
