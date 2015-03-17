@@ -22,4 +22,22 @@ public class XmlFileXPathTransformerTest
                     "/foo[windup:startFrame(0) and windup:evaluate(0, el1 = 1234 and windup:matches(0, el, '{foo}'))]/baz/tomato[windup:startFrame(1) and windup:evaluate(1, 1 = 1)]/self::node()[windup:persist(1, .)]",
                     result);
     }
+
+    @Test
+    public void testXPathWithOr()
+    {
+        String result = XmlFileXPathTransformer.transformXPath("/foo | /boo | /bar | /baz");
+        Assert.assertEquals(
+                    "/foo/self::node()[windup:persist(-1, .)] | /boo/self::node()[windup:persist(-1, .)] | /bar/self::node()[windup:persist(-1, .)] | /baz/self::node()[windup:persist(-1, .)]",
+                    result);
+    }
+
+    @Test
+    public void testXPathWithOrNoSpaces()
+    {
+        String result = XmlFileXPathTransformer.transformXPath("/foo|/boo|/bar|/baz");
+        Assert.assertEquals(
+                    "/foo/self::node()[windup:persist(-1, .)]|/boo/self::node()[windup:persist(-1, .)]|/bar/self::node()[windup:persist(-1, .)]|/baz/self::node()[windup:persist(-1, .)]",
+                    result);
+    }
 }
