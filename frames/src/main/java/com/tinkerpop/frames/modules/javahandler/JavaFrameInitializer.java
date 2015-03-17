@@ -18,7 +18,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.util.ExceptionUtils;
-import javassist.util.proxy.ProxyFactory;
 
 /**
  * Calls the methods annotated with {@link Initializer} on frame

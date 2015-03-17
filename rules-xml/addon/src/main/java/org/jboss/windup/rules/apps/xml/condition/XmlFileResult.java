@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
 import org.ocpsoft.rewrite.config.ConditionBuilder;
-import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
  * The next step in building XmlFile condition after the regex for xpath result was specified.

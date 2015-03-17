@@ -2,7 +2,6 @@ package com.tinkerpop.frames.modules.javahandler;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import junit.framework.Assert;
 
