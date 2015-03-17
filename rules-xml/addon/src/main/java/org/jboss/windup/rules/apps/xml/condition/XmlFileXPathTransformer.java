@@ -1,26 +1,52 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * Converts an XPath from a standard xpath, to one that calls Windup's builtin functions for hooking into the XPath execution lifecycle.
+ */
 public class XmlFileXPathTransformer
 {
     private static final String WINDUP_MATCHES_FUNCTION_PREFIX = "windup:matches(";
 
-    public static String transformXPath(String xpath)
+    /**
+     * Performs the conversion from standard XPath to xpath with parameterization support.
+     */
+    public static String transformXPath(String originalXPath)
     {
-        StringBuilder result = new StringBuilder();
+        // use a list to maintain the multiple joined xqueries (if there are multiple queries joined with the "|" operator)
+        List<StringBuilder> compiledXPaths = new ArrayList<>(1);
+
         int frameIdx = -1;
         boolean inQuote = false;
+        int conditionLevel = 0;
         char startQuoteChar = 0;
-        for (int i = 0; i < xpath.length(); i++)
+        StringBuilder currentXPath = new StringBuilder();
+        compiledXPaths.add(currentXPath);
+        for (int i = 0; i < originalXPath.length(); i++)
         {
-            char curChar = xpath.charAt(i);
+            char curChar = originalXPath.charAt(i);
             if (!inQuote && curChar == '[')
             {
                 frameIdx++;
-                result.append("[windup:startFrame(").append(frameIdx).append(") and windup:evaluate(").append(frameIdx).append(", ");
+                conditionLevel++;
+                currentXPath.append("[windup:startFrame(").append(frameIdx).append(") and windup:evaluate(").append(frameIdx).append(", ");
             }
             else if (!inQuote && curChar == ']')
             {
-                result.append(")]");
+                conditionLevel--;
+                currentXPath.append(")]");
+            }
+            else if (!inQuote && conditionLevel == 0 && curChar == '|')
+            {
+                // joining multiple xqueries
+                currentXPath = new StringBuilder();
+                compiledXPaths.add(currentXPath);
             }
             else
             {
@@ -35,18 +61,39 @@ public class XmlFileXPathTransformer
                     startQuoteChar = curChar;
                 }
 
-                if (!inQuote && xpath.startsWith(WINDUP_MATCHES_FUNCTION_PREFIX, i))
+                if (!inQuote && originalXPath.startsWith(WINDUP_MATCHES_FUNCTION_PREFIX, i))
                 {
                     i += (WINDUP_MATCHES_FUNCTION_PREFIX.length() - 1);
-                    result.append("windup:matches(").append(frameIdx).append(", ");
+                    currentXPath.append("windup:matches(").append(frameIdx).append(", ");
                 }
                 else
                 {
-                    result.append(curChar);
+                    currentXPath.append(curChar);
                 }
             }
         }
-        result.append("/self::node()[windup:persist(").append(frameIdx).append(", ").append(".)]");
-        return result.toString();
+
+        Pattern leadingAndTrailingWhitespace = Pattern.compile("(\\s*)(.*?)(\\s*)");
+        StringBuilder finalResult = new StringBuilder();
+        for (StringBuilder compiledXPath : compiledXPaths)
+        {
+            if (StringUtils.isNotBlank(compiledXPath))
+            {
+                Matcher whitespaceMatcher = leadingAndTrailingWhitespace.matcher(compiledXPath);
+                if (!whitespaceMatcher.matches())
+                    continue;
+
+                compiledXPath = new StringBuilder();
+                compiledXPath.append(whitespaceMatcher.group(1));
+                compiledXPath.append(whitespaceMatcher.group(2));
+                compiledXPath.append("/self::node()[windup:persist(").append(frameIdx).append(", ").append(".)]");
+                compiledXPath.append(whitespaceMatcher.group(3));
+
+                if (StringUtils.isNotBlank(finalResult))
+                    finalResult.append("|");
+                finalResult.append(compiledXPath);
+            }
+        }
+        return finalResult.toString();
     }
 }
