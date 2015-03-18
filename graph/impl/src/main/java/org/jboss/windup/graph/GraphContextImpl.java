@@ -283,9 +283,15 @@ public class GraphContextImpl implements GraphContext
         return graphDir;
     }
 
+    /**
+     * Returns unmodifiable Map of options.
+     * The values are created through WindupConfiguration.setOptionValue().
+     */
     @Override
     public Map<String, Object> getOptionMap()
     {
+        if (this.configurationOptions == null)
+            return Collections.EMPTY_MAP;
         return Collections.unmodifiableMap(this.configurationOptions);
     }
 
