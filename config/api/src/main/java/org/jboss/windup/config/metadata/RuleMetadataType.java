@@ -1,5 +1,6 @@
 package org.jboss.windup.config.metadata;
 
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
@@ -8,7 +9,7 @@ import org.ocpsoft.rewrite.config.Rule;
 public enum RuleMetadataType
 {
     /**
-     * The {@link WinupRuleProvider} that originated this rule
+     * The {@link AbstractRuleProvider} that originated this rule
      */
     RULE_PROVIDER,
 

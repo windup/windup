@@ -1,14 +1,19 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.jboss.windup.ast.java.JavaASTProcessor;
-import org.jboss.windup.ast.java.data.JavaClassReference;
-import org.jboss.windup.ast.java.data.JavaClassReferences;
+import org.jboss.windup.ast.java.data.ClassReference;
+import org.jboss.windup.ast.java.data.ClassReferences;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.ast.java.data.annotations.AnnotationArrayValue;
+import org.jboss.windup.ast.java.data.annotations.AnnotationClassReference;
+import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
+import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -22,13 +27,17 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
+import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationListTypeValueModel;
+import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
+import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -107,20 +116,22 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
                 try
                 {
-                    JavaClassReferences references = JavaASTProcessor.analyzeJavaFile(importResolver, librariesPaths, javaFilePaths,
+                    ClassReferences references = JavaASTProcessor.analyzeJavaFile(importResolver, librariesPaths, javaFilePaths,
                                 sourceFile.toPath());
                     TypeReferenceService typeReferenceService = new TypeReferenceService(event.getGraphContext());
-                    for (JavaClassReference reference : references.getReferences())
+                    for (ClassReference reference : references.getReferences())
                     {
                         // we are always interested in types + anything that the TypeInterestFactory has registered
                         if (reference.getLocation() == TypeReferenceLocation.TYPE
                                     || TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
                         {
                             JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(payload, reference.getLocation(),
-                                        reference.getLineNumber(), reference.getColumn(), reference.getLength(), reference.getQualifiedName(),reference.getLine());
-                            if (reference.getLocation() == TypeReferenceLocation.ANNOTATION)
+                                        reference.getLineNumber(), reference.getColumn(), reference.getLength(), reference.getQualifiedName(),
+                                        reference.getLine());
+                            if (reference instanceof AnnotationClassReference)
                             {
-                                addAnnotationValues(event.getGraphContext(), typeReference, reference.getAnnotationValues());
+                                Map<String, AnnotationValue> annotationValues = ((AnnotationClassReference) reference).getAnnotationValues();
+                                addAnnotationValues(event.getGraphContext(), typeReference, annotationValues);
                             }
                         }
                     }
@@ -141,12 +152,73 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         /**
          * Adds parameters contained in the annotation into the annotation type reference
          */
-        private void addAnnotationValues(GraphContext context, JavaTypeReferenceModel typeReference, Map<String, String> annotationValues)
+        private void addAnnotationValues(GraphContext context, JavaTypeReferenceModel typeReference, Map<String, AnnotationValue> annotationValues)
         {
             GraphService<JavaAnnotationTypeReferenceModel> annotationTypeReferenceService = new GraphService<>(context,
                         JavaAnnotationTypeReferenceModel.class);
+
             JavaAnnotationTypeReferenceModel javaAnnotationTypeReferenceModel = annotationTypeReferenceService.addTypeToModel(typeReference);
-            javaAnnotationTypeReferenceModel.setAnnotationValues(annotationValues);
+
+            Map<String, JavaAnnotationTypeValueModel> valueModels = new HashMap<>();
+            for (Map.Entry<String, AnnotationValue> entry : annotationValues.entrySet())
+            {
+                valueModels.put(entry.getKey(), getValueModelForAnnotationValue(context, entry.getValue()));
+            }
+
+            javaAnnotationTypeReferenceModel.setAnnotationValues(valueModels);
+        }
+
+        private JavaAnnotationTypeValueModel getValueModelForAnnotationValue(GraphContext context, AnnotationValue value)
+        {
+            JavaAnnotationTypeValueModel result;
+
+            if (value instanceof AnnotationLiteralValue)
+            {
+                GraphService<JavaAnnotationLiteralTypeValueModel> literalValueService = new GraphService<>(context,
+                            JavaAnnotationLiteralTypeValueModel.class);
+
+                AnnotationLiteralValue literal = (AnnotationLiteralValue) value;
+                JavaAnnotationLiteralTypeValueModel literalValueModel = literalValueService.create();
+                literalValueModel.setLiteralType(literal.getLiteralType().getSimpleName());
+                literalValueModel.setLiteralValue(literal.getLiteralValue() == null ? null : literal.getLiteralValue().toString());
+
+                result = literalValueModel;
+            }
+            else if (value instanceof AnnotationArrayValue)
+            {
+                GraphService<JavaAnnotationListTypeValueModel> listValueService = new GraphService<>(context, JavaAnnotationListTypeValueModel.class);
+
+                AnnotationArrayValue arrayValues = (AnnotationArrayValue) value;
+
+                JavaAnnotationListTypeValueModel listModel = listValueService.create();
+                for (AnnotationValue arrayValue : arrayValues.getValues())
+                {
+                    listModel.addItem(getValueModelForAnnotationValue(context, arrayValue));
+                }
+
+                result = listModel;
+            }
+            else if (value instanceof AnnotationClassReference)
+            {
+                GraphService<JavaAnnotationTypeReferenceModel> annotationTypeReferenceService = new GraphService<>(context,
+                            JavaAnnotationTypeReferenceModel.class);
+
+                AnnotationClassReference annotationClassReference = (AnnotationClassReference) value;
+                Map<String, JavaAnnotationTypeValueModel> valueModels = new HashMap<>();
+                for (Map.Entry<String, AnnotationValue> entry : annotationClassReference.getAnnotationValues().entrySet())
+                {
+                    valueModels.put(entry.getKey(), getValueModelForAnnotationValue(context, entry.getValue()));
+                }
+                JavaAnnotationTypeReferenceModel annotationTypeReferenceModel = annotationTypeReferenceService.create();
+                annotationTypeReferenceModel.setAnnotationValues(valueModels);
+
+                result = annotationTypeReferenceModel;
+            }
+            else
+            {
+                throw new WindupException("Unrecognized AnnotationValue subtype: " + value.getClass().getCanonicalName());
+            }
+            return result;
         }
 
         @Override
