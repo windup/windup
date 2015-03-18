@@ -12,7 +12,7 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Returns information about which {@link Rule}s have been evaluated by windup as well as their execution results.
- * 
+ *
  * @author jsightler <jesse.sightler@gmail.com>
  *
  */
@@ -33,7 +33,7 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod
     public String getDescription()
     {
         return "Takes a parameter of type " + AbstractRuleProvider.class.getSimpleName() + " and returns a List<"
-                    + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current Windup execution.";
+            + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current Windup execution.";
     }
 
     @Override
