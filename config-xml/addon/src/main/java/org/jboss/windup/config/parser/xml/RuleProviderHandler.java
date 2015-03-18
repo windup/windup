@@ -2,17 +2,23 @@ package org.jboss.windup.config.parser.xml;
 
 import static org.joox.JOOX.$;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
+import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.phase.RulePhase;
 import org.w3c.dom.Element;
 
 /**
@@ -20,11 +26,14 @@ import org.w3c.dom.Element;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-@NamespaceElementHandler(elementName = "ruleset", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "ruleset", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class RuleProviderHandler implements ElementHandler<Void>
 {
     private static final String ID = "id";
+    private static final String PHASE = "phase";
     private static final AtomicInteger currentDefaultIDIndex = new AtomicInteger(0);
+    private Map<String, Class<? extends RulePhase>> cachedPhases;
+    public static final String WINDUP_RULE_NAMESPACE="http://windup.jboss.org/v1/xml";
 
     @Override
     public Void processElement(ParserContext context, Element element) throws ConfigurationException
@@ -35,20 +44,16 @@ public class RuleProviderHandler implements ElementHandler<Void>
             id = generateDefaultID();
         }
         RuleProviderBuilder builder = RuleProviderBuilder.begin(id);
+        String phaseStr = element.getAttribute(PHASE);
+        Class<? extends RulePhase> phase = getPhases().get(classNameToKey(phaseStr));
+        builder.setPhase(phase);
+        
         context.setBuilder(builder);
 
         List<Element> children = $(element).children().get();
         for (Element child : children)
         {
             Object result = context.processElement(child);
-
-            switch ($(child).tag())
-            {
-            case "execute-after":
-                builder.getMetadata().getExecuteAfterIDs().add(result.toString());
-            case "execute-before":
-                builder.getMetadata().getExecuteBeforeIDs().add(result.toString());
-            }
         }
         context.addRuleProvider(builder);
 
@@ -58,5 +63,27 @@ public class RuleProviderHandler implements ElementHandler<Void>
     private String generateDefaultID()
     {
         return "XMLRuleProvider:" + RandomStringUtils.random(4) + ":" + currentDefaultIDIndex.incrementAndGet();
+    }
+    
+    private Map<String, Class<? extends RulePhase>> getPhases()
+    {
+        if (cachedPhases == null)
+        {
+            cachedPhases = new HashMap<>();
+            Furnace furnace = FurnaceHolder.getFurnace();
+            for (RulePhase phase : furnace.getAddonRegistry().getServices(RulePhase.class))
+            {
+                @SuppressWarnings("unchecked")
+                Class<? extends RulePhase> unwrappedClass = (Class<? extends RulePhase>) Proxies.unwrap(phase).getClass();
+                String simpleName = unwrappedClass.getSimpleName();
+                cachedPhases.put(classNameToKey(simpleName), unwrappedClass);
+            }
+        }
+        return cachedPhases;
+    }
+    
+    private String classNameToKey(String className)
+    {
+        return className.toUpperCase();
     }
 }

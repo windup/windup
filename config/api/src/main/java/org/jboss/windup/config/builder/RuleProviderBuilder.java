@@ -26,6 +26,8 @@ public final class RuleProviderBuilder extends AbstractRuleProvider implements
     private ConfigurationBuilder configurationBuilder;
     private MetadataBuilder metadata;
 
+    
+   
     /**
      * Begin creating a new dynamic {@link AbstractRuleProvider}.
      */
@@ -105,6 +107,10 @@ public final class RuleProviderBuilder extends AbstractRuleProvider implements
     public Configuration getConfiguration(GraphContext context)
     {
         return configurationBuilder;
+    }
+    
+    public MetadataBuilder getMetadataBuilder() {
+        return metadata;
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.jboss.windup.config.operation.iteration.IterationBuilderPerform;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.Perform;
@@ -24,7 +25,7 @@ import org.w3c.dom.Element;
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */
-@NamespaceElementHandler(elementName = "iteration", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "iteration", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class IterationHandler implements ElementHandler<Iteration>
 {
 
