@@ -1,9 +1,14 @@
 package org.jboss.windup.exec;
 
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
+import org.apache.commons.lang3.ObjectUtils;
 
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
@@ -15,6 +20,11 @@ import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
+import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
+import org.jboss.windup.exec.rulefilters.AndFilter;
+import org.jboss.windup.exec.rulefilters.RuleProviderFilter;
+import org.jboss.windup.exec.rulefilters.TagsRuleProviderFilter;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -26,14 +36,15 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.Rule;
-import org.ocpsoft.rewrite.config.RuleVisit;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
-import org.ocpsoft.rewrite.util.Visitor;
 
 /**
+ * Loads and executes the Rules from RuleProviders according to given WindupConfiguration.
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Ondrej Zizka, ozizka@redhat.com
  */
 public class WindupProcessorImpl implements WindupProcessor
 {
@@ -62,7 +73,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
         context.setOptions(windupConfiguration.getOptionMap());
 
-        // initialize the basic configuration data in the graph
+        // Initialize the basic configuration data in the graph.
         WindupConfigurationModel configModel = WindupConfigurationService.getConfigurationModel(context);
         configModel.setInputPath(getFileModel(context, windupConfiguration.getInputPath()));
         configModel.setOutputPath(getFileModel(context, windupConfiguration.getOutputDirectory()));
@@ -85,39 +96,52 @@ public class WindupProcessorImpl implements WindupProcessor
 
         final GraphRewrite event = new GraphRewrite(context);
 
-        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(context,
-                    windupConfiguration.getRuleProviderFilter());
+
+        // Combine the configured RuleProvider filter with tags-based filter.
+        final Collection inclTagsColl = (Collection)ObjectUtils.defaultIfNull(windupConfiguration.getOptionMap().get(IncludeTagsOption.NAME), Collections.EMPTY_SET);
+        final Collection exclTagsColl = (Collection)ObjectUtils.defaultIfNull(windupConfiguration.getOptionMap().get(ExcludeTagsOption.NAME), Collections.EMPTY_SET);
+        Set<String> includeTags = new HashSet((Collection)inclTagsColl);
+        Set<String> excludeTags = new HashSet((Collection)exclTagsColl);
+
+        if ((!includeTags.isEmpty()) || (!excludeTags.isEmpty()))
+        {
+            // Merge the user-provided RuleProvider filter and others from the WindupConfiguration.
+            RuleProviderFilter configuredFilter = windupConfiguration.getRuleProviderFilter();
+            final TagsRuleProviderFilter tagsFilter = new TagsRuleProviderFilter(includeTags, excludeTags);
+            RuleProviderFilter overallFilter =
+                    null == windupConfiguration.getRuleProviderFilter()
+                    ? tagsFilter
+                    : new AndFilter(configuredFilter, tagsFilter);
+            windupConfiguration.setRuleProviderFilter(overallFilter);
+        }
+
+        RuleProviderRegistry providerRegistry =
+                ruleLoader.loadConfiguration(context, windupConfiguration.getRuleProviderFilter());
         event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
 
         Configuration rules = providerRegistry.getConfiguration();
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
         if (windupConfiguration.getProgressMonitor() != null)
-            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(),
-                        rules));
+            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(), rules));
 
         for (RuleLifecycleListener listener : listeners)
         {
             ruleSubset.addLifecycleListener(listener);
         }
 
-        new RuleVisit(ruleSubset).accept(new Visitor<Rule>()
+        for (Rule rule : ruleSubset.getRules())
         {
-            @Override
-            public void visit(Rule r)
-            {
-                if (r instanceof PreRulesetEvaluation)
-                {
-                    ((PreRulesetEvaluation) r).preRulesetEvaluation(event);
-                }
-            }
-        });
+            if (rule instanceof PreRulesetEvaluation)
+                ((PreRulesetEvaluation) rule).preRulesetEvaluation(event);
+        }
+
         ruleSubset.perform(event, createEvaluationContext());
 
         long endTime = System.currentTimeMillis();
         long seconds = (endTime - startTime) / 1000L;
         LOG.info("Windup execution took " + seconds + " seconds to execute on input: "
-                    + windupConfiguration.getInputPath() + "!");
+                    + windupConfiguration.getInputPath() + ".");
 
         ExecutionStatistics.get().reset();
     }

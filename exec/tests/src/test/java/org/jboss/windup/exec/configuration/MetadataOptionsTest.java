@@ -34,19 +34,19 @@ public class MetadataOptionsTest
 {
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
     })
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap
-                    .create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .create(ForgeArchive.class)
+            .addBeansXML()
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
 
         return archive;
     }
@@ -99,15 +99,15 @@ public class MetadataOptionsTest
     }
 
     @RuleMetadata(
-                sourceTechnologies = {
-                            @Technology(id = "sourceTech1", versionRange = "[0, ]"),
-                            @Technology(id = "sourceTech2", versionRange = "[0, ]")
-                },
-                targetTechnologies = {
-                            @Technology(id = "targetTech1", versionRange = "[0, ]"),
-                            @Technology(id = "targetTech2", versionRange = "[0, ]")
-                },
-                tags = { "tag1", "tag2", "tag3" })
+        sourceTechnologies = {
+            @Technology(id = "sourceTech1", versionRange = "[0, ]"),
+            @Technology(id = "sourceTech2", versionRange = "[0, ]")
+        },
+        targetTechnologies = {
+            @Technology(id = "targetTech1", versionRange = "[0, ]"),
+            @Technology(id = "targetTech2", versionRange = "[0, ]")
+        },
+        tags = { "tag1", "tag2", "tag3" })
     public static class MetadataRuleProvider extends AbstractRuleProvider
     {
         @Override

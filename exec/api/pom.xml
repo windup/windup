@@ -12,9 +12,9 @@
     <name>Windup Engine - Execution API</name>
 
     <dependencies>
-        
+
         <!-- Local Dependencies -->
-        
+
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
@@ -36,5 +36,10 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-proxy</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>
