@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.exec.rulefilters.RuleProviderFilter;
 
 /**
  * Executes only the given rule with all it's dependencies and pre-phases.
@@ -14,7 +14,7 @@ import org.jboss.windup.config.RuleProvider;
  * @author mbriskar
  *
  */
-public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProvider>
+public class RuleProviderWithDependenciesPredicate implements RuleProviderFilter
 {
     private static Logger LOG = Logger.getLogger(RuleProviderWithDependenciesPredicate.class.getName());
 

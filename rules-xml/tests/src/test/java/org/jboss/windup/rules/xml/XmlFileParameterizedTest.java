@@ -29,6 +29,8 @@ import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotRulesFilter;
+import org.jboss.windup.exec.rulefilters.PhaseRulesFilter;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -118,18 +120,11 @@ public class XmlFileParameterizedTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
-                }
-            };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
-                        .setGraphContext(context);
+                .setRuleProviderFilter(new NotRulesFilter(
+                    new PhaseRulesFilter(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                ))
+                .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
@@ -236,26 +231,26 @@ public class XmlFileParameterizedTest
                         .begin()
                         .addRule()
                         .when(XmlFile.matchesXpath(
-                                        "/root" + 
-                                        "/row[windup:matches(index/text(), '{index}')]" + 
+                                        "/root" +
+                                        "/row[windup:matches(index/text(), '{index}')]" +
                                         "/@indexAtt[windup:matches(self::node(), '{index}')]"
                                     )
                         )
                         .perform(Hint.withText("Found value: {index}").withEffort(2)
                                      .and(addTypeRefToList))
-                                     
-                                     
+
+
                         .addRule()
                         .when(
                                     XmlFile.matchesXpath(
-                                        "//row[windup:matches(index/text(), '{index}')]" + 
+                                        "//row[windup:matches(index/text(), '{index}')]" +
                                         "//@indexAtt[windup:matches(self::node(), '{index}')]"
                                     )
                         )
                         .perform(Hint.withText("Found dangling value: {index}").withEffort(2)
                                      .and(addTypeRefToList))
-                                     
-                                     
+
+
                         .addRule()
                         .when(
                                     XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]")

@@ -13,13 +13,18 @@
     <name>Windup Engine - Execution API Tests</name>
 
     <dependencies>
-    
+
         <!-- Local Dependencies -->
-        
+
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
 
