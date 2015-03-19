@@ -15,8 +15,6 @@ import java.util.Set;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.exec.WindupProcessor;
@@ -26,11 +24,12 @@ import org.jboss.windup.exec.configuration.options.OfflineModeOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
+import org.jboss.windup.exec.rulefilters.RuleProviderFilter;
 import org.jboss.windup.graph.GraphContext;
 
 /**
  * Configuration of WindupProcessor.
- * 
+ *
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -39,7 +38,7 @@ public class WindupConfiguration
     private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
     private static final String DEFAULT_USER_IGNORE_DIRECTORIES_OPTION = "defaultUserIgnorePaths";
 
-    private Predicate<RuleProvider> ruleProviderFilter;
+    private RuleProviderFilter ruleProviderFilter;
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
     private Map<String, Object> configurationOptions = new HashMap<>();
 
@@ -181,7 +180,7 @@ public class WindupConfiguration
     /**
      * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the
      * file/directory specified by the user and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
-     * 
+     *
      * @return
      */
     public Iterable<Path> getAllIgnoreDirectories()
@@ -225,7 +224,7 @@ public class WindupConfiguration
 
     /**
      * Contains a list of {@link Path}s with the directory that contains user provided rules.
-     * 
+     *
      * This method does guard against duplicate directories.
      */
     public WindupConfiguration addDefaultUserRulesDirectory(Path path)
@@ -257,7 +256,7 @@ public class WindupConfiguration
     /**
      * Adds a path to the list of default {@link Path}s with directories/files that contain files with regexes of file
      * names to be ignored.
-     * 
+     *
      * This method does guard against duplicate directories.
      */
     public WindupConfiguration addDefaultUserIgnorePath(Path path)
@@ -286,7 +285,7 @@ public class WindupConfiguration
         return this;
     }
 
-    public Predicate<RuleProvider> getRuleProviderFilter()
+    public RuleProviderFilter getRuleProviderFilter()
     {
         return ruleProviderFilter;
     }
@@ -294,7 +293,7 @@ public class WindupConfiguration
     /**
      * A filter to limit which rule providers' rules will be executed.
      */
-    public WindupConfiguration setRuleProviderFilter(Predicate<RuleProvider> ruleProviderFilter)
+    public WindupConfiguration setRuleProviderFilter(RuleProviderFilter ruleProviderFilter)
     {
         this.ruleProviderFilter = ruleProviderFilter;
         return this;
@@ -341,5 +340,11 @@ public class WindupConfiguration
     {
         Boolean offline = getOptionValue(OfflineModeOption.NAME);
         return offline == null ? false : offline;
+    }
+
+
+    public void getOptionMap(String NAME)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

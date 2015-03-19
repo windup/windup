@@ -107,13 +107,13 @@ public class RuleIterationOverDefaultSingleVariableTest
 
             // this should call perform()
             RuleSubset.create(configuration).perform(event, evaluationContext);
-            Assert.assertEquals(TestSimple1ModelCounter, 1);
-            Assert.assertEquals(TestSimple2ModelCounter, 2);
+            Assert.assertEquals(1, TestSimple1ModelCounter);
+            Assert.assertEquals(2, TestSimple2ModelCounter);
             vertex.asVertex().remove();
             // this should call otherwise()
             RuleSubset.create(configuration).perform(event, evaluationContext);
-            Assert.assertEquals(TestSimple1ModelCounter, 1);
-            Assert.assertEquals(TestSimple2ModelCounter, 4);
+            Assert.assertEquals(1, TestSimple1ModelCounter);
+            Assert.assertEquals(4, TestSimple2ModelCounter);
         }
     }
 
@@ -138,7 +138,7 @@ public class RuleIterationOverDefaultSingleVariableTest
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.setInputPath(fileModelService
-                        .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
+                .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleIterationOverDefaultSingleVariableWithExceptionProvider provider = new TestRuleIterationOverDefaultSingleVariableWithExceptionProvider();
             Configuration configuration = provider.getConfiguration(context);
