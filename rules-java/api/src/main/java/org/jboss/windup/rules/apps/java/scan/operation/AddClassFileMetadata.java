@@ -80,9 +80,9 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
                 if (interfaceNames != null)
                 {
-                    for (final String iface : interfaceNames)
+                    for (final String interfaceName : interfaceNames)
                     {
-                        JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(iface);
+                        JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(interfaceName);
                         javaClassModel.addImplements(interfaceModel);
                     }
                 }

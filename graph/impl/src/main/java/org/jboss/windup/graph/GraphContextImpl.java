@@ -78,7 +78,8 @@ public class GraphContextImpl implements GraphContext
         return this;
     }
 
-    private void fireListeners() {
+    private void fireListeners()
+    {
         Imported<AfterGraphInitializationListener> afterInitializationListeners = furnace.getAddonRegistry().getServices(
                     AfterGraphInitializationListener.class);
         Map<String, Object> confProps = new HashMap<>();
@@ -98,7 +99,8 @@ public class GraphContextImpl implements GraphContext
         }
     }
 
-    private void createFramed(TitanGraph titanGraph) {
+    private void createFramed(TitanGraph titanGraph)
+    {
         this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
         this.batchGraph = new BatchGraph<TitanGraph>(titanGraph, 1000L);
 
@@ -145,22 +147,22 @@ public class GraphContextImpl implements GraphContext
         // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
         // We need to hard-code the property names here since we can't depend on rulesets' addons.
         String[] keys = new String[] {
-            // rules/apps/xml/model/NamespaceMetaModel
-            "namespaceURI",
-            "schemaLocation",
-            // rules/apps/xml/model/XmlFileModel
-            "rootTagName",
-            // rules/apps/java/model/JavaClassModel
-            "qualifiedName",
-            // graph/model/resource/FileModel
-            "filePath",
-            // rules/apps/java/model/project/MavenProjectModel
-            "mavenIdentifier",
-            // JavaClassModel, JavaClassFileModel, JavaSourceFileModel, PackageModel - possible collision!
-            "packageName",
+                    // rules/apps/xml/model/NamespaceMetaModel
+                    "namespaceURI",
+                    "schemaLocation",
+                    // rules/apps/xml/model/XmlFileModel
+                    "rootTagName",
+                    // rules/apps/java/model/JavaClassModel
+                    "qualifiedName",
+                    // graph/model/resource/FileModel
+                    "filePath",
+                    // rules/apps/java/model/project/MavenProjectModel
+                    "mavenIdentifier",
+                    // JavaClassModel, JavaClassFileModel, JavaSourceFileModel, PackageModel - possible collision!
+                    "packageName",
 
-            "DoctypeMeta:publicId", "DoctypeMeta:systemId",
-            "ClassificationModel:classification"
+                    "DoctypeMeta:publicId", "DoctypeMeta:systemId",
+                    "ClassificationModel:classification"
         };
 
         TitanManagement mgmt = titanGraph.getManagementSystem();
@@ -219,7 +221,6 @@ public class GraphContextImpl implements GraphContext
         return TitanFactory.open(conf);
     }
 
-
     public Configuration getConfiguration()
     {
         return conf;
@@ -234,10 +235,9 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void close()
     {
-        //TODO: This is probably not the same instance as the one gained using AfterGraphInitializationListener interface
-        Imported<BeforeGraphCloseListener> beforeCloseListeners = furnace.getAddonRegistry().getServices(
-                    BeforeGraphCloseListener.class);
-        for(BeforeGraphCloseListener listener : beforeCloseListeners) {
+        Imported<BeforeGraphCloseListener> beforeCloseListeners = furnace.getAddonRegistry().getServices(BeforeGraphCloseListener.class);
+        for (BeforeGraphCloseListener listener : beforeCloseListeners)
+        {
             listener.beforeGraphClose();
         }
         this.eventGraph.getBaseGraph().shutdown();
@@ -246,6 +246,13 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void clear()
     {
+        if (this.eventGraph == null)
+            return;
+        if (this.eventGraph.getBaseGraph() == null)
+            return;
+        if (this.eventGraph.getBaseGraph().isOpen())
+            close();
+
         TitanCleanup.clear(this.eventGraph.getBaseGraph());
     }
 

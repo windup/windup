@@ -72,9 +72,12 @@ public class JavaASTProcessor extends ASTVisitor
     private static Logger LOG = Logger.getLogger(JavaASTProcessor.class.getName());
 
     private final WildcardImportResolver wildcardImportResolver;
-    private final CompilationUnit cu;
-    private final String fqcn;
-    private final Path javaFile;
+    private CompilationUnit cu;
+    private Path javaFile;
+    private ASTParser parser;
+
+    private final Set<String> libraryPaths;
+    private final Set<String> sourcePaths;
 
     /**
      * Contains all wildcard imports (import com.example.*) lines from the source file.
@@ -103,7 +106,7 @@ public class JavaASTProcessor extends ASTVisitor
      */
     private final Map<String, String> nameInstance = new HashMap<String, String>();
 
-    private ClassReferences classReferences = new ClassReferences();
+    private ClassReferences classReferences;
 
     /**
      * Processes a java file using the default {@link WildcardImportResolver}.
@@ -112,7 +115,7 @@ public class JavaASTProcessor extends ASTVisitor
      */
     public static ClassReferences analyzeJavaFile(Set<String> libraryPaths, Set<String> sourcePaths, Path sourceFile)
     {
-        return analyzeJavaFile(new NoopWildcardImportResolver(), libraryPaths, sourcePaths, sourceFile);
+        return new JavaASTProcessor(new NoopWildcardImportResolver(), libraryPaths, sourcePaths).analyzeFile(sourceFile);
     }
 
     /**
@@ -127,44 +130,48 @@ public class JavaASTProcessor extends ASTVisitor
     public static ClassReferences analyzeJavaFile(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths,
                 Path sourceFile)
     {
-        String fileName = sourceFile.getFileName().toString();
-        ASTParser parser = ASTParser.newParser(AST.JLS8);
-
-        parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]), sourcePaths.toArray(new String[sourcePaths.size()]),
-                    null, true);
-        parser.setBindingsRecovery(false);
-        parser.setResolveBindings(true);
-        parser.setUnitName(fileName);
-        try
-        {
-            parser.setSource(FileUtils.readFileToString(sourceFile.toFile()).toCharArray());
-        }
-        catch (IOException e)
-        {
-            throw new JavaASTException("Failed to get source for file: " + sourceFile.toString() + " due to: " + e.getMessage(), e);
-        }
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-
-        JavaASTProcessor processor = new JavaASTProcessor(importResolver, cu, sourceFile);
-        return processor.getJavaClassReferences();
+        return new JavaASTProcessor(importResolver, libraryPaths, sourcePaths).analyzeFile(sourceFile);
     }
 
-    private JavaASTProcessor(WildcardImportResolver importResolver, CompilationUnit cu, Path javaFile)
+    public JavaASTProcessor(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths)
     {
         this.wildcardImportResolver = importResolver;
-        this.cu = cu;
-        this.javaFile = javaFile;
+        this.parser = ASTParser.newParser(AST.JLS8);
+        this.libraryPaths = libraryPaths;
+        this.sourcePaths = sourcePaths;
+    }
+
+    public ClassReferences analyzeFile(Path javaFile)
+    {
+        this.classReferences = new ClassReferences();
         this.wildcardImports.clear();
         this.classNameLookedUp.clear();
         this.classNameToFQCN.clear();
         this.names.clear();
         this.nameInstance.clear();
 
+        parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]), sourcePaths.toArray(new String[sourcePaths.size()]), null, true);
+        parser.setBindingsRecovery(false);
+        parser.setResolveBindings(true);
+
+        String fileName = javaFile.getFileName().toString();
+        parser.setUnitName(fileName);
+        try
+        {
+            parser.setSource(FileUtils.readFileToString(javaFile.toFile()).toCharArray());
+        }
+        catch (IOException e)
+        {
+            throw new JavaASTException("Failed to get source for file: " + javaFile.toString() + " due to: " + e.getMessage(), e);
+        }
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        this.cu = (CompilationUnit) parser.createAST(null);
+
         PackageDeclaration packageDeclaration = cu.getPackage();
         String packageName = packageDeclaration == null ? "" : packageDeclaration.getName().getFullyQualifiedName();
         @SuppressWarnings("unchecked")
         List<TypeDeclaration> types = cu.types();
+        String fqcn = null;
         if (!types.isEmpty())
         {
             TypeDeclaration typeDeclaration = (TypeDeclaration) types.get(0);
@@ -172,13 +179,13 @@ public class JavaASTProcessor extends ASTVisitor
 
             if (packageName.equals(""))
             {
-                this.fqcn = className;
+                fqcn = className;
             }
             else
             {
-                this.fqcn = packageName + "." + className;
+                fqcn = packageName + "." + className;
             }
-            this.classReferences.addReference(new ClassReference(this.fqcn, TypeReferenceLocation.TYPE, cu.getLineNumber(typeDeclaration
+            this.classReferences.addReference(new ClassReference(fqcn, TypeReferenceLocation.TYPE, cu.getLineNumber(typeDeclaration
                         .getStartPosition()), cu.getColumnNumber(cu.getStartPosition()), cu.getLength(), extractDefinitionLine(typeDeclaration
                         .toString())));
 
@@ -201,15 +208,12 @@ public class JavaASTProcessor extends ASTVisitor
                 resolveBinding = resolveBinding.getSuperclass();
             }
         }
-        else
-        {
-            this.fqcn = null;
-        }
 
         this.names.add("this");
         this.nameInstance.put("this", fqcn);
 
         cu.accept(this);
+        return this.classReferences;
     }
 
     private String extractDefinitionLine(String typeDeclaration)
@@ -423,7 +427,14 @@ public class JavaASTProcessor extends ASTVisitor
         else if (expression instanceof NumberLiteral)
         {
             ITypeBinding binding = expression.resolveTypeBinding();
-            value = new AnnotationLiteralValue(resolveLiteralType(binding), ((NumberLiteral) expression).resolveConstantExpressionValue());
+            if (binding == null)
+            {
+                value = new AnnotationLiteralValue(String.class, expression.toString());
+            }
+            else
+            {
+                value = new AnnotationLiteralValue(resolveLiteralType(binding), ((NumberLiteral) expression).resolveConstantExpressionValue());
+            }
         }
         else if (expression instanceof TypeLiteral)
             value = new AnnotationLiteralValue(Class.class, ((TypeLiteral) expression).resolveConstantExpressionValue());
@@ -462,8 +473,16 @@ public class JavaASTProcessor extends ASTVisitor
             if (castExpressionValue instanceof AnnotationLiteralValue)
             {
                 AnnotationLiteralValue literalValue = (AnnotationLiteralValue) castExpressionValue;
-                Class<?> type = resolveLiteralType(cast.getType().resolveBinding());
-                value = new AnnotationLiteralValue(type, literalValue.getLiteralValue());
+                ITypeBinding binding = cast.getType().resolveBinding();
+                if (binding == null)
+                {
+                    value = new AnnotationLiteralValue(String.class, literalValue.getLiteralValue());
+                }
+                else
+                {
+                    Class<?> type = resolveLiteralType(cast.getType().resolveBinding());
+                    value = new AnnotationLiteralValue(type, literalValue.getLiteralValue());
+                }
             }
             else
             {

@@ -25,7 +25,9 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
     {
         super(MetadataBuilder.forProvider(DiscoverMavenHierarchyRuleProvider.class)
                     .setPhase(DiscoverProjectStructurePhase.class)
-                    .addExecuteAfter(DiscoverMavenProjectsRuleProvider.class));
+                    .addExecuteAfter(DiscoverMavenProjectsRuleProvider.class)
+                    .addExecuteAfter(DiscoverNonMavenArchiveProjectsRuleProvider.class)
+                    .addExecuteAfter(DiscoverNonMavenSourceProjectsRuleProvider.class));
     }
 
     @Override

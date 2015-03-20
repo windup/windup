@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
 
 import org.jboss.windup.ast.java.JavaASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
@@ -18,6 +22,8 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Commit;
+import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -25,6 +31,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -37,6 +44,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeV
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -48,10 +56,17 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
+    private static Logger LOG = Logging.get(AnalyzeJavaFilesRuleProvider.class);
+
+    private JavaASTProcessor processor;
+    @Inject
+    private WindupWildcardImportResolver importResolver;
+
     public AnalyzeJavaFilesRuleProvider()
     {
         super(MetadataBuilder.forProvider(AnalyzeJavaFilesRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class));
+                    .setPhase(InitialAnalysisPhase.class)
+                    .setHaltOnException(true));
     }
 
     // @formatter:off
@@ -61,11 +76,25 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin()
             .addRule()
             .when(Query.fromType(JavaSourceFileModel.class))
-            .perform(new ParseSourceOperation()
-            .and(IterationProgress.monitoring("Analyzed Java File: ", 250))
-            .and(Commit.every(10)));
+            .perform(
+                    Iteration.over().perform(
+                        new ParseSourceOperation()
+                            .and(IterationProgress.monitoring("Analyzed Java File: ", 250))
+                            .and(Commit.every(10))
+                    ).endIteration()
+                    .and(new ClearClasspathCache())
+            );
     }
     // @formatter:on
+
+    private final class ClearClasspathCache extends GraphOperation
+    {
+        @Override
+        public void perform(GraphRewrite event, EvaluationContext context)
+        {
+            processor = null;
+        }
+    }
 
     private final class ParseSourceOperation extends AbstractIterationOperation<JavaSourceFileModel>
     {
@@ -83,41 +112,43 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 }
 
                 GraphService<JavaSourceFileModel> service = new GraphService<JavaSourceFileModel>(event.getGraphContext(), JavaSourceFileModel.class);
-                Iterable<JavaSourceFileModel> findAll = service.findAll();
-                Set<String> javaFilePaths = new HashSet<String>();
-                for (JavaSourceFileModel javaFile : findAll)
+                if (processor == null)
                 {
-                    FileModel rootSourceFolder = javaFile.getRootSourceFolder();
-                    if (rootSourceFolder != null)
+                    Iterable<JavaSourceFileModel> allJavaSourceModels = service.findAll();
+                    Set<String> sourcePaths = new HashSet<>();
+                    for (JavaSourceFileModel javaFile : allJavaSourceModels)
                     {
-                        javaFilePaths.add(rootSourceFolder.getFilePath());
+                        FileModel rootSourceFolder = javaFile.getRootSourceFolder();
+                        if (rootSourceFolder != null)
+                        {
+                            sourcePaths.add(rootSourceFolder.getFilePath());
+                        }
                     }
-                }
-                // TODO: May be adding even the project
-                GraphService<JarArchiveModel> libraryService = new GraphService<JarArchiveModel>(event.getGraphContext(), JarArchiveModel.class);
-                Iterable<JarArchiveModel> libraries = libraryService.findAll();
-                Set<String> librariesPaths = new HashSet<>();
-                for (JarArchiveModel library : libraries)
-                {
-                    if (library.getUnzippedDirectory() != null)
-                    {
-                        librariesPaths.add(library.getUnzippedDirectory().getFilePath());
-                    }
-                    else
-                    {
-                        librariesPaths.add(library.getFilePath());
-                    }
-                }
 
+                    GraphService<JarArchiveModel> libraryService = new GraphService<JarArchiveModel>(event.getGraphContext(), JarArchiveModel.class);
+
+                    Iterable<JarArchiveModel> libraries = libraryService.findAll();
+                    Set<String> libraryPaths = new HashSet<>();
+                    for (JarArchiveModel library : libraries)
+                    {
+                        if (library.getUnzippedDirectory() != null)
+                        {
+                            libraryPaths.add(library.getUnzippedDirectory().getFilePath());
+                        }
+                        else
+                        {
+                            libraryPaths.add(library.getFilePath());
+                        }
+                    }
+                    processor = new JavaASTProcessor(importResolver, libraryPaths, sourcePaths);
+                }
                 File sourceFile = payload.asFile();
 
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFile");
-                WindupWildcardImportResolver importResolver = new WindupWildcardImportResolver();
-                WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
                 try
                 {
-                    ClassReferences references = JavaASTProcessor.analyzeJavaFile(importResolver, librariesPaths, javaFilePaths,
-                                sourceFile.toPath());
+                    WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
+                    ClassReferences references = processor.analyzeFile(sourceFile.toPath());
                     TypeReferenceService typeReferenceService = new TypeReferenceService(event.getGraphContext());
                     for (ClassReference reference : references.getReferences())
                     {
@@ -136,6 +167,13 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         }
                     }
                     ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.parseFile");
+                }
+                catch (Exception e)
+                {
+                    LOG.log(Level.WARNING, "Could not analyze java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
+                    ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+                    classificationService.attachClassification(payload, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
+                                JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                 }
                 finally
                 {

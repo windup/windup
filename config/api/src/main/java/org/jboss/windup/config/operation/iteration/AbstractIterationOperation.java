@@ -25,8 +25,6 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
 
     /**
      * When the variable name is not specified, let the Iteration to set the current payload variable name.
-     * 
-     * @param variableName
      */
     public AbstractIterationOperation()
     {
@@ -184,9 +182,6 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      *            to be lowercased
      * @param delimiterChars optional characters that are used to delimit word boundaries
      * @return the camel case version of the word
-     * @see #underscore(String, char[])
-     * @see #upperCamelCase(String, char[])
-     * @see #lowerCamelCase(String, char[])
      */
     public String camelCase(String lowerCaseAndUnderscoredWord,
                 boolean uppercaseFirstLetter,

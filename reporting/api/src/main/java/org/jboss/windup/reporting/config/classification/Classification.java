@@ -14,11 +14,12 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.LinkModel;
 import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.service.LinkService;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -145,10 +146,9 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
         String text = classificationPattern.getBuilder().build(event, context);
 
         GraphContext graphContext = event.getGraphContext();
-        GraphService<ClassificationModel> classificationService = new GraphService<ClassificationModel>(graphContext,
-                    ClassificationModel.class);
-        ClassificationModel classification = classificationService.getUniqueByProperty(
-                    ClassificationModel.CLASSIFICATION, text);
+        ClassificationService classificationService = new ClassificationService(graphContext);
+
+        ClassificationModel classification = classificationService.getUniqueByProperty(ClassificationModel.CLASSIFICATION, text);
 
         if (classification == null)
         {
@@ -158,32 +158,19 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
             classification.setDescription(description);
             classification.setClassifiation(text);
 
-            // TODO replace this with a link to a RuleModel, once that is implemented.
             classification.setRuleID(((Rule) context.get(Rule.class)).getId());
 
-            GraphService<LinkModel> linkService = new GraphService<>(graphContext, LinkModel.class);
+            LinkService linkService = new LinkService(graphContext);
             for (Link link : links)
             {
-                LinkModel linkModel = linkService.create();
-                linkModel.setDescription(link.getDescription());
-                linkModel.setLink(link.getLink());
+                LinkModel linkModel = linkService.getOrCreate(link.getDescription(), link.getLink());
                 classification.addLink(linkModel);
             }
         }
 
-        // check for duplicate adds first
-        for (FileModel existingFileModel : classification.getFileModels())
-        {
-            if (existingFileModel.asVertex().getId().equals(payload.asVertex().getId()))
-            {
-                log.info("Classification already added to " + payload.getPrettyPathWithinProject() + " [" + this
-                            + "] -- not adding again");
-                return;
-            }
-        }
+        classificationService.attachClassification(classification, payload);
         if (payload instanceof SourceFileModel)
             ((SourceFileModel) payload).setGenerateSourceReport(true);
-        classification.addFileModel(payload);
         log.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
     }
 

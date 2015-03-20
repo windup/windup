@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.service;
 
+import org.apache.tools.ant.taskdefs.Length;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -92,8 +93,31 @@ public class ClassificationService extends GraphService<ClassificationModel>
             model = create();
             model.setClassifiation(classificationText);
             model.setDescription(description);
+            model.addFileModel(fileModel);
         }
-        model.addFileModel(fileModel);
+        else
+        {
+            return attachClassification(model, fileModel);
+        }
+
         return model;
+    }
+
+    /**
+     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
+     * present.
+     */
+    public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
+    {
+        // check for duplicates
+        for (FileModel existingFileModel : classificationModel.getFileModels())
+        {
+            if (existingFileModel.equals(fileModel))
+            {
+                return classificationModel;
+            }
+        }
+        classificationModel.addFileModel(fileModel);
+        return classificationModel;
     }
 }
