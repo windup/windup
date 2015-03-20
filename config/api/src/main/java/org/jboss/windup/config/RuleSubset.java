@@ -269,13 +269,10 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 {
                     boolean autocommit = true;
                     if (ruleContext != null && ruleContext.containsKey(RuleMetadataType.AUTO_COMMIT))
-                    {
                         autocommit = (Boolean) ruleContext.get(RuleMetadataType.AUTO_COMMIT);
-                    }
+
                     if (autocommit)
-                    {
                         event.getGraphContext().getGraph().getBaseGraph().commit();
-                    }
 
                     Variables.instance(event).pop();
 
@@ -307,8 +304,12 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         exMsg += "\n  Defined in: " + location;
                 }
 
-                Object fatal_ = ruleContext.get(RuleMetadataType.TREAT_EXCEPTIONS_AS_FATAL);
-                if (fatal_ instanceof Boolean && ((Boolean)fatal_).booleanValue())
+                // Depending on RuleProvider's haltOnException, halt Windup on exception.
+                AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ruleContext.get(RuleMetadataType.RULE_PROVIDER);
+                boolean halt = ruleProvider.getMetadata().isHaltOnException();
+                Object halt_ = ruleContext.get(RuleMetadataType.HALT_ON_EXCEPTION);
+                halt |= (halt_ instanceof Boolean && ((Boolean)halt_).booleanValue());
+                if (halt)
                     throw new WindupException(exMsg, ex);
             }
 

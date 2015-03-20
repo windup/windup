@@ -12,7 +12,7 @@ import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * A descriptor for {@link RuleProvider} metadata. Can be overridden by altering the {@link RuleProviderMetadata} directly.
- * 
+ *
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -71,4 +71,12 @@ public @interface RuleMetadata
      * A list of target technologies that the annotated rules pertain to.
      */
     Technology[] targetTechnologies() default {};
+
+    /**
+     * Whether Windup should stop execution if this provider's rule execution ends with an exception.
+     *
+     * By default, the exceptions are only logged and the failing rule appears in report.
+     * The rule itself is responsible for handling exceptions and storing them into the graph.
+     */
+    boolean haltOnException() default false;
 }

@@ -27,7 +27,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * <p>
  * Inherited metadata is specified by {@link #setRulesetMetadata(RulesetMetadata)}, and is typically performed by the {@link RuleProviderLoader}
  * implementation.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProviderMetadata
@@ -46,7 +46,10 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     private Set<TechnologyReference> sourceTechnologies = new HashSet<>();
     private Set<TechnologyReference> targetTechnologies = new HashSet<>();
     private Set<AddonId> requiredAddons = new HashSet<>();
+    private boolean haltOnException = false;
+
     private RulesetMetadata parent = new AbstractRulesetMetadata("NULL");
+
 
     private MetadataBuilder(Class<? extends RuleProvider> implementationType, String providerId)
     {
@@ -79,56 +82,57 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         Assert.notNull(providerId, "Rule provider ID must not be null.");
 
         MetadataBuilder builder = new MetadataBuilder(implementationType, providerId)
-                    .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
+            .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
 
         RuleMetadata metadata = Annotations.getAnnotation(implementationType, RuleMetadata.class);
-        if (metadata != null)
+        if (metadata == null)
+            return builder;
+
+        Class<? extends RuleProvider>[] after = metadata.after();
+        if (after.length > 0)
+            builder.setExecuteAfter(Arrays.asList(after));
+
+        String[] afterIDs = metadata.afterIDs();
+        if (afterIDs.length > 0)
+            builder.setExecuteAfterIDs(Arrays.asList(afterIDs));
+
+        Class<? extends RuleProvider>[] before = metadata.before();
+        if (before.length > 0)
+            builder.setExecuteBefore(Arrays.asList(before));
+
+        String[] beforeIDs = metadata.beforeIDs();
+        if (beforeIDs.length > 0)
+            builder.setExecuteBeforeIDs(Arrays.asList(beforeIDs));
+
+        builder.setPhase(metadata.phase());
+
+        String[] tags = metadata.tags();
+        if (tags.length > 0)
+            builder.setTags(Arrays.asList(tags));
+
+        Technology[] sourceTechnologies = metadata.sourceTechnologies();
+        if (sourceTechnologies.length > 0)
         {
-            Class<? extends RuleProvider>[] after = metadata.after();
-            if (after.length > 0)
-                builder.setExecuteAfter(Arrays.asList(after));
-
-            String[] afterIDs = metadata.afterIDs();
-            if (afterIDs.length > 0)
-                builder.setExecuteAfterIDs(Arrays.asList(afterIDs));
-
-            Class<? extends RuleProvider>[] before = metadata.before();
-            if (before.length > 0)
-                builder.setExecuteBefore(Arrays.asList(before));
-
-            String[] beforeIDs = metadata.beforeIDs();
-            if (beforeIDs.length > 0)
-                builder.setExecuteBeforeIDs(Arrays.asList(beforeIDs));
-
-            builder.setPhase(metadata.phase());
-
-            String[] tags = metadata.tags();
-            if (tags.length > 0)
-                builder.setTags(Arrays.asList(tags));
-
-            Technology[] sourceTechnologies = metadata.sourceTechnologies();
-            if (sourceTechnologies.length > 0)
+            for (Technology technology : sourceTechnologies)
             {
-                for (Technology technology : sourceTechnologies)
-                {
-                    builder.addSourceTechnology(new TechnologyReference(
-                                technology.id(),
-                                Versions.parseVersionRange(technology.versionRange())));
-                }
+                builder.addSourceTechnology(new TechnologyReference(
+                            technology.id(),
+                            Versions.parseVersionRange(technology.versionRange())));
             }
-
-            Technology[] targetTechnologies = metadata.targetTechnologies();
-            if (targetTechnologies.length > 0)
-            {
-                for (Technology technology : targetTechnologies)
-                {
-                    builder.addTargetTechnology(new TechnologyReference(
-                                technology.id(),
-                                Versions.parseVersionRange(technology.versionRange())));
-                }
-            }
-
         }
+
+        Technology[] targetTechnologies = metadata.targetTechnologies();
+        if (targetTechnologies.length > 0)
+        {
+            for (Technology technology : targetTechnologies)
+            {
+                builder.addTargetTechnology(new TechnologyReference(
+                            technology.id(),
+                            Versions.parseVersionRange(technology.versionRange())));
+            }
+        }
+
+        builder.haltOnException = metadata.haltOnException();
 
         return builder;
     }
@@ -356,8 +360,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
 
         return this;
     }
-    
-    public MetadataBuilder addTag(String tag) 
+
+    public MetadataBuilder addTag(String tag)
     {
         if (!StringUtils.isBlank(tag)) {
             this.tags.add(tag.trim());
@@ -443,6 +447,29 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
 
         return this;
     }
+
+
+    /**
+     * Whether Windup should stop execution if this provider's rule execution ends with an exception.
+     *
+     * By default, the exceptions are only logged and the failing rule appears in report.
+     * The rule itself is responsible for handling exceptions and storing them into the graph.
+     */
+    public MetadataBuilder setHaltOnException(boolean haltOnException)
+    {
+        this.haltOnException = haltOnException;
+        return this;
+    }
+
+    @Override
+    public boolean isHaltOnException()
+    {
+        return haltOnException;
+    }
+
+
+
+
 
     /**
      * Join N sets.
