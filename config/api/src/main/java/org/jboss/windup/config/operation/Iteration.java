@@ -45,7 +45,7 @@ import org.ocpsoft.rewrite.event.Rewrite;
 /**
  * Used to iterate over an implicit or explicit variable defined within the corresponding
  * {@link ConfigurationRuleBuilder#when(Condition)} clause in the current rule.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Iteration extends DefaultOperationBuilder
@@ -83,7 +83,7 @@ public class Iteration extends DefaultOperationBuilder
 
     /**
      * Begin an {@link Iteration} over the named selection of the given type. Also sets the name and type of the
-     * variable for this iteration's "current element". The type server for automatic type check.
+     * variable for this iteration's "current element". The type serves for automatic type check.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
@@ -264,7 +264,7 @@ public class Iteration extends DefaultOperationBuilder
 
     /**
      * Return the current {@link Iteration} payload variable name.
-     * 
+     *
      * @throws IllegalStateException if there is more than one variable in the {@link Variables} stack, and the payload
      *             name cannot be determined.
      */
@@ -302,7 +302,7 @@ public class Iteration extends DefaultOperationBuilder
 
     /**
      * Get the {@link Iteration} payload with the given name.
-     * 
+     *
      * @throws IllegalArgumentException if the given variable refers to a non-payload.
      */
     @SuppressWarnings("unchecked")
@@ -324,7 +324,7 @@ public class Iteration extends DefaultOperationBuilder
 
     /**
      * Get the {@link Iteration} payload with the given name and type.
-     * 
+     *
      * @throws IllegalArgumentException if the given variable refers to a non-payload.
      */
     @SuppressWarnings("unchecked")

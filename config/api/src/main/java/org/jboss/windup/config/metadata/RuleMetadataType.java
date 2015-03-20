@@ -10,6 +10,8 @@ public enum RuleMetadataType
 {
     /**
      * The {@link AbstractRuleProvider} that originated this rule
+     *//**
+     * The {@link AbstractRuleProvider} that originated this rule
      */
     RULE_PROVIDER,
 
@@ -25,13 +27,16 @@ public enum RuleMetadataType
 
     /**
      * Whether or not to call commit after each {@link Rule} execution.
-     * 
+     *
      * The default behavior (if this is not set) is to autocommit after each rule execution.
      */
     AUTO_COMMIT,
 
     /**
-     * Whether or not all Exceptions from this Rule are to be treated as fatal. The default is non-fatal.
+     * Whether Windup should stop execution if this provider's rule execution ends with an exception.
+     *
+     * By default, the exceptions are only logged and the failing rule appears in report.
+     * The rule itself is responsible for handling exceptions and storing them into the graph.
      */
-    TREAT_EXCEPTIONS_AS_FATAL
+    HALT_ON_EXCEPTION
 }

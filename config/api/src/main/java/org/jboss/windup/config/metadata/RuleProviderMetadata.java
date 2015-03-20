@@ -8,7 +8,7 @@ import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Describes {@link RuleProvider} instances.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface RuleProviderMetadata extends RulesetMetadata
@@ -69,4 +69,14 @@ public interface RuleProviderMetadata extends RulesetMetadata
      * For specifying Java-based rules, {@link #getExecuteBefore()} is preferred.
      */
     public List<String> getExecuteBeforeIDs();
+
+
+    /**
+     * Whether Windup should stop execution if this provider's rule execution ends with an exception.
+     *
+     * By default, the exceptions are only logged and the failing rule appears in report.
+     * The rule itself is responsible for handling exceptions and storing them into the graph.
+     */
+    public boolean isHaltOnException();
+
 }

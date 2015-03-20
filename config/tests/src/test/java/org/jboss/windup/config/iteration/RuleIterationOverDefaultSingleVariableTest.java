@@ -18,6 +18,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
@@ -36,9 +37,9 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 /**
  * Testing the Iteration.over("list_variable") method along with Iteration.singleVariableIterationName().
- * 
+ *
  * @author mbriskar
- * 
+ *
  */
 @RunWith(Arquillian.class)
 public class RuleIterationOverDefaultSingleVariableTest
@@ -48,26 +49,26 @@ public class RuleIterationOverDefaultSingleVariableTest
 
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addClasses(
-                                TestRuleIterationOverDefaultSingleVariableProvider.class,
-                                TestRuleIterationOverDefaultSingleVariableWithExceptionProvider.class,
-                                TestSimple1Model.class,
-                                TestSimple2Model.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+        .addBeansXML()
+        .addClasses(
+            TestRuleIterationOverDefaultSingleVariableProvider.class,
+            TestRuleIterationOverDefaultSingleVariableWithExceptionProvider.class,
+            TestSimple1Model.class,
+            TestSimple2Model.class)
+        .addAsAddonDependencies(
+            AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+            AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+            AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+            AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+        );
         return archive;
     }
 
@@ -116,6 +117,10 @@ public class RuleIterationOverDefaultSingleVariableTest
         }
     }
 
+
+    /**
+     * @throws Exception because the provider tries to use a non-existent variable.
+     */
     @Test(expected = Exception.class)
     public void testTypeSelectionWithException() throws Exception
     {
@@ -155,59 +160,59 @@ public class RuleIterationOverDefaultSingleVariableTest
         public Configuration getConfiguration(GraphContext context)
         {
             Configuration configuration = ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(Query.fromType(TestSimple2Model.class).as("list_variable"))
-                        .perform(Iteration
-                                    .over("list_variable")
-                                    .perform(new GraphOperation()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context)
-                                        {
-                                            Variables varStack = Variables.instance(event);
-                                            TestSimple2Model singleVariable =
-                                                        Iteration.getCurrentPayload(
-                                                                    varStack,
-                                                                    TestSimple2Model.class,
-                                                                    Iteration.singleVariableIterationName("list_variable"));
-                                            if (singleVariable != null)
-                                            {
-                                                TestSimple2ModelCounter++;
-                                            }
-                                            
-                                        }
-                                    })
-                                    .endIteration()
-                        )
-                        .addRule()
-                        .when(Query.fromType(TestSimple1Model.class).as("list_variable"))
-                        .perform(Iteration
-                                    .over("list_variable")
-                                    .perform(new GraphOperation()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context)
-                                        {
-                                            Variables varStack = Variables.instance(event);
-                                            TestSimple1Model singleVariable =
-                                                        Iteration.getCurrentPayload(
-                                                                    varStack,
-                                                                    TestSimple1Model.class,
-                                                                    Iteration.singleVariableIterationName("list_variable"));
-                                            if (singleVariable != null)
-                                            {
-                                                TestSimple1ModelCounter++;
-                                            }
-                                        }
-                                    })
-                                    .endIteration()
-                        );
+            .addRule()
+            .when(Query.fromType(TestSimple2Model.class).as("list_variable"))
+            .perform(Iteration
+                .over("list_variable")
+                .perform(new GraphOperation()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context)
+                    {
+                        Variables varStack = Variables.instance(event);
+                        TestSimple2Model singleVariable =
+                            Iteration.getCurrentPayload(
+                                varStack,
+                                TestSimple2Model.class,
+                                Iteration.singleVariableIterationName("list_variable"));
+                        if (singleVariable != null)
+                        {
+                            TestSimple2ModelCounter++;
+                        }
+                    }
+                })
+                .endIteration()
+            )
+            .addRule()
+            .when(Query.fromType(TestSimple1Model.class).as("list_variable"))
+            .perform(Iteration
+                .over("list_variable")
+                .perform(new GraphOperation()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context)
+                    {
+                        Variables varStack = Variables.instance(event);
+                        TestSimple1Model singleVariable =
+                            Iteration.getCurrentPayload(
+                                varStack,
+                                TestSimple1Model.class,
+                                Iteration.singleVariableIterationName("list_variable"));
+                        if (singleVariable != null)
+                        {
+                            TestSimple1ModelCounter++;
+                        }
+                    }
+                })
+                .endIteration()
+            );
             return configuration;
         }
         // @formatter:on
 
     }
 
+    @RuleMetadata(haltOnException = true)
     public class TestRuleIterationOverDefaultSingleVariableWithExceptionProvider extends AbstractRuleProvider
     {
         public TestRuleIterationOverDefaultSingleVariableWithExceptionProvider()
@@ -220,29 +225,28 @@ public class RuleIterationOverDefaultSingleVariableTest
         public Configuration getConfiguration(GraphContext context)
         {
             Configuration configuration = ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(Query.fromType(TestSimple2Model.class).as("list_variable"))
-                        .perform(Iteration
-                                    .over("list_variable")
-                                    .perform(new GraphOperation()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context)
-                                        {
-                                            Variables varStack = Variables.instance(event);
-                                            TestSimple2Model singleVariable =
-                                                        Iteration.getCurrentPayload(
-                                                                    varStack,
-                                                                    TestSimple2Model.class,
-                                                                    Iteration.singleVariableIterationName("list_var"));
-                                        }
-                                    })
-                                    .endIteration()
-                        );
+            .addRule()
+            .when(Query.fromType(TestSimple2Model.class).as("list_variable"))
+            .perform(Iteration
+                .over("list_variable")
+                .perform(new GraphOperation()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context)
+                    {
+                        Variables varStack = Variables.instance(event);
+                        TestSimple2Model singleVariable =
+                            Iteration.getCurrentPayload(
+                                varStack,
+                                TestSimple2Model.class,
+                                Iteration.singleVariableIterationName("list_var"));
+                    }
+                })
+                .endIteration()
+            );
             return configuration;
         }
         // @formatter:on
-
     }
 
 }
