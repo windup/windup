@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.jboss.windup.ast.java.JavaASTProcessor;
+import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
 import org.jboss.windup.ast.java.data.ClassReferences;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -58,7 +58,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logging.get(AnalyzeJavaFilesRuleProvider.class);
 
-    private JavaASTProcessor processor;
+    private ASTProcessor processor;
     @Inject
     private WindupWildcardImportResolver importResolver;
 
@@ -140,7 +140,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             libraryPaths.add(library.getFilePath());
                         }
                     }
-                    processor = new JavaASTProcessor(importResolver, libraryPaths, sourcePaths);
+                    processor = new ASTProcessor(importResolver, libraryPaths, sourcePaths);
                 }
                 File sourceFile = payload.asFile();
 

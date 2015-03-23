@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.rules;
 
+import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -85,7 +86,8 @@ public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvid
         navIdx.addProjectModel(projectModel);
         for (ProjectModel childProject : projectModel.getChildProjects())
         {
-            addAllProjectModels(navIdx, childProject);
+            if (!Iterators.asSet(navIdx.getProjectModels()).contains(childProject))
+                addAllProjectModels(navIdx, childProject);
         }
     }
 

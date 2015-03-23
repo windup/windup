@@ -67,9 +67,9 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
  * @author jsightler
  *
  */
-public class JavaASTProcessor extends ASTVisitor
+public class ASTProcessor extends ASTVisitor
 {
-    private static Logger LOG = Logger.getLogger(JavaASTProcessor.class.getName());
+    private static Logger LOG = Logger.getLogger(ASTProcessor.class.getName());
 
     private final WildcardImportResolver wildcardImportResolver;
     private CompilationUnit cu;
@@ -115,7 +115,7 @@ public class JavaASTProcessor extends ASTVisitor
      */
     public static ClassReferences analyzeJavaFile(Set<String> libraryPaths, Set<String> sourcePaths, Path sourceFile)
     {
-        return new JavaASTProcessor(new NoopWildcardImportResolver(), libraryPaths, sourcePaths).analyzeFile(sourceFile);
+        return new ASTProcessor(new NoopWildcardImportResolver(), libraryPaths, sourcePaths).analyzeFile(sourceFile);
     }
 
     /**
@@ -130,10 +130,10 @@ public class JavaASTProcessor extends ASTVisitor
     public static ClassReferences analyzeJavaFile(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths,
                 Path sourceFile)
     {
-        return new JavaASTProcessor(importResolver, libraryPaths, sourcePaths).analyzeFile(sourceFile);
+        return new ASTProcessor(importResolver, libraryPaths, sourcePaths).analyzeFile(sourceFile);
     }
 
-    public JavaASTProcessor(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths)
+    public ASTProcessor(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths)
     {
         this.wildcardImportResolver = importResolver;
         this.parser = ASTParser.newParser(AST.JLS8);
@@ -149,6 +149,7 @@ public class JavaASTProcessor extends ASTVisitor
         this.classNameToFQCN.clear();
         this.names.clear();
         this.nameInstance.clear();
+        this.javaFile = javaFile;
 
         parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]), sourcePaths.toArray(new String[sourcePaths.size()]), null, true);
         parser.setBindingsRecovery(false);
@@ -162,7 +163,7 @@ public class JavaASTProcessor extends ASTVisitor
         }
         catch (IOException e)
         {
-            throw new JavaASTException("Failed to get source for file: " + javaFile.toString() + " due to: " + e.getMessage(), e);
+            throw new ASTException("Failed to get source for file: " + javaFile.toString() + " due to: " + e.getMessage(), e);
         }
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         this.cu = (CompilationUnit) parser.createAST(null);
@@ -565,7 +566,7 @@ public class JavaASTProcessor extends ASTVisitor
         case "char":
             return char.class;
         default:
-            throw new JavaASTException("Unrecognized literal type: " + binding.getName());
+            throw new ASTException("Unrecognized literal type: " + binding.getName());
         }
     }
 

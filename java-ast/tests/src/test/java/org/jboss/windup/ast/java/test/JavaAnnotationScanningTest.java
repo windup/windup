@@ -3,7 +3,7 @@ package org.jboss.windup.ast.java.test;
 import java.nio.file.Paths;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.windup.ast.java.JavaASTProcessor;
+import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
 import org.jboss.windup.ast.java.data.ClassReferences;
 import org.jboss.windup.ast.java.data.annotations.AnnotationArrayValue;
@@ -21,7 +21,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     @Test
     public void testSimpleAnnotatedClass()
     {
-        ClassReferences references = JavaASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/annotations/basic/SimpleAnnotatedClass.java"));
 
         boolean foundSimpleAnnotation = false;
@@ -55,7 +55,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     @Test
     public void testComplexAnnotatedClass()
     {
-        ClassReferences references = JavaASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/annotations/complex/ComplexAnnotatedClass.java"));
 
         boolean foundAnnotation = false;

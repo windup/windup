@@ -19,6 +19,8 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.Commit;
+import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.query.Query;
@@ -65,7 +67,10 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JavaSourceFileModel.class))
-                    .perform(new IndexJavaFileIterationOperator());
+                    .perform(new IndexJavaFileIterationOperator()
+                                .and(Commit.every(100))
+                                .and(IterationProgress.monitoring("Indexed Java Source File: ", 250))
+                    );
     }
 
     private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<JavaSourceFileModel>

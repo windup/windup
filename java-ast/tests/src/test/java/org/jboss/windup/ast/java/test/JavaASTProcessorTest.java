@@ -3,7 +3,7 @@ package org.jboss.windup.ast.java.test;
 import java.nio.file.Paths;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.windup.ast.java.JavaASTProcessor;
+import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
 import org.jboss.windup.ast.java.data.ClassReferences;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -18,8 +18,8 @@ public class JavaASTProcessorTest extends AbstractJavaASTTest
     @Test
     public void testHelloWorld()
     {
-        ClassReferences references = JavaASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/helloworld/HelloWorld.java"));
+        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+                Paths.get("src/test/resources/testclasses/helloworld/HelloWorld.java"));
 
         for (ClassReference reference : references.getReferences())
         {
@@ -49,8 +49,8 @@ public class JavaASTProcessorTest extends AbstractJavaASTTest
     @Test
     public void testSimpleMain()
     {
-        ClassReferences references = JavaASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/simple/Main.java"));
+        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+                Paths.get("src/test/resources/testclasses/simple/Main.java"));
 
         for (ClassReference reference : references.getReferences())
         {
@@ -73,8 +73,8 @@ public class JavaASTProcessorTest extends AbstractJavaASTTest
     @Test
     public void testMyBClass()
     {
-        ClassReferences references = JavaASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/simple/MyBClass.java"));
+        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+                Paths.get("src/test/resources/testclasses/simple/MyBClass.java"));
 
         for (ClassReference reference : references.getReferences())
         {
@@ -92,8 +92,8 @@ public class JavaASTProcessorTest extends AbstractJavaASTTest
     @Test
     public void testMyAClass()
     {
-        ClassReferences references = JavaASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/simple/MyAClass.java"));
+        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+                Paths.get("src/test/resources/testclasses/simple/MyAClass.java"));
 
         for (ClassReference reference : references.getReferences())
         {
@@ -109,8 +109,8 @@ public class JavaASTProcessorTest extends AbstractJavaASTTest
     @Test
     public void testJavaLangReferences()
     {
-        ClassReferences references = JavaASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/javalang/JavaLangReferences.java"));
+        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+                Paths.get("src/test/resources/testclasses/javalang/JavaLangReferences.java"));
 
         for (ClassReference reference : references.getReferences())
         {
