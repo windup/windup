@@ -80,10 +80,11 @@ public abstract class DecompilerTestBase
         {
             final StringBuilder sb = new StringBuilder();
             sb.append("Failed decompilation of " + res.getFailures().size() + " classes: ");
-            for (final DecompilationFailure dex : res.getFailures())
+            for (final DecompilationFailure e : res.getFailures())
             {
-                sb.append("\n    ").append(dex.getMessage());
-                final Throwable cause = dex.getCause();
+                sb.append("\n    ").append(e.getMessage());
+                final Throwable cause = e.getCause();
+                cause.printStackTrace();
                 if (cause instanceof NullPointerException)
                     sb.append(" - NPE at ").append(cause.getStackTrace()[0]);
                 else

@@ -10,13 +10,12 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
- * Provides a shorthand for stating the order of execution of {@link Rule}s within Windup. When a
- * {@link AbstractRuleProvider} specifies a {@link RulePhase}, the results of calling
- * {@link RulePhase#getExecuteAfter()} and {@link RulePhase#getExecuteBefore()} on the rule will appended to the results
- * of {@link AbstractRuleProvider#getExecuteAfter()} and {@link RulePhase#getExecuteBefore()}.
- * 
- * In this way, most {@link AbstractRuleProvider}s will be able to simply specify a {@link RulePhase} in order to
- * determine their approximate placement within the execution lifecycle.
+ * Provides a shorthand for stating the order of execution of {@link Rule}s within Windup. When a {@link AbstractRuleProvider} specifies a
+ * {@link RulePhase}, the results of calling {@link RulePhase#getExecuteAfter()} and {@link RulePhase#getExecuteBefore()} on the rule will appended to
+ * the results of {@link RuleProviderMetadata#getExecuteAfter()} and {@link RulePhase#getExecuteBefore()}.
+ *
+ * In this way, most {@link AbstractRuleProvider}s will be able to simply specify a {@link RulePhase} in order to determine their approximate
+ * placement within the execution lifecycle.
  * 
  * @author jsightler <jesse.sightler@gmail.com>
  */

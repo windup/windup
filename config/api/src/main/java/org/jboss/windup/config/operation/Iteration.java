@@ -43,9 +43,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
- * Used to iterate over an implicit or explicit variable defined within the corresponding
- * {@link ConfigurationRuleBuilder#when(Condition)} clause in the current rule.
- *
+ * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
+ * the current rule.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Iteration extends DefaultOperationBuilder
@@ -94,8 +94,7 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's
-     * "current element".
+     * Begin an {@link Iteration} over the named selection. Also sets the name of the variable for this iteration's "current element".
      */
     public static IterationBuilderOver over(String source)
     {
@@ -105,8 +104,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name
-     * of the variable for this iteration's "current element" to have the default value.
+     * Begin an {@link Iteration} over the selection of the given type, named with the default name. Also sets the name of the variable for this
+     * iteration's "current element" to have the default value.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType)
     {
@@ -117,8 +116,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the selection that is placed on the top of the {@link Variables}. Also sets the
-     * name of the variable for this iteration's "current element" (i.e payload) to have the default value.
+     * Begin an {@link Iteration} over the selection that is placed on the top of the {@link Variables}. Also sets the name of the variable for this
+     * iteration's "current element" (i.e payload) to have the default value.
      */
     public static IterationBuilderOver over()
     {
@@ -128,8 +127,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Change the name of the single variable of the given type. If this method is not called, the name is calculated
-     * using the {@link Iteration.singleVariableIterationName()} method.
+     * Change the name of the single variable of the given type. If this method is not called, the name is calculated using the
+     * {@link Iteration#singleVariableIterationName(String)} method.
      */
     @Override
     public IterationBuilderVar as(Class<? extends WindupVertexFrame> varType, String var)
@@ -139,8 +138,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Change the name of the single variable. If this method is not called, the name is calculated using the {@link
-     * Iteration.singleVariableIterationName()} method.
+     * Change the name of the single variable. If this method is not called, the name is calculated using the
+     * {@link Iteration#singleVariableIterationName(String)} method.
      */
     @Override
     public IterationBuilderVar as(String var)
@@ -202,8 +201,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Called internally to actually process the Iteration. Loops over the frames to iterate, and performs their
-     * .perform( ... ) or .otherwise( ... ) parts.
+     * Called internally to actually process the Iteration. Loops over the frames to iterate, and performs their .perform( ... ) or .otherwise( ... )
+     * parts.
      */
     public void perform(GraphRewrite event, EvaluationContext context)
     {
@@ -224,8 +223,8 @@ public class Iteration extends DefaultOperationBuilder
                 }
                 conditionResult = condition.evaluate(event, context);
                 /*
-                 * Add special clear layer for perform, because condition used one and could have added new variables.
-                 * The condition result put into variables is ignored.
+                 * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
+                 * variables is ignored.
                  */
                 variables.push();
                 getPayloadManager().setCurrentPayload(variables, frame);

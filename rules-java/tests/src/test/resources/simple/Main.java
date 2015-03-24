@@ -1,8 +1,5 @@
 package simple;
 
-import simple.MyBClass;
-import simple.ClassReturningAnother;
-
 public class Main
 {
     public static void main(String[] argv) throws Exception

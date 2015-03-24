@@ -56,43 +56,44 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 final JavaClass bcelJavaClass = parser.parse();
                 final String packageName = bcelJavaClass.getPackageName();
                 final String qualifiedName = bcelJavaClass.getClassName();
-                int majorVersion = bcelJavaClass.getMajor();
-                int minorVersion = bcelJavaClass.getMinor();
-
-                String simpleName = qualifiedName;
-                if (packageName != null && !packageName.equals("") && simpleName != null)
-                {
-                    simpleName = simpleName.substring(packageName.length() + 1);
-                }
-
-                payload.setMajorVersion(majorVersion);
-                payload.setMinorVersion(minorVersion);
-                payload.setPackageName(packageName);
 
                 final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
                 final JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
-                javaClassModel.setSimpleName(simpleName);
-                javaClassModel.setPackageName(packageName);
-                javaClassModel.setQualifiedName(qualifiedName);
-                javaClassModel.setClassFile(payload);
-                javaClassModel.setPublic(bcelJavaClass.isPublic());
-
-                final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
-                if (interfaceNames != null)
+                if (javaCfgService.shouldScanPackage(packageName))
                 {
-                    for (final String iface : interfaceNames)
+                    int majorVersion = bcelJavaClass.getMajor();
+                    int minorVersion = bcelJavaClass.getMinor();
+
+                    String simpleName = qualifiedName;
+                    if (packageName != null && !packageName.equals("") && simpleName != null)
                     {
-                        JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(iface);
-                        javaClassModel.addImplements(interfaceModel);
+                        simpleName = simpleName.substring(packageName.length() + 1);
                     }
-                }
 
-                String superclassName = bcelJavaClass.getSuperclassName();
-                if (!StringUtils.isBlank(superclassName))
-                    javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
+                    payload.setMajorVersion(majorVersion);
+                    payload.setMinorVersion(minorVersion);
+                    payload.setPackageName(packageName);
 
-                if (javaCfgService.shouldScanPackage(packageName)) // only add these details if this is a scanned package
-                {
+                    javaClassModel.setSimpleName(simpleName);
+                    javaClassModel.setPackageName(packageName);
+                    javaClassModel.setQualifiedName(qualifiedName);
+                    javaClassModel.setClassFile(payload);
+                    javaClassModel.setPublic(bcelJavaClass.isPublic());
+
+                    final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
+                    if (interfaceNames != null)
+                    {
+                        for (final String interfaceName : interfaceNames)
+                        {
+                            JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(interfaceName);
+                            javaClassModel.addImplements(interfaceModel);
+                        }
+                    }
+
+                    String superclassName = bcelJavaClass.getSuperclassName();
+                    if (!StringUtils.isBlank(superclassName))
+                        javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
+
                     for (final Method method : bcelJavaClass.getMethods())
                     {
                         javaClassService.addJavaMethod(javaClassModel, method.getName(), toJavaClasses(javaClassService, method.getArgumentTypes()));
@@ -114,7 +115,6 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
 
                                 if (StringUtils.equals(classVal, bcelJavaClass.getClassName()))
                                 {
-                                    // skip adding class name.
                                     return;
                                 }
 
