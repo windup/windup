@@ -165,6 +165,10 @@ if [ -r "$WINDUP_HOME/addons/" ] ; then
   ADDONS_DIR="--immutableAddonDir $WINDUP_HOME/addons/"
 fi
 
+if [ -z "$MAX_MEMORY" ] ; then
+  MAX_MEMORY="2048m"
+fi
+
 if [ -z "$MAX_PERM_SIZE" ] ; then
   MAX_PERM_SIZE="256m"
 fi
