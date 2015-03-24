@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -29,8 +28,8 @@ import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.rulefilters.NotRulesFilter;
-import org.jboss.windup.exec.rulefilters.PhaseRulesFilter;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -49,35 +48,35 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * This tests a scenario that combines a parameter from an XML file with a Java class. This should match only one of the
- * two Java files in the source directory.
+ * This tests a scenario that combines a parameter from an XML file with a Java class. This should match only one of the two Java files in the source
+ * directory.
  */
 @RunWith(Arquillian.class)
 public class XmlAndJavaParameterizedTest
 {
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-        @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-        .addBeansXML()
-        .addAsAddonDependencies(
-            AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-            AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-            AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
-            AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-            AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-xml"),
-            AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-            AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-        );
+                    .addBeansXML()
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-xml"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
 
         return archive;
     }
@@ -106,10 +105,10 @@ public class XmlAndJavaParameterizedTest
             pm.setRootFileModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                .setRuleProviderFilter(new NotRulesFilter(
-                    new PhaseRulesFilter(MigrationRulesPhase.class, ReportGenerationPhase.class)
-                ))
-                .setGraphContext(context);
+                        .setRuleProviderFilter(new NotPredicate(
+                                    new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                                    ))
+                        .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);

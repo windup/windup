@@ -1,26 +1,30 @@
 package org.jboss.windup.exec;
 
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.RuleLifecycleListener;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
-import org.jboss.windup.exec.rulefilters.AndFilter;
-import org.jboss.windup.exec.rulefilters.RuleProviderFilter;
-import org.jboss.windup.exec.rulefilters.TagsRuleProviderFilter;
+import org.jboss.windup.exec.configuration.options.SourceOption;
+import org.jboss.windup.exec.configuration.options.TargetOption;
+import org.jboss.windup.exec.rulefilters.AndPredicate;
+import org.jboss.windup.exec.rulefilters.SourceAndTargetPredicate;
+import org.jboss.windup.exec.rulefilters.TaggedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -95,22 +99,27 @@ public class WindupProcessorImpl implements WindupProcessor
         final GraphRewrite event = new GraphRewrite(context);
 
         // Combine the configured RuleProvider filter with tags-based filter.
-        Set<String> includeTags = (Set<String>) windupConfiguration.getOptionMap().get(IncludeTagsOption.NAME);
-        Set<String> excludeTags = (Set<String>) windupConfiguration.getOptionMap().get(ExcludeTagsOption.NAME);
-        if ((null != includeTags) || (null != excludeTags))
+        Collection<String> includeTags = (Collection<String>) windupConfiguration.getOptionMap().get(IncludeTagsOption.NAME);
+        Collection<String> excludeTags = (Collection<String>) windupConfiguration.getOptionMap().get(ExcludeTagsOption.NAME);
+        Collection<String> sources = (Collection<String>) windupConfiguration.getOptionMap().get(SourceOption.NAME);
+        Collection<String> targets = (Collection<String>) windupConfiguration.getOptionMap().get(TargetOption.NAME);
+        if (includeTags != null || excludeTags != null || sources != null || targets != null)
         {
             // Merge the user-provided RuleProvider filter and others from the WindupConfiguration.
-            RuleProviderFilter configuredFilter = windupConfiguration.getRuleProviderFilter();
-            final TagsRuleProviderFilter tagsFilter = new TagsRuleProviderFilter(includeTags, excludeTags);
-            RuleProviderFilter overallFilter =
-                    null == windupConfiguration.getRuleProviderFilter()
-                    ? tagsFilter
-                    : new AndFilter(configuredFilter, tagsFilter);
+            Predicate<RuleProvider> configuredPredicate = windupConfiguration.getRuleProviderFilter();
+
+            final TaggedRuleProviderPredicate tagPredicate = new TaggedRuleProviderPredicate(includeTags, excludeTags);
+            final SourceAndTargetPredicate sourceAndTargetPredicate = new SourceAndTargetPredicate(sources, targets);
+
+            Predicate<RuleProvider> overallFilter =
+                        null == configuredPredicate
+                                    ? new AndPredicate(tagPredicate, sourceAndTargetPredicate)
+                                    : new AndPredicate(configuredPredicate, tagPredicate, sourceAndTargetPredicate);
             windupConfiguration.setRuleProviderFilter(overallFilter);
         }
 
         RuleProviderRegistry providerRegistry =
-                ruleLoader.loadConfiguration(context, windupConfiguration.getRuleProviderFilter());
+                    ruleLoader.loadConfiguration(context, windupConfiguration.getRuleProviderFilter());
         event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
 
         Configuration rules = providerRegistry.getConfiguration();

@@ -15,7 +15,9 @@ import java.util.Set;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
@@ -24,7 +26,6 @@ import org.jboss.windup.exec.configuration.options.OfflineModeOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
-import org.jboss.windup.exec.rulefilters.RuleProviderFilter;
 import org.jboss.windup.graph.GraphContext;
 
 /**
@@ -38,7 +39,7 @@ public class WindupConfiguration
     private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
     private static final String DEFAULT_USER_IGNORE_DIRECTORIES_OPTION = "defaultUserIgnorePaths";
 
-    private RuleProviderFilter ruleProviderFilter;
+    private Predicate<RuleProvider> ruleProviderFilter;
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
     private Map<String, Object> configurationOptions = new HashMap<>();
 
@@ -162,8 +163,8 @@ public class WindupConfiguration
     }
 
     /**
-     * Gets all user rule directories. This includes both the ones that they specify (eg, /path/to/rules) as well as
-     * ones that Windup provides by default (eg, WINDUP_HOME/rules and ~/.windup/rules).
+     * Gets all user rule directories. This includes both the ones that they specify (eg, /path/to/rules) as well as ones that Windup provides by
+     * default (eg, WINDUP_HOME/rules and ~/.windup/rules).
      */
     public Iterable<Path> getAllUserRulesDirectories()
     {
@@ -178,8 +179,8 @@ public class WindupConfiguration
     }
 
     /**
-     * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the
-     * file/directory specified by the user and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
+     * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the file/directory specified by the user
+     * and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
      *
      * @return
      */
@@ -209,8 +210,7 @@ public class WindupConfiguration
     }
 
     /**
-     * Contains a default list of {@link Path}s with directories/files that contains files having regexes of file names
-     * to be ignored.
+     * Contains a default list of {@link Path}s with directories/files that contains files having regexes of file names to be ignored.
      */
     public List<Path> getDefaultUserIgnoreDirectories()
     {
@@ -254,8 +254,7 @@ public class WindupConfiguration
     }
 
     /**
-     * Adds a path to the list of default {@link Path}s with directories/files that contain files with regexes of file
-     * names to be ignored.
+     * Adds a path to the list of default {@link Path}s with directories/files that contain files with regexes of file names to be ignored.
      *
      * This method does guard against duplicate directories.
      */
@@ -285,7 +284,7 @@ public class WindupConfiguration
         return this;
     }
 
-    public RuleProviderFilter getRuleProviderFilter()
+    public Predicate<RuleProvider> getRuleProviderFilter()
     {
         return ruleProviderFilter;
     }
@@ -293,7 +292,7 @@ public class WindupConfiguration
     /**
      * A filter to limit which rule providers' rules will be executed.
      */
-    public WindupConfiguration setRuleProviderFilter(RuleProviderFilter ruleProviderFilter)
+    public WindupConfiguration setRuleProviderFilter(Predicate<RuleProvider> ruleProviderFilter)
     {
         this.ruleProviderFilter = ruleProviderFilter;
         return this;
@@ -342,9 +341,8 @@ public class WindupConfiguration
         return offline == null ? false : offline;
     }
 
-
     public void getOptionMap(String NAME)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose Tools | Templates.
     }
 }

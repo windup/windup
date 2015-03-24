@@ -18,19 +18,15 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.rulefilters.NotRulesFilter;
-import org.jboss.windup.exec.rulefilters.PhaseRulesFilter;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
@@ -82,10 +78,7 @@ public class XMLTransformationXMLRulesTest
     {
         try (GraphContext context = factory.create())
         {
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-            pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-            inputPath.setFilePath("src/test/resources/");
+            Path inputPath = Paths.get("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
@@ -94,17 +87,14 @@ public class XMLTransformationXMLRulesTest
 
             GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
                         XsltTransformationModel.class);
-            inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
 
             Assert.assertFalse(transformationService.findAll().iterator().hasNext());
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                .setRuleProviderFilter(new NotRulesFilter(
-                    new PhaseRulesFilter(MigrationRulesPhase.class, ReportGenerationPhase.class)
-                ))
-                .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+                        .setRuleProviderFilter(
+                                    new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class, ReportRenderingPhase.class)))
+                        .setGraphContext(context);
+            windupConfiguration.setInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 

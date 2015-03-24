@@ -26,9 +26,8 @@ import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.rulefilters.NotRulesFilter;
-import org.jboss.windup.exec.rulefilters.PhaseRulesFilter;
-import org.jboss.windup.exec.rulefilters.RuleProviderFilter;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -119,12 +118,12 @@ public class GroovyExtensionJavaRulesTest
 
             try
             {
-                RuleProviderFilter filter = new NotRulesFilter(
-                        new PhaseRulesFilter(MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)
-                );
+                Predicate<RuleProvider> predicate = new NotPredicate(
+                            new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)
+                            );
                 WindupConfiguration configuration = new WindupConfiguration()
                             .setGraphContext(context)
-                            .setRuleProviderFilter(filter)
+                            .setRuleProviderFilter(predicate)
                             .setInputPath(Paths.get(inputPath))
                             .setOutputDirectory(outputPath)
                             .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))

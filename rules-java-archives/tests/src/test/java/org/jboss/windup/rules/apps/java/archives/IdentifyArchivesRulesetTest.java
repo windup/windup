@@ -15,9 +15,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -26,8 +24,8 @@ import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
-import org.jboss.windup.exec.rulefilters.NotRulesFilter;
-import org.jboss.windup.exec.rulefilters.PhaseRulesFilter;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
@@ -101,9 +99,10 @@ public class IdentifyArchivesRulesetTest
             wc.setInputPath(INPUT_PATH);
             wc.setOutputDirectory(OUTPUT_PATH);
             wc.setOptionValue(OverwriteOption.NAME, true);
-            wc.setRuleProviderFilter(new NotRulesFilter(
-                new PhaseRulesFilter(ArchiveExtractionPhase.class, DecompilationPhase.class, MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)
-            ));
+            wc.setRuleProviderFilter(new NotPredicate(
+                        new RuleProviderPhasePredicate(ArchiveExtractionPhase.class, DecompilationPhase.class, MigrationRulesPhase.class,
+                                    ReportGenerationPhase.class, ReportRenderingPhase.class)
+                        ));
 
             processor.execute(wc);
 
