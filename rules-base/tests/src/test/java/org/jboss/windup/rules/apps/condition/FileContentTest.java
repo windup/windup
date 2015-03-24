@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.condition;
 
-import org.jboss.windup.exec.rulefilters.NotRulesFilter;
-import org.jboss.windup.exec.rulefilters.PhaseRulesFilter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,9 +18,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -30,7 +30,8 @@ import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.rulefilters.RuleProviderFilter;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -106,12 +107,11 @@ public class FileContentTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            RuleProviderFilter filter = new NotRulesFilter(
-                new PhaseRulesFilter(ReportGenerationPhase.class, MigrationRulesPhase.class)
-            );
+            Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class,
+                        MigrationRulesPhase.class));
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(filter)
+                        .setRuleProviderFilter(predicate)
                         .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);

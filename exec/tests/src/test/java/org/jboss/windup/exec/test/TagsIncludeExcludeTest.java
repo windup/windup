@@ -4,16 +4,14 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -33,15 +31,13 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
-import org.jboss.windup.exec.rulefilters.EnumerationOfRulesFilter;
-import org.jboss.windup.exec.rulefilters.RuleProviderFilter;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
@@ -53,42 +49,38 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * How this tests works:
  *
- * The 3 RuleProviders have different tags.
- * There are 4 executions, each time with different include/exclude tags.
- * Through the RuleExecutionListener, execution of rules is observed,
- * and the same listener, at the end of execution, checks whether the right set of rules was executed.
+ * The 3 RuleProviders have different tags. There are 4 executions, each time with different include/exclude tags. Through the RuleExecutionListener,
+ * execution of rules is observed, and the same listener, at the end of execution, checks whether the right set of rules was executed.
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 @RunWith(Arquillian.class)
 public class TagsIncludeExcludeTest
 {
-    //private static final Logger log = Logging.get(TagsIncludeExcludeTest.class);
+
+    public static final String TEST_RULES_THAT_SHOULD_RUN = "test:rulesThatShouldRun";
 
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
     })
     public static ForgeArchive getDeployment()
     {
-        //AddonDependencyEntry[] entries = classToAddonDepEntries(TagsIncludeExcludeTest.class);
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-            .addBeansXML()
-            //.addPackages(true, RuleProviderFilter.class.getPackage())
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
-                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec")
-            );
+                    .addBeansXML()
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec")
+                    );
         return archive;
     }
-
 
     @Inject
     private WindupProcessor processor;
@@ -98,12 +90,6 @@ public class TagsIncludeExcludeTest
 
     @Inject
     private RuleProviderRegistryCache cache;
-
-
-
-    private final static EnumerationOfRulesFilter TEST_RULE_PROVIDERS =
-            new EnumerationOfRulesFilter(TestTagsA1B1Rules.class, TestTagsARules.class, TestTagsBRules.class);
-
 
     public static class TestTagsRuleExecutionListener extends AbstractRuleLifecycleListener
     {
@@ -115,37 +101,31 @@ public class TagsIncludeExcludeTest
             event.getRewriteContext().put("testData", new HashMap());
         }
 
-
         @Override
         public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
         {
-            RuleProvider provider = (RuleProvider) ((Context)rule).get(RuleMetadataType.RULE_PROVIDER);
+            RuleProvider provider = (RuleProvider) ((Context) rule).get(RuleMetadataType.RULE_PROVIDER);
             String realName = Proxies.unwrapProxyClassName(provider.getClass());
             executedRules.put(realName, Boolean.FALSE);
         }
 
-
         @Override
         public void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule, boolean result)
         {
-            RuleProvider provider = (RuleProvider) ((Context)rule).get(RuleMetadataType.RULE_PROVIDER);
+            RuleProvider provider = (RuleProvider) ((Context) rule).get(RuleMetadataType.RULE_PROVIDER);
             String realName = Proxies.unwrapProxyClassName(provider.getClass());
             executedRules.put(realName, Boolean.TRUE);
         }
 
-
         @Override
         public void afterExecution(GraphRewrite event)
         {
-            //Map<RuleProvider, Boolean> executedRules = (Map<RuleProvider, Boolean>) event.getRewriteContext().get("testData");
-            // We could store the data in event.getRewriteContext().
             Set<Class<? extends RuleProvider>> shouldHaveRun =
-                    (Set<Class<? extends RuleProvider>>) event.getGraphContext().getOptionMap().get("test:rulesThatShouldRun");
+                        (Set<Class<? extends RuleProvider>>) event.getGraphContext().getOptionMap().get(TEST_RULES_THAT_SHOULD_RUN);
             assertRule(TestTagsA1B1Rules.class, shouldHaveRun);
             assertRule(TestTagsARules.class, shouldHaveRun);
             assertRule(TestTagsBRules.class, shouldHaveRun);
         }
-
 
         private void assertRule(Class<? extends RuleProvider> cls, Set<Class<? extends RuleProvider>> shouldHaveRun)
         {
@@ -154,26 +134,25 @@ public class TagsIncludeExcludeTest
         }
     }
 
-
     @Test
     public void testIncludeA1Tags()
     {
         goTest("tagA1", null, new HashSet(Arrays.asList(TestTagsARules.class, TestTagsA1B1Rules.class)));
     }
 
-    @Test @Ignore
+    @Test
     public void testExcludeA1Tags()
     {
         goTest(null, "tagA1", new HashSet(Arrays.asList(TestTagsBRules.class)));
     }
 
-    @Test @Ignore
+    @Test
     public void testCombinedA1B1Tags()
     {
         goTest("tagA1", "tagB1", new HashSet(Arrays.asList(TestTagsARules.class)));
     }
 
-    @Test @Ignore
+    @Test
     public void testNoTags()
     {
         // All rules should be executed (tags should create no limitation).
@@ -187,7 +166,7 @@ public class TagsIncludeExcludeTest
 
         try (GraphContext grCtx = contextFactory.create())
         {
-            runRules(TEST_RULE_PROVIDERS, grCtx, inTags, exTags, rulesThatShouldRun);
+            runRules(grCtx, inTags, exTags, rulesThatShouldRun);
         }
         catch (Exception ex)
         {
@@ -195,13 +174,11 @@ public class TagsIncludeExcludeTest
         }
     }
 
-
-
-
     /**
      * Configure the WindupConfiguration according to the params and run the RuleProviders.
      */
-    private void runRules(RuleProviderFilter filter, GraphContext grCtx, Set<String> inTags, Set<String> exTags, Set<Class<? extends RuleProvider>> rulesThatShouldRun)
+    private void runRules(GraphContext grCtx, Set<String> inTags, Set<String> exTags,
+                Set<Class<? extends RuleProvider>> rulesThatShouldRun)
     {
         try
         {
@@ -209,19 +186,18 @@ public class TagsIncludeExcludeTest
             WindupConfiguration wc = new WindupConfiguration();
             wc.setGraphContext(grCtx);
             wc.setInputPath(Paths.get("."));
-            wc.setRuleProviderFilter(filter);
             wc.setOutputDirectory(Paths.get("target/WindupReport"));
 
             wc.setOptionValue(IncludeTagsOption.NAME, inTags);
             wc.setOptionValue(ExcludeTagsOption.NAME, exTags);
-            wc.setOptionValue("test:rulesThatShouldRun", rulesThatShouldRun);
+            wc.setOptionValue(TEST_RULES_THAT_SHOULD_RUN, rulesThatShouldRun);
 
             // Run.
             processor.execute(wc);
         }
         catch (Exception ex)
         {
-            //if (ex instanceof InvocationException)
+            // if (ex instanceof InvocationException)
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
@@ -248,9 +224,7 @@ public class TagsIncludeExcludeTest
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin().addRule()
-            .perform(
-                Log.message(org.ocpsoft.logging.Logger.Level.TRACE, "Performing Rule: " + this.getClass().getSimpleName())
-            );
+                        .perform(Log.message(Logger.Level.TRACE, "Performing Rule: " + this.getClass().getSimpleName()));
         }
     }
     // Formatter:off
