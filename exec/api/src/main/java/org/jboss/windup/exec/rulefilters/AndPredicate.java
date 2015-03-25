@@ -8,8 +8,7 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.RuleProvider;
 
 /**
- * AND predicate which needs all of the given predicates to accept. It will stop on first false if you
- * setStopWhenKnown(true).
+ * AND predicate which needs all of the given predicates to accept.
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
