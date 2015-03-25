@@ -6,22 +6,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -30,6 +28,8 @@ import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -48,8 +48,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * This tests a scenario that combines a parameter from an XML file with a Java class. This should match only one of the
- * two Java files in the source directory.
+ * This tests a scenario that combines a parameter from an XML file with a Java class. This should match only one of the two Java files in the source
+ * directory.
  */
 @RunWith(Arquillian.class)
 public class XmlAndJavaParameterizedTest
@@ -97,25 +97,17 @@ public class XmlAndJavaParameterizedTest
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
             inputPath.setFilePath("src/test/resources/parameterizationtests");
 
-            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+            Path outputPath = FileUtils.getTempDirectory().toPath().resolve("windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
-                }
-            };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
+                        .setRuleProviderFilter(new NotPredicate(
+                                    new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                                    ))
                         .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
@@ -157,24 +149,21 @@ public class XmlAndJavaParameterizedTest
                 }
             };
 
-            return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(XmlFile.matchesXpath(
-                                        "/javaclasses" + 
-                                        "/javaclass[windup:matches(text(), '{classname}')]"
-                                    ).as("javaclassnamesfromxml")
-                              .and(
-                                  JavaClass.references("{classname}")
-                                           .as("javaClasses")
-                              )
-                        )
-                        .perform(
-                            Iteration.over("javaClasses").perform(
-                                    Hint.withText("Found value: {classname}").withEffort(2)
-                                     .and(addTypeRefToList)
-                             ).endIteration()
-                         );
+            return ConfigurationBuilder.begin()
+                .addRule()
+                .when(XmlFile.matchesXpath(
+                        "/javaclasses/javaclass[windup:matches(text(), '{classname}')]"
+                    ).as("javaclassnamesfromxml")
+                    .and(
+                        JavaClass.references("{classname}").as("javaClasses")
+                    )
+                )
+                .perform(
+                    Iteration.over("javaClasses").perform(
+                        Hint.withText("Found value: {classname}").withEffort(2)
+                        .and(addTypeRefToList)
+                    ).endIteration()
+                 );
         }
         // @formatter:on
 

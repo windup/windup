@@ -26,6 +26,8 @@ import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -116,28 +118,9 @@ public class GroovyExtensionJavaRulesTest
 
             try
             {
-                Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-                {
-
-                    @Override
-                    public boolean accept(RuleProvider provider)
-                    {
-                        if (provider.getMetadata().getPhase().equals(MigrationRulesPhase.class))
-                        {
-                            return false;
-                        }
-                        if (provider.getMetadata().getPhase().equals(ReportGenerationPhase.class))
-                        {
-                            return false;
-                        }
-                        if (provider.getMetadata().getPhase().equals(ReportRenderingPhase.class))
-                        {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                };
+                Predicate<RuleProvider> predicate = new NotPredicate(
+                            new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)
+                            );
                 WindupConfiguration configuration = new WindupConfiguration()
                             .setGraphContext(context)
                             .setRuleProviderFilter(predicate)

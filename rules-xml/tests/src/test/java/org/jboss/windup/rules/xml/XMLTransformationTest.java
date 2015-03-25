@@ -21,15 +21,15 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -108,16 +108,10 @@ public class XMLTransformationTest
                         XsltTransformationModel.class);
             Assert.assertFalse(transformationService.findAll().iterator().hasNext());
 
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return provider.getMetadata().getPhase() != ReportGenerationPhase.class;
-                }
-            };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
+                        .setRuleProviderFilter(new NotPredicate(
+                                    new RuleProviderPhasePredicate(ReportGenerationPhase.class)
+                                    ))
                         .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
@@ -164,12 +158,11 @@ public class XMLTransformationTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(XmlFile.matchesXpath("/abc:project")
-                                    .namespace("abc", "http://maven.apache.org/POM/4.0.0"))
-                        .perform(XSLTTransformation.using(SIMPLE_XSLT_XSL).withExtension(XSLT_EXTENSION));
+            return ConfigurationBuilder.begin()
+                .addRule()
+                .when(XmlFile.matchesXpath("/abc:project")
+                    .namespace("abc", "http://maven.apache.org/POM/4.0.0"))
+                .perform(XSLTTransformation.using(SIMPLE_XSLT_XSL).withExtension(XSLT_EXTENSION));
         }
 
         // @formatter:on

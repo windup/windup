@@ -18,10 +18,8 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -29,6 +27,8 @@ import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -81,9 +81,8 @@ public class XmlFileMultipleConditionTest
     private GraphContextFactory factory;
 
     /**
-     * File example.xml contains 5 elements of randomElement. It should be hinted only once, because it has only 1 line
-     * having note.
-     * 
+     * File example.xml contains 5 elements of randomElement. It should be hinted only once, because it has only 1 line having note.
+     *
      * @throws IOException
      */
     @Test
@@ -104,17 +103,10 @@ public class XmlFileMultipleConditionTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
-                }
-            };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
+                        .setRuleProviderFilter(new NotPredicate(
+                                    new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                                    ))
                         .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);

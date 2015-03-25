@@ -31,8 +31,9 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
     {
         if (!Annotations.isAnnotationPresent(getClass(), RuleMetadata.class))
         {
-            throw new IllegalStateException(getClass().getName() + " must either specify @" + RuleMetadata.class.getName()
-                        + " or call a constructor and provide " + RuleProviderMetadata.class.getName());
+            throw new IllegalStateException(getClass().getName() + " must either "
+                        + "be abstract, or specify @" + RuleMetadata.class.getName()
+                        + ", or call a super() constructor and provide " + RuleProviderMetadata.class.getName());
         }
         this.metadata = MetadataBuilder.forProvider(getClass());
     }

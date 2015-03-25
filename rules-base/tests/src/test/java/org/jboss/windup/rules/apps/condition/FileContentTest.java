@@ -30,6 +30,8 @@ import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -105,15 +107,9 @@ public class FileContentTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
-                }
-            };
+            Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class,
+                        MigrationRulesPhase.class));
+
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(predicate)
                         .setGraphContext(context);
@@ -200,35 +196,37 @@ public class FileContentTest
                         .setPhase(InitialAnalysisPhase.class));
         }
 
+        // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(FileContent.matches("file {text}.").inFilesNamed("{*}.txt"))
-                        .perform(new ParameterizedIterationOperation<FileLocationModel>()
-                        {
-                            private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{text}");
+            .addRule()
+            .when(FileContent.matches("file {text}.").inFilesNamed("{*}.txt"))
+            .perform(new ParameterizedIterationOperation<FileLocationModel>()
+            {
+                private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{text}");
 
-                            @Override
-                            public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-                            {
-                                rule1ResultStrings.add(textPattern.getBuilder().build(event, context));
-                                rule1ResultModels.add(payload);
-                            }
+                @Override
+                public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
+                {
+                    rule1ResultStrings.add(textPattern.getBuilder().build(event, context));
+                    rule1ResultModels.add(payload);
+                }
 
-                            @Override
-                            public Set<String> getRequiredParameterNames()
-                            {
-                                return textPattern.getRequiredParameterNames();
-                            }
+                @Override
+                public Set<String> getRequiredParameterNames()
+                {
+                    return textPattern.getRequiredParameterNames();
+                }
 
-                            @Override
-                            public void setParameterStore(ParameterStore store)
-                            {
-                                textPattern.setParameterStore(store);
-                            }
-                        });
+                @Override
+                public void setParameterStore(ParameterStore store)
+                {
+                    textPattern.setParameterStore(store);
+                }
+            });
         }
+        // @formatter:on
     }
 }

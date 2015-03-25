@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -21,6 +21,8 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -55,7 +57,6 @@ public class GatherIgnoredFilesTest
                                 AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
                                 AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                     );
-
         return archive;
     }
 
@@ -75,8 +76,8 @@ public class GatherIgnoredFilesTest
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
             inputPath.setFilePath("src/test/resources/");
 
-            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
+                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -87,14 +88,8 @@ public class GatherIgnoredFilesTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return provider.getMetadata().getPhase() != ReportGenerationPhase.class;
-                }
-            };
+            Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class));
+
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(predicate)
                         .setGraphContext(context);
@@ -103,7 +98,6 @@ public class GatherIgnoredFilesTest
             processor.execute(windupConfiguration);
             WindupJavaConfigurationService javaCfg = new WindupJavaConfigurationService(context);
             Assert.assertTrue(javaCfg.getIgnoredFileRegexes().contains("testRegex"));
-
         }
     }
 

@@ -17,11 +17,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -29,6 +27,8 @@ import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -118,17 +118,10 @@ public class XmlFileParameterizedTest
             inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return (provider.getMetadata().getPhase() != ReportGenerationPhase.class) &&
-                                (provider.getMetadata().getPhase() != MigrationRulesPhase.class);
-                }
-            };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
+                        .setRuleProviderFilter(new NotPredicate(
+                                    new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                                    ))
                         .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
@@ -236,26 +229,26 @@ public class XmlFileParameterizedTest
                         .begin()
                         .addRule()
                         .when(XmlFile.matchesXpath(
-                                        "/root" + 
-                                        "/row[windup:matches(index/text(), '{index}')]" + 
+                                        "/root" +
+                                        "/row[windup:matches(index/text(), '{index}')]" +
                                         "/@indexAtt[windup:matches(self::node(), '{index}')]"
                                     )
                         )
                         .perform(Hint.withText("Found value: {index}").withEffort(2)
                                      .and(addTypeRefToList))
-                                     
-                                     
+
+
                         .addRule()
                         .when(
                                     XmlFile.matchesXpath(
-                                        "//row[windup:matches(index/text(), '{index}')]" + 
+                                        "//row[windup:matches(index/text(), '{index}')]" +
                                         "//@indexAtt[windup:matches(self::node(), '{index}')]"
                                     )
                         )
                         .perform(Hint.withText("Found dangling value: {index}").withEffort(2)
                                      .and(addTypeRefToList))
-                                     
-                                     
+
+
                         .addRule()
                         .when(
                                     XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]")

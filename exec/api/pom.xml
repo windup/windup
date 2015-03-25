@@ -12,9 +12,8 @@
     <name>Windup Engine - Execution API</name>
 
     <dependencies>
-        
         <!-- Local Dependencies -->
-        
+
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
@@ -35,6 +34,5 @@
             <artifactId>cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 </project>
