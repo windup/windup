@@ -2,9 +2,6 @@ package org.jboss.windup.rules.apps.maven.dao;
 
 import java.util.Iterator;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
@@ -14,11 +11,12 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-@Singleton
-public class MavenModelService extends GraphService<MavenProjectModel>
+/**
+ * Contains methods for searching and deleting {@link MavenProjectModel}s.
+ */
+public class MavenProjectService extends GraphService<MavenProjectModel>
 {
-    @Inject
-    public MavenModelService(GraphContext context)
+    public MavenProjectService(GraphContext context)
     {
         super(context, MavenProjectModel.class);
     }
@@ -34,10 +32,14 @@ public class MavenModelService extends GraphService<MavenProjectModel>
         return facet;
     }
 
-    public MavenProjectModel findByGroupArtifactVersion(String groupId, String artifactId, String version)
+    /**
+     * Find all {@link MavenProjectModel}s that match the given groupId, artifactId, and version. Note that this could potentially return multiple
+     * projects if multiple projects are in the original application with the same GAV.
+     */
+    public Iterable<MavenProjectModel> findByGroupArtifactVersion(String groupId, String artifactId, String version)
     {
         String key = generateMavenKey(groupId, artifactId, version);
-        MavenProjectModel facet = this.getUniqueByProperty(MavenProjectModel.MAVEN_IDENTIFIER, key);
+        Iterable<MavenProjectModel> facet = this.findAllByProperty(MavenProjectModel.MAVEN_IDENTIFIER, key);
 
         return facet;
     }

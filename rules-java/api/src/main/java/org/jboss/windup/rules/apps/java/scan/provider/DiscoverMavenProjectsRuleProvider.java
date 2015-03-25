@@ -20,7 +20,7 @@ import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
-import org.jboss.windup.rules.apps.maven.dao.MavenModelService;
+import org.jboss.windup.rules.apps.maven.dao.MavenProjectService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.MarshallingException;
@@ -41,6 +41,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
     private static final Map<String, String> namespaces = new HashMap<>();
+
     static
     {
         namespaces.put("pom", "http://maven.apache.org/POM/4.0.0");
@@ -49,7 +50,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     public DiscoverMavenProjectsRuleProvider()
     {
         super(MetadataBuilder.forProvider(DiscoverMavenProjectsRuleProvider.class)
-                    .setPhase(DiscoverProjectStructurePhase.class));
+                    .setPhase(DiscoverProjectStructurePhase.class)
+                    .setHaltOnException(true));
     }
 
     @Override
@@ -64,7 +66,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
             {
-                MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, payload);
+                // get a default name from the parent file (if the maven project doesn't contain one)
+                String defaultName = payload.getParentArchive() == null ? payload.asFile().getParentFile().getName() : payload.getParentArchive()
+                            .getFileName();
+                MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, defaultName, payload);
                 if (mavenProjectModel != null)
                 {
                     ArchiveModel archiveModel = payload.getParentArchive();
@@ -117,16 +122,16 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 
         // @formatter:off
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when(fileWhen)
-            .perform(evaluatePomFiles);
+                .addRule()
+                .when(fileWhen)
+                .perform(evaluatePomFiles);
         // @formatter:on
     }
 
     /**
-     * This method is here so that the caller can know not to try to reset the project model for an archive (or
-     * directory) if the archive (or directory) is already a maven project.
-     * 
+     * This method is here so that the caller can know not to try to reset the project model for an archive (or directory) if the archive (or
+     * directory) is already a maven project.
+     * <p/>
      * This can sometimes help in cases in which an archive includes multiple poms in its META-INF.
      */
     private boolean isAlreadyMavenProject(FileModel fileModel)
@@ -158,7 +163,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         }
     }
 
-    public MavenProjectModel extractMavenProjectModel(GraphRewrite event, XmlFileModel xmlResourceModel)
+    public MavenProjectModel extractMavenProjectModel(GraphRewrite event, String defaultProjectName, XmlFileModel xmlResourceModel)
     {
         File myFile = xmlResourceModel.asFile();
         Document document = xmlResourceModel.asDocument();
@@ -193,12 +198,17 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             organization = PackageNameMapping.getOrganizationForPackage(event, groupId);
         }
 
-        MavenModelService mavenModelService = new MavenModelService(event.getGraphContext());
-        MavenProjectModel mavenProjectModel = mavenModelService.findByGroupArtifactVersion(groupId, artifactId,
-                    version);
+        MavenProjectService mavenProjectService = new MavenProjectService(event.getGraphContext());
+        MavenProjectModel mavenProjectModel = getMavenStubProject(mavenProjectService, groupId, artifactId, version);
+        /*
+         * We don't want to reuse one that is already associated with a file (defined twice). This happens sometimes if the same maven gav is defined
+         * multiple times within the input application.
+         */
         if (mavenProjectModel == null)
         {
-            mavenProjectModel = mavenModelService.createMavenStub(groupId, artifactId, version);
+            LOG.info("Creating maven project for pom at: " + xmlResourceModel.getFilePath() + " with gav: " + groupId + "," + artifactId + ","
+                        + version);
+            mavenProjectModel = mavenProjectService.createMavenStub(groupId, artifactId, version);
             mavenProjectModel.addMavenPom(xmlResourceModel);
         }
         else
@@ -223,6 +233,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             }
         }
 
+        if (StringUtils.isBlank(name))
+        {
+            name = defaultProjectName;
+        }
         mavenProjectModel.setName(getReadableNameForProject(name, groupId, artifactId, version));
 
         if (StringUtils.isNotBlank(organization))
@@ -249,11 +263,11 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             parentArtifactId = resolveProperty(document, namespaces, parentArtifactId, version);
             parentVersion = resolveProperty(document, namespaces, parentVersion, version);
 
-            MavenProjectModel parent = mavenModelService.findByGroupArtifactVersion(parentGroupId,
-                        parentArtifactId, parentVersion);
+            MavenProjectModel parent = getMavenProject(mavenProjectService, parentGroupId, parentArtifactId, parentVersion);
+
             if (parent == null)
             {
-                parent = mavenModelService.createMavenStub(parentGroupId, parentArtifactId, parentVersion);
+                parent = mavenProjectService.createMavenStub(parentGroupId, parentArtifactId, parentVersion);
                 parent.setName(getReadableNameForProject(null, parentGroupId, parentArtifactId,
                             parentVersion));
             }
@@ -280,11 +294,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 
             if (StringUtils.isNotBlank(dependencyGroupId))
             {
-                MavenProjectModel dependency = mavenModelService.findByGroupArtifactVersion(dependencyGroupId,
-                            dependencyArtifactId, dependencyVersion);
+                MavenProjectModel dependency = getMavenProject(mavenProjectService, dependencyGroupId, dependencyArtifactId, dependencyVersion);
                 if (dependency == null)
                 {
-                    dependency = mavenModelService.createMavenStub(dependencyGroupId, dependencyArtifactId,
+                    dependency = mavenProjectService.createMavenStub(dependencyGroupId, dependencyArtifactId,
                                 dependencyVersion);
                     dependency.setName(getReadableNameForProject(null, dependencyGroupId, dependencyArtifactId,
                                 dependencyVersion));
@@ -300,6 +313,50 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         return mavenProjectModel;
     }
 
+    /**
+     * This will return a {@link MavenProjectModel} with the give gav, preferring one that has been found in the input application as opposed to a
+     * stub.
+     */
+    private MavenProjectModel getMavenProject(MavenProjectService mavenProjectService, String groupId, String artifactId, String version)
+    {
+        Iterable<MavenProjectModel> possibleProjects = mavenProjectService.findByGroupArtifactVersion(groupId, artifactId, version);
+        MavenProjectModel project = null;
+        for (MavenProjectModel possibleProject : possibleProjects)
+        {
+            if (possibleProject.getRootFileModel() != null)
+            {
+                return possibleProject;
+            }
+            else if (project == null)
+            {
+                project = possibleProject;
+            }
+        }
+        return project;
+    }
+
+    /**
+     * A Maven stub is a Maven Project for which we have found information, but the project has not yet been located within the input application. If
+     * we have found an application of the same GAV within the input app, we should fill out this stub instead of creating a new one.
+     */
+    private MavenProjectModel getMavenStubProject(MavenProjectService mavenProjectService, String groupId, String artifactId, String version)
+    {
+        Iterable<MavenProjectModel> mavenProjectModels = mavenProjectService.findByGroupArtifactVersion(groupId, artifactId, version);
+        if (!mavenProjectModels.iterator().hasNext())
+        {
+            return null;
+        }
+        for (MavenProjectModel mavenProjectModel : mavenProjectModels)
+        {
+            if (mavenProjectModel.getRootFileModel() == null)
+            {
+                // this is a stub... we can fill it in with details
+                return mavenProjectModel;
+            }
+        }
+        return null;
+    }
+
     private String getReadableNameForProject(String mavenName, String groupId, String artifactId, String version)
     {
         StringBuilder sb = new StringBuilder();
@@ -309,7 +366,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             sb.append(" (");
         }
 
-        sb.append(groupId).append(":").append(artifactId).append(":").append(version);
+        if (StringUtils.isNotBlank(groupId) || StringUtils.isNotBlank(artifactId) || StringUtils.isNotBlank(version))
+        {
+            sb.append(groupId).append(":").append(artifactId).append(":").append(version);
+        }
 
         if (StringUtils.isNotBlank(mavenName))
         {
