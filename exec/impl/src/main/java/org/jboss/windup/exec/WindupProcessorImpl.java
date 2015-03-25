@@ -36,9 +36,11 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.config.RuleVisit;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
+import org.ocpsoft.rewrite.util.Visitor;
 
 /**
  * Loads and executes the Rules from RuleProviders according to given WindupConfiguration.
@@ -130,12 +132,17 @@ public class WindupProcessorImpl implements WindupProcessor
             ruleSubset.addLifecycleListener(listener);
         }
 
-        for (Rule rule : ruleSubset.getRules())
+        new RuleVisit(ruleSubset).accept(new Visitor<Rule>()
         {
-            if (rule instanceof PreRulesetEvaluation)
-                ((PreRulesetEvaluation) rule).preRulesetEvaluation(event);
-        }
-
+            @Override
+            public void visit(Rule r)
+            {
+                if (r instanceof PreRulesetEvaluation)
+                {
+                    ((PreRulesetEvaluation) r).preRulesetEvaluation(event);
+                }
+            }
+        });
         ruleSubset.perform(event, createEvaluationContext());
 
         long endTime = System.currentTimeMillis();
