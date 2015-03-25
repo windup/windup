@@ -26,10 +26,13 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotRulesFilter;
+import org.jboss.windup.exec.rulefilters.PhaseRulesFilter;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -55,28 +58,28 @@ public class XMLTransformationTest
 
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+        @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addAsResource("simpleXSLT.xsl")
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-xml"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addAsResource("simpleXSLT.xsl")
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-xml"),
+                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
         return archive;
     }
 
@@ -108,17 +111,11 @@ public class XMLTransformationTest
                         XsltTransformationModel.class);
             Assert.assertFalse(transformationService.findAll().iterator().hasNext());
 
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return provider.getMetadata().getPhase() != ReportGenerationPhase.class;
-                }
-            };
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
-                        .setGraphContext(context);
+                .setRuleProviderFilter(new NotRulesFilter(
+                    new PhaseRulesFilter(ReportGenerationPhase.class)
+                ))
+                .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
@@ -164,12 +161,11 @@ public class XMLTransformationTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(XmlFile.matchesXpath("/abc:project")
-                                    .namespace("abc", "http://maven.apache.org/POM/4.0.0"))
-                        .perform(XSLTTransformation.using(SIMPLE_XSLT_XSL).withExtension(XSLT_EXTENSION));
+            return ConfigurationBuilder.begin()
+                .addRule()
+                .when(XmlFile.matchesXpath("/abc:project")
+                    .namespace("abc", "http://maven.apache.org/POM/4.0.0"))
+                .perform(XSLTTransformation.using(SIMPLE_XSLT_XSL).withExtension(XSLT_EXTENSION));
         }
 
         // @formatter:on

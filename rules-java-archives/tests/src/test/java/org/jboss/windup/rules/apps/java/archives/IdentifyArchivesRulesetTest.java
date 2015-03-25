@@ -26,6 +26,8 @@ import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
+import org.jboss.windup.exec.rulefilters.NotRulesFilter;
+import org.jboss.windup.exec.rulefilters.PhaseRulesFilter;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
@@ -99,18 +101,9 @@ public class IdentifyArchivesRulesetTest
             wc.setInputPath(INPUT_PATH);
             wc.setOutputDirectory(OUTPUT_PATH);
             wc.setOptionValue(OverwriteOption.NAME, true);
-            wc.setRuleProviderFilter(new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider type)
-                {
-                    return !(type.getMetadata().getPhase().isAssignableFrom(ReportGenerationPhase.class))
-                                && !(type.getMetadata().getPhase().isAssignableFrom(ReportRenderingPhase.class))
-                                && !(type.getMetadata().getPhase().isAssignableFrom(DecompilationPhase.class))
-                                && !(type.getMetadata().getPhase().isAssignableFrom(ArchiveExtractionPhase.class))
-                                && !(type.getMetadata().getPhase().isAssignableFrom(MigrationRulesPhase.class));
-                }
-            });
+            wc.setRuleProviderFilter(new NotRulesFilter(
+                new PhaseRulesFilter(ArchiveExtractionPhase.class, DecompilationPhase.class, MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)
+            ));
 
             processor.execute(wc);
 

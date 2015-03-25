@@ -11,6 +11,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
@@ -31,8 +32,9 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
     {
         if (!Annotations.isAnnotationPresent(getClass(), RuleMetadata.class))
         {
-            throw new IllegalStateException(getClass().getName() + " must either specify @" + RuleMetadata.class.getName()
-                        + " or call a constructor and provide " + RuleProviderMetadata.class.getName());
+            throw new IllegalStateException(getClass().getName() + " must either "
+                    + "be abstract, or specify @" + RuleMetadata.class.getName()
+                        + ", or call a super() constructor and provide " + RuleProviderMetadata.class.getName());
         }
         this.metadata = MetadataBuilder.forProvider(getClass());
     }
@@ -131,7 +133,7 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
         StringBuilder builder = new StringBuilder();
         builder.append(metadata.getID());
 
-        if (!metadata.getID().equals(metadata.getOrigin()))
+        if (this instanceof RulePhase || !metadata.getID().equals(metadata.getOrigin()))
         {
             builder.append(" from ").append(metadata.getOrigin());
         }
