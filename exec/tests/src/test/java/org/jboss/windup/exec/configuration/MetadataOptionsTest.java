@@ -9,7 +9,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -34,25 +33,23 @@ public class MetadataOptionsTest
 {
     @Deployment
     @Dependencies({
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
     })
     public static ForgeArchive getDeployment()
     {
         ForgeArchive archive = ShrinkWrap
-            .create(ForgeArchive.class)
-            .addBeansXML()
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                    .create(ForgeArchive.class)
+                    .addBeansXML()
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
 
         return archive;
     }
 
-    @Inject
-    private Furnace furnace;
     @Inject
     private SourceOption sourceOption;
     @Inject
@@ -81,7 +78,8 @@ public class MetadataOptionsTest
     }
 
     @Test
-    public void testIncludeTags() throws Exception {
+    public void testIncludeTags() throws Exception
+    {
         Collection<?> availableValues = includeTagsOption.getAvailableValues();
 
         Assert.assertTrue(availableValues.contains("tag1"));
@@ -90,7 +88,8 @@ public class MetadataOptionsTest
     }
 
     @Test
-    public void testExcludeTags() throws Exception {
+    public void testExcludeTags() throws Exception
+    {
         Collection<?> availableValues = excludeTagsOption.getAvailableValues();
 
         Assert.assertTrue(availableValues.contains("tag1"));
@@ -99,15 +98,15 @@ public class MetadataOptionsTest
     }
 
     @RuleMetadata(
-        sourceTechnologies = {
-            @Technology(id = "sourceTech1", versionRange = "[0, ]"),
-            @Technology(id = "sourceTech2", versionRange = "[0, ]")
-        },
-        targetTechnologies = {
-            @Technology(id = "targetTech1", versionRange = "[0, ]"),
-            @Technology(id = "targetTech2", versionRange = "[0, ]")
-        },
-        tags = { "tag1", "tag2", "tag3" })
+                sourceTechnologies = {
+                            @Technology(id = "sourceTech1", versionRange = "[0, ]"),
+                            @Technology(id = "sourceTech2", versionRange = "[0, ]")
+                },
+                targetTechnologies = {
+                            @Technology(id = "targetTech1", versionRange = "[0, ]"),
+                            @Technology(id = "targetTech2", versionRange = "[0, ]")
+                },
+                tags = { "tag1", "tag2", "tag3" })
     public static class MetadataRuleProvider extends AbstractRuleProvider
     {
         @Override

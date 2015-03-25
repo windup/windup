@@ -65,68 +65,48 @@ public class WindupProcessorImpl implements WindupProcessor
     }
 
     @Override
-    public void execute(WindupConfiguration windupConfiguration)
+    public void execute(WindupConfiguration config)
     {
         long startTime = System.currentTimeMillis();
 
-        validateConfig(windupConfiguration);
+        validateConfig(config);
 
-        GraphContext context = windupConfiguration.getGraphContext();
+        GraphContext context = config.getGraphContext();
+        context.setOptions(config.getOptionMap());
 
-        context.setOptions(windupConfiguration.getOptionMap());
-
-        // Initialize the basic configuration data in the graph.
         WindupConfigurationModel configModel = WindupConfigurationService.getConfigurationModel(context);
-        configModel.setInputPath(getFileModel(context, windupConfiguration.getInputPath()));
-        configModel.setOutputPath(getFileModel(context, windupConfiguration.getOutputDirectory()));
-        configModel.setOfflineMode(windupConfiguration.isOffline());
-        for (Path path : windupConfiguration.getAllUserRulesDirectories())
+        configModel.setInputPath(getFileModel(context, config.getInputPath()));
+        configModel.setOutputPath(getFileModel(context, config.getOutputDirectory()));
+        configModel.setOfflineMode(config.isOffline());
+        for (Path path : config.getAllUserRulesDirectories())
         {
             System.out.println("Using user rules dir: " + path);
             if (path == null)
             {
                 throw new WindupException("Null path found (all paths are: "
-                            + windupConfiguration.getAllUserRulesDirectories() + ")");
+                            + config.getAllUserRulesDirectories() + ")");
             }
             configModel.addUserRulesPath(getFileModel(context, path));
         }
 
-        for (Path path : windupConfiguration.getAllIgnoreDirectories())
+        for (Path path : config.getAllIgnoreDirectories())
         {
             configModel.addUserIgnorePath(getFileModel(context, path));
         }
 
         final GraphRewrite event = new GraphRewrite(context);
 
-        // Combine the configured RuleProvider filter with tags-based filter.
-        Collection<String> includeTags = (Collection<String>) windupConfiguration.getOptionMap().get(IncludeTagsOption.NAME);
-        Collection<String> excludeTags = (Collection<String>) windupConfiguration.getOptionMap().get(ExcludeTagsOption.NAME);
-        Collection<String> sources = (Collection<String>) windupConfiguration.getOptionMap().get(SourceOption.NAME);
-        Collection<String> targets = (Collection<String>) windupConfiguration.getOptionMap().get(TargetOption.NAME);
-        if (includeTags != null || excludeTags != null || sources != null || targets != null)
-        {
-            // Merge the user-provided RuleProvider filter and others from the WindupConfiguration.
-            Predicate<RuleProvider> configuredPredicate = windupConfiguration.getRuleProviderFilter();
-
-            final TaggedRuleProviderPredicate tagPredicate = new TaggedRuleProviderPredicate(includeTags, excludeTags);
-            final SourceAndTargetPredicate sourceAndTargetPredicate = new SourceAndTargetPredicate(sources, targets);
-
-            Predicate<RuleProvider> overallFilter =
-                        null == configuredPredicate
-                                    ? new AndPredicate(tagPredicate, sourceAndTargetPredicate)
-                                    : new AndPredicate(configuredPredicate, tagPredicate, sourceAndTargetPredicate);
-            windupConfiguration.setRuleProviderFilter(overallFilter);
-        }
+        configureRuleProviderAndTagFilters(config);
 
         RuleProviderRegistry providerRegistry =
-                    ruleLoader.loadConfiguration(context, windupConfiguration.getRuleProviderFilter());
+                    ruleLoader.loadConfiguration(context, config.getRuleProviderFilter());
         event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
 
         Configuration rules = providerRegistry.getConfiguration();
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
-        if (windupConfiguration.getProgressMonitor() != null)
-            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(windupConfiguration.getProgressMonitor(), rules));
+        if (config.getProgressMonitor() != null)
+            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(config.getProgressMonitor(), rules));
 
         for (RuleLifecycleListener listener : listeners)
         {
@@ -144,14 +124,39 @@ public class WindupProcessorImpl implements WindupProcessor
                 }
             }
         });
+
         ruleSubset.perform(event, createEvaluationContext());
 
         long endTime = System.currentTimeMillis();
         long seconds = (endTime - startTime) / 1000L;
         LOG.info("Windup execution took " + seconds + " seconds to execute on input: "
-                    + windupConfiguration.getInputPath() + "!");
+                    + config.getInputPath() + "!");
 
         ExecutionStatistics.get().reset();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void configureRuleProviderAndTagFilters(WindupConfiguration config)
+    {
+        Collection<String> includeTags = (Collection<String>) config.getOptionMap().get(IncludeTagsOption.NAME);
+        Collection<String> excludeTags = (Collection<String>) config.getOptionMap().get(ExcludeTagsOption.NAME);
+        Collection<String> sources = (Collection<String>) config.getOptionMap().get(SourceOption.NAME);
+        Collection<String> targets = (Collection<String>) config.getOptionMap().get(TargetOption.NAME);
+        if (includeTags != null || excludeTags != null || sources != null || targets != null)
+        {
+            Predicate<RuleProvider> configuredPredicate = config.getRuleProviderFilter();
+
+            final TaggedRuleProviderPredicate tagPredicate = new TaggedRuleProviderPredicate(includeTags, excludeTags);
+            final SourceAndTargetPredicate sourceAndTargetPredicate = new SourceAndTargetPredicate(sources, targets);
+
+            Predicate<RuleProvider> providerFilter = new AndPredicate(tagPredicate, sourceAndTargetPredicate);
+            if (configuredPredicate != null)
+            {
+                providerFilter = new AndPredicate(configuredPredicate, tagPredicate, sourceAndTargetPredicate);
+            }
+
+            config.setRuleProviderFilter(providerFilter);
+        }
     }
 
     private FileModel getFileModel(GraphContext context, Path path)
@@ -159,9 +164,6 @@ public class WindupProcessorImpl implements WindupProcessor
         return new FileService(context).createByFilePath(path.toString());
     }
 
-    /**
-     * Creates EvaluationContext which serves as an environment and input for RuleSubset executor.
-     */
     private EvaluationContext createEvaluationContext()
     {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();

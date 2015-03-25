@@ -6,8 +6,6 @@ import java.util.Set;
 
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.config.phase.RulePhase;
 
 /**
@@ -22,9 +20,10 @@ public class RuleProviderPhasePredicate implements Predicate<RuleProvider>
     /**
      * Creates the {@link RuleProviderPhasePredicate} with the given phase types.
      */
+    @SafeVarargs
     public RuleProviderPhasePredicate(Class<? extends RulePhase>... phases)
     {
-        this.phases = new HashSet(Arrays.asList(phases));
+        this.phases = new HashSet<>(Arrays.asList(phases));
     }
 
     @Override
@@ -32,18 +31,4 @@ public class RuleProviderPhasePredicate implements Predicate<RuleProvider>
     {
         return this.phases.contains(provider.getMetadata().getPhase());
     }
-
-    /**
-     * Filters the rules with phase = Reporting*.
-     *
-     * @author Ondrej Zizka, ozizka at redhat.com
-     */
-    public static class ReportingFilterRuleProvider extends RuleProviderPhasePredicate
-    {
-        public ReportingFilterRuleProvider()
-        {
-            super(ReportGenerationPhase.class, ReportRenderingPhase.class);
-        }
-    }
-
 }

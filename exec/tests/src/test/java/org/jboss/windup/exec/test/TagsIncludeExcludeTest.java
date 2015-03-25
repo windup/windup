@@ -25,7 +25,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleMetadataType;
-import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.config.operation.Log;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -49,8 +48,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * How this tests works:
  *
- * The 3 RuleProviders have different tags. There are 4 executions, each time with different include/exclude tags. Through the RuleExecutionListener,
- * execution of rules is observed, and the same listener, at the end of execution, checks whether the right set of rules was executed.
+ * The 3 RuleProviders have different tags. There are 4 executions, each time with different include/exclude tags.
+ * Through the RuleExecutionListener, execution of rules is observed, and the same listener, at the end of execution,
+ * checks whether the right set of rules was executed.
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
@@ -88,17 +88,14 @@ public class TagsIncludeExcludeTest
     @Inject
     private GraphContextFactory contextFactory;
 
-    @Inject
-    private RuleProviderRegistryCache cache;
-
     public static class TestTagsRuleExecutionListener extends AbstractRuleLifecycleListener
     {
-        Map<String, Boolean> executedRules = new HashMap();
+        Map<String, Boolean> executedRules = new HashMap<>();
 
         @Override
         public void beforeExecution(GraphRewrite event)
         {
-            event.getRewriteContext().put("testData", new HashMap());
+            event.getRewriteContext().put("testData", new HashMap<>());
         }
 
         @Override
@@ -120,6 +117,7 @@ public class TagsIncludeExcludeTest
         @Override
         public void afterExecution(GraphRewrite event)
         {
+            @SuppressWarnings("unchecked")
             Set<Class<? extends RuleProvider>> shouldHaveRun =
                         (Set<Class<? extends RuleProvider>>) event.getGraphContext().getOptionMap().get(TEST_RULES_THAT_SHOULD_RUN);
             assertRule(TestTagsA1B1Rules.class, shouldHaveRun);
@@ -137,36 +135,44 @@ public class TagsIncludeExcludeTest
     @Test
     public void testIncludeA1Tags()
     {
-        goTest("tagA1", null, new HashSet(Arrays.asList(TestTagsARules.class, TestTagsA1B1Rules.class)));
+        executeTest("tagA1", null, new HashSet<Class<? extends RuleProvider>>(Arrays.asList(TestTagsARules.class, TestTagsA1B1Rules.class)));
     }
 
     @Test
     public void testExcludeA1Tags()
     {
-        goTest(null, "tagA1", new HashSet(Arrays.asList(TestTagsBRules.class)));
+        executeTest(null, "tagA1", new HashSet<Class<? extends RuleProvider>>(Arrays.asList(TestTagsBRules.class)));
     }
 
     @Test
     public void testCombinedA1B1Tags()
     {
-        goTest("tagA1", "tagB1", new HashSet(Arrays.asList(TestTagsARules.class)));
+        executeTest("tagA1", "tagB1", new HashSet<Class<? extends RuleProvider>>(Arrays.asList(TestTagsARules.class)));
     }
 
     @Test
     public void testNoTags()
     {
-        // All rules should be executed (tags should create no limitation).
-        goTest(null, null, new HashSet(Arrays.asList(TestTagsA1B1Rules.class, TestTagsARules.class, TestTagsBRules.class)));
+        /*
+         * All rules should be executed (tags should create no limitation).
+         */
+        executeTest(null, null,
+                    new HashSet<Class<? extends RuleProvider>>(Arrays.asList(TestTagsA1B1Rules.class, TestTagsARules.class, TestTagsBRules.class)));
     }
 
-    private void goTest(String includeTags, String excludeTags, Set<Class<? extends RuleProvider>> rulesThatShouldRun)
+    private void executeTest(String includeTags, String excludeTags, Set<Class<? extends RuleProvider>> rules)
     {
-        Set<String> inTags = includeTags == null ? null : new HashSet(Arrays.asList(StringUtils.split(includeTags)));
-        Set<String> exTags = excludeTags == null ? null : new HashSet(Arrays.asList(StringUtils.split(excludeTags)));
+        Set<String> included = null;
+        if (includeTags != null)
+            included = new HashSet<>(Arrays.asList(StringUtils.split(includeTags)));
 
-        try (GraphContext grCtx = contextFactory.create())
+        Set<String> excluded = null;
+        if (excludeTags != null)
+            excluded = new HashSet<>(Arrays.asList(StringUtils.split(excludeTags)));
+
+        try (GraphContext context = contextFactory.create())
         {
-            runRules(grCtx, inTags, exTags, rulesThatShouldRun);
+            runRules(context, included, excluded, rules);
         }
         catch (Exception ex)
         {
@@ -178,28 +184,18 @@ public class TagsIncludeExcludeTest
      * Configure the WindupConfiguration according to the params and run the RuleProviders.
      */
     private void runRules(GraphContext grCtx, Set<String> inTags, Set<String> exTags,
-                Set<Class<? extends RuleProvider>> rulesThatShouldRun)
+                Set<Class<? extends RuleProvider>> rules)
     {
-        try
-        {
-            // Windup config.
-            WindupConfiguration wc = new WindupConfiguration();
-            wc.setGraphContext(grCtx);
-            wc.setInputPath(Paths.get("."));
-            wc.setOutputDirectory(Paths.get("target/WindupReport"));
+        WindupConfiguration wc = new WindupConfiguration();
+        wc.setGraphContext(grCtx);
+        wc.setInputPath(Paths.get("."));
+        wc.setOutputDirectory(Paths.get("target/WindupReport"));
 
-            wc.setOptionValue(IncludeTagsOption.NAME, inTags);
-            wc.setOptionValue(ExcludeTagsOption.NAME, exTags);
-            wc.setOptionValue(TEST_RULES_THAT_SHOULD_RUN, rulesThatShouldRun);
+        wc.setOptionValue(IncludeTagsOption.NAME, inTags);
+        wc.setOptionValue(ExcludeTagsOption.NAME, exTags);
+        wc.setOptionValue(TEST_RULES_THAT_SHOULD_RUN, rules);
 
-            // Run.
-            processor.execute(wc);
-        }
-        catch (Exception ex)
-        {
-            // if (ex instanceof InvocationException)
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
+        processor.execute(wc);
     }
 
     @RuleMetadata(tags = { "tagA1", "tagA2", "tagA3" })
@@ -217,7 +213,6 @@ public class TagsIncludeExcludeTest
     {
     }
 
-    // Formatter:off
     public abstract static class NoopRuleProvider extends AbstractRuleProvider
     {
         @Override
@@ -227,6 +222,5 @@ public class TagsIncludeExcludeTest
                         .perform(Log.message(Logger.Level.TRACE, "Performing Rule: " + this.getClass().getSimpleName()));
         }
     }
-    // Formatter:off
 
 }
