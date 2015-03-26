@@ -175,11 +175,6 @@
                 </property>
             </activation>
             <modules>
-                <!--
-                    Only include this module in non-release builds
-                    (as it can trigger a circular dependency in release builds)
-                -->
-                <module>dist</module>
             </modules>
         </profile>
 
