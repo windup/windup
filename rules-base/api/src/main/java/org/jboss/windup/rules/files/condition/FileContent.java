@@ -35,8 +35,8 @@ import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
 
-import com.googlecode.streamflyer.core.Modifier;
-import com.googlecode.streamflyer.core.ModifyingReader;
+import com.github.rwitzel.streamflyer.core.Modifier;
+import com.github.rwitzel.streamflyer.core.ModifyingReader;
 
 /**
  * Matches on file contents based upon parameterization.
@@ -208,7 +208,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                         }
                     };
 
-                    Modifier regexModifier = new StreamRegexMatcher(fileContentsRegex.pattern(), matchListener);
+                    Modifier regexModifier = StreamRegexMatcher.create(fileContentsRegex.pattern(), matchListener);
                     try (ModifyingReader modifyingReader = new ModifyingReader(reader, regexModifier))
                     {
 

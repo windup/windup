@@ -15,9 +15,9 @@
 
         <!-- Local Dependencies -->
         <dependency>
-            <groupId>com.googlecode.streamflyer</groupId>
+            <groupId>com.github.rwitzel.streamflyer</groupId>
             <artifactId>streamflyer-core</artifactId>
-            <version>1.1.2</version>
+            <version>1.2.0</version>
         </dependency>
 
         <!-- Addon Dependencies -->

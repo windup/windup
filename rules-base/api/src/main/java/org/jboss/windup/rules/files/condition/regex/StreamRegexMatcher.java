@@ -4,14 +4,14 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.googlecode.streamflyer.regex.MatchProcessor;
-import com.googlecode.streamflyer.regex.MatchProcessorResult;
-import com.googlecode.streamflyer.regex.OnStreamMatcher;
-import com.googlecode.streamflyer.regex.OnStreamStandardMatcher;
-import com.googlecode.streamflyer.regex.RegexModifier;
-import com.googlecode.streamflyer.regex.addons.util.DoNothingProcessor;
-import com.googlecode.streamflyer.util.ModificationFactory;
-import com.googlecode.streamflyer.util.statistics.LineColumnAwareModificationFactory;
+import com.github.rwitzel.streamflyer.core.AfterModification;
+import com.github.rwitzel.streamflyer.regex.MatchProcessor;
+import com.github.rwitzel.streamflyer.regex.MatchProcessorResult;
+import com.github.rwitzel.streamflyer.regex.OnStreamMatcher;
+import com.github.rwitzel.streamflyer.regex.RegexModifier;
+import com.github.rwitzel.streamflyer.regex.addons.util.DoNothingProcessor;
+import com.github.rwitzel.streamflyer.util.ModificationFactory;
+import com.github.rwitzel.streamflyer.util.statistics.LineColumnAwareModificationFactory;
 
 /**
  * Extends {@link RegexModifier} to support tracking the line number and column, and to fire {@link StreamRegexMatchedEvent} events when content is
@@ -22,78 +22,95 @@ import com.googlecode.streamflyer.util.statistics.LineColumnAwareModificationFac
  */
 public class StreamRegexMatcher extends RegexModifier
 {
-    private final StreamRegexMatchListener listener;
+    private StreamRegexMatcherProcessor streamRegexMatcherProcessor;
 
-    public StreamRegexMatcher(String regex, StreamRegexMatchListener listener)
+    public static StreamRegexMatcher create(String regex, StreamRegexMatchListener listener)
     {
-        this.listener = listener;
-        Matcher jdkMatcher = Pattern.compile(regex, 0).matcher("");
-        jdkMatcher.useTransparentBounds(true);
-        jdkMatcher.useAnchoringBounds(false);
-        init(new OnStreamStandardMatcher(jdkMatcher), new StreamRegexMatcherProcessor(), 2048, 2048);
+        StreamRegexMatcherProcessor streamRegexMatcherProcessor = new StreamRegexMatcherProcessor(listener);
+        return new StreamRegexMatcher(regex, 0, streamRegexMatcherProcessor);
     }
 
-    @SuppressWarnings("hiding")
+    private StreamRegexMatcher(String regex, int flags, StreamRegexMatcherProcessor streamRegexMatcherProcessor)
+    {
+        super(regex, flags, streamRegexMatcherProcessor, 2048, 2048);
+        this.streamRegexMatcherProcessor = streamRegexMatcherProcessor;
+    }
+
+    @Override
+    public AfterModification modify(StringBuilder characterBuffer, int firstModifiableCharacterInBuffer,
+                boolean endOfStreamHit)
+    {
+        this.streamRegexMatcherProcessor.setFirstCharIndex(firstModifiableCharacterInBuffer);
+        return super.modify(characterBuffer, firstModifiableCharacterInBuffer, endOfStreamHit);
+    }
+
+    @Override
     protected void init(OnStreamMatcher matcher, MatchProcessor matchProcessor, int minimumLengthOfLookBehind,
                 int newNumberOfChars)
     {
-
-        ModificationFactory modFactory = new ModificationFactory(minimumLengthOfLookBehind, newNumberOfChars);
-        this.factory = new LineColumnAwareModificationFactory(modFactory);
+        super.init(matcher, matchProcessor, minimumLengthOfLookBehind, newNumberOfChars);
+        ModificationFactory delegate = new ModificationFactory(minimumLengthOfLookBehind, newNumberOfChars);
+        this.factory = new LineColumnAwareModificationFactory(delegate);
         this.matchProcessor = matchProcessor;
         this.matcher = matcher;
         this.newNumberOfChars = newNumberOfChars;
+
+        ((StreamRegexMatcherProcessor) matchProcessor).setLineColumnAwareModificationFactory((LineColumnAwareModificationFactory) this.factory);
     }
 
-    private LineColumnAwareModificationFactory getMatchFactory()
+    private static class StreamRegexMatcherProcessor extends DoNothingProcessor implements MatchProcessor
     {
-        return (LineColumnAwareModificationFactory) this.factory;
-    }
+        private int firstCharIndex;
+        private final StreamRegexMatchListener listener;
+        private LineColumnAwareModificationFactory lineColumnAwareModificationFactory;
 
-    private class StreamRegexMatcherProcessor extends DoNothingProcessor implements MatchProcessor
-    {
+        public StreamRegexMatcherProcessor(StreamRegexMatchListener listener)
+        {
+            this.listener = listener;
+        }
+
+        public void setLineColumnAwareModificationFactory(LineColumnAwareModificationFactory lineColumnAwareModificationFactory)
+        {
+            this.lineColumnAwareModificationFactory = lineColumnAwareModificationFactory;
+        }
+
+        public void setFirstCharIndex(int firstCharIndex)
+        {
+            this.firstCharIndex = firstCharIndex;
+        }
+
         @Override
         public MatchProcessorResult process(StringBuilder characterBuffer, int firstModifiableCharacterInBuffer, MatchResult matchResult)
         {
-            LineColumnAwareModificationFactory matchFactory = getMatchFactory();
-            // This is the line number of the start of the buffer, not necessarily the start of the match
-            long lineNumber = matchFactory.getCurrentLine();
-            // the start Column may be after the first char in a line, so use the LineColumnAwareModificationFactory to figure out the actual column
-            // number
-            int startColumn = (int) matchFactory.getCurrentColumn() + matchResult.start() - firstModifiableCharacterInBuffer;
-            boolean calculateStartColumn = false;
+            long unmatchedStartLine = lineColumnAwareModificationFactory.getCurrentLine();
+            long unmatchedStartColumn = lineColumnAwareModificationFactory.getCurrentColumn();
+            int unmatchedStart = firstCharIndex;
+            int unmatchedEnd = matchResult.start();
+            String unmatched = characterBuffer.substring(unmatchedStart, unmatchedEnd);
 
-            // now we calculate the actual line number based upon the start line number of the buffer and the index of the match in the buffer
-            char lastChar = 0;
-            for (int i = 0; i < matcher.start(); i++)
+            Matcher matcher = Pattern.compile("\r\n|\r|\n").matcher(unmatched);
+            int numLines = 0;
+            int endOfLastLineBreak = 0;
+            while (matcher.find())
             {
-                char ch = characterBuffer.charAt(i);
-                if (ch == '\r')
-                {
-                    startColumn = 0;
-                    calculateStartColumn = true;
-                    lineNumber++;
-                }
-                else if (ch == '\n')
-                {
-                    if (lastChar != '\r')
-                    {
-                        startColumn = 0;
-                        calculateStartColumn = true;
-                        lineNumber++;
-                    }
-                }
-                else if (calculateStartColumn)
-                {
-                    startColumn++;
-                }
-                lastChar = ch;
+                numLines++;
+                endOfLastLineBreak = matcher.end();
+            }
+            long lineNumber = unmatchedStartLine + numLines;
+            long columnNumber;
+            if (numLines == 0)
+            {
+                columnNumber = unmatchedStartColumn + unmatched.length();
+            }
+            else
+            {
+                columnNumber = unmatched.length() - endOfLastLineBreak; // length of last line in 'unmatched'
             }
 
-            StreamRegexMatchedEvent event = new StreamRegexMatchedEvent(matchResult.group(), lineNumber, startColumn);
+            String matchText = matchResult.group();
+            StreamRegexMatchedEvent event = new StreamRegexMatchedEvent(matchText, lineNumber, columnNumber);
             listener.regexMatched(event);
-            MatchProcessorResult result = super.process(characterBuffer, firstModifiableCharacterInBuffer, matchResult);
-            return result;
+            return super.process(characterBuffer, firstModifiableCharacterInBuffer, matchResult);
         }
     }
 }
