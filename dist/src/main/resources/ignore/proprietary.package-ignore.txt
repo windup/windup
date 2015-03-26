@@ -1,8 +1,0 @@
-weblogic
-com.weblogic
-ibm
-com.ibm
-oracle
-com.oracle
-sap
-com.sap
