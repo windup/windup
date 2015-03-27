@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-import org.jboss.forge.furnace.ContainerStatus;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
 import org.jboss.forge.furnace.repositories.AddonRepository;
@@ -26,19 +25,17 @@ import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.se.FurnaceFactory;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.furnace.versions.EmptyVersion;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.windup.bootstrap.listener.GreetingListener;
-import org.jboss.windup.config.ConfigurationOption;
-import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 /**
  * A class with a main method to bootstrap Windup.
  *
  * You can deploy addons by calling {@link Bootstrap#install(String)}
  *
+ * @author mbriskar
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -102,6 +99,7 @@ public class Bootstrap
             systemProperties.setProperty("java.util.logging.manager", logManagerName);
         }
         Bootstrap bootstrap = new Bootstrap(bootstrapArgs.toArray(new String[bootstrapArgs.size()]));
+        
         bootstrap.start();
     }
 
@@ -185,12 +183,7 @@ public class Bootstrap
 
         addReposToFurnace(furnace, mutableRepos, immutableRepos);
 
-        Iterable<ConfigurationOption> knownWindupArgs = getKnownWindupArgs(furnace);
-
-        // add them again (since starting/stopping furnace destroyed them)
-        addReposToFurnace(furnace, mutableRepos, immutableRepos);
-
-        furnace.addContainerLifecycleListener(new GreetingListener());
+        furnace.addContainerLifecycleListener(new GreetingListener(displayHelp));
 
         if (isEvaluate)
             setupNonInteractive(furnace);
@@ -202,28 +195,14 @@ public class Bootstrap
 
         if (displayHelp)
         {
-            System.out.println(getHelpMessage(knownWindupArgs));
+            // The main purpose of this run is only to show the options. No need to provide all the arguments.
             return args;
         }
 
-        List<String> windupArgs = new ArrayList<>();
         for (int i = 0; i < args.length; i++)
         {
             final String arg = args[i];
-            // Put Windup arguments aside.
-            if (isWindupArg(knownWindupArgs, arg))
-            {
-                // Add all values of this argument (they are in this format: --foo bar baz | --otherArg)
-                do
-                {
-                    unknownArgs.remove(args[i]);
-                    windupArgs.add(args[i]);
-                    args[i] = null;
-                }
-                while (++i < args.length && !args[i].startsWith("--"));
-                i--;
-            }
-            else if (unknownArgs.contains(arg))
+            if (unknownArgs.contains(arg))
             {
                 args[i] = null;
             }
@@ -238,31 +217,23 @@ public class Bootstrap
         }
 
         // Move Windup arguments to --evaluate '...'
-        if (!windupArgs.isEmpty())
+        if (!unknownArgs.isEmpty())
         {
             setupNonInteractive(furnace);
 
             // Pass unknown arguments to Windup (Forge).
-            windupArgs.addAll(unknownArgs);
-            unknownArgs.clear();
 
             if (isEvaluate)
                 System.out.println("Both --evaluate (-e) and Windup options were found, may lead to unexpected behavior.");
 
             StringBuilder sb = new StringBuilder("windup-migrate-app");
-            for (String windupArg : windupArgs)
+            for (String windupArg : unknownArgs)
                 sb.append(" ").append(windupArg);
             argsList.add("-e");
             argsList.add(sb.toString());
         }
         else
         {
-            if (!unknownArgs.isEmpty())
-            {
-                System.out.println("Windup: unrecognized options: " + Strings.join(unknownArgs.toArray(), ", "));
-                System.out.println("Run 'windup --help' for more information.");
-                this.exitAfter = true;
-            }
             if (!isEvaluate)
             {
                 System.setProperty("forge.standalone", "true");
@@ -304,18 +275,6 @@ public class Bootstrap
         }
     }
 
-    private static boolean isWindupArg(Iterable<ConfigurationOption> availableOptions, String arg)
-    {
-        for (ConfigurationOption availableOption : availableOptions)
-        {
-            if (arg.equals("--" + availableOption.getName()))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private static void setupNonInteractive(final Furnace furnace)
     {
         furnace.setServerMode(true);
@@ -333,54 +292,6 @@ public class Bootstrap
 
         args = processArguments(args, furnaceService);
         furnace.setArgs(args);
-    }
-
-    private static String getHelpMessage(Iterable<ConfigurationOption> windupOptions)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Usage: windup [OPTION]... PARAMETER ... \n");
-        sb.append("Extendable migration analysis, at your fingertips. \n");
-        sb.append("\n");
-
-        sb.append("\nWindup Options:\n");
-        for (ConfigurationOption option : windupOptions)
-        {
-            sb.append("--").append(option.getName()).append("\n");
-            sb.append("\t").append(option.getDescription()).append("\n");
-        }
-
-        sb.append("\nForge Options:\n");
-
-        sb.append("-i, --install [[groupId:]addon[,version]]\n");
-        sb.append("\t install the required addons and exit. ex: `windup -i core-addon-x` or `windup -i org.example.addon:example,1.0.0` \n");
-
-        sb.append("-r, --remove [[groupId:]addon[,version]]\n");
-        sb.append("\t remove the required addons and exit. ex: `windup -r core-addon-x` or `windup -r org.example.addon:example,1.0.0` \n");
-
-        sb.append("-l, --list\n");
-        sb.append("\t list installed addons and exit \n");
-
-        sb.append("-a, --addonDir [dir]\n");
-        sb.append("\t add the given directory for use as a custom addon repository \n");
-
-        sb.append("-e, --evaluate [cmd]\n");
-        sb.append("\t evaluate the given string as commands (requires shell addon. Install via: `windup -i shell`) \n");
-
-        sb.append("-m, --immutableAddonDir [dir]\n");
-        sb.append("\t add the given directory for use as a custom immutable addon repository (read only) \n");
-
-        sb.append("-b, --batchMode\n");
-        sb.append("\t run Forge in batch mode and does not prompt for confirmation (exits immediately after running) \n");
-
-        sb.append("-d, --debug\n");
-        sb.append("\t run Forge in debug mode (wait on port 8000 for a debugger to attach) \n");
-
-        sb.append("-h, --help\n");
-        sb.append("\t display this help and exit \n");
-
-        sb.append("-v, --version\n");
-        sb.append("\t output version information and exit \n");
-        return sb.toString();
     }
 
     private static boolean containsMutableRepository(List<AddonRepository> repositories)
@@ -458,47 +369,6 @@ public class Bootstrap
     private void start() throws InterruptedException, ExecutionException
     {
         furnaceService.start(exitAfter, batchMode);
-    }
-
-    private static void startFurnaceAsyncAndReturnWhenStarted(Furnace furnace)
-    {
-        furnace.setServerMode(true);
-        furnace.startAsync();
-        while (furnace.getStatus() != ContainerStatus.STARTED)
-        {
-            try
-            {
-                Thread.sleep(50L);
-            }
-            catch (InterruptedException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private static Iterable<ConfigurationOption> getKnownWindupArgs(Furnace furnace)
-    {
-        startFurnaceAsyncAndReturnWhenStarted(furnace);
-        try
-        {
-            return WindupConfiguration.getWindupConfigurationOptions(furnace);
-        }
-        finally
-        {
-            furnace.stop();
-            while (furnace.getStatus() != ContainerStatus.STOPPED || furnace.getRepositories().size() > 0)
-            {
-                try
-                {
-                    Thread.sleep(50L);
-                }
-                catch (InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
     }
 
 }

@@ -11,10 +11,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Logger;
 
+import org.jboss.forge.furnace.ContainerStatus;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
 import org.jboss.windup.bootstrap.Bootstrap;
+import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -22,11 +25,18 @@ import org.jboss.windup.bootstrap.Bootstrap;
 public class GreetingListener implements ContainerLifecycleListener
 {
     private final Logger logger = Logger.getLogger(getClass().getName());
+    private boolean displayHelp = false;
+
+    public GreetingListener(boolean outputHelp)
+    {
+        displayHelp = outputHelp;
+    }
 
     @Override
     public void beforeStart(Furnace furnace) throws ContainerException
     {
-        if (furnace.isServerMode())
+
+        if (furnace.isServerMode() && !displayHelp)
         {
             StringWriter sw = new StringWriter();
             PrintWriter out = new PrintWriter(sw, true);
@@ -50,7 +60,11 @@ public class GreetingListener implements ContainerLifecycleListener
     @Override
     public void afterStart(Furnace furnace) throws ContainerException
     {
-        // Do nothing
+        if (displayHelp)
+        {
+            //this is called synchronously before any addon is deployed, so we need to asynchronously query the furnace and display help if needed
+           new DisplayHelpThread(furnace).start();
+        }
     }
 
     @Override
@@ -76,4 +90,6 @@ public class GreetingListener implements ContainerLifecycleListener
     {
         // Do nothing
     }
+
+   
 }
