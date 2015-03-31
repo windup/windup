@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -27,11 +28,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Maps file extensions to {@link WindupVertexFrame} types. Mappings are always applied during the
  * {@link ArchiveMetadataExtractionPhase} phase, no matter where this rule appears in the pipeline. The following example
  * demonstrates how to match files ending with *.xml to a frame type:
- * 
+ *
  * <pre>
  *   {@link FileMapping}.from(".*\\.xml").to({@link XmlFileModel}.class)
  * </pre>
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
@@ -42,9 +43,16 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
     private Pattern pattern;
     private List<Class<? extends WindupVertexFrame>> types = new ArrayList<>();
 
+    private final String id;
+
     private FileMapping(Pattern pattern)
     {
         this.pattern = pattern;
+
+        String normalizedPattern = StringUtils.replacePattern(pattern.pattern(), "\\s", "_");
+        normalizedPattern = StringUtils.substring(normalizedPattern, 0, 10);
+        this.id = this.getClass().getSimpleName()+ "_" + normalizedPattern
+                + "_" + RandomStringUtils.randomAlphanumeric(2);
     }
 
     /**
@@ -166,7 +174,7 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
     @Override
     public String getId()
     {
-        return this.getClass().getName() + "_" + UUID.randomUUID().toString();
+        return this.id;
     }
 
     @Override
