@@ -12,10 +12,14 @@ import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * Provides the message that will be reported on the project overview page.
+ * @author mbriskar
+ *
+ */
 public class LineItem extends AbstractIterationOperation<ProjectModel>
 {
 
-    private static final Logger LOG = Logging.get(LineItem.class);
     private String message;
 
     LineItem(String variable)

@@ -20,8 +20,8 @@ public class ArtifactHandler implements ElementHandler<Artifact>
     {
         String groupId = $(element).attr("groupId");
         String artifactId = $(element).attr("artifactId");
-        String from = $(element).attr("from");
-        String to = $(element).attr("to");
+        String from = $(element).attr("fromVersion");
+        String to = $(element).attr("toVersion");
         Artifact artifact = Artifact.withGroupId(groupId).andArtifactId(artifactId).andVersion(Version.fromVersion(from).to(to));
         return artifact;
     }
