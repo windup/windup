@@ -458,7 +458,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 Windup 2.0 to migrate Java applications or other components.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="images/windup-logo-wiki-header.jpg" alt="Windup Logo"></span></p>
+<p><span class="image"><img src="images/windup-logo-large.png" alt="Windup Logo"></span></p>
 </div>
 <hr>
 <div class="sect2">
@@ -844,16 +844,12 @@ JBoss Windup, version [ 2.0.0-VERSION ] - JBoss, by Red Hat, Inc. [ http://windu
 <p>The command to run Windup is <code>windup-migrate-app</code>.</p>
 </li>
 <li>
-<p>The following is a list of the most commonly used command line arguments.</p>
+<p>This command can take arbitrary options processed by different addons. The list of options in the core Windup distribution can be found in <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/ConfigurationOption.html">Javadoc</a>. Most commonly used command line arguments are:</p>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">--input <strong>INPUT_ARCHIVE_OR_FOLDER</strong></dt>
 <dd>
 <p>This is the fully qualified application archive or source path.</p>
-</dd>
-<dt class="hdlist1">--source-mode true (optional)</dt>
-<dd>
-<p>This argument is optional and is only required if the application to be evaluated contains source files rather than compiled binaries. The default value is <code>false</code>.</p>
 </dd>
 <dt class="hdlist1">--output <strong>OUTPUT_REPORT_DIRECTORY</strong></dt>
 <dd>
@@ -875,6 +871,10 @@ If the <strong>OUTPUT_REPORT_DIRECTORY</strong> directory exists and you do not 
 <dd>
 <p>Specify this optional argument only if you are certain you want to force Windup to delete the existing <strong>OUTPUT_REPORT_DIRECTORY</strong>. The default value is <code>false</code>.</p>
 </dd>
+<dt class="hdlist1">--userRulesDirectory</dt>
+<dd>
+<p>Points to a directory to load XML rules from. (Search pattern: *.windup.groovy and *.windup.xml)</p>
+</dd>
 <dt class="hdlist1">--packages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
 <dd>
 <p>This is a comma-delimited list of the packages to be evaluated by Windup.</p>
@@ -882,6 +882,10 @@ If the <strong>OUTPUT_REPORT_DIRECTORY</strong> directory exists and you do not 
 <dt class="hdlist1">--excludePackages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
 <dd>
 <p>This is a comma-delimited list of the packages to be excluded by Windup.</p>
+</dd>
+<dt class="hdlist1">--source-mode true (optional)</dt>
+<dd>
+<p>This argument is optional and is only required if the application to be evaluated contains source files rather than compiled binaries. The default value is <code>false</code>.</p>
 </dd>
 </dl>
 </div>
@@ -1953,7 +1957,7 @@ public List&lt;Class&lt;? extends WindupRuleProvider&gt;&gt; getExecuteAfter()
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-03-30 10:50:06 EDT
+Last updated 2015-04-01 14:59:45 EDT
 </div>
 </div>
 </body>

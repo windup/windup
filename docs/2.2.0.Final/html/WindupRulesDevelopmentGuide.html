@@ -487,7 +487,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 custom rules for Windup 2.0.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="images/windup-logo-wiki-header.jpg" alt="Windup Logo"></span></p>
+<p><span class="image"><img src="images/windup-logo-large.png" alt="Windup Logo"></span></p>
 </div>
 <hr>
 <div class="sect2">
@@ -873,16 +873,12 @@ JBoss Windup, version [ 2.0.0-VERSION ] - JBoss, by Red Hat, Inc. [ http://windu
 <p>The command to run Windup is <code>windup-migrate-app</code>.</p>
 </li>
 <li>
-<p>The following is a list of the most commonly used command line arguments.</p>
+<p>This command can take arbitrary options processed by different addons. The list of options in the core Windup distribution can be found in <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/ConfigurationOption.html">Javadoc</a>. Most commonly used command line arguments are:</p>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">--input <strong>INPUT_ARCHIVE_OR_FOLDER</strong></dt>
 <dd>
 <p>This is the fully qualified application archive or source path.</p>
-</dd>
-<dt class="hdlist1">--source-mode true (optional)</dt>
-<dd>
-<p>This argument is optional and is only required if the application to be evaluated contains source files rather than compiled binaries. The default value is <code>false</code>.</p>
 </dd>
 <dt class="hdlist1">--output <strong>OUTPUT_REPORT_DIRECTORY</strong></dt>
 <dd>
@@ -904,6 +900,10 @@ If the <strong>OUTPUT_REPORT_DIRECTORY</strong> directory exists and you do not 
 <dd>
 <p>Specify this optional argument only if you are certain you want to force Windup to delete the existing <strong>OUTPUT_REPORT_DIRECTORY</strong>. The default value is <code>false</code>.</p>
 </dd>
+<dt class="hdlist1">--userRulesDirectory</dt>
+<dd>
+<p>Points to a directory to load XML rules from. (Search pattern: *.windup.groovy and *.windup.xml)</p>
+</dd>
 <dt class="hdlist1">--packages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
 <dd>
 <p>This is a comma-delimited list of the packages to be evaluated by Windup.</p>
@@ -911,6 +911,10 @@ If the <strong>OUTPUT_REPORT_DIRECTORY</strong> directory exists and you do not 
 <dt class="hdlist1">--excludePackages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
 <dd>
 <p>This is a comma-delimited list of the packages to be excluded by Windup.</p>
+</dd>
+<dt class="hdlist1">--source-mode true (optional)</dt>
+<dd>
+<p>This argument is optional and is only required if the application to be evaluated contains source files rather than compiled binaries. The default value is <code>false</code>.</p>
 </dd>
 </dl>
 </div>
@@ -1984,7 +1988,14 @@ and some others, all of which are optional.</p>
 <div class="paragraph">
 <p>Other way to fill a when part is subclassing the <code>GraphCondition</code>.
 Actually, <code>Query</code> also implements it, and is only a convenient way to
-create a condition.</p>
+create a condition.
+You can also use multiple conditions within one when() call using and().
+Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>.when(Query.fromType(XmlMetaFacetModel.class).and(Query...))</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Last noticable but important feature is the ability to use
@@ -2015,7 +2026,7 @@ writes the findings into the graph.</p>
 <div class="paragraph">
 <p>For that, various operations are available. These are subclasses of
 <code>GraphOperation</code>. You can also implement your own. See
-Rules-Operations[Rules Operations] for more info. Again, there are
+<a href="#Rules-Rules-Operations">Rules Operations</a> for more information. Again, there are
 several convenient implementations for constructs like iteration
 (<code>Iteration</code>).</p>
 </div>
@@ -2044,7 +2055,22 @@ several convenient implementations for constructs like iteration
 <div class="sect5">
 <h6 id="_nested_iterations">Nested iterations</h6>
 <div class="paragraph">
-<p>TO_DO: Provide information about nested iterations</p>
+<p>An iteration is also an operation, so everywhere an operation is expected, you can freely put the Iteration. If the Iteration is put inside the perform method of another Iteration, we speak about nested iterations.
+An example of such nested iteration may be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>.addRule()
+     .when(...)
+     .perform(
+     Iteration.over("list_variable").as("single_var")
+       .perform(
+         Iteration.over("single_var") //second iteration
+           .perform(...).endIteration()
+     )
+     .endIteration()
+);</pre>
+</div>
 </div>
 </div>
 <div class="sect5">
@@ -2073,7 +2099,18 @@ For more information, see <a href="http://ocpsoft.org/rewrite/">OCP Rewrite web<
 <div class="sect4">
 <h5 id="_where">Where</h5>
 <div class="paragraph">
-<p>TO_DO: Provide information about the where clause</p>
+<p>The where clause is used to provide information about used parameters within the rule. So for example if you have used a parameter in some condition like for example <code>JavaClass.references("{myMatch}")</code>, you may use the where clause to specify what the <code>myMatch</code> is like <code>.where("myMatch").matches("java.lang.String.toString\(.*\)")</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>.when(JavaClass.references("{myMatch}").at(TypeReferenceLocation.METHOD))
+.perform(...)
+.where("myMatch").matches("java.lang.String.toString\(.*\)")</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>+
+Please note that within the where clause the regex is used in contrast to JavaClass.references() where a windup specific syntax is expected.</p>
 </div>
 </div>
 <div class="sect4">
@@ -2099,39 +2136,75 @@ and not actually used, is <code>RuleMetadata.CATEGORY</code>.</p>
 <p>For a list of what key services and constructs can be used in the rule,
 see <a href="#Rules-Available-Rules-Utilities">Available Rules Utilities</a>.</p>
 </div>
+<div class="sect4">
+<h5 id="_variable_stack">Variable stack</h5>
+<div class="paragraph">
+<p>The communication between the conditions and operations is done using the variable stack that is filled with the output of the condition/s and then given to the Iteration to be processed.
+Within conditions, you can specify the name of the result iterable that is saved in the stack using <code>as()</code> method, the iteration can specify the iterable to iterate over using the <code>over()</code> method and even specify the name of for each processed single model of the result being processed.
+Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>.addRule()
+     .when(Query...as("result_list"))
+     .perform(
+     Iteration.over("result_list").as("single_var")
+          ...
+     )
+);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The varstack may be accesed even from the second condition in order to narrow the result of the previous one. After that the iteration may choose which result it wants to iterate over (it is even possible to have multiple iterations listed in the perform, each of which may access different result saved in the variable stack).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>.addRule()
+     .when(Query...as("result_list").and(Query.from("result_list")....as("second_result_list")))
+     .perform(
+     Iteration.over("second_result_list")
+          ...
+     )
+);</pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="Rules-Basic-Rule-Execution-Flow-Patterns">4.3. Basic Rule Execution Flow Patterns</h3>
-<div class="paragraph">
-<p>TO_DO: Need some links to github to the respective example files.</p>
-</div>
 <div class="sect3">
-<h4 id="_operation_single_operation">4.3.1. operation();  - single operation</h4>
+<h4 id="_single_operation_operation">4.3.1. Single Operation - operation();</h4>
 <div class="paragraph">
-<p>When no iteration or condition is needed.</p>
-</div>
-<div class="paragraph">
-<p>Example: [CopyJavaConfigToGraphRuleProvider](rules-java/src/main/java/org/jboss/windup/rules/apps/java/config/CopyJavaConfigToGraphRuleProvider.java)</p>
+<p>No condition or iteration is needed. The following is an example of a single operation.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
+<pre>return ConfigurationBuilder.begin()
     .addRule()
     .perform(new GraphOperation(){
         @Override
         public void perform(GraphRewrite event, EvaluationContext context){
             ...
         }
-    });</code></pre>
+    });</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Windup source code example: <a href="https://github.com/windup/windup/blob/master/rules-java/impl/src/main/java/org/jboss/windup/rules/apps/java/config/CopyJavaConfigToGraphRuleProvider.java#L99-L101" class="bare">https://github.com/windup/windup/blob/master/rules-java/impl/src/main/java/org/jboss/windup/rules/apps/java/config/CopyJavaConfigToGraphRuleProvider.java#L99-L101</a></p>
+</div>
+<div class="paragraph">
+<p>The <code>copyConfigToGraph</code> GraphOperation used in the perform() above is defined before the rule.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_if_operation_single_conditional_operation">4.3.2. if( &#8230;&#8203; ){ operation(); }  - single conditional operation</h4>
+<h4 id="_single_conditional_operation_if_operation">4.3.2. Single Conditional Operation - if( &#8230;&#8203; ){ operation()}</h4>
+<div class="paragraph">
+<p>A single condition must be met. The following is an example of a single conditional operation.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
+<pre>return ConfigurationBuilder.begin()
     .addRule()
     .when( ... )
     .perform(new GraphOperation(){
@@ -2139,14 +2212,17 @@ see <a href="#Rules-Available-Rules-Utilities">Available Rules Utilities</a>.</p
         public void perform(GraphRewrite event, EvaluationContext context){
             ...
         }
-    });</code></pre>
+    });</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Windup source code example: <a href="https://github.com/windup/windup/blob/master/reporting/api/src/main/java/org/jboss/windup/reporting/rules/AttachApplicationReportsToIndexRuleProvider.java#L39-L41" class="bare">https://github.com/windup/windup/blob/master/reporting/api/src/main/java/org/jboss/windup/reporting/rules/AttachApplicationReportsToIndexRuleProvider.java#L39-L41</a></p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_for_foomodel_class_single_iteration">4.3.3. for( FooModel.class ){ &#8230;&#8203; } - Single iteration</h4>
+<h4 id="_single_iteration_for_foomodel_class">4.3.3. Single Iteration - for( FooModel.class ){ &#8230;&#8203; }</h4>
 <div class="paragraph">
-<p>For simple iterations, <code>IteratingRuleProvider</code> can be used, which makes the <code>perform</code> a bit less verbose:</p>
+<p>For simple iterations, you can extend the <code>IteratingRuleProvider</code> class to simplify the <code>perform</code> code.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2173,9 +2249,12 @@ see <a href="#Rules-Available-Rules-Utilities">Available Rules Utilities</a>.</p
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Windup source code example: <a href="https://github.com/windup/windup/blob/master/rules-java/api/src/main/java/org/jboss/windup/rules/apps/java/scan/provider/DiscoverArchiveManifestFilesRuleProvider.java" class="bare">https://github.com/windup/windup/blob/master/rules-java/api/src/main/java/org/jboss/windup/rules/apps/java/scan/provider/DiscoverArchiveManifestFilesRuleProvider.java</a></p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_if_for_conditional_iteration">4.3.4. if( &#8230;&#8203; ){ for( &#8230;&#8203; ) } - conditional iteration</h4>
+<h4 id="_conditional_iteration_if_for">4.3.4. Conditional Iteration - if( &#8230;&#8203; ){ for( &#8230;&#8203; ) }</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
@@ -2188,12 +2267,15 @@ see <a href="#Rules-Available-Rules-Utilities">Available Rules Utilities</a>.</p
     )</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Windup source code example: <a href="https://github.com/windup/windup/blob/master/rules-java-ee/addon/src/main/java/org/jboss/windup/rules/apps/javaee/rules/DiscoverEjbAnnotationsRuleProvider.java#L82-L93" class="bare">https://github.com/windup/windup/blob/master/rules-java-ee/addon/src/main/java/org/jboss/windup/rules/apps/javaee/rules/DiscoverEjbAnnotationsRuleProvider.java#L82-L93</a></p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_for_if_iteration_with_a_condition">4.3.5. for( &#8230;&#8203; ){ if( &#8230;&#8203; ){ &#8230;&#8203; } } - iteration with a condition</h4>
+<h4 id="_iteration_with_a_condition_for_if">4.3.5. Iteration With a Condition - for( &#8230;&#8203; ){ if( &#8230;&#8203; ){ &#8230;&#8203; } }</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
+<pre>return ConfigurationBuilder.begin()
 .addRule()
     .when(
         // Stores all ArchiveModel's into variables stack, under that type.
@@ -2212,16 +2294,31 @@ see <a href="#Rules-Available-Rules-Utilities">Available Rules Utilities</a>.</p
                     return "ProjectModel == null";
                 }
             })
-            .perform( ... )</code></pre>
+            .perform( ... )</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Windup source code example: <a href="https://github.com/windup/windup/blob/master/reporting/impl/src/main/java/org/jboss/windup/reporting/rules/rendering/RenderReportRuleProvider.java#L46-L66" class="bare">https://github.com/windup/windup/blob/master/reporting/impl/src/main/java/org/jboss/windup/reporting/rules/rendering/RenderReportRuleProvider.java#L46-L66</a></p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_for_for_nested_iterations">4.3.6. for( &#8230;&#8203; ){ for( &#8230;&#8203; ) { &#8230;&#8203; } } - nested iterations</h4>
+<h4 id="_nested_iterations_for_for">4.3.6. Nested Iterations - for( &#8230;&#8203; ){ for( &#8230;&#8203; ) { &#8230;&#8203; } }</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java"></code></pre>
+<pre>.addRule()
+     .when(...)
+     .perform(Iteration //first iteration
+     .over("list_variable").as("single_var")
+     .perform(
+         Iteration.over("single_var") //second iteration
+         .perform(...).endIteration()
+     )
+     .endIteration()
+);</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Windup source code example: <a href="https://github.com/windup/windup/blob/master/config/tests/src/test/java/org/jboss/windup/config/iteration/payload/IterationPayLoadPassTest.java#L183-L202" class="bare">https://github.com/windup/windup/blob/master/config/tests/src/test/java/org/jboss/windup/config/iteration/payload/IterationPayLoadPassTest.java#L183-L202</a></p>
 </div>
 </div>
 </div>
@@ -2999,23 +3096,21 @@ otherwise
 <div class="sect4">
 <h5 id="_summary_4">Summary</h5>
 <div class="paragraph">
-<p>Use the <code>project</code> element to find information in project files. For a better understanding of the <code>project</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/condition/Project.html">Project</a> class.</p>
+<p>Use the <code>project</code> element to query for the project charateristics. For a better understanding of the <code>project</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/condition/Project.html">Project</a> class.</p>
 </div>
 <div class="paragraph">
-<p>The following is an example of a rule that tests for an <code>xmlfile</code>.</p>
+<p>The following is an example of a rule that checks a rule is dependent on the junit in the version between 2.0.0.Final and 2.2.0.Final.</p>
 </div>
 <div class="literalblock">
 <div class="content">
 <pre>&lt;rule&gt;
     &lt;when&gt;
         &lt;project&gt;
-            &lt;artifact groupId="junit" artifactId="junit" from="MyEjbRule" to="???"/&gt;
+            &lt;artifact groupId="junit" artifactId="junit" from="2.0.0.Final" to="2.2.0.Final"/&gt;
         &lt;/project&gt;
     &lt;/when&gt;
     &lt;perform&gt;
-        &lt;hint title="Title for Hint for Project"&gt;
-            &lt;message&gt;Descriptive message&lt;/message&gt;
-        &lt;/hint&gt;
+        &lt;lineitem message="The project uses junit with the version between 2.0.0.Final and 2.2.0.Final"/&gt;
     &lt;/perform&gt;
 &lt;/rule&gt;</pre>
 </div>
@@ -3026,7 +3121,7 @@ otherwise
 <div class="sect5">
 <h6 id="_project_element_attributes">project Element Attributes</h6>
 <div class="paragraph">
-<p>The <code>project</code> element does not have any attributes.</p>
+<p>The <code>project</code> element is used to match against the project as a whole. You can use this condition to query for dependencies of the project. It does not have any attributes itself.</p>
 </div>
 </div>
 <div class="sect5">
@@ -3035,27 +3130,30 @@ otherwise
 <dl>
 <dt class="hdlist1">artifact</dt>
 <dd>
-<p>The namespace to referenced in XML files. This element contains the following attributes:</p>
+<p>Subcondition used within <code>project</code> to query against project dependencies. This element contains the following attributes:</p>
 <div class="ulist">
 <ul>
 <li>
 <p>groupId="PROJECT_GROUP_ID"</p>
 <div class="paragraph">
-<p>Match on the project <code>&lt;groupId&gt;</code></p>
+<p>Match on the project <code>&lt;groupId&gt;</code> of the dependency</p>
 </div>
 </li>
 <li>
 <p>artifactId="PROJECT_ARTIFACT_ID"
-Match on the project <code>&lt;artifactId&gt;</code></p>
+Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </li>
 <li>
-<p>from="VARIABLE_NAME"</p>
+<p>fromVersion="FROM_VERSION"</p>
 <div class="paragraph">
-<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME.</p>
+<p>Specify the lower version bound of the artifact. For example <code>2.0.0.Final</code></p>
 </div>
 </li>
 <li>
-<p>to = TO_DO: complete the project artifact 'to' element syntax</p>
+<p>toVersion="TO_VERSION"</p>
+<div class="paragraph">
+<p>Specify the upper version bound of the artifact. For example <code>2.2.0.Final</code></p>
+</div>
 </li>
 </ul>
 </div>
@@ -3068,13 +3166,7 @@ Match on the project <code>&lt;artifactId&gt;</code></p>
 <div class="sect3">
 <h4 id="filecontent-syntax">5.2.4. filecontent Syntax</h4>
 <div class="paragraph">
-<p>TO_DO: complete the filecontent element syntax</p>
-</div>
-<div class="paragraph">
-<p>Use the <code>filecontent</code> element to find information in file content.For a better understanding of the <code>filecontent</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/files/condition/FileContent.html">FileContent</a> class.</p>
-</div>
-<div class="paragraph">
-<p>Use the <code>filecontent</code> element to test for content within files. The following is an example of a rule that tests for <code>filecontent</code>.</p>
+<p>Use the <code>filecontent</code> element to find strings or text within files, for example, a line in a Properties file. For a better understanding of the <code>filecontent</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/files/condition/FileContent.html">FileContent</a> class.</p>
 </div>
 </div>
 </div>
@@ -3585,20 +3677,23 @@ Match on the project <code>&lt;artifactId&gt;</code></p>
 <div class="sect3">
 <h4 id="_add_the_rule_to_windup">5.4.1. Add the Rule to Windup</h4>
 <div class="paragraph">
-<p>A Windup rule is installed simply by copying the rule to the appropriate Windup folder. Windup scans for rules in the following locations:</p>
+<p>A Windup rule is installed simply by copying the rule to the appropriate Windup folder. Windup scans for rules in the following locations for files ending with <code><strong>.windup.groovy</code> and <code></strong>.windup.xml</code>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>The <code>WINDUP_HOME/rules/</code> folder.</p>
+<p>The directory specified in the <code>--userRulesDirectory</code> option to the <code>windup-migrate-app</code>.</p>
+</li>
+<li>
+<p>The <code>WINDUP_HOME/rules/</code> directory.</p>
 <div class="paragraph">
-<p>This is the folder where you run the Windup executable. See <a href="#About-the-WINDUP_HOME-Variable">About the WINDUP_HOME Variable</a> for details.</p>
+<p><code>WINDUP_HOME</code> is the directory where you run the Windup executable (see <a href="#About-the-WINDUP_HOME-Variable">here</a>).</p>
 </div>
 </li>
 <li>
-<p>The <code>${user.home}/.windup/rules/</code> folder.</p>
+<p>The <code>${user.home}/.windup/rules/</code> directory.</p>
 <div class="paragraph">
-<p>This folder is created by Windup the first time you execute Windup. It used to track rules and add-ons and to contains the Windup log.</p>
+<p>The <code>${user.home}/.windup</code> is a directory created by Windup at first run and contains rules, add-ons, and the Windup log.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4435,7 +4530,7 @@ The complete and up-to-date list of models is in <a href="#http://windup.github.
 
 </div>
 <div class="sect3">
-<h4 id="_custom_models_coming_from_addons">8.3.4. Custom Models (coming from Addons)</h4>
+<h4 id="_custom_models_coming_from_add_ons">8.3.4. Custom Models (coming from add-ons)</h4>
 <div class="paragraph">
 <p>See respective ruleset&#8217;s documentation.</p>
 </div>
@@ -4446,7 +4541,7 @@ The complete and up-to-date list of models is in <a href="#http://windup.github.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-03-30 10:50:06 EDT
+Last updated 2015-04-01 14:59:45 EDT
 </div>
 </div>
 </body>
