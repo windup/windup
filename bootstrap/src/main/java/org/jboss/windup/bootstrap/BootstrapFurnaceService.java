@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.jboss.forge.furnace.ContainerStatus;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
@@ -76,8 +77,6 @@ public class BootstrapFurnaceService
      */
     void start(boolean exitAfter, boolean batchMode) throws InterruptedException, ExecutionException
     {
-        if (exitAfter)
-            return;
 
         if (!batchMode)
         {
@@ -92,7 +91,6 @@ public class BootstrapFurnaceService
                 }
             }
         }
-
         furnace.start();
     }
 
