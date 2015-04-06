@@ -19,58 +19,89 @@ package com.strobel.assembler.metadata;
 import java.util.List;
 
 /**
+ * (WINDUP NOTE: Copied from the procyon source code and used here to override the version in the procyon jar. This will allow us to more reliably
+ * abord the decompilation process within WINDUP). Whenever the thread is interrupted, this will throw an exception indicating that.
+ * 
  * @author Mike Strobel
  */
-final class ParameterizedType extends TypeReference implements IGenericInstance {
+final class ParameterizedType extends TypeReference implements IGenericInstance
+{
     private final TypeReference _genericDefinition;
     private final List<TypeReference> _typeParameters;
 
-    ParameterizedType(final TypeReference genericDefinition, final List<TypeReference> typeParameters) {
+    ParameterizedType(final TypeReference genericDefinition, final List<TypeReference> typeParameters)
+    {
         _genericDefinition = genericDefinition;
         _typeParameters = typeParameters;
     }
 
+    private void exitIfNeeded()
+    {
+        if (Thread.currentThread().isInterrupted())
+        {
+            throw new RuntimeException("Thread interrupted... exiting");
+        }
+    }
+
     @Override
-    public String getName() {
+    public String getName()
+    {
+        exitIfNeeded();
         return _genericDefinition.getName();
     }
 
     @Override
-    public String getPackageName() {
+    public String getPackageName()
+    {
+        exitIfNeeded();
         return _genericDefinition.getPackageName();
     }
 
     @Override
-    public String getFullName() {
+    public String getFullName()
+    {
+        exitIfNeeded();
         return _genericDefinition.getFullName();
     }
 
     @Override
-    public String getInternalName() {
+    public String getInternalName()
+    {
+        exitIfNeeded();
         return _genericDefinition.getInternalName();
     }
 
     @Override
-    public TypeReference getDeclaringType() {
+    public TypeReference getDeclaringType()
+    {
+        exitIfNeeded();
         return _genericDefinition.getDeclaringType();
     }
 
     @Override
-    public String getSimpleName() {
+    public String getSimpleName()
+    {
+        exitIfNeeded();
         return _genericDefinition.getSimpleName();
     }
 
     @Override
-    public boolean isGenericDefinition() {
+    public boolean isGenericDefinition()
+    {
+        exitIfNeeded();
         return false;
     }
 
     @Override
-    public List<GenericParameter> getGenericParameters() {
-        if (!_genericDefinition.isGenericDefinition()) {
+    public List<GenericParameter> getGenericParameters()
+    {
+        exitIfNeeded();
+        if (!_genericDefinition.isGenericDefinition())
+        {
             final TypeDefinition resolvedDefinition = _genericDefinition.resolve();
 
-            if (resolvedDefinition != null) {
+            if (resolvedDefinition != null)
+            {
                 return resolvedDefinition.getGenericParameters();
             }
         }
@@ -79,47 +110,65 @@ final class ParameterizedType extends TypeReference implements IGenericInstance 
     }
 
     @Override
-    public boolean hasTypeArguments() {
+    public boolean hasTypeArguments()
+    {
+        exitIfNeeded();
         return true;
     }
 
     @Override
-    public List<TypeReference> getTypeArguments() {
+    public List<TypeReference> getTypeArguments()
+    {
+        exitIfNeeded();
         return _typeParameters;
     }
 
     @Override
-    public IGenericParameterProvider getGenericDefinition() {
+    public IGenericParameterProvider getGenericDefinition()
+    {
+        exitIfNeeded();
         return _genericDefinition;
     }
 
     @Override
-    public TypeReference getUnderlyingType() {
+    public TypeReference getUnderlyingType()
+    {
+        exitIfNeeded();
         return _genericDefinition;
     }
 
     @Override
-    public final <R, P> R accept(final TypeMetadataVisitor<P, R> visitor, final P parameter) {
+    public final <R, P> R accept(final TypeMetadataVisitor<P, R> visitor, final P parameter)
+    {
+        exitIfNeeded();
         return visitor.visitParameterizedType(this, parameter);
     }
 
     @Override
-    public TypeDefinition resolve() {
+    public TypeDefinition resolve()
+    {
+        exitIfNeeded();
         return _genericDefinition.resolve();
     }
 
     @Override
-    public FieldDefinition resolve(final FieldReference field) {
+    public FieldDefinition resolve(final FieldReference field)
+    {
+        exitIfNeeded();
         return _genericDefinition.resolve(field);
     }
 
     @Override
-    public MethodDefinition resolve(final MethodReference method) {
+    public MethodDefinition resolve(final MethodReference method)
+    {
+        exitIfNeeded();
         return _genericDefinition.resolve(method);
     }
 
     @Override
-    public TypeDefinition resolve(final TypeReference type) {
+    public TypeDefinition resolve(final TypeReference type)
+    {
+        exitIfNeeded();
         return _genericDefinition.resolve(type);
     }
 }
