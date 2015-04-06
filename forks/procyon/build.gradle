@@ -1,0 +1,136 @@
+import org.gradle.api.artifacts.maven.MavenDeployment
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+
+archivesBaseName = 'procyon'
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'maven'
+
+    version "0.5.28"
+
+    group 'org.bitbucket.mstrobel'
+    sourceCompatibility = 1.7    // JDK version
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.11'
+    }
+}
+
+subprojects {
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+
+    archivesBaseName = 'procyon-' + it.name.split("\\.")[1].toLowerCase()
+
+    jar {
+        metaInf {
+            from 'License.txt'
+            from 'README.md'
+        }
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from 'build/docs/javadoc'
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    if (project.name != "Procyon.Decompiler") {
+        javadoc {
+            options.encoding = 'UTF-8'
+        }
+
+        artifacts {
+            archives jar
+            archives javadocJar
+            archives sourcesJar
+        }
+
+        signing {
+            sign configurations.archives
+        }
+
+        uploadArchives {
+            repositories.mavenDeployer {
+                beforeDeployment { MavenDeployment deployment ->
+                    signing.signPom(deployment)
+                }
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                    authentication(userName: project.properties.get("sonatypeUsername"), password: project.properties.get("sonatypePassword"))
+                }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                    authentication(userName: project.properties.get("sonatypeUsername"), password: project.properties.get("sonatypePassword"))
+                }
+
+                pom {
+                    groupId = project.group
+                    version = project.version
+                    artifactId = project.archivesBaseName
+
+                    project {
+                        name project.archivesBaseName
+                        packaging 'jar'
+                        description 'Procyon'
+                        url 'https://bitbucket.org/mstrobel/procyon'
+
+                        scm {
+                            url 'https://bitbucket.org/mstrobel/procyon'
+                            connection 'scm:hg:https://hg@bitbucket.org/mstrobel/procyon'
+                            developerConnection 'scm:hg:https://mstrobel@bitbucket.org/mstrobel/procyon'
+                        }
+
+                        issueManagement {
+                            system 'jira'
+                            url 'https://bitbucket.org/mstrobel/procyon/issues'
+                        }
+
+                        licenses {
+                            license {
+                                name 'The Apache Software License, Version 2.0'
+                                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'mstrobel'
+                                name 'Mike Strobel'
+                                roles {
+                                    role 'owner'
+                                    role 'packager'
+                                    role 'developer'
+                                }
+                            }
+                        }
+
+                        dependencies {
+                            dependency {
+                                groupId 'junit'
+                                artifactId 'junit'
+                                version '4.11'
+                                scope 'test'
+//                                optional = true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
