@@ -107,15 +107,15 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         Assert.assertTrue(util
                     .checkStaticIPInReport(
                                 "org.apache.wicket.protocol.http.mock.MockHttpServletRequest",
-                                "Line Number 140, Column Number 25", "127.0.0.1"));
+                                "Line Number 83, Column Number 25", "127.0.0.1"));
         Assert.assertTrue(util
                     .checkStaticIPInReport(
                                 "org.apache.wicket.protocol.http.mock.MockHttpServletRequest",
-                                "Line Number 653, Column Number 16", "127.0.0.1"));
+                                "Line Number 616, Column Number 16", "127.0.0.1"));
         Assert.assertTrue(util
                     .checkStaticIPInReport(
                                 "org.apache.wicket.protocol.http.mock.MockHttpServletRequest",
-                                "Line Number 656, Column Number 16", "127.0.0.1"));
+                                "Line Number 619, Column Number 16", "127.0.0.1"));
     }
 
     /**

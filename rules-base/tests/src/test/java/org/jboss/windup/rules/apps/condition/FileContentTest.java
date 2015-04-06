@@ -34,8 +34,6 @@ import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.files.condition.FileContent;
@@ -94,18 +92,12 @@ public class FileContentTest
     {
         try (GraphContext context = factory.create())
         {
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-            pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-            inputPath.setFilePath("src/test/resources/");
+            Path inputPath = Paths.get("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
-
-            inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class,
                         MigrationRulesPhase.class));
@@ -113,7 +105,7 @@ public class FileContentTest
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(predicate)
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
@@ -135,6 +127,7 @@ public class FileContentTest
             boolean foundFile2Line2 = false;
             boolean foundFile2Line3 = false;
             boolean foundFile2Line4 = false;
+            boolean foundFile3Needle = false;
             for (int i = 0; i < provider.rule1ResultStrings.size(); i++)
             {
                 FileLocationModel location = provider.rule1ResultModels.get(i);
@@ -181,6 +174,17 @@ public class FileContentTest
             Assert.assertTrue(foundFile2Line2);
             Assert.assertTrue(foundFile2Line3);
             Assert.assertTrue(foundFile2Line4);
+
+            for (int i = 0; i < provider.rule2ResultStrings.size(); i++)
+            {
+                FileLocationModel location = provider.rule2ResultModels.get(i);
+                System.out.println("Rule 2 Location: " + location);
+                if (location.getFile().getFileName().equals("file3.txt") && location.getLineNumber() == 30721 && location.getColumnNumber() == 15)
+                {
+                    foundFile3Needle = true;
+                }
+            }
+            Assert.assertTrue(foundFile3Needle);
         }
     }
 
@@ -189,6 +193,8 @@ public class FileContentTest
     {
         private List<String> rule1ResultStrings = new ArrayList<>();
         private List<FileLocationModel> rule1ResultModels = new ArrayList<>();
+        private List<String> rule2ResultStrings = new ArrayList<>();
+        private List<FileLocationModel> rule2ResultModels = new ArrayList<>();
 
         public FileContentTestRuleProvider()
         {
@@ -203,26 +209,43 @@ public class FileContentTest
             return ConfigurationBuilder.begin()
             .addRule()
             .when(FileContent.matches("file {text}.").inFilesNamed("{*}.txt"))
-            .perform(new ParameterizedIterationOperation<FileLocationModel>()
-            {
+            .perform(new ParameterizedIterationOperation<FileLocationModel>() {
                 private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{text}");
 
                 @Override
-                public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-                {
+                public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
                     rule1ResultStrings.add(textPattern.getBuilder().build(event, context));
                     rule1ResultModels.add(payload);
                 }
 
                 @Override
-                public Set<String> getRequiredParameterNames()
-                {
+                public Set<String> getRequiredParameterNames() {
                     return textPattern.getRequiredParameterNames();
                 }
 
                 @Override
-                public void setParameterStore(ParameterStore store)
-                {
+                public void setParameterStore(ParameterStore store) {
+                    textPattern.setParameterStore(store);
+                }
+            })
+            .addRule()
+            .when(FileContent.matches(" THE {needle} IN THE HAYSTACK {*}").inFilesNamed("{*}.txt"))
+            .perform(new ParameterizedIterationOperation<FileLocationModel>() {
+                private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{needle}");
+
+                @Override
+                public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
+                    rule2ResultStrings.add(textPattern.getBuilder().build(event, context));
+                    rule2ResultModels.add(payload);
+                }
+
+                @Override
+                public Set<String> getRequiredParameterNames() {
+                    return textPattern.getRequiredParameterNames();
+                }
+
+                @Override
+                public void setParameterStore(ParameterStore store) {
                     textPattern.setParameterStore(store);
                 }
             });
