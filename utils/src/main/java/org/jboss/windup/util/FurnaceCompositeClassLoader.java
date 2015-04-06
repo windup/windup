@@ -2,14 +2,15 @@ package org.jboss.windup.util;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FurnaceCompositeClassLoader extends ClassLoader
 {
-    private final List<ClassLoader> loaders = Collections.synchronizedList(new ArrayList<ClassLoader>());
+    private final Set<ClassLoader> loaders = new LinkedHashSet<ClassLoader>();
 
     public FurnaceCompositeClassLoader(List<ClassLoader> loaders)
     {
@@ -74,7 +75,7 @@ public class FurnaceCompositeClassLoader extends ClassLoader
     @Override
     public Enumeration<URL> getResources(String name) throws IOException
     {
-        List<URL> result = new ArrayList<>();
+        Set<URL> result = new LinkedHashSet<>();
         for (ClassLoader classLoader : loaders)
         {
             result.addAll(Collections.list(classLoader.getResources(name)));
@@ -83,11 +84,12 @@ public class FurnaceCompositeClassLoader extends ClassLoader
         ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
         if (contextLoader != null)
         {
-            return contextLoader.getResources(name);
+            result.addAll(Collections.list(contextLoader.getResources(name)));
         }
         else
         {
-            return super.getResources(name);
+            result.addAll(Collections.list(super.getResources(name)));
         }
+        return Collections.enumeration(result);
     }
 }
