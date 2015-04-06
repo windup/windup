@@ -261,6 +261,16 @@
                 <version>${project.version}</version>
             </dependency>
 
+
+            <!-- === Maven Plugins === -->
+
+            <dependency>
+                <groupId>org.jboss.forge.furnace</groupId>
+                <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.forge}</version>
+            </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 </project>
