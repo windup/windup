@@ -11,7 +11,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.archives.identify.ChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.ArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
@@ -22,8 +22,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
 
 /**
- * {@link GraphChangedListener} responsible for identifying {@link ArchiveModel} instances when they are added to the
- * graph.
+ * {@link GraphChangedListener} responsible for identifying {@link ArchiveModel} instances when they are added to the graph.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
@@ -32,7 +31,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
 {
     private static final Logger log = Logger.getLogger(ArchiveIdentificationGraphChangedListener.class.getName());
 
-    private final ChecksumIdentifier identifier;
+    private final ArchiveIdentificationService identifier;
 
     private GraphContext context;
 
@@ -42,7 +41,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
         return this;
     }
 
-    public ArchiveIdentificationGraphChangedListener(GraphContext context, ChecksumIdentifier identifier)
+    public ArchiveIdentificationGraphChangedListener(GraphContext context, ArchiveIdentificationService identifier)
     {
         this.identifier = identifier;
         this.context = context;

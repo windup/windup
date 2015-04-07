@@ -14,6 +14,12 @@
     <dependencies>
 
         <!-- Local Dependencies -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>4.8.1</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>

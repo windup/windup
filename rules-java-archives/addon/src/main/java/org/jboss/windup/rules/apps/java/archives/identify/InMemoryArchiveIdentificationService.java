@@ -14,12 +14,12 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
- * In-memory implementation of {@link ChecksumIdentifier}.
+ * In-memory implementation of {@link ArchiveIdentificationService}.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class InMemoryChecksumIdentifier implements ChecksumIdentifier
+public class InMemoryArchiveIdentificationService implements ArchiveIdentificationService
 {
     private final Map<String, String> map = new TreeMap<>();
 
@@ -37,12 +37,13 @@ public class InMemoryChecksumIdentifier implements ChecksumIdentifier
         return CoordinateBuilder.create(coordinate);
     }
 
-    public void addMapping(String checksum, String coordinate)
+    public InMemoryArchiveIdentificationService addMapping(String checksum, String coordinate)
     {
         map.put(checksum, coordinate);
+        return this;
     }
 
-    public void addMappingsFrom(File file)
+    public InMemoryArchiveIdentificationService addMappingsFrom(File file)
     {
         try (FileInputStream inputStream = new FileInputStream(file))
         {
@@ -66,6 +67,7 @@ public class InMemoryChecksumIdentifier implements ChecksumIdentifier
         {
             throw new WindupException("Failed to load SHA1 to " + Coordinate.class.getSimpleName() + " definitions from [" + file + "]", e);
         }
+        return this;
     }
 
 }

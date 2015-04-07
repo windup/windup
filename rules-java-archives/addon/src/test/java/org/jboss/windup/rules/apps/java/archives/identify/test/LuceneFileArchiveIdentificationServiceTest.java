@@ -1,26 +1,26 @@
 package org.jboss.windup.rules.apps.java.archives.identify.test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+
 import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.windup.rules.apps.java.archives.identify.SortedFileChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.ArchiveIdentificationService;
+import org.jboss.windup.rules.apps.java.archives.identify.LuceneArchiveIdentificationService;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class SortedFileChecksumIdentifierTest
+public class LuceneFileArchiveIdentificationServiceTest
 {
 
     @Test
-    public void testGetCoordinateFromSHA1() throws FileNotFoundException
+    public void testGetCoordinateFromSHA1() throws Exception
     {
-        final File file = new File("target/test-nexus-data/central.archive-metadata.txt");
+        final File file = new File("target/test-nexus-data/lucene/");
         Assert.assertTrue("Test file does not exist", file.exists());
-        SortedFileChecksumIdentifier ident = new SortedFileChecksumIdentifier(file);
+        LuceneArchiveIdentificationService ident = new LuceneArchiveIdentificationService(file);
 
         Coordinate coordinate = ident.getCoordinate("55555555564e84315e83c6ba4a855b07ba51166b");
         Assert.assertNull("No coordinate for 55555555564e84315e83c6ba4a855b07ba51166b", coordinate);
@@ -44,8 +44,7 @@ public class SortedFileChecksumIdentifierTest
         check(ident, "7ff0d167a6816aa113b1b4a8a37515701a74b288", "org.kill-bill.billing:killbill-platform-osgi-bundles-lib-slf4j-osgi:jar::0.1.0");
     }
 
-
-    private static void check(SortedFileChecksumIdentifier ident, String hash, String coordString)
+    private static void check(ArchiveIdentificationService ident, String hash, String coordString)
     {
         Coordinate coord = ident.getCoordinate(hash);
         Assert.assertNotNull("Coordinate found for " + hash, coord);

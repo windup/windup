@@ -12,8 +12,9 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.archives.identify.CompositeChecksumIdentifier;
-import org.jboss.windup.rules.apps.java.archives.identify.SortedFileChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
+import org.jboss.windup.rules.apps.java.archives.identify.InMemoryArchiveIdentificationService;
+import org.jboss.windup.rules.apps.java.archives.identify.LuceneArchiveIdentificationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -24,7 +25,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Loads configuration/metadata for {@link ArchiveIdentificationRuleProvider}.
+ * Loads configuration/metadata for identifying archives by SHA1 hashes.
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -40,38 +41,71 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
     }
 
     @Inject
-    private CompositeChecksumIdentifier identifier;
+    private CompositeArchiveIdentificationService identifier;
 
     @Override
     public Configuration getConfiguration(final GraphContext grCtx)
     {
-        ConfigurationBuilder config = ConfigurationBuilder.begin();
-        config.addRule().perform(new GraphOperation()
-        {
-            public void perform(GraphRewrite event, EvaluationContext evCtx)
-            {
-                Visitor<File> visitor = new Visitor<File>()
-                {
-                    @Override
-                    public void visit(File file)
-                    {
-                        try
-                        {
-                            log.info("Loading archive identification data from [" + file.getAbsolutePath() + "]");
-                            identifier.addIdentifier(new SortedFileChecksumIdentifier(file));
-                        }
-                        catch (Exception e)
-                        {
-                            throw new WindupException("Failed to load identification data from file [" + file + "]", e);
-                        }
-                    }
-                };
+        return ConfigurationBuilder.begin()
+                    .addRule()
+                    .perform(new AddDelimitedFileIndexOperation())
+                    .addRule()
+                    .perform(new AddLuceneFileIndexOperation());
+    }
 
-                FileSuffixPredicate predicate = new FileSuffixPredicate("\\.archive-metadata\\.txt");
-                FileVisit.visit(PathUtil.getUserCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
-                FileVisit.visit(PathUtil.getWindupCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
-            }
-        });
-        return config;
+    private class AddDelimitedFileIndexOperation extends GraphOperation
+    {
+        @Override
+        public void perform(GraphRewrite event, EvaluationContext context)
+        {
+            Visitor<File> visitor = new Visitor<File>()
+            {
+                @Override
+                public void visit(File file)
+                {
+                    try
+                    {
+                        log.info("Loading archive identification data from [" + file.getAbsolutePath() + "]");
+                        identifier.addIdentifier(new InMemoryArchiveIdentificationService().addMappingsFrom(file));
+                    }
+                    catch (Exception e)
+                    {
+                        throw new WindupException("Failed to load identification data from file [" + file + "]", e);
+                    }
+                }
+            };
+
+            FileSuffixPredicate predicate = new FileSuffixPredicate("\\.archive-metadata\\.txt");
+            FileVisit.visit(PathUtil.getUserCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
+            FileVisit.visit(PathUtil.getWindupCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
+        }
+    }
+
+    private class AddLuceneFileIndexOperation extends GraphOperation
+    {
+        @Override
+        public void perform(GraphRewrite event, EvaluationContext context)
+        {
+            Visitor<File> visitor = new Visitor<File>()
+            {
+                @Override
+                public void visit(File file)
+                {
+                    try
+                    {
+                        log.info("Loading archive identification data from [" + file.getAbsolutePath() + "]");
+                        identifier.addIdentifier(new LuceneArchiveIdentificationService(file.getParentFile()));
+                    }
+                    catch (Exception e)
+                    {
+                        throw new WindupException("Failed to load identification data from file [" + file + "]", e);
+                    }
+                }
+            };
+
+            FileSuffixPredicate predicate = new FileSuffixPredicate("archive-metadata\\.lucene\\.marker");
+            FileVisit.visit(PathUtil.getUserCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
+            FileVisit.visit(PathUtil.getWindupCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
+        }
     }
 }

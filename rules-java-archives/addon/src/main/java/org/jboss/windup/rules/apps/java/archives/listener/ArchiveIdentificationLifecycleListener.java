@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import org.jboss.windup.config.AbstractRuleLifecycleListener;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.rules.apps.java.archives.identify.CompositeChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
 
 /**
  * Registers the {@link ArchiveIdentificationGraphChangedListener}.
@@ -19,7 +19,7 @@ public class ArchiveIdentificationLifecycleListener extends AbstractRuleLifecycl
     private static final Logger LOG = Logger.getLogger(ArchiveIdentificationLifecycleListener.class.getSimpleName());
 
     @Inject
-    private CompositeChecksumIdentifier identifier;
+    private CompositeArchiveIdentificationService identifier;
 
     @Override
     public void beforeExecution(GraphRewrite event)

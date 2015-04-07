@@ -29,8 +29,8 @@ import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.archives.identify.CompositeChecksumIdentifier;
-import org.jboss.windup.rules.apps.java.archives.identify.InMemoryChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
+import org.jboss.windup.rules.apps.java.archives.identify.InMemoryArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.junit.Assert;
@@ -81,7 +81,7 @@ public class IdentifyArchivesRulesetTest
     private GraphContextFactory contextFactory;
 
     @Inject
-    private CompositeChecksumIdentifier identifier;
+    private CompositeArchiveIdentificationService identifier;
 
     @Test
     public void testJarsAreIdentified() throws Exception
@@ -90,7 +90,7 @@ public class IdentifyArchivesRulesetTest
         {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 
-            InMemoryChecksumIdentifier inMemoryIdentifier = new InMemoryChecksumIdentifier();
+            InMemoryArchiveIdentificationService inMemoryIdentifier = new InMemoryArchiveIdentificationService();
             inMemoryIdentifier.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", LOG4J_COORDINATE);
             identifier.addIdentifier(inMemoryIdentifier);
 
