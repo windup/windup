@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
@@ -27,7 +28,8 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
     /**
      * This is the "root" directory for this source file.
      * 
-     * For example, if you have a file at "/project/src/main/java/org/example/Foo.java" then this would point the directory "/project/src/main/java".
+     * For example, if you have a file at "/project/src/main/java/org/example/Foo.java" then this would point the
+     * directory "/project/src/main/java".
      * 
      */
     @Adjacency(label = ROOT_SOURCE_FOLDER, direction = Direction.OUT)
@@ -36,7 +38,8 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
     /**
      * This is the "root" directory for this source file.
      * 
-     * For example, if you have a file at "/project/src/main/java/org/example/Foo.java" then this would point the directory "/project/src/main/java".
+     * For example, if you have a file at "/project/src/main/java/org/example/Foo.java" then this would point the
+     * directory "/project/src/main/java".
      * 
      */
     @Adjacency(label = ROOT_SOURCE_FOLDER, direction = Direction.OUT)
@@ -45,6 +48,7 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
     /**
      * Contains the Java package name
      */
+    @Indexed
     @Property(PACKAGE_NAME)
     String getPackageName();
 

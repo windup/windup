@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
@@ -11,9 +12,9 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * This classifies files and provides general background information about a specific {@link FileModel}. (For instance, an XML file may be classified
- * as a "XYZ Configuration File".) A {@link ClassificationModel} may also contain links to additional information, or
- * auto-translated/generated/updated versions of the source file.
+ * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,
+ * an XML file may be classified as a "XYZ Configuration File".) A {@link ClassificationModel} may also contain links to
+ * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(ClassificationModel.TYPE)
 public interface ClassificationModel extends WindupVertexFrame
@@ -68,6 +69,7 @@ public interface ClassificationModel extends WindupVertexFrame
     /**
      * Set text of this {@link ClassificationModel}.
      */
+    @Indexed
     @Property(CLASSIFICATION)
     void setClassifiation(String classification);
 

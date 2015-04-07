@@ -1,10 +1,13 @@
 package org.jboss.windup.graph;
 
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.BaseConfiguration;
@@ -12,6 +15,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
@@ -30,6 +34,7 @@ import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
@@ -39,9 +44,10 @@ public class GraphContextImpl implements GraphContext
 {
     private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
 
-    private Furnace furnace;
+    private final Furnace furnace;
     private Map<String, Object> configurationOptions;
     private final GraphTypeRegistry graphTypeRegistry;
+    private final GraphTypeManager graphTypeManager;
     private EventGraph<TitanGraph> eventGraph;
     private BatchGraph<TitanGraph> batchGraph;
     private FramedGraph<EventGraph<TitanGraph>> framed;
@@ -51,11 +57,12 @@ public class GraphContextImpl implements GraphContext
 
     private GraphApiCompositeClassLoaderProvider classLoaderProvider;
 
-    public GraphContextImpl(Furnace furnace, GraphTypeRegistry graphTypeRegistry, GraphApiCompositeClassLoaderProvider classLoaderProvider,
-                Path graphDir)
+    public GraphContextImpl(Furnace furnace, GraphTypeRegistry typeRegistry, GraphTypeManager typeManager,
+                GraphApiCompositeClassLoaderProvider classLoaderProvider, Path graphDir)
     {
         this.furnace = furnace;
-        this.graphTypeRegistry = graphTypeRegistry;
+        this.graphTypeRegistry = typeRegistry;
+        this.graphTypeManager = typeManager;
         this.classLoaderProvider = classLoaderProvider;
         this.graphDir = graphDir;
     }
@@ -64,7 +71,7 @@ public class GraphContextImpl implements GraphContext
     {
         FileUtils.deleteQuietly(graphDir.toFile());
         TitanGraph titan = initializeTitanGraph();
-        initializeTitanManagement(titan);
+        initializeTitanIndexes(titan);
         createFramed(titan);
         fireListeners();
         return this;
@@ -106,7 +113,7 @@ public class GraphContextImpl implements GraphContext
 
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
-        final FrameClassLoaderResolver fclr = new FrameClassLoaderResolver()
+        final FrameClassLoaderResolver classLoaderResolver = new FrameClassLoaderResolver()
         {
             public ClassLoader resolveClassLoader(Class<?> frameType)
             {
@@ -119,10 +126,8 @@ public class GraphContextImpl implements GraphContext
             @Override
             public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
             {
-                // Composite classloader
-                config.setFrameClassLoaderResolver(fclr);
+                config.setFrameClassLoaderResolver(classLoaderResolver);
 
-                // Custom annotations handlers.
                 config.addMethodHandler(new MapInPropertiesHandler());
                 config.addMethodHandler(new MapInAdjacentPropertiesHandler());
                 config.addMethodHandler(new MapInAdjacentVerticesHandler());
@@ -132,59 +137,82 @@ public class GraphContextImpl implements GraphContext
         };
 
         FramedGraphFactory factory = new FramedGraphFactory(
-                    addModules, // See above
-                    new JavaHandlerModule(), // @JavaHandler
-                    graphTypeRegistry.build(), // Model classes
-                    new GremlinGroovyModule() // @Gremlin
+                    addModules,
+                    new JavaHandlerModule(), // Supports @JavaHandler
+                    graphTypeRegistry.build(), // Adds detected WindupVertexFrame/Model classes
+                    new GremlinGroovyModule() // Supports @Gremlin
         );
 
         framed = factory.create(eventGraph);
     }
 
-    private void initializeTitanManagement(TitanGraph titanGraph)
+    private void initializeTitanIndexes(TitanGraph titanGraph)
     {
-        // TODO: This has to load dynamically. WINDUP-198
-        // E.g. get all Model classes and look for @Indexed - org.jboss.windup.graph.api.model.anno.
-        // We need to hard-code the property names here since we can't depend on rulesets' addons.
-        String[] keys = new String[] {
-                    // rules/apps/xml/model/NamespaceMetaModel
-                    "namespaceURI",
-                    "schemaLocation",
-                    // rules/apps/xml/model/XmlFileModel
-                    "rootTagName",
-                    // rules/apps/java/model/JavaClassModel
-                    "qualifiedName",
-                    // graph/model/resource/FileModel
-                    "filePath",
-                    // rules/apps/java/model/project/MavenProjectModel
-                    "mavenIdentifier",
-                    // JavaClassModel, JavaClassFileModel, JavaSourceFileModel, PackageModel - possible collision!
-                    "packageName",
+        Set<String> defaultIndexKeys = new HashSet<>();
+        Set<String> searchIndexKeys = new HashSet<>();
+        Set<String> listIndexKeys = new HashSet<>();
 
-                    "DoctypeMeta:publicId", "DoctypeMeta:systemId",
-                    "ClassificationModel:classification"
-        };
-
-        TitanManagement mgmt = titanGraph.getManagementSystem();
-
-        for (String key : keys)
+        Set<Class<? extends WindupVertexFrame>> modelTypes = graphTypeManager.getRegisteredTypes();
+        for (Class<? extends WindupVertexFrame> type : modelTypes)
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
-            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
+            for (Method method : type.getDeclaredMethods())
+            {
+                Indexed index = method.getAnnotation(Indexed.class);
+                if (index != null)
+                {
+                    Property property = Annotations.getAnnotation(method, Property.class);
+                    if (property != null)
+                    {
+                        switch (index.value())
+                        {
+                        case DEFAULT:
+                            defaultIndexKeys.add(property.value());
+                            break;
+
+                        case SEARCH:
+                            searchIndexKeys.add(property.value());
+                            break;
+
+                        case LIST:
+                            listIndexKeys.add(property.value());
+                            break;
+
+                        default:
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
-        for (String key : new String[] { "referenceSourceSnippit" })
+        /*
+         * This is the root Model index that enables us to query on frame-type (by subclass type, etc.) Without this,
+         * every typed query would be slow. Do not remove this unless something really paradigm-shifting has happened.
+         */
+        listIndexKeys.add(WindupVertexFrame.TYPE_PROP);
+
+        log.info("Detected and initialized [" + defaultIndexKeys.size() + "] indexes: " + defaultIndexKeys);
+
+        TitanManagement titan = titanGraph.getManagementSystem();
+        for (String key : defaultIndexKeys)
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
-            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
+            PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
+            titan.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
-        for (String key : new String[] { WindupVertexFrame.TYPE_PROP })
+        for (String key : searchIndexKeys)
         {
-            PropertyKey propKey = mgmt.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.LIST).make();
-            mgmt.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
+            PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
+            titan.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
         }
-        mgmt.commit();
+
+        for (String key : listIndexKeys)
+        {
+            PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.LIST).make();
+            titan.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
+        }
+
+        titan.commit();
     }
 
     private TitanGraph initializeTitanGraph()

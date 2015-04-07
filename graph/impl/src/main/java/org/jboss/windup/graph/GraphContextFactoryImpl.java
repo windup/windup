@@ -24,33 +24,42 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     @Inject
     private GraphTypeRegistry graphTypeRegistry;
 
+    @Inject
+    private GraphTypeManager graphTypeManager;
+
     private GraphContext graphContext;
 
     @Override
     public GraphContext create()
     {
         return new GraphContextImpl(
-                    this.furnace,
-                    this.graphTypeRegistry,
-                    this.graphApiCompositeClassLoaderProvider, getTempGraphDirectory()).create();
+                    furnace,
+                    graphTypeRegistry,
+                    graphTypeManager,
+                    graphApiCompositeClassLoaderProvider,
+                    getTempGraphDirectory()).create();
     }
 
     @Override
     public GraphContext create(Path graphDir)
     {
         return new GraphContextImpl(
-                    this.furnace,
-                    this.graphTypeRegistry,
-                    this.graphApiCompositeClassLoaderProvider, graphDir).create();
+                    furnace,
+                    graphTypeRegistry,
+                    graphTypeManager,
+                    graphApiCompositeClassLoaderProvider,
+                    graphDir).create();
     }
-    
+
     @Override
     public GraphContext load(Path graphDir)
     {
         return new GraphContextImpl(
-                    this.furnace,
-                    this.graphTypeRegistry,
-                    this.graphApiCompositeClassLoaderProvider, graphDir).load();
+                    furnace,
+                    graphTypeRegistry,
+                    graphTypeManager,
+                    graphApiCompositeClassLoaderProvider,
+                    graphDir).load();
     }
 
     @Produces
@@ -70,5 +79,4 @@ public class GraphContextFactoryImpl implements GraphContextFactory
                     .toPath();
     }
 
-    
 }

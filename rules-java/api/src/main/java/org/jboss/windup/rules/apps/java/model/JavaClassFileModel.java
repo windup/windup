@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -31,6 +32,7 @@ public interface JavaClassFileModel extends FileModel
     /**
      * Contains the package name represented by this class file.
      */
+    @Indexed
     @Property(PROPERTY_PACKAGE_NAME)
     public void setPackageName(String packageName);
 

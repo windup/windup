@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
@@ -61,6 +62,7 @@ public interface JavaClassModel extends WindupVertexFrame
     /**
      * Contains the fully qualified name of the class
      */
+    @Indexed
     @Property(QUALIFIED_NAME)
     public String getQualifiedName();
 
@@ -73,6 +75,7 @@ public interface JavaClassModel extends WindupVertexFrame
     /**
      * Contains the class' package name
      */
+    @Indexed
     @Property(PACKAGE_NAME)
     String getPackageName();
 
@@ -119,37 +122,43 @@ public interface JavaClassModel extends WindupVertexFrame
     Iterable<JavaClassModel> getImplements();
 
     /**
-     * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was decompiled from a .class file)
+     * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was
+     * decompiled from a .class file)
      */
     @Adjacency(label = DECOMPILED_SOURCE, direction = Direction.OUT)
     void setDecompiledSource(JavaSourceFileModel source);
 
     /**
-     * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was decompiled from a .class file)
+     * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was
+     * decompiled from a .class file)
      */
     @Adjacency(label = DECOMPILED_SOURCE, direction = Direction.OUT)
     JavaSourceFileModel getDecompiledSource();
 
     /**
-     * Contains the original source code of this file, assuming that it was originally provided in source form (and not via a decompilation).
+     * Contains the original source code of this file, assuming that it was originally provided in source form (and not
+     * via a decompilation).
      */
     @Adjacency(label = ORIGINAL_SOURCE, direction = Direction.OUT)
     void setOriginalSource(JavaSourceFileModel source);
 
     /**
-     * Contains the original source code of this file, assuming that it was originally provided in source form (and not via a decompilation).
+     * Contains the original source code of this file, assuming that it was originally provided in source form (and not
+     * via a decompilation).
      */
     @Adjacency(label = ORIGINAL_SOURCE, direction = Direction.OUT)
     JavaSourceFileModel getOriginalSource();
 
     /**
-     * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class file)
+     * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class
+     * file)
      */
     @Adjacency(label = CLASS_FILE, direction = Direction.OUT)
     FileModel getClassFile();
 
     /**
-     * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class file)
+     * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class
+     * file)
      */
     @Adjacency(label = CLASS_FILE, direction = Direction.OUT)
     FileModel setClassFile(FileModel file);
