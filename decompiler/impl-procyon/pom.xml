@@ -15,7 +15,7 @@
     <name>Windup Engine - Decompiler Procyon</name>
 
     <properties>
-        <version.procyon>0.5.27</version.procyon>
+        <version.procyon>0.5.28-WINDUP</version.procyon>
     </properties>
 
     <dependencies>
