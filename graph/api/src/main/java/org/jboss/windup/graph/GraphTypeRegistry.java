@@ -96,7 +96,6 @@ public class GraphTypeRegistry
 
         for (Class<?> clazz : classes)
         {
-            // Add those extending WindupVertexFrame.
             if (WindupVertexFrame.class.isAssignableFrom(clazz))
             {
                 LOG.fine("    Found: " + clazz);

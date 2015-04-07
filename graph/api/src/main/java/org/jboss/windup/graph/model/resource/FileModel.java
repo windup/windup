@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.util.exception.WindupException;
@@ -47,20 +48,24 @@ public interface FileModel extends ResourceModel
     public static final String IS_DIRECTORY = "isDirectory";
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
+     * to "file.txt"
      */
     @Property(FILE_NAME)
     public String getFileName();
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
+     * to "file.txt"
      */
+    @Indexed
     @Property(FILE_NAME)
     public void setFileName(String filename);
 
     /**
      * Contains the full path to the file (eg, /tmp/foo/bar/file.txt)
      */
+    @Indexed
     @Property(FILE_PATH)
     public String getFilePath();
 

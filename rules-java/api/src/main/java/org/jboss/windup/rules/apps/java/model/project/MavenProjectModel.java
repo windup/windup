@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.model.project;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
@@ -58,6 +59,7 @@ public interface MavenProjectModel extends ProjectModel
     /**
      * The full maven id (groupid, artifactid, and version).
      */
+    @Indexed
     @Property(MAVEN_IDENTIFIER)
     String getMavenIdentifier();
 

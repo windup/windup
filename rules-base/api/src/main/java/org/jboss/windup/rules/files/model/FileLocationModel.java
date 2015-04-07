@@ -1,5 +1,7 @@
 package org.jboss.windup.rules.files.model;
 
+import org.jboss.windup.graph.IndexType;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -46,13 +48,15 @@ public interface FileLocationModel extends FileReferenceModel
     int getColumnNumber();
 
     /**
-     * Set the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel} .
+     * Set the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel}
+     * .
      */
     @Property(LENGTH)
     void setLength(int length);
 
     /**
-     * Get the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel} .
+     * Get the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel}
+     * .
      */
     @Property(LENGTH)
     int getLength();
@@ -60,6 +64,7 @@ public interface FileLocationModel extends FileReferenceModel
     /**
      * Gets the snippit referenced by this {@link FileLocationModel}.
      */
+    @Indexed(IndexType.SEARCH)
     @Property(SOURCE_SNIPPIT)
     void setSourceSnippit(String source);
 

@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.xml.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
@@ -22,9 +23,11 @@ public interface NamespaceMetaModel extends WindupVertexFrame
     @Property("namespaceURI")
     public String getURI();
 
+    @Indexed
     @Property("namespaceURI")
     public void setURI(String uri);
 
+    @Indexed
     @Property("schemaLocation")
     public String getSchemaLocation();
 

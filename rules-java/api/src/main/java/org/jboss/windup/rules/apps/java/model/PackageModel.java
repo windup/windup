@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.Property;
@@ -15,6 +16,7 @@ public interface PackageModel extends WindupVertexFrame
     public static final String TYPE = "WindupServiceConfigurationPackageModel";
     public static final String PACKAGE_NAME = "packageName";
 
+    @Indexed
     @Property(PACKAGE_NAME)
     public String getPackageName();
 
