@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
-import org.jboss.windup.rules.apps.java.archives.identify.InMemoryChecksumIdentifier;
+import org.jboss.windup.rules.apps.java.archives.identify.InMemoryArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -15,12 +15,12 @@ import org.junit.Test;
  * @author Ondrej Zizka, ozizka at redhat.com
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ArchiveCoordinateIdentifierTest
+public class ArchiveCoordinateIdentificationTest
 {
     private static final String DATA_PATH = "src/test/resources/";
     private static final File SKIPLIST_FILE = new File(DATA_PATH + "/skippedArchives.txt");
 
-    InMemoryChecksumIdentifier identifier = new InMemoryChecksumIdentifier();
+    InMemoryArchiveIdentificationService identifier = new InMemoryArchiveIdentificationService();
 
     @Test
     public void testIdentifyArchive() throws IOException
