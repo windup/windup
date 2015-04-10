@@ -18,10 +18,9 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ui.RulesetUpdateChecker;
@@ -34,32 +33,22 @@ import org.junit.runner.RunWith;
 public class WindupUpdateRulesetCommandTest
 {
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
                 @AddonDependency(name = "org.jboss.forge.addon:maven"),
                 @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        ForgeArchive archive = ShrinkWrap
-                    .create(ForgeArchive.class)
+        AddonArchive archive = ShrinkWrap
+                    .create(AddonArchive.class)
                     .addBeansXML()
-                    .addAsResource(WindupCommandTest.class.getResource(TEST_OLD_WINDUP), TEST_OLD_WINDUP)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.ui:windup-ui"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                                AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                                AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-                    );
-
+                    .addAsResource(WindupCommandTest.class.getResource(TEST_OLD_WINDUP), TEST_OLD_WINDUP);
         return archive;
     }
 
@@ -67,7 +56,7 @@ public class WindupUpdateRulesetCommandTest
 
     @Inject
     private DependencyResolver resolver;
-    
+
     @Inject
     private UITestHarness uiTestHarness;
 

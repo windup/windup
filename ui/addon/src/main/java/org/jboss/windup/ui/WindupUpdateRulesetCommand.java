@@ -1,6 +1,5 @@
 package org.jboss.windup.ui;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -8,9 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipInputStream;
 
 import javax.inject.Inject;
 
@@ -22,7 +18,6 @@ import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -36,10 +31,9 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.windup.util.PathUtil;
 
 /**
- * Provides a basic Forge UI implementation for running Windup from within a {@link UIProvider}.
+ * Provides a basic UI command updating the rules/migration-core folder with the latest version.
  *
- * @author jsightler <jesse.sightler@gmail.com>
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author mbriskar
  */
 public class WindupUpdateRulesetCommand implements UICommand
 {
@@ -64,7 +58,13 @@ public class WindupUpdateRulesetCommand implements UICommand
         List<Coordinate> resolveVersions = dependencyResolver.resolveVersions(DependencyQueryBuilder.create(CoordinateBuilder.create()
                     .setGroupId("org.jboss.windup.rules")
                     .setArtifactId("windup-rulesets")));
-        Coordinate latestCoordinate = resolveVersions.get(resolveVersions.size() - 1);
+        int i = 0;
+        Coordinate latestCoordinate;
+        do{
+            i++;
+            latestCoordinate = resolveVersions.get(resolveVersions.size() - i);
+        }while(latestCoordinate.isSnapshot()); 
+        
         Path windupRulesDir = PathUtil.getWindupRulesDir();
         Path coreRulesPropertiesPath = windupRulesDir.resolve(RulesetUpdateChecker.RULESET_CORE_DIRECTORY);
         // delete the previous rules
