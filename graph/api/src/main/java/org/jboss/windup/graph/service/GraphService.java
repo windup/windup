@@ -115,7 +115,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public Iterable<T> findAll()
     {
-        return (Iterable<T>) findAllQuery().vertices(type);
+        return findAllQuery().vertices(type);
     }
 
     @Override
@@ -126,17 +126,17 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             @Override
             public Iterable<T> execute() throws BuildException
             {
-                FramedGraphQuery fgq = findAllQuery();
+                FramedGraphQuery query = findAllQuery();
 
                 for (int i = 0, j = keys.length; i < j; i++)
                 {
                     String key = keys[i];
                     String val = vals[i];
 
-                    fgq = fgq.has(key, val);
+                    query = query.has(key, val);
                 }
 
-                return fgq.vertices(type);
+                return query.vertices(type);
             }
         });
     }
@@ -237,10 +237,10 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             return null;
         }
 
-        Iterator<T> iter = results.iterator();
-        T result = iter.next();
+        Iterator<T> iterator = results.iterator();
+        T result = iterator.next();
 
-        if (iter.hasNext())
+        if (iterator.hasNext())
         {
             throw new NonUniqueResultException("Expected unique value, but returned non-unique.");
         }
@@ -258,10 +258,10 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             return null;
         }
 
-        Iterator<T> iter = results.iterator();
-        T result = iter.next();
+        Iterator<T> iterator = results.iterator();
+        T result = iterator.next();
 
-        if (iter.hasNext())
+        if (iterator.hasNext())
         {
             throw new NonUniqueResultException("Expected unique value, but returned non-unique.");
         }
@@ -302,8 +302,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
 
     /**
      * Adds the specified type to this frame, and returns a new object that implements this type.
-     *
-     * @see GraphTypeManagerTest
      */
     public static <T extends WindupVertexFrame> T addTypeToModel(GraphContext graphContext, WindupVertexFrame frame,
                 Class<T> type)

@@ -15,9 +15,9 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-public class SourceReportModelService extends GraphService<SourceReportModel>
+public class SourceReportService extends GraphService<SourceReportModel>
 {
-    public SourceReportModelService(GraphContext context)
+    public SourceReportService(GraphContext context)
     {
         super(context, SourceReportModel.class);
     }

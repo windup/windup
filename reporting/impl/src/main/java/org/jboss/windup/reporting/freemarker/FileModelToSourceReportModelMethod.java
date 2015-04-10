@@ -5,7 +5,7 @@ import java.util.List;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
-import org.jboss.windup.reporting.service.SourceReportModelService;
+import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
@@ -27,12 +27,12 @@ import freemarker.template.TemplateModelException;
 public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMethod
 {
     public static final String NAME = "fileModelToSourceReport";
-    private SourceReportModelService sourceReportService;
+    private SourceReportService sourceReportService;
 
     @Override
     public void setContext(GraphRewrite event)
     {
-        this.sourceReportService = new SourceReportModelService(event.getGraphContext());
+        this.sourceReportService = new SourceReportService(event.getGraphContext());
     }
 
     @Override

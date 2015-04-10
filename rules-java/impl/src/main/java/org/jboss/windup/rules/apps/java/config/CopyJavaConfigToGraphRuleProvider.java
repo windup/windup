@@ -36,7 +36,7 @@ public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
     public CopyJavaConfigToGraphRuleProvider()
     {
         super(MetadataBuilder.forProvider(CopyJavaConfigToGraphRuleProvider.class)
-                    .setPhase(InitializationPhase.class));
+                    .setPhase(InitializationPhase.class).setHaltOnException(true));
     }
 
     @Override

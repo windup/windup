@@ -137,6 +137,23 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- Windup Engine - Tooling API Addon -->
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-tooling</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-tooling-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-tooling-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Windup Engine - Reporting Addon -->
             <dependency>

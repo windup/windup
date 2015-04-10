@@ -79,6 +79,7 @@
         <module>rules-xml</module>
 
         <module>exec</module>
+        <module>tooling</module>
         <module>reporting</module>
         <module>rules-java-project</module>
         <module>ui</module>

@@ -26,7 +26,7 @@ import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.query.FindSourceReportFilesGremlinCriterion;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
-import org.jboss.windup.reporting.service.SourceReportModelService;
+import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -68,7 +68,7 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
         {
             public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
             {
-                SourceReportModelService sourceReportModelService = new SourceReportModelService(
+                SourceReportService sourceReportModelService = new SourceReportService(
                             event.getGraphContext());
                 SourceReportModel sm = sourceReportModelService.create();
                 ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,

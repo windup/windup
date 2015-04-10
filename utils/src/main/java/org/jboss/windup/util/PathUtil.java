@@ -15,7 +15,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PathUtil
 {
-    private static final Logger log = Logger.getLogger(PathUtil.class.getName());
+    private static final Logger LOG = Logger.getLogger(PathUtil.class.getName());
+
+    public static final String WINDUP_HOME = "windup.home";
     public static final String RULES_DIRECTORY_NAME="rules";
     public static final String IGNORE_DIRECTORY_NAME="ignore";
     public static final String CACHE_DIRECTORY_NAME="cache";
@@ -32,7 +34,7 @@ public class PathUtil
         if (userHome == null)
         {
             Path path = new File("").toPath();
-            log.warning("$USER_HOME not set, using [" + path + "] instead.");
+            LOG.warning("$USER_HOME not set, using [" + path + "] instead.");
             return path;
         }
         return Paths.get(userHome).resolve(".windup");
@@ -43,14 +45,19 @@ public class PathUtil
      */
     public static Path getWindupHome()
     {
-        String windupHome = System.getProperty("windup.home");
+        String windupHome = System.getProperty(WINDUP_HOME);
         if (windupHome == null)
         {
             Path path = new File("").toPath();
-            log.warning("$WINDUP_HOME not set, using [" + path + "] instead.");
+            LOG.warning("$WINDUP_HOME not set, using [" + path + "] instead.");
             return path;
         }
         return Paths.get(windupHome);
+    }
+
+    public static void setWindupHome(Path windupHome)
+    {
+        System.setProperty(WINDUP_HOME, windupHome.toAbsolutePath().toString());
     }
 
     /**
