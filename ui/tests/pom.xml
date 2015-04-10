@@ -30,7 +30,10 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>org.jboss.forge.furnace.test</groupId>
+            <artifactId>arquillian-forge-core</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
@@ -77,6 +80,7 @@
             <artifactId>arquillian-furnace-classpath</artifactId>
             <scope>test</scope>
         </dependency>
+	
 
     </dependencies>
 </project>

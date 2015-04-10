@@ -49,6 +49,27 @@
             <scope>provided</scope>
         </dependency>
 
+ 	<dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>dependencies</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+	<dependency>
+	    <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+	
+	<dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addon-manager-spi</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+  
+
     </dependencies>
 
     <build>
