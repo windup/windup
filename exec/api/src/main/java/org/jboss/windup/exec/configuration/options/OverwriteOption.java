@@ -7,7 +7,7 @@ import org.jboss.windup.config.ValidationResult;
 /**
  * Indicates that Windup should overwrite the output directory if it already exists (without prompting).
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class OverwriteOption extends AbstractConfigurationOption

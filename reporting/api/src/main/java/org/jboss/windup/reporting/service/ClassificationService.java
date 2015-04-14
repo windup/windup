@@ -15,7 +15,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 /**
  * Adds methods for loading and querying ClassificationModel related data.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class ClassificationService extends GraphService<ClassificationModel>

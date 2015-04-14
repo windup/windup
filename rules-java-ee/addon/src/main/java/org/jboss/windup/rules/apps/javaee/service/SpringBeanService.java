@@ -7,7 +7,7 @@ import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 /**
  * Contains methods for creating, querying, and updating SpringBeanModel entries in the Graph.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class SpringBeanService extends GraphService<SpringBeanModel>

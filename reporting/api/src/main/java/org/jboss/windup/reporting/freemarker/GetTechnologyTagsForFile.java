@@ -21,7 +21,7 @@ import freemarker.template.TemplateModelException;
  * 
  * The method will return an Iterable containing {@link TechnologyTagModel} instances.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
 {

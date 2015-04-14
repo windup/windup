@@ -10,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Contains metadata extracted from the XML configuration file.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(SpringConfigurationFileModel.TYPE)
 public interface SpringConfigurationFileModel extends XmlFileModel

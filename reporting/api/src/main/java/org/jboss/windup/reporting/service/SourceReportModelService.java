@@ -12,7 +12,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * 
  * This provides helper queries and functions for finding and creating SourceReportModel instances.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class SourceReportModelService extends GraphService<SourceReportModel>

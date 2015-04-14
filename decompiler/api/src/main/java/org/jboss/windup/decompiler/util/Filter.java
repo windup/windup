@@ -3,7 +3,7 @@ package org.jboss.windup.decompiler.util;
 /**
  * A filter for anything that can ACCEPT, REJECT, or STOP.
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public interface Filter<T>
 {

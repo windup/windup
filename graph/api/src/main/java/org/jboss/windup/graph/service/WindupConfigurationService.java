@@ -6,7 +6,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 /**
  * Helper methods for accessing the WindupConfigurationModel and associated data.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class WindupConfigurationService extends GraphService<WindupConfigurationModel>
 {

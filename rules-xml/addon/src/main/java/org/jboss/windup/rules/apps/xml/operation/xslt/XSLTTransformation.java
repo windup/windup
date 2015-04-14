@@ -44,7 +44,7 @@ import org.jboss.windup.util.Logging;
 
 /**
  * Graph operation doing the xslt transformation using the .xslt source on the target xml object
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel> implements XSLTTransformationDescription,XSLTTransformationExtension,XSLTTransformationParams,XSLTTransformationLocation,XSLTTransformationFileSystem
 {

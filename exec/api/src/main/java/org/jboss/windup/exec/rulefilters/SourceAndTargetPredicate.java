@@ -10,7 +10,7 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.TechnologyReference;
 
 /**
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class SourceAndTargetPredicate implements Predicate<RuleProvider>
 {

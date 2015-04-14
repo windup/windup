@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  * Additional models may extend this to support additional project types (eg, Maven-based projects).
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ProjectModel.TYPE)
 public interface ProjectModel extends WindupVertexFrame

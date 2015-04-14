@@ -17,7 +17,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * 
  * This renders an overview page listing all applications analyzed by the current execution of windup.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class RenderOverviewPageRuleProvider extends AbstractRuleProvider

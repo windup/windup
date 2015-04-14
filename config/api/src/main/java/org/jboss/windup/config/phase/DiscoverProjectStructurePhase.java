@@ -10,7 +10,7 @@ package org.jboss.windup.config.phase;
  * project types (for example, Maven projects).
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class DiscoverProjectStructurePhase extends RulePhase

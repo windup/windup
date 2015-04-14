@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class Logging
 {

@@ -12,7 +12,7 @@ import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 /**
  * Provides methods for loading and working with {@link WindupJavaConfigurationModel} objects.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class WindupJavaConfigurationService extends GraphService<WindupJavaConfigurationModel>

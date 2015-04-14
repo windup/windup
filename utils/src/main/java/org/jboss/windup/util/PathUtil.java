@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Provides useful methods for manipulating filenames (eg, removing illegal chars from files).
  *
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class PathUtil

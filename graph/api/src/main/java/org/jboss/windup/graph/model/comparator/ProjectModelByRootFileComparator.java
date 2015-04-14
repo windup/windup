@@ -8,7 +8,7 @@ import org.jboss.windup.graph.model.ProjectModel;
  * 
  * Returns a comparison based on an ascending alphabetical sort of the RootFileModel's FilePath.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class ProjectModelByRootFileComparator implements Comparator<ProjectModel>

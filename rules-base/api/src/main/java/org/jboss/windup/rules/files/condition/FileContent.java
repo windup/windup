@@ -47,7 +47,7 @@ import com.github.rwitzel.streamflyer.core.ModifyingReader;
  *   {@link FileContent}.matches("Some example {text}").inFilesNamed("{filename}")
  * </pre>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class FileContent extends ParameterizedGraphCondition implements FileContentMatches

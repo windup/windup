@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Contains methods for testing the Java Application Overview report.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class TestJavaApplicationOverviewUtil extends TestReportUtil

@@ -10,7 +10,7 @@ package org.jboss.windup.config.phase;
  * {@link ReportGenerationPhase}.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class PreReportGenerationPhase extends RulePhase

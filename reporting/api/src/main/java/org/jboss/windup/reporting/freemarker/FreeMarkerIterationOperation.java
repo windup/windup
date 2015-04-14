@@ -29,7 +29,7 @@ import freemarker.template.TemplateException;
 /**
  * This class is used to produce a freemarker report from inside of a Windup {@link Iteration}.
  * 
- * @author jsightler <jesse.sightler@gmail.com)
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a> <jesse.sightler@gmail.com)
  * 
  */
 public class FreeMarkerIterationOperation extends AbstractIterationOperation<ReportModel>

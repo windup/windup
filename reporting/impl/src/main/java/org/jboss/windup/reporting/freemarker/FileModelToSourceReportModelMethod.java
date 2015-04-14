@@ -21,7 +21,7 @@ import freemarker.template.TemplateModelException;
  * 
  * fileModelToSourceReport(fileModel)
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMethod

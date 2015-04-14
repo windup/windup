@@ -12,7 +12,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class ZipUtil
 {

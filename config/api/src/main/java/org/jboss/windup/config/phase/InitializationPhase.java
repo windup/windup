@@ -8,7 +8,7 @@ package org.jboss.windup.config.phase;
  * graph) should occur during this phase.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class InitializationPhase extends RulePhase

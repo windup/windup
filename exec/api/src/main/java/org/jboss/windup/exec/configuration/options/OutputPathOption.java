@@ -6,7 +6,7 @@ import org.jboss.windup.config.InputType;
 /**
  * Indicates that output path for the windup report and other data produced by a Windup execution.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class OutputPathOption extends AbstractPathConfigurationOption

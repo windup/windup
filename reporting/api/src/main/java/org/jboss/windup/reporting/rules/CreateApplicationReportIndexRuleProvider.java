@@ -21,7 +21,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Creates an index that can be used to register reports related to an application.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvider

@@ -9,7 +9,7 @@ import com.tinkerpop.blueprints.GraphQuery;
 /**
  * Manages creating, querying, and deleting {@link EnvironmentReferenceModel}s.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class EnvironmentReferenceService extends GraphService<EnvironmentReferenceModel>
 {

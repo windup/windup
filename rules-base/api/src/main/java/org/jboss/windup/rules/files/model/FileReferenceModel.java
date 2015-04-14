@@ -10,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Isolated file reference interface from the other models.
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 @TypeValue(FileReferenceModel.TYPE)

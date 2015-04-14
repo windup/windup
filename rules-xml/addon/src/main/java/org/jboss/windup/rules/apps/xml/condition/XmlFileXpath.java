@@ -4,7 +4,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
  * The building step of XmlFile condition
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface XmlFileXpath extends ConditionBuilder

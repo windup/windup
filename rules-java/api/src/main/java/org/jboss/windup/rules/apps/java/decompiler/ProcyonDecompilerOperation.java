@@ -108,7 +108,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
     /**
      * This listens for decompiled files and writes the results to disk in a background thread.
      * 
-     * @author jsightler
+     * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
      *
      */
     private class AddDecompiledItemsToGraph implements DecompilationListener

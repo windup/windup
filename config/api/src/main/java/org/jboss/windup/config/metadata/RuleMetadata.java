@@ -13,7 +13,7 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * A descriptor for {@link RuleProvider} metadata. Can be overridden by altering the {@link RuleProviderMetadata} directly.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Target(ElementType.TYPE)

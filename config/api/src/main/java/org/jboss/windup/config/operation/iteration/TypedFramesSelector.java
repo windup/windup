@@ -9,7 +9,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Selection of frames having all variables of the given type (regardless of the variable name).
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class TypedFramesSelector implements FramesSelector

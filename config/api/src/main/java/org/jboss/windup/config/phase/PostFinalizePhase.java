@@ -16,7 +16,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * </ul>
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class PostFinalizePhase extends RulePhase

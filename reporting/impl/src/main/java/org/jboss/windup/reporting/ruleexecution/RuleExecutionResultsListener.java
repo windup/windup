@@ -19,7 +19,7 @@ import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListene
 /**
  * Manages recording the history of {@link Rule}s executed by Windup.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class RuleExecutionResultsListener implements RuleLifecycleListener

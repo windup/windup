@@ -7,7 +7,7 @@ import com.strobel.core.VerifyArgument;
 /**
  * Keeps a set of types which failed to load and also uses an LRUCache to reduce the memory footprint for cached lookups.
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public final class NoRetryMetadataSystem extends MetadataSystem
 {

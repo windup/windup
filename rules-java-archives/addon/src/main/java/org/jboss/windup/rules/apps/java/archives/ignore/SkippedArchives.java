@@ -26,7 +26,7 @@ import org.jboss.windup.util.exception.WindupException;
  *
  * Examples: org.apache.commons.*:*:* org.hibernate.*:hibernate-core:(3.2,4.0]:jar
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class SkippedArchives

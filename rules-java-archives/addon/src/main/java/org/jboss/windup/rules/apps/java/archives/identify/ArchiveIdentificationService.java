@@ -7,7 +7,7 @@ import org.jboss.forge.addon.dependencies.Coordinate;
 /**
  * Used to map {@link File} hashes (SHA1, MD5, etc) to {@link Coordinate} instances.
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public interface ArchiveIdentificationService
 {

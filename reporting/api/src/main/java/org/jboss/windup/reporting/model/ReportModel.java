@@ -19,7 +19,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Provides the base object for all reports.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue("Report")
 public interface ReportModel extends WindupVertexFrame

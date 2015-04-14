@@ -17,7 +17,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Test for {@link RuleMetadata}.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RuleMetadata(id = "myRule1",

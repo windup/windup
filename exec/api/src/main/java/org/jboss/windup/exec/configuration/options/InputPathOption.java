@@ -6,7 +6,7 @@ import org.jboss.windup.config.InputType;
 /**
  * Specifies the Input path for Windup.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class InputPathOption extends AbstractPathConfigurationOption

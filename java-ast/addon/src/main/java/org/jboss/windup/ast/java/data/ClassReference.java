@@ -5,7 +5,7 @@ package org.jboss.windup.ast.java.data;
  * as information about the reference. Information includes indicating where the reference was found within the file (line, column, and length) as
  * well as how it was used (import, method call, etc).
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class ClassReference

@@ -7,7 +7,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
  * {@link AbstractRuleProvider} itself and the values that it returns from
  * {@link AbstractRuleProvider#getExecuteAfter()} and {@link AbstractRuleProvider#getExecuteBefore()}.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class DependentPhase extends RulePhase

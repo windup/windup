@@ -6,7 +6,7 @@ import org.jboss.windup.config.ruleprovider.SingleRuleProvider;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class MetadataTestRuleProvider2 extends SingleRuleProvider

@@ -11,7 +11,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 /**
  * Service methods for finding and creating {@link ApplicationReportIndexModel} objects.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class ApplicationReportIndexService extends GraphService<ApplicationReportIndexModel>
 {

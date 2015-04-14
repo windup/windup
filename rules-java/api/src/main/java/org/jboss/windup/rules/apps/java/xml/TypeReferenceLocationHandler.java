@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
  *   &lt;location&gt;METHOD_PARAMETER&lt;/location&gt;
  * </pre>
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "location", namespace = "http://windup.jboss.org/v1/xml")
 public class TypeReferenceLocationHandler implements ElementHandler<TypeReferenceLocation>

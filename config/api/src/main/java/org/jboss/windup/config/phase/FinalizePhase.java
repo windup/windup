@@ -12,7 +12,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * may have been opened during {@link Rule}s from earlier {@link AbstractRuleProvider}s.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class FinalizePhase extends RulePhase

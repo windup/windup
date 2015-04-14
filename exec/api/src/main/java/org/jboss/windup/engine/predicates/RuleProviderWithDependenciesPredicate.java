@@ -11,7 +11,7 @@ import org.jboss.windup.config.RuleProvider;
 /**
  * Executes only the given rule with all it's dependencies and pre-phases.
  *
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProvider>

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Store Map<String,String> in properties of a vertex.
  *
- * @author Ondrej Zizka
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapInAdjacentProperties

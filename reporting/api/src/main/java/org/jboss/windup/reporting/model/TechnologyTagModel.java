@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * is a Hibernate Configuration File.
  * 
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(TechnologyTagModel.TYPE)
 public interface TechnologyTagModel extends WindupVertexFrame

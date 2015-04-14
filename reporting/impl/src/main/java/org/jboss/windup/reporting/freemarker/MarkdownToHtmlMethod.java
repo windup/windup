@@ -21,7 +21,7 @@ import freemarker.template.TemplateModelException;
 /**
  * Converts from an input string in Markdown format to an output string in HTML.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
 {

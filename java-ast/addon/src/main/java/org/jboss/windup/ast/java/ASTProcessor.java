@@ -64,7 +64,7 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
  * Provides the ability to parse a Java file and return a {@link ClassReferences} object containing the fully qualified names of all of the contained
  * references.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class ASTProcessor extends ASTVisitor

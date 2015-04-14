@@ -13,7 +13,7 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * Maintains a link between all {@link Rule} and {@link RuleProvider} instances that have been loaded by Windup.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class RuleProviderRegistry
 {

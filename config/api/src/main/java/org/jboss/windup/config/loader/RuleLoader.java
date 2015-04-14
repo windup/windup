@@ -10,7 +10,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 /**
  * {@link RuleLoader} manages loading {@link Configuration}s from all {@link AbstractRuleProvider}s in the system.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public interface RuleLoader
 {

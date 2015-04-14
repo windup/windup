@@ -10,7 +10,7 @@ import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 /**
  * Contains annotation information, including a hierachy of all of the properties defined by this annotation.
  * 
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class AnnotationClassReference extends ClassReference implements AnnotationValue

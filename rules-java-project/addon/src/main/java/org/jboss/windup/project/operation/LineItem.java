@@ -14,7 +14,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Provides the message that will be reported on the project overview page.
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class LineItem extends AbstractIterationOperation<ProjectModel>

@@ -4,7 +4,7 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
  * Interface signalizing the last step in building the {@link Classification}
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface ClassificationEffort extends OperationBuilder

@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Represents a Java Method within a {@link JavaClassModel}
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaMethodModel.TYPE)
 public interface JavaMethodModel extends WindupVertexFrame

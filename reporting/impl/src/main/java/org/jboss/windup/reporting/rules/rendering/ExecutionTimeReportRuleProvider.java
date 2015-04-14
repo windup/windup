@@ -33,7 +33,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Produces a simple text report of how long each RuleProvider's rule took to execute, the time spent in each phase, and
  * any other timing data that was been stored in {@link ExecutionStatistics}.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class ExecutionTimeReportRuleProvider extends AbstractRuleProvider

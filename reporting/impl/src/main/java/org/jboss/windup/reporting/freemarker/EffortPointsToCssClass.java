@@ -15,7 +15,7 @@ import freemarker.template.TemplateModelException;
  * 8-13 == severe<br/>
  * >13 == critical<br/>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class EffortPointsToCssClass implements WindupFreeMarkerMethod

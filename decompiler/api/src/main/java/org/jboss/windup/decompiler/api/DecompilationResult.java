@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Keeps a count of successful decompilations and list of failed ones, in the form of an exception with String path and cause exception.
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DecompilationResult

@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Contains a list of {@link WindupVertexFrame} objects and (for convenience) implements the {@link Iterable} interface as well.
  * 
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 @TypeValue(WindupVertexListModel.TYPE)

@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 /**
  * Sets the phase for the current ruleset
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "phase", namespace = "http://windup.jboss.org/v1/xml")
 public class PhaseHandler implements ElementHandler<Void>

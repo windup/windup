@@ -22,8 +22,8 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 /**
  * Sorts {@link RuleProvider}s based upon their executeBefore/executeAfter methods.
  *
- * @author jsightler <jesse.sightler@gmail.com>
- * @author Ondrej Zizka <zizka@seznam.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class RuleProviderSorter
 {

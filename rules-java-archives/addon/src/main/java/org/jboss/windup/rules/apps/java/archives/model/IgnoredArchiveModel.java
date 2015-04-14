@@ -6,7 +6,7 @@ import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @TypeValue(IgnoredArchiveModel.TYPE)

@@ -18,7 +18,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Attaches {@link ApplicationReportModel}s to the {@link ApplicationReportIndexModel}
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class AttachApplicationReportsToIndexRuleProvider extends AbstractRuleProvider
 {

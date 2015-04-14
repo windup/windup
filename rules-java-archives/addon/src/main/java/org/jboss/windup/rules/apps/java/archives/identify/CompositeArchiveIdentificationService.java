@@ -10,7 +10,7 @@ import org.jboss.forge.addon.dependencies.Coordinate;
 /**
  * A {@link ArchiveIdentificationService} that delegates to one or more provided {@link ArchiveIdentificationService} instances.
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @Singleton
 public class CompositeArchiveIdentificationService implements ArchiveIdentificationService

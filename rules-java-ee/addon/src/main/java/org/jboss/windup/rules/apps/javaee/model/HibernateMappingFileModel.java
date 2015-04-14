@@ -10,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Contains metadata extracted from a hibernate mapping file (*.hbm.xml)
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(HibernateMappingFileModel.TYPE)
 public interface HibernateMappingFileModel extends XmlFileModel

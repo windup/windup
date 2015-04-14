@@ -19,7 +19,7 @@ import com.tinkerpop.pipes.PipeFunction;
  * This provides a helper class that can be used execute a Gremlin search returning all FileModels that do not have associated
  * {@link FileLocationModel}s or @{link ClassificationModel}s.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class FindFilesNotClassifiedOrHintedGremlinCriterion
 {

@@ -8,7 +8,7 @@ package org.jboss.windup.config.phase;
  * Unzipping of any input files (such as an incoming ear file) occur during this phase.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class ArchiveExtractionPhase extends RulePhase

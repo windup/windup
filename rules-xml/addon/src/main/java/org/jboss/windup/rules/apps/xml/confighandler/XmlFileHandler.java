@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
  *  &lt;/xmlfile&gt;
  * </pre>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 @NamespaceElementHandler(elementName = "xmlfile", namespace = "http://windup.jboss.org/v1/xml")

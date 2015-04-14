@@ -9,7 +9,7 @@ import com.tinkerpop.blueprints.Vertex;
 /**
  * Contains methods for loading, querying, and deleting {@link LinkModel}s.
  *
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class LinkService extends GraphService<LinkModel>
 {

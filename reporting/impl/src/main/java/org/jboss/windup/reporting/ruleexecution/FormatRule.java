@@ -26,7 +26,7 @@ import freemarker.template.TemplateModelException;
  * 
  * formatRule(Rule)
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class FormatRule implements WindupFreeMarkerMethod

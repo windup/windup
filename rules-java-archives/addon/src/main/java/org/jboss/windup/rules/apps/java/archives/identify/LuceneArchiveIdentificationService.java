@@ -23,7 +23,7 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class LuceneArchiveIdentificationService implements ArchiveIdentificationService, Closeable
 {

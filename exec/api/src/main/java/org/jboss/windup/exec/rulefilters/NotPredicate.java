@@ -6,7 +6,7 @@ import org.jboss.windup.config.RuleProvider;
 /**
  * NOT predicate which negates the result of given predicate..
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class NotPredicate implements Predicate<RuleProvider>
 {

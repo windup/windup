@@ -10,7 +10,7 @@ import org.jboss.windup.config.RuleProvider;
 /**
  * AND predicate which needs all of the given predicates to accept.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class AndPredicate implements Predicate<RuleProvider>
 {

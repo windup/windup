@@ -36,7 +36,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Read and add all the ignore regexes (when a file matches the regex, it will not be scanned by windup) that are
  * present in the windup runtime.
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<WindupConfigurationModel>

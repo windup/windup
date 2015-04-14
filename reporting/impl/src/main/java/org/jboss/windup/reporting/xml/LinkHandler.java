@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
  *  &lt;link href="http://www.foo.com/" description="Helpful text" /&gt;
  * </pre>
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "link", namespace = "http://windup.jboss.org/v1/xml")
 public class LinkHandler implements ElementHandler<Link>

@@ -9,7 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 /**
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @TypeField(WindupVertexFrame.TYPE_PROP)
 public interface Person extends VertexFrame

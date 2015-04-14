@@ -3,7 +3,7 @@ package org.jboss.windup.project.condition;
 
 /**
  * Class used to specify the artifact in the {@link Project} condition
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class Artifact{

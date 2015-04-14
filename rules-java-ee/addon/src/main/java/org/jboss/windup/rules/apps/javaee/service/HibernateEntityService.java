@@ -7,7 +7,7 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
 /**
  * Contains methods for querying, creating, and deleting {@link HibernateEntityModel}s.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class HibernateEntityService extends GraphService<HibernateEntityModel>

@@ -34,7 +34,7 @@ import freemarker.template.TemplateModelException;
  * 
  * Can be called as follows: sortFilesByPathAscending(Iterable<FileModel>)
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class SortFilesByPathMethod implements WindupFreeMarkerMethod

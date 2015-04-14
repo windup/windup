@@ -6,7 +6,7 @@ import org.jboss.windup.config.InputType;
 /**
  * Indicates the directory that will contain rules provided by the user.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class UserRulesDirectoryOption extends AbstractPathConfigurationOption

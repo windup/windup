@@ -9,7 +9,7 @@ import org.jboss.windup.config.RuleProvider;
 /**
  * Executes only those {@link RuleProvider} instances that were specified in this {@link Predicate}.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class EnumeratedRuleProviderPredicate implements Predicate<RuleProvider>

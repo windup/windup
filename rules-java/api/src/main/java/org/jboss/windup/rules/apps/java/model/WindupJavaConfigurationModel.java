@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Configuration options that are specific to the Java Ruleset
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(WindupJavaConfigurationModel.TYPE)
 public interface WindupJavaConfigurationModel extends WindupVertexFrame

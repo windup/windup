@@ -17,7 +17,7 @@ import com.github.rwitzel.streamflyer.util.statistics.LineColumnAwareModificatio
  * Extends {@link RegexModifier} to support tracking the line number and column, and to fire {@link StreamRegexMatchedEvent} events when content is
  * matched by the regular expression.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class StreamRegexMatcher extends RegexModifier

@@ -11,7 +11,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Contains metadata associated with a Hibernate Entity
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 @TypeValue(HibernateEntityModel.TYPE)

@@ -8,7 +8,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Contains EJB Message Driven model information and related data.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(EjbMessageDrivenModel.TYPE)
 public interface EjbMessageDrivenModel extends EjbBeanBaseModel

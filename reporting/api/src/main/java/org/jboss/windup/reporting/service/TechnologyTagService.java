@@ -21,7 +21,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 /**
  * Contains methods for finding, creating, and deleting {@link TechnologyTagModel} instances.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class TechnologyTagService extends GraphService<TechnologyTagModel>

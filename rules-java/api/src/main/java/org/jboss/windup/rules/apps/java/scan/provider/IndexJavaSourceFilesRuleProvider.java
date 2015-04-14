@@ -46,7 +46,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Discovers .java files from the applications being analyzed.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 {

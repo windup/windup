@@ -4,7 +4,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
  * The last step of building the XmlFile condition after the namespace was specified.
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface XmlFileNamespace extends ConditionBuilder

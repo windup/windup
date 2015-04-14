@@ -18,7 +18,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Finds files that were not classified as Maven archives/projects, and adds some generic project information for them.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProvider
 {

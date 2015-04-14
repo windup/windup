@@ -4,7 +4,7 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
  * Interface specifying there is no more methods to call to build the {@link XSLTTransformation}
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface XSLTTransformationParams extends OperationBuilder

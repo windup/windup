@@ -7,7 +7,7 @@ import org.jboss.windup.config.ValidationResult;
 /**
  * Indicates the Java packages for Windup to scan.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class ScanPackagesOption extends AbstractConfigurationOption
 {

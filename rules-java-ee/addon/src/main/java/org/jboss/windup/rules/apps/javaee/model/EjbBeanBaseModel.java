@@ -11,7 +11,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Contains metadata used by all specializations of EJBs (eg, environment references)
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 @TypeValue(EjbBeanBaseModel.TYPE)

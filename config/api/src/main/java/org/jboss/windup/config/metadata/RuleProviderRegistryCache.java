@@ -15,7 +15,7 @@ import org.jboss.windup.graph.GraphContextFactory;
  * improve performance. This is useful for cases in which you need to repeatedly query the registry for information, such as when looking up metadata
  * in the user interface.
  *
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @Singleton
 public class RuleProviderRegistryCache

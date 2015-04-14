@@ -7,7 +7,7 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateMappingFileModel;
 /**
  * Contains methods for creating, searching, and deleting {@link HibernateMappingFileModel}s.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class HibernateMappingFileService extends GraphService<HibernateMappingFileModel>
 {

@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 /**
  *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ *  @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class Util {
 

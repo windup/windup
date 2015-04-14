@@ -29,7 +29,7 @@ import freemarker.template.TemplateModelException;
  * 
  * NOTE: This will only return JavaSourceFileModels and XmlFileModels in order to reduce clutter.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
 {

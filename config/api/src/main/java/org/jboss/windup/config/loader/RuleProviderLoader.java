@@ -10,7 +10,7 @@ import org.jboss.windup.graph.GraphContext;
  * Each configuration extension will implement this interface to provide a list of WindupRuleProviders. A
  * GraphConfigurationLoader will pull in all WindupRuleProviders and sort them based upon the provider's metadata.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface RuleProviderLoader

@@ -3,7 +3,7 @@ package org.jboss.windup.util.exception;
 /**
  * Root Windup exception to inherit other Windup-specific exceptions from.
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class WindupException extends RuntimeException
 {

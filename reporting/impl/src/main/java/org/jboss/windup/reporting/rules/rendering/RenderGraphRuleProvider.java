@@ -19,7 +19,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * This renders the graph itself to the output directory for debug purposes.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 @Vetoed

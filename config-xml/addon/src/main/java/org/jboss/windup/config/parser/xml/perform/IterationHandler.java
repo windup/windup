@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 /**
  * Parses the "iteration" element to produce {@link Iteration} {@link Operation}s.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "iteration", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class IterationHandler implements ElementHandler<Iteration>
