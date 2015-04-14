@@ -56,8 +56,8 @@
 							<xs:extension base="xs:string">
 								<xs:attribute type="xs:string" name="groupId" />
 								<xs:attribute type="xs:string" name="artifactId" />
-								<xs:attribute type="xs:string" name="from" />
-								<xs:attribute type="xs:string" name="to" />
+								<xs:attribute type="xs:string" name="fromVersion" />
+								<xs:attribute type="xs:string" name="toVersion" />
 							</xs:extension>
 						</xs:simpleContent>
 					</xs:complexType>
