@@ -9,7 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Contains EJB Session Bean information and related data.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(EjbSessionBeanModel.TYPE)
 public interface EjbSessionBeanModel extends EjbBeanBaseModel

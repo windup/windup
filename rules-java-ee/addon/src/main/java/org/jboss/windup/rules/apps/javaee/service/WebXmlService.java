@@ -8,7 +8,7 @@ import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
  * 
  * Provides querying, creation, and related methods for accessing {@link WebXmlModel} objects.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class WebXmlService extends GraphService<WebXmlModel>
 {

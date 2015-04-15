@@ -18,7 +18,7 @@ import freemarker.template.TemplateModelException;
  * 
  * getMigrationEffortPointsForFile(FileModel):int
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class GetEffortForFile implements WindupFreeMarkerMethod

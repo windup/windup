@@ -11,7 +11,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * application (or server) that will need to be changed and produce metadata to be reported on regarding these changes.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class MigrationRulesPhase extends RulePhase

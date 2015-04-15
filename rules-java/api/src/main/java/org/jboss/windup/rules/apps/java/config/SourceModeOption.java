@@ -7,7 +7,7 @@ import org.jboss.windup.config.ValidationResult;
 /**
  * Indicates that the input is source code (as opposed to compiled code).
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class SourceModeOption extends AbstractConfigurationOption
 {

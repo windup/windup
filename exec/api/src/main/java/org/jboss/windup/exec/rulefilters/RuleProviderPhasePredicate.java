@@ -11,7 +11,7 @@ import org.jboss.windup.config.phase.RulePhase;
 /**
  * Filters the rules with given phases.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class RuleProviderPhasePredicate implements Predicate<RuleProvider>
 {

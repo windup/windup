@@ -7,7 +7,7 @@ import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 /**
  * Manages the creation, querying, and deletion of {@link JarManifestModel}s.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class JarManifestService extends GraphService<JarManifestModel>

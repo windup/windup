@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 /**
  * Covers: https://issues.jboss.org/browse/WINDUP-168
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 @RunWith(Arquillian.class)

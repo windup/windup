@@ -21,7 +21,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * This renders the ApplicationReport, along with all of its subapplications via freemarker.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class RenderReportRuleProvider extends AbstractRuleProvider

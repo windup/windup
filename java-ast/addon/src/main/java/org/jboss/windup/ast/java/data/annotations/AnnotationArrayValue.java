@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Contains an array of {@link AnnotationValue}s.
  * 
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class AnnotationArrayValue implements AnnotationValue

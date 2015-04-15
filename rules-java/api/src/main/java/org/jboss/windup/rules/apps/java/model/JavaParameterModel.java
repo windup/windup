@@ -10,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Contains information regarding parameters to a Java Method.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaParameterModel.TYPE)
 public interface JavaParameterModel extends WindupVertexFrame

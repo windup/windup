@@ -16,7 +16,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * This provides a simplified way to extend {@link AbstractRuleProvider} for cases where the rule simply needs to
  * provide some query, and wants to execute a function over each resulting row.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFrame> extends AbstractRuleProvider
 {

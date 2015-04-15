@@ -6,7 +6,7 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 /**
  * One of the first steps in defining the Classification
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface ClassificationAs extends OperationBuilder

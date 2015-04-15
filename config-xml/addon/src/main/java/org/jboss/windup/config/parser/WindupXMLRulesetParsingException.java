@@ -4,7 +4,7 @@ import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Exception thrown when parsing of the ruleset failed.
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class WindupXMLRulesetParsingException extends WindupException

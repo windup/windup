@@ -25,7 +25,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Discovers MANIFEST.MF files within archives.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>

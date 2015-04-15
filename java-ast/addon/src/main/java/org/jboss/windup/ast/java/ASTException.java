@@ -3,7 +3,7 @@ package org.jboss.windup.ast.java;
 /**
  * Thrown due to errors parsing Java source with the {@link ASTProcessor}
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class ASTException extends RuntimeException

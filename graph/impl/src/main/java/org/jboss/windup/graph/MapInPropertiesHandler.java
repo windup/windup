@@ -18,7 +18,7 @@ import com.tinkerpop.frames.modules.MethodHandler;
 /**
  * Handles @MapInProperties Map<String,String>.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
 {

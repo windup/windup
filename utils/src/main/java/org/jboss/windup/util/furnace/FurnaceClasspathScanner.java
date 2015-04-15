@@ -25,8 +25,8 @@ import org.jboss.windup.util.PathUtil;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * @author jsightler
- * @author Ondrej Zizka
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class FurnaceClasspathScanner
 {

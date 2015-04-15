@@ -14,7 +14,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 /**
  * This adds a classification to source files that reference the {@link WebServlet} annotation.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class TestServletAnnotationRuleProvider extends AbstractRuleProvider
 {

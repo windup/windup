@@ -8,7 +8,7 @@ package org.jboss.windup.config.phase;
  * This discovers files from the input (for example, find all of the files in the input directory).
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class DiscoveryPhase extends RulePhase

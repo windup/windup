@@ -3,7 +3,7 @@ package org.jboss.windup.project.condition;
 /**
  * Object used to specify the version range
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class Version

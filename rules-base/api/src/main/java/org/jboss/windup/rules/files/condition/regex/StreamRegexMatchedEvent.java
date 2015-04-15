@@ -3,7 +3,7 @@ package org.jboss.windup.rules.files.condition.regex;
 /**
  * Contains information about the regular expression match (line, column, text).
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class StreamRegexMatchedEvent

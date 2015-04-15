@@ -5,7 +5,7 @@ import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderCustom;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */

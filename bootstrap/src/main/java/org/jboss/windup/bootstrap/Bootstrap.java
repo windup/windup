@@ -35,7 +35,7 @@ import org.jboss.windup.bootstrap.listener.GreetingListener;
  *
  * You can deploy addons by calling {@link Bootstrap#install(String)}
  *
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 /**
  * Discovers web.xml files, parses them, and places relevant metadata into the graph.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {

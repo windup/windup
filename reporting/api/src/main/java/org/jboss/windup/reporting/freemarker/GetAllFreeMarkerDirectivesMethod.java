@@ -21,7 +21,7 @@ import freemarker.template.TemplateModelException;
  * 
  * getAllFreeMarkerDirectives()
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class GetAllFreeMarkerDirectivesMethod implements WindupFreeMarkerMethod

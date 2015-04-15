@@ -12,7 +12,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * as the analysis of source code for placement within the graph (for use by later {@link Rule}s).
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class InitialAnalysisPhase extends RulePhase

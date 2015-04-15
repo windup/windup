@@ -6,7 +6,7 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
  * Next step in building {@link XSLTTransformation} operation
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface XSLTTransformationLocation extends OperationBuilder

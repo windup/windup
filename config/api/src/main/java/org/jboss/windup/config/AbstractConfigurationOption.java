@@ -6,8 +6,8 @@ import java.util.Collections;
 /**
  * Provides a base class for sharing default functionality between {@link ConfigurationOption}s.
  *
- * @author jsightler <jesse.sightler@gmail.com>
- * @author ozizka
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public abstract class AbstractConfigurationOption implements ConfigurationOption
 {

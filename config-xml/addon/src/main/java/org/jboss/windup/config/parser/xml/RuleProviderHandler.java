@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
 /**
  * Parses a "ruleset" element, and uses it to create a new {@link AbstractRuleProvider}
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "ruleset", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class RuleProviderHandler implements ElementHandler<Void>

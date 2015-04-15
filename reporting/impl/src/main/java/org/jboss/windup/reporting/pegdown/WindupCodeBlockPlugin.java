@@ -30,7 +30,7 @@ import org.pegdown.plugins.ToHtmlSerializerPlugin;
  * </p>
  * 
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class WindupCodeBlockPlugin extends Parser implements BlockPluginParser, ToHtmlSerializerPlugin

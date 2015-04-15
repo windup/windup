@@ -5,7 +5,7 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
  * Step of the classification to specify more links or effort (effort is the last option).
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface ClassificationLink  extends OperationBuilder

@@ -27,7 +27,7 @@ import freemarker.template.TemplateModel;
  * 
  * The chart will present a distribution of packages that have been hinted by Windup.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class RenderApplicationPieChartDirective implements WindupFreeMarkerTemplateDirective

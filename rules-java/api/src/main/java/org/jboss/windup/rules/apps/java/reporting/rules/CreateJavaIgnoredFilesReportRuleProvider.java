@@ -27,7 +27,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Creates a report for all the ignored files along with all the regexes they were matched against.
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvider

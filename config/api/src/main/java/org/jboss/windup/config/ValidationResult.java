@@ -3,7 +3,7 @@ package org.jboss.windup.config;
 /**
  * Indicates the result of a validation operation.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class ValidationResult

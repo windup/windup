@@ -17,7 +17,7 @@ import org.jboss.windup.util.exception.WindupException;
  * In-memory implementation of {@link ArchiveIdentificationService}.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class InMemoryArchiveIdentificationService implements ArchiveIdentificationService
 {

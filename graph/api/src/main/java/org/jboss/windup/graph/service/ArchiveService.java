@@ -9,7 +9,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 /**
  * Provides methods for searching, creating, and deleting ArchiveModel Vertices.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class ArchiveService extends GraphService<ArchiveModel>

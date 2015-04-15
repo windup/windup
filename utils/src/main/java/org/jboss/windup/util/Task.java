@@ -3,7 +3,7 @@ package org.jboss.windup.util;
 /**
  * A task to be performed.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  * @param <RETURN_TYPE>
  */

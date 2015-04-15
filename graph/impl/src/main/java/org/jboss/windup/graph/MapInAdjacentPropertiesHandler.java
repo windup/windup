@@ -20,7 +20,7 @@ import com.tinkerpop.frames.modules.MethodHandler;
 /**
  * Handles @MapInAdjacentProperties Map<String,String>.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class MapInAdjacentPropertiesHandler implements MethodHandler<MapInAdjacentProperties>
 {

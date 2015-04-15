@@ -13,7 +13,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 /**
  * This class provides helpful utility methods for creating and finding {@link ApplicationReportModel} vertices.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class ApplicationReportService extends GraphService<ApplicationReportModel>

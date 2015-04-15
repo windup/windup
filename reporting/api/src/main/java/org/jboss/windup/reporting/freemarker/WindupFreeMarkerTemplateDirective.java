@@ -9,7 +9,7 @@ import freemarker.template.TemplateDirectiveModel;
  * 
  * This makes it possible for windup-addons to provide extension methods that can be easily accessed by the freemarker templates.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 

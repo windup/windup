@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 /**
  * A test for the rexster initialization
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 @RunWith(Arquillian.class)

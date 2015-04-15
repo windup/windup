@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
  *  &lt;xslt description="weblogic.xml converted to jboss.xml" extension="-transformed-file.xml" xsltFile="path/to/xsltfile"/&gt;
  * </pre>
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 @NamespaceElementHandler(elementName = "xslt", namespace = "http://windup.jboss.org/v1/xml")

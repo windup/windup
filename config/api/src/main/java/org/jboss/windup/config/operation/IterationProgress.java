@@ -12,7 +12,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Provides a simplistic way of printing a message to the log every {@link IterationProgress#interval} iterations.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class IterationProgress extends AbstractIterationOperation<WindupVertexFrame>

@@ -6,7 +6,7 @@ import org.jboss.windup.reporting.config.classification.Classification;
 /**
  * Intermediate step for constructing {@link XSLTTransformation} instances for a specified ref.
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 public class XSLTTransformationOf
 {

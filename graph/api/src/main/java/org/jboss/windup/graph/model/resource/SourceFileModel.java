@@ -8,7 +8,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Indicates that a file is source code (as opposed to a binary file of some kind).
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(SourceFileModel.TYPE)
 public interface SourceFileModel extends WindupVertexFrame

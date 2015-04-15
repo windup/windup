@@ -13,7 +13,7 @@ import freemarker.template.TemplateModelException;
 /**
  * Returns information about which {@link Rule}s have been evaluated by windup as well as their execution results.
  *
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class GetRuleExecutionResults implements WindupFreeMarkerMethod

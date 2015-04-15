@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 /**
  * Discovers spring configuration XML files, and places the metadata into the Graph.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {

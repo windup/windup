@@ -4,7 +4,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.phase.RulePhase;
 
 /**
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface RuleProviderBuilderMetadataSetPhase

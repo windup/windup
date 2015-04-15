@@ -7,7 +7,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * This provides a set of default (empty) methods that make it easy to implement {@link RuleLifecycleListener}s that only need to override a subset of
  * the available methods.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public abstract class AbstractRuleLifecycleListener implements RuleLifecycleListener

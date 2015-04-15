@@ -19,7 +19,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * This lists all of the top level reports within the application report (eg, Application classes report, Hibernate
  * entity report, EJB report, etc). Potential uses include navigation bars within a report.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 @TypeValue("ApplicationReportIndexModel")

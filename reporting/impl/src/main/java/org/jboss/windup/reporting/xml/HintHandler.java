@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
  * 
  * Also note that markdown formatting is fully supported via the <a href="http://www.pegdown.org/">Pegdown</a> library.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "hint", namespace = "http://windup.jboss.org/v1/xml")
 public class HintHandler implements ElementHandler<Hint>

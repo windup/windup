@@ -8,7 +8,7 @@ import org.ocpsoft.rewrite.context.Context;
 /**
  * Utils for the Metadata. Will be likely moved to Windup Utils.
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class RuleUtils
 {

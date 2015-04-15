@@ -16,7 +16,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 /**
  * This provides helper functions for finding and creating BlackListModels within the graph.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class InlineHintService extends GraphService<InlineHintModel>

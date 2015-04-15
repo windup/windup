@@ -8,7 +8,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * This stores the time it takes to execute all of the rules within a particular phase of execution.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(RulePhaseExecutionStatisticsModel.TYPE)
 public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame

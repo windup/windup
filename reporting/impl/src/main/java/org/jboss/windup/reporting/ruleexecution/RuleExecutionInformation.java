@@ -12,7 +12,7 @@ import com.tinkerpop.blueprints.Vertex;
  * Contains information about a {@link Rule} and how it was executed by Windup (whether it was evaluated and executed, whether it failed, and various
  * statistics on what it performed.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class RuleExecutionInformation

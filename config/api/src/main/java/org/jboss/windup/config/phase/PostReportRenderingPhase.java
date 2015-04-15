@@ -10,7 +10,7 @@ package org.jboss.windup.config.phase;
  * last. One possible use is to render all of the contents of the graph itself.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class PostReportRenderingPhase extends RulePhase

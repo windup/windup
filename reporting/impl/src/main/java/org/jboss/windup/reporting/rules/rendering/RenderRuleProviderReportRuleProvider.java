@@ -16,7 +16,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * Renders a report of all {@link AbstractRuleProvider}s that were loaded by Windup, as well as the results of each
  * {@link Rule} execution.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider

@@ -6,7 +6,7 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 /**
  * This is {@link Hint} after the {@link Severity} has been set.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public interface HintSeverity

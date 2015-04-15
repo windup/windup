@@ -11,7 +11,7 @@ import org.junit.Test;
 /**
  * This is here for reference. Static getDeployment() doesn't allow leveraging subclassing. FORGE-1790
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class AbstractTestCase
 {

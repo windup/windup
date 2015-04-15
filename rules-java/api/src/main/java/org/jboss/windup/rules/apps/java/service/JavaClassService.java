@@ -17,7 +17,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 /**
  * Contains methods for searching, updating, and deleting {@link JavaClassModel} frames.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class JavaClassService extends GraphService<JavaClassModel>
 {

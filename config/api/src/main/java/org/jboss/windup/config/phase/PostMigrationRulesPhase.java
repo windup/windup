@@ -9,7 +9,7 @@ package org.jboss.windup.config.phase;
  * immediately after all other migration rules. The primary use case at the moment involves unit tests.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class PostMigrationRulesPhase extends RulePhase

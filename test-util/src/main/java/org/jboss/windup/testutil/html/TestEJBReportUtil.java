@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Used to assist the unit tests in validating the contents of the EJB Report.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class TestEJBReportUtil extends TestReportUtil

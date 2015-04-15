@@ -13,7 +13,7 @@ import org.jboss.windup.config.RuleProvider;
  * Accepts the given provider if it has any or all of requested include tags, or has not all or any of the requested
  * exclude tags.
  *
- * @author Ondrej Zizka, ozizka@redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>, ozizka@redhat.com
  */
 public class TaggedRuleProviderPredicate implements Predicate<RuleProvider>
 {

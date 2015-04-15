@@ -25,7 +25,7 @@ import freemarker.template.TemplateException;
 /**
  * This class is used to produce a freemarker report (and the associated ReportModel) from outside of an Iteration context.
  * 
- * @author jsightler <jesse.sightler@gmail.com)
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a> <jesse.sightler@gmail.com)
  * 
  */
 public class FreeMarkerOperation extends GraphOperation

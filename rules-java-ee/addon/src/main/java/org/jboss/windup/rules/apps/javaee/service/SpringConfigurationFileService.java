@@ -7,7 +7,7 @@ import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
 /**
  * Provides methods for creating, updating, and querying {@link SpringConfigurationFileModel}s.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class SpringConfigurationFileService extends GraphService<SpringConfigurationFileModel>

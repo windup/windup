@@ -38,7 +38,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * Relevancy is based on whether the item has classifications or blacklists attached to it.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class CreateSourceReportRuleProvider extends AbstractRuleProvider

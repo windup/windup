@@ -16,7 +16,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 /**
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class TaggedRuleProviderPredicateTest
 {

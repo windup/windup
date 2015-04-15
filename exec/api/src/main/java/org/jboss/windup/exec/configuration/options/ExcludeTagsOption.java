@@ -15,7 +15,7 @@ import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 /**
  * Specifies the tags to be excluded during Windup execution. The default behavior is not to exclude any tags.
  *
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class ExcludeTagsOption extends AbstractConfigurationOption
 {

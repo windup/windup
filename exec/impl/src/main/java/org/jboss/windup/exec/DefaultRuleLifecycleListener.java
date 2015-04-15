@@ -10,7 +10,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @Vetoed
 class DefaultRuleLifecycleListener implements RuleLifecycleListener

@@ -43,7 +43,7 @@ import org.w3c.dom.Element;
 /**
  * Discovers ejb-jar.xml files and parses the related metadata
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>

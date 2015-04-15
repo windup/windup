@@ -15,7 +15,7 @@ import java.lang.annotation.RetentionPolicy;
  * <li><code>void putAll*(Map&lt;String,String&gt;)</code>
  * </ul>
  *
- * @author Ondrej Zizka
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapInProperties

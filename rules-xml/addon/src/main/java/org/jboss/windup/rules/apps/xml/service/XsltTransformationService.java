@@ -14,7 +14,7 @@ import org.jboss.windup.util.exception.WindupException;
 /**
  * Contains methods for querying, creating, and deleting {@link XsltTransformationModel} objects.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class XsltTransformationService extends GraphService<XsltTransformationModel>
 {

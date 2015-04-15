@@ -6,7 +6,7 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 /**
  * One of the builder interfaces of Hint operation.
  * 
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface HintText

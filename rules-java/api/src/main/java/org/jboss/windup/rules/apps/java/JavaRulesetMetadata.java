@@ -5,7 +5,7 @@ import org.jboss.windup.config.metadata.AbstractRulesetMetadata;
 /**
  * MetadataBuilder for the Java RuleMetadata addon.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class JavaRulesetMetadata extends AbstractRulesetMetadata

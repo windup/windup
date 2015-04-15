@@ -21,7 +21,7 @@ import freemarker.template.TemplateModelException;
  * 
  * If recursive is true, the effort total includes child projects.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class GetEffortForProjectMethod implements WindupFreeMarkerMethod

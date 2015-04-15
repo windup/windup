@@ -5,7 +5,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ *  @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @TypeValue("SomeModel")
 public interface TestSomeModel extends WindupVertexFrame

@@ -8,7 +8,7 @@ import java.util.List;
  * Contains a list of {@link ClassReference}s, which themselves describe the contents of the Java source file, and all of the things that it
  * directly references.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class ClassReferences

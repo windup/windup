@@ -24,7 +24,7 @@ import org.junit.Test;
 /**
  * Base class for decompiler tests .
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class DecompilerTestBase

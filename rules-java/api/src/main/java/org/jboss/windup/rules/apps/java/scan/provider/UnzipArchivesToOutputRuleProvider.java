@@ -16,7 +16,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 /**
  * Unzip archives from the input application.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider

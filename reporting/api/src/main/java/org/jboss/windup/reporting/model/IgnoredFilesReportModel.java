@@ -10,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Report model containing all the information needed for the report listing all the ignored files during the windup process with all the ignore regexes they were matched against.
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 @TypeValue(IgnoredFilesReportModel.TYPE)

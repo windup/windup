@@ -17,7 +17,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * In this way, most {@link AbstractRuleProvider}s will be able to simply specify a {@link RulePhase} in order to determine their approximate
  * placement within the execution lifecycle.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public abstract class RulePhase extends AbstractRuleProvider
 {

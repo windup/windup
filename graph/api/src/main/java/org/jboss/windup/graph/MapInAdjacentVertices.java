@@ -13,7 +13,7 @@ import java.lang.annotation.RetentionPolicy;
  * 
  * The map key is stored within a property of the provided name on the Edge between the two vertices.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)

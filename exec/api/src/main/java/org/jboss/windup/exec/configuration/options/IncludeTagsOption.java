@@ -15,7 +15,7 @@ import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 /**
  * Specifies the tags to be included during Windup execution. The default behavior is to include all tags.
  * 
- * @author <a href="mailto:jesse.sightler@gmail.com">jsightler</a>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class IncludeTagsOption extends AbstractConfigurationOption
 {

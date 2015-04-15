@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Represents a source ".java" file on disk.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaSourceFileModel.TYPE)
 public interface JavaSourceFileModel extends FileModel, SourceFileModel

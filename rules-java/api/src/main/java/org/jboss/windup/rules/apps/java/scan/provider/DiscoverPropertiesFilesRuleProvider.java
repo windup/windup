@@ -19,7 +19,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Discovers Java-style .properties files and places them into the graph.
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel>
 {

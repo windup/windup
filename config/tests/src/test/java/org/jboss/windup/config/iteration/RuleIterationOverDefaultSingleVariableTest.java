@@ -38,7 +38,7 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 /**
  * Testing the Iteration.over("list_variable") method along with Iteration.singleVariableIterationName().
  *
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 @RunWith(Arquillian.class)

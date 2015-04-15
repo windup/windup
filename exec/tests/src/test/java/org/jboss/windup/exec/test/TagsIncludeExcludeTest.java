@@ -52,7 +52,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Through the RuleExecutionListener, execution of rules is observed, and the same listener, at the end of execution,
  * checks whether the right set of rules was executed.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @RunWith(Arquillian.class)
 public class TagsIncludeExcludeTest

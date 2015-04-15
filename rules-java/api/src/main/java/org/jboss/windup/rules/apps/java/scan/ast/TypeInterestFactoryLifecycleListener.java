@@ -7,7 +7,7 @@ import org.jboss.windup.config.RuleLifecycleListener;
 /**
  * Makes sure to clear the {@link TypeInterestFactory} before and after each execution of Windup.
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class TypeInterestFactoryLifecycleListener extends AbstractRuleLifecycleListener implements RuleLifecycleListener

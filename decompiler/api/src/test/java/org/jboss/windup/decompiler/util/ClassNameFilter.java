@@ -5,7 +5,7 @@ import java.util.zip.ZipEntry;
 /**
  * ZipEntry Filter which accepts only one class and its inner classes.
  * 
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class ClassNameFilter implements Filter<ZipEntry>
 {

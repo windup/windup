@@ -4,7 +4,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
  * The next step in building XmlFile condition after the regex for xpath result was specified.
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface XmlFileResult extends ConditionBuilder

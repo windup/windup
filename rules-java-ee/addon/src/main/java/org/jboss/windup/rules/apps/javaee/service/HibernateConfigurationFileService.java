@@ -7,7 +7,7 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
 /**
  * Contains methods for querying, updating, and deleting {@link HibernateConfigurationFileModel}
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class HibernateConfigurationFileService extends GraphService<HibernateConfigurationFileModel>

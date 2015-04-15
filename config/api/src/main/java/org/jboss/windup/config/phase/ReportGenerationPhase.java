@@ -8,7 +8,7 @@ package org.jboss.windup.config.phase;
  * During this phase, report information will be gathered and stored in the graph.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class ReportGenerationPhase extends RulePhase

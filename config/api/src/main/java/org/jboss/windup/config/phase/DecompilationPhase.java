@@ -9,7 +9,7 @@ package org.jboss.windup.config.phase;
  * Any required decompilation of an input application would occur during this phase.
  * </p>
  * 
- * @author jsightler
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class DecompilationPhase extends RulePhase

@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
  * &lt;/javaclass&gt;
  * </pre>
  *
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 @NamespaceElementHandler(elementName = JavaClassHandler.ELEM_NAME, namespace = "http://windup.jboss.org/v1/xml")

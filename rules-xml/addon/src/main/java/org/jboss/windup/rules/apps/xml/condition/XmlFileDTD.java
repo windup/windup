@@ -4,7 +4,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
  * The next step in building XmlFile condition after DTD was specified.
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public interface XmlFileDTD extends ConditionBuilder

@@ -46,7 +46,7 @@ import org.ocpsoft.rewrite.util.Visitor;
  * Loads and executes the Rules from RuleProviders according to given WindupConfiguration.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * @author Ondrej Zizka, ozizka@redhat.com
+ * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>, ozizka@redhat.com
  */
 public class WindupProcessorImpl implements WindupProcessor
 {

@@ -49,7 +49,7 @@ import org.jboss.windup.util.PathUtil;
 /**
  * Provides a basic Forge UI implementation for running Windup from within a {@link UIProvider}.
  *
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class WindupCommand implements UICommand

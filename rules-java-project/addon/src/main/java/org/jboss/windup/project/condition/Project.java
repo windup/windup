@@ -16,7 +16,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Condition used to search the projects based on {@link Artifact} within the graph.
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class Project extends GraphCondition

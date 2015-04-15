@@ -11,7 +11,7 @@ import com.tinkerpop.pipes.util.structures.Pair;
  * This service provides useful methods for dealing with {@link RuleProviderExecutionStatisticsModel} Vertices within
  * the graph
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class RuleProviderExecutionStatisticsService extends GraphService<RuleProviderExecutionStatisticsModel>

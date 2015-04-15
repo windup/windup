@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * 
  * </p>
  * 
- * @author jsightler <jesse.sightler@gmail.com>
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class ExecutionStatistics
