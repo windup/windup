@@ -16,6 +16,12 @@ import org.apache.commons.lang3.StringUtils;
 public class PathUtil
 {
     private static final Logger log = Logger.getLogger(PathUtil.class.getName());
+    public static final String RULES_DIRECTORY_NAME="rules";
+    public static final String IGNORE_DIRECTORY_NAME="ignore";
+    public static final String CACHE_DIRECTORY_NAME="cache";
+    public static final String ADDONS_DIRECTORY_NAME="addons";
+    public static String LIBRARY_DIRECTORY_NAME = "lib";
+    public static String BINARY_DIRECTORY_NAME = "bin";
 
     /**
      * The path $USER_HOME/.windup
@@ -52,7 +58,7 @@ public class PathUtil
      */
     public static Path getUserCacheDir()
     {
-        return getUserSubdirectory("cache");
+        return getUserSubdirectory(CACHE_DIRECTORY_NAME);
     }
 
     /**
@@ -60,7 +66,7 @@ public class PathUtil
      */
     public static Path getWindupCacheDir()
     {
-        return getWindupSubdirectory("cache");
+        return getWindupSubdirectory(CACHE_DIRECTORY_NAME);
     }
 
     /**
@@ -68,7 +74,7 @@ public class PathUtil
      */
     public static Path getUserIgnoreDir()
     {
-        return getUserSubdirectory("ignore");
+        return getUserSubdirectory(IGNORE_DIRECTORY_NAME);
     }
 
     /**
@@ -76,7 +82,15 @@ public class PathUtil
      */
     public static Path getWindupIgnoreDir()
     {
-        return getWindupSubdirectory("ignore");
+        return getWindupSubdirectory(IGNORE_DIRECTORY_NAME);
+    }
+    
+    /**
+     * The path $WINDUP_HOME/addons
+     */
+    public static Path getWindupAddonsDir()
+    {
+        return getWindupSubdirectory(ADDONS_DIRECTORY_NAME);
     }
 
     /**
@@ -84,7 +98,7 @@ public class PathUtil
      */
     public static Path getUserRulesDir()
     {
-        return getUserSubdirectory("rules");
+        return getUserSubdirectory(RULES_DIRECTORY_NAME);
     }
 
     /**
@@ -92,7 +106,7 @@ public class PathUtil
      */
     public static Path getWindupRulesDir()
     {
-        return getWindupSubdirectory("rules");
+        return getWindupSubdirectory(RULES_DIRECTORY_NAME);
     }
 
     /**

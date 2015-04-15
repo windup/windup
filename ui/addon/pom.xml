@@ -22,12 +22,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+	<dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources</artifactId>
@@ -35,8 +41,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>windup-utils</artifactId>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>maven</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -48,6 +54,27 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+
+ 	<dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>dependencies</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+	<dependency>
+	    <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+	
+	<dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addon-manager-spi</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+  
 
     </dependencies>
 
