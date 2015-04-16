@@ -1,6 +1,8 @@
 package org.jboss.windup.exec.configuration;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +29,7 @@ import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.PathUtil;
 
 /**
  * Configuration of WindupProcessor.
@@ -44,6 +47,53 @@ public class WindupConfiguration
     private Map<String, Object> configurationOptions = new HashMap<>();
 
     private GraphContext context;
+
+    public WindupConfiguration()
+    {
+    }
+
+    public void useDefaultDirectories() throws IOException
+    {
+        Path userRulesDir = PathUtil.getUserRulesDir();
+        if (userRulesDir != null && !Files.isDirectory(userRulesDir))
+        {
+            Files.createDirectories(userRulesDir);
+        }
+        if (userRulesDir != null)
+        {
+            addDefaultUserRulesDirectory(userRulesDir);
+        }
+
+        Path userIgnoreDir = PathUtil.getUserIgnoreDir();
+        if (userIgnoreDir != null && !Files.isDirectory(userIgnoreDir))
+        {
+            Files.createDirectories(userIgnoreDir);
+        }
+        if (userIgnoreDir != null)
+        {
+            addDefaultUserIgnorePath(userIgnoreDir);
+        }
+
+        Path windupHomeRulesDir = PathUtil.getWindupRulesDir();
+        if (windupHomeRulesDir != null && !Files.isDirectory(windupHomeRulesDir))
+        {
+            Files.createDirectories(windupHomeRulesDir);
+        }
+        if (windupHomeRulesDir != null)
+        {
+            addDefaultUserRulesDirectory(windupHomeRulesDir);
+        }
+
+        Path windupHomeIgnoreDir = PathUtil.getWindupIgnoreDir();
+        if (windupHomeIgnoreDir != null && !Files.isDirectory(windupHomeIgnoreDir))
+        {
+            Files.createDirectories(windupHomeIgnoreDir);
+        }
+        if (windupHomeIgnoreDir != null)
+        {
+            addDefaultUserIgnorePath(windupHomeIgnoreDir);
+        }
+    }
 
     /**
      * Sets a configuration option to the specified value.

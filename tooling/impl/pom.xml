@@ -3,22 +3,31 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.jboss.windup.exec</groupId>
-        <artifactId>windup-exec-parent</artifactId>
+        <groupId>org.jboss.windup</groupId>
+        <artifactId>windup-tooling-parent</artifactId>
         <version>2.3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>windup-exec-api</artifactId>
-    <name>Windup Engine - Execution API</name>
+    <artifactId>windup-tooling-impl</artifactId>
+    <name>Windup Tooling - Impl</name>
 
     <dependencies>
         <!-- Local Dependencies -->
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-tooling-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-api</artifactId>
-            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+       <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -28,13 +37,27 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>windup-utils</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.jboss.windup.reporting</groupId>
+            <artifactId>windup-reporting-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-ee</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
+       	    <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Furnace Container -->
         <dependency>
@@ -42,5 +65,6 @@
             <artifactId>cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 </project>

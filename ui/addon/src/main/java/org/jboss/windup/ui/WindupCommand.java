@@ -1,7 +1,6 @@
 package org.jboss.windup.ui;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -44,7 +43,6 @@ import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.util.PathUtil;
 
 /**
  * Provides a basic Forge UI implementation for running Windup from within a {@link UIProvider}.
@@ -169,45 +167,7 @@ public class WindupCommand implements UICommand
             windupConfiguration.setOptionValue(key, value);
         }
 
-        Path userRulesDir = PathUtil.getUserRulesDir();
-        if (userRulesDir != null && !Files.isDirectory(userRulesDir))
-        {
-            Files.createDirectories(userRulesDir);
-        }
-        if (userRulesDir != null)
-        {
-            windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
-        }
-
-        Path userIgnoreDir = PathUtil.getUserIgnoreDir();
-        if (userIgnoreDir != null && !Files.isDirectory(userIgnoreDir))
-        {
-            Files.createDirectories(userIgnoreDir);
-        }
-        if (userIgnoreDir != null)
-        {
-            windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
-        }
-
-        Path windupHomeRulesDir = PathUtil.getWindupRulesDir();
-        if (windupHomeRulesDir != null && !Files.isDirectory(windupHomeRulesDir))
-        {
-            Files.createDirectories(windupHomeRulesDir);
-        }
-        if (windupHomeRulesDir != null)
-        {
-            windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
-        }
-
-        Path windupHomeIgnoreDir = PathUtil.getWindupIgnoreDir();
-        if (windupHomeIgnoreDir != null && !Files.isDirectory(windupHomeIgnoreDir))
-        {
-            Files.createDirectories(windupHomeIgnoreDir);
-        }
-        if (windupHomeIgnoreDir != null)
-        {
-            windupConfiguration.addDefaultUserIgnorePath(windupHomeIgnoreDir);
-        }
+        windupConfiguration.useDefaultDirectories();
 
         Boolean overwrite = (Boolean) windupConfiguration.getOptionMap().get(OverwriteOption.NAME);
         if (overwrite == null)
