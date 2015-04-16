@@ -38,6 +38,12 @@ public class XmlFileService extends GraphService<XmlFileModel>
     public Document loadDocumentQuiet(XmlFileModel model)
     {
         ClassificationService classificationService = new ClassificationService(getGraphContext());
+        if (model.asFile().length() == 0)
+        {
+            LOG.log(Level.WARNING, "Failed to parse xml entity: " + model.getFilePath() + ", as the file is empty.");
+            return null;
+        }
+
         try (InputStream is = model.asInputStream())
         {
             Document doc = LocationAwareXmlReader.readXML(is);
@@ -46,17 +52,14 @@ public class XmlFileService extends GraphService<XmlFileModel>
         catch (SAXException e)
         {
             LOG.log(Level.WARNING,
-                        "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage(),
-                        e);
-            classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
-                        XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+                        "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
+            classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION, XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
         }
         catch (IOException e)
         {
             LOG.log(Level.WARNING,
-                        "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage(), e);
-            classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
-                        XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+                        "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
+            classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION, XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
         }
         return null;
     }

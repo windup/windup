@@ -35,6 +35,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+/**
+ * Extract some basic metadata from all {@link XmlFileModel}s found in the graph.
+ */
 public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getSimpleName());
@@ -128,8 +131,15 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
         }
         catch (SAXException e)
         {
-            LOG.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(),
+            if (file.asFile().length() == 0)
+            {
+                LOG.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath() + ", as the file is empty.");
+            }
+            else
+            {
+                LOG.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(),
                         e);
+            }
         }
         catch (IOException e)
         {

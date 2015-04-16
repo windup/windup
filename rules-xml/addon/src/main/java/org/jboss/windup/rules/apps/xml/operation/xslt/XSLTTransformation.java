@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.xml.transform.Result;
@@ -36,11 +37,8 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
-import org.ocpsoft.rewrite.context.EvaluationContext;
-
-import java.util.logging.Logger;
-
 import org.jboss.windup.util.Logging;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Graph operation doing the xslt transformation using the .xslt source on the target xml object
@@ -260,6 +258,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 
             ClassificationService classificationService = new ClassificationService(graphContext);
             ClassificationModel classificationModel = classificationService.create();
+            classificationModel.setClassifiation("Transformed to: " + description);
             classificationModel.addFileModel(payload);
 
             GraphService<LinkModel> linkService = new GraphService<>(graphContext, LinkModel.class);
