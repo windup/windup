@@ -418,7 +418,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_overview">1. Overview</a>
 <ul class="sectlevel2">
 <li><a href="#_what_is_windup">1.1. What is Windup?</a></li>
-<li><a href="#Features-of-Windup-2.0">1.2. Features of Windup 2.0</a></li>
+<li><a href="#Features-of-Windup-2">1.2. Features of Windup 2</a></li>
 <li><a href="#About-the-WINDUP_HOME-Variable">1.3. About the WINDUP_HOME Variable</a></li>
 </ul>
 </li>
@@ -442,7 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Glossary">4.1. Glossary of Terms Used in Windup</a></li>
 <li><a href="#Windup-Processing-Overview">4.2. Windup Processing Overview</a></li>
 <li><a href="#Windup-Architectural-Components">4.3. Windup Architectural Components</a></li>
-<li><a href="#Rules-Rule-Execution-Lifecycle">4.4. Rule Execution Lifecycle</a></li>
+<li><a href="#Rule-Phases">4.4. Rule Phases</a></li>
 <li><a href="#Rules-Rule-Story-Points">4.5. Rule Story Points</a></li>
 </ul>
 </li>
@@ -455,7 +455,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="paragraph">
 <p>This guide is for engineers, consultants, and others who plan to use
-Windup 2.0 to migrate Java applications or other components.</p>
+Windup 2 to migrate Java applications or other components.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/windup-logo-large.png" alt="Windup Logo"></span></p>
@@ -473,9 +473,9 @@ the Java application to simplify migration efforts. It seeks to make
 migrating from other containers to JBoss EAP a piece of cake.</p>
 </div>
 <div class="sect3">
-<h4 id="_windup_2_0_vs_windup_0_7_x">1.1.1. Windup 2.0 vs. Windup 0.7.x</h4>
+<h4 id="_windup_2_vs_windup_0_7_x">1.1.1. Windup 2 vs. Windup 0.7.x</h4>
 <div class="paragraph">
-<p>Windup 2.0 aims to deliver the same functionality as legacy Windup, however, the internal architecture and rule structure is very different and allows for the creation of much more complex rules.</p>
+<p>Windup 2 aims to deliver the same functionality as legacy Windup, however, the internal architecture and rule structure is very different and allows for the creation of much more complex rules.</p>
 </div>
 </div>
 <div class="sect3">
@@ -526,7 +526,7 @@ profile the resource</p></td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Features-of-Windup-2.0">1.2. Features of Windup 2.0</h3>
+<h3 id="Features-of-Windup-2">1.2. Features of Windup 2</h3>
 <div class="hdlist">
 <table>
 <tr>
@@ -534,7 +534,7 @@ profile the resource</p></td>
 Shared Data Model
 </td>
 <td class="hdlist2">
-<p>Windup 2.0 creates a shared data model graph that provides the following benefits.</p>
+<p>Windup 2 creates a shared data model graph that provides the following benefits.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -555,7 +555,7 @@ Shared Data Model
 Extensibility
 </td>
 <td class="hdlist2">
-<p>Windup 2.0 can be extended by developers, users, and 3rd-parties.</p>
+<p>Windup 2 can be extended by developers, users, and 3rd-parties.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -576,7 +576,7 @@ Extensibility
 Better Rules
 </td>
 <td class="hdlist2">
-<p>Windup 2.0 provides more powerful and complex rules.</p>
+<p>Windup 2 provides more powerful and complex rules.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -598,11 +598,11 @@ Better Rules
 Automation
 </td>
 <td class="hdlist2">
-<p>Windup 2.0 has the ability to automate some of the migration processes.</p>
+<p>Windup 2 has the ability to automate some of the migration processes.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Windup is integrated with Forge 2.0, meaning it can generate projects, libraries, and configuration files.</p>
+<p>Windup is integrated with Forge 2, meaning it can generate projects, libraries, and configuration files.</p>
 </li>
 <li>
 <p>Rules can create Forge inputs and put them into the data graph.</p>
@@ -640,7 +640,7 @@ Work Estimation
 Better Reporting
 </td>
 <td class="hdlist2">
-<p>Windup 2.0  reports are now targeted for specific audiences.</p>
+<p>Windup 2  reports are now targeted for specific audiences.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -667,10 +667,10 @@ Better Reporting
 <div class="ulist">
 <ul>
 <li>
-<p>If you download and install the latest distribution of Windup from the JBoss Nexus repository, <code>WINDUP_HOME</code> refers to the <code>windup-distribution-2.0.0.VERSION</code> folder extracted from the downloaded ZIP file.</p>
+<p>If you download and install the latest distribution of Windup from the JBoss Nexus repository, <code>WINDUP_HOME</code> refers to the <code>windup-distribution-2.2.0.Final</code> folder extracted from the downloaded ZIP file.</p>
 </li>
 <li>
-<p>If you build Windup from GitHub source, <code>WINDUP_HOME</code> refers to the <code>windup-distribution-2.0.0-VERSION</code> folder extracted from the Windup source <code>dist/target/windup-distribution-2.0.0-VERSION.zip</code> file.</p>
+<p>If you build Windup from GitHub source, <code>WINDUP_HOME</code> refers to the <code>windup-distribution-2.2.0-Final</code> folder extracted from the Windup source <code>dist/target/windup-distribution-2.2.0-Final.zip</code> file.</p>
 </li>
 </ul>
 </div>
@@ -827,9 +827,9 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 |__/|__/_/_/ /_/\__,_/\__,_/ .___/
                           /_/
 
-JBoss Windup, version [ 2.0.0-VERSION ] - JBoss, by Red Hat, Inc. [ http://windup.jboss.org ]
+JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.jboss.org ]
 
-[windup-distribution-2.0.0-VERSION]$</pre>
+[windup-distribution-2.2.0.Final]$</pre>
 </div>
 </div>
 </li>
@@ -1020,7 +1020,7 @@ For Windows: &gt; bin\windup.bat --evaluate "windup-migrate-app --input \windup-
 <div class="sect4">
 <h5 id="_windup_quickstart_examples">Windup Quickstart Examples</h5>
 <div class="paragraph">
-<p>For more concrete examples, see the Windup quickstarts located on GitHub here: <a href="https://github.com/windup/windup-quickstarts" class="bare">https://github.com/windup/windup-quickstarts</a>. If you prefer, you can download the <a href="https://github.com/windup/windup-quickstarts/releases/tag/2.0.0.Alpha1">2.0.0.Alpha1 release</a> ZIP or TAR  distribution of the quickstarts.</p>
+<p>For more concrete examples, see the Windup quickstarts located on GitHub here: <a href="https://github.com/windup/windup-quickstarts" class="bare">https://github.com/windup/windup-quickstarts</a>. If you prefer, you can download the <a href="https://github.com/windup/windup-quickstarts/releases/">latest release</a> ZIP or TAR  distribution of the quickstarts.</p>
 </div>
 <div class="paragraph">
 <p>The quickstarts provide examples of Java-based and XML-based rules you can run and test using Windup. The README instructions provide a step-by-step guide to run the quickstart example. You can also look through the code examples and use them as a starting point for creating your own rules.</p>
@@ -1610,7 +1610,7 @@ For Windows: &gt; bin\windup.bat --evaluate "windup-migrate-app --input \windup-
 <p>Wnen you run the <code>windup-migrate-app</code> command, Windup executes its own core rules to extract files from archives, decompile classes, and analyze the application. In this phase Windup builds a data model and stores component data and relationships in a graph database, which can then be queried and updated as needed by the migration rules and for reporting purposes.</p>
 </div>
 <div class="paragraph">
-<p>For more information about the phases of rule execution and how to control rule dependencies, see <a href="#Rules-Rule-Execution-Lifecycle">Rule Execution Lifecycle</a>.</p>
+<p>For more information about the phases of rule execution, see <a href="#Rule-Phases">Rule Phases</a>.</p>
 </div>
 <div class="paragraph">
 <p>For more information about the graph database components, see <a href="#Windup-Architectural-Components">Windup Architectural Components</a>.</p>
@@ -1656,7 +1656,7 @@ For Windows: &gt; bin\windup.bat --evaluate "windup-migrate-app --input \windup-
 <div class="paragraph">
 <p>The following open source software, tools, and APIs are used within
 Windup to analyze and provide migration information. If you plan to
-contribute source code to the core Windup 2.0 project, you should be
+contribute source code to the core Windup 2 project, you should be
 familiar with them.</p>
 </div>
 <div class="sect3">
@@ -1744,151 +1744,92 @@ Ocpsoft Rewrite, see: <a href="http://ocpsoft.org/rewrite/">OCPsoft Rewrite</a>.
 </div>
 </div>
 <div class="sect2">
-<h3 id="Rules-Rule-Execution-Lifecycle">4.4. Rule Execution Lifecycle</h3>
-<div class="sect3">
-<h4 id="_rule_lifecycle">4.4.1. Rule Lifecycle</h4>
+<h3 id="Rule-Phases">4.4. Rule Phases</h3>
 <div class="paragraph">
-<p>Windup executes each rule in a sequential order. The following
-sections describe the phases of rule execution and how rules may specify
-that one or more other rules must be executed before or after they are
-run.</p>
+<p>Rule phases provide a way for rule authors to control the rule lifecycle by specifying the phase in which the rule should execute. Windup executes rules sequentially within rule phases, however, the order of rule execution within a phase can be controlled by specifying other rules that should be run before or after the rule.</p>
 </div>
 <div class="paragraph">
-<p>For a graphical overview of rule processing, see
-<a href="https://docs.google.com/drawings/d/1IMnds3Qu8Wwcf7_mr7NJ9a3YgtcGJ7dejl09EhWl7Vc/edit">this
-diagram</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_rule_phases">4.4.2. Rule Phases</h4>
-<div class="listingblock">
-<div class="content">
-<pre>INFO: Loaded [67] org.jboss.windup.config.WindupRuleProvider [
-org.jboss.windup.config.phase.Implicit
-org.jboss.windup.config.phase.Initialization
-org.jboss.windup.config.phase.Discovery
-org.jboss.windup.config.phase.ArchiveExtraction
-org.jboss.windup.config.phase.ArchiveMetadataExtraction
-org.jboss.windup.config.phase.ClassifyFileTypes
-org.jboss.windup.config.phase.DiscoverProjectStructure
-org.jboss.windup.config.phase.Decompilation
-org.jboss.windup.config.phase.InitialAnalysis
-org.jboss.windup.config.phase.MigrationRules
-org.jboss.windup.config.phase.PostMigrationRules
-org.jboss.windup.config.phase.PreReportGeneration
-org.jboss.windup.config.phase.ReportGeneration
-org.jboss.windup.config.phase.PostReportGeneration
-org.jboss.windup.config.phase.ReportRendering
-org.jboss.windup.config.phase.PostReportRendering
-org.jboss.windup.config.phase.Finalize
-org.jboss.windup.config.phase.PostFinalize
-]</pre>
-</div>
+<p>By default, rules run in the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/MigrationRulesPhase.html">MigrationRulesPhase</a>.  However, a rule may require certain processing or actions to occur before it executes, such as the extraction of archives and scanning of java or XML files, so a rule can specify that it is run during another phase in the process.</p>
 </div>
 <div class="paragraph">
-<p>By default, a rule runs during the <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#MIGRATION_RULES">MIGRATION_RULES</a> phase. However, a
-rule may require certain processing or actions to occur before it
-executes, such as the extraction of archives and scanning of java or XML
-files.</p>
-</div>
-<div class="paragraph">
-<p>Rule phases provide a way for rule authors to specify and control in
-which phase of the rule lifecycle the rule should execute. This is done
-by overriding the <code>WindupRuleProvider.getPhase()</code> method. The following
-example specifies this rule should execute during the <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#INITIAL_ANALYSIS">INITIAL_ANALYSIS</a> rule phase.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Override
-public RulePhase getPhase() {
-    return InitialAnalysis.class;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The following is the list of rule phases as defined in the <code>RulePhase</code>
-enum class. Note that there are also <code>PRE_</code> processing and <code>POST_</code>
-processing phases for each of the following rule phases.</p>
+<p>The rule phases below are listed in the order in which they are executed by Windup. The exception is the last phase, which can occur during any phase of the execution lifecycle.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#DISCOVERY">DISCOVERY</a></dt>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/InitializationPhase.html">InitializationPhase</a></dt>
 <dd>
-<p>This phase is called during resource discovery. Static files are scanned
-by their basic properties, for example, the name, extension, location,
-and fully qualified Java class name. Archives are unzipped in this
-phase. Typically, any rule that only puts data into the graph is
-executed during this phase.</p>
+<p>This is the first phase of Windup Execution. Initialization related tasks, such as copying configuration data to the graph, should occur during this phase.</p>
 </dd>
-<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#INITIAL_ANALYSIS">INITIAL_ANALYSIS</a></dt>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/DiscoveryPhase.html">DiscoveryPhase</a></dt>
 <dd>
-<p>This phase is called to perform a basic analysis of the files content.
-It extracts all method names from class files, extracts metadata, such
-as the XML namespace and root element, from XML files.</p>
+<p>This resource discovery phase immediately follows the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/InitializationPhase.html">InitializationPhase</a>. During this phase, input files are identified by the name, extension, location, and fully qualified Java class names. Typically, any rule that only puts data into the graph is executed during this phase.</p>
 </dd>
-<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#COMPOSITION">COMPOSITION</a></dt>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ArchiveExtractionPhase.html">ArchiveExtractionPhase</a></dt>
 <dd>
-<p>This phase is called to perform high-level composition operations on the
-graph. For example, it may link items found in XML files to the related
-Java classes or references to server resources in Java classes.</p>
+<p>This phase immediately follows the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/DiscoveryPhase.html">DiscoveryPhase</a>. During this phase, input files such and EARs, WARs, JARs, and other zipped files are unzipped during this phase.</p>
 </dd>
-<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#MIGRATION_RULES">MIGRATION_RULES</a></dt>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ArchiveMetadataExtractionPhase.html">ArchiveMetadataExtractionPhase</a></dt>
 <dd>
-<p>This phase is the default phase for all rules unless overridden.
-During this phase, migration rules attach data to the graph associated
-with migration. This could include: - Hints to migrators for manual
-migration - Automated migration of schemas or source segments -
-Blacklists to indicate vendor specific APIs.</p>
+<p>This phase occurs immediately after <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ArchiveExtractionPhase.html">ArchiveExtractionPhase</a>. It calculates checksums for archives and determines whether the archive is an EAR, WAR, JAR, or some other type of compressed file.</p>
 </dd>
-<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#REPORT_GENERATION">REPORT_GENERATION</a></dt>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ClassifyFileTypesPhase.html">ClassifyFileTypesPhase</a></dt>
 <dd>
-<p>During this phase, reporting visitors produce report data in the graph
-that will later be used by the report rendering phase.</p>
+<p>This phase follows the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ArchiveMetadataExtractionPhase.html">ArchiveMetadataExtractionPhase</a>. During this phase, files are scanned and metadata is created for them.For example, this phase may find all of the Java files in an application and mark them as Java, or it may find all of the bash scripts in an input and identify them appropriately.</p>
 </dd>
-<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#REPORT_RENDERING">REPORT_RENDERING</a></dt>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/DiscoverProjectStructurePhase.html">DiscoverProjectStructurePhase</a></dt>
+<dd>
+<p>This phase, which follows <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ClassifyFileTypesPhase.html">ClassifyFileTypesPhase</a>, identifies the project structure of the input application. This includes identification of project files, any subprojects, and the type of project, for example Maven or Ant.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/DecompilationPhase.html">DecompilationPhase</a></dt>
+<dd>
+<p>This phase follows the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/DiscoverProjectStructurePhase.html">DiscoverProjectStructurePhase</a>. This phase is responsible for identifying and decompiling classes included in the input application.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/InitialAnalysisPhase.html">InitialAnalysisPhase</a></dt>
+<dd>
+<p>This phase follows the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/DecompilationPhase.html">DecompilationPhase</a> and is called to perform a basic analysis of file content.
+It extracts all method names from class files and extracts metadata, such as the XML namespace and root element, from XML files.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/MigrationRulesPhase.html">MigrationRulesPhase</a></dt>
+<dd>
+<p>This phase, which follows the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/InitialAnalysisPhase.html">InitialAnalysisPhase</a>, is the default phase for all rules unless it is specifically overridden. During this phase, migration rules attach data to the graph associated with migration. This can include hints to migrators for manual migration, automated migration of schemas or source segments, blacklists to indicate vendor specific APIs.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/PostMigrationRulesPhase.html">PostMigrationRulesPhase</a></dt>
+<dd>
+<p>This phase occurs immediately after <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/MigrationRulesPhase.html">MigrationRulesPhase</a>. This phase can be used to execute a rule that must follow all other migration rules. The primary use case at the moment involves unit tests.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/PreReportGenerationPhase.html">PreReportGenerationPhase</a></dt>
+<dd>
+<p>This phase occurs after the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/PostMigrationRulesPhase.html">PostMigrationRulesPhase</a> and immediately before the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ReportGenerationPhase.html">ReportGenerationPhase</a>. It can be used for initialization tasks that will be needed by all reports during that phase.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ReportGenerationPhase.html">ReportGenerationPhase</a></dt>
+<dd>
+<p>During this phase, reporting visitors produce report data in the graph that is used later by the report rendering phase.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/PostReportGenerationPhase.html">PostReportGenerationPhase</a></dt>
+<dd>
+<p>This phase occurs immediately after the main tasks of report generation. It can be used to generate reports that need data from all of the previously generated reports.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/ReportRenderingPhase.html">ReportRenderingPhase</a></dt>
 <dd>
 <p>This is the phase that renders the report.</p>
 </dd>
-<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html#FINALIZE">FINALIZE</a></dt>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/PostReportRenderingPhase.html">PostReportRenderingPhase</a></dt>
 <dd>
-<p>This phase is called to clean up resources and close streams.</p>
+<p>This phase occurs immediately after reports have been rendered. It can be used to render any reports that need to execute last. One possible use is to render all the entire contents of the graph itself.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/FinalizePhase.html">FinalizePhase</a></dt>
+<dd>
+<p>This phase is called to clean up resources and close streams. This phase occurs at the end of execution. Rules in this phase are responsible for any cleanup of resources and closing any streams that may have been opened.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/PostFinalizePhase.html">PostFinalizePhase</a></dt>
+<dd>
+<p>This occurs immediately after the FinalizePhase. This is an ideal place to put Rules that would like to be the absolute last things to fire, for example reporting on the execution time of previous rules or reporting on all of the rules that have executed and which AbstractRuleProviders executed them.</p>
+</dd>
+<dt class="hdlist1"><a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/phase/DependentPhase.html">DependentPhase</a></dt>
+<dd>
+<p>This phase can occur during any phase of the execution lifecycle. It&#8217;s exact placement is determine by the code within the rule.</p>
 </dd>
 </dl>
-</div>
-<div class="paragraph">
-<p>For more information about rule phases, see the <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/config/RulePhase.html">RulePhase Javadoc</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_execute_before_and_execute_after">4.4.3. Execute Before and Execute After</h4>
-<div class="paragraph">
-<p>A rule may specify that one or more rules must be executed before it is
-run. In this case, all named rules will be fired in the order specified
-before executing the the current rule.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Override
-public List&lt;Class&lt;? extends WindupRuleProvider&gt;&gt; getExecuteBefore()
-{
-   return asClassList(RuleToFireBefore.class);
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A rule may also specify that one or more rules must be executed after it
-is run. In this case, all named rules will be fired in the order
-specified after executing the the current rule.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Override
-public List&lt;Class&lt;? extends WindupRuleProvider&gt;&gt; getExecuteAfter()
-{
-    return asClassList(RuleToFireAfter.class);
-}</code></pre>
-</div>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -1957,7 +1898,7 @@ public List&lt;Class&lt;? extends WindupRuleProvider&gt;&gt; getExecuteAfter()
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-04-01 14:59:45 EDT
+Last updated 2015-04-17 14:43:01 EDT
 </div>
 </div>
 </body>
