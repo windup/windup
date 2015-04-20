@@ -39,7 +39,7 @@
 		<td>
 			<#list getTechnologyTagsForFile(fileModel).iterator() as tag>
 		    <@tagRenderer tag>
-		    	<#if tag.version?has_content> ${tag.name} ${tag.version} 
+		    	<#if tag.version?has_content> ${tag.name} ${tag.version}
 		    	<#else>
 		    		${tag.name}
 		    	</#if>
@@ -47,9 +47,14 @@
 		  </#list>
 		</td>
 		<td>
-		  <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content>
-  		  <b>Warnings: ${sourceReportModel.sourceFileModel.inlineHintCount} items</b>
+		  <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content || sourceReportModel.sourceFileModel.classificationModels.iterator()?has_content>
+  		  <b>Warnings: ${sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount} items</b>
           <ul class='notifications'>
+			<#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
+				<#if classification.classification?has_content>
+				<li class='warning'>${classification.classification}</li>
+				</#if>
+			</#list>
             <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
               <#if hintLine.hint?has_content>
                 <li class='warning'>${hintLine.title}</li>

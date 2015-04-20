@@ -22,6 +22,7 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
 import org.jboss.windup.rules.apps.maven.dao.MavenProjectService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.MarshallingException;
 import org.jboss.windup.util.xml.XmlUtil;
@@ -163,10 +164,15 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         }
     }
 
-    public MavenProjectModel extractMavenProjectModel(GraphRewrite event, String defaultProjectName, XmlFileModel xmlResourceModel)
+    public MavenProjectModel extractMavenProjectModel(GraphRewrite event, String defaultProjectName, XmlFileModel xmlFileModel)
     {
-        File myFile = xmlResourceModel.asFile();
-        Document document = xmlResourceModel.asDocument();
+        File xmlFile = xmlFileModel.asFile();
+        Document document = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(xmlFileModel);
+        if (document == null)
+        {
+            LOG.warning("Could not parse pom at: " + xmlFileModel.getFilePath() + " skipping maven project discovery for this.");
+            return null;
+        }
 
         // modelVersion
         String modelVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:modelVersion", namespaces);
@@ -206,10 +212,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
          */
         if (mavenProjectModel == null)
         {
-            LOG.info("Creating maven project for pom at: " + xmlResourceModel.getFilePath() + " with gav: " + groupId + "," + artifactId + ","
+            LOG.info("Creating maven project for pom at: " + xmlFileModel.getFilePath() + " with gav: " + groupId + "," + artifactId + ","
                         + version);
             mavenProjectModel = mavenProjectService.createMavenStub(groupId, artifactId, version);
-            mavenProjectModel.addMavenPom(xmlResourceModel);
+            mavenProjectModel.addMavenPom(xmlFileModel);
         }
         else
         {
@@ -218,7 +224,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             for (XmlFileModel foundPom : mavenProjectModel.getMavenPom())
             {
                 File foundPomFile = foundPom.asFile();
-                if (foundPomFile.getAbsoluteFile().equals(myFile))
+                if (foundPomFile.getAbsoluteFile().equals(xmlFile))
                 {
                     // this one is already there
                     found = true;
@@ -229,7 +235,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             // if this mavenprojectmodel isn't already associated with a pom file, add it now
             if (!found)
             {
-                mavenProjectModel.addMavenPom(xmlResourceModel);
+                mavenProjectModel.addMavenPom(xmlFileModel);
             }
         }
 
