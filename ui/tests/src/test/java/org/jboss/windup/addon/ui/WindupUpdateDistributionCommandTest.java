@@ -37,12 +37,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ui.RulesetUpdateChecker;
-import org.jboss.windup.ui.WindupUpdateDistributionCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,6 +47,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+/**
+ * Test distribution update by faking the old installation by downgrading windup-ui addon (changing installed.xml and windup-ui addon folder name).
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briškár</a>
+ *
+ */
 @RunWith(Arquillian.class)
 public class WindupUpdateDistributionCommandTest
 {
@@ -70,7 +72,7 @@ public class WindupUpdateDistributionCommandTest
         AddonArchive archive = ShrinkWrap
                     .create(AddonArchive.class)
                     .addBeansXML()
-                    .addAsResource(WindupCommandTest.class.getResource(TEST_OLD_WINDUP), TEST_OLD_WINDUP);
+                    .addAsResource(WindupUpdateDistributionCommandTest.class.getResource(TEST_OLD_WINDUP), TEST_OLD_WINDUP);
         return archive;
     }
 
@@ -88,6 +90,10 @@ public class WindupUpdateDistributionCommandTest
     @Inject
     private UITestHarness uiTestHarness;
 
+    /**
+     * Changes version of the windup-ui addon and then ask to update and checks that the .update is correctly prepared in the $WINDUP_HOME directory.
+     * @throws Exception
+     */
     @Test
     public void testUpdateDistributionCommand() throws Exception
     {
@@ -127,19 +133,27 @@ public class WindupUpdateDistributionCommandTest
             {
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
+                Assert.assertFalse(new File(windupHome + "/.update").exists());
                 Result result = controller.execute();
                 Assert.assertFalse("Windup Update Distribution command should suceed, but it failed.",result instanceof Failed);
-                rulesetNeedUpdate = RulesetUpdateChecker.rulesetNeedUpdate(resolver);
-                Assert.assertFalse("Ruleset should have already been updated to the latest version and as such should not need another update.",rulesetNeedUpdate);
-                File addonsHomeNew = new File(windupHome + "/addons");
-                File binNew = new File(windupHome + "/bin");
-                File libNew = new File(windupHome + "/lib");
-                Assert.assertTrue("Addons folder was not updated sucessfully",addonsHomeNew.exists());
-                Assert.assertTrue("Bin folder was not updated sucessfully",binNew.exists());
-                Assert.assertTrue("Library folder was not updated sucessfully",libNew.exists());
-                Assert.assertTrue("Binary folder does not contain enough items (at least 2)",binNew.listFiles().length > 1);
-                Assert.assertTrue("Library folder does not contain enough libraries (at least 8)",libNew.listFiles().length > 7);
-                Assert.assertTrue("Addons folder does not contain enough addons (at least 6)",addonsHomeNew.listFiles().length > 5);
+                Assert.assertTrue(".update folder should have been placed in WINDUP_HOME/.update already, but it is not there.",new File(windupHome + "/.update").exists());
+                String pomXmlPath = "";
+                if(new File(windupHome + "/.update/rules/migration-core").exists()) {
+                    pomXmlPath= windupHome + "/.update/rules/migration-core/META-INF/maven/org.jboss.windup.rules/windup-rulesets/pom.xml";
+                } else {
+                    pomXmlPath= windupHome + "/.update/rules/META-INF/maven/org.jboss.windup.rules/windup-rulesets/pom.xml";
+                }
+                rulesetNeedUpdate = RulesetUpdateChecker.rulesetNeedUpdate(resolver,pomXmlPath);
+                Assert.assertFalse("Ruleset should have already been downloaded with the most updated version.",rulesetNeedUpdate);
+                File addonsHomeNew = new File(windupHome + "/.update/addons");
+                File binNew = new File(windupHome + "/.update/bin");
+                File libNew = new File(windupHome + "/.update/lib");
+                Assert.assertTrue(".update/addons folder was not updated sucessfully, it should exist now",addonsHomeNew.exists());
+                Assert.assertTrue(".update/bin folder was not updated sucessfully, it should exist now",binNew.exists());
+                Assert.assertTrue(".update/lib folder was not updated sucessfully, it should exist now",libNew.exists());
+                Assert.assertTrue(".update/bin folder does not contain enough items (at least 2)",binNew.listFiles().length > 1);
+                Assert.assertTrue(".update/lib folder does not contain enough libraries (at least 8)",libNew.listFiles().length > 7);
+                Assert.assertTrue(".update/addons folder does not contain enough addons (at least 6)",addonsHomeNew.listFiles().length > 5);
             }
             finally
             {
@@ -147,7 +161,12 @@ public class WindupUpdateDistributionCommandTest
             }
         }
     }
+    
 
+    /**
+     * Wait for the windup-ui addon to start.
+     * @param furnace
+     */
     private void waitForWindupUIAddon(Furnace furnace) {
         Set<Addon> addons = furnace.getAddonRegistry().getAddons();
         for(Addon addon : addons) {
@@ -165,6 +184,12 @@ public class WindupUpdateDistributionCommandTest
             }
         }
     }
+    /**
+     * This is because UI-Addon contains addon version check to know if it needs to update. 
+     * After changing the version to older, the check will return that it needs an update.
+     * @param homeAddonsDir
+     * @param uiPreviousVersion
+     */
     private void changeUiAddonDirectoryToBeOlder(File homeAddonsDir, String uiPreviousVersion)
     {
         File uiAddonDirectory = new File(homeAddonsDir.getAbsolutePath() + "/org-jboss-windup-ui-windup-ui-"
@@ -186,6 +211,11 @@ public class WindupUpdateDistributionCommandTest
         }
     }
 
+    /**
+     * Gets the version of org.jboss.windup.ui:windup-ui, information is taken from installed.xml file.
+     * @param homeAddonsDirPath
+     * @return
+     */
     private String getPreviousVersion(String homeAddonsDirPath)
     {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

@@ -2,12 +2,7 @@ package org.jboss.windup.ui;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,9 +33,11 @@ import org.jboss.forge.furnace.versions.Version;
 import org.jboss.windup.util.PathUtil;
 
 /**
- * Provides a basic UI command updating the whole windup distribution.
+ * Provides a basic UI command updating the whole windup distribution. This command provides only the first step of 2-step update that
+ * consists of downloading the latest distribution version and saving it
+ * into $WINDUP_HOME/.update. This is because deletion of files that are already on classpath is not supported in Windows (files are locked).
  *
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briškár</a>
  */
 public class WindupUpdateDistributionCommand implements UICommand
 {
@@ -61,19 +58,22 @@ public class WindupUpdateDistributionCommand implements UICommand
     public Result execute(UIExecutionContext context) throws Exception
     {
         if (!context.getPrompt().promptBoolean(
-                    "Are you sure you want to continue? This command will delete current directories: addons, bin, lib, rules/migration-core"))
+                    "Are you sure you want to continue? This command will delete current directories preserving only the extra added rules"))
         {
             return Results.fail("Updating distribution was aborted.");
-
         }
         List<Coordinate> distributionVersions = dependencyResolver.resolveVersions(DependencyQueryBuilder.create(CoordinateBuilder.create()
                     .setGroupId("org.jboss.windup")
                     .setArtifactId("windup-distribution")));
-        Coordinate latestDistributionCoordinate = distributionVersions.get(distributionVersions.size() - 1);
+        Coordinate latestDistributionCoordinate ;
         int i = 0;
         do
         {
             i++;
+            if(distributionVersions.size() <= i) {
+                //if we haven't found final version
+                return Results.fail("Have not found any online Final version of the distribution.");
+            }
             latestDistributionCoordinate = distributionVersions.get(distributionVersions.size() - i);
         }
         while (latestDistributionCoordinate.isSnapshot());
@@ -83,16 +83,8 @@ public class WindupUpdateDistributionCommand implements UICommand
         {
             return Results.fail("Windup is already in the most updated version.");
         }
-        Path windupRulesDir = PathUtil.getWindupRulesDir();
-        Path addonsDir = PathUtil.getWindupAddonsDir();
-        Path binDir = PathUtil.getWindupHome().resolve(PathUtil.BINARY_DIRECTORY_NAME);
-        Path libDir = PathUtil.getWindupHome().resolve( PathUtil.LIBRARY_DIRECTORY_NAME);
-        Path coreRulesPropertiesPath = windupRulesDir.resolve(RulesetUpdateChecker.RULESET_CORE_DIRECTORY);
-
-        deleteWholeDirectory(coreRulesPropertiesPath);
-        deleteWholeDirectory(addonsDir);
-        deleteWholeDirectory(libDir);
-        deleteWholeDirectory(binDir);
+        Path updateDir = PathUtil.getWindupUpdateDir();
+        
         Dependency dependency = dependencyResolver.resolveArtifact(DependencyQueryBuilder.create(CoordinateBuilder.create()
                     .setGroupId(latestDistributionCoordinate.getGroupId()).setArtifactId(latestDistributionCoordinate.getArtifactId())
                     .setVersion(latestDistributionCoordinate.getVersion()).setClassifier("offline").setPackaging("zip")));
@@ -117,55 +109,22 @@ public class WindupUpdateDistributionCommand implements UICommand
             }
         };
         File[] windupDistrubution = new File(tempFolderPath).listFiles(windupUnzipped);
+
         String distributionExctractedPath = windupDistrubution[0].getAbsolutePath();
-        FileUtils.copyDirectory(new File(distributionExctractedPath + "/" + PathUtil.ADDONS_DIRECTORY_NAME), addonsDir.toFile());
-        FileUtils.copyDirectory(new File(distributionExctractedPath + "/" + PathUtil.BINARY_DIRECTORY_NAME), binDir.toFile());
-        FileUtils.copyDirectory(new File(distributionExctractedPath + "/" + PathUtil.LIBRARY_DIRECTORY_NAME), libDir.toFile());
-        File downloadedMigrationCore = new File(distributionExctractedPath + "/" + PathUtil.RULES_DIRECTORY_NAME + "/"
-                    + RulesetUpdateChecker.RULESET_CORE_DIRECTORY);
-        if (downloadedMigrationCore.exists())
-        {
-            // copy from rules/migration-core to migration-core
-            FileUtils.copyDirectory(downloadedMigrationCore, coreRulesPropertiesPath.toFile());
-        }
-        else
-        {
-            // copy from rules/ to migration-core
-            // TODO: This else branch is just for testing purposes while the online version does not contain migration-core folder
-            FileUtils.copyDirectory(new File(distributionExctractedPath + "/" + PathUtil.RULES_DIRECTORY_NAME), coreRulesPropertiesPath.toFile());
-        }
-        return Results.success("Sucessfully updated to version " + latestDistributionCoordinate.getVersion() + ". Please restart windup.");
+        FileUtils.copyDirectory(new File(distributionExctractedPath), updateDir.toFile());
+        return Results.success("Sucessfully prepared to be updated to version " + latestDistributionCoordinate.getVersion() + ". Please restart windup in order to take effect.");
     }
 
-    private void deleteWholeDirectory(Path directory) throws IOException
-    {
-        if (directory.toFile().exists())
-        {
-            Files.walkFileTree(directory, new SimpleFileVisitor<Path>()
-            {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                            throws IOException
-                {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir,
-                            IOException exc) throws IOException
-                {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        }
-    }
 
     @Override
     public boolean isEnabled(UIContext context)
     {
-        return true;
+        if(context.getProvider().isGUI()) {
+            //user should update the whole IDE plugin instead
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override

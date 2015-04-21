@@ -33,7 +33,7 @@ import org.jboss.windup.util.PathUtil;
 /**
  * Provides a basic UI command updating the rules/migration-core folder with the latest version.
  *
- * @author mbriskar
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briškár</a>
  */
 public class WindupUpdateRulesetCommand implements UICommand
 {
@@ -62,6 +62,11 @@ public class WindupUpdateRulesetCommand implements UICommand
         Coordinate latestCoordinate;
         do{
             i++;
+            i++;
+            if(resolveVersions.size() <= i) {
+                //if we haven't found final version
+                return Results.fail("Have not found any online Final version of the ruleset.");
+            }
             latestCoordinate = resolveVersions.get(resolveVersions.size() - i);
         }while(latestCoordinate.isSnapshot()); 
         
