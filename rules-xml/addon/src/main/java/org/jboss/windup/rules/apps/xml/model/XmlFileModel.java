@@ -1,20 +1,12 @@
 package org.jboss.windup.rules.apps.xml.model;
 
-import java.io.InputStream;
-
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
-import org.jboss.windup.util.exception.WindupException;
-import org.jboss.windup.util.xml.LocationAwareXmlReader;
-import org.w3c.dom.Document;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(XmlFileModel.TYPE)
@@ -46,27 +38,4 @@ public interface XmlFileModel extends FileModel, SourceFileModel
 
     @Property(ROOT_TAG_NAME)
     public void setRootTagName(String rootTagName);
-
-    @JavaHandler
-    public Document asDocument();
-
-    abstract class Impl implements XmlFileModel, JavaHandlerContext<Vertex>
-    {
-
-        @Override
-        public Document asDocument()
-        {
-            FileModel fileModel = frame(asVertex(), FileModel.class);
-            try (InputStream is = fileModel.asInputStream())
-            {
-                Document parsedDocument = LocationAwareXmlReader.readXML(is);
-                return parsedDocument;
-            }
-            catch (Exception e)
-            {
-                throw new WindupException("Exception reading document.", e);
-            }
-        }
-
-    }
 }

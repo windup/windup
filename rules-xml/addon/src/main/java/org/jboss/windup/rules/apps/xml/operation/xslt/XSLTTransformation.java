@@ -35,6 +35,7 @@ import org.jboss.windup.reporting.model.LinkModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
+import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.Logging;
@@ -243,7 +244,8 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 
         Path resultPath = outputPath.resolve(fileName);
 
-        Source xmlSource = new DOMSource(payload.asDocument());
+        XmlFileService xmlService = new XmlFileService(graphContext);
+        Source xmlSource = new DOMSource(xmlService.loadDocumentQuiet(payload));
         Result xmlResult = new StreamResult(resultPath.toFile());
 
         try
