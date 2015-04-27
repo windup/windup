@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -20,6 +21,7 @@ import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
+import org.jboss.windup.decompiler.util.Filter;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -32,6 +34,8 @@ import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
@@ -86,10 +90,14 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                 outputDir = outputDir.toPath().resolve("WEB-INF").resolve("classes").toFile();
             }
 
+            //load all packages and filter on it.
+            WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
+            Filter<ZipEntry> filter = new ZipEntryPackageFilter(javaCfg.getScanJavaPackages());
+            
             try
             {
                 AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(payload, event.getGraphContext());
-                DecompilationResult result = decompiler.decompileArchive(archive, outputDir, addDecompiledItemsToGraph);
+                DecompilationResult result = decompiler.decompileArchive(archive, outputDir, filter, addDecompiledItemsToGraph);
                 for (DecompilationFailure failure : result.getFailures())
                 {
                     LOG.log(Level.WARNING, "Failed to decompile.", failure);

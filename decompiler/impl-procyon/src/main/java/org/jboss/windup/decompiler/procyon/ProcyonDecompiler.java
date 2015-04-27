@@ -319,16 +319,6 @@ public class ProcyonDecompiler implements Decompiler
             {
                 final JarEntry entry = entries.nextElement();
 
-                if (filter != null)
-                    filterRes = filter.decide(entry);
-                if (filterRes == Filter.Result.REJECT)
-                {
-                    jarEntryCount.decrementAndGet();
-                    continue;
-                }
-                if (filterRes == Filter.Result.STOP)
-                    break;
-
                 final String name = entry.getName();
 
                 if (!name.endsWith(".class"))
@@ -336,6 +326,21 @@ public class ProcyonDecompiler implements Decompiler
                     jarEntryCount.decrementAndGet();
                     continue;
                 }
+                
+                //if filter exists, then filter...
+                if (filter != null) {
+                    filterRes = filter.decide(entry);
+                    
+                    if (filterRes == Filter.Result.REJECT)
+                    {
+                        jarEntryCount.decrementAndGet();
+                        continue;
+                    }
+                    if (filterRes == Filter.Result.STOP) {
+                        break;
+                    }
+                }
+                
 
                 final String typeName = StringUtils.removeEnd(name, ".class");
 
