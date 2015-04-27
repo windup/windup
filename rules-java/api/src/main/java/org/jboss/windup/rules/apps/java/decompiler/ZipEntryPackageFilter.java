@@ -33,16 +33,28 @@ public class ZipEntryPackageFilter implements Filter<ZipEntry> {
 		}
 		
 		String name = what.getName();
-		name = StringUtils.removeStart(name, "/WEB-INF/classes");
+		
+		if(StringUtils.startsWith(name, "WEB-INF/classes/")) {
+			//WAR file
+			name = StringUtils.removeStart(name, "WEB-INF/classes/");
+		}
+		else if(StringUtils.startsWith(name, "classes/")) {
+			//PAR file (jBPM Process Archive)
+			name = StringUtils.removeStart(name, "classes/");
+		}
+		else if(StringUtils.startsWith(name, "service/")) {
+			//SAR file (JBoss Service Archive)
+			name = StringUtils.removeStart(name, "service/");
+		}
 		
 		for(String filter : filters) {
 			
 			if(StringUtils.startsWith(what.getName(), filter)) {
-				log.info("Accepting: "+what.getName());
+				log.fine("Accepting: "+what.getName()+" -- Name: "+name);
 				return Result.ACCEPT;
 			}
 		}
-		log.info("Rejecting: "+what.getName()+" -- Name: "+name);
+		log.fine("Rejecting: "+what.getName()+" -- Name: "+name);
 		return Result.REJECT;
 	}
 

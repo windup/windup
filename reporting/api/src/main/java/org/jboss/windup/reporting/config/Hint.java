@@ -3,6 +3,7 @@ package org.jboss.windup.reporting.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Assert;
@@ -120,7 +121,10 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
 
         if (locationModel.getFile() instanceof SourceFileModel)
             ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
-        log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this + "] ");
+        
+        if(log.getLevel() == Level.FINE) {
+        	log.fine("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this + "] ");
+        }
     }
 
     @Override
