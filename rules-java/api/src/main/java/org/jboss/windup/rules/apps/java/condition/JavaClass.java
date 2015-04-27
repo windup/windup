@@ -303,13 +303,15 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             TypeInterestFactory.registerInterest(
                         this.uniqueID,
                         referencePattern.getCompiledPattern(store).pattern(),
+                        referencePattern.getPattern(),
                         locations);
         }
         else
         {
             TypeInterestFactory.registerInterest(
                         this.uniqueID,
-                        referencePattern.getCompiledPattern(store).pattern());
+                        referencePattern.getCompiledPattern(store).pattern(),
+                        referencePattern.getPattern());
         }
 
         referencePattern.setParameterStore(store);
