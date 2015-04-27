@@ -327,7 +327,6 @@ public class ProcyonDecompiler implements Decompiler
                     continue;
                 }
                 
-                //if filter exists, then filter...
                 if (filter != null) {
                     filterRes = filter.decide(entry);
                     

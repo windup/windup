@@ -34,8 +34,6 @@ import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
-import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
-import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
@@ -90,10 +88,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                 outputDir = outputDir.toPath().resolve("WEB-INF").resolve("classes").toFile();
             }
 
-            //load all packages and filter on it.
-            WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
-            Filter<ZipEntry> filter = new ZipEntryPackageFilter(javaCfg.getScanJavaPackages());
-            
+            Filter<ZipEntry> filter = new ZipEntryPackageFilter(event.getGraphContext());
             try
             {
                 AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(payload, event.getGraphContext());
