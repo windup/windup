@@ -5,19 +5,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.Constant;
-import org.apache.bcel.classfile.ConstantClass;
-import org.apache.bcel.classfile.ConstantPool;
-import org.apache.bcel.classfile.EmptyVisitor;
 import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.Type;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.PackageModel;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -48,82 +46,80 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
         ExecutionStatistics.get().begin("AddClassFileMetadata.perform()");
         try
         {
-            WindupJavaConfigurationService javaCfgService = new WindupJavaConfigurationService(event.getGraphContext());
+            WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
 
+            String absoluteFile = payload.asFile().getAbsolutePath();
+            absoluteFile = FilenameUtils.separatorsToUnix(absoluteFile);
+
+            for (PackageModel excludePackage : javaConfiguration.getExcludeJavaPackages())
+            {
+                String packageAsPath = excludePackage.getPackageName().replace(".", "/");
+                if (absoluteFile.contains(packageAsPath))
+                    return;
+            }
+
+            boolean shouldScan = true;
+            for (PackageModel includePackage : javaConfiguration.getScanJavaPackages())
+            {
+                String packageAsPath = includePackage.getPackageName().replace(".", "/");
+                if (absoluteFile.contains(packageAsPath))
+                {
+                    shouldScan = true;
+                    break;
+                }
+                else
+                {
+                    shouldScan = false;
+                }
+            }
+            if (!shouldScan)
+            {
+                return;
+            }
+
+            // we should scan it, so make sure we get the package name from it
             try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
             {
                 final ClassParser parser = new ClassParser(fis, payload.getFilePath());
                 final JavaClass bcelJavaClass = parser.parse();
                 final String packageName = bcelJavaClass.getPackageName();
+
                 final String qualifiedName = bcelJavaClass.getClassName();
 
                 final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
                 final JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
-                if (javaCfgService.shouldScanPackage(packageName))
+                int majorVersion = bcelJavaClass.getMajor();
+                int minorVersion = bcelJavaClass.getMinor();
+
+                String simpleName = qualifiedName;
+                if (packageName != null && !packageName.equals("") && simpleName != null)
                 {
-                    int majorVersion = bcelJavaClass.getMajor();
-                    int minorVersion = bcelJavaClass.getMinor();
+                    simpleName = StringUtils.removeStart(simpleName, packageName);
+                }
 
-                    String simpleName = qualifiedName;
-                    if (packageName != null && !packageName.equals("") && simpleName != null)
+                payload.setMajorVersion(majorVersion);
+                payload.setMinorVersion(minorVersion);
+                payload.setPackageName(packageName);
+
+                javaClassModel.setSimpleName(simpleName);
+                javaClassModel.setPackageName(packageName);
+                javaClassModel.setQualifiedName(qualifiedName);
+                javaClassModel.setClassFile(payload);
+                javaClassModel.setPublic(bcelJavaClass.isPublic());
+
+                final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
+                if (interfaceNames != null)
+                {
+                    for (final String interfaceName : interfaceNames)
                     {
-                        simpleName = simpleName.substring(packageName.length() + 1);
-                    }
-
-                    payload.setMajorVersion(majorVersion);
-                    payload.setMinorVersion(minorVersion);
-                    payload.setPackageName(packageName);
-
-                    javaClassModel.setSimpleName(simpleName);
-                    javaClassModel.setPackageName(packageName);
-                    javaClassModel.setQualifiedName(qualifiedName);
-                    javaClassModel.setClassFile(payload);
-                    javaClassModel.setPublic(bcelJavaClass.isPublic());
-
-                    final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
-                    if (interfaceNames != null)
-                    {
-                        for (final String interfaceName : interfaceNames)
-                        {
-                            JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(interfaceName);
-                            javaClassModel.addImplements(interfaceModel);
-                        }
-                    }
-
-                    String superclassName = bcelJavaClass.getSuperclassName();
-                    if (!StringUtils.isBlank(superclassName))
-                        javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
-
-                    for (final Method method : bcelJavaClass.getMethods())
-                    {
-                        javaClassService.addJavaMethod(javaClassModel, method.getName(), toJavaClasses(javaClassService, method.getArgumentTypes()));
-                    }
-
-                    final Constant[] pool = bcelJavaClass.getConstantPool().getConstantPool();
-                    for (final Constant c : pool)
-                    {
-                        if (c == null)
-                            continue;
-                        c.accept(new EmptyVisitor()
-                        {
-                            @Override
-                            public void visitConstantClass(final ConstantClass obj)
-                            {
-                                final ConstantPool pool = bcelJavaClass.getConstantPool();
-                                String classVal = obj.getConstantValue(pool).toString();
-                                classVal = StringUtils.replace(classVal, "/", ".");
-
-                                if (StringUtils.equals(classVal, bcelJavaClass.getClassName()))
-                                {
-                                    return;
-                                }
-
-                                final JavaClassModel clz = javaClassService.getOrCreatePhantom(classVal);
-                                javaClassModel.addImport(clz);
-                            }
-                        });
+                        JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(interfaceName);
+                        javaClassModel.addImplements(interfaceModel);
                     }
                 }
+
+                String superclassName = bcelJavaClass.getSuperclassName();
+                if (!StringUtils.isBlank(superclassName))
+                    javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
 
                 payload.setJavaClass(javaClassModel);
             }

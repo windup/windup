@@ -13,10 +13,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -47,28 +46,16 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class JavaClassCompositeTest
 {
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addClass(JavaCompositeClassTestRuleProvider.class)
-                    .addClass(JavaClassCompositeTest.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
-
-        return archive;
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject
@@ -173,8 +160,8 @@ public class JavaClassCompositeTest
             )
             
             .addRule().when(
-                JavaClass.references("{type}").inType("{*}1").at(TypeReferenceLocation.IMPORT)
-                .and(JavaClass.references("{type}").inType("{*}2").at(TypeReferenceLocation.IMPORT).as("2"))
+                JavaClass.references("{type}").inType("org.{*}1").at(TypeReferenceLocation.IMPORT)
+                .and(JavaClass.references("{type}").inType("org.{*}2").at(TypeReferenceLocation.IMPORT).as("2"))
             ).perform(
                 Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                 {

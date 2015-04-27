@@ -164,7 +164,7 @@ public interface JavaClassModel extends WindupVertexFrame
     FileModel setClassFile(FileModel file);
 
     /**
-     * Gets the {@link JavaMethodNodel} by name
+     * Gets the {@link JavaMethodModel} by name
      */
     @GremlinGroovy("it.out('" + JAVA_METHOD + "').has('" + JavaMethodModel.METHOD_NAME + "', methodName)")
     Iterable<JavaMethodModel> getMethod(@GremlinParam("methodName") String methodName);

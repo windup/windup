@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -60,6 +63,11 @@ public final class TypeInterestFactory
     private static AtomicLong cacheLookupCount = new AtomicLong(0);
     private static AtomicLong cacheHitCount = new AtomicLong(0);
 
+    // cache the words from the patterns and use this to filter out obvious non-matches very quickly
+    private static Set<String> prescanMap = new TreeSet<>();
+    private static AtomicInteger totalPrescans = new AtomicInteger();
+    private static AtomicInteger totalPrescanHits = new AtomicInteger();
+
     static void clear()
     {
         patternsBySource.clear();
@@ -67,22 +75,25 @@ public final class TypeInterestFactory
         resultsCache.clear();
         cacheLookupCount.set(0);
         cacheHitCount.set(0);
+        prescanMap.clear();
+        totalPrescans.set(0);
+        totalPrescanHits.set(0);
     }
 
     /**
      * Register a regex pattern to filter interest in certain Java types.
      */
-    public static void registerInterest(String sourceKey, String regex, List<TypeReferenceLocation> locations)
+    public static void registerInterest(String sourceKey, String regex, String pattern, List<TypeReferenceLocation> locations)
     {
-        registerInterest(sourceKey, regex, locations.toArray(new TypeReferenceLocation[locations.size()]));
+        registerInterest(sourceKey, regex, pattern, locations.toArray(new TypeReferenceLocation[locations.size()]));
     }
 
     /**
      * Register a regex pattern to filter interest in certain Java types.
      */
-    public static void registerInterest(String sourceKey, String regex, TypeReferenceLocation... locations)
+    public static void registerInterest(String sourceKey, String regex, String pattern, TypeReferenceLocation... locations)
     {
-        patternsBySource.put(sourceKey, new PatternAndLocation(locations, regex));
+        patternsBySource.put(sourceKey, new PatternAndLocation(locations, regex, pattern));
     }
 
     private static String getCacheKey(TypeReferenceLocation location, String text)
@@ -117,9 +128,9 @@ public final class TypeInterestFactory
             result = new HashMap<>();
             for (PatternAndLocation patternKey : patternsBySource.values())
             {
-                String entryPattern = patternKey.pattern;
+                String entryRegex = patternKey.regex;
                 TypeReferenceLocation[] entryLocations = patternKey.locations;
-                if (result.containsKey(entryPattern))
+                if (result.containsKey(entryRegex))
                 {
                     continue;
                 }
@@ -146,7 +157,7 @@ public final class TypeInterestFactory
                     /*
                      * For now, surround with .* to ensure that regexes will match some of the messier references that the type visitor report.
                      */
-                    result.put(entryPattern, Pattern.compile(".*" + entryPattern + ".*"));
+                    result.put(entryRegex, Pattern.compile(".*" + entryRegex + ".*"));
                 }
             }
             patternsByLocation.put(typeReferenceLocation, result);
@@ -157,6 +168,46 @@ public final class TypeInterestFactory
     public static boolean matchesAny(String text, TypeReferenceLocation typeReferenceLocation)
     {
         ExecutionStatistics.get().begin("TypeInterestFactory.matchesAny(text)");
+        synchronized (prescanMap)
+        {
+            if (prescanMap.isEmpty())
+            {
+                for (PatternAndLocation patternKey : patternsBySource.values())
+                {
+                    String pattern = patternKey.pattern;
+                    StringTokenizer stk = new StringTokenizer(pattern, ".");
+                    while (stk.hasMoreTokens())
+                    {
+                        prescanMap.add(stk.nextToken());
+                    }
+                }
+            }
+        }
+
+        StringTokenizer stk = new StringTokenizer(text, ".");
+        boolean foundPotentialMatch = false;
+        totalPrescans.incrementAndGet();
+        while (stk.hasMoreTokens())
+        {
+            if (prescanMap.contains(stk.nextToken()))
+            {
+                foundPotentialMatch = true;
+                break;
+            }
+        }
+
+        if (totalPrescans.get() % 25000 == 0)
+        {
+            int perc = (int) (((double) totalPrescanHits.get() / (double) totalPrescans.get()) * 100);
+            LOG.info("Prescan hit ratio " + totalPrescanHits.get() + " / " + totalPrescans.get() + "; " + perc + "%");
+        }
+
+        if (!foundPotentialMatch)
+        {
+            totalPrescanHits.incrementAndGet();
+            return false;
+        }
+
         try
         {
             if (ignorePatternSet.contains(text))
@@ -205,11 +256,13 @@ public final class TypeInterestFactory
     private static class PatternAndLocation
     {
         private TypeReferenceLocation[] locations;
+        private String regex;
         private String pattern;
 
-        private PatternAndLocation(TypeReferenceLocation[] locations, String pattern)
+        private PatternAndLocation(TypeReferenceLocation[] locations, String regex, String pattern)
         {
             this.locations = locations;
+            this.regex = regex;
             this.pattern = pattern;
         }
 
@@ -219,7 +272,7 @@ public final class TypeInterestFactory
             final int prime = 31;
             int result = 1;
             result = prime * result + Arrays.hashCode(locations);
-            result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
+            result = prime * result + ((regex == null) ? 0 : regex.hashCode());
             return result;
         }
 
@@ -235,12 +288,12 @@ public final class TypeInterestFactory
             PatternAndLocation other = (PatternAndLocation) obj;
             if (!Arrays.equals(locations, other.locations))
                 return false;
-            if (pattern == null)
+            if (regex == null)
             {
-                if (other.pattern != null)
+                if (other.regex != null)
                     return false;
             }
-            else if (!pattern.equals(other.pattern))
+            else if (!regex.equals(other.regex))
                 return false;
             return true;
         }
