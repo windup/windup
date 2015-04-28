@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.xml.model;
 
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -20,6 +21,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(XmlFileModel.TYPE)
 public interface XmlFileModel extends FileModel, SourceFileModel
 {
+    public static final Logger LOG = Logger.getLogger(XmlFileModel.class.getName());
+
     public static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
     public static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed";
 
@@ -52,20 +55,35 @@ public interface XmlFileModel extends FileModel, SourceFileModel
 
     abstract class Impl implements XmlFileModel, JavaHandlerContext<Vertex>
     {
-
         @Override
         public Document asDocument()
         {
-            FileModel fileModel = frame(asVertex(), FileModel.class);
-            try (InputStream is = fileModel.asInputStream())
+            XMLDocumentCache.Result cacheResult = XMLDocumentCache.get(this);
+            Document document;
+            if (cacheResult.isParseFailure())
             {
-                Document parsedDocument = LocationAwareXmlReader.readXML(is);
-                return parsedDocument;
+                throw new WindupException("Could not load " + asFile() + " due to previous parse failure");
             }
-            catch (Exception e)
+            else if (cacheResult.getDocument() == null)
             {
-                throw new WindupException("Exception reading document.", e);
+                FileModel fileModel = frame(asVertex(), FileModel.class);
+                try (InputStream is = fileModel.asInputStream())
+                {
+                    document = LocationAwareXmlReader.readXML(is);
+                    XMLDocumentCache.cache(this, document);
+                }
+                catch (Exception e)
+                {
+                    XMLDocumentCache.cacheParseFailure(this);
+                    throw new WindupException("Exception reading document due to: " + e.getMessage(), e);
+                }
             }
+            else
+            {
+                document = cacheResult.getDocument();
+            }
+
+            return document;
         }
 
     }

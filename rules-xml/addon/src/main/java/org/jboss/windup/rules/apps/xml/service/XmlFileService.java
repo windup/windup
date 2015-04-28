@@ -9,6 +9,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.rules.apps.xml.model.XMLDocumentCache;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.w3c.dom.Document;
@@ -44,23 +45,42 @@ public class XmlFileService extends GraphService<XmlFileModel>
             return null;
         }
 
-        try (InputStream is = model.asInputStream())
+        XMLDocumentCache.Result cacheResult = XMLDocumentCache.get(model);
+        Document document = null;
+        if (cacheResult.isParseFailure())
         {
-            Document doc = LocationAwareXmlReader.readXML(is);
-            return doc;
+            LOG.log(Level.WARNING, "Not loading entity: " + model.getFilePath() + ", due to previous parse failures");
         }
-        catch (SAXException e)
+        else if (cacheResult.getDocument() == null)
         {
-            LOG.log(Level.WARNING,
-                        "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
-            classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION, XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+            try (InputStream is = model.asInputStream())
+            {
+                document = LocationAwareXmlReader.readXML(is);
+            }
+            catch (SAXException e)
+            {
+                XMLDocumentCache.cacheParseFailure(model);
+                LOG.log(Level.WARNING,
+                            "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
+                classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
+                            XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+            }
+            catch (IOException e)
+            {
+                XMLDocumentCache.cacheParseFailure(model);
+                LOG.log(Level.WARNING,
+                            "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
+                classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
+                            XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+            }
+
+            if (document != null)
+                XMLDocumentCache.cache(model, document);
         }
-        catch (IOException e)
+        else
         {
-            LOG.log(Level.WARNING,
-                        "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
-            classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION, XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+            document = cacheResult.getDocument();
         }
-        return null;
+        return document;
     }
 }

@@ -29,6 +29,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Contains utility methods for interacting with XML files.
+ */
 public class XmlUtil
 {
     private static Logger LOG = Logging.get(XmlUtil.class);
@@ -40,6 +43,9 @@ public class XmlUtil
         objs.put("xsi", "http://www.w3.org/2001/XMLSchema-instance");
     }
 
+    /**
+     * Converts the given {@link NodeList} to a {@link String}.
+     */
     public static String nodeListToString(NodeList nodeList)
     {
         StringBuilder sb = new StringBuilder();
@@ -51,6 +57,9 @@ public class XmlUtil
         return sb.toString();
     }
 
+    /**
+     * Converts the given {@link Node} to a {@link String}.
+     */
     public static String nodeToString(Node node)
     {
         StringWriter sw = new StringWriter();
@@ -73,6 +82,9 @@ public class XmlUtil
         return sw.toString();
     }
 
+    /**
+     * Returns the names and locations defined in this {@link Document}.
+     */
     public static Map<String, String> getSchemaLocations(Document doc)
     {
         Set<String> namespaces = new HashSet<String>();
@@ -119,6 +131,9 @@ public class XmlUtil
         return result;
     }
 
+    /**
+     * Runs the given xpath and returns a boolean result.
+     */
     public static boolean xpathExists(Node document, String xpathExpression, Map<String, String> namespaceMapping) throws XPathException,
                 MarshallingException
     {
@@ -126,23 +141,35 @@ public class XmlUtil
         return result != null && result;
     }
 
+    /**
+     * Runs the given xpath and returns a {@link String} result.
+     */
     public static String xpathExtract(Node document, String xpathExpression, Map<String, String> namespaceMapping) throws XPathException,
                 MarshallingException
     {
         return (String) executeXPath(document, xpathExpression, namespaceMapping, XPathConstants.STRING);
     }
 
+    /**
+     * Runs the given xpath and returns a {@link NodeList} result.
+     */
     public static NodeList xpathNodeList(Node document, String xpathExpression, Map<String, String> namespaceMapping) throws XPathException,
                 MarshallingException
     {
         return (NodeList) executeXPath(document, xpathExpression, namespaceMapping, XPathConstants.NODESET);
     }
 
+    /**
+     * Runs the given xpath and returns a {@link NodeList} result.
+     */
     public static NodeList xpathNodeList(Node document, XPathExpression xpathExpression) throws XPathException, MarshallingException
     {
         return (NodeList) executeXPath(document, xpathExpression, XPathConstants.NODESET);
     }
 
+    /**
+     * Executes the given xpath and returns the result with the type specified.
+     */
     public static Object executeXPath(Node document, String xpathExpression, Map<String, String> namespaceMapping, QName result)
                 throws XPathException, MarshallingException
     {
@@ -166,6 +193,9 @@ public class XmlUtil
         }
     }
 
+    /**
+     * Executes the given {@link XPathExpression} and returns the result with the type specified.
+     */
     public static Object executeXPath(Node document, XPathExpression expr, QName result) throws XPathException, MarshallingException
     {
         try
