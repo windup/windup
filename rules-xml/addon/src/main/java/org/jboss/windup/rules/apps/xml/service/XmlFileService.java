@@ -45,8 +45,13 @@ public class XmlFileService extends GraphService<XmlFileModel>
             return null;
         }
 
-        Document document = XMLDocumentCache.get(model);
-        if (document == null)
+        XMLDocumentCache.Result cacheResult = XMLDocumentCache.get(model);
+        Document document = null;
+        if (cacheResult.isParseFailure())
+        {
+            LOG.log(Level.WARNING, "Not loading entity: " + model.getFilePath() + ", due to previous parse failures");
+        }
+        else if (cacheResult.getDocument() == null)
         {
             try (InputStream is = model.asInputStream())
             {
@@ -54,6 +59,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
             }
             catch (SAXException e)
             {
+                XMLDocumentCache.cacheParseFailure(model);
                 LOG.log(Level.WARNING,
                             "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
                 classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
@@ -61,6 +67,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
             }
             catch (IOException e)
             {
+                XMLDocumentCache.cacheParseFailure(model);
                 LOG.log(Level.WARNING,
                             "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
                 classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
@@ -68,7 +75,11 @@ public class XmlFileService extends GraphService<XmlFileModel>
             }
 
             if (document != null)
-                XMLDocumentCache.put(model, document);
+                XMLDocumentCache.cache(model, document);
+        }
+        else
+        {
+            document = cacheResult.getDocument();
         }
         return document;
     }

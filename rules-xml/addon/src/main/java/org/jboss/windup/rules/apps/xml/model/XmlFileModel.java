@@ -58,19 +58,29 @@ public interface XmlFileModel extends FileModel, SourceFileModel
         @Override
         public Document asDocument()
         {
-            Document document = XMLDocumentCache.get(this);
-            if (document == null)
+            XMLDocumentCache.Result cacheResult = XMLDocumentCache.get(this);
+            Document document;
+            if (cacheResult.isParseFailure())
+            {
+                throw new WindupException("Could not load " + asFile() + " due to previous parse failure");
+            }
+            else if (cacheResult.getDocument() == null)
             {
                 FileModel fileModel = frame(asVertex(), FileModel.class);
                 try (InputStream is = fileModel.asInputStream())
                 {
                     document = LocationAwareXmlReader.readXML(is);
-                    XMLDocumentCache.put(this, document);
+                    XMLDocumentCache.cache(this, document);
                 }
                 catch (Exception e)
                 {
-                    throw new WindupException("Exception reading document.", e);
+                    XMLDocumentCache.cacheParseFailure(this);
+                    throw new WindupException("Exception reading document due to: " + e.getMessage(), e);
                 }
+            }
+            else
+            {
+                document = cacheResult.getDocument();
             }
 
             return document;

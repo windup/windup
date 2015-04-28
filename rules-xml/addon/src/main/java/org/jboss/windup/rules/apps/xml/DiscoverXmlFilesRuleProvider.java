@@ -2,8 +2,6 @@ package org.jboss.windup.rules.apps.xml;
 
 import static org.joox.JOOX.$;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -16,24 +14,21 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.DoctypeMetaService;
 import org.jboss.windup.rules.apps.xml.service.NamespaceService;
 import org.jboss.windup.rules.files.FileMapping;
-import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.LocationAwareContentHandler.Doctype;
-import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  * Extract some basic metadata from all {@link XmlFileModel}s found in the graph.
@@ -57,10 +52,10 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
 
                     .addRule()
                     .when(Query.fromType(XmlFileModel.class))
-                    .perform(new AbstractIterationOperation<FileModel>()
+                    .perform(new AbstractIterationOperation<XmlFileModel>()
                     {
                         @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+                        public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
                         {
                             addXmlMetaInformation(event.getGraphContext(), payload);
                         }
@@ -73,17 +68,14 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                     });
     }
 
-    private void addXmlMetaInformation(GraphContext context, FileModel file)
+    private void addXmlMetaInformation(GraphContext context, XmlFileModel file)
     {
         DoctypeMetaService docTypeService = new DoctypeMetaService(context);
         NamespaceService namespaceService = new NamespaceService(context);
 
-        // try and read the XML...
-        try (InputStream is = file.asInputStream())
+        try
         {
-
-            // read it to a Document object.
-            Document parsedDocument = LocationAwareXmlReader.readXML(is);
+            Document parsedDocument = file.asDocument();
 
             // pull out doctype data.
             Doctype docType = (Doctype) parsedDocument.getUserData(LocationAwareContentHandler.DOCTYPE_KEY_NAME);
@@ -129,7 +121,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                 }
             }
         }
-        catch (SAXException e)
+        catch (Exception e)
         {
             if (file.asFile().length() == 0)
             {
@@ -140,15 +132,8 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                 LOG.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(),
                         e);
             }
-        }
-        catch (IOException e)
-        {
-            LOG.log(Level.WARNING,
-                        "Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(), e);
-        }
-        catch (Exception e)
-        {
-            throw new WindupException("Failed to load and parse XML for entity: " + file.getFilePath(), e);
+            new ClassificationService(context).attachClassification(file, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
+                        XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
         }
     }
 }
