@@ -13,7 +13,7 @@ import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -57,7 +57,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
         ArchiveService archiveService = new ArchiveService(event.getGraphContext());
-        FileModel manifestFile = archiveService.getChildFile(payload, "META-INF/MANIFEST.MF");
+        ResourceModel manifestFile = archiveService.getChildFile(payload, "META-INF/MANIFEST.MF");
         if (manifestFile == null)
         {
             // no manifest found, skip this one
@@ -65,7 +65,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
         }
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         JarManifestService jarManifestService = new JarManifestService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(manifestFile, TECH_TAG, TECH_TAG_LEVEL);
+        technologyTagService.addTagToResourceModel(manifestFile, TECH_TAG, TECH_TAG_LEVEL);
 
         JarManifestModel jarManifest = jarManifestService.addTypeToModel(manifestFile);
         jarManifest.setArchive(payload);

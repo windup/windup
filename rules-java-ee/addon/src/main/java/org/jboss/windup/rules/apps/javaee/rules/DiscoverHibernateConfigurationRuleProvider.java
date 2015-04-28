@@ -98,7 +98,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
         }
     }
 
-    private void createHibernateConfigurationModel(GraphContext graphContext, XmlFileModel xmlFileModel, String versionInformation)
+    private void createHibernateConfigurationModel(GraphContext graphContext, XmlFileModel xmlResourceModel, String versionInformation)
     {
         HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(graphContext);
         GraphService<HibernateSessionFactoryModel> hibernateSessionFactoryService = new GraphService<>(graphContext,
@@ -106,15 +106,15 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
         TechnologyTagService technologyTagService = new TechnologyTagService(graphContext);
 
         // check the root XML node.
-        HibernateConfigurationFileModel hibernateConfigurationModel = hibernateConfigurationFileService.addTypeToModel(xmlFileModel);
-        technologyTagService.addTagToFileModel(hibernateConfigurationModel, TECH_TAG, TECH_TAG_LEVEL);
+        HibernateConfigurationFileModel hibernateConfigurationModel = hibernateConfigurationFileService.addTypeToModel(xmlResourceModel);
+        technologyTagService.addTagToResourceModel(hibernateConfigurationModel, TECH_TAG, TECH_TAG_LEVEL);
 
         if (StringUtils.isNotBlank(versionInformation))
         {
             hibernateConfigurationModel.setSpecificationVersion(versionInformation);
         }
 
-        Document doc = new XmlFileService(graphContext).loadDocumentQuiet(xmlFileModel);
+        Document doc = new XmlFileService(graphContext).loadDocumentQuiet(xmlResourceModel);
         for (Element element : $(doc).find("session-factory").get())
         {
             HibernateSessionFactoryModel sessionFactoryModel = hibernateSessionFactoryService.create();

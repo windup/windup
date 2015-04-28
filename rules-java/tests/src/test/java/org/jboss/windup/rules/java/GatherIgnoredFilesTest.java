@@ -27,7 +27,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.junit.Assert;
@@ -73,7 +73,7 @@ public class GatherIgnoredFilesTest
         {
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel inputPath = context.getFramed().addVertex(null, ResourceModel.class);
             inputPath.setFilePath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
@@ -82,11 +82,11 @@ public class GatherIgnoredFilesTest
             Files.createDirectories(outputPath);
 
             WindupConfigurationModel config = WindupConfigurationService.getConfigurationModel(context);
-            FileModel ignoreFile = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel ignoreFile = context.getFramed().addVertex(null, ResourceModel.class);
             ignoreFile.setFilePath("src/test/resources/test-windup-ignore.txt");
             config.addUserIgnorePath(ignoreFile);
             inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            pm.setRootResourceModel(inputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class));
 

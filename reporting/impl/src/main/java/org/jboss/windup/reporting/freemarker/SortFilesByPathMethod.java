@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -32,7 +32,7 @@ import freemarker.template.TemplateModelException;
  * <li>/foo/car/caz.class</li>
  * </ul>
  * 
- * Can be called as follows: sortFilesByPathAscending(Iterable<FileModel>)
+ * Can be called as follows: sortFilesByPathAscending(Iterable<ResourceModel>)
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
@@ -50,7 +50,7 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes an Iterable<" + FileModel.class.getSimpleName() + "> and returns them, ordered alphabetically.";
+        return "Takes an Iterable<" + ResourceModel.class.getSimpleName() + "> and returns them, ordered alphabetically.";
     }
 
     @Override
@@ -59,20 +59,20 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
-            throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
+            throw new TemplateModelException("Error, method expects one argument (Iterable<ResourceModel>)");
         }
-        Iterable<FileModel> fileModelIterable = getList(arguments.get(0));
-        List<FileModel> fileModelList = new ArrayList<>();
-        for (FileModel fm : fileModelIterable)
+        Iterable<ResourceModel> fileModelIterable = getList(arguments.get(0));
+        List<ResourceModel> fileModelList = new ArrayList<>();
+        for (ResourceModel fm : fileModelIterable)
         {
             fileModelList.add(fm);
         }
 
         final FilePathComparator filePathComparator = new FilePathComparator();
-        Collections.sort(fileModelList, new Comparator<FileModel>()
+        Collections.sort(fileModelList, new Comparator<ResourceModel>()
         {
             @Override
-            public int compare(FileModel o1, FileModel o2)
+            public int compare(ResourceModel o1, ResourceModel o2)
             {
                 return filePathComparator.compare(o1.getFilePath(), o2.getFilePath());
             }
@@ -83,17 +83,17 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<FileModel> getList(Object arg) throws TemplateModelException
+    private Iterable<ResourceModel> getList(Object arg) throws TemplateModelException
     {
         if (arg instanceof BeanModel)
         {
             BeanModel beanModel = (BeanModel) arg;
-            return (Iterable<FileModel>) beanModel.getWrappedObject();
+            return (Iterable<ResourceModel>) beanModel.getWrappedObject();
         }
         else if (arg instanceof SimpleSequence)
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
-            return (Iterable<FileModel>) simpleSequence.toList();
+            return (Iterable<ResourceModel>) simpleSequence.toList();
         }
         else
         {

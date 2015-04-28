@@ -32,7 +32,7 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
@@ -97,22 +97,22 @@ public class JavaClassSourceMatchTest
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
 
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel inputPathFrame = context.getFramed().addVertex(null, ResourceModel.class);
             inputPathFrame.setFilePath(inputDir);
             inputPathFrame.setProjectModel(pm);
-            pm.addFileModel(inputPathFrame);
+            pm.addResourceModel(inputPathFrame);
 
-            pm.setRootFileModel(inputPathFrame);
+            pm.setRootResourceModel(inputPathFrame);
 
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel fileModel = context.getFramed().addVertex(null, ResourceModel.class);
             fileModel.setFilePath(inputDir + "/JavaClassTestFile1.java");
             fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
+            pm.addResourceModel(fileModel);
 
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel = context.getFramed().addVertex(null, ResourceModel.class);
             fileModel.setFilePath(inputDir + "/JavaClassTestFile2.java");
             fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
+            pm.addResourceModel(fileModel);
 
             context.getGraph().getBaseGraph().commit();
 
@@ -175,7 +175,7 @@ public class JavaClassSourceMatchTest
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()
-            .addRule().when(JavaClass.references("org.jboss.windup.graph.model.resource.FileModel.setFilePath{*}").matchesSource("{*}/JavaHintsClassificationsTest.java{*}").inType("{*}").at(TypeReferenceLocation.METHOD_CALL))
+            .addRule().when(JavaClass.references("org.jboss.windup.graph.model.resource.ResourceModel.setFilePath{*}").matchesSource("{*}/JavaHintsClassificationsTest.java{*}").inType("{*}").at(TypeReferenceLocation.METHOD_CALL))
             .perform( Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                         {
                 @Override

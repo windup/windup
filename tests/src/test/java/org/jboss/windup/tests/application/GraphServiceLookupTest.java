@@ -11,7 +11,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
@@ -61,9 +61,9 @@ public class GraphServiceLookupTest
 
             FileService fileModelService = new FileService(graphContext);
             Assert.assertNotNull(fileModelService);
-            FileModel fileModel = fileModelService.create();
+            ResourceModel fileModel = fileModelService.create();
             Assert.assertNotNull(fileModel);
-            Assert.assertTrue(fileModel instanceof FileModel);
+            Assert.assertTrue(fileModel instanceof ResourceModel);
 
             Service<TestSampleModel> sampleModelService = new GraphService<>(graphContext, TestSampleModel.class);
             Assert.assertNotNull(sampleModelService);

@@ -4,11 +4,11 @@ import java.io.File;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.FileService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<FileModel>
+public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<ResourceModel>
 {
     private RecurseDirectoryAndAddFiles(String variableName)
     {
@@ -35,16 +35,16 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)
+    public void perform(GraphRewrite event, EvaluationContext context, ResourceModel resourceModel)
     {
         FileService fileModelService = new FileService(event.getGraphContext());
         recurseAndAddFiles(fileModelService, resourceModel);
     }
 
     /**
-     * Recurses the given folder and adds references to these files to the graph as FileModels
+     * Recurses the given folder and adds references to these files to the graph as ResourceModels
      */
-    private void recurseAndAddFiles(FileService fileService, FileModel file)
+    private void recurseAndAddFiles(FileService fileService, ResourceModel file)
     {
         String filePath = file.getFilePath();
         File fileReference = new File(filePath);
@@ -56,7 +56,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
             {
                 for (File reference : subFiles)
                 {
-                    FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
+                    ResourceModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
                     recurseAndAddFiles(fileService, subFile);
                 }
             }

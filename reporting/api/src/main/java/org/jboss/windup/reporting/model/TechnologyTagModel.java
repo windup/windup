@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -20,7 +20,7 @@ public interface TechnologyTagModel extends WindupVertexFrame
 {
     public static final String TYPE = "TechnologyTag";
 
-    public static final String TECH_TAG_TO_FILE_MODEL = "techTagToFileModel";
+    public static final String TECH_TAG_TO_FILE_MODEL = "techTagToResourceModel";
     public static final String NAME = "name";
     public static final String VERSION = "version";
     public static final String LEVEL = "level";
@@ -62,14 +62,14 @@ public interface TechnologyTagModel extends WindupVertexFrame
     void setLevel(TechnologyTagLevel level);
 
     /**
-     * References the {@link FileModel}s that use this technology.
+     * References the {@link ResourceModel}s that use this technology.
      */
     @Adjacency(label = TECH_TAG_TO_FILE_MODEL, direction = Direction.OUT)
-    public void addFileModel(FileModel fileModel);
+    public void addResourceModel(ResourceModel fileModel);
 
     /**
-     * References the {@link FileModel}s that use this technology.
+     * References the {@link ResourceModel}s that use this technology.
      */
     @Adjacency(label = TECH_TAG_TO_FILE_MODEL, direction = Direction.OUT)
-    public Iterable<FileModel> getFileModels();
+    public Iterable<ResourceModel> getResourceModels();
 }

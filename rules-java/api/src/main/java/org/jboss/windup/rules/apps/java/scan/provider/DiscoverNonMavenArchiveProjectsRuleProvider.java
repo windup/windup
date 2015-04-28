@@ -15,7 +15,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.util.ZipUtil;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -92,7 +92,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                 if (projectModel == null) {
                                     projectModel = projectModelService.create();
                                     projectModel.setName(archiveModel.getArchiveName());
-                                    projectModel.setRootFileModel(archiveModel);
+                                    projectModel.setRootResourceModel(archiveModel);
                                     projectModel.setDescription("Unidentified Archive");
                                     
                                     if(ZipUtil.endsWithZipExtension(archiveModel.getArchiveName()))
@@ -106,7 +106,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                     
                                     archiveModel.setProjectModel(projectModel);
                                     // Attach the project to all files within the archive
-                                    for (FileModel f : archiveModel.getContainedFileModels())
+                                    for (ResourceModel f : archiveModel.getContainedResourceModels())
                                     {
                                         // don't add archive models, as those really are separate projects...
                                         // also, don't set the project model if one is already set
@@ -114,7 +114,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                         {
                                             // only set it if it has not already been set
                                             f.setProjectModel(projectModel);
-                                            projectModel.addFileModel(f);
+                                            projectModel.addResourceModel(f);
                                         }
                                     }
                                 }

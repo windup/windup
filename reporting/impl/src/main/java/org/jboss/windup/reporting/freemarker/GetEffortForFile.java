@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.freemarker;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -16,7 +16,7 @@ import freemarker.template.TemplateModelException;
  * 
  * Called from a freemarker template as follows:
  * 
- * getMigrationEffortPointsForFile(FileModel):int
+ * getMigrationEffortPointsForFile(ResourceModel):int
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
@@ -43,7 +43,7 @@ public class GetEffortForFile implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes a " + FileModel.class.getSimpleName() + " as a parameter and returns an int containing the effort estimate for this file.";
+        return "Takes a " + ResourceModel.class.getSimpleName() + " as a parameter and returns an int containing the effort estimate for this file.";
     }
 
     @Override
@@ -53,10 +53,10 @@ public class GetEffortForFile implements WindupFreeMarkerMethod
         if (arguments.size() != 1)
         {
             throw new TemplateModelException(
-                        "Error, method expects one argument (FileModel)");
+                        "Error, method expects one argument (ResourceModel)");
         }
         StringModel fileModelArg = (StringModel) arguments.get(0);
-        FileModel fileModel = (FileModel) fileModelArg.getWrappedObject();
+        ResourceModel fileModel = (ResourceModel) fileModelArg.getWrappedObject();
 
         Object result = classificationService.getMigrationEffortPoints(fileModel) + inlineHintService.getMigrationEffortPoints(fileModel);
         ExecutionStatistics.get().end(NAME);

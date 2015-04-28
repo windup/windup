@@ -18,6 +18,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -190,7 +191,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         for (SourceReportModel sourceReportModel : sourceReportService.findAll())
         {
             ReportLinkImpl reportLink = new ReportLinkImpl();
-            reportLink.setInputFile(sourceReportModel.getSourceFileModel().asFile());
+            reportLink.setInputFile(((FileModel) sourceReportModel.getSourceFileModel()).asFile());
             Path reportPath = Paths.get(reportService.getReportDirectory()).resolve(sourceReportModel.getReportFilename());
             reportLink.setReportFile(reportPath.toFile());
             reportLinks.add(reportLink);
@@ -205,7 +206,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         for (InlineHintModel hintModel : hintService.findAll())
         {
             HintImpl hint = new HintImpl();
-            hint.setFile(hintModel.getFile().asFile());
+            hint.setFile(((FileModel) hintModel.getFile()).asFile());
             hint.setTitle(hintModel.getTitle());
             hint.setHint(hintModel.getHint());
             hint.setSeverity(hintModel.getSeverity());
@@ -228,7 +229,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         ClassificationService classificationService = new ClassificationService(graphContext);
         for (ClassificationModel classificationModel : classificationService.findAll())
         {
-            for (FileModel fileModel : classificationModel.getFileModels())
+            for (ResourceModel fileModel : classificationModel.getResourceModels())
             {
                 ClassificationImpl classification = new ClassificationImpl();
                 classification.setClassification(classificationModel.getClassification());
@@ -236,7 +237,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
                 classification.setEffort(classificationModel.getEffort());
                 classification.setRuleID(classificationModel.getRuleID());
                 classification.setSeverity(classificationModel.getSeverity());
-                classification.setFile(fileModel.asFile());
+                classification.setFile(((FileModel) fileModel).asFile());
 
                 classification.setLinks(asLinks(classificationModel.getLinks()));
                 classifications.add(classification);

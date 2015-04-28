@@ -84,12 +84,12 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         Iterable<OverviewReportLineMessageModel> findAll = lineNotesService.findAll();
         for (OverviewReportLineMessageModel find : findAll)
         {
-            String projectPrettyPath = projectModel.getRootFileModel().getPrettyPath();
+            String projectPrettyPath = projectModel.getRootResourceModel().getPrettyPath();
             ProjectModel project = find.getProject();
             boolean found = false;
             while (project != null && !found)
             {
-                if (projectPrettyPath.equals(project.getRootFileModel().getPrettyPath()))
+                if (projectPrettyPath.equals(project.getRootResourceModel().getPrettyPath()))
                 {
                     applicationReportModel.addApplicationReportLine(find);
                     found = true;

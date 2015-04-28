@@ -62,21 +62,21 @@ public class JavaClassTestFile2
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
 
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel inputPathFrame = context.getFramed().addVertex(null, ResourceModel.class);
             inputPathFrame.setFilePath(inputPath);
             inputPathFrame.setProjectModel(pm);
-            pm.setRootFileModel(inputPathFrame);
+            pm.setRootResourceModel(inputPathFrame);
 
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel fileModel = context.getFramed().addVertex(null, ResourceModel.class);
             fileModel.setFilePath(inputPath + "/JavaHintsClassificationsTest2.java");
             fileModel.setProjectModel(pm);
 
-            pm.addFileModel(inputPathFrame);
-            pm.addFileModel(fileModel);
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            pm.addResourceModel(inputPathFrame);
+            pm.addResourceModel(fileModel);
+            fileModel = context.getFramed().addVertex(null, ResourceModel.class);
             fileModel.setFilePath(inputPath + "/JavaClassTest.java");
             fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
+            pm.addResourceModel(fileModel);
 
             try
             {
@@ -108,7 +108,7 @@ public class JavaClassTestFile2
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
                 Assert.assertEquals(1, classifications.size());
 
-                Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
+                Iterable<ResourceModel> fileModels = classifications.get(0).getResourceModels();
                 Assert.assertEquals(2, Iterators.asList(fileModels).size());
             }
             finally

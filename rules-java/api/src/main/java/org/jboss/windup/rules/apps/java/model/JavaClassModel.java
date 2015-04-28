@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -154,14 +154,14 @@ public interface JavaClassModel extends WindupVertexFrame
      * file)
      */
     @Adjacency(label = CLASS_FILE, direction = Direction.OUT)
-    FileModel getClassFile();
+    ResourceModel getClassFile();
 
     /**
      * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class
      * file)
      */
     @Adjacency(label = CLASS_FILE, direction = Direction.OUT)
-    FileModel setClassFile(FileModel file);
+    ResourceModel setClassFile(ResourceModel file);
 
     /**
      * Gets the {@link JavaMethodModel} by name

@@ -33,7 +33,7 @@ import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -107,16 +107,16 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         }
 
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        for (FileModel userRulesFileModel : cfg.getUserRulesPaths())
+        for (ResourceModel userRulesResourceModel : cfg.getUserRulesPaths())
         {
-            for (URL resource : getWindupUserDirectoryXmlFiles(userRulesFileModel))
+            for (URL resource : getWindupUserDirectoryXmlFiles(userRulesResourceModel))
             {
                 try
                 {
                     Document doc = dBuilder.parse(resource.toURI().toString());
                     ParserContext parser = new ParserContext(furnace);
 
-                    String userRulesPath = userRulesFileModel.getFilePath();
+                    String userRulesPath = userRulesResourceModel.getFilePath();
                     parser.setXmlInputPath(Paths.get(resource.toURI()));
                     parser.setXmlInputRootPath(Paths.get(userRulesPath));
 
@@ -152,9 +152,9 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         return scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_EXTENSION));
     }
 
-    private Collection<URL> getWindupUserDirectoryXmlFiles(FileModel userRulesFileModel)
+    private Collection<URL> getWindupUserDirectoryXmlFiles(ResourceModel userRulesResourceModel)
     {
-        String userRulesDirectory = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
+        String userRulesDirectory = userRulesResourceModel == null ? null : userRulesResourceModel.getFilePath();
 
         // no user dir, so just return the ones that we found in the classpath
         if (userRulesDirectory == null)

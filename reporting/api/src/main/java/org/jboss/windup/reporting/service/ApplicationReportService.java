@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.service;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 
@@ -36,7 +36,7 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         return applicationReportModel;
     }
 
-    public ApplicationReportModel getMainApplicationReportForFile(FileModel fileModel)
+    public ApplicationReportModel getMainApplicationReportForFile(ResourceModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<>(getGraphContext().getGraph());
         pipe.V(WindupVertexFrame.TYPE_PROP, ApplicationReportModel.TYPE);
@@ -54,9 +54,9 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         {
             rootProjectModel = rootProjectModel.getParentProject();
         }
-        String rootFilePath = rootProjectModel.getRootFileModel().getFilePath();
+        String rootFilePath = rootProjectModel.getRootResourceModel().getFilePath();
         pipe.out(ProjectModel.ROOT_FILE_MODEL);
-        pipe.has(FileModel.FILE_PATH, rootFilePath);
+        pipe.has(ResourceModel.FILE_PATH, rootFilePath);
 
         pipe.back("applicationReport");
 

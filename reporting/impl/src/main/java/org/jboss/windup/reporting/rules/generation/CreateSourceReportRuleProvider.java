@@ -14,7 +14,7 @@ import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.SourceTypeResolver;
@@ -64,17 +64,17 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
          */
         Condition finder = Query.fromType(SourceFileModel.class).piped(new FindSourceReportFilesGremlinCriterion());
 
-        GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>()
+        GraphOperation addSourceReport = new AbstractIterationOperation<ResourceModel>()
         {
-            public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+            public void perform(GraphRewrite event, EvaluationContext context, ResourceModel payload)
             {
                 SourceReportService sourceReportModelService = new SourceReportService(
                             event.getGraphContext());
                 SourceReportModel sm = sourceReportModelService.create();
-                ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
+                ReportFileModel reportResourceModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
                             ReportFileModel.class);
-                sm.setSourceFileModel(reportFileModel);
-                if (reportFileModel.getProjectModel() == null)
+                sm.setSourceFileModel(reportResourceModel);
+                if (reportResourceModel.getProjectModel() == null)
                 {
                     LOG.warning("Error, source report created for file: " + payload.getFilePath() + ", but this file does not have a " + 
                                 ProjectModel.class.getSimpleName() + " associated. Execution will continue, however the source report " + 
@@ -113,7 +113,7 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
 
     // @formatter:on
 
-    private String resolveSourceType(FileModel f)
+    private String resolveSourceType(ResourceModel f)
     {
         for (SourceTypeResolver resolver : resolvers)
         {

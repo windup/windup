@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphRule;
@@ -18,6 +18,7 @@ import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.Logging;
@@ -25,9 +26,8 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Maps file extensions to {@link WindupVertexFrame} types. Mappings are always applied during the
- * {@link ArchiveMetadataExtractionPhase} phase, no matter where this rule appears in the pipeline. The following example
- * demonstrates how to match files ending with *.xml to a frame type:
+ * Maps file extensions to {@link WindupVertexFrame} types. Mappings are always applied during the {@link ArchiveMetadataExtractionPhase} phase, no
+ * matter where this rule appears in the pipeline. The following example demonstrates how to match files ending with *.xml to a frame type:
  *
  * <pre>
  *   {@link FileMapping}.from(".*\\.xml").to({@link XmlFileModel}.class)
@@ -101,10 +101,9 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
             String pattern = entry.getKey();
             List<Class<? extends WindupVertexFrame>> types = entry.getValue();
 
-            Iterable<FileModel> models = fileService.findAllByPropertyMatchingRegex(
-                        FileModel.FILE_PATH, pattern);
+            Iterable<FileModel> models = fileService.findAllByPropertyMatchingRegex(ResourceModel.FILE_PATH, pattern);
 
-            for (FileModel model : models)
+            for (ResourceModel model : models)
             {
                 if (!model.isDirectory())
                 {

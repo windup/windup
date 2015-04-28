@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -13,11 +13,11 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * Gets all technology tags for the provided {@link FileModel} (eg, "EJB", "Web XML").
+ * Gets all technology tags for the provided {@link ResourceModel} (eg, "EJB", "Web XML").
  * 
  * Example call:
  * 
- * getTechnologyTagsForFile(FileModel).
+ * getTechnologyTagsForFile(ResourceModel).
  * 
  * The method will return an Iterable containing {@link TechnologyTagModel} instances.
  * 
@@ -40,10 +40,10 @@ public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
-            throw new TemplateModelException("Error, method expects one argument (" + FileModel.class.getSimpleName() + ")");
+            throw new TemplateModelException("Error, method expects one argument (" + ResourceModel.class.getSimpleName() + ")");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
-        FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
+        ResourceModel fileModel = (ResourceModel) stringModelArg.getWrappedObject();
         Iterable<TechnologyTagModel> result = new TechnologyTagService(this.context).findTechnologyTagsForFile(fileModel);
         ExecutionStatistics.get().end(NAME);
         return result;
@@ -58,7 +58,7 @@ public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes a " + FileModel.class.getSimpleName()
+        return "Takes a " + ResourceModel.class.getSimpleName()
                     + " as a parameter and returns an Iterable<" + TechnologyTagModel.class.getSimpleName()
                     + "> containing the technology tags for this file.";
     }

@@ -11,7 +11,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.logging.Logger.Level;
@@ -66,12 +66,12 @@ public class DecompileArchivesRuleProvider extends AbstractRuleProvider
                     ArchiveModel archive = event.getGraphContext().getFramed().frame(argument, ArchiveModel.class);
                     WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
                                 event.getGraphContext());
-                    for (FileModel fileModel : archive.getContainedFileModels())
+                    for (ResourceModel fileModel : archive.getContainedResourceModels())
                     {
                         if (fileModel instanceof JavaClassFileModel)
                         {
-                            JavaClassFileModel javaClassFileModel = (JavaClassFileModel) fileModel;
-                            if (windupJavaConfigurationService.shouldScanPackage(javaClassFileModel.getPackageName()))
+                            JavaClassFileModel javaClassResourceModel = (JavaClassFileModel) fileModel;
+                            if (windupJavaConfigurationService.shouldScanPackage(javaClassResourceModel.getPackageName()))
                             {
                                 return true;
                             }

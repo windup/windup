@@ -93,7 +93,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         for (IgnoredFileModel file : allIgnoredFiles)
         {
             List<String> allProjectPaths = getAllFatherProjectPaths(file.getProjectModel());
-            if (allProjectPaths.contains(rootProjectModel.getRootFileModel().getFilePath()))
+            if (allProjectPaths.contains(rootProjectModel.getRootResourceModel().getFilePath()))
             {
                 ignoredFilesReportModel.addIgnoredFile(file);
             }
@@ -112,11 +112,11 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     private List<String> getAllFatherProjectPaths(ProjectModel projectModel)
     {
         List<String> paths = new ArrayList<String>();
-        paths.add(projectModel.getRootFileModel().getFilePath());
+        paths.add(projectModel.getRootResourceModel().getFilePath());
         while (projectModel.getParentProject() != null)
         {
             projectModel = projectModel.getParentProject();
-            paths.add(projectModel.getRootFileModel().getFilePath());
+            paths.add(projectModel.getRootResourceModel().getFilePath());
         }
         return paths;
     }

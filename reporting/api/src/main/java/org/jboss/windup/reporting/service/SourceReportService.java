@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.service;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 
@@ -25,7 +25,7 @@ public class SourceReportService extends GraphService<SourceReportModel>
     /**
      * Find the SourceReportModel instance for this fileModel (this is a 1:1 relationship).
      */
-    public SourceReportModel getSourceReportForFileModel(FileModel fileModel)
+    public SourceReportModel getSourceReportForResourceModel(ResourceModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
         pipeline.in(SourceReportModel.SOURCE_REPORT_TO_SOURCE_FILE_MODEL);

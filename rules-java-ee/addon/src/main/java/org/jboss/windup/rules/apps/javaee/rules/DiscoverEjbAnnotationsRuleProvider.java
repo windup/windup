@@ -13,7 +13,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
@@ -238,7 +238,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        FileModel originalFile = javaTypeReference.getFile();
+        ResourceModel originalFile = javaTypeReference.getFile();
         if (originalFile instanceof JavaSourceFileModel)
         {
             JavaSourceFileModel javaSource = (JavaSourceFileModel) originalFile;

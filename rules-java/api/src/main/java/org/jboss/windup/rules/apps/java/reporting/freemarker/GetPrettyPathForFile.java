@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -35,10 +35,10 @@ public class GetPrettyPathForFile implements WindupFreeMarkerMethod
         {
             if (arguments.size() != 1)
             {
-                throw new TemplateModelException("Error, method expects one argument (FileModel)");
+                throw new TemplateModelException("Error, method expects one argument (ResourceModel)");
             }
             StringModel stringModelArg = (StringModel) arguments.get(0);
-            FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
+            ResourceModel fileModel = (ResourceModel) stringModelArg.getWrappedObject();
             if (fileModel instanceof JavaClassFileModel)
             {
                 JavaClassFileModel jcfm = (JavaClassFileModel) fileModel;
@@ -77,7 +77,7 @@ public class GetPrettyPathForFile implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes a " + FileModel.class.getSimpleName()
+        return "Takes a " + ResourceModel.class.getSimpleName()
                     + " as a parameter and either the qualified name (if it is a Java file) or the path within the file's project.";
     }
 

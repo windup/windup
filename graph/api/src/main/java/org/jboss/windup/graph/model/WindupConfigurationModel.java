@@ -1,6 +1,7 @@
 package org.jboss.windup.graph.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -37,25 +38,25 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
-    void addUserRulesPath(FileModel userRulesPath);
+    void addUserRulesPath(ResourceModel userRulesPath);
     
     /**
      * The location for user provided ignore directory (list of ignored jar files)
      */
     @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
-    void addUserIgnorePath(FileModel userIgnorePath);
+    void addUserIgnorePath(ResourceModel userIgnorePath);
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
-    Iterable<FileModel> getUserRulesPaths();
+    Iterable<ResourceModel> getUserRulesPaths();
     
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
-    Iterable<FileModel> getUserIgnorePaths();
+    Iterable<ResourceModel> getUserIgnorePaths();
 
     /**
      * Where to put the report and other files produced during Windup execution.
@@ -67,7 +68,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * Where to put the report and other files produced during Windup execution.
      */
     @Adjacency(label = "outputPath", direction = Direction.OUT)
-    void setOutputPath(FileModel outputPath);
+    void setOutputPath(ResourceModel outputPath);
 
     /**
      * Indicates whether or not to function in offline mode

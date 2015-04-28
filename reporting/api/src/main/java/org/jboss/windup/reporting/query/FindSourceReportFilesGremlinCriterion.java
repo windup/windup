@@ -4,7 +4,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -17,7 +17,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * This provides a helper class that can be used in a Windup Query call to execute a Gremlin search returning all FileModels that have associated
+ * This provides a helper class that can be used in a Windup Query call to execute a Gremlin search returning all ResourceModels that have associated
  * {@link FileLocationModel}s or @{link ClassificationModel}s.
  */
 public class FindSourceReportFilesGremlinCriterion implements QueryGremlinCriterion
@@ -30,20 +30,20 @@ public class FindSourceReportFilesGremlinCriterion implements QueryGremlinCriter
 
         // create a pipeline to get all blacklisted items
         GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
-                    context.getQuery().type(FileModel.class).vertices());
+                    context.getQuery().type(ResourceModel.class).vertices());
         hintPipeline.as("fileModel1").in(FileLocationModel.FILE_MODEL)
                     .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE).back("fileModel1");
 
         // create a pipeline to get all items with attached classifications
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
-                    context.getQuery().type(FileModel.class).vertices());
+                    context.getQuery().type(ResourceModel.class).vertices());
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE)
                     .back("fileModel2");
 
         // create a pipeline to get all items with attached technology tags
         GremlinPipeline<Vertex, Vertex> technologyTagPipeline = new GremlinPipeline<Vertex, Vertex>(
-                    context.getQuery().type(FileModel.class).vertices());
+                    context.getQuery().type(ResourceModel.class).vertices());
         technologyTagPipeline.as("fileModel3").in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL)
                     .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE)
                     .has(TechnologyTagModel.LEVEL, TechnologyTagLevel.IMPORTANT.toString())

@@ -5,9 +5,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
@@ -15,6 +20,8 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.ZipEntryModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -26,27 +33,42 @@ import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * Unzips the archive recursively into the {@link UnzipArchiveToOutputFolder#ARCHIVES} folder in the output directory.
+ */
 public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<ArchiveModel>
 {
     private static final String MALFORMED_ARCHIVE = "Malformed archive";
     private static final String ARCHIVES = "archives";
     private static final Logger LOG = Logging.get(UnzipArchiveToOutputFolder.class);
 
+    /**
+     * Constructions an instance that will load the data from a variable with the given name.
+     */
     public UnzipArchiveToOutputFolder(String variableName)
     {
         super(variableName);
     }
 
+    /**
+     * Constructions an instance with the default configuration.
+     */
     public UnzipArchiveToOutputFolder()
     {
         super();
     }
 
+    /**
+     * Constructs an instance using the variable with the given name.
+     */
     public static UnzipArchiveToOutputFolder unzip(String variableName)
     {
         return new UnzipArchiveToOutputFolder(variableName);
     }
 
+    /**
+     * Constructs an instance with the default configuration.
+     */
     public static UnzipArchiveToOutputFolder unzip()
     {
         return new UnzipArchiveToOutputFolder();
@@ -64,27 +86,25 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         }
 
         // create a folder for all archive contents
-        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-        String windupOutputFolder = cfg.getOutputPath().getFilePath();
+        WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+        Path archivesPath = configuration.getOutputPath().asFile().toPath().resolve(ARCHIVES);
 
-        Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, ARCHIVES);
-        if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
+        if (!Files.isDirectory(archivesPath))
         {
             try
             {
-                Files.createDirectories(windupTempUnzippedArchiveFolder);
+                Files.createDirectories(archivesPath);
             }
             catch (IOException e)
             {
-                throw new WindupException("Failed to create temporary folder: " + windupTempUnzippedArchiveFolder
-                            + " due to: " + e.getMessage(), e);
+                throw new WindupException("Failed to create temporary folder: " + archivesPath + " due to: " + e.getMessage(), e);
             }
         }
 
-        unzipToTempDirectory(event.getGraphContext(), windupTempUnzippedArchiveFolder, zipFile, payload);
+        unzip(event.getGraphContext(), archivesPath, zipFile, payload);
     }
 
-    private Path getAppArchiveFolder(Path tempFolder, String appArchiveName)
+    private Path getArchiveFolderName(Path tempFolder, String appArchiveName)
     {
         Path appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName);
 
@@ -98,7 +118,17 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         return appArchiveFolder;
     }
 
-    private void unzipToTempDirectory(final GraphContext context,
+    private boolean containsZipFiles(ZipFile zipFile)
+    {
+        for (ZipEntry entry : Collections.list(zipFile.entries()))
+        {
+            if (!entry.isDirectory() && ZipUtil.endsWithZipExtension(entry.getName()))
+                return true;
+        }
+        return false;
+    }
+
+    private void unzip(final GraphContext context,
                 final Path tempFolder, final File inputZipFile,
                 final ArchiveModel archiveModel)
     {
@@ -109,7 +139,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         if (null == appArchiveName)
             throw new IllegalStateException("Archive model doesn't have an archiveName: " + archiveModel.getFilePath());
 
-        final Path appArchiveFolder = getAppArchiveFolder(tempFolder, appArchiveName);
+        final Path appArchiveFolder = getArchiveFolderName(tempFolder, appArchiveName);
 
         try
         {
@@ -124,9 +154,12 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         // unzip to the temp folder
         LOG.info("Unzipping " + inputZipFile.getPath() + " to "
                     + appArchiveFolder.toString());
-        try
+        try (ZipFile zipFile = new ZipFile(inputZipFile))
         {
-            ZipUtil.unzipToFolder(inputZipFile, appArchiveFolder.toFile());
+            if (containsZipFiles(zipFile))
+                ZipUtil.unzipToFolder(inputZipFile, appArchiveFolder.toFile());
+            else
+                addZipEntriesToGraph(context, archiveModel, zipFile);
         }
         catch (Throwable e)
         {
@@ -137,27 +170,43 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             return;
         }
 
-        FileModel newFileModel = fileService.createByFilePath(appArchiveFolder.toString());
+        FileModel newResourceModel = fileService.createByFilePath(appArchiveFolder.toString());
         // mark the path to the archive
-        archiveModel.setUnzippedDirectory(newFileModel);
-        newFileModel.setParentArchive(archiveModel);
+        archiveModel.setUnzippedDirectory(newResourceModel);
+        newResourceModel.setParentArchive(archiveModel);
 
         // add all unzipped files, and make sure their parent archive is set
-        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, newFileModel);
+        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, newResourceModel);
+    }
+
+    private void addZipEntriesToGraph(GraphContext context, ArchiveModel archiveModel, ZipFile zipFile)
+    {
+        GraphService<ZipEntryModel> service = new GraphService<>(context, ZipEntryModel.class);
+
+        for (ZipEntry entry : Collections.list(zipFile.entries()))
+        {
+            String entryName = FilenameUtils.separatorsToUnix(entry.getName());
+            entryName = StringUtils.removeEnd(entryName, "/");
+
+            ZipEntryModel entryModel = service.create();
+            entryModel.setFileName(FilenameUtils.getName(entryName));
+            entryModel.setDirectory(entry.isDirectory());
+            entryModel.setParentArchive(archiveModel);
+            entryModel.setFilePath(entryName);
+        }
     }
 
     /**
-     * Recurses the given folder and adds references to these files to the graph as FileModels.
+     * Recurses the given folder and adds references to these files to the graph as ResourceModels.
      *
-     * We don't set the parent file model in the case of the inital children, as the direct parent is really the archive
-     * itself. For example for file "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary
-     * directory that happens to hold it.
+     * We don't set the parent file model in the case of the inital children, as the direct parent is really the archive itself. For example for file
+     * "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary directory that happens to hold it.
      */
     private void recurseAndAddFiles(GraphContext context, Path tempFolder,
                 FileService fileService, ArchiveModel archiveModel,
-                FileModel parentFileModel)
+                FileModel parentResourceModel)
     {
-        File fileReference = parentFileModel.asFile();
+        File fileReference = parentResourceModel.asFile();
         WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(context);
         if (fileReference.isDirectory())
         {
@@ -166,7 +215,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             {
                 for (File subFile : subFiles)
                 {
-                    FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
+                    FileModel subFileModel = fileService.createByFilePath(parentResourceModel, subFile.getAbsolutePath());
                     subFileModel.setParentArchive(archiveModel);
 
                     // check if this file should be ignored
@@ -190,7 +239,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                          */
                         newArchiveModel = GraphService.refresh(context, newArchiveModel);
                         if (!(newArchiveModel instanceof IgnoredArchiveModel))
-                            unzipToTempDirectory(context, tempFolder, newZipFile,
+                            unzip(context, tempFolder, newZipFile,
                                         newArchiveModel);
 
                     }
@@ -205,10 +254,9 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     }
 
     /**
-     * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any of the
-     * specified regular expressions.
+     * Checks if the {@link ResourceModel#getFilePath()} + {@link ResourceModel#getFileName()} is ignored by any of the specified regular expressions.
      */
-    private boolean checkIfIgnored(final GraphContext context, FileModel file, List<String> patterns)
+    private boolean checkIfIgnored(final GraphContext context, ResourceModel file, List<String> patterns)
     {
         boolean ignored = false;
         if (patterns != null && patterns.size() != 0)
@@ -217,8 +265,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             {
                 if (file.getFilePath().matches(pattern))
                 {
-                    IgnoredFileModel ignoredFileModel = GraphService.addTypeToModel(context, file, IgnoredFileModel.class);
-                    ignoredFileModel.setIgnoredRegex(pattern);
+                    IgnoredFileModel ignoredResourceModel = GraphService.addTypeToModel(context, file, IgnoredFileModel.class);
+                    ignoredResourceModel.setIgnoredRegex(pattern);
                     LOG.info("File/Directory placed in " + file.getFilePath() + " was ignored, because matched [" + pattern + "].");
                     ignored = true;
                     break;

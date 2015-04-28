@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 
@@ -29,10 +29,10 @@ public class FileMappingGraphChangedListener implements GraphChangedListener
     @Override
     public void vertexPropertyChanged(Vertex vertex, String key, Object oldValue, Object setValue)
     {
-        if (FileModel.FILE_PATH.equals(key))
+        if (ResourceModel.FILE_PATH.equals(key))
         {
             FileService fileService = new FileService(event.getGraphContext());
-            FileModel model = fileService.frame(vertex);
+            ResourceModel model = fileService.frame(vertex);
 
             Map<String, List<Class<? extends WindupVertexFrame>>> mappings = FileMapping
                         .getMappings(event);

@@ -33,7 +33,7 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.ui.WindupCommand;
@@ -475,10 +475,10 @@ public class WindupCommandTest
                 Assert.assertTrue(foundWindupHomeDirIgnorePath);
                 Assert.assertEquals(3, totalFound);
                 GraphContext context = (GraphContext) controller.getContext().getAttributeMap().get(GraphContext.class);
-                GraphService<FileModel> service = new GraphService<FileModel>(context.load(), FileModel.class);
-                Iterable<FileModel> findAll = service.findAll();
+                GraphService<ResourceModel> service = new GraphService<ResourceModel>(context.load(), ResourceModel.class);
+                Iterable<ResourceModel> findAll = service.findAll();
                 boolean notEmpty = false;
-                for (FileModel fileModel : findAll)
+                for (ResourceModel fileModel : findAll)
                 {
                     notEmpty = true;
                     if (!(fileModel instanceof IgnoredFileModel) && (fileModel.getFileName().contains("META-INF")))

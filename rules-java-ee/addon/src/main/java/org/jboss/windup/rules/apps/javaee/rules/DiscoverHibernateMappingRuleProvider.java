@@ -121,7 +121,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
                 continue;
             }
 
-            technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
+            technologyTagService.addTagToResourceModel(xml, TECH_TAG, TECH_TAG_LEVEL);
 
             // prepend with package name.
             if (StringUtils.isNotBlank(clzPkg) && !StringUtils.startsWith(clzName, clzPkg))

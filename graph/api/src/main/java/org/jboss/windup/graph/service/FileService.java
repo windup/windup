@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -21,7 +22,7 @@ public class FileService extends GraphService<FileModel>
         return createByFilePath(null, filePath);
     }
 
-    public FileModel createByFilePath(FileModel parentFile, String filePath)
+    public FileModel createByFilePath(ResourceModel parentFile, String filePath)
     {
         ExecutionStatistics.get().begin("FileService.createByFilePath(parentFile, filePath)");
         // always search by absolute path
@@ -72,7 +73,6 @@ public class FileService extends GraphService<FileModel>
             regex = ".+\\." + builder.toString() + "$";
         }
 
-        return getGraphContext().getQuery().type(FileModel.class)
-                    .has("filePath", Text.REGEX, regex).vertices(FileModel.class);
+        return getGraphContext().getQuery().type(FileModel.class).has("filePath", Text.REGEX, regex).vertices(FileModel.class);
     }
 }

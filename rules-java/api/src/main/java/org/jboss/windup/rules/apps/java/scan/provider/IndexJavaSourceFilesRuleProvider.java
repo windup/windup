@@ -27,6 +27,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -122,7 +123,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                 }
 
                 // make sure we mark this as a Java file
-                technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
+                technologyTagService.addTagToResourceModel(payload, TECH_TAG, TECH_TAG_LEVEL);
 
                 payload.setPackageName(packageName);
                 try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
@@ -155,7 +156,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private void addParsedClassToFile(FileInputStream fis, GraphContext context, JavaSourceFileModel sourceFileModel)
+        private void addParsedClassToFile(FileInputStream fis, GraphContext context, JavaSourceFileModel sourceResourceModel)
         {
             JavaSource<?> javaSource;
             try
@@ -165,7 +166,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             catch (ParserException e)
             {
                 ClassificationService classificationService = new ClassificationService(context);
-                classificationService.attachClassification(sourceFileModel,
+                classificationService.attachClassification(sourceResourceModel,
                             JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                             JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                 return;
@@ -173,16 +174,16 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 
             String packageName = javaSource.getPackage();
             // set the package name to the parsed value
-            sourceFileModel.setPackageName(packageName);
+            sourceResourceModel.setPackageName(packageName);
 
             // Set the root path of this source file (if possible). As this could be coming from user-provided source, it
             // is possible that the path will not match the package name. In this case, we will likely end up with a null
             // root path.
-            Path rootSourcePath = PathUtil.getRootFolderForSource(sourceFileModel.asFile().toPath(), packageName);
+            Path rootSourcePath = PathUtil.getRootFolderForSource(((FileModel) sourceResourceModel).asFile().toPath(), packageName);
             if (rootSourcePath != null)
             {
-                FileModel rootSourceFileModel = new FileService(context).createByFilePath(rootSourcePath.toString());
-                sourceFileModel.setRootSourceFolder(rootSourceFileModel);
+                ResourceModel rootSourceFileModel = new FileService(context).createByFilePath(rootSourcePath.toString());
+                sourceResourceModel.setRootSourceFolder(rootSourceFileModel);
             }
 
             String qualifiedName = javaSource.getQualifiedName();
@@ -195,11 +196,11 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 
             JavaClassService javaClassService = new JavaClassService(context);
             JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
-            javaClassModel.setOriginalSource(sourceFileModel);
+            javaClassModel.setOriginalSource(sourceResourceModel);
             javaClassModel.setSimpleName(simpleName);
             javaClassModel.setPackageName(packageName);
             javaClassModel.setQualifiedName(qualifiedName);
-            javaClassModel.setClassFile(sourceFileModel);
+            javaClassModel.setClassFile(sourceResourceModel);
             javaClassModel.setPublic(javaSource.isPublic());
 
             if (javaSource instanceof InterfaceCapable)
@@ -224,7 +225,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                     javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
             }
 
-            sourceFileModel.addJavaClass(javaClassModel);
+            sourceResourceModel.addJavaClass(javaClassModel);
         }
 
         @Override

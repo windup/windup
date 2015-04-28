@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.java;
 
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Iterators;
@@ -61,26 +61,26 @@ public class JavaClassTestFile1
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
 
-            // Create FileModel for $inputDir
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            // Create ResourceModel for $inputDir
+            ResourceModel inputPathFrame = context.getFramed().addVertex(null, ResourceModel.class);
             inputPathFrame.setFilePath(inputDir);
             inputPathFrame.setProjectModel(pm);
-            pm.addFileModel(inputPathFrame);
+            pm.addResourceModel(inputPathFrame);
 
-            // Set project.rootFileModel to inputPath
-            pm.setRootFileModel(inputPathFrame);
+            // Set project.rootResourceModel to inputPath
+            pm.setRootResourceModel(inputPathFrame);
 
-            // Create FileModel for $inputDir/HintsClassificationsTest.java
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            // Create ResourceModel for $inputDir/HintsClassificationsTest.java
+            ResourceModel fileModel = context.getFramed().addVertex(null, ResourceModel.class);
             fileModel.setFilePath(inputDir + "/JavaHintsClassificationsTest.java");
             fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
+            pm.addResourceModel(fileModel);
 
-            // Create FileModel for $inputDir/JavaClassTest.java
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            // Create ResourceModel for $inputDir/JavaClassTest.java
+            fileModel = context.getFramed().addVertex(null, ResourceModel.class);
             fileModel.setFilePath(inputDir + "/JavaClassTest.java");
             fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
+            pm.addResourceModel(fileModel);
 
             context.getGraph().getBaseGraph().commit();
 

@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.ocpsoft.rewrite.config.Rule;
 
 import com.tinkerpop.blueprints.Direction;
@@ -11,7 +11,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,
+ * This classifies files and provides general background information about a specific {@link ResourceModel}. (For instance,
  * an XML file may be classified as a "XYZ Configuration File".) A {@link ClassificationModel} may also contain links to
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
@@ -25,13 +25,13 @@ public interface OverviewReportLineMessageModel extends WindupVertexFrame
     public static final String PROPERTY_EFFORT = "effort";
     public static final String PROPERTY_LINKS = "links";
 
-    public static final String FILE_MODEL = "classificationModelToFileModel";
+    public static final String FILE_MODEL = "classificationModelToResourceModel";
 
     @Adjacency(label = PROJECT_MODEL, direction = Direction.OUT)
     public void setProject(ProjectModel pModel);
 
     /**
-     * Get the {@link FileModel} associated with this {@link ClassificationModel}.
+     * Get the {@link ResourceModel} associated with this {@link ClassificationModel}.
      */
     @Adjacency(label = PROJECT_MODEL, direction = Direction.OUT)
     public ProjectModel getProject();

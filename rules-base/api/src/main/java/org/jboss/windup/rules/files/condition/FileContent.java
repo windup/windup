@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.files.condition;
 
-import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,6 +20,7 @@ import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.files.condition.regex.StreamRegexMatchListener;
@@ -154,7 +154,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         if (filenamePattern != null)
         {
             Pattern filenameRegex = filenamePattern.getCompiledPattern(store);
-            fileModels = fileModelService.findAllByPropertyMatchingRegex(FileModel.FILE_NAME, filenameRegex.pattern());
+            fileModels = fileModelService.findAllByPropertyMatchingRegex(ResourceModel.FILE_NAME, filenameRegex.pattern());
         }
         else
         {
@@ -162,7 +162,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         }
 
         final List<FileLocationModel> results = new ArrayList<>();
-        for (final FileModel fileModel : fileModels)
+        for (final ResourceModel fileModel : fileModels)
         {
             if (fileModel.isDirectory())
                 continue;
@@ -172,7 +172,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
             {
                 try
                 {
-                    Reader reader = new FileReader(fileModel.asFile());
+                    Reader reader = fileModel.asReader();
 
                     Pattern fileContentsRegex = contentPattern.getCompiledPattern(store);
                     StreamRegexMatchListener matchListener = new StreamRegexMatchListener()

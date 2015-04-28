@@ -1,7 +1,8 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -15,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaSourceFileModel.TYPE)
-public interface JavaSourceFileModel extends FileModel, SourceFileModel
+public interface JavaSourceFileModel extends ResourceModel, SourceFileModel
 {
     public static final String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
     public static final String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
@@ -33,7 +34,7 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
      * 
      */
     @Adjacency(label = ROOT_SOURCE_FOLDER, direction = Direction.OUT)
-    FileModel getRootSourceFolder();
+    ResourceModel getRootSourceFolder();
 
     /**
      * This is the "root" directory for this source file.
@@ -43,7 +44,7 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
      * 
      */
     @Adjacency(label = ROOT_SOURCE_FOLDER, direction = Direction.OUT)
-    void setRootSourceFolder(FileModel fileModel);
+    void setRootSourceFolder(ResourceModel fileModel);
 
     /**
      * Contains the Java package name

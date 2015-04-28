@@ -31,7 +31,7 @@ import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -100,21 +100,21 @@ public class GroovyExtensionJavaRulesTest
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
 
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel inputPathFrame = context.getFramed().addVertex(null, ResourceModel.class);
             inputPathFrame.setFilePath(inputPath);
             inputPathFrame.setProjectModel(pm);
-            pm.setRootFileModel(inputPathFrame);
+            pm.setRootResourceModel(inputPathFrame);
 
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel fileModel = context.getFramed().addVertex(null, ResourceModel.class);
             fileModel.setFilePath(inputPath + "/JavaClassTestFile1.java");
             fileModel.setProjectModel(pm);
 
-            pm.addFileModel(inputPathFrame);
-            pm.addFileModel(fileModel);
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            pm.addResourceModel(inputPathFrame);
+            pm.addResourceModel(fileModel);
+            fileModel = context.getFramed().addVertex(null, ResourceModel.class);
             fileModel.setFilePath(inputPath + "/JavaClassTestFile2.java");
             fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
+            pm.addResourceModel(fileModel);
 
             try
             {
@@ -144,7 +144,7 @@ public class GroovyExtensionJavaRulesTest
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
                 Assert.assertEquals(1, classifications.size());
 
-                Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
+                Iterable<ResourceModel> fileModels = classifications.get(0).getResourceModels();
                 Assert.assertEquals(2, Iterators.asList(fileModels).size());
             }
             finally

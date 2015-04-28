@@ -37,7 +37,7 @@ import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -97,7 +97,7 @@ public class XMLFileNestedConditionTest
         {
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel inputPath = context.getFramed().addVertex(null, ResourceModel.class);
             inputPath.setFilePath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
@@ -106,7 +106,7 @@ public class XMLFileNestedConditionTest
             Files.createDirectories(outputPath);
 
             inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            pm.setRootResourceModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(new NotPredicate(
@@ -129,7 +129,7 @@ public class XMLFileNestedConditionTest
                 Assert.assertEquals("Spring File", classificationString);
             }
             Assert.assertEquals(1, classifications.size());
-            Iterator<FileModel> iterator = classifications.get(0).getFileModels().iterator();
+            Iterator<ResourceModel> iterator = classifications.get(0).getResourceModels().iterator();
             Assert.assertNotNull(iterator.next());
             Assert.assertNotNull(iterator.next());
             Assert.assertFalse(iterator.hasNext());

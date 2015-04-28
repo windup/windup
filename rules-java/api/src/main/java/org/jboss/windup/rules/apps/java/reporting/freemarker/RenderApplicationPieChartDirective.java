@@ -48,7 +48,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
     {
         StringModel projectStringModel = (StringModel) params.get("project");
         ProjectModel projectModel = (ProjectModel) projectStringModel.getWrappedObject();
-        String filename = projectModel.getRootFileModel().getPrettyPath();
+        String filename = projectModel.getRootResourceModel().getPrettyPath();
 
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) params.get("recursive");
         boolean recursive = recursiveBooleanModel.getAsBoolean();

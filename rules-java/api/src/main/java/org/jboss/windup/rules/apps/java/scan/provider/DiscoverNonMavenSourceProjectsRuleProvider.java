@@ -8,7 +8,7 @@ import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -43,31 +43,31 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
         public void perform(GraphRewrite event, EvaluationContext context)
         {
             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-            FileModel mainFileModel = cfg.getInputPath();
+            ResourceModel mainResourceModel = cfg.getInputPath();
 
             ProjectService projectModelService = new ProjectService(event.getGraphContext());
-            ProjectModel mainProjectModel = mainFileModel.getProjectModel();
+            ProjectModel mainProjectModel = mainResourceModel.getProjectModel();
             if (mainProjectModel == null)
             {
                 mainProjectModel = projectModelService.create();
-                mainProjectModel.setName(mainFileModel.getFileName());
+                mainProjectModel.setName(mainResourceModel.getFileName());
                 mainProjectModel.setDescription("Source Directory");
 
-                mainFileModel.setProjectModel(mainProjectModel);
-                mainProjectModel.setRootFileModel(mainFileModel);
-                mainProjectModel.addFileModel(mainFileModel);
+                mainResourceModel.setProjectModel(mainProjectModel);
+                mainProjectModel.setRootResourceModel(mainResourceModel);
+                mainProjectModel.addResourceModel(mainResourceModel);
             }
 
-            addProjectToChildFiles(mainFileModel, mainProjectModel);
+            addProjectToChildFiles(mainResourceModel, mainProjectModel);
         }
 
-        private void addProjectToChildFiles(FileModel fileModel, ProjectModel projectModel)
+        private void addProjectToChildFiles(ResourceModel fileModel, ProjectModel projectModel)
         {
-            for (FileModel childFile : fileModel.getFilesInDirectory())
+            for (ResourceModel childFile : fileModel.getFilesInDirectory())
             {
                 if (childFile.getProjectModel() == null)
                 {
-                    projectModel.addFileModel(childFile);
+                    projectModel.addResourceModel(childFile);
                     childFile.setProjectModel(projectModel);
                 }
                 else if (childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))

@@ -4,7 +4,7 @@ import java.util.StringTokenizer;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 /**
  * Provides methods for searching, creating, and deleting ArchiveModel Vertices.
@@ -22,33 +22,33 @@ public class ArchiveService extends GraphService<ArchiveModel>
     /**
      * Finds the file at the provided path within the archive.
      * 
-     * Eg, getChildFile(ArchiveModel, "/META-INF/MANIFEST.MF") will return a {@link FileModel} if a file named
+     * Eg, getChildFile(ArchiveModel, "/META-INF/MANIFEST.MF") will return a {@link ResourceModel} if a file named
      * /META-INF/MANIFEST.MF exists within the archive
      * 
      * This function expects filePath to use "/" characters to index within the archive, regardless of the underlying
      * operating system platform being used.
      * 
-     * @return Returns the located {@link FileModel} or null if no file with this path could be located
+     * @return Returns the located {@link ResourceModel} or null if no file with this path could be located
      */
-    public FileModel getChildFile(ArchiveModel archiveModel, String filePath)
+    public ResourceModel getChildFile(ArchiveModel archiveModel, String filePath)
     {
         StringTokenizer stk = new StringTokenizer(filePath, "/");
 
-        FileModel currentFileModel = archiveModel.getUnzippedDirectory();
+        ResourceModel currentResourceModel = archiveModel.getUnzippedDirectory();
 
-        while (stk.hasMoreTokens() && currentFileModel != null)
+        while (stk.hasMoreTokens() && currentResourceModel != null)
         {
             String pathElement = stk.nextToken();
 
-            currentFileModel = findFileModel(currentFileModel, pathElement);
+            currentResourceModel = findResourceModel(currentResourceModel, pathElement);
         }
-        return currentFileModel;
+        return currentResourceModel;
     }
 
-    private FileModel findFileModel(FileModel fm, String pathElement)
+    private ResourceModel findResourceModel(ResourceModel fm, String pathElement)
     {
-        FileModel result = null;
-        for (FileModel child : fm.getFilesInDirectory())
+        ResourceModel result = null;
+        for (ResourceModel child : fm.getFilesInDirectory())
         {
             if (child.getFileName().equals(pathElement))
             {

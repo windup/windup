@@ -1,6 +1,6 @@
 package org.jboss.windup.reporting.model;
 
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 
@@ -10,7 +10,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * This is used to classify lines within application source {@link FileModel} instances, and to provide hints and related data regarding specific
+ * This is used to classify lines within application source {@link ResourceModel} instances, and to provide hints and related data regarding specific
  * positions within those files.
  */
 @TypeValue(InlineHintModel.TYPE)
@@ -39,13 +39,13 @@ public interface InlineHintModel extends FileLocationModel
     String getTitle();
 
     /**
-     * Set the text to be displayed within this {@link InlineHintModel} in the designated {@link FileModel}.
+     * Set the text to be displayed within this {@link InlineHintModel} in the designated {@link ResourceModel}.
      */
     @Property(HINT)
     void setHint(String hint);
 
     /**
-     * Get the text to be displayed within this {@link InlineHintModel} in the designated {@link FileModel}.
+     * Get the text to be displayed within this {@link InlineHintModel} in the designated {@link ResourceModel}.
      */
     @Property(HINT)
     String getHint();

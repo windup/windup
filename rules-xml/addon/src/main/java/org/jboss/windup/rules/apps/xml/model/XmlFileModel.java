@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareXmlReader;
@@ -66,8 +67,7 @@ public interface XmlFileModel extends FileModel, SourceFileModel
             }
             else if (cacheResult.getDocument() == null)
             {
-                FileModel fileModel = frame(asVertex(), FileModel.class);
-                try (InputStream is = fileModel.asInputStream())
+                try (InputStream is = asInputStream())
                 {
                     document = LocationAwareXmlReader.readXML(is);
                     XMLDocumentCache.cache(this, document);
