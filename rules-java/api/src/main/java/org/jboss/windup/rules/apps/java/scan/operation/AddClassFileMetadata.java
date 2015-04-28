@@ -7,14 +7,12 @@ import java.util.logging.Logger;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.Type;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.model.PackageModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
@@ -48,34 +46,10 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
         {
             WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
 
-            String absoluteFile = payload.asFile().getAbsolutePath();
-            absoluteFile = FilenameUtils.separatorsToUnix(absoluteFile);
+            String absolutePath = payload.asFile().getAbsolutePath();
 
-            for (PackageModel excludePackage : javaConfiguration.getExcludeJavaPackages())
-            {
-                String packageAsPath = excludePackage.getPackageName().replace(".", "/");
-                if (absoluteFile.contains(packageAsPath))
-                    return;
-            }
-
-            boolean shouldScan = true;
-            for (PackageModel includePackage : javaConfiguration.getScanJavaPackages())
-            {
-                String packageAsPath = includePackage.getPackageName().replace(".", "/");
-                if (absoluteFile.contains(packageAsPath))
-                {
-                    shouldScan = true;
-                    break;
-                }
-                else
-                {
-                    shouldScan = false;
-                }
-            }
-            if (!shouldScan)
-            {
+            if (!new WindupJavaConfigurationService(event.getGraphContext()).shouldScanFile(absolutePath))
                 return;
-            }
 
             // we should scan it, so make sure we get the package name from it
             try (FileInputStream fis = new FileInputStream(payload.getFilePath()))

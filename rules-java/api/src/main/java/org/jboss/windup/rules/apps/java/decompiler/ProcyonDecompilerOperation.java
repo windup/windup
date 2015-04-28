@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -20,6 +21,7 @@ import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
+import org.jboss.windup.decompiler.util.Filter;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -86,10 +88,11 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                 outputDir = outputDir.toPath().resolve("WEB-INF").resolve("classes").toFile();
             }
 
+            Filter<ZipEntry> filter = new ZipEntryPackageFilter(event.getGraphContext());
             try
             {
                 AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(payload, event.getGraphContext());
-                DecompilationResult result = decompiler.decompileArchive(archive, outputDir, addDecompiledItemsToGraph);
+                DecompilationResult result = decompiler.decompileArchive(archive, outputDir, filter, addDecompiledItemsToGraph);
                 for (DecompilationFailure failure : result.getFailures())
                 {
                     LOG.log(Level.WARNING, "Failed to decompile.", failure);

@@ -120,6 +120,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
 
         if (locationModel.getFile() instanceof SourceFileModel)
             ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
+
         log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this + "] ");
     }
 
