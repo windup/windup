@@ -75,6 +75,16 @@ a.anchor {
 	visibility: hidden;
 }
 
+
+img.windup-contributors {
+	width:35px;
+	margin: 4px;
+}
+
+p.windup-contributors  {
+	margin: 10px 0 0 0;
+}
+
 /** Navigation **/
 .nav .glyphicon {
 	height: 13px;
