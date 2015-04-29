@@ -54,28 +54,29 @@
 					<div class="panel-heading">
 					    <h3 class="panel-title">Spring Beans</h3>
 					</div>
-					<div class="panel-body">
-					    <#if !reportModel.relatedResources.springBeans.list.iterator()?has_content>
-					        No Spring Beans Found!
-					    </#if>
-						<#if reportModel.relatedResources.springBeans.list.iterator()?has_content>
-						    <table class="table table-striped table-bordered" id="springBeansTable">
-						        <tr>
-						            <th>Bean Name</th><th>Java Class</th>
-						        </tr>
-						        <#list reportModel.relatedResources.springBeans.list.iterator() as springBean>
-						            <tr>
-			                           <td>${springBean.springBeanName!""}</td>
-			                           <td>
-			                               <#if springBean.javaClass??>
-			                                   ${springBean.javaClass.qualifiedName}
-			                               </#if>
-			                           </td>
-						            </tr>
-						        </#list>
-						    </table>
-						</#if>
-					</div><!--end of panel-body-->
+					
+				    <#if !reportModel.relatedResources.springBeans.list.iterator()?has_content>
+				    <div class="panel-body">
+				        No Spring Beans Found!
+				    </div>
+				    </#if>
+					<#if reportModel.relatedResources.springBeans.list.iterator()?has_content>
+					    <table class="table table-striped table-bordered" id="springBeansTable">
+					        <tr>
+					            <th>Bean Name</th><th>Java Class</th>
+					        </tr>
+					        <#list reportModel.relatedResources.springBeans.list.iterator() as springBean>
+					            <tr>
+		                           <td>${springBean.springBeanName!""}</td>
+		                           <td>
+		                               <#if springBean.javaClass??>
+		                                   ${springBean.javaClass.qualifiedName}
+		                               </#if>
+		                           </td>
+					            </tr>
+					        </#list>
+					    </table>
+					</#if>
 				</div><!--end of panel-->
     		</div> <!-- /container -->
 		</div><!-- /row -->
