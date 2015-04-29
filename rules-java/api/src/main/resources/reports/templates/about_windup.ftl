@@ -79,6 +79,10 @@
 						  
 						  <dt>Mailing List</dt>
 						  <dd><a href="https://lists.jboss.org/mailman/listinfo/windup-dev">https://lists.jboss.org/mailman/listinfo/windup-dev</a></dd>
+						  
+						  <dt>Issues Tracking</dt>
+						  <dd><a href="https://issues.jboss.org/browse/WINDUP">https://issues.jboss.org/browse/WINDUP</a></dd>
+						  
 						</dl>
 				    </div>
 				</div>
