@@ -30,6 +30,12 @@ h3.panel-title span.s {
 	margin:0 10px
 }
 
+dl:last-child {
+	margin-bottom:0;
+}
+
+
+
 .windup-bar {
 	height: 130px; text-align: center; background: #FFF; border-bottom: 1px solid #c2cfdb;
 }
