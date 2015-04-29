@@ -3,6 +3,9 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -26,6 +29,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 {
+	
+	@Inject Addon addon;
+	
     public static final String REPORT_NAME = "About";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/about_windup.ftl";
 
@@ -87,8 +93,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
         Map<String, WindupVertexFrame> related = new HashMap<String, WindupVertexFrame>();
         AboutWindupModel aboutWindupModel = context.getFramed().addVertex(null, AboutWindupModel.class);
         
-        //TODO: replace with the utility call that @lincolnthree is going to be adding to the utility package.
-        aboutWindupModel.setWindupRuntimeVersion("2.3.0.SNAPSHOT");
+        aboutWindupModel.setWindupRuntimeVersion(addon.getId().getVersion().toString());
         related.put("windupAbout", aboutWindupModel);
         
         applicationReportModel.setRelatedResource(related);
