@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.ResourceModel;
-import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -58,16 +57,6 @@ public interface JavaSourceFileModel extends ResourceModel, SourceFileModel
      */
     @Property(PACKAGE_NAME)
     void setPackageName(String packageName);
-
-    /**
-     * Contains the primary {@link JavaClassModel} in the class
-     */
-    void setMainJavaClass(JavaClassModel javaClassModel);
-
-    /**
-     * Contains the primary {@link JavaClassModel} in the class
-     */
-    JavaClassModel getMainJavaClass();
 
     /**
      * Lists the {@link JavaClassModel}s contained within this source file

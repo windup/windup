@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.operation;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,13 +46,11 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
         {
             WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
 
-            String absolutePath = payload.asFile().getAbsolutePath();
-
-            if (!new WindupJavaConfigurationService(event.getGraphContext()).shouldScanFile(absolutePath))
+            if (!new WindupJavaConfigurationService(event.getGraphContext()).shouldScanFile(payload.getFilePath()))
                 return;
 
             // we should scan it, so make sure we get the package name from it
-            try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
+            try (InputStream fis = payload.asInputStream())
             {
                 final ClassParser parser = new ClassParser(fis, payload.getFilePath());
                 final JavaClass bcelJavaClass = parser.parse();

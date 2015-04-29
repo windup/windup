@@ -123,7 +123,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
         }
         catch (Exception e)
         {
-            if (file.asFile().length() == 0)
+            if (file.getLength() == 0)
             {
                 LOG.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath() + ", as the file is empty.");
             }

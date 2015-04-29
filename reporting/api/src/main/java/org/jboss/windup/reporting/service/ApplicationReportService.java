@@ -55,7 +55,7 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
             rootProjectModel = rootProjectModel.getParentProject();
         }
         String rootFilePath = rootProjectModel.getRootResourceModel().getFilePath();
-        pipe.out(ProjectModel.ROOT_FILE_MODEL);
+        pipe.out(ProjectModel.ROOT_RESOURCE_MODEL);
         pipe.has(ResourceModel.FILE_PATH, rootFilePath);
 
         pipe.back("applicationReport");

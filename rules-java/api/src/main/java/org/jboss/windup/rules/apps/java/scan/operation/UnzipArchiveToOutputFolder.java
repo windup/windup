@@ -11,8 +11,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
@@ -21,7 +19,6 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
-import org.jboss.windup.graph.model.resource.ZipEntryModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -171,7 +168,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         }
 
         FileModel newResourceModel = fileService.createByFilePath(appArchiveFolder.toString());
-        // mark the path to the archive
+        // mark the path to the archive even if we didn't actually unzip the file. This might be used if we later need
+        // to unzip an individual file from the archive for some reason.
         archiveModel.setUnzippedDirectory(newResourceModel);
         newResourceModel.setParentArchive(archiveModel);
 
@@ -181,18 +179,12 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 
     private void addZipEntriesToGraph(GraphContext context, ArchiveModel archiveModel, ZipFile zipFile)
     {
-        GraphService<ZipEntryModel> service = new GraphService<>(context, ZipEntryModel.class);
+
 
         for (ZipEntry entry : Collections.list(zipFile.entries()))
         {
-            String entryName = FilenameUtils.separatorsToUnix(entry.getName());
-            entryName = StringUtils.removeEnd(entryName, "/");
 
-            ZipEntryModel entryModel = service.create();
-            entryModel.setFileName(FilenameUtils.getName(entryName));
-            entryModel.setDirectory(entry.isDirectory());
-            entryModel.setParentArchive(archiveModel);
-            entryModel.setFilePath(entryName);
+
         }
     }
 

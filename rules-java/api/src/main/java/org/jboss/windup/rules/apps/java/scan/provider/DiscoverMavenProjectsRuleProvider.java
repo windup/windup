@@ -15,6 +15,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
@@ -68,8 +69,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
             {
                 // get a default name from the parent file (if the maven project doesn't contain one)
-                String defaultName = payload.getParentArchive() == null ? payload.asFile().getParentFile().getName() : payload.getParentArchive()
-                            .getFileName();
+                String defaultName = getParentFileName(payload);
                 MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, defaultName, payload);
                 if (mavenProjectModel != null)
                 {
@@ -96,7 +96,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     else
                     {
                         // add the parent file
-                        File parentFile = payload.asFile().getParentFile();
+                        File parentFile = ((FileModel) payload).asFile().getParentFile();
                         ResourceModel parentResourceModel = new FileService(event.getGraphContext()).findByPath(parentFile.getAbsolutePath());
                         if (parentResourceModel != null && !isAlreadyMavenProject(parentResourceModel))
                         {
@@ -127,6 +127,22 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 .when(fileWhen)
                 .perform(evaluatePomFiles);
         // @formatter:on
+    }
+
+    private String getParentFileName(XmlFileModel file)
+    {
+        if (file.getParentArchive() != null)
+        {
+            return file.getParentArchive().getFileName();
+        }
+
+        if (file instanceof FileModel)
+        {
+            FileModel fileModel = (FileModel) file;
+            return fileModel.asFile().getParentFile().getName();
+        }
+
+        return null;
     }
 
     /**
@@ -166,7 +182,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 
     public MavenProjectModel extractMavenProjectModel(GraphRewrite event, String defaultProjectName, XmlFileModel xmlResourceModel)
     {
-        File xmlFile = xmlResourceModel.asFile();
         Document document = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(xmlResourceModel);
         if (document == null)
         {
@@ -223,8 +238,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             boolean found = false;
             for (XmlFileModel foundPom : mavenProjectModel.getMavenPom())
             {
-                File foundPomFile = foundPom.asFile();
-                if (foundPomFile.getAbsoluteFile().equals(xmlFile))
+                if (foundPom.equals(xmlResourceModel))
                 {
                     // this one is already there
                     found = true;

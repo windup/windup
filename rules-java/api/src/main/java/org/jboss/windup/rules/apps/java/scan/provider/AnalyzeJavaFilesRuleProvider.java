@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -10,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
 import org.jboss.windup.ast.java.data.ClassReferences;
@@ -29,7 +29,6 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -143,13 +142,13 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     }
                     processor = new ASTProcessor(importResolver, libraryPaths, sourcePaths);
                 }
-                File sourceFile = ((FileModel) payload).asFile();
 
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFile");
                 try
                 {
                     WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
-                    ClassReferences references = processor.analyzeFile(sourceFile.toPath());
+                    String fileContents = IOUtils.toString(payload.asInputStream());
+                    ClassReferences references = processor.analyzeFile(payload.getFileName(), fileContents);
                     TypeReferenceService typeReferenceService = new TypeReferenceService(event.getGraphContext());
                     for (ClassReference reference : references.getReferences())
                     {

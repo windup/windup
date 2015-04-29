@@ -42,13 +42,13 @@
 <#macro projectModelRenderer projectModel>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
+            <h3 class="panel-title">${projectModel.rootResourceModel.prettyPath}</h3>
         </div>
         <table class="table table-striped table-bordered">
           <tr>
             <th>Name</th><th>Technology</th>
           </tr>
-          <#list sortFilesByPathAscending(findFilesNotClassifiedOrHinted(projectModel.fileModelsNoDirectories)) as fileModel>
+          <#list sortFilesByPathAscending(findFilesNotClassifiedOrHinted(projectModel.resourceModelsNoDirectories)) as fileModel>
              <@fileModelRenderer fileModel/>
           </#list>
         </table>

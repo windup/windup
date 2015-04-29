@@ -9,12 +9,16 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@TypeValue(ResourceModel.TYPE)
 public interface ResourceModel extends WindupVertexFrame
 {
+    String TYPE = "ResourceModel";
     String PARENT_RESOURCE = "parentResource";
     String FILE_NAME = "fileName";
     String FILE_TO_PROJECT_MODEL = "fileToProjectModel";
@@ -22,6 +26,7 @@ public interface ResourceModel extends WindupVertexFrame
     String MD5_HASH = "md5Hash";
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";
+    String LENGTH = "length";
 
     /**
      * Parent directory.
@@ -82,9 +87,14 @@ public interface ResourceModel extends WindupVertexFrame
     /**
      * Contains the full path to the file (eg, /tmp/foo/bar/file.txt)
      */
-    // implemented via a handler that makes sure the isDirectory property is set as well
-    @JavaHandler
+    @Property(FILE_PATH)
     void setFilePath(String filePath);
+
+    @Property(LENGTH)
+    void setLength(long length);
+
+    @Property(LENGTH)
+    long getLength();
 
     /**
      * Indicates whether the file is a directory or not
@@ -141,13 +151,14 @@ public interface ResourceModel extends WindupVertexFrame
     /**
      * Returns the path of this file within the archive (including all subarchives, etc)
      */
-    @JavaHandler
     String getPrettyPath();
 
     /**
      * Returns the path of this file within the parent project (format suitable for reporting)
      */
-    @JavaHandler
     String getPrettyPathWithinProject();
 
+    abstract class Impl implements ResourceModel, JavaHandlerContext<Vertex>
+    {
+    }
 }
