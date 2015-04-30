@@ -19,6 +19,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -179,12 +180,10 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 
     private void addZipEntriesToGraph(GraphContext context, ArchiveModel archiveModel, ZipFile zipFile)
     {
-
-
+        ArchiveService archiveService = new ArchiveService(context);
         for (ZipEntry entry : Collections.list(zipFile.entries()))
         {
-
-
+            archiveService.createEntry(archiveModel, entry);
         }
     }
 

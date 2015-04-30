@@ -1,5 +1,6 @@
 package org.jboss.windup.graph.service;
 
+import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.FilenameUtils;
@@ -35,18 +36,15 @@ public class ArchiveService extends GraphService<ArchiveModel>
      */
     public ResourceModel getChildFile(ArchiveModel archiveModel, String filePath)
     {
-        filePath = FilenameUtils.separatorsToUnix(filePath);
-
-
-        for (ResourceModel resourceModel : archiveModel.getContainedResourceModels())
+        String fullFilePath = getFilePathForZipEntry(archiveModel, filePath);
+        ResourceModel result = getUniqueByProperty(ResourceModel.FILE_PATH, fullFilePath);
+        if (result == null)
         {
-            String pathWithinProject = StringUtils.removeStart(resourceModel.getPrettyPathWithinProject(), archiveModel.getArchiveName());
-            pathWithinProject = StringUtils.removeStart(pathWithinProject, "/");
-            if (pathWithinProject.equals(filePath))
-                return resourceModel;
+            // It be in the uncompressed folder on disk? Let's try
+            Path fullPath = archiveModel.getUnzippedDirectory().asFile().toPath().resolve(filePath);
+            result = getUniqueByProperty(ResourceModel.FILE_PATH, fullPath.toAbsolutePath().toString());
         }
-
-        return null;
+        return result;
     }
 
     public static String getRelativePath(ArchiveModel archiveModel, ZipEntryModel entry)
@@ -56,7 +54,12 @@ public class ArchiveService extends GraphService<ArchiveModel>
 
     private String getFilePathForZipEntry(ArchiveModel archiveModel, ZipEntry entry)
     {
-        String entryName = FilenameUtils.separatorsToUnix(entry.getName());
+        return getFilePathForZipEntry(archiveModel, entry.getName());
+    }
+
+    private String getFilePathForZipEntry(ArchiveModel archiveModel, String entryName)
+    {
+        entryName = FilenameUtils.separatorsToUnix(entryName);
         entryName = StringUtils.removeEnd(entryName, "/");
         return getPrefix(archiveModel) + entryName;
     }

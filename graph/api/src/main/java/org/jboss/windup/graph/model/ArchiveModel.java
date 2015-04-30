@@ -44,10 +44,10 @@ public interface ArchiveModel extends FileModel
     public ArchiveModel getChildArchive();
 
     @Adjacency(label = UNZIPPED_DIRECTORY, direction = Direction.OUT)
-    public void setUnzippedDirectory(ResourceModel fileResourceModel);
+    public void setUnzippedDirectory(FileModel fileResourceModel);
 
     @Adjacency(label = UNZIPPED_DIRECTORY, direction = Direction.OUT)
-    public ResourceModel getUnzippedDirectory();
+    public FileModel getUnzippedDirectory();
 
     @Adjacency(label = ARCHIVE_FILES, direction = Direction.OUT)
     public Iterable<ResourceModel> getContainedResourceModels();

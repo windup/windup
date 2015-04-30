@@ -234,7 +234,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                         {
                             throw new WindupException(
                                         "Failed to find original JavaClassFileModel for decompiled Java file: "
-                                                    + decompiledOutputFile + " at: " + originalClassResourceModel.getFilePath());
+                                                    + decompiledOutputFile + " at: " + inputPath);
                         }
                     }
                     archiveModel.addDecompiledResourceModel(decompiledFileModel);
