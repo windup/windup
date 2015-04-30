@@ -32,6 +32,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface FileModel extends ResourceModel
 {
     public static final String ARCHIVE_FILES = "archiveFiles";
+    public static final String APPLICATION_FLAG = "ApplicationFlag";
 
     public static final String PARENT_FILE = "parentFile";
 
@@ -53,7 +54,20 @@ public interface FileModel extends ResourceModel
      */
     @Property(FILE_NAME)
     public String getFileName();
+    //test from
+    @Property(APPLICATION_FLAG)
+    public String getApplicationFlag();
+    
+    @Indexed
+    @Property(APPLICATION_FLAG)
+    public void setApplicationFlag(String applicationFlag);
+    
+    @Adjacency(label = "ApplicationFlagVertex", direction = Direction.OUT)
+    public ApplicationFlagVertex getApplicationFlagVertex();
 
+    @Adjacency(label = "ApplicationFlagVertex", direction = Direction.OUT)
+    public void setApplicationFlagVertex(ApplicationFlagVertex parentFile);
+    // test to
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
      * to "file.txt"

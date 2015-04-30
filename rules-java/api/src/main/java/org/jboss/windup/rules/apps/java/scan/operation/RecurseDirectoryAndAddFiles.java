@@ -4,8 +4,11 @@ import java.io.File;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.graph.model.resource.ApplicationFlag;
+import org.jboss.windup.graph.model.resource.ApplicationFlagVertex;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.GraphService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<FileModel>
@@ -38,14 +41,22 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)
     {
         FileService fileModelService = new FileService(event.getGraphContext());
-        recurseAndAddFiles(fileModelService, resourceModel);
+        resourceModel.setApplicationFlag("application");
+        GraphService<ApplicationFlagVertex> service = new GraphService<ApplicationFlagVertex>(event.getGraphContext(),ApplicationFlagVertex.class);
+        ApplicationFlagVertex unique = service.getUnique();
+        if(unique == null) {
+            unique = service.create();
+        }
+        recurseAndAddFiles(unique,fileModelService, resourceModel);
     }
 
     /**
      * Recurses the given folder and adds references to these files to the graph as FileModels
      */
-    private void recurseAndAddFiles(FileService fileService, FileModel file)
+    private void recurseAndAddFiles(ApplicationFlagVertex flagVertex, FileService fileService, FileModel file)
     {
+        file.setApplicationFlag("application");
+            file.setApplicationFlagVertex(flagVertex);
         String filePath = file.getFilePath();
         File fileReference = new File(filePath);
 
@@ -57,7 +68,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
                 for (File reference : subFiles)
                 {
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
-                    recurseAndAddFiles(fileService, subFile);
+                    recurseAndAddFiles(flagVertex,fileService, subFile);
                 }
             }
         }
