@@ -116,6 +116,7 @@
 			</div>
 
         </div>
+        <#if iterableHasContent(projectModel.fileModelsNoDirectories)>
         <table class="table table-striped table-bordered">
           <tr>
             <th>Name</th><th>Technology</th><th>Issues</th><th>Estimated Story Points</th>
@@ -124,6 +125,7 @@
              <@fileModelRenderer fileModel/>
           </#list>
         </table>
+        </#if>
     </div>
   <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
     <@projectModelRenderer childProject/>

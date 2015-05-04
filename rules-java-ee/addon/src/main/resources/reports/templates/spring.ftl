@@ -55,12 +55,12 @@
 					    <h3 class="panel-title">Spring Beans</h3>
 					</div>
 					
-				    <#if !reportModel.relatedResources.springBeans.list.iterator()?has_content>
+				    <#if !iterableHasContent(reportModel.relatedResources.springBeans)>
 				    <div class="panel-body">
 				        No Spring Beans Found!
 				    </div>
 				    </#if>
-					<#if reportModel.relatedResources.springBeans.list.iterator()?has_content>
+					<#if iterableHasContent(reportModel.relatedResources.springBeans)>
 					    <table class="table table-striped table-bordered" id="springBeansTable">
 					        <tr>
 					            <th>Bean Name</th><th>Java Class</th>

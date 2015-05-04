@@ -66,23 +66,19 @@
 		            <div class="panel-heading">
 		                <h3 class="panel-title">Hibernate Configuration: ${hibernateConfiguration.prettyPath}</h3>
 		            </div>
-		            <div class="panel-body">
-		                <div class="col-md-6">
-		                    <table class="table table-striped table-bordered" id="sessionFactoryPropertiesTable">
-		                        <tr>
-		                            <th>Session Property</th><th>Value</th>
-		                        </tr>
-				                <#list hibernateConfiguration.hibernateSessionFactories.iterator() as sessionFactory>
-		                                <#list sessionFactory.sessionFactoryProperties?keys as sessionPropKey>
-				                            <tr>
-				                                <td>${sessionPropKey}</td>
-				                                <td>${sessionFactory.sessionFactoryProperties[sessionPropKey]}</td>
-				                            </tr>
-				                        </#list>
-				                </#list>
-				            </table>
-		       		    </div>
-		            </div>
+                    <table class="table table-striped table-bordered" id="sessionFactoryPropertiesTable">
+                        <tr>
+                            <th>Session Property</th><th>Value</th>
+                        </tr>
+		                <#list hibernateConfiguration.hibernateSessionFactories.iterator() as sessionFactory>
+                                <#list sessionFactory.sessionFactoryProperties?keys as sessionPropKey>
+		                            <tr>
+		                                <td>${sessionPropKey}</td>
+		                                <td>${sessionFactory.sessionFactoryProperties[sessionPropKey]}</td>
+		                            </tr>
+		                        </#list>
+		                </#list>
+		            </table>
 		        </div>
 		    </#list>
 
@@ -102,28 +98,21 @@
 		            <div class="panel-heading">
 		                <h3 class="panel-title">Hibernate Entities</h3>
 		            </div>
-		            <div class="panel-body">
-		                <div class="row">
-		              	
-		                <div class="col-md-6">
-		    		        <table class="table table-striped table-bordered" id="hibernateEntityTable">
-				                <tr>
-				                    <th>Hibernate Entity</th><th>Table</th>
-				                </tr>
-				                <#list reportModel.relatedResources.hibernateEntities.list.iterator() as entity>
-				          	        <tr>
-				          		        <td>
-				          			        <#if entity.javaClass??>
-										        ${entity.javaClass.qualifiedName}
-									        </#if>
-								        </td>
-				          		        <td>${entity.tableName!""}</td>
-				          	        </tr>
-				                </#list>
-				            </table>
-				         </div>
-		      	    </div>
-		          </div>
+    		        <table class="table table-striped table-bordered" id="hibernateEntityTable">
+		                <tr>
+		                    <th>Hibernate Entity</th><th>Table</th>
+		                </tr>
+		                <#list reportModel.relatedResources.hibernateEntities.list.iterator() as entity>
+		          	        <tr>
+		          		        <td>
+		          			        <#if entity.javaClass??>
+								        ${entity.javaClass.qualifiedName}
+							        </#if>
+						        </td>
+		          		        <td>${entity.tableName!""}</td>
+		          	        </tr>
+		                </#list>
+		            </table>
 		        </div>
 		    </#if>
 	    </div> <!-- /container -->
