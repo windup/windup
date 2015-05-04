@@ -8,7 +8,7 @@ import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -42,7 +42,7 @@ public class CreateTattletaleReportLinkRuleProvider extends AbstractRuleProvider
         public void perform(GraphRewrite event, EvaluationContext context)
         {
             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-            FileModel inputFM = cfg.getInputPath();
+            ResourceModel inputFM = cfg.getInputPath();
             ProjectModel inputProjectModel = inputFM.getProjectModel();
 
             ApplicationReportModel applicationReportModel = new ApplicationReportService(event.getGraphContext()).create();

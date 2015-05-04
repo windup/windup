@@ -1,8 +1,5 @@
 package org.jboss.windup.ext.groovy;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,11 +35,15 @@ import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 
 /**
  * Loads files with the specified extension (specified in {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_EXTENSION}
@@ -184,17 +185,17 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
         results.addAll(scripts);
 
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        Iterable<FileModel> userRulesFileModels = cfg.getUserRulesPaths();
-        for (FileModel fm : userRulesFileModels)
+        Iterable<FileModel> userRulesResourceModels = cfg.getUserRulesPaths();
+        for (ResourceModel fm : userRulesResourceModels)
         {
             results.addAll(getScripts(fm));
         }
         return results;
     }
 
-    private Collection<URL> getScripts(FileModel userRulesFileModel)
+    private Collection<URL> getScripts(ResourceModel userRulesResourceModel)
     {
-        String userRulesDirectory = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
+        String userRulesDirectory = userRulesResourceModel == null ? null : userRulesResourceModel.getFilePath();
 
         Path userRulesPath = Paths.get(userRulesDirectory);
 

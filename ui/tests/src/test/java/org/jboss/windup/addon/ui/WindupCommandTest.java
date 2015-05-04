@@ -23,18 +23,17 @@ import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.IgnoredFileModel;
+import org.jboss.windup.graph.model.resource.IgnoredResourceModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.ui.WindupCommand;
 import org.jboss.windup.util.PathUtil;
@@ -47,32 +46,22 @@ import org.junit.runner.RunWith;
 public class WindupCommandTest
 {
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        ForgeArchive archive = ShrinkWrap
-                    .create(ForgeArchive.class)
+        return ShrinkWrap
+                    .create(AddonArchive.class)
                     .addBeansXML()
                     .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar")
-                    .addAsResource(WindupCommandTest.class.getResource("/ignore/test-windup-ignore.txt"), TEST_IGNORE_FILE)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.ui:windup-ui"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                                AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-                    );
-
-        return archive;
+                    .addAsResource(WindupCommandTest.class.getResource("/ignore/test-windup-ignore.txt"), TEST_IGNORE_FILE);
     }
 
     private static String TEST_IGNORE_FILE = "/test.txt";
@@ -475,13 +464,13 @@ public class WindupCommandTest
                 Assert.assertTrue(foundWindupHomeDirIgnorePath);
                 Assert.assertEquals(3, totalFound);
                 GraphContext context = (GraphContext) controller.getContext().getAttributeMap().get(GraphContext.class);
-                GraphService<FileModel> service = new GraphService<FileModel>(context.load(), FileModel.class);
-                Iterable<FileModel> findAll = service.findAll();
+                GraphService<ResourceModel> service = new GraphService<ResourceModel>(context.load(), ResourceModel.class);
+                Iterable<ResourceModel> allFiles = service.findAll();
                 boolean notEmpty = false;
-                for (FileModel fileModel : findAll)
+                for (ResourceModel fileModel : allFiles)
                 {
                     notEmpty = true;
-                    if (!(fileModel instanceof IgnoredFileModel) && (fileModel.getFileName().contains("META-INF")))
+                    if (!(fileModel instanceof IgnoredResourceModel) && (fileModel.getFileName().contains("META-INF")))
                     {
                         Assert.fail("The file " + fileModel.getFileName() + " should be ignored");
                     }

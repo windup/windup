@@ -9,7 +9,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
@@ -41,7 +41,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
         public void perform(GraphRewrite event, EvaluationContext context)
         {
             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-            FileModel inputFM = cfg.getInputPath();
+            ResourceModel inputFM = cfg.getInputPath();
             String inputPath = inputFM.getFilePath();
             String reportDirectory = new ReportService(event.getGraphContext()).getReportDirectory();
             String tattletaleDir = Paths.get(reportDirectory, TATTLETALE_REPORT_SUBDIR).toString();

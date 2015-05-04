@@ -12,7 +12,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -27,11 +27,11 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
 /**
- * Classifies a {@link FileModel} {@link Iteration} payload.
+ * Classifies a {@link ResourceModel} {@link Iteration} payload.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
+public class Classification extends ParameterizedIterationOperation<ResourceModel> implements ClassificationAs, ClassificationEffort,
             ClassificationDescription, ClassificationLink, ClassificationSeverity
 {
     public static final Severity DEFAULT_SEVERITY = Severity.WARNING;
@@ -55,20 +55,20 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
 
     /**
      * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it. This is mainly to simplify the
-     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
+     * creation of the rule, when the ResourceModel itself is not being iterated but just a model referencing it.
      * 
      */
     @Override
-    public FileModel resolvePayload(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
+    public ResourceModel resolvePayload(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
         checkVariableName(event, context);
         if (payload instanceof FileReferenceModel)
         {
             return ((FileReferenceModel) payload).getFile();
         }
-        if (payload instanceof FileModel)
+        if (payload instanceof ResourceModel)
         {
-            return (FileModel) payload;
+            return (ResourceModel) payload;
         }
         return null;
     }
@@ -124,7 +124,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     }
 
     /**
-     * Classify the current {@link FileModel} as the given text.
+     * Classify the current {@link ResourceModel} as the given text.
      */
     public static ClassificationAs as(String classification)
     {
@@ -135,7 +135,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     }
 
     @Override
-    public void performParameterized(GraphRewrite event, EvaluationContext context, FileModel payload)
+    public void performParameterized(GraphRewrite event, EvaluationContext context, ResourceModel payload)
     {
         /*
          * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.

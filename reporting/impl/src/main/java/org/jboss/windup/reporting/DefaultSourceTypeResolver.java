@@ -1,13 +1,13 @@
 package org.jboss.windup.reporting;
 
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.SourceTypeResolver;
 
 public class DefaultSourceTypeResolver implements SourceTypeResolver
 {
 
     @Override
-    public String resolveSourceType(FileModel f)
+    public String resolveSourceType(ResourceModel f)
     {
         String filename = f.getFileName();
         if (filename == null)

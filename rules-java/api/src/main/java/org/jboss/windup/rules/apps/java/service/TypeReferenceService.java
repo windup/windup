@@ -7,7 +7,7 @@ import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -46,7 +46,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
         // 1. Get all JavaHints for the given project
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
-        pipeline.in(FileModel.FILE_TO_PROJECT_MODEL).in(InlineHintModel.FILE_MODEL);
+        pipeline.in(ResourceModel.FILE_TO_PROJECT_MODEL).in(InlineHintModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
         pipeline.as("inlineHintVertex");
@@ -122,7 +122,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
     }
 
-    public JavaTypeReferenceModel createTypeReference(FileModel fileModel, TypeReferenceLocation location,
+    public JavaTypeReferenceModel createTypeReference(ResourceModel fileModel, TypeReferenceLocation location,
                 int lineNumber, int columnNumber, int length, String resolvedSource, String line)
     {
         ExecutionStatistics.get().begin("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");

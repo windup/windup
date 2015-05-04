@@ -28,7 +28,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphApiCompositeClassLoaderProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.LinkModel;
@@ -73,7 +73,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 
     /**
      * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type. This is mainly to simplify the
-     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
+     * creation of the rule, when the ResourceModel itself is not being iterated but just a model referencing it.
      *
      */
     @Override
@@ -83,7 +83,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         WindupVertexFrame payload = resolveVariable(event, getVariableName());
         if (payload instanceof FileReferenceModel)
         {
-            FileModel file = ((FileReferenceModel) payload).getFile();
+            ResourceModel file = ((FileReferenceModel) payload).getFile();
             perform(event, context, (XmlFileModel) file);
         }
         else
@@ -259,7 +259,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             ClassificationService classificationService = new ClassificationService(graphContext);
             ClassificationModel classificationModel = classificationService.create();
             classificationModel.setClassifiation("Transformed to: " + description);
-            classificationModel.addFileModel(payload);
+            classificationModel.addResourceModel(payload);
 
             GraphService<LinkModel> linkService = new GraphService<>(graphContext, LinkModel.class);
             LinkModel linkModel = linkService.create();

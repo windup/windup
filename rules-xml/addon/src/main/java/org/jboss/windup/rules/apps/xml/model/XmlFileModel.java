@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.LocationAwareXmlReader;
@@ -19,7 +19,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(XmlFileModel.TYPE)
-public interface XmlFileModel extends FileModel, SourceFileModel
+public interface XmlFileModel extends ResourceModel, SourceFileModel
 {
     public static final Logger LOG = Logger.getLogger(XmlFileModel.class.getName());
 
@@ -62,12 +62,11 @@ public interface XmlFileModel extends FileModel, SourceFileModel
             Document document;
             if (cacheResult.isParseFailure())
             {
-                throw new WindupException("Could not load " + asFile() + " due to previous parse failure");
+                throw new WindupException("Could not load " + getFilePath() + " due to previous parse failure");
             }
             else if (cacheResult.getDocument() == null)
             {
-                FileModel fileModel = frame(asVertex(), FileModel.class);
-                try (InputStream is = fileModel.asInputStream())
+                try (InputStream is = asInputStream())
                 {
                     document = LocationAwareXmlReader.readXML(is);
                     XMLDocumentCache.cache(this, document);

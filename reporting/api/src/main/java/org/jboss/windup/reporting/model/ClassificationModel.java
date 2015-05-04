@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.config.Link;
 import org.ocpsoft.rewrite.config.Rule;
 
@@ -12,7 +12,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,
+ * This classifies files and provides general background information about a specific {@link ResourceModel}. (For instance,
  * an XML file may be classified as a "XYZ Configuration File".) A {@link ClassificationModel} may also contain links to
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
@@ -28,19 +28,19 @@ public interface ClassificationModel extends WindupVertexFrame
     static final String EFFORT = TYPE_PREFIX + "effort";
     static final String LINKS = TYPE_PREFIX + "links";
 
-    static final String FILE_MODEL = TYPE_PREFIX + "classificationModelToFileModel";
+    static final String FILE_MODEL = TYPE_PREFIX + "classificationModelToResourceModel";
 
     /**
-     * Add a {@link FileModel} associated with this {@link ClassificationModel}.
+     * Add a {@link ResourceModel} associated with this {@link ClassificationModel}.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    void addFileModel(FileModel fileModel);
+    void addResourceModel(ResourceModel fileModel);
 
     /**
-     * Get the {@link FileModel} associated with this {@link ClassificationModel}.
+     * Get the {@link ResourceModel} associated with this {@link ClassificationModel}.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    Iterable<FileModel> getFileModels();
+    Iterable<ResourceModel> getResourceModels();
 
     /**
      * Add a related {@link Link} to this {@link ClassificationModel}

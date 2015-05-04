@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -19,29 +19,29 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ProjectModel.TYPE)
 public interface ProjectModel extends WindupVertexFrame
 {
-    public static final String TYPE = "ProjectModel";
-    public static final String DEPENDENCY = "dependency";
-    public static final String PARENT_PROJECT = "parentProject";
-    public static final String ROOT_FILE_MODEL = "rootFileModel";
-    public static final String PROJECT_MODEL_TO_FILE = "projectModelToFile";
-    public static final String SOURCE_BASED = "sourceBased";
-    public static final String DESCRIPTION = "description";
-    public static final String ORGANIZATION = "organization";
-    public static final String URL = "url";
-    public static final String NAME = "name";
-    public static final String VERSION = "version";
-    public static final String PROJECT_TYPE = "projectType";
+    String TYPE = "ProjectModel";
+    String DEPENDENCY = "dependency";
+    String PARENT_PROJECT = "parentProject";
+    String ROOT_RESOURCE_MODEL = "rootResourceModel";
+    String PROJECT_MODEL_TO_FILE = "projectModelToFile";
+    String SOURCE_BASED = "sourceBased";
+    String DESCRIPTION = "description";
+    String ORGANIZATION = "organization";
+    String URL = "url";
+    String NAME = "name";
+    String VERSION = "version";
+    String PROJECT_TYPE = "projectType";
 
     /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
      * project.
      * 
      */
-    @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    void setRootFileModel(FileModel fileModel);
+    @Adjacency(label = ROOT_RESOURCE_MODEL, direction = Direction.OUT)
+    void setRootResourceModel(ResourceModel fileModel);
 
-    @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    FileModel getRootFileModel();
+    @Adjacency(label = ROOT_RESOURCE_MODEL, direction = Direction.OUT)
+    ResourceModel getRootResourceModel();
 
     /**
      * Indicates whether or not this is a source-based project (eg, the project provided by the user for analysis), or a binary project (eg, as part
@@ -169,17 +169,17 @@ public interface ProjectModel extends WindupVertexFrame
      * Retrieve all files contained within the project.
      */
     @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
-    Iterable<FileModel> getFileModels();
+    Iterable<ResourceModel> getResourceModels();
 
     /**
      * Add a file model to the project.
      */
     @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
-    void addFileModel(FileModel fileModel);
+    void addResourceModel(ResourceModel fileModel);
 
     /**
      * Gets all contained files that are not directories
      */
-    @GremlinGroovy("it.out('" + PROJECT_MODEL_TO_FILE + "').has('" + FileModel.IS_DIRECTORY + "', false)")
-    Iterable<FileModel> getFileModelsNoDirectories();
+    @GremlinGroovy("it.out('" + PROJECT_MODEL_TO_FILE + "').has('" + ResourceModel.IS_DIRECTORY + "', false)")
+    Iterable<ResourceModel> getResourceModelsNoDirectories();
 }

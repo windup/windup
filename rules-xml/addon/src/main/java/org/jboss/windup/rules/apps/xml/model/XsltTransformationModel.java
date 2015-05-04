@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.xml.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -58,16 +58,16 @@ public interface XsltTransformationModel extends WindupVertexFrame
     public void setDescription(String description);
 
     /**
-     * Links to the original {@link FileModel} with the original XML contents.
+     * Links to the original {@link ResourceModel} with the original XML contents.
      */
     @Adjacency(label = FILE_SOURCE, direction = Direction.OUT)
-    FileModel getSourceFile();
+    ResourceModel getSourceFile();
 
     /**
-     * Links to the original {@link FileModel} with the original XML contents.
+     * Links to the original {@link ResourceModel} with the original XML contents.
      */
     @Adjacency(label = FILE_SOURCE, direction = Direction.OUT)
-    void setSourceFile(FileModel file);
+    void setSourceFile(ResourceModel file);
 
     /**
      * Contains the result filename

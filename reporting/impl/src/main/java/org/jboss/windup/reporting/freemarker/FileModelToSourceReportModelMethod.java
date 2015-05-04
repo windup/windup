@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.freemarker;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -13,7 +13,7 @@ import freemarker.template.TemplateModelException;
 
 /**
  * 
- * This FreeMarker method simply finds the SourceReport that is associated with the provided FileModel, if there is a SourceReport available.
+ * This FreeMarker method simply finds the SourceReport that is associated with the provided ResourceModel, if there is a SourceReport available.
  * 
  * If none is available, it will return null.
  * 
@@ -44,7 +44,8 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
     @Override
     public String getDescription()
     {
-        return "Takes a " + FileModel.class.getSimpleName() + " as a parameter, and returns the related " + SourceReportModel.class.getSimpleName()
+        return "Takes a " + ResourceModel.class.getSimpleName() + " as a parameter, and returns the related "
+                    + SourceReportModel.class.getSimpleName()
                     + " (or null if none is available).";
     }
 
@@ -54,11 +55,11 @@ public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMetho
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
-            throw new TemplateModelException("Error, method expects one argument (FileModel)");
+            throw new TemplateModelException("Error, method expects one argument (ResourceModel)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
-        FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
-        SourceReportModel result = sourceReportService.getSourceReportForFileModel(fileModel);
+        ResourceModel fileModel = (ResourceModel) stringModelArg.getWrappedObject();
+        SourceReportModel result = sourceReportService.getSourceReportForResourceModel(fileModel);
         ExecutionStatistics.get().end(NAME);
         return result;
     }

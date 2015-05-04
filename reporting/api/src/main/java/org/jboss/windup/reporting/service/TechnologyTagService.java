@@ -7,7 +7,7 @@ import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
@@ -33,10 +33,10 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     }
 
     /**
-     * Adds the provided tag to the provided {@link FileModel}. If a {@link TechnologyTagModel} cannot be found with the provided name, then one will
+     * Adds the provided tag to the provided {@link ResourceModel}. If a {@link TechnologyTagModel} cannot be found with the provided name, then one will
      * be created.
      */
-    public TechnologyTagModel addTagToFileModel(FileModel fileModel, String tagName, TechnologyTagLevel level)
+    public TechnologyTagModel addTagToResourceModel(ResourceModel fileModel, String tagName, TechnologyTagLevel level)
     {
         FramedGraphQuery q = getGraphContext().getQuery().type(TechnologyTagModel.class)
                     .has(TechnologyTagModel.NAME, tagName);
@@ -47,14 +47,14 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
             m.setName(tagName);
             m.setLevel(level);
         }
-        m.addFileModel(fileModel);
+        m.addResourceModel(fileModel);
         return m;
     }
 
     /**
-     * Return an {@link Iterable} containing all {@link TechnologyTagModel}s that are directly associated with the provided {@link FileModel}.
+     * Return an {@link Iterable} containing all {@link TechnologyTagModel}s that are directly associated with the provided {@link ResourceModel}.
      */
-    public Iterable<TechnologyTagModel> findTechnologyTagsForFile(FileModel fileModel)
+    public Iterable<TechnologyTagModel> findTechnologyTagsForFile(ResourceModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);

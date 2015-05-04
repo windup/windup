@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.files.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -20,14 +20,14 @@ public interface FileReferenceModel extends WindupVertexFrame
     public static final String FILE_MODEL = "file";
 
     /**
-     * Contains the {@link FileModel} referenced by this object.
+     * Contains the {@link ResourceModel} referenced by this object.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    FileModel getFile();
+    ResourceModel getFile();
 
     /**
-     * Contains the {@link FileModel} referenced by this object.
+     * Contains the {@link ResourceModel} referenced by this object.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    FileModel setFile(FileModel file);
+    ResourceModel setFile(ResourceModel file);
 }

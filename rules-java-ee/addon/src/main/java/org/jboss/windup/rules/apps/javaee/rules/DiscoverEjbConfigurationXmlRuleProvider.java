@@ -86,7 +86,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     private void extractMetadata(GraphContext context, XmlFileModel xmlModel, Document doc)
     {
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
+        TechnologyTagModel technologyTag = technologyTagService.addTagToResourceModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
 
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null)

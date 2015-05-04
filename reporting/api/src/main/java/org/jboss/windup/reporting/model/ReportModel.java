@@ -32,7 +32,6 @@ public interface ReportModel extends WindupVertexFrame
     public static final String REPORT_FILENAME = "reportFilename";
     public static final String REPORT_ICON_CLASS = "reportIconClass";
     public static final String REPORT_NAME = "reportName";
-    public static final String REPORT_SUBDIRECTORY = "reportSubdirectory";
 
     /**
      * The name of the report (for example, 'ClassLoader Report' or 'EJB Report')

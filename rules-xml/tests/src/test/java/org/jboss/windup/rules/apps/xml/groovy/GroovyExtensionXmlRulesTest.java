@@ -27,7 +27,7 @@ import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -84,7 +84,7 @@ public class GroovyExtensionXmlRulesTest
         {
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel inputPath = context.getFramed().addVertex(null, ResourceModel.class);
             inputPath.setFilePath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
@@ -93,7 +93,7 @@ public class GroovyExtensionXmlRulesTest
             Files.createDirectories(outputPath);
 
             inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            pm.setRootResourceModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(new NotPredicate(
@@ -115,7 +115,7 @@ public class GroovyExtensionXmlRulesTest
             {
                 String classification = model.getClassification();
                 System.out.println("Classification: " + classification + " of file(s): ");
-                for (FileModel fileModel : model.getFileModels())
+                for (ResourceModel fileModel : model.getResourceModels())
                 {
                     System.out.println("\tFile Path: " + fileModel.getFilePath());
                 }

@@ -6,7 +6,7 @@ import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -21,7 +21,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel>
+public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<ResourceModel>
 {
     private static final String TECH_TAG = "Properties";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
@@ -41,12 +41,12 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(FileModel.class).withProperty(FileModel.IS_DIRECTORY, false)
-                    .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX,
+        return Query.fromType(ResourceModel.class).withProperty(ResourceModel.IS_DIRECTORY, false)
+                    .withProperty(ResourceModel.FILE_PATH, QueryPropertyComparisonType.REGEX,
                                 ".*\\.properties$");
     }
 
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, ResourceModel payload)
     {
         ExecutionStatistics.get().begin("DiscoverPropertiesFilesRuleProvider.perform");
         GraphService<PropertiesModel> service = new GraphService<>(event.getGraphContext(), PropertiesModel.class);
@@ -56,7 +56,7 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
 
         GraphService.addTypeToModel(event.getGraphContext(), payload, SourceFileModel.class);
 
-        technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
+        technologyTagService.addTagToResourceModel(payload, TECH_TAG, TECH_TAG_LEVEL);
 
         ExecutionStatistics.get().end("DiscoverPropertiesFilesRuleProvider.perform");
     }

@@ -73,8 +73,8 @@ public class ASTProcessor extends ASTVisitor
 
     private final WildcardImportResolver wildcardImportResolver;
     private CompilationUnit cu;
-    private Path javaFile;
     private ASTParser parser;
+    private String filename;
 
     private final Set<String> libraryPaths;
     private final Set<String> sourcePaths;
@@ -115,7 +115,15 @@ public class ASTProcessor extends ASTVisitor
      */
     public static ClassReferences analyzeJavaFile(Set<String> libraryPaths, Set<String> sourcePaths, Path sourceFile)
     {
-        return new ASTProcessor(new NoopWildcardImportResolver(), libraryPaths, sourcePaths).analyzeFile(sourceFile);
+        try
+        {
+            return new ASTProcessor(new NoopWildcardImportResolver(), libraryPaths, sourcePaths).analyzeFile(sourceFile.getFileName().toString(),
+                        FileUtils.readFileToString(sourceFile.toFile()));
+        }
+        catch (IOException e)
+        {
+            throw new ASTException("Failed to load file: " + sourceFile + " due to: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -130,7 +138,15 @@ public class ASTProcessor extends ASTVisitor
     public static ClassReferences analyzeJavaFile(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths,
                 Path sourceFile)
     {
-        return new ASTProcessor(importResolver, libraryPaths, sourcePaths).analyzeFile(sourceFile);
+        try
+        {
+            return new ASTProcessor(importResolver, libraryPaths, sourcePaths).analyzeFile(sourceFile.getFileName().toString(),
+                        FileUtils.readFileToString(sourceFile.toFile()));
+        }
+        catch (IOException e)
+        {
+            throw new ASTException("Failed to load file: " + sourceFile + " due to: " + e.getMessage(), e);
+        }
     }
 
     public ASTProcessor(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths)
@@ -141,7 +157,7 @@ public class ASTProcessor extends ASTVisitor
         this.sourcePaths = sourcePaths;
     }
 
-    public ClassReferences analyzeFile(Path javaFile)
+    public ClassReferences analyzeFile(String filename, String fileContents)
     {
         this.classReferences = new ClassReferences();
         this.wildcardImports.clear();
@@ -149,22 +165,15 @@ public class ASTProcessor extends ASTVisitor
         this.classNameToFQCN.clear();
         this.names.clear();
         this.nameInstance.clear();
-        this.javaFile = javaFile;
+        this.filename = filename;
 
         parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]), sourcePaths.toArray(new String[sourcePaths.size()]), null, true);
         parser.setBindingsRecovery(false);
         parser.setResolveBindings(true);
 
-        String fileName = javaFile.getFileName().toString();
-        parser.setUnitName(fileName);
-        try
-        {
-            parser.setSource(FileUtils.readFileToString(javaFile.toFile()).toCharArray());
-        }
-        catch (IOException e)
-        {
-            throw new ASTException("Failed to get source for file: " + javaFile.toString() + " due to: " + e.getMessage(), e);
-        }
+        parser.setUnitName(filename);
+        parser.setSource(fileContents.toCharArray());
+
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         this.cu = (CompilationUnit) parser.createAST(null);
 
@@ -507,7 +516,7 @@ public class ASTProcessor extends ASTVisitor
         }
         else
         {
-            LOG.warning("Unexpected type: " + expression.getClass().getCanonicalName() + " in file: " + this.javaFile
+            LOG.warning("Unexpected type: " + expression.getClass().getCanonicalName() + " in file: " + this.filename
                         + " just attempting to use it as a string value");
             value = new AnnotationLiteralValue(String.class, expression == null ? null : expression.toString());
         }

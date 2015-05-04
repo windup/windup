@@ -122,7 +122,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     private void addWebXmlMetadata(GraphContext context, XmlFileModel xml, Document doc)
     {
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
+        TechnologyTagModel technologyTag = technologyTagService.addTagToResourceModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
 
         String webXmlVersion = getVersion(xml, doc);

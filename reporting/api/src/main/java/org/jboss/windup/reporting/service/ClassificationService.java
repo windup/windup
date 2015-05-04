@@ -4,7 +4,7 @@ import org.apache.tools.ant.taskdefs.Length;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 
@@ -26,10 +26,10 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided {@link FileModel}.
+     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided {@link ResourceModel}.
      * 
      */
-    public int getMigrationEffortPoints(FileModel fileModel)
+    public int getMigrationEffortPoints(ResourceModel fileModel)
     {
         // 1. Get all classification models
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
@@ -81,10 +81,10 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link ResourceModel}. If an existing Model
      * exists with the provided classificationText, that one will be used instead.
      */
-    public ClassificationModel attachClassification(FileModel fileModel, String classificationText, String description)
+    public ClassificationModel attachClassification(ResourceModel fileModel, String classificationText, String description)
     {
         ClassificationModel model = getUnique(getTypedQuery()
                     .has(ClassificationModel.CLASSIFICATION, classificationText));
@@ -93,7 +93,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             model = create();
             model.setClassifiation(classificationText);
             model.setDescription(description);
-            model.addFileModel(fileModel);
+            model.addResourceModel(fileModel);
         }
         else
         {
@@ -107,17 +107,17 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
      * present.
      */
-    public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
+    public ClassificationModel attachClassification(ClassificationModel classificationModel, ResourceModel fileModel)
     {
         // check for duplicates
-        for (FileModel existingFileModel : classificationModel.getFileModels())
+        for (ResourceModel existingResourceModel : classificationModel.getResourceModels())
         {
-            if (existingFileModel.equals(fileModel))
+            if (existingResourceModel.equals(fileModel))
             {
                 return classificationModel;
             }
         }
-        classificationModel.addFileModel(fileModel);
+        classificationModel.addResourceModel(fileModel);
         return classificationModel;
     }
 }

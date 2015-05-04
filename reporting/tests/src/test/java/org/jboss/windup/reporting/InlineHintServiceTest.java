@@ -14,7 +14,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.junit.Assert;
@@ -62,7 +62,7 @@ public class InlineHintServiceTest
 
             boolean foundF1Effort = false;
             boolean foundF2Effort = false;
-            for (FileModel fm : projectModel.getFileModels())
+            for (ResourceModel fm : projectModel.getResourceModels())
             {
                 if (fm.getFilePath().equals("/f1"))
                 {
@@ -86,9 +86,9 @@ public class InlineHintServiceTest
     {
         InlineHintService inlineHintService = new InlineHintService(context);
 
-        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        ResourceModel f1 = context.getFramed().addVertex(null, ResourceModel.class);
         f1.setFilePath("/f1");
-        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        ResourceModel f2 = context.getFramed().addVertex(null, ResourceModel.class);
         f2.setFilePath("/f2");
 
         InlineHintModel b1 = inlineHintService.create();
@@ -103,9 +103,9 @@ public class InlineHintServiceTest
         b2.setFile(f2);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
-        projectModel.addFileModel(f1);
+        projectModel.addResourceModel(f1);
         f1.setProjectModel(projectModel);
-        projectModel.addFileModel(f2);
+        projectModel.addResourceModel(f2);
         f2.setProjectModel(projectModel);
 
         return projectModel;

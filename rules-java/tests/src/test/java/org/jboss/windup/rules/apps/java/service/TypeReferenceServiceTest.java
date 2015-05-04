@@ -15,7 +15,7 @@ import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -76,9 +76,9 @@ public class TypeReferenceServiceTest
     {
         InlineHintService inlineHintService = new InlineHintService(context);
         TypeReferenceService typeReferenceService = new TypeReferenceService(context);
-        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        ResourceModel f1 = context.getFramed().addVertex(null, ResourceModel.class);
         f1.setFilePath("/f1");
-        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        ResourceModel f2 = context.getFramed().addVertex(null, ResourceModel.class);
         f2.setFilePath("/f2");
 
         JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
@@ -94,9 +94,9 @@ public class TypeReferenceServiceTest
         b1b.setFileLocationReference(t2);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
-        projectModel.addFileModel(f1);
+        projectModel.addResourceModel(f1);
         f1.setProjectModel(projectModel);
-        projectModel.addFileModel(f2);
+        projectModel.addResourceModel(f2);
         f2.setProjectModel(projectModel);
 
         return projectModel;

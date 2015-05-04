@@ -123,14 +123,14 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
         }
         catch (Exception e)
         {
-            if (file.asFile().length() == 0)
+            if (file.getLength() == 0)
             {
                 LOG.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath() + ", as the file is empty.");
             }
             else
             {
                 LOG.log(Level.WARNING, "Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(),
-                        e);
+                            e);
             }
             new ClassificationService(context).attachClassification(file, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
                         XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);

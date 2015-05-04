@@ -2,7 +2,7 @@ package org.jboss.windup.rules.files.model;
 
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Property;
@@ -24,38 +24,38 @@ public interface FileLocationModel extends FileReferenceModel
     String SOURCE_SNIPPIT = "referenceSourceSnippit";
 
     /**
-     * Set the line number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
+     * Set the line number at which this {@link InlineHintModel} should appear in the designated {@link ResourceModel}.
      */
     @Property(LINE_NUMBER)
     void setLineNumber(int lineNumber);
 
     /**
-     * Get the line number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
+     * Get the line number at which this {@link InlineHintModel} should appear in the designated {@link ResourceModel}.
      */
     @Property(LINE_NUMBER)
     int getLineNumber();
 
     /**
-     * Set the column number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
+     * Set the column number at which this {@link InlineHintModel} should appear in the designated {@link ResourceModel}.
      */
     @Property(COLUMN_NUMBER)
     void setColumnNumber(int startPosition);
 
     /**
-     * Get the column number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
+     * Get the column number at which this {@link InlineHintModel} should appear in the designated {@link ResourceModel}.
      */
     @Property(COLUMN_NUMBER)
     int getColumnNumber();
 
     /**
-     * Set the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel}
+     * Set the length of content for which this {@link InlineHintModel} should cover in the designated {@link ResourceModel}
      * .
      */
     @Property(LENGTH)
     void setLength(int length);
 
     /**
-     * Get the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel}
+     * Get the length of content for which this {@link InlineHintModel} should cover in the designated {@link ResourceModel}
      * .
      */
     @Property(LENGTH)

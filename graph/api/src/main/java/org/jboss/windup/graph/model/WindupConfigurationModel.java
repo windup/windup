@@ -56,7 +56,6 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
     Iterable<FileModel> getUserIgnorePaths();
-
     /**
      * Where to put the report and other files produced during Windup execution.
      */

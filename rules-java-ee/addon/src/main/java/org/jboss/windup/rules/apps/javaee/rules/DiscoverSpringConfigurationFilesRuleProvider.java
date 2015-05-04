@@ -83,7 +83,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
             return;
         }
 
-        technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
+        technologyTagService.addTagToResourceModel(payload, TECH_TAG, TECH_TAG_LEVEL);
 
         Element element = beansElements.get(0);
         SpringConfigurationFileModel springConfigurationModel = springConfigurationFileService

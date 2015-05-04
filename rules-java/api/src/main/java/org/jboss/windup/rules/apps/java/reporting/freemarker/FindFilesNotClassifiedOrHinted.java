@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -25,7 +25,7 @@ import freemarker.template.TemplateModelException;
  * 
  * Called by:
  * 
- * findFilesNotClassifiedOrHinted(Iterable<FileModel>)
+ * findFilesNotClassifiedOrHinted(Iterable<ResourceModel>)
  * 
  * NOTE: This will only return JavaSourceFileModels and XmlFileModels in order to reduce clutter.
  * 
@@ -48,24 +48,24 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
-            throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
+            throw new TemplateModelException("Error, method expects one argument (Iterable<ResourceModel>)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
         @SuppressWarnings("unchecked")
-        Iterable<FileModel> fileModels = (Iterable<FileModel>) stringModelArg.getWrappedObject();
+        Iterable<ResourceModel> fileModels = (Iterable<ResourceModel>) stringModelArg.getWrappedObject();
 
         FindFilesNotClassifiedOrHintedGremlinCriterion criterion = new FindFilesNotClassifiedOrHintedGremlinCriterion();
-        List<Vertex> initialFileModelsAsVertices = new ArrayList<>();
-        for (FileModel fm : fileModels)
+        List<Vertex> initialResourceModelsAsVertices = new ArrayList<>();
+        for (ResourceModel fm : fileModels)
         {
-            initialFileModelsAsVertices.add(fm.asVertex());
+            initialResourceModelsAsVertices.add(fm.asVertex());
         }
-        Iterable<Vertex> result = criterion.query(context, initialFileModelsAsVertices);
+        Iterable<Vertex> result = criterion.query(context, initialResourceModelsAsVertices);
 
-        List<FileModel> resultModels = new ArrayList<FileModel>();
+        List<ResourceModel> resultModels = new ArrayList<ResourceModel>();
         for (Vertex v : result)
         {
-            FileModel f = context.getFramed().frame(v, FileModel.class);
+            ResourceModel f = context.getFramed().frame(v, ResourceModel.class);
             if (f instanceof JavaSourceFileModel || f instanceof XmlFileModel)
             {
                 resultModels.add(f);
@@ -85,7 +85,7 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes an Iterable<" + FileModel.class.getSimpleName()
+        return "Takes an Iterable<" + ResourceModel.class.getSimpleName()
                     + "> as a parameter and returns the files that have neither " + ClassificationModel.class.getSimpleName()
                     + "s nor " + InlineHintModel.class.getSimpleName() + "s associated with them.";
     }

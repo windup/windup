@@ -11,7 +11,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
@@ -59,14 +59,14 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
 
     private void validateInlineHintsInAppropriatePackages(GraphContext context)
     {
-        GraphService<FileModel> fileModelService = new GraphService<>(context, FileModel.class);
+        GraphService<ResourceModel> fileModelService = new GraphService<>(context, ResourceModel.class);
         boolean foundHintedFile = false;
         boolean foundAppHintedFile = false;
         boolean foundNonAppHintedFile = false;
 
         InlineHintService inlineHintService = new InlineHintService(context);
 
-        for (FileModel fileModel : fileModelService.findAll())
+        for (ResourceModel fileModel : fileModelService.findAll())
         {
             String pkg = null;
             if (fileModel instanceof JavaClassFileModel)

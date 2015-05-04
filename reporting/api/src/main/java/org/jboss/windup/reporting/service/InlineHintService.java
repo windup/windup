@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.service;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
@@ -29,7 +29,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     /**
      * Gets all inline hints that are directly associated with the given file
      */
-    public Iterable<InlineHintModel> getHintsForFile(FileModel file)
+    public Iterable<InlineHintModel> getHintsForFile(ResourceModel file)
     {
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(file.asVertex());
         inlineHintPipeline.in(FileReferenceModel.FILE_MODEL);
@@ -40,9 +40,9 @@ public class InlineHintService extends GraphService<InlineHintModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link InlineHintModel}s associated with the provided {@link FileModel}.
+     * Returns the total effort points in all of the {@link InlineHintModel}s associated with the provided {@link ResourceModel}.
      */
-    public int getMigrationEffortPoints(FileModel fileModel)
+    public int getMigrationEffortPoints(ResourceModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(fileModel.asVertex());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);

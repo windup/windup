@@ -10,7 +10,7 @@ import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -76,7 +76,7 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
         }
     }
 
-    private void setParentProject(FileModel fileModel, MavenProjectModel projectModel)
+    private void setParentProject(ResourceModel fileModel, MavenProjectModel projectModel)
     {
         if (fileModel == null)
         {
@@ -94,7 +94,7 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
 
     private void setMavenParentProject(MavenProjectModel projectModel)
     {
-        FileModel fileModel = projectModel.getRootFileModel();
+        ResourceModel fileModel = projectModel.getRootResourceModel();
         if (fileModel == null)
         {
             // skip if no file was discovered for it
@@ -108,7 +108,7 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
         }
         else
         {
-            FileModel parentFile = fileModel.getParentFile();
+            ResourceModel parentFile = fileModel.getParentFile();
             setParentProject(parentFile, projectModel);
         }
     }

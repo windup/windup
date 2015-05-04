@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
@@ -27,16 +27,16 @@ public interface PropertiesModel extends WindupVertexFrame
     public static final String TYPE = "PropertiesModel";
 
     /**
-     * Gets the {@link FileModel} that contains these @{link {@link Properties}
+     * Gets the {@link ResourceModel} that contains these @{link {@link Properties}
      */
     @Adjacency(label = PROPERTIES_FILE_RESOURCE, direction = Direction.OUT)
-    public FileModel getFileResource();
+    public ResourceModel getFileResource();
 
     /**
-     * Sets the {@link FileModel} that contains these @{link {@link Properties}
+     * Sets the {@link ResourceModel} that contains these @{link {@link Properties}
      */
     @Adjacency(label = PROPERTIES_FILE_RESOURCE, direction = Direction.OUT)
-    public void setFileResource(FileModel resource);
+    public void setFileResource(ResourceModel resource);
 
     /**
      * Gets the contents of the file as a {@link Properties} object.

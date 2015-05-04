@@ -14,7 +14,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.junit.Assert;
@@ -62,7 +62,7 @@ public class ClassificationServiceTest
 
             boolean foundF1Effort = false;
             boolean foundF2Effort = false;
-            for (FileModel fm : projectModel.getFileModels())
+            for (ResourceModel fm : projectModel.getResourceModels())
             {
                 if (fm.getFilePath().equals("/f1"))
                 {
@@ -86,26 +86,26 @@ public class ClassificationServiceTest
     {
         ClassificationService classificationService = new ClassificationService(context);
 
-        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        ResourceModel f1 = context.getFramed().addVertex(null, ResourceModel.class);
         f1.setFilePath("/f1");
-        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        ResourceModel f2 = context.getFramed().addVertex(null, ResourceModel.class);
         f2.setFilePath("/f2");
 
         ClassificationModel b1 = classificationService.create();
         ClassificationModel b1b = classificationService.create();
-        b1.addFileModel(f1);
+        b1.addResourceModel(f1);
         b1.setEffort(20);
-        b1b.addFileModel(f1);
+        b1b.addResourceModel(f1);
         b1b.setEffort(120);
 
         ClassificationModel b2 = classificationService.create();
-        b2.addFileModel(f2);
+        b2.addResourceModel(f2);
         b2.setEffort(3);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
-        projectModel.addFileModel(f1);
+        projectModel.addResourceModel(f1);
         f1.setProjectModel(projectModel);
-        projectModel.addFileModel(f2);
+        projectModel.addResourceModel(f2);
         f2.setProjectModel(projectModel);
 
         return projectModel;

@@ -28,7 +28,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Project;
@@ -94,11 +94,11 @@ public class OverviewReportLineTest
             dependency.setProject(subsubProject);
             subProject.addDependency(dependency);
             pm.addChildProject(subProject);
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel inputPath = context.getFramed().addVertex(null, ResourceModel.class);
             inputPath.setFilePath("src/test/resources/");
-            FileModel subinputPath = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel subinputPath = context.getFramed().addVertex(null, ResourceModel.class);
             subinputPath.setFilePath("src/test/resources/org");
-            FileModel subsubinputPath = context.getFramed().addVertex(null, FileModel.class);
+            ResourceModel subsubinputPath = context.getFramed().addVertex(null, ResourceModel.class);
             subinputPath.setFilePath("src/test/resources/org/jboss");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
@@ -109,12 +109,12 @@ public class OverviewReportLineTest
             inputPath.setProjectModel(pm);
             subinputPath.setProjectModel(subProject);
             subsubinputPath.setProjectModel(subsubProject);
-            pm.addFileModel(inputPath);
-            pm.setRootFileModel(inputPath);
-            subProject.addFileModel(subinputPath);
-            subProject.setRootFileModel(subinputPath);
-            subsubProject.addFileModel(subsubinputPath);
-            subsubProject.setRootFileModel(subsubinputPath);
+            pm.addResourceModel(inputPath);
+            pm.setRootResourceModel(inputPath);
+            subProject.addResourceModel(subinputPath);
+            subProject.setRootResourceModel(subinputPath);
+            subsubProject.addResourceModel(subsubinputPath);
+            subsubProject.setRootResourceModel(subsubinputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setGraphContext(context);

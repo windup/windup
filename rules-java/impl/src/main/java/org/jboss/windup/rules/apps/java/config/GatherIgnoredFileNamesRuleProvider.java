@@ -25,7 +25,7 @@ import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
@@ -58,14 +58,14 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
         WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(event
                     .getGraphContext());
         final List<Path> filesUrl = new ArrayList<>();
-        for (FileModel ignoredRegexesFileModel : payload.getUserIgnorePaths())
+        for (ResourceModel ignoredRegexesResourceModel : payload.getUserIgnorePaths())
         {
 
-            if (ignoredRegexesFileModel.isDirectory())
+            if (ignoredRegexesResourceModel.isDirectory())
             {
                 try
                 {
-                    Files.walkFileTree(Paths.get(ignoredRegexesFileModel.getFilePath()), new SimpleFileVisitor<Path>()
+                    Files.walkFileTree(Paths.get(ignoredRegexesResourceModel.getFilePath()), new SimpleFileVisitor<Path>()
                     {
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
@@ -81,12 +81,12 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
                 }
                 catch (IOException e1)
                 {
-                    log.warning("IOException thrown when trying to access the ignored file regexes in " + ignoredRegexesFileModel.getFilePath());
+                    log.warning("IOException thrown when trying to access the ignored file regexes in " + ignoredRegexesResourceModel.getFilePath());
                 }
             }
             else
             {
-                filesUrl.add(Paths.get(ignoredRegexesFileModel.getFilePath()));
+                filesUrl.add(Paths.get(ignoredRegexesResourceModel.getFilePath()));
             }
         }
         for (Path filePath : filesUrl)

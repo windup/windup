@@ -74,7 +74,7 @@
 <#macro projectModelRenderer projectModel>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
+            <h3 class="panel-title">${projectModel.rootResourceModel.prettyPath}</h3>
         </div>
         <div class="container-fluid summaryMargin">
             <div class='col-md-3 text-right totalSummary'>
@@ -120,7 +120,7 @@
           <tr>
             <th>Name</th><th>Technology</th><th>Issues</th><th>Estimated Story Points</th>
           </tr>
-          <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
+          <#list sortFilesByPathAscending(projectModel.resourceModelsNoDirectories) as fileModel>
              <@fileModelRenderer fileModel/>
           </#list>
         </table>

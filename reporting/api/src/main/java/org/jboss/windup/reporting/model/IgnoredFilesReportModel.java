@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.model;
 
 
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -36,13 +36,13 @@ public interface IgnoredFilesReportModel extends ApplicationReportModel
      * Get the files that were ignored.
      */
     @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
-    public Iterable<FileModel> getIgnoredFiles();
+    public Iterable<ResourceModel> getIgnoredFiles();
 
     /**
      * Add file that was ignored.
      */
     @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
-    public void addIgnoredFile(FileModel fileModel);
+    public void addIgnoredFile(ResourceModel fileModel);
     
     
     

@@ -26,6 +26,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
@@ -80,7 +81,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
             LOG.info("Decompiling with " + threads + " threads");
 
             decompiler.setExecutorService(Executors.newFixedThreadPool(threads), threads);
-            String archivePath = ((FileModel) payload).getFilePath();
+            String archivePath = ((ResourceModel) payload).getFilePath();
             File archive = new File(archivePath);
             File outputDir = new File(payload.getUnzippedDirectory().getFilePath());
             if (payload instanceof WarArchiveModel)
@@ -162,83 +163,68 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                 {
                     ArchiveService archiveService = new ArchiveService(context);
                     ArchiveModel archiveModel = archiveService.getById(archiveModelID);
-                    // original source is a path inside the archive... split it up by separator, and append
-                    // it to the unzipped directory
-                    String[] classFilePathTokens = inputPath.split("\\\\|/");
+                    ResourceModel originalClassResourceModel = archiveService.getChildFile(archiveModel, inputPath);
 
-                    Path classFilePath = Paths.get(archiveModel.getUnzippedDirectory().getFilePath());
-                    for (String pathToken : classFilePathTokens)
+                    ResourceModel parentResourceModel = fileService.findByPath(Paths.get(decompiledOutputFile)
+                                .getParent()
+                                .toString());
+
+                    // make sure parent files already exist
+                    // (it can happen that it does not if procyon puts the decompiled .java file in an unexpected
+                    // place, for example in the case
+                    // of war files)
+                    if (parentResourceModel == null)
                     {
-                        classFilePath = classFilePath.resolve(pathToken);
-                    }
-
-                    FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
-                                decompiledOutputFile);
-
-                    if (decompiledFileModel == null)
-                    {
-                        FileModel parentFileModel = fileService.findByPath(Paths.get(decompiledOutputFile)
-                                    .getParent()
-                                    .toString());
-
-                        // make sure parent files already exist
-                        // (it can happen that it does not if procyon puts the decompiled .java file in an unexpected
-                        // place, for example in the case
-                        // of war files)
-                        if (parentFileModel == null)
+                        List<Path> lineage = new LinkedList<>();
+                        Path parentPath = Paths.get(decompiledOutputFile).getParent();
+                        ResourceModel existingParentFM = parentResourceModel;
+                        while (existingParentFM == null)
                         {
-                            List<Path> lineage = new LinkedList<>();
-                            Path parentPath = Paths.get(decompiledOutputFile).getParent();
-                            FileModel existingParentFM = parentFileModel;
-                            while (existingParentFM == null)
-                            {
-                                lineage.add(0, parentPath);
-                                parentPath = parentPath.getParent();
-                                existingParentFM = fileService.findByPath(parentPath.toString());
-                            }
-
-                            FileModel currentParent = existingParentFM;
-                            for (Path p : lineage)
-                            {
-                                currentParent = fileService.createByFilePath(currentParent, p.toString());
-                            }
-                            parentFileModel = currentParent;
+                            lineage.add(0, parentPath);
+                            parentPath = parentPath.getParent();
+                            existingParentFM = fileService.findByPath(parentPath.toString());
                         }
 
-                        decompiledFileModel = fileService.createByFilePath(parentFileModel, decompiledOutputFile);
-                        decompiledFileModel.setParentArchive(archiveModel);
+                        ResourceModel currentParent = existingParentFM;
+                        for (Path p : lineage)
+                        {
+                            currentParent = fileService.createByFilePath(currentParent, p.toString());
+                        }
+                        parentResourceModel = currentParent;
                     }
+
+                    FileModel decompiledFileModel = fileService.createByFilePath(parentResourceModel, decompiledOutputFile);
+                    decompiledFileModel.setParentArchive(archiveModel);
+
                     ProjectModel projectModel = archiveModel.getProjectModel();
                     decompiledFileModel.setProjectModel(projectModel);
-                    projectModel.addFileModel(decompiledFileModel);
+                    projectModel.addResourceModel(decompiledFileModel);
 
                     if (decompiledOutputFile.endsWith(".java"))
                     {
                         if (!(decompiledFileModel instanceof JavaSourceFileModel))
                         {
-                            decompiledFileModel = new GraphService<JavaSourceFileModel>(context, JavaSourceFileModel.class)
+                            decompiledFileModel = (FileModel) new GraphService<JavaSourceFileModel>(context, JavaSourceFileModel.class)
                                         .addTypeToModel(decompiledFileModel);
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
                         TechnologyTagService techTagService = new TechnologyTagService(context);
-                        techTagService.addTagToFileModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
+                        techTagService.addTagToResourceModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
-                        FileModel classFileModel = fileService.getUniqueByProperty(
-                                    FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
-                        if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
+                        if (originalClassResourceModel != null && originalClassResourceModel instanceof JavaClassFileModel)
                         {
-                            JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
+                            JavaClassFileModel classModel = (JavaClassFileModel) originalClassResourceModel;
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
 
                             // Set the root path of this source file (if possible). Procyon should always be placing the file
                             // into a location that is appropriate for the package name, so this should always yield
                             // a non-null root path.
-                            Path rootSourcePath = PathUtil.getRootFolderForSource(decompiledSourceFileModel.asFile().toPath(),
+                            Path rootSourcePath = PathUtil.getRootFolderForSource(((FileModel) decompiledSourceFileModel).asFile().toPath(),
                                         classModel.getPackageName());
                             if (rootSourcePath != null)
                             {
-                                FileModel rootSourceFileModel = fileService.createByFilePath(rootSourcePath.toString());
+                                ResourceModel rootSourceFileModel = fileService.createByFilePath(rootSourcePath.toString());
                                 decompiledSourceFileModel.setRootSourceFolder(rootSourceFileModel);
                             }
                             if (classModel.getJavaClass() != null)
@@ -248,10 +234,10 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                         {
                             throw new WindupException(
                                         "Failed to find original JavaClassFileModel for decompiled Java file: "
-                                                    + decompiledOutputFile + " at: " + classFilePath.toString());
+                                                    + decompiledOutputFile + " at: " + inputPath);
                         }
                     }
-                    archiveModel.addDecompiledFileModel(decompiledFileModel);
+                    archiveModel.addDecompiledResourceModel(decompiledFileModel);
                     if (atomicInteger.incrementAndGet() % 100 == 0)
                     {
                         LOG.info("Performing periodic commit (" + atomicInteger.get() + ") for archive vertex: " + archiveModelID);

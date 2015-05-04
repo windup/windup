@@ -13,7 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
-import org.jboss.windup.graph.model.resource.IgnoredFileModel;
+import org.jboss.windup.graph.model.resource.IgnoredResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.IgnoredFilesReportModel;
@@ -87,13 +87,13 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         ignoredFilesReportModel.setTemplateType(TemplateType.FREEMARKER);
         ignoredFilesReportModel.setDisplayInApplicationList(false);
 
-        GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<IgnoredFileModel>(context,
-                    IgnoredFileModel.class);
-        Iterable<IgnoredFileModel> allIgnoredFiles = ignoredFilesModelService.findAll();
-        for (IgnoredFileModel file : allIgnoredFiles)
+        GraphService<IgnoredResourceModel> ignoredFilesModelService = new GraphService<IgnoredResourceModel>(context,
+                    IgnoredResourceModel.class);
+        Iterable<IgnoredResourceModel> allIgnoredFiles = ignoredFilesModelService.findAll();
+        for (IgnoredResourceModel file : allIgnoredFiles)
         {
             List<String> allProjectPaths = getAllFatherProjectPaths(file.getProjectModel());
-            if (allProjectPaths.contains(rootProjectModel.getRootFileModel().getFilePath()))
+            if (allProjectPaths.contains(rootProjectModel.getRootResourceModel().getFilePath()))
             {
                 ignoredFilesReportModel.addIgnoredFile(file);
             }
@@ -112,11 +112,11 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     private List<String> getAllFatherProjectPaths(ProjectModel projectModel)
     {
         List<String> paths = new ArrayList<String>();
-        paths.add(projectModel.getRootFileModel().getFilePath());
+        paths.add(projectModel.getRootResourceModel().getFilePath());
         while (projectModel.getParentProject() != null)
         {
             projectModel = projectModel.getParentProject();
-            paths.add(projectModel.getRootFileModel().getFilePath());
+            paths.add(projectModel.getRootResourceModel().getFilePath());
         }
         return paths;
     }

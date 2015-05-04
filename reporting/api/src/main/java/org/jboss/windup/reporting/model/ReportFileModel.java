@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * Extends the file model with some convenience accessors for getting to {@link InlineHintModel} and other reporting related data.
  */
 @TypeValue(ReportFileModel.TYPE)
-public interface ReportFileModel extends FileModel
+public interface ReportFileModel extends ResourceModel
 {
     public static final String TYPE = "ReportFileModel";
     public static final String RELATED_HINTS_QUERY = "it.in(\"" + FileReferenceModel.FILE_MODEL
