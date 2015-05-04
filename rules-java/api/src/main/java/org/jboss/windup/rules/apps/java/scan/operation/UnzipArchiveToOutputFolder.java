@@ -17,8 +17,9 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.IgnoredFileModel;
+import org.jboss.windup.graph.model.resource.IgnoredResourceModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
+import org.jboss.windup.graph.model.resource.ZipEntryModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
@@ -39,6 +40,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     private static final String MALFORMED_ARCHIVE = "Malformed archive";
     private static final String ARCHIVES = "archives";
     private static final Logger LOG = Logging.get(UnzipArchiveToOutputFolder.class);
+
+    private List<String> ignoredFileRegexes;
 
     /**
      * Constructions an instance that will load the data from a variable with the given name.
@@ -183,7 +186,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         ArchiveService archiveService = new ArchiveService(context);
         for (ZipEntry entry : Collections.list(zipFile.entries()))
         {
-            archiveService.createEntry(archiveModel, entry);
+            ZipEntryModel entryModel = archiveService.createEntry(archiveModel, entry);
+            checkIfIgnored(context, entryModel, getIgnoredFileRegexes(context));
         }
     }
 
@@ -210,7 +214,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                     subFileModel.setParentArchive(archiveModel);
 
                     // check if this file should be ignored
-                    if (checkIfIgnored(context, subFileModel, windupJavaConfigurationService.getIgnoredFileRegexes()))
+                    if (checkIfIgnored(context, subFileModel, getIgnoredFileRegexes(context)))
                     {
                         continue;
                     }
@@ -256,7 +260,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             {
                 if (file.getFilePath().matches(pattern))
                 {
-                    IgnoredFileModel ignoredResourceModel = GraphService.addTypeToModel(context, file, IgnoredFileModel.class);
+                    IgnoredResourceModel ignoredResourceModel = GraphService.addTypeToModel(context, file, IgnoredResourceModel.class);
                     ignoredResourceModel.setIgnoredRegex(pattern);
                     LOG.info("File/Directory placed in " + file.getFilePath() + " was ignored, because matched [" + pattern + "].");
                     ignored = true;
@@ -265,6 +269,15 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             }
         }
         return ignored;
+    }
+
+    private List<String> getIgnoredFileRegexes(GraphContext context)
+    {
+        if (ignoredFileRegexes == null)
+        {
+            this.ignoredFileRegexes = new WindupJavaConfigurationService(context).getIgnoredFileRegexes();
+        }
+        return this.ignoredFileRegexes;
     }
 
     @Override

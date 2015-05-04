@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -17,7 +16,6 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ResourceModel;
-import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
@@ -96,8 +94,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     else
                     {
                         // add the parent file
-                        File parentFile = ((FileModel) payload).asFile().getParentFile();
-                        ResourceModel parentResourceModel = new FileService(event.getGraphContext()).findByPath(parentFile.getAbsolutePath());
+                        ResourceModel parentResourceModel = payload.getParentFile();
                         if (parentResourceModel != null && !isAlreadyMavenProject(parentResourceModel))
                         {
                             parentResourceModel.setProjectModel(mavenProjectModel);

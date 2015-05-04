@@ -6,8 +6,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Indicates that a given file was ignored by windup.
  */
-@TypeValue(IgnoredFileModel.TYPE)
-public interface IgnoredFileModel extends ResourceModel
+@TypeValue(IgnoredResourceModel.TYPE)
+public interface IgnoredResourceModel extends ResourceModel
 {
     public static final String TYPE = "IgnoredFileModel";
     public static final String IGNORED_BY_REGEX = "IgnoredByRegex";

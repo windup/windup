@@ -13,7 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
-import org.jboss.windup.graph.model.resource.IgnoredFileModel;
+import org.jboss.windup.graph.model.resource.IgnoredResourceModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.IgnoredFilesReportModel;
@@ -87,10 +87,10 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         ignoredFilesReportModel.setTemplateType(TemplateType.FREEMARKER);
         ignoredFilesReportModel.setDisplayInApplicationList(false);
 
-        GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<IgnoredFileModel>(context,
-                    IgnoredFileModel.class);
-        Iterable<IgnoredFileModel> allIgnoredFiles = ignoredFilesModelService.findAll();
-        for (IgnoredFileModel file : allIgnoredFiles)
+        GraphService<IgnoredResourceModel> ignoredFilesModelService = new GraphService<IgnoredResourceModel>(context,
+                    IgnoredResourceModel.class);
+        Iterable<IgnoredResourceModel> allIgnoredFiles = ignoredFilesModelService.findAll();
+        for (IgnoredResourceModel file : allIgnoredFiles)
         {
             List<String> allProjectPaths = getAllFatherProjectPaths(file.getProjectModel());
             if (allProjectPaths.contains(rootProjectModel.getRootResourceModel().getFilePath()))
