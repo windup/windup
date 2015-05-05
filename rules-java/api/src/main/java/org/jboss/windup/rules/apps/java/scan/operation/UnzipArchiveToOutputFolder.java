@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.java.scan.operation;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
@@ -19,7 +21,7 @@ import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
@@ -80,7 +82,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                             + " due to: " + e.getMessage(), e);
             }
         }
-
         unzipToTempDirectory(event.getGraphContext(), windupTempUnzippedArchiveFolder, zipFile, payload);
     }
 
@@ -149,14 +150,19 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     /**
      * Recurses the given folder and adds references to these files to the graph as FileModels.
      *
-     * We don't set the parent file model in the case of the inital children, as the direct parent is really the archive
-     * itself. For example for file "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary
-     * directory that happens to hold it.
+     * We don't set the parent file model in the case of the inital children, as the direct parent is really the archive itself. For example for file
+     * "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary directory that happens to hold it.
      */
     private void recurseAndAddFiles(GraphContext context, Path tempFolder,
                 FileService fileService, ArchiveModel archiveModel,
                 FileModel parentFileModel)
     {
+        FileFilter filter = TrueFileFilter.TRUE;
+        if (archiveModel instanceof IdentifiedArchiveModel)
+        {
+            filter = new IdentifiedArchiveFileFilter(archiveModel);
+        }
+
         File fileReference = parentFileModel.asFile();
         WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(context);
         if (fileReference.isDirectory())
@@ -166,6 +172,11 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             {
                 for (File subFile : subFiles)
                 {
+                    if (!filter.accept(subFile))
+                    {
+                        continue;
+                    }
+
                     FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
                     subFileModel.setParentArchive(archiveModel);
 
@@ -189,10 +200,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                          * New archive must be reloaded in case the archive should be ignored
                          */
                         newArchiveModel = GraphService.refresh(context, newArchiveModel);
-                        if (!(newArchiveModel instanceof IgnoredArchiveModel))
-                            unzipToTempDirectory(context, tempFolder, newZipFile,
-                                        newArchiveModel);
-
+                        unzipToTempDirectory(context, tempFolder, newZipFile, newArchiveModel);
                     }
 
                     if (subFile.isDirectory())
@@ -205,8 +213,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     }
 
     /**
-     * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any of the
-     * specified regular expressions.
+     * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any of the specified regular expressions.
      */
     private boolean checkIfIgnored(final GraphContext context, FileModel file, List<String> patterns)
     {
