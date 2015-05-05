@@ -1,53 +1,24 @@
 package org.jboss.windup.rules.apps.xml.operation.xslt;
 
-import org.jboss.windup.reporting.config.classification.Classification;
-
+import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
- * Intermediate step for constructing {@link XSLTTransformation} instances for a specified ref.
+ * Next step in building {@link XSLTTransformation} operation
  * 
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ *
  */
-public class XSLTTransformationOf
+public interface XSLTTransformationOf extends XSLTTransformationEffort, OperationBuilder
 {
-    private XSLTTransformation transformation;
-
-    XSLTTransformationOf(String variable)
-    {
-        this.transformation = new XSLTTransformation(variable);
-    }
-    
     /**
-     * Specify the location of the template xslt file.
-     * @param location
-     * @return
+     * Set the location of the XSLT template to be used.
      */
-    public XSLTTransformationFileSystem usingFilesystem(String location)
-    {
-        transformation.setTemplate(location);
-        return transformation;
-    }
-    
-    /**
-     * Specify the relative location of the xslt file along with the classloader
-     * @param location Location of the xslt file
-     * @param classLoader ClassLoader in which the engine should load the location
-     * @return
-     */
-    public  XSLTTransformationLocation using(String location, ClassLoader classLoader)
-    {
-        // classLoader instance needed to see the file passed in the location
-        transformation.setContextClassLoader(classLoader);
-        transformation.setTemplate(location);
-        return transformation;
-    }
+    XSLTTransformationLocation usingTemplate(String location);
 
     /**
-     * Set the text of this {@link Classification}. E.g: "Unparsable XML file." or "Source File"
+     * Set the location of the XSLT template to be used, and the {@link ClassLoader} within which the template is
+     * contained.
      */
-    public XSLTTransformationLocation using(String location)
-    {
-        this.transformation.setTemplate(location);
-        return this.transformation;
-    }
+    XSLTTransformationLocation usingTemplate(String location, ClassLoader loader);
 }

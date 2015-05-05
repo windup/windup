@@ -40,6 +40,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
     {
         String description = $(element).attr("description");
         String extension = $(element).attr("extension");
+        String effort = $(element).attr("effort");
         String template = $(element).attr("template");
         String of = $(element).attr("of");
 
@@ -75,10 +76,8 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             {
                 Path path = pathContainingXml.resolve(template).toAbsolutePath();
 
-                // If we can't find it at the default location, try relative to the rule xml file itself
                 if (!Files.exists(path))
                 {
-                    // This contains the parent of the rule itself (eg, /path/to/rules/rule.windup.xml would result in /path/to/rules/)
                     Path rulesParentPath = handlerManager.getXmlInputPath().getParent();
                     fullPath = rulesParentPath.resolve(template).normalize().toAbsolutePath().toString();
                 }
@@ -87,20 +86,24 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
                     fullPath = path.normalize().toString();
                 }
             }
-            if (of != null)
-            {
-                return (XSLTTransformation) XSLTTransformation
-                            .of(of)
-                            .usingFilesystem(fullPath)
-                            .withDescription(description)
-                            .withExtension(extension)
-                            .withParameters(parameters);
-            }
-            return (XSLTTransformation) XSLTTransformation
+
+            XSLTTransformation transformation = (XSLTTransformation) XSLTTransformation
                         .usingFilesystem(fullPath)
                         .withDescription(description)
                         .withExtension(extension)
                         .withParameters(parameters);
+
+            if (of != null)
+            {
+                transformation = (XSLTTransformation) XSLTTransformation
+                            .of(of)
+                            .usingTemplate(fullPath)
+                            .withDescription(description)
+                            .withExtension(extension)
+                            .withParameters(parameters);
+                return transformation;
+            }
+            return transformation.withEffort(effort == null ? 0 : Integer.valueOf(effort));
         }
         else
         {
@@ -109,7 +112,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             {
                 return (XSLTTransformation) XSLTTransformation
                             .of(of)
-                            .using(template, xmlFileAddonClassLoader)
+                            .usingTemplate(template, xmlFileAddonClassLoader)
                             .withDescription(description)
                             .withExtension(extension)
                             .withParameters(parameters);
