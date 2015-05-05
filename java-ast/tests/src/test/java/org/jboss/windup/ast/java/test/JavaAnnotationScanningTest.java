@@ -1,11 +1,11 @@
 package org.jboss.windup.ast.java.test;
 
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
-import org.jboss.windup.ast.java.data.ClassReferences;
 import org.jboss.windup.ast.java.data.annotations.AnnotationArrayValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationClassReference;
 import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
@@ -21,12 +21,12 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     @Test
     public void testSimpleAnnotatedClass()
     {
-        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/annotations/basic/SimpleAnnotatedClass.java"));
 
         boolean foundSimpleAnnotation = false;
         boolean foundSingleMemberAnnotation = false;
-        for (ClassReference reference : references.getReferences())
+        for (ClassReference reference : references)
         {
             System.out.println("Reference: " + reference);
             if (reference instanceof AnnotationClassReference)
@@ -55,11 +55,11 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     @Test
     public void testComplexAnnotatedClass()
     {
-        ClassReferences references = ASTProcessor.analyzeJavaFile(getLibraryPaths(), getSourcePaths(),
+        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/annotations/complex/ComplexAnnotatedClass.java"));
 
         boolean foundAnnotation = false;
-        for (ClassReference reference : references.getReferences())
+        for (ClassReference reference : references)
         {
             System.out.println("Reference: " + reference);
             if (reference instanceof AnnotationClassReference)
