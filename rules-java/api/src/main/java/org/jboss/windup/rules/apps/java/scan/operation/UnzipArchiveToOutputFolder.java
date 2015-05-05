@@ -13,6 +13,8 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.ApplicationFlag;
+import org.jboss.windup.graph.model.resource.ApplicationFlagVertex;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -157,7 +159,14 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 FileService fileService, ArchiveModel archiveModel,
                 FileModel parentFileModel)
     {
+        GraphService<ApplicationFlagVertex> service = new GraphService<ApplicationFlagVertex>(context,ApplicationFlagVertex.class);
+        ApplicationFlagVertex applicationFlagVertex = service.getUnique();
+        if(applicationFlagVertex == null) {
+            applicationFlagVertex = service.create();
+        }
         File fileReference = parentFileModel.asFile();
+        parentFileModel.setApplicationFlag("application");
+        parentFileModel.setApplicationFlagVertex(applicationFlagVertex);
         WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(context);
         if (fileReference.isDirectory())
         {
@@ -167,6 +176,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 for (File subFile : subFiles)
                 {
                     FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
+                    subFileModel.setApplicationFlag("application");
+                    subFileModel.setApplicationFlagVertex(applicationFlagVertex);
                     subFileModel.setParentArchive(archiveModel);
 
                     // check if this file should be ignored
