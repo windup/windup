@@ -17,13 +17,12 @@ import javax.inject.Singleton;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
@@ -54,7 +53,7 @@ public class XMLTransformationTest
     private static final String XSLT_EXTENSION = "-test-result.html";
 
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
@@ -63,20 +62,11 @@ public class XMLTransformationTest
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addAsResource("simpleXSLT.xsl")
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-xml"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                    .addAsResource("simpleXSLT.xsl");
         return archive;
     }
 
@@ -126,6 +116,8 @@ public class XMLTransformationTest
             Path transformedPath = xsltTransformationService.getTransformedXSLTPath().resolve(
                         xsltTransformation.getResult());
 
+            Assert.assertEquals(3, xsltTransformation.getEffort());
+
             int lineFound = 0;
             try (BufferedReader br = new BufferedReader(new FileReader(transformedPath.toFile())))
             {
@@ -144,28 +136,22 @@ public class XMLTransformationTest
     }
 
     @Singleton
+    @RuleMetadata(phase = PostMigrationRulesPhase.class)
     public static class TestXMLTransformationRuleProvider extends AbstractRuleProvider
     {
-
         private Set<FileLocationModel> xmlFiles = new HashSet<>();
 
-        public TestXMLTransformationRuleProvider()
-        {
-            super(MetadataBuilder.forProvider(TestXMLTransformationRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
-        }
-
-        // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
             return ConfigurationBuilder.begin()
-                .addRule()
-                .when(XmlFile.matchesXpath("/abc:project")
-                    .namespace("abc", "http://maven.apache.org/POM/4.0.0"))
-                .perform(XSLTTransformation.using(SIMPLE_XSLT_XSL).withExtension(XSLT_EXTENSION));
+                        .addRule()
+                        .when(XmlFile.matchesXpath("/abc:project")
+                                    .namespace("abc", "http://maven.apache.org/POM/4.0.0"))
+                        .perform(XSLTTransformation.using(SIMPLE_XSLT_XSL)
+                                    .withExtension(XSLT_EXTENSION)
+                                    .withEffort(3));
         }
-
-        // @formatter:on
 
         public Set<FileLocationModel> getXmlFileMatches()
         {

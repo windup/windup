@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.xml.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -15,11 +16,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface XsltTransformationModel extends WindupVertexFrame
 {
     public static final String TYPE = "XsltTransformation";
-    public static final String LOCATION = "location";
-    public static final String EXTENSION = "extension";
-    public static final String DESCRIPTION = "description";
-    public static final String FILE_SOURCE = "file_source";
-    public static final String FILE_RESULT = "file_result";
+    public static final String LOCATION = TYPE + "location";
+    public static final String EXTENSION = TYPE + "extension";
+    public static final String EFFORT = TYPE + "effort";
+    public static final String DESCRIPTION = TYPE + "description";
+    public static final String FILE_SOURCE = TYPE + "file_source";
+    public static final String FILE_RESULT = TYPE + "file_result";
 
     /**
      * Contains the location of the XSLT file
@@ -56,6 +58,18 @@ public interface XsltTransformationModel extends WindupVertexFrame
      */
     @Property(DESCRIPTION)
     public void setDescription(String description);
+
+    /**
+     * Gets the relative level of effort to complete this {@link XSLTTransformation}
+     */
+    @Property(EFFORT)
+    public int getEffort();
+
+    /**
+     * Sets the relative level of effort to complete this {@link XSLTTransformation}
+     */
+    @Property(EFFORT)
+    public void setEffort(int effort);
 
     /**
      * Links to the original {@link FileModel} with the original XML contents.

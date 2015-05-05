@@ -1,29 +1,17 @@
 package org.jboss.windup.rules.apps.xml.operation.xslt;
 
-import java.util.Map;
-
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
  * The next step in building {@link XSLTTransformation} just after the description was specified.
+ * 
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
-public interface XSLTTransformationDescription extends OperationBuilder
+public interface XSLTTransformationDescription extends XSLTTransformationExtension, OperationBuilder
 {
-    
     /**
-     * Extension that is going to be added to the result file.
-     * @param extension Examples are .xml,.result etc.
-     * @return
+     * Extension to be appended to the result file.
      */
     XSLTTransformationExtension withExtension(String extension);
-    
-    /**
-     * Specify {@link XSLTTransformation} parameters. Use this if you don't want to specify extension.
-     * @param parameters parameters for the xslt transformer factory
-     * @return
-     */
-    XSLTTransformationParams withParameters(Map<String, String> parameters);
-    
 }
