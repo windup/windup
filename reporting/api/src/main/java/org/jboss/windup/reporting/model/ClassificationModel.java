@@ -9,6 +9,7 @@ import org.ocpsoft.rewrite.config.Rule;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -51,7 +52,7 @@ public interface ClassificationModel extends WindupVertexFrame
     /**
      * Get the related {@link Link} instances associated with this {@link ClassificationModel}
      */
-    @Adjacency(label = LINKS, direction = Direction.OUT)
+    @GremlinGroovy("it.out('"+LINKS+"').dedup")
     Iterable<LinkModel> getLinks();
 
     /**
