@@ -26,25 +26,31 @@
     	<div class="panel-heading">
             <h3 class="panel-title">Static IP Addresses</h3>
         </div>
-
-        <table class="table table-striped table-bordered" id="staticIPTable">
-            <tr>
-                <th>File</th>
-                <th>Location</th>
-				<th>IP Address</th>
-            </tr>
-
-            <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
-            <tr>
-                <td>
-                	<#assign fileName = getPrettyPathForFile(staticIpRef.file)!> 
-					<@fileSourceLink staticIpRef.file fileName/>
-                </td>
-                <td> <#if staticIpRef.lineNumber?has_content>Line Number ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Column Number ${staticIpRef.columnNumber} </#if> </td>
-				<td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>
-            </tr>
-            </#list>
-        </table>
+		
+		<#if iterableHasContent(reportModel.relatedResources.staticIPLocations)>
+	        <table class="table table-striped table-bordered" id="staticIPTable">
+	            <tr>
+	                <th>File</th>
+	                <th>Location</th>
+					<th>IP Address</th>
+	            </tr>
+	
+	            <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
+	            <tr>
+	                <td>
+	                	<#assign fileName = getPrettyPathForFile(staticIpRef.file)!> 
+						<@fileSourceLink staticIpRef.file fileName/>
+	                </td>
+	                <td> <#if staticIpRef.lineNumber?has_content>Line Number ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Column Number ${staticIpRef.columnNumber} </#if> </td>
+					<td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>
+	            </tr>
+	            </#list>
+	        </table>
+        <#else>
+	        <div class="panel-body">
+		        No Static IP Addresses.
+		    </div>
+        </#if>
     </div>
 </#macro>
 

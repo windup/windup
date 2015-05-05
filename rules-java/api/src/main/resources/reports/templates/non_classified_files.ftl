@@ -40,19 +40,22 @@
 </#macro>
 
 <#macro projectModelRenderer projectModel>
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
-        </div>
-        <table class="table table-striped table-bordered">
-          <tr>
-            <th>Name</th><th>Technology</th>
-          </tr>
-          <#list sortFilesByPathAscending(findFilesNotClassifiedOrHinted(projectModel.fileModelsNoDirectories)) as fileModel>
-             <@fileModelRenderer fileModel/>
-          </#list>
-        </table>
-    </div>
+	<#assign fileModelCollection = sortFilesByPathAscending(findFilesNotClassifiedOrHinted(projectModel.fileModelsNoDirectories))>
+	<#if iterableHasContent(fileModelCollection)>
+	    <div class="panel panel-primary">
+	        <div class="panel-heading">
+	            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
+	        </div>
+	        <table class="table table-striped table-bordered">
+	          <tr>
+	            <th>Name</th><th>Technology</th>
+	          </tr>
+	          <#list fileModelCollection as fileModel>
+	             <@fileModelRenderer fileModel/>
+	          </#list>
+	        </table>
+	    </div>
+	</#if>
   <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
     <@projectModelRenderer childProject/>
   </#list>
