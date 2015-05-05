@@ -102,6 +102,12 @@
 							<#if projectModel.url?has_content>
 								<a href="${projectModel.url}">Project Site</a>
 							</#if>
+									
+							<#if projectModelSha1Archive(projectModel)?has_content>
+								<#assign sha1URL = '|ga|1|1:"' + projectModelSha1Archive(projectModel) + '"'>
+								<#assign sha1URL = 'http://search.maven.org/#search' + sha1URL?url('ISO-8859-1')>
+								<a href="${sha1URL}">Maven Central</a>
+							</#if>
 						</td>
 					</tr>
 					<tr>
