@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.model;
 
+import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.rules.files.model.FileLocationModel;

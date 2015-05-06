@@ -44,6 +44,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
         ExecutionStatistics.get().begin("AddClassFileMetadata.perform()");
         try
         {
+            
             WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
 
             String absolutePath = payload.asFile().getAbsolutePath();

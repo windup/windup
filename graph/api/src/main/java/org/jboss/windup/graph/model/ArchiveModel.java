@@ -51,4 +51,8 @@ public interface ArchiveModel extends FileModel
 
     @Adjacency(label = "decompiledFiles", direction = Direction.OUT)
     public void addDecompiledFileModel(FileModel archiveFile);
+    
+    @Adjacency(label = VendorModel.ARCHIVE_MODEL, direction = Direction.IN)
+    public Iterable<VendorModel> getVendorModels();
+
 }
