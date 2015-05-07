@@ -12,7 +12,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.tests.application.model.TestSampleModel;
@@ -59,7 +59,7 @@ public class GraphServiceLookupTest
         {
             Assert.assertNotNull(graphContext);
 
-            FileService fileModelService = new FileService(graphContext);
+            PathService fileModelService = new PathService(graphContext);
             Assert.assertNotNull(fileModelService);
             FileModel fileModel = fileModelService.create();
             Assert.assertNotNull(fileModel);

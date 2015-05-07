@@ -92,7 +92,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                 if (projectModel == null) {
                                     projectModel = projectModelService.create();
                                     projectModel.setName(archiveModel.getArchiveName());
-                                    projectModel.setRootFileModel(archiveModel);
+                                    projectModel.setRootDirModel(archiveModel);
                                     projectModel.setDescription("Unidentified Archive");
                                     
                                     if(ZipUtil.endsWithZipExtension(archiveModel.getArchiveName()))
@@ -106,7 +106,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                     
                                     archiveModel.setProjectModel(projectModel);
                                     // Attach the project to all files within the archive
-                                    for (FileModel f : archiveModel.getContainedFileModels())
+                                    for (FileModel f : archiveModel.getContainedPaths())
                                     {
                                         // don't add archive models, as those really are separate projects...
                                         // also, don't set the project model if one is already set

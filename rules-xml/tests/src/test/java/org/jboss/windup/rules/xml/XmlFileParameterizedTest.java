@@ -108,7 +108,7 @@ public class XmlFileParameterizedTest
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-            inputPath.setFilePath("src/test/resources/parameterizationtests");
+            inputPath.setFullPath("src/test/resources/parameterizationtests");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
@@ -116,14 +116,14 @@ public class XmlFileParameterizedTest
             Files.createDirectories(outputPath);
 
             inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            pm.setRootDirModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(new NotPredicate(
                                     new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
                                     ))
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFullPath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 

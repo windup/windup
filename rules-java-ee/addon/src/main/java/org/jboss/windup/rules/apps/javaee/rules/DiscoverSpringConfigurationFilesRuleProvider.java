@@ -79,7 +79,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
 
         if (beansElements.size() == 0)
         {
-            LOG.log(Level.WARNING, "Found [beans] XML without namespace at: " + payload.getFilePath() + ".");
+            LOG.log(Level.WARNING, "Found [beans] XML without namespace at: " + payload.getFullPath() + ".");
             return;
         }
 

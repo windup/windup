@@ -30,7 +30,7 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel fileResourceModel)
     {
-        File file = new File(fileResourceModel.getFilePath());
+        File file = new File(fileResourceModel.getFullPath());
         ArchiveModel archiveResourceModel = GraphService.addTypeToModel(event.getGraphContext(),
                     fileResourceModel, ArchiveModel.class);
 

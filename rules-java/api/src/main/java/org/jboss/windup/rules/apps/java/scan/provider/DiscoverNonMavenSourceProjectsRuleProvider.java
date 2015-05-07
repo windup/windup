@@ -54,7 +54,7 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
                 mainProjectModel.setDescription("Source Directory");
 
                 mainFileModel.setProjectModel(mainProjectModel);
-                mainProjectModel.setRootFileModel(mainFileModel);
+                mainProjectModel.setRootDirModel(mainFileModel);
                 mainProjectModel.addFileModel(mainFileModel);
             }
 

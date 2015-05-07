@@ -64,13 +64,13 @@ public class ClassificationServiceTest
             boolean foundF2Effort = false;
             for (FileModel fm : projectModel.getFileModels())
             {
-                if (fm.getFilePath().equals("/f1"))
+                if (fm.getFullPath().equals("/f1"))
                 {
                     int fileEffort = classificationService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(140, fileEffort);
                     foundF1Effort = true;
                 }
-                else if (fm.getFilePath().equals("/f2"))
+                else if (fm.getFullPath().equals("/f2"))
                 {
                     int fileEffort = classificationService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(3, fileEffort);
@@ -87,9 +87,9 @@ public class ClassificationServiceTest
         ClassificationService classificationService = new ClassificationService(context);
 
         FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
-        f1.setFilePath("/f1");
+        f1.setFullPath("/f1");
         FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
-        f2.setFilePath("/f2");
+        f2.setFullPath("/f2");
 
         ClassificationModel b1 = classificationService.create();
         ClassificationModel b1b = classificationService.create();

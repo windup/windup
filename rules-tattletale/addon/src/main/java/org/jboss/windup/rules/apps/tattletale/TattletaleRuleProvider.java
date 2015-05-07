@@ -42,7 +42,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
         {
             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
             FileModel inputFM = cfg.getInputPath();
-            String inputPath = inputFM.getFilePath();
+            String inputPath = inputFM.getFullPath();
             String reportDirectory = new ReportService(event.getGraphContext()).getReportDirectory();
             String tattletaleDir = Paths.get(reportDirectory, TATTLETALE_REPORT_SUBDIR).toString();
 

@@ -59,7 +59,7 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
                 ProjectModel projectModel = windupConfiguration.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    throw new WindupException("Error, no project found in: " + windupConfiguration.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + windupConfiguration.getInputPath().getFullPath());
                 }
                 createSpringBeanReport(event.getGraphContext(), projectModel);
             }

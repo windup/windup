@@ -60,7 +60,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
             Coordinate coordinate = identifier.getCoordinate(archive.getSHA1Hash());
             if (coordinate != null)
             {
-                log.info("Identified archive: [" + archive.getFilePath() + "] as [" + coordinate + "] will not be unzipped or analyzed.");
+                log.info("Identified archive: [" + archive.getFullPath() + "] as [" + coordinate + "] will not be unzipped or analyzed.");
                 IdentifiedArchiveModel identifiedArchive = GraphService
                             .addTypeToModel(context, archive, IdentifiedArchiveModel.class);
                 ArchiveCoordinateModel coordinateModel = new GraphService<>(context, ArchiveCoordinateModel.class).create();
@@ -76,7 +76,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
             }
             else
             {
-                log.info("Archive not identified: " + archive.getFilePath());
+                log.info("Archive not identified: " + archive.getFullPath());
             }
         }
     }
@@ -92,7 +92,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
             }
             catch (IOException e)
             {
-                throw new WindupException("Failed to read archive file at: " + payload.getFilePath() + " due to: "
+                throw new WindupException("Failed to read archive file at: " + payload.getFullPath() + " due to: "
                             + e.getMessage(), e);
             }
         }
@@ -106,7 +106,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
             }
             catch (IOException e)
             {
-                throw new WindupException("Failed to read archive file at: " + payload.getFilePath() + " due to: "
+                throw new WindupException("Failed to read archive file at: " + payload.getFullPath() + " due to: "
                             + e.getMessage(), e);
             }
         }

@@ -16,7 +16,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
@@ -58,7 +58,7 @@ public class TechnologyTagServiceTest
         {
             ProjectService projectService = new ProjectService(context);
             TechnologyTagService techTagService = new TechnologyTagService(context);
-            FileService fileService = new FileService(context);
+            PathService fileService = new PathService(context);
 
             ProjectModel parent = projectService.create();
             parent.setName("Parent");

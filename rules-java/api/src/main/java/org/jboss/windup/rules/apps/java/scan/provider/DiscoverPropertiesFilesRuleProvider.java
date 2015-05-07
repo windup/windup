@@ -42,7 +42,7 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
     public ConditionBuilder when()
     {
         return Query.fromType(FileModel.class).withProperty(FileModel.IS_DIRECTORY, false)
-                    .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX,
+                    .withProperty(PathModel.FULL_PATH, QueryPropertyComparisonType.REGEX,
                                 ".*\\.properties$");
     }
 

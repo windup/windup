@@ -74,7 +74,7 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
             @Override
             public int compare(FileModel o1, FileModel o2)
             {
-                return filePathComparator.compare(o1.getFilePath(), o2.getFilePath());
+                return filePathComparator.compare(o1.getFullPath(), o2.getFullPath());
             }
         });
 

@@ -121,7 +121,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         FileModel rootSourceFolder = javaFile.getRootSourceFolder();
                         if (rootSourceFolder != null)
                         {
-                            sourcePaths.add(rootSourceFolder.getFilePath());
+                            sourcePaths.add(rootSourceFolder.getFullPath());
                         }
                     }
 
@@ -133,11 +133,11 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     {
                         if (library.getUnzippedDirectory() != null)
                         {
-                            libraryPaths.add(library.getUnzippedDirectory().getFilePath());
+                            libraryPaths.add(library.getUnzippedDirectory().getFullPath());
                         }
                         else
                         {
-                            libraryPaths.add(library.getFilePath());
+                            libraryPaths.add(library.getFullPath());
                         }
                     }
                     processor = new ASTProcessor(importResolver, libraryPaths, sourcePaths);
@@ -170,7 +170,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 }
                 catch (Exception e)
                 {
-                    LOG.log(Level.WARNING, "Could not analyze java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
+                    LOG.log(Level.WARNING, "Could not analyze java file: " + payload.getFullPath() + " due to: " + e.getMessage(), e);
                     ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                     classificationService.attachClassification(payload, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                 JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);

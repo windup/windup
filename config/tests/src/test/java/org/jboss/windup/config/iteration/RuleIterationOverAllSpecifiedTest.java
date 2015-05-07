@@ -25,7 +25,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.rules.files.FileMapping;
 import org.junit.Assert;
 import org.junit.Test;
@@ -93,8 +93,8 @@ public class RuleIterationOverAllSpecifiedTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            FileService fileModelService = new FileService(context);
-            windupCfg.setInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
+            PathService fileModelService = new PathService(context);
+            windupCfg.setInputPath(fileModelService.createByPath(OperatingSystemUtils.createTempDir()
                         .getAbsolutePath()));
 
             TestRuleIterationOverAllSpecifiedProvider provider = new TestRuleIterationOverAllSpecifiedProvider();
@@ -127,9 +127,9 @@ public class RuleIterationOverAllSpecifiedTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            FileService fileModelService = new FileService(context);
+            PathService fileModelService = new PathService(context);
             windupCfg.setInputPath(fileModelService
-                        .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
+                        .createByPath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleIterationOverAllSpecifiedWithExceptionProvider provider = new TestRuleIterationOverAllSpecifiedWithExceptionProvider();
             Configuration configuration = provider.getConfiguration(context);

@@ -21,7 +21,7 @@ import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.files.condition.regex.StreamRegexMatchListener;
 import org.jboss.windup.rules.files.condition.regex.StreamRegexMatchedEvent;
@@ -37,16 +37,17 @@ import org.ocpsoft.rewrite.util.Maps;
 
 import com.github.rwitzel.streamflyer.core.Modifier;
 import com.github.rwitzel.streamflyer.core.ModifyingReader;
+import org.jboss.windup.graph.model.resource.PathModel;
 
 /**
  * Matches on file contents based upon parameterization.
- * 
+ *
  * Example:
- * 
+ *
  * <pre>
  *   {@link FileContent}.matches("Some example {text}").inFilesNamed("{filename}")
  * </pre>
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
@@ -149,30 +150,30 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         final ParameterStore store = DefaultParameterStore.getInstance(context);
 
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
-        FileService fileModelService = new FileService(event.getGraphContext());
-        final Iterable<FileModel> fileModels;
+        PathService pathService = new PathService(event.getGraphContext());
+        final Iterable<PathModel> pathModels;
         if (filenamePattern != null)
         {
             Pattern filenameRegex = filenamePattern.getCompiledPattern(store);
-            fileModels = fileModelService.findAllByPropertyMatchingRegex(FileModel.FILE_NAME, filenameRegex.pattern());
+            pathModels = pathService.findAllByPropertyMatchingRegex(PathModel.NAME, filenameRegex.pattern());
         }
         else
         {
-            fileModels = fileModelService.findAll();
+            pathModels = pathService.findAll();
         }
 
         final List<FileLocationModel> results = new ArrayList<>();
-        for (final FileModel fileModel : fileModels)
+        for (final PathModel pathModel : pathModels)
         {
-            if (fileModel.isDirectory())
+            if (pathModel.isDirectory())
                 continue;
 
-            final ParameterizedPatternResult filenamePatternResult = filenamePattern.parse(fileModel.getFileName());
+            final ParameterizedPatternResult filenamePatternResult = filenamePattern.parse(pathModel.getFileName());
             if (filenamePatternResult.matches())
             {
                 try
                 {
-                    Reader reader = new FileReader(fileModel.asFile());
+                    Reader reader = new FileReader(pathModel.asFile());
 
                     Pattern fileContentsRegex = contentPattern.getCompiledPattern(store);
                     StreamRegexMatchListener matchListener = new StreamRegexMatchListener()
@@ -190,7 +191,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                                             && contentPatternResult.submit(event, context))
                                 {
                                     FileLocationModel fileLocationModel = fileLocationService.create();
-                                    fileLocationModel.setFile(fileModel);
+                                    fileLocationModel.setFile(pathModel.asFileModel());
                                     fileLocationModel.setColumnNumber((int) matchEvent.getColumnNumber());
                                     // increment by one, as the source is 0-based, but the model is 1-based
                                     int lineNumber = (int) (matchEvent.getLineNumber() + 1);
@@ -219,7 +220,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                 }
                 catch (Exception e)
                 {
-                    LOG.log(Level.WARNING, "Error loading and matching contents for file: " + fileModel.getFilePath() + " due to: " + e.getMessage(),
+                    LOG.log(Level.WARNING, "Error loading and matching contents for file: " + pathModel.getFullPath() + " due to: " + e.getMessage(),
                                 e);
                 }
             }

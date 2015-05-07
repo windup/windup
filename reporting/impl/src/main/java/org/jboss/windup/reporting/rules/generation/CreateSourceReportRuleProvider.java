@@ -76,7 +76,7 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
                 sm.setSourceFileModel(reportFileModel);
                 if (reportFileModel.getProjectModel() == null)
                 {
-                    LOG.warning("Error, source report created for file: " + payload.getFilePath() + ", but this file does not have a " + 
+                    LOG.warning("Error, source report created for file: " + payload.getFullPath() + ", but this file does not have a " + 
                                 ProjectModel.class.getSimpleName() + " associated. Execution will continue, however the source report " + 
                                 "for this file may be malformed");
                 }

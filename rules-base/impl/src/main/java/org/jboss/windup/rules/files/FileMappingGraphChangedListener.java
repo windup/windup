@@ -7,19 +7,19 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
+import org.jboss.windup.graph.model.resource.PathModel;
 
 public class FileMappingGraphChangedListener implements GraphChangedListener
 {
     private static final Logger LOG = Logger.getLogger(FileMappingGraphChangedListener.class.getSimpleName());
 
-    private GraphRewrite event;
+    private final GraphRewrite event;
 
     public FileMappingGraphChangedListener(GraphRewrite event)
     {
@@ -29,10 +29,10 @@ public class FileMappingGraphChangedListener implements GraphChangedListener
     @Override
     public void vertexPropertyChanged(Vertex vertex, String key, Object oldValue, Object setValue)
     {
-        if (FileModel.FILE_PATH.equals(key))
+        if (PathModel.FULL_PATH.equals(key))
         {
-            FileService fileService = new FileService(event.getGraphContext());
-            FileModel model = fileService.frame(vertex);
+            PathService pathService = new PathService(event.getGraphContext());
+            PathModel model = pathService.frame(vertex);
 
             Map<String, List<Class<? extends WindupVertexFrame>>> mappings = FileMapping
                         .getMappings(event);
@@ -41,7 +41,7 @@ public class FileMappingGraphChangedListener implements GraphChangedListener
                 String pattern = entry.getKey();
                 List<Class<? extends WindupVertexFrame>> types = entry.getValue();
 
-                if (((String) setValue).matches(pattern))
+                if (!((String) setValue).matches(pattern))
                 {
                     if (!model.isDirectory())
                     {
@@ -49,7 +49,7 @@ public class FileMappingGraphChangedListener implements GraphChangedListener
                         {
                             GraphService.addTypeToModel(event.getGraphContext(), model, type);
                         }
-                        LOG.fine("Mapped file [" + model.getFilePath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
+                        LOG.fine("Mapped file [" + model.getFullPath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
                                     + "] types: " + types);
                     }
                 }

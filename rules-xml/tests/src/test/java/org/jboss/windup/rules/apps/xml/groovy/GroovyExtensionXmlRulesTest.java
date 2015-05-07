@@ -85,7 +85,7 @@ public class GroovyExtensionXmlRulesTest
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-            inputPath.setFilePath("src/test/resources/");
+            inputPath.setFullPath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
@@ -93,14 +93,14 @@ public class GroovyExtensionXmlRulesTest
             Files.createDirectories(outputPath);
 
             inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            pm.setRootDirModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(new NotPredicate(
                                     new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
                                     ))
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFullPath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
@@ -117,7 +117,7 @@ public class GroovyExtensionXmlRulesTest
                 System.out.println("Classification: " + classification + " of file(s): ");
                 for (FileModel fileModel : model.getFileModels())
                 {
-                    System.out.println("\tFile Path: " + fileModel.getFilePath());
+                    System.out.println("\tFile Path: " + fileModel.getFullPath());
                 }
                 Assert.assertNotNull(classification);
             }

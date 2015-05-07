@@ -80,19 +80,19 @@ public class InlineHintModelQueryTest
     public void testFindingClassifiedFiles() throws Exception
     {
         FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
-        f1.setFilePath("/f1");
+        f1.setFullPath("/f1");
         FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
-        f2.setFilePath("/f2");
+        f2.setFullPath("/f2");
         FileModel f3 = context.getFramed().addVertex(null, FileModel.class);
-        f3.setFilePath("/f3");
+        f3.setFullPath("/f3");
         FileModel f4 = context.getFramed().addVertex(null, FileModel.class);
-        f4.setFilePath("/f4");
+        f4.setFullPath("/f4");
         FileModel f5 = context.getFramed().addVertex(null, FileModel.class);
-        f5.setFilePath("/f5");
+        f5.setFullPath("/f5");
         FileModel f6 = context.getFramed().addVertex(null, FileModel.class);
-        f6.setFilePath("/f6");
+        f6.setFullPath("/f6");
         FileModel f7 = context.getFramed().addVertex(null, FileModel.class);
-        f7.setFilePath("/f7");
+        f7.setFullPath("/f7");
 
         InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
         InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
@@ -147,19 +147,19 @@ public class InlineHintModelQueryTest
         Assert.assertEquals(4, fileModels.size());
         for (FileModel fm : fileModels)
         {
-            if (fm.getFilePath().equals(f1.getFilePath()))
+            if (fm.getFullPath().equals(f1.getFullPath()))
             {
                 foundF1 = true;
             }
-            else if (fm.getFilePath().equals(f2.getFilePath()))
+            else if (fm.getFullPath().equals(f2.getFullPath()))
             {
                 foundF2 = true;
             }
-            else if (fm.getFilePath().equals(f3.getFilePath()))
+            else if (fm.getFullPath().equals(f3.getFullPath()))
             {
                 foundF3 = true;
             }
-            else if (fm.getFilePath().equals(f4.getFilePath()))
+            else if (fm.getFullPath().equals(f4.getFullPath()))
             {
                 foundF4 = true;
             }
@@ -174,19 +174,19 @@ public class InlineHintModelQueryTest
     public void testFindingNonClassifiedFiles() throws Exception
     {
         FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
-        f1.setFilePath("/f1");
+        f1.setFullPath("/f1");
         FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
-        f2.setFilePath("/f2");
+        f2.setFullPath("/f2");
         FileModel f3 = context.getFramed().addVertex(null, FileModel.class);
-        f3.setFilePath("/f3");
+        f3.setFullPath("/f3");
         FileModel f4 = context.getFramed().addVertex(null, FileModel.class);
-        f4.setFilePath("/f4");
+        f4.setFullPath("/f4");
         FileModel f5 = context.getFramed().addVertex(null, FileModel.class);
-        f5.setFilePath("/f5");
+        f5.setFullPath("/f5");
         FileModel f6 = context.getFramed().addVertex(null, FileModel.class);
-        f6.setFilePath("/f6");
+        f6.setFullPath("/f6");
         FileModel f7 = context.getFramed().addVertex(null, FileModel.class);
-        f7.setFilePath("/f7");
+        f7.setFullPath("/f7");
 
         InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
         InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
@@ -235,19 +235,19 @@ public class InlineHintModelQueryTest
         Assert.assertEquals(4, fileModels.size());
         for (FileModel fm : fileModels)
         {
-            if (fm.getFilePath().equals(f4.getFilePath()))
+            if (fm.getFullPath().equals(f4.getFullPath()))
             {
                 foundF4 = true;
             }
-            else if (fm.getFilePath().equals(f5.getFilePath()))
+            else if (fm.getFullPath().equals(f5.getFullPath()))
             {
                 foundF5 = true;
             }
-            else if (fm.getFilePath().equals(f6.getFilePath()))
+            else if (fm.getFullPath().equals(f6.getFullPath()))
             {
                 foundF6 = true;
             }
-            else if (fm.getFilePath().equals(f7.getFilePath()))
+            else if (fm.getFullPath().equals(f7.getFullPath()))
             {
                 foundF7 = true;
             }

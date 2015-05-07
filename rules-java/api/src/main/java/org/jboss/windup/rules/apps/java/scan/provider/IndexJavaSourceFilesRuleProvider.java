@@ -27,7 +27,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -94,10 +94,10 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                             WindupConfigurationModel.class)
                             .getUnique();
 
-                String inputDir = configuration.getInputPath().getFilePath();
+                String inputDir = configuration.getInputPath().getFullPath();
                 inputDir = Paths.get(inputDir).toAbsolutePath().toString();
 
-                String filepath = payload.getFilePath();
+                String filepath = payload.getFullPath();
                 filepath = Paths.get(filepath).toAbsolutePath().toString();
 
                 String classFilePath;
@@ -125,23 +125,23 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                 technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
 
                 payload.setPackageName(packageName);
-                try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
+                try (FileInputStream fis = new FileInputStream(payload.getFullPath()))
                 {
                     addParsedClassToFile(fis, event.getGraphContext(), payload);
                 }
                 catch (FileNotFoundException e)
                 {
-                    throw new WindupException("File in " + payload.getFilePath() + " was not found.", e);
+                    throw new WindupException("File in " + payload.getFullPath() + " was not found.", e);
                 }
                 catch (IOException e)
                 {
                     throw new WindupException("IOException thrown when parsing file located in "
-                                + payload.getFilePath(), e);
+                                + payload.getFullPath(), e);
                 }
                 catch (Exception e)
                 {
                     LOG.log(Level.WARNING,
-                                "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
+                                "Could not parse java file: " + payload.getFullPath() + " due to: " + e.getMessage(), e);
                     ClassificationService classificationService = new ClassificationService(graphContext);
                     classificationService.attachClassification(payload,
                                 JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
@@ -181,7 +181,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             Path rootSourcePath = PathUtil.getRootFolderForSource(sourceFileModel.asFile().toPath(), packageName);
             if (rootSourcePath != null)
             {
-                FileModel rootSourceFileModel = new FileService(context).createByFilePath(rootSourcePath.toString());
+                FileModel rootSourceFileModel = new PathService(context).createByPath(rootSourcePath.toString());
                 sourceFileModel.setRootSourceFolder(rootSourceFileModel);
             }
 

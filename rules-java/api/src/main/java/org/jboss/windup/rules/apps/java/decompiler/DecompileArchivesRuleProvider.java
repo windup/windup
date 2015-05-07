@@ -66,7 +66,7 @@ public class DecompileArchivesRuleProvider extends AbstractRuleProvider
                     ArchiveModel archive = event.getGraphContext().getFramed().frame(argument, ArchiveModel.class);
                     WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
                                 event.getGraphContext());
-                    for (FileModel fileModel : archive.getContainedFileModels())
+                    for (FileModel fileModel : archive.getContainedPaths())
                     {
                         if (fileModel instanceof JavaClassFileModel)
                         {

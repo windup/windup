@@ -18,7 +18,8 @@ import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.model.resource.PathModel;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Rule;
@@ -95,16 +96,16 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
         Map<String, List<Class<? extends WindupVertexFrame>>> mappings = FileMapping
                     .getMappings(event);
 
-        FileService fileService = new FileService(event.getGraphContext());
+        PathService fileService = new PathService(event.getGraphContext());
         for (Entry<String, List<Class<? extends WindupVertexFrame>>> entry : mappings.entrySet())
         {
             String pattern = entry.getKey();
             List<Class<? extends WindupVertexFrame>> types = entry.getValue();
 
-            Iterable<FileModel> models = fileService.findAllByPropertyMatchingRegex(
-                        FileModel.FILE_PATH, pattern);
+            Iterable<PathModel> models =
+                fileService.findAllByPropertyMatchingRegex(PathModel.FULL_PATH, pattern);
 
-            for (FileModel model : models)
+            for (PathModel model : models)
             {
                 if (!model.isDirectory())
                 {
@@ -112,7 +113,7 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
                     {
                         GraphService.addTypeToModel(event.getGraphContext(), model, type);
                     }
-                    LOG.info("Mapped file [" + model.getFilePath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
+                    LOG.info("Mapped file [" + model.getFullPath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
                                 + "] types: " + types);
                 }
             }

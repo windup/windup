@@ -31,6 +31,6 @@ public abstract class AbstractGraphRenderer implements GraphRenderer
 
     private Path getOutputPath(WindupConfigurationModel configuration)
     {
-        return Paths.get(configuration.getOutputPath().getFilePath(), "renderedGraph");
+        return Paths.get(configuration.getOutputPath().getFullPath(), "renderedGraph");
     }
 }

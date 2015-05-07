@@ -98,19 +98,19 @@ public class JavaClassTest
             pm.setName("Main Project");
 
             FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
-            inputPathFrame.setFilePath(inputDir);
+            inputPathFrame.setFullPath(inputDir);
             inputPathFrame.setProjectModel(pm);
             pm.addFileModel(inputPathFrame);
 
-            pm.setRootFileModel(inputPathFrame);
+            pm.setRootDirModel(inputPathFrame);
 
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTestFile1.java");
+            fileModel.setFullPath(inputDir + "/JavaClassTestFile1.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
             fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTestFile2.java");
+            fileModel.setFullPath(inputDir + "/JavaClassTestFile2.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
@@ -181,7 +181,7 @@ public class JavaClassTest
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
                         firstRuleMatchCount++;
-                        log.info("First rule matched: " + payload.getFile().getFilePath());
+                        log.info("First rule matched: " + payload.getFile().getFullPath());
                     }
                 }).endIteration()
             )

@@ -45,7 +45,7 @@ public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvid
                 ProjectModel projectModel = payload.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFullPath());
                 }
                 createApplicationReportIndex(event.getGraphContext(), projectModel);
             }

@@ -46,7 +46,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
                 ProjectModel projectModel = payload.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFullPath());
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
@@ -84,12 +84,12 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         Iterable<OverviewReportLineMessageModel> findAll = lineNotesService.findAll();
         for (OverviewReportLineMessageModel find : findAll)
         {
-            String projectPrettyPath = projectModel.getRootFileModel().getPrettyPath();
+            String projectPrettyPath = projectModel.getRootPathModel().getPrettyPath();
             ProjectModel project = find.getProject();
             boolean found = false;
             while (project != null && !found)
             {
-                if (projectPrettyPath.equals(project.getRootFileModel().getPrettyPath()))
+                if (projectPrettyPath.equals(project.getRootPathModel().getPrettyPath()))
                 {
                     applicationReportModel.addApplicationReportLine(find);
                     found = true;

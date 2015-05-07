@@ -340,13 +340,13 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
             }
 
             // in case of taking a result of other XmlFile condition as input, multiple FileReferenceModels may reference the same XmlFileModel.
-            if (xmlCache.contains(xml.getFilePath()))
+            if (xmlCache.contains(xml.getFullPath()))
             {
                 continue;
             }
             else
             {
-                xmlCache.add(xml.getFilePath());
+                xmlCache.add(xml.getFullPath());
             }
 
             if (fileNamePattern != null)

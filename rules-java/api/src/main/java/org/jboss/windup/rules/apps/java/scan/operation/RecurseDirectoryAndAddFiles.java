@@ -5,7 +5,7 @@ import java.io.File;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<FileModel>
@@ -37,16 +37,16 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)
     {
-        FileService fileModelService = new FileService(event.getGraphContext());
+        PathService fileModelService = new PathService(event.getGraphContext());
         recurseAndAddFiles(fileModelService, resourceModel);
     }
 
     /**
      * Recurses the given folder and adds references to these files to the graph as FileModels
      */
-    private void recurseAndAddFiles(FileService fileService, FileModel file)
+    private void recurseAndAddFiles(PathService fileService, FileModel file)
     {
-        String filePath = file.getFilePath();
+        String filePath = file.getFullPath();
         File fileReference = new File(filePath);
 
         if (fileReference.isDirectory())

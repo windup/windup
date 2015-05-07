@@ -9,12 +9,13 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.graph.model.resource.PathModel;
 
 /**
  * This class provides helpful utility methods for creating and finding {@link ApplicationReportModel} vertices.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class ApplicationReportService extends GraphService<ApplicationReportModel>
 {
@@ -54,9 +55,9 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         {
             rootProjectModel = rootProjectModel.getParentProject();
         }
-        String rootFilePath = rootProjectModel.getRootFileModel().getFilePath();
-        pipe.out(ProjectModel.ROOT_FILE_MODEL);
-        pipe.has(FileModel.FILE_PATH, rootFilePath);
+        String rootFilePath = rootProjectModel.getRootPathModel().getFullPath();
+        pipe.out(ProjectModel.ROOT_DIR_MODEL);
+        pipe.has(PathModel.FULL_PATH, rootFilePath);
 
         pipe.back("applicationReport");
 

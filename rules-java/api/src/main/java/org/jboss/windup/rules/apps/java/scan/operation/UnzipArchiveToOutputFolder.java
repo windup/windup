@@ -13,9 +13,11 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.DirectoryModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.model.resource.PathModel;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -65,7 +67,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 
         // create a folder for all archive contents
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-        String windupOutputFolder = cfg.getOutputPath().getFilePath();
+        String windupOutputFolder = cfg.getOutputPath().getFullPath();
 
         Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, ARCHIVES);
         if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
@@ -102,12 +104,12 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 final Path tempFolder, final File inputZipFile,
                 final ArchiveModel archiveModel)
     {
-        final FileService fileService = new FileService(context);
+        final PathService fileService = new PathService(context);
 
         // Setup a temp folder for the archive
         String appArchiveName = archiveModel.getArchiveName();
         if (null == appArchiveName)
-            throw new IllegalStateException("Archive model doesn't have an archiveName: " + archiveModel.getFilePath());
+            throw new IllegalStateException("Archive model doesn't have an archiveName: " + archiveModel.getFullPath());
 
         final Path appArchiveFolder = getAppArchiveFolder(tempFolder, appArchiveName);
 
@@ -137,13 +139,13 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             return;
         }
 
-        FileModel newFileModel = fileService.createByFilePath(appArchiveFolder.toString());
+        DirectoryModel appArchiveDirM = fileService.createByPath(appArchiveFolder.toString()).asDirectoryModel();
         // mark the path to the archive
-        archiveModel.setUnzippedDirectory(newFileModel);
-        newFileModel.setParentArchive(archiveModel);
+        archiveModel.setUnzippedDirectory(appArchiveDirM);
+        appArchiveDirM.setParentArchive(archiveModel);
 
         // add all unzipped files, and make sure their parent archive is set
-        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, newFileModel);
+        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, appArchiveDirM);
     }
 
     /**
@@ -154,10 +156,10 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
      * directory that happens to hold it.
      */
     private void recurseAndAddFiles(GraphContext context, Path tempFolder,
-                FileService fileService, ArchiveModel archiveModel,
-                FileModel parentFileModel)
+                PathService fileService, ArchiveModel archiveModel,
+                DirectoryModel parentDirModel)
     {
-        File fileReference = parentFileModel.asFile();
+        File fileReference = parentDirModel.asFile();
         WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(context);
         if (fileReference.isDirectory())
         {
@@ -166,7 +168,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             {
                 for (File subFile : subFiles)
                 {
-                    FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
+                    PathModel subFileModel = fileService.createByFilePath(parentDirModel, subFile.getAbsolutePath());
                     subFileModel.setParentArchive(archiveModel);
 
                     // check if this file should be ignored
@@ -175,7 +177,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                         continue;
                     }
 
-                    if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
+                    if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFullPath()))
                     {
                         File newZipFile = subFileModel.asFile();
                         ArchiveModel newArchiveModel = GraphService
@@ -197,7 +199,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 
                     if (subFile.isDirectory())
                     {
-                        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, subFileModel);
+                        recurseAndAddFiles(context, tempFolder, fileService, archiveModel, subFileModel.asDirectoryModel());
                     }
                 }
             }
@@ -205,21 +207,21 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     }
 
     /**
-     * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any of the
+     * Checks if the {@link FileModel#getFullPath()} + {@link FileModel#getFileName()} is ignored by any of the
      * specified regular expressions.
      */
-    private boolean checkIfIgnored(final GraphContext context, FileModel file, List<String> patterns)
+    private boolean checkIfIgnored(final GraphContext context, PathModel path, List<String> patterns)
     {
         boolean ignored = false;
         if (patterns != null && patterns.size() != 0)
         {
             for (String pattern : patterns)
             {
-                if (file.getFilePath().matches(pattern))
+                if (path.getFullPath().matches(pattern))
                 {
-                    IgnoredFileModel ignoredFileModel = GraphService.addTypeToModel(context, file, IgnoredFileModel.class);
+                    IgnoredFileModel ignoredFileModel = GraphService.addTypeToModel(context, path, IgnoredFileModel.class);
                     ignoredFileModel.setIgnoredRegex(pattern);
-                    LOG.info("File/Directory placed in " + file.getFilePath() + " was ignored, because matched [" + pattern + "].");
+                    LOG.info("File/Directory placed in " + path.getFullPath() + " was ignored, because matched [" + pattern + "].");
                     ignored = true;
                     break;
                 }

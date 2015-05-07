@@ -8,42 +8,43 @@ import org.jboss.windup.util.ExecutionStatistics;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
+import org.jboss.windup.graph.model.resource.PathModel;
 
-public class FileService extends GraphService<FileModel>
+public class PathService extends GraphService<PathModel>
 {
-    public FileService(GraphContext context)
+    public PathService(GraphContext context)
     {
-        super(context, FileModel.class);
+        super(context, PathModel.class);
     }
 
-    public FileModel createByFilePath(String filePath)
+    public PathModel createByPath(String filePath)
     {
         return createByFilePath(null, filePath);
     }
 
-    public FileModel createByFilePath(FileModel parentFile, String filePath)
+    public PathModel createByFilePath(PathModel parentPath, String filePath)
     {
         ExecutionStatistics.get().begin("FileService.createByFilePath(parentFile, filePath)");
         // always search by absolute path
         String absolutePath = Paths.get(filePath).toAbsolutePath().toString();
-        FileModel entry = findByPath(absolutePath);
+        PathModel entry = findByPath(absolutePath);
 
         if (entry == null)
         {
             entry = this.create();
-            entry.setFilePath(absolutePath);
-            entry.setParentFile(parentFile);
+            entry.setFullPath(absolutePath);
+            entry.setParentFile(parentPath);
         }
 
         ExecutionStatistics.get().end("FileService.createByFilePath(parentFile, filePath)");
         return entry;
     }
 
-    public FileModel findByPath(String filePath)
+    public PathModel findByPath(String filePath)
     {
         // make the path absolute (as we only store absolute paths)
         filePath = Paths.get(filePath).toAbsolutePath().toString();
-        return getUniqueByProperty(FileModel.FILE_PATH, filePath);
+        return getUniqueByProperty(FileModel.FULL_PATH, filePath);
     }
 
     public Iterable<FileModel> findArchiveEntryWithExtension(String... values)

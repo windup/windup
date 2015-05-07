@@ -7,22 +7,24 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.resource.DirectoryModel;
+import org.jboss.windup.graph.model.resource.PathModel;
 
 /**
  * Base interface representing an abstract project model with a project name, version, type, and location on disk. Projects may be source-based or
  * binary based.
- * 
+ *
  * Additional models may extend this to support additional project types (eg, Maven-based projects).
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ProjectModel.TYPE)
 public interface ProjectModel extends WindupVertexFrame
 {
-    public static final String TYPE = "ProjectModel";
+    public static final String TYPE = "Project";
     public static final String DEPENDENCY = "dependency";
     public static final String PARENT_PROJECT = "parentProject";
-    public static final String ROOT_FILE_MODEL = "rootFileModel";
+    public static final String ROOT_DIR_MODEL = "rootDirModel";
     public static final String PROJECT_MODEL_TO_FILE = "projectModelToFile";
     public static final String SOURCE_BASED = "sourceBased";
     public static final String DESCRIPTION = "description";
@@ -35,13 +37,13 @@ public interface ProjectModel extends WindupVertexFrame
     /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
      * project.
-     * 
+     *
      */
-    @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    void setRootFileModel(FileModel fileModel);
+    @Adjacency(label = ROOT_DIR_MODEL, direction = Direction.OUT)
+    void setRootPathModel(PathModel fileModel);
 
-    @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    FileModel getRootFileModel();
+    @Adjacency(label = ROOT_DIR_MODEL, direction = Direction.OUT)
+    PathModel getRootPathModel();
 
     /**
      * Indicates whether or not this is a source-based project (eg, the project provided by the user for analysis), or a binary project (eg, as part
@@ -175,11 +177,11 @@ public interface ProjectModel extends WindupVertexFrame
      * Add a file model to the project.
      */
     @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
-    void addFileModel(FileModel fileModel);
+    void addFileModel(PathModel fileModel);
 
     /**
      * Gets all contained files that are not directories
      */
-    @GremlinGroovy("it.out('" + PROJECT_MODEL_TO_FILE + "').has('" + FileModel.IS_DIRECTORY + "', false)")
+    @GremlinGroovy("it.out('" + PROJECT_MODEL_TO_FILE + "').has('" + PathModel.IS_DIRECTORY + "', false)")
     Iterable<FileModel> getFileModelsNoDirectories();
 }

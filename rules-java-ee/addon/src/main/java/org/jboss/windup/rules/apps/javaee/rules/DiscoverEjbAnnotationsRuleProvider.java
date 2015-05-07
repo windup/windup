@@ -264,7 +264,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         }
         else
         {
-            LOG.warning("Unrecognized file type with annotation found at: \"" + originalFile.getFilePath() + "\"");
+            LOG.warning("Unrecognized file type with annotation found at: \"" + originalFile.getFullPath() + "\"");
         }
         return result;
     }

@@ -60,7 +60,7 @@ public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
             {
                 final WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event
                             .getGraphContext());
-                String outputPath = cfg.getOutputPath().getFilePath();
+                String outputPath = cfg.getOutputPath().getFullPath();
                 copyCssResourcesToOutput(event.getGraphContext(), outputPath);
             }
 

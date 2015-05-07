@@ -50,7 +50,7 @@ public interface SourceReportModel extends ReportModel
             }
             catch (IOException e)
             {
-                throw new WindupException("Failed to read source file: \"" + getSourceFileModel().getFilePath()
+                throw new WindupException("Failed to read source file: \"" + getSourceFileModel().getFullPath()
                             + "\" due to: " + e.getMessage(), e);
             }
         }

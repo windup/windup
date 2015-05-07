@@ -41,7 +41,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
         ClassificationService classificationService = new ClassificationService(getGraphContext());
         if (model.asFile().length() == 0)
         {
-            LOG.log(Level.WARNING, "Failed to parse xml entity: " + model.getFilePath() + ", as the file is empty.");
+            LOG.log(Level.WARNING, "Failed to parse xml entity: " + model.getFullPath() + ", as the file is empty.");
             return null;
         }
 
@@ -49,7 +49,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
         Document document = null;
         if (cacheResult.isParseFailure())
         {
-            LOG.log(Level.WARNING, "Not loading entity: " + model.getFilePath() + ", due to previous parse failures");
+            LOG.log(Level.WARNING, "Not loading entity: " + model.getFullPath() + ", due to previous parse failures");
         }
         else if (cacheResult.getDocument() == null)
         {
@@ -61,7 +61,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
             {
                 XMLDocumentCache.cacheParseFailure(model);
                 LOG.log(Level.WARNING,
-                            "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
+                            "Failed to parse xml entity: " + model.getFullPath() + ", due to: " + e.getMessage());
                 classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
                             XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
             }
@@ -69,7 +69,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
             {
                 XMLDocumentCache.cacheParseFailure(model);
                 LOG.log(Level.WARNING,
-                            "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
+                            "Failed to parse xml entity: " + model.getFullPath() + ", due to: " + e.getMessage());
                 classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
                             XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
             }

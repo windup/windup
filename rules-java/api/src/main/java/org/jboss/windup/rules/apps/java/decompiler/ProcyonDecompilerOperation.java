@@ -25,9 +25,11 @@ import org.jboss.windup.decompiler.util.Filter;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.DirectoryModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.PathModel;
 import org.jboss.windup.graph.service.ArchiveService;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -80,9 +82,9 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
             LOG.info("Decompiling with " + threads + " threads");
 
             decompiler.setExecutorService(Executors.newFixedThreadPool(threads), threads);
-            String archivePath = ((FileModel) payload).getFilePath();
+            String archivePath = ((FileModel) payload).getFullPath();
             File archive = new File(archivePath);
-            File outputDir = new File(payload.getUnzippedDirectory().getFilePath());
+            File outputDir = new File(payload.getUnzippedDirectory().getFullPath());
             if (payload instanceof WarArchiveModel)
             {
                 outputDir = outputDir.toPath().resolve("WEB-INF").resolve("classes").toFile();
@@ -110,7 +112,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
 
     /**
      * This listens for decompiled files and writes the results to disk in a background thread.
-     * 
+     *
      * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
      *
      */
@@ -119,14 +121,14 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
         private final ExecutorService executorService = Executors.newSingleThreadExecutor();
         private final GraphContext context;
         private final Object archiveModelID;
-        private final FileService fileService;
+        private final PathService fileService;
         private final AtomicInteger atomicInteger = new AtomicInteger(0);
 
         private AddDecompiledItemsToGraph(ArchiveModel archiveModel, GraphContext context)
         {
             this.context = context;
             this.archiveModelID = archiveModel.asVertex().getId();
-            this.fileService = new FileService(context);
+            this.fileService = new PathService(context);
         }
 
         @Override
@@ -166,46 +168,46 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                     // it to the unzipped directory
                     String[] classFilePathTokens = inputPath.split("\\\\|/");
 
-                    Path classFilePath = Paths.get(archiveModel.getUnzippedDirectory().getFilePath());
+                    Path classFilePath = Paths.get(archiveModel.getUnzippedDirectory().getFullPath());
                     for (String pathToken : classFilePathTokens)
                     {
                         classFilePath = classFilePath.resolve(pathToken);
                     }
 
-                    FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
-                                decompiledOutputFile);
+                    FileModel decompiledFileModel = fileService.getUniqueByProperty(PathModel.FULL_PATH,
+                                decompiledOutputFile).asFileModel();
 
                     if (decompiledFileModel == null)
                     {
-                        FileModel parentFileModel = fileService.findByPath(Paths.get(decompiledOutputFile)
+                        DirectoryModel parentDirModel = fileService.findByPath(Paths.get(decompiledOutputFile)
                                     .getParent()
-                                    .toString());
+                                    .toString()).asDirectoryModel();
 
                         // make sure parent files already exist
                         // (it can happen that it does not if procyon puts the decompiled .java file in an unexpected
                         // place, for example in the case
                         // of war files)
-                        if (parentFileModel == null)
+                        if (parentDirModel == null)
                         {
                             List<Path> lineage = new LinkedList<>();
                             Path parentPath = Paths.get(decompiledOutputFile).getParent();
-                            FileModel existingParentFM = parentFileModel;
-                            while (existingParentFM == null)
+                            DirectoryModel existingParentDM = parentDirModel;
+                            while (existingParentDM == null)
                             {
                                 lineage.add(0, parentPath);
                                 parentPath = parentPath.getParent();
-                                existingParentFM = fileService.findByPath(parentPath.toString());
+                                existingParentDM = fileService.findByPath(parentPath.toString()).asDirectoryModel();
                             }
 
-                            FileModel currentParent = existingParentFM;
+                            DirectoryModel currentParent = existingParentDM;
                             for (Path p : lineage)
                             {
-                                currentParent = fileService.createByFilePath(currentParent, p.toString());
+                                currentParent = fileService.createByFilePath(currentParent, p.toString()).asDirectoryModel();
                             }
-                            parentFileModel = currentParent;
+                            parentDirModel = currentParent;
                         }
 
-                        decompiledFileModel = fileService.createByFilePath(parentFileModel, decompiledOutputFile);
+                        decompiledFileModel = fileService.createByFilePath(parentDirModel, decompiledOutputFile).asFileModel();
                         decompiledFileModel.setParentArchive(archiveModel);
                     }
                     ProjectModel projectModel = archiveModel.getProjectModel();
@@ -224,7 +226,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                         techTagService.addTagToFileModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
                         FileModel classFileModel = fileService.getUniqueByProperty(
-                                    FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
+                                    PathModel.FULL_PATH, classFilePath.toAbsolutePath().toString()).asFileModel();
                         if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
                         {
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
@@ -238,7 +240,7 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                                         classModel.getPackageName());
                             if (rootSourcePath != null)
                             {
-                                FileModel rootSourceFileModel = fileService.createByFilePath(rootSourcePath.toString());
+                                FileModel rootSourceFileModel = fileService.createByPath(rootSourcePath.toString()).asFileModel();
                                 decompiledSourceFileModel.setRootSourceFolder(rootSourceFileModel);
                             }
                             if (classModel.getJavaClass() != null)

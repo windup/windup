@@ -65,7 +65,7 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
             {
                 try
                 {
-                    Files.walkFileTree(Paths.get(ignoredRegexesFileModel.getFilePath()), new SimpleFileVisitor<Path>()
+                    Files.walkFileTree(Paths.get(ignoredRegexesFileModel.getFullPath()), new SimpleFileVisitor<Path>()
                     {
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
@@ -81,12 +81,12 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
                 }
                 catch (IOException e1)
                 {
-                    log.warning("IOException thrown when trying to access the ignored file regexes in " + ignoredRegexesFileModel.getFilePath());
+                    log.warning("IOException thrown when trying to access the ignored file regexes in " + ignoredRegexesFileModel.getFullPath());
                 }
             }
             else
             {
-                filesUrl.add(Paths.get(ignoredRegexesFileModel.getFilePath()));
+                filesUrl.add(Paths.get(ignoredRegexesFileModel.getFullPath()));
             }
         }
         for (Path filePath : filesUrl)

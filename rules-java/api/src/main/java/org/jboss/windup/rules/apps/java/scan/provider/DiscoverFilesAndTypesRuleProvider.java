@@ -52,7 +52,7 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
         .addRule()
         .when(Query.fromType(FileModel.class)
             .withProperty(FileModel.IS_DIRECTORY, false)
-            .withProperty(FileModel.FILE_PATH,
+            .withProperty(PathModel.FULL_PATH,
                 QueryPropertyComparisonType.REGEX,
                 ZipUtil.getEndsWithZipRegularExpression())
         )

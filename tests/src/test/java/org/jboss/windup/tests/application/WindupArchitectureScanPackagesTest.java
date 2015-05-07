@@ -96,7 +96,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
                 }
                 else
                 {
-                    System.out.println("Unexpected hinted file found: " + fileModel.getFilePath() + " hint: " + hint.getTitle() + " desc: "
+                    System.out.println("Unexpected hinted file found: " + fileModel.getFullPath() + " hint: " + hint.getTitle() + " desc: "
                                 + hint.getDescription());
                     foundNonAppHintedFile = true;
                 }

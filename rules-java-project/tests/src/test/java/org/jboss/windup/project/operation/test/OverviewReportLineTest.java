@@ -95,11 +95,11 @@ public class OverviewReportLineTest
             subProject.addDependency(dependency);
             pm.addChildProject(subProject);
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-            inputPath.setFilePath("src/test/resources/");
+            inputPath.setFullPath("src/test/resources/");
             FileModel subinputPath = context.getFramed().addVertex(null, FileModel.class);
-            subinputPath.setFilePath("src/test/resources/org");
+            subinputPath.setFullPath("src/test/resources/org");
             FileModel subsubinputPath = context.getFramed().addVertex(null, FileModel.class);
-            subinputPath.setFilePath("src/test/resources/org/jboss");
+            subinputPath.setFullPath("src/test/resources/org/jboss");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
@@ -110,15 +110,15 @@ public class OverviewReportLineTest
             subinputPath.setProjectModel(subProject);
             subsubinputPath.setProjectModel(subsubProject);
             pm.addFileModel(inputPath);
-            pm.setRootFileModel(inputPath);
+            pm.setRootDirModel(inputPath);
             subProject.addFileModel(subinputPath);
-            subProject.setRootFileModel(subinputPath);
+            subProject.setRootDirModel(subinputPath);
             subsubProject.addFileModel(subsubinputPath);
-            subsubProject.setRootFileModel(subsubinputPath);
+            subsubProject.setRootDirModel(subsubinputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFullPath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 

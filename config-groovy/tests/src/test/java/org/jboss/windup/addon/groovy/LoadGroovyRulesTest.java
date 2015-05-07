@@ -30,7 +30,7 @@ import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -141,8 +141,8 @@ public class LoadGroovyRulesTest
                     IOUtils.copy(is, os);
                 }
 
-                FileService fileModelService = new FileService(context);
-                cfg.addUserRulesPath(fileModelService.createByFilePath(userRulesPath.toAbsolutePath().toString()));
+                PathService fileModelService = new PathService(context);
+                cfg.addUserRulesPath(fileModelService.createByPath(userRulesPath.toAbsolutePath().toString()));
 
                 Imported<RuleProviderLoader> loaders = furnace.getAddonRegistry().getServices(
                             RuleProviderLoader.class);

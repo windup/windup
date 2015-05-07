@@ -94,7 +94,7 @@ public class XMLTransformationTest
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-            inputPath.setFilePath("src/test/resources/");
+            inputPath.setFullPath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
@@ -102,7 +102,7 @@ public class XMLTransformationTest
             Files.createDirectories(outputPath);
 
             inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            pm.setRootDirModel(inputPath);
 
             GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
                         XsltTransformationModel.class);
@@ -113,7 +113,7 @@ public class XMLTransformationTest
                                     new RuleProviderPhasePredicate(ReportGenerationPhase.class)
                                     ))
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFullPath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 

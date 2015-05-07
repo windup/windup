@@ -74,7 +74,7 @@ public class GatherIgnoredFilesTest
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-            inputPath.setFilePath("src/test/resources/");
+            inputPath.setFullPath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
                         "windup_" + RandomStringUtils.randomAlphanumeric(6));
@@ -83,17 +83,17 @@ public class GatherIgnoredFilesTest
 
             WindupConfigurationModel config = WindupConfigurationService.getConfigurationModel(context);
             FileModel ignoreFile = context.getFramed().addVertex(null, FileModel.class);
-            ignoreFile.setFilePath("src/test/resources/test-windup-ignore.txt");
+            ignoreFile.setFullPath("src/test/resources/test-windup-ignore.txt");
             config.addUserIgnorePath(ignoreFile);
             inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            pm.setRootDirModel(inputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class));
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(predicate)
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setInputPath(Paths.get(inputPath.getFullPath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
             WindupJavaConfigurationService javaCfg = new WindupJavaConfigurationService(context);

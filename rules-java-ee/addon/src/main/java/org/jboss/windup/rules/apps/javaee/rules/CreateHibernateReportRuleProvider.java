@@ -60,7 +60,7 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
                 ProjectModel projectModel = windupConfiguration.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    throw new WindupException("Error, no project found in: " + windupConfiguration.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + windupConfiguration.getInputPath().getFullPath());
                 }
                 createHibernateReport(event.getGraphContext(), projectModel);
             }

@@ -15,8 +15,10 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
+import org.jboss.windup.graph.model.resource.DirectoryModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.model.resource.PathModel;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
@@ -60,7 +62,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     {
         ConditionBuilder fileWhen = Query
                     .fromType(XmlFileModel.class)
-                    .withProperty(FileModel.FILE_NAME, "pom.xml");
+                    .withProperty(FileModel.NAME, "pom.xml");
 
         AbstractIterationOperation<XmlFileModel> evaluatePomFiles = new AbstractIterationOperation<XmlFileModel>()
         {
@@ -78,10 +80,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     {
                         archiveModel.setProjectModel(mavenProjectModel);
 
-                        mavenProjectModel.setRootFileModel(archiveModel);
+                        mavenProjectModel.setRootPathModel(archiveModel);
 
                         // Attach the project to all files within the archive
-                        for (FileModel f : archiveModel.getContainedFileModels())
+                        for (PathModel f : archiveModel.getContainedPaths())
                         {
                             // don't add archive models, as those really are separate projects...
                             // also, don't set the project model if one is already set
@@ -97,18 +99,17 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     {
                         // add the parent file
                         File parentFile = payload.asFile().getParentFile();
-                        FileModel parentFileModel = new FileService(event.getGraphContext()).findByPath(parentFile.getAbsolutePath());
-                        if (parentFileModel != null && !isAlreadyMavenProject(parentFileModel))
+                        final PathService pathService = new PathService(event.getGraphContext());
+                        DirectoryModel parentDirModel = pathService.findByPath(parentFile.getAbsolutePath()).asDirectoryModel();
+                        if (parentDirModel != null && !isAlreadyMavenProject(parentDirModel))
                         {
-                            parentFileModel.setProjectModel(mavenProjectModel);
-                            mavenProjectModel.addFileModel(parentFileModel);
-                            mavenProjectModel.setRootFileModel(parentFileModel);
+                            parentDirModel.setProjectModel(mavenProjectModel);
+                            mavenProjectModel.addFileModel(parentDirModel);
+                            mavenProjectModel.setRootPathModel(parentDirModel);
 
                             // now add all child folders that do not contain pom files
-                            for (FileModel childFile : parentFileModel.getFilesInDirectory())
-                            {
+                            for (PathModel childFile : parentDirModel.getPathsInDirectory())
                                 addFilesToModel(mavenProjectModel, childFile);
-                            }
                         }
                     }
                 }
@@ -130,8 +131,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     }
 
     /**
-     * This method is here so that the caller can know not to try to reset the project model for an archive (or directory) if the archive (or
-     * directory) is already a maven project.
+     * This method is here so that the caller can know not to try to reset the project model
+     * for an archive (or directory) if the archive (or directory) is already a maven project.
      * <p/>
      * This can sometimes help in cases in which an archive includes multiple poms in its META-INF.
      */
@@ -140,11 +141,11 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         return fileModel.getProjectModel() != null && fileModel.getProjectModel() instanceof MavenProjectModel;
     }
 
-    private void addFilesToModel(MavenProjectModel mavenProjectModel, FileModel fileModel)
+    private void addFilesToModel(MavenProjectModel mavenProjectModel, DirectoryModel dirModel)
     {
         // First, make sure we aren't looking at a separate module (we assume that if a pom.xml is in the folder,
         // it is a separate module)
-        for (FileModel childFile : fileModel.getFilesInDirectory())
+        for (PathModel childFile : dirModel.getPathsInDirectory())
         {
             String filename = childFile.getFileName();
             if (filename.equals("pom.xml"))
@@ -154,13 +155,14 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             }
         }
 
-        fileModel.setProjectModel(mavenProjectModel);
-        mavenProjectModel.addFileModel(fileModel);
+        dirModel.setProjectModel(mavenProjectModel);
+        mavenProjectModel.addFileModel(dirModel);
 
         // now recursively all files to the project
-        for (FileModel childFile : fileModel.getFilesInDirectory())
+        for (PathModel entry : dirModel.getPathsInDirectory())
         {
-            addFilesToModel(mavenProjectModel, childFile);
+            if (entry.isDirectory())
+                addFilesToModel(mavenProjectModel, entry.asDirectoryModel());
         }
     }
 
@@ -170,7 +172,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         Document document = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(xmlFileModel);
         if (document == null)
         {
-            LOG.warning("Could not parse pom at: " + xmlFileModel.getFilePath() + " skipping maven project discovery for this.");
+            LOG.warning("Could not parse pom at: " + xmlFileModel.getFullPath() + " skipping maven project discovery for this.");
             return null;
         }
 
@@ -212,7 +214,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
          */
         if (mavenProjectModel == null)
         {
-            LOG.info("Creating maven project for pom at: " + xmlFileModel.getFilePath() + " with gav: " + groupId + "," + artifactId + ","
+            LOG.info("Creating maven project for pom at: " + xmlFileModel.getFullPath() + " with gav: " + groupId + "," + artifactId + ","
                         + version);
             mavenProjectModel = mavenProjectService.createMavenStub(groupId, artifactId, version);
             mavenProjectModel.addMavenPom(xmlFileModel);
@@ -329,7 +331,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         MavenProjectModel project = null;
         for (MavenProjectModel possibleProject : possibleProjects)
         {
-            if (possibleProject.getRootFileModel() != null)
+            if (possibleProject.getRootPathModel() != null)
             {
                 return possibleProject;
             }
@@ -354,7 +356,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         }
         for (MavenProjectModel mavenProjectModel : mavenProjectModels)
         {
-            if (mavenProjectModel.getRootFileModel() == null)
+            if (mavenProjectModel.getRootPathModel() == null)
             {
                 // this is a stub... we can fill it in with details
                 return mavenProjectModel;

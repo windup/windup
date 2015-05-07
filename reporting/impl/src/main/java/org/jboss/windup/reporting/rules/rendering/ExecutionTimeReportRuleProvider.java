@@ -60,7 +60,7 @@ public class ExecutionTimeReportRuleProvider extends AbstractRuleProvider
                         {
                             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event
                                         .getGraphContext());
-                            String outputDir = cfg.getOutputPath().getFilePath();
+                            String outputDir = cfg.getOutputPath().getFullPath();
 
                             // create a directory for the output
                             Path statsDir = Paths.get(outputDir, "stats");

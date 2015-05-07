@@ -25,7 +25,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.PathService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,8 +92,8 @@ public class IterationPayLoadPassTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            FileService fileModelService = new FileService(context);
-            windupCfg.setInputPath(fileModelService.createByFilePath("/tmp/testpath"));
+            PathService fileModelService = new PathService(context);
+            windupCfg.setInputPath(fileModelService.createByPath("/tmp/testpath"));
 
             TestIterationPayLoadPassProvider provider = new TestIterationPayLoadPassProvider();
             Configuration configuration = provider.getConfiguration(context);
@@ -120,8 +120,8 @@ public class IterationPayLoadPassTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
-            FileService fileModelService = new FileService(context);
-            windupCfg.setInputPath(fileModelService.createByFilePath("/tmp/testpath"));
+            PathService fileModelService = new PathService(context);
+            windupCfg.setInputPath(fileModelService.createByPath("/tmp/testpath"));
 
             TestIterationPayLoadNotPassProvider provider = new TestIterationPayLoadNotPassProvider();
             Configuration configuration = provider.getConfiguration(context);

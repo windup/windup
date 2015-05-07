@@ -87,7 +87,7 @@ public class XMLDocumentCache
 
     private static String getKey(XmlFileModel key)
     {
-        return key.getFilePath();
+        return key.getFullPath();
     }
 
     private static class CacheDocument

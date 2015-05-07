@@ -34,6 +34,7 @@ import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.PathModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -44,9 +45,9 @@ import org.w3c.dom.Document;
 /**
  * This {@link RuleProviderLoader} searches for and loads {@link AbstractRuleProvider}s from XML files that within all
  * addons, with filenames that end in ".windup.xml".
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class XMLRuleProviderLoader implements RuleProviderLoader
 {
@@ -107,16 +108,16 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         }
 
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        for (FileModel userRulesFileModel : cfg.getUserRulesPaths())
+        for (PathModel userRulesPathModel : cfg.getUserRulesPaths())
         {
-            for (URL resource : getWindupUserDirectoryXmlFiles(userRulesFileModel))
+            for (URL resource : getWindupUserDirectoryXmlFiles(userRulesPathModel))
             {
                 try
                 {
                     Document doc = dBuilder.parse(resource.toURI().toString());
                     ParserContext parser = new ParserContext(furnace);
 
-                    String userRulesPath = userRulesFileModel.getFilePath();
+                    String userRulesPath = userRulesPathModel.getFullPath();
                     parser.setXmlInputPath(Paths.get(resource.toURI()));
                     parser.setXmlInputRootPath(Paths.get(userRulesPath));
 
@@ -152,9 +153,9 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         return scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_EXTENSION));
     }
 
-    private Collection<URL> getWindupUserDirectoryXmlFiles(FileModel userRulesFileModel)
+    private Collection<URL> getWindupUserDirectoryXmlFiles(PathModel userRulesPathModel)
     {
-        String userRulesDirectory = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
+        String userRulesDirectory = userRulesPathModel == null ? null : userRulesPathModel.getFullPath();
 
         // no user dir, so just return the ones that we found in the classpath
         if (userRulesDirectory == null)
@@ -162,14 +163,14 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
             return Collections.emptyList();
         }
         Path userRulesPath = Paths.get(userRulesDirectory);
-        if (!Files.isDirectory(userRulesPath))
+        if (!Files.exists(userRulesPath))
         {
-            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
+            LOG.warning("Not scanning rules in: " + userRulesPath.normalize().toString() + " (doesn't exist)");
             return Collections.emptyList();
         }
         if (!Files.isDirectory(userRulesPath))
         {
-            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be read!");
+            LOG.warning("Not scanning rules in: " + userRulesPath.normalize().toString() + " (not a directory)");
             return Collections.emptyList();
         }
 

@@ -63,7 +63,7 @@ public class JavaClassTestFile1
 
             // Create FileModel for $inputDir
             FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
-            inputPathFrame.setFilePath(inputDir);
+            inputPathFrame.setFullPath(inputDir);
             inputPathFrame.setProjectModel(pm);
             pm.addFileModel(inputPathFrame);
 
@@ -72,13 +72,13 @@ public class JavaClassTestFile1
 
             // Create FileModel for $inputDir/HintsClassificationsTest.java
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaHintsClassificationsTest.java");
+            fileModel.setFullPath(inputDir + "/JavaHintsClassificationsTest.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
             // Create FileModel for $inputDir/JavaClassTest.java
             fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTest.java");
+            fileModel.setFullPath(inputDir + "/JavaClassTest.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 

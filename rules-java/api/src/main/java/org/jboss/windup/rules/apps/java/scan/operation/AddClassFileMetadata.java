@@ -52,9 +52,9 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 return;
 
             // we should scan it, so make sure we get the package name from it
-            try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
+            try (FileInputStream fis = new FileInputStream(payload.getFullPath()))
             {
-                final ClassParser parser = new ClassParser(fis, payload.getFilePath());
+                final ClassParser parser = new ClassParser(fis, payload.getFullPath());
                 final JavaClass bcelJavaClass = parser.parse();
                 final String packageName = bcelJavaClass.getPackageName();
 
@@ -101,7 +101,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
         catch (Exception e)
         {
             LOG.log(Level.WARNING,
-                        "BCEL was unable to parse class file: " + payload.getFilePath() + " due to: " + e.getMessage(),
+                        "BCEL was unable to parse class file: " + payload.getFullPath() + " due to: " + e.getMessage(),
                         e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             classificationService.attachClassification(payload, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,

@@ -28,7 +28,8 @@ import org.jboss.windup.exec.rulefilters.TaggedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.model.resource.PathModel;
+import org.jboss.windup.graph.service.PathService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Checks;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -75,8 +76,8 @@ public class WindupProcessorImpl implements WindupProcessor
         context.setOptions(config.getOptionMap());
 
         WindupConfigurationModel configModel = WindupConfigurationService.getConfigurationModel(context);
-        configModel.setInputPath(getFileModel(context, config.getInputPath()));
-        configModel.setOutputPath(getFileModel(context, config.getOutputDirectory()));
+        configModel.setInputPath(getPathModel(context, config.getInputPath()));
+        configModel.setOutputPath(getPathModel(context, config.getOutputDirectory()).asDirectoryModel());
         configModel.setOfflineMode(config.isOffline());
         for (Path path : config.getAllUserRulesDirectories())
         {
@@ -86,12 +87,12 @@ public class WindupProcessorImpl implements WindupProcessor
                 throw new WindupException("Null path found (all paths are: "
                             + config.getAllUserRulesDirectories() + ")");
             }
-            configModel.addUserRulesPath(getFileModel(context, path));
+            configModel.addUserRulesPath(getPathModel(context, path));
         }
 
         for (Path path : config.getAllIgnoreDirectories())
         {
-            configModel.addUserIgnorePath(getFileModel(context, path));
+            configModel.addUserIgnorePath(getPathModel(context, path));
         }
 
         final GraphRewrite event = new GraphRewrite(context);
@@ -159,9 +160,9 @@ public class WindupProcessorImpl implements WindupProcessor
         }
     }
 
-    private FileModel getFileModel(GraphContext context, Path path)
+    private PathModel getPathModel(GraphContext context, Path path)
     {
-        return new FileService(context).createByFilePath(path.toString());
+        return new PathService(context).createByPath(path.toString());
     }
 
     private EvaluationContext createEvaluationContext()

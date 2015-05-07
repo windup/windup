@@ -6,6 +6,8 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.resource.DirectoryModel;
+import org.jboss.windup.graph.model.resource.PathModel;
 
 /**
  * Contains the global configuration for the current Windup execution.
@@ -25,49 +27,49 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * The input path to scan
      */
     @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
-    FileModel getInputPath();
+    PathModel getInputPath();
 
     /**
      * The input path to scan
      */
     @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
-    void setInputPath(FileModel inputPath);
+    void setInputPath(PathModel inputPath);
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
-    void addUserRulesPath(FileModel userRulesPath);
-    
+    void addUserRulesPath(PathModel userRulesPath);
+
     /**
      * The location for user provided ignore directory (list of ignored jar files)
      */
     @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
-    void addUserIgnorePath(FileModel userIgnorePath);
+    void addUserIgnorePath(PathModel userIgnorePath);
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
-    Iterable<FileModel> getUserRulesPaths();
-    
+    Iterable<PathModel> getUserRulesPaths();
+
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
-    Iterable<FileModel> getUserIgnorePaths();
+    Iterable<PathModel> getUserIgnorePaths();
 
     /**
      * Where to put the report and other files produced during Windup execution.
      */
     @Adjacency(label = "outputPath", direction = Direction.OUT)
-    FileModel getOutputPath();
+    DirectoryModel getOutputPath();
 
     /**
      * Where to put the report and other files produced during Windup execution.
      */
     @Adjacency(label = "outputPath", direction = Direction.OUT)
-    void setOutputPath(FileModel outputPath);
+    void setOutputPath(DirectoryModel outputPath);
 
     /**
      * Indicates whether or not to function in offline mode

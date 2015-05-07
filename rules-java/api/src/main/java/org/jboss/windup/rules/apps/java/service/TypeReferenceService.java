@@ -17,6 +17,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.graph.model.resource.PathModel;
 
 public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
 {
@@ -28,7 +29,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     /**
      * Returns the list of most frequently hinted packages (based upon JavaInlineHintModel references) within the given ProjectModel. If recursive is
      * set to true, then also include child projects.
-     * 
+     *
      * nameDepth controls how many package levels to include (com.* vs com.example.* vs com.example.sub.*)
      */
     public Map<String, Integer> getPackageUseFrequencies(ProjectModel projectModel, int nameDepth, boolean recursive)
@@ -46,7 +47,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
         // 1. Get all JavaHints for the given project
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
-        pipeline.in(FileModel.FILE_TO_PROJECT_MODEL).in(InlineHintModel.FILE_MODEL);
+        pipeline.in(PathModel.PATH_TO_PROJECT_MODEL).in(InlineHintModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
         pipeline.as("inlineHintVertex");

@@ -44,7 +44,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends AbstractRuleP
                 ProjectModel projectModel = payload.getInputPath().getProjectModel();
                 if (projectModel == null)
                 {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFullPath());
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
