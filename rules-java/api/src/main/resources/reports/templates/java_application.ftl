@@ -97,11 +97,11 @@
 					</tr>
 					<tr>
 						<td>
-						<#assign vendors = projectModelToVendors(projectModel)>
+						<#assign organizations = projectModelToOrganizations(projectModel)>
 						
-						<#if iterableHasContent(vendors)>
-							<#list vendors.iterator() as vendor>
-								${vendor.name}
+						<#if iterableHasContent(organizations)>
+							<#list organizations.iterator() as organization>
+								${organization.name}
 							</#list>
 						</#if>
 						</td>
