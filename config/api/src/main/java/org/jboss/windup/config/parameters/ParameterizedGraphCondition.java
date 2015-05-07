@@ -7,12 +7,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
@@ -21,6 +23,8 @@ import org.ocpsoft.rewrite.param.Parameterized;
 
 public abstract class ParameterizedGraphCondition extends GraphCondition implements Parameterized
 {
+    private static Logger LOG = Logging.get(ParameterizedGraphCondition.class);
+
     static final String PARAM_VALUE_STORE_MAP_KEY = ParameterizedGraphCondition.class.getName()
                 + "_parameterValueStoreMap";
     static final String RESULT_VALUE_STORE_MAP_KEY = ParameterizedGraphCondition.class.getName()
@@ -107,7 +111,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                 if (last != null)
                                 {
                                     // WHY DOES THIS HAPPEN?
-                                    System.out.println("DOES THIS STILL HAPPEN?");
+                                    LOG.warning("DOES THIS STILL HAPPEN?");
                                 }
                             }
                         }

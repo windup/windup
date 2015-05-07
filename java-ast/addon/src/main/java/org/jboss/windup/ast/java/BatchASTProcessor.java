@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -30,10 +29,11 @@ public class BatchASTProcessor
     /**
      * Process the given batch of files and pass the results back to the listener as each file is processed.
      */
-    public static void analyze(final BatchASTListener listener, final WildcardImportResolver importResolver, final Set<String> libraryPaths,
+    public static BatchASTFuture analyze(final BatchASTListener listener, final WildcardImportResolver importResolver,
+                final Set<String> libraryPaths,
                 final Set<String> sourcePaths, Set<Path> sourceFiles)
     {
-        ExecutorService executor = Executors.newFixedThreadPool(THREADPOOL_SIZE);
+        final ExecutorService executor = Executors.newFixedThreadPool(THREADPOOL_SIZE);
 
         final String[] encodings = null;
         final String[] bindingKeys = new String[0];
@@ -45,7 +45,7 @@ public class BatchASTProcessor
             {
                 try
                 {
-                    /**
+                    /*
                      * This super() call doesn't do anything, but we call it just to be nice, in case that ever changes.
                      */
                     super.acceptAST(sourcePath, ast);
@@ -72,8 +72,21 @@ public class BatchASTProcessor
                     ASTParser parser = ASTParser.newParser(AST.JLS8);
                     parser.setBindingsRecovery(false);
                     parser.setResolveBindings(true);
-                    Map<?, ?> options = JavaCore.getOptions();
+                    Map<Object, Object> options = JavaCore.getOptions();
                     JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
+                    // these options seem to slightly reduce the number of times that JDT aborts on compilation errors
+                    options.put(JavaCore.CORE_INCOMPLETE_CLASSPATH, "warning");
+                    options.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, "warning");
+                    options.put(JavaCore.COMPILER_PB_FORBIDDEN_REFERENCE, "warning");
+                    options.put(JavaCore.CORE_CIRCULAR_CLASSPATH, "warning");
+                    options.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, "warning");
+                    options.put(JavaCore.COMPILER_PB_NULL_SPECIFICATION_VIOLATION, "warning");
+                    options.put(JavaCore.CORE_JAVA_BUILD_INVALID_CLASSPATH, "ignore");
+                    options.put(JavaCore.COMPILER_PB_NULL_ANNOTATION_INFERENCE_CONFLICT, "warning");
+                    options.put(JavaCore.CORE_OUTPUT_LOCATION_OVERLAPPING_ANOTHER_SOURCE, "warning");
+
+                    parser.setCompilerOptions(options);
+
                     parser.setCompilerOptions(options);
                     parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]),
                                 sourcePaths.toArray(new String[sourcePaths.size()]),
@@ -86,20 +99,15 @@ public class BatchASTProcessor
             });
         }
 
-        try
+        executor.shutdown();
+        return new BatchASTFuture()
         {
-            executor.shutdown();
-            while (executor.awaitTermination(10, TimeUnit.SECONDS) == false)
+            @Override
+            public boolean isDone()
             {
-                /*
-                 * Shut down, then wait for termination in order to wait for all tasks to finish.
-                 */
+                return executor.isTerminated();
             }
-        }
-        catch (InterruptedException e)
-        {
-            throw new RuntimeException("Interrupted while parsing Java sources.", e);
-        }
+        };
     }
 
     private static List<List<String>> createBatches(Set<Path> sourceFiles)

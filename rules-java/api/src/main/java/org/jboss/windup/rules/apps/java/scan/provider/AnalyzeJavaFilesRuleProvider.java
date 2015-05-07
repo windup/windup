@@ -2,23 +2,28 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jboss.forge.furnace.util.Sets;
 import org.jboss.windup.ast.java.ASTProcessor;
+import org.jboss.windup.ast.java.BatchASTFuture;
 import org.jboss.windup.ast.java.BatchASTListener;
 import org.jboss.windup.ast.java.BatchASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
@@ -144,25 +149,23 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     final int totalToProcess = allSourceFiles.size();
                     final AtomicInteger numberProcessed = new AtomicInteger(0);
 
-                    final Map<Path, List<ClassReference>> processedPaths = new ConcurrentHashMap<>(allSourceFiles.size());
+                    final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(1000);
                     final Set<Path> failedPaths = Sets.getConcurrentSet();
                     BatchASTListener listener = new BatchASTListener()
                     {
                         @Override
                         public void processed(Path filePath, List<ClassReference> references)
                         {
-                            processedPaths.put(filePath, references);
+                            try
+                            {
+                                processedPaths.put(new ImmutablePair<Path, List<ClassReference>>(filePath, references));
+                            }
+                            catch (InterruptedException e)
+                            {
+                                throw new WindupException(e.getMessage(), e);
+                            }
 
                             numberProcessed.incrementAndGet();
-                            if (numberProcessed.get() % LOG_INTERVAL == 0)
-                            {
-                                LOG.info("Analyzed Java File: " + numberProcessed.get() + " / " + totalToProcess);
-                            }
-
-                            if (numberProcessed.get() % COMMIT_INTERVAL == 0)
-                            {
-                                event.getGraphContext().getGraph().getBaseGraph().commit();
-                            }
                         }
 
                         @Override
@@ -174,11 +177,22 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     };
 
                     Set<Path> filesToProcess = new TreeSet<>(allSourceFiles);
-                    BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
+                    BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
 
-                    for (Entry<Path, List<ClassReference>> entry : processedPaths.entrySet())
+                    while (!future.isDone() || !processedPaths.isEmpty())
                     {
-                        processReferences(event.getGraphContext(), entry.getKey(), entry.getValue());
+                        Pair<Path, List<ClassReference>> pair = processedPaths.poll(1000, TimeUnit.SECONDS);
+                        processReferences(event.getGraphContext(), pair.getKey(), pair.getValue());
+                        if (numberProcessed.get() % LOG_INTERVAL == 0)
+                        {
+                            LOG.info("Analyzed Java File: " + numberProcessed.get() + " / " + totalToProcess);
+                        }
+
+                        if (numberProcessed.get() % COMMIT_INTERVAL == 0)
+                        {
+                            event.getGraphContext().getGraph().getBaseGraph().commit();
+                        }
+                        filesToProcess.remove(pair.getKey());
                     }
 
                     for (Path path : failedPaths)
@@ -189,8 +203,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                     JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                     }
 
-                    filesToProcess.removeAll(processedPaths.keySet());
-                    processedPaths.clear();
 
                     if (!filesToProcess.isEmpty())
                     {
@@ -198,13 +210,13 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                          * These were rejected by the batch, so try them one file at a time because the one-at-a-time
                          * ASTParser usually succeeds where the batch failed.
                          */
-                        for (Path unprocessed : filesToProcess)
+                        for (Path unprocessed : new ArrayList<>(filesToProcess))
                         {
                             try
                             {
                                 List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
                                 processReferences(event.getGraphContext(), unprocessed, references);
-                                processedPaths.put(unprocessed, references);
+                                filesToProcess.remove(unprocessed);
                             }
                             catch (Exception e)
                             {
@@ -216,7 +228,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             }
                         }
                     }
-                    filesToProcess.removeAll(processedPaths.entrySet());
+
 
                     if (!filesToProcess.isEmpty())
                     {
