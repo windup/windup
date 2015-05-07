@@ -6,15 +6,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.furnace.util.Sets;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.BatchASTListener;
 import org.jboss.windup.ast.java.BatchASTProcessor;
@@ -87,6 +90,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
     private final class ParseSourceOperation extends GraphOperation
     {
+        final Map<Path, JavaSourceFileModel> sourcePathToFileModel = new TreeMap<>();
+
         public void perform(final GraphRewrite event, EvaluationContext context)
         {
             ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.analyzeFile");
@@ -99,7 +104,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 Iterable<JavaSourceFileModel> allJavaSourceModels = service.findAll();
 
                 final Set<Path> allSourceFiles = new TreeSet<>();
-                final Map<Path, JavaSourceFileModel> sourcePathToFileModel = new TreeMap<>();
 
                 Set<String> sourcePaths = new HashSet<>();
                 for (JavaSourceFileModel javaFile : allJavaSourceModels)
@@ -140,14 +144,14 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     final int totalToProcess = allSourceFiles.size();
                     final AtomicInteger numberProcessed = new AtomicInteger(0);
 
-                    final Set<Path> processedPaths = new HashSet<>(allSourceFiles.size());
+                    final Map<Path, List<ClassReference>> processedPaths = new ConcurrentHashMap<>(allSourceFiles.size());
+                    final Set<Path> failedPaths = Sets.getConcurrentSet();
                     BatchASTListener listener = new BatchASTListener()
                     {
                         @Override
                         public void processed(Path filePath, List<ClassReference> references)
                         {
-                            processedPaths.add(filePath);
-                            processReferences(event.getGraphContext(), sourcePathToFileModel, filePath, references);
+                            processedPaths.put(filePath, references);
 
                             numberProcessed.incrementAndGet();
                             if (numberProcessed.get() % LOG_INTERVAL == 0)
@@ -165,40 +169,54 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         public void failed(Path filePath, Throwable cause)
                         {
                             LOG.log(Level.WARNING, "Failed to process: " + filePath + " due to: " + cause.getMessage(), cause);
-                            ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                            JavaSourceFileModel sourceFileModel = sourcePathToFileModel.get(filePath);
-                            classificationService.attachClassification(sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
-                                        JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                            failedPaths.add(filePath);
                         }
                     };
 
                     Set<Path> filesToProcess = new TreeSet<>(allSourceFiles);
                     BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
-                    filesToProcess.removeAll(processedPaths);
+
+                    for (Entry<Path, List<ClassReference>> entry : processedPaths.entrySet())
+                    {
+                        processReferences(event.getGraphContext(), entry.getKey(), entry.getValue());
+                    }
+
+                    for (Path path : failedPaths)
+                    {
+                        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+                        JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), path);
+                        classificationService.attachClassification(sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
+                                    JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                    }
+
+                    filesToProcess.removeAll(processedPaths.keySet());
                     processedPaths.clear();
 
                     if (!filesToProcess.isEmpty())
                     {
-                        // try these one file at a time
+                        /*
+                         * These were rejected by the batch, so try them one file at a time because the one-at-a-time
+                         * ASTParser usually succeeds where the batch failed.
+                         */
                         for (Path unprocessed : filesToProcess)
                         {
                             try
                             {
                                 List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
-                                processReferences(event.getGraphContext(), sourcePathToFileModel, unprocessed, references);
-                                processedPaths.add(unprocessed);
+                                processReferences(event.getGraphContext(), unprocessed, references);
+                                processedPaths.put(unprocessed, references);
                             }
                             catch (Exception e)
                             {
                                 LOG.log(Level.WARNING, "Failed to process: " + unprocessed + " due to: " + e.getMessage(), e);
                                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                                JavaSourceFileModel sourceFileModel = sourcePathToFileModel.get(unprocessed);
+                                JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
                                 classificationService.attachClassification(sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                             JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                             }
                         }
                     }
-                    filesToProcess.removeAll(processedPaths);
+                    filesToProcess.removeAll(processedPaths.entrySet());
 
                     if (!filesToProcess.isEmpty())
                     {
@@ -208,7 +226,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         message.append("Failed to process " + filesToProcess.size() + " files:\n");
                         for (Path unprocessed : filesToProcess)
                         {
-                            JavaSourceFileModel sourceFileModel = sourcePathToFileModel.get(unprocessed);
+                            JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
                             message.append("\tFailed to process: " + unprocessed + "\n");
                             classificationService.attachClassification(sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                         JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
@@ -233,8 +251,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private void processReferences(GraphContext context, Map<Path, JavaSourceFileModel> sourcePathToFileModel, Path filePath,
-                    List<ClassReference> references)
+        private void processReferences(GraphContext context, Path filePath, List<ClassReference> references)
         {
             TypeReferenceService typeReferenceService = new TypeReferenceService(context);
             for (ClassReference reference : references)
@@ -243,7 +260,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 if (reference.getLocation() == TypeReferenceLocation.TYPE
                             || TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
                 {
-                    JavaSourceFileModel javaSourceModel = sourcePathToFileModel.get(filePath);
+                    JavaSourceFileModel javaSourceModel = getJavaSourceFileModel(context, filePath);
                     JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(javaSourceModel,
                                 reference.getLocation(),
                                 reference.getLineNumber(), reference.getColumn(), reference.getLength(),
@@ -256,6 +273,11 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     }
                 }
             }
+        }
+
+        private JavaSourceFileModel getJavaSourceFileModel(GraphContext context, Path filePath)
+        {
+            return GraphService.refresh(context, sourcePathToFileModel.get(filePath));
         }
 
         /**

@@ -18,7 +18,8 @@ public interface BatchASTListener
     void processed(Path filePath, List<ClassReference> classReferences);
 
     /**
-     * Called on parse failures. Note that some failures will not trigger this method, due to limitations of JDT's batch API.
+     * Called on parse failures. Note that some failures will not trigger this method, due to limitations of JDT's batch
+     * API.
      */
     void failed(Path filePath, Throwable cause);
 }

@@ -3,11 +3,9 @@ package org.jboss.windup.ast.java;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Logger;
 
@@ -56,69 +54,41 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 
 /**
- * Provides the ability to parse a Java file and return a {@link List} of {@link ClassReference} objects containing the fully qualified names of all
- * of the contained references.
+ * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects
+ * containing the fully qualified names of all of the contained references. <b>Note: A new instance of this visitor
+ * should be constructed for each {@link CompilationUnit}</b>
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ASTReferenceResolver extends ASTVisitor
+public class ReferenceResolvingVisitor extends ASTVisitor
 {
-    private static Logger LOG = Logger.getLogger(ASTReferenceResolver.class.getName());
+    private static Logger LOG = Logger.getLogger(ReferenceResolvingVisitor.class.getName());
 
     private final WildcardImportResolver wildcardImportResolver;
+
     private String path;
-    private CompilationUnit compilationUnit;
+    private final CompilationUnit compilationUnit;
+    private final List<ClassReference> classReferences = new ArrayList<>();
 
-    /**
-     * Contains all wildcard imports (import com.example.*) lines from the source file.
-     *
-     * These are used for type resolution throughout the class.
-     */
-    private final List<String> wildcardImports = new ArrayList<>();
+    private final ReferenceResolvingVisitorState state;
 
-    /**
-     * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will exist here even if no results
-     * were found.
-     */
-    private final Set<String> classNameLookedUp = new HashSet<>();
-
-    /**
-     * Contains a map of class short names (eg, MyClass) to qualified names (eg, com.example.MyClass)
-     */
-    private final Map<String, String> classNameToFQCN = new HashMap<>();
-    /**
-     * Maintains a set of all variable names that have been resolved
-     */
-    private final Set<String> names = new HashSet<String>();
-
-    /**
-     * Maintains a map of nameInstances to fully qualified class names.
-     */
-    private final Map<String, String> nameInstance = new HashMap<String, String>();
-
-    private List<ClassReference> classReferences;
-
-    public ASTReferenceResolver(WildcardImportResolver importResolver)
+    public ReferenceResolvingVisitor(WildcardImportResolver importResolver, CompilationUnit compilationUnit, String path)
     {
+        this.state = new ReferenceResolvingVisitorState();
         this.wildcardImportResolver = importResolver;
-    }
-
-    public List<ClassReference> analyze(String path, CompilationUnit compilationUnit)
-    {
         this.compilationUnit = compilationUnit;
         this.path = path;
-        this.classReferences = new ArrayList<>();
-        this.wildcardImports.clear();
-        this.classNameLookedUp.clear();
-        this.classNameToFQCN.clear();
-        this.names.clear();
-        this.nameInstance.clear();
 
-        PackageDeclaration packageDeclaration = this.compilationUnit.getPackage();
+        resolveCurrentTypeNames(compilationUnit);
+    }
+
+    private void resolveCurrentTypeNames(CompilationUnit compilationUnit)
+    {
+        PackageDeclaration packageDeclaration = compilationUnit.getPackage();
         String packageName = packageDeclaration == null ? "" : packageDeclaration.getName().getFullyQualifiedName();
         @SuppressWarnings("unchecked")
-        List<TypeDeclaration> types = this.compilationUnit.types();
+        List<TypeDeclaration> types = compilationUnit.types();
         String fqcn = null;
         if (!types.isEmpty())
         {
@@ -133,8 +103,9 @@ public class ASTReferenceResolver extends ASTVisitor
             {
                 fqcn = packageName + "." + className;
             }
-            this.classReferences.add(new ClassReference(fqcn, TypeReferenceLocation.TYPE, this.compilationUnit.getLineNumber(typeDeclaration
-                        .getStartPosition()), this.compilationUnit.getColumnNumber(this.compilationUnit.getStartPosition()), this.compilationUnit
+
+            classReferences.add(new ClassReference(fqcn, TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration
+                        .getStartPosition()), compilationUnit.getColumnNumber(compilationUnit.getStartPosition()), compilationUnit
                         .getLength(), extractDefinitionLine(typeDeclaration
                         .toString())));
 
@@ -151,24 +122,21 @@ public class ASTReferenceResolver extends ASTVisitor
                 {
                     if (superclassType.resolveBinding() != null)
                     {
-                        this.classReferences.add(new ClassReference(resolveBinding.getQualifiedName(), TypeReferenceLocation.TYPE,
-                                    this.compilationUnit
-                                .getLineNumber(typeDeclaration
-                                                            .getStartPosition()), this.compilationUnit.getColumnNumber(this.compilationUnit
+                        classReferences.add(new ClassReference(resolveBinding.getQualifiedName(), TypeReferenceLocation.TYPE,
+                                    compilationUnit
+                                                .getLineNumber(typeDeclaration
+                                                            .getStartPosition()), compilationUnit.getColumnNumber(compilationUnit
                                                 .getStartPosition()),
-                                this.compilationUnit.getLength(),
-                                extractDefinitionLine(typeDeclaration.toString())));
+                                    compilationUnit.getLength(),
+                                    extractDefinitionLine(typeDeclaration.toString())));
                     }
                     resolveBinding = resolveBinding.getSuperclass();
                 }
             }
         }
 
-        this.names.add("this");
-        this.nameInstance.put("this", fqcn);
-
-        this.compilationUnit.accept(this);
-        return this.classReferences;
+        state.getNames().add("this");
+        state.getNameInstance().put("this", fqcn);
     }
 
     private String extractDefinitionLine(String typeDeclaration)
@@ -219,14 +187,15 @@ public class ASTReferenceResolver extends ASTVisitor
     }
 
     /**
-     * The method determines if the type can be resolved and if not, will try to guess the qualified name using the information from the imports.
+     * The method determines if the type can be resolved and if not, will try to guess the qualified name using the
+     * information from the imports.
      */
     private ClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length,
                 String line)
     {
         if (type == null)
             return null;
-        
+
         ITypeBinding resolveBinding = type.resolveBinding();
         if (resolveBinding == null)
         {
@@ -255,7 +224,7 @@ public class ASTReferenceResolver extends ASTVisitor
     @Override
     public boolean visit(MethodDeclaration node)
     {
-        //register method return type
+        // register method return type
         IMethodBinding resolveBinding = node.resolveBinding();
         ITypeBinding returnType = null;
         if (resolveBinding != null)
@@ -281,11 +250,11 @@ public class ASTReferenceResolver extends ASTVisitor
         {
             for (SingleVariableDeclaration type : parameters)
             {
-                this.names.add(type.getName().toString());
+                state.getNames().add(type.getName().toString());
                 String typeName = type.getType().toString();
                 typeName = resolveClassname(typeName);
                 qualifiedArguments.add(typeName);
-                this.nameInstance.put(type.getName().toString(), typeName);
+                state.getNameInstance().put(type.getName().toString(), typeName);
                 processType(type.getType(), TypeReferenceLocation.METHOD_PARAMETER, compilationUnit.getLineNumber(node.getStartPosition()),
                             compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
             }
@@ -304,7 +273,7 @@ public class ASTReferenceResolver extends ASTVisitor
         }
 
         // register method declaration
-        MethodType methodCall = new MethodType(nameInstance.get("this"), node.getName().toString(), qualifiedArguments);
+        MethodType methodCall = new MethodType(state.getNameInstance().get("this"), node.getName().toString(), qualifiedArguments);
         processMethod(methodCall, TypeReferenceLocation.METHOD, compilationUnit.getLineNumber(node.getName().getStartPosition()),
                     compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
                     extractDefinitionLine(node.toString()));
@@ -365,8 +334,8 @@ public class ASTReferenceResolver extends ASTVisitor
             nodeType = resolveClassname(nodeType);
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             frag.resolveBinding();
-            this.names.add(frag.getName().getIdentifier());
-            this.nameInstance.put(frag.getName().toString(), nodeType.toString());
+            state.getNames().add(frag.getName().getIdentifier());
+            state.getNameInstance().put(frag.getName().toString(), nodeType.toString());
 
             processTypeBinding(node.getType().resolveBinding(), TypeReferenceLocation.FIELD_DECLARATION,
                         compilationUnit.getLineNumber(node.getStartPosition()),
@@ -464,7 +433,7 @@ public class ASTReferenceResolver extends ASTVisitor
         }
         else
         {
-            LOG.warning("Unexpected type: " + expression.getClass().getCanonicalName() + " in file: " + this.path
+            LOG.warning("Unexpected type: " + expression.getClass().getCanonicalName() + " in type: " + this.path
                         + " just attempting to use it as a string value");
             value = new AnnotationLiteralValue(String.class, expression == null ? null : expression.toString());
         }
@@ -642,8 +611,8 @@ public class ASTReferenceResolver extends ASTVisitor
             String nodeType = node.getType().toString();
             nodeType = resolveClassname(nodeType);
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
-            this.names.add(frag.getName().getIdentifier());
-            this.nameInstance.put(frag.getName().toString(), nodeType.toString());
+            state.getNames().add(frag.getName().getIdentifier());
+            state.getNameInstance().put(frag.getName().toString(), nodeType.toString());
         }
         processType(node.getType(), TypeReferenceLocation.VARIABLE_DECLARATION,
                     compilationUnit.getLineNumber(node.getStartPosition()),
@@ -657,7 +626,7 @@ public class ASTReferenceResolver extends ASTVisitor
         String name = node.getName().toString();
         if (node.isOnDemand())
         {
-            wildcardImports.add(name);
+            state.getWildcardImports().add(name);
 
             String[] resolvedNames = this.wildcardImportResolver.resolve(name);
             for (String resolvedName : resolvedNames)
@@ -669,8 +638,8 @@ public class ASTReferenceResolver extends ASTVisitor
         else
         {
             String clzName = StringUtils.substringAfterLast(name, ".");
-            classNameLookedUp.add(clzName);
-            classNameToFQCN.put(clzName, name);
+            state.getClassNameLookedUp().add(clzName);
+            state.getClassNameToFQCN().put(clzName, name);
             processImport(name, compilationUnit.getLineNumber(node.getName().getStartPosition()),
                         compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString());
         }
@@ -740,13 +709,13 @@ public class ASTReferenceResolver extends ASTVisitor
         {
             String nodeName = StringUtils.removeStart(node.toString(), "this.");
             String objRef = StringUtils.substringBefore(nodeName, "." + node.getName().toString());
-            if (nameInstance.containsKey(objRef))
+            if (state.getNameInstance().containsKey(objRef))
             {
-                objRef = nameInstance.get(objRef);
+                objRef = state.getNameInstance().get(objRef);
             }
             objRef = resolveClassname(objRef);
 
-            // not resolved binding
+            @SuppressWarnings("unchecked")
             List<Expression> arguments = node.arguments();
             for (Expression expression : arguments)
             {
@@ -764,7 +733,6 @@ public class ASTReferenceResolver extends ASTVisitor
             qualifiedInstances.add(objRef);
         }
 
-        // register all found qualified names for this method invocation
         for (String qualifiedInstance : qualifiedInstances)
         {
             MethodType methodCall = new MethodType(qualifiedInstance, node.getName().toString(), argumentsQualified);
@@ -785,7 +753,6 @@ public class ASTReferenceResolver extends ASTVisitor
     public boolean visit(ClassInstanceCreation node)
     {
         IMethodBinding constructorBinding = node.resolveConstructorBinding();
-        // ITypeBinding resolveTypeBinding = node.resolveTypeBinding();
         String qualifiedClass = "";
         List<String> constructorMethodQualifiedArguments = new ArrayList<String>();
         if (constructorBinding != null && constructorBinding.getDeclaringClass() != null)
@@ -800,6 +767,7 @@ public class ASTReferenceResolver extends ASTVisitor
 
         if (constructorMethodQualifiedArguments.isEmpty() && !node.arguments().isEmpty())
         {
+            @SuppressWarnings("unchecked")
             List<Expression> arguments = node.arguments();
             arguments.get(0).resolveTypeBinding();
             for (Expression type : arguments)
@@ -818,7 +786,9 @@ public class ASTReferenceResolver extends ASTVisitor
             }
         }
 
-        // qualified class may not be resolved in case of anonymous classes
+        /*
+         * Qualified class may not be resolved in case of anonymous classes
+         */
         if (qualifiedClass == null || qualifiedClass.equals(""))
         {
             qualifiedClass = node.getType().toString();
@@ -832,7 +802,7 @@ public class ASTReferenceResolver extends ASTVisitor
         return super.visit(node);
     }
 
-    public static class MethodType
+    private static class MethodType
     {
         private final String qualifiedName;
         private final String methodName;
@@ -851,21 +821,6 @@ public class ASTReferenceResolver extends ASTVisitor
             {
                 this.qualifiedParameters = new LinkedList<String>();
             }
-        }
-
-        public String getMethodName()
-        {
-            return methodName;
-        }
-
-        public String getQualifiedName()
-        {
-            return qualifiedName;
-        }
-
-        public List<String> getQualifiedParameters()
-        {
-            return qualifiedParameters;
         }
 
         @Override
@@ -890,7 +845,7 @@ public class ASTReferenceResolver extends ASTVisitor
         }
     }
 
-    public static class ConstructorType
+    private static class ConstructorType
     {
         private final String qualifiedName;
         private final List<String> qualifiedParameters;
@@ -907,16 +862,6 @@ public class ASTReferenceResolver extends ASTVisitor
                 this.qualifiedParameters = new LinkedList<String>();
             }
 
-        }
-
-        public String getQualifiedName()
-        {
-            return qualifiedName;
-        }
-
-        public List<String> getQualifiedParameters()
-        {
-            return qualifiedParameters;
         }
 
         @Override
@@ -948,7 +893,7 @@ public class ASTReferenceResolver extends ASTVisitor
         {
             if (o instanceof SimpleName)
             {
-                String name = nameInstance.get(o.toString());
+                String name = state.getNameInstance().get(o.toString());
                 if (name != null)
                 {
                     resolvedParams.add(name);
@@ -965,9 +910,9 @@ public class ASTReferenceResolver extends ASTVisitor
             else if (o instanceof FieldAccess)
             {
                 String field = ((FieldAccess) o).getName().toString();
-                if (names.contains(field))
+                if (state.getNames().contains(field))
                 {
-                    resolvedParams.add(nameInstance.get(field));
+                    resolvedParams.add(state.getNameInstance().get(field));
                 }
                 else
                 {
@@ -1050,36 +995,34 @@ public class ASTReferenceResolver extends ASTVisitor
 
     private String resolveClassname(String sourceClassname)
     {
-        // If the type contains a "." assume that it is fully qualified.
-        // FIXME - This is a carryover from the original Windup code, and I don't think
-        // that this assumption is valid.
+        /*
+         * If the type contains a "." assume that it is fully qualified.
+         * 
+         * FIXME - This is a carryover from the original Windup code, and I don't think that this assumption is valid.
+         */
         if (!StringUtils.contains(sourceClassname, "."))
         {
-            // Check if we have already looked this one up
-            if (classNameLookedUp.contains(sourceClassname))
+            if (state.getClassNameLookedUp().contains(sourceClassname))
             {
-                // if yes, then just use the looked up name from the map
-                String qualifiedName = classNameToFQCN.get(sourceClassname);
+                String qualifiedName = state.getClassNameToFQCN().get(sourceClassname);
                 if (qualifiedName != null)
                 {
                     return qualifiedName;
                 }
                 else
                 {
-                    // otherwise, just return the provided name (unchanged)
                     return sourceClassname;
                 }
             }
             else
             {
-                classNameLookedUp.add(sourceClassname);
-                String resolvedClassName = this.wildcardImportResolver.resolve(this.wildcardImports, sourceClassname);
+                state.getClassNameLookedUp().add(sourceClassname);
+                String resolvedClassName = this.wildcardImportResolver.resolve(this.state.getWildcardImports(), sourceClassname);
                 if (resolvedClassName != null)
                 {
-                    classNameToFQCN.put(sourceClassname, resolvedClassName);
+                    state.getClassNameToFQCN().put(sourceClassname, resolvedClassName);
                     return resolvedClassName;
                 }
-                // nothing was found, so just return the original value
                 return sourceClassname;
             }
         }
@@ -1091,11 +1034,13 @@ public class ASTReferenceResolver extends ASTVisitor
 
     private String qualifyType(String objRef)
     {
-        // temporarily remove to resolve arrays
+        /*
+         * Temporarily remove '[]' to resolve array types.
+         */
         objRef = StringUtils.removeEnd(objRef, "[]");
-        if (nameInstance.containsKey(objRef))
+        if (state.getNameInstance().containsKey(objRef))
         {
-            objRef = nameInstance.get(objRef);
+            objRef = state.getNameInstance().get(objRef);
         }
         objRef = resolveClassname(objRef);
         return objRef;
