@@ -85,10 +85,19 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         for (OverviewReportLineMessageModel find : findAll)
         {
             String projectPrettyPath = projectModel.getRootFileModel().getPrettyPath();
+            if (projectPrettyPath == null)
+            {
+                throw new WindupException("Path for project: " + projectModel + " evaluated to null!");
+            }
+
             ProjectModel project = find.getProject();
             boolean found = false;
             while (project != null && !found)
             {
+                if (project.getRootFileModel() == null)
+                {
+                    throw new WindupException("Root file for project: " + project + " evaluated to null!");
+                }
                 if (projectPrettyPath.equals(project.getRootFileModel().getPrettyPath()))
                 {
                     applicationReportModel.addApplicationReportLine(find);

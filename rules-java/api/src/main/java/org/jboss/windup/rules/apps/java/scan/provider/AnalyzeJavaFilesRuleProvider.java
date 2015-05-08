@@ -181,7 +181,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                     while (!future.isDone() || !processedPaths.isEmpty())
                     {
-                        Pair<Path, List<ClassReference>> pair = processedPaths.poll(1000, TimeUnit.SECONDS);
+                        Pair<Path, List<ClassReference>> pair = processedPaths.poll(250, TimeUnit.MILLISECONDS);
                         processReferences(event.getGraphContext(), pair.getKey(), pair.getValue());
                         if (numberProcessed.get() % LOG_INTERVAL == 0)
                         {
@@ -203,12 +203,11 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                     JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                     }
 
-
                     if (!filesToProcess.isEmpty())
                     {
                         /*
-                         * These were rejected by the batch, so try them one file at a time because the one-at-a-time
-                         * ASTParser usually succeeds where the batch failed.
+                         * These were rejected by the batch, so try them one file at a time because the one-at-a-time ASTParser usually succeeds where
+                         * the batch failed.
                          */
                         for (Path unprocessed : new ArrayList<>(filesToProcess))
                         {
@@ -228,7 +227,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             }
                         }
                     }
-
 
                     if (!filesToProcess.isEmpty())
                     {
@@ -263,26 +261,36 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private void processReferences(GraphContext context, Path filePath, List<ClassReference> references)
+        private List<ClassReference> filterClassReferences(List<ClassReference> references)
         {
-            TypeReferenceService typeReferenceService = new TypeReferenceService(context);
+            List<ClassReference> results = new ArrayList<>(references.size());
             for (ClassReference reference : references)
             {
                 // we are always interested in types + anything that the TypeInterestFactory has registered
                 if (reference.getLocation() == TypeReferenceLocation.TYPE
                             || TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
                 {
-                    JavaSourceFileModel javaSourceModel = getJavaSourceFileModel(context, filePath);
-                    JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(javaSourceModel,
-                                reference.getLocation(),
-                                reference.getLineNumber(), reference.getColumn(), reference.getLength(),
-                                reference.getQualifiedName(),
-                                reference.getLine());
-                    if (reference instanceof AnnotationClassReference)
-                    {
-                        Map<String, AnnotationValue> annotationValues = ((AnnotationClassReference) reference).getAnnotationValues();
-                        addAnnotationValues(context, typeReference, annotationValues);
-                    }
+                    results.add(reference);
+                }
+            }
+            return results;
+        }
+
+        private void processReferences(GraphContext context, Path filePath, List<ClassReference> references)
+        {
+            TypeReferenceService typeReferenceService = new TypeReferenceService(context);
+            for (ClassReference reference : references)
+            {
+                JavaSourceFileModel javaSourceModel = getJavaSourceFileModel(context, filePath);
+                JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(javaSourceModel,
+                            reference.getLocation(),
+                            reference.getLineNumber(), reference.getColumn(), reference.getLength(),
+                            reference.getQualifiedName(),
+                            reference.getLine());
+                if (reference instanceof AnnotationClassReference)
+                {
+                    Map<String, AnnotationValue> annotationValues = ((AnnotationClassReference) reference).getAnnotationValues();
+                    addAnnotationValues(context, typeReference, annotationValues);
                 }
             }
         }
