@@ -1,5 +1,8 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -79,18 +82,22 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         applicationReportModel.setDisplayInApplicationList(true);
-        GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<OverviewReportLineMessageModel>(context,
-                    OverviewReportLineMessageModel.class);
-        Iterable<OverviewReportLineMessageModel> findAll = lineNotesService.findAll();
-        for (OverviewReportLineMessageModel find : findAll)
+        GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<>(context, OverviewReportLineMessageModel.class);
+        Iterable<OverviewReportLineMessageModel> allLines = lineNotesService.findAll();
+        Set<String> dupeCheck = new HashSet<>();
+
+        for (OverviewReportLineMessageModel line : allLines)
         {
+            if (dupeCheck.contains(line.getMessage()))
+                continue;
+
             String projectPrettyPath = projectModel.getRootFileModel().getPrettyPath();
             if (projectPrettyPath == null)
             {
                 throw new WindupException("Path for project: " + projectModel + " evaluated to null!");
             }
 
-            ProjectModel project = find.getProject();
+            ProjectModel project = line.getProject();
             boolean found = false;
             while (project != null && !found)
             {
@@ -100,7 +107,8 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
                 }
                 if (projectPrettyPath.equals(project.getRootFileModel().getPrettyPath()))
                 {
-                    applicationReportModel.addApplicationReportLine(find);
+                    dupeCheck.add(line.getMessage());
+                    applicationReportModel.addApplicationReportLine(line);
                     found = true;
                 }
                 else

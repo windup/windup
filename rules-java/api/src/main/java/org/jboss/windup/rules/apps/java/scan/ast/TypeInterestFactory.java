@@ -59,7 +59,7 @@ public final class TypeInterestFactory
 
     // cache these lookups in an LRU cache, as there are frequent duplicates (and the regex comparisons are much slower
     // than a cache lookup)
-    private static LRUMap resultsCache = new LRUMap(8000);
+    private static Map<String, Boolean> resultsCache = Collections.synchronizedMap(new LRUMap(8000));
     private static AtomicLong cacheLookupCount = new AtomicLong(0);
     private static AtomicLong cacheHitCount = new AtomicLong(0);
 

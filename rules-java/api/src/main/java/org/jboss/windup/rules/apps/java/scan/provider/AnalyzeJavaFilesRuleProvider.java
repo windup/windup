@@ -166,8 +166,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             {
                                 throw new WindupException(e.getMessage(), e);
                             }
-
-                            numberProcessed.incrementAndGet();
                         }
 
                         @Override
@@ -183,9 +181,15 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                     while (!future.isDone() || !processedPaths.isEmpty())
                     {
-                        LOG.info("Queue size: " + processedPaths.size() + " / " + ANALYSIS_QUEUE_SIZE);
+                        if (processedPaths.size() > (ANALYSIS_QUEUE_SIZE / 2))
+                            LOG.info("Queue size: " + processedPaths.size() + " / " + ANALYSIS_QUEUE_SIZE);
                         Pair<Path, List<ClassReference>> pair = processedPaths.poll(250, TimeUnit.MILLISECONDS);
+                        if (pair == null)
+                            continue;
+
                         processReferences(event.getGraphContext(), pair.getKey(), pair.getValue());
+
+                        numberProcessed.incrementAndGet();
                         if (numberProcessed.get() % LOG_INTERVAL == 0)
                         {
                             LOG.info("Analyzed Java File: " + numberProcessed.get() + " / " + totalToProcess);
@@ -217,7 +221,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             try
                             {
                                 List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
-                                processReferences(event.getGraphContext(), unprocessed, references);
+                                processReferences(event.getGraphContext(), unprocessed, filterClassReferences(references));
                                 filesToProcess.remove(unprocessed);
                             }
                             catch (Exception e)
@@ -276,7 +280,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     results.add(reference);
                 }
             }
-            LOG.info("Filtered " + references.size() + " to " + results.size());
             return results;
         }
 
