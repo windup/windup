@@ -95,6 +95,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
     private final class ParseSourceOperation extends GraphOperation
     {
+        private static final int ANALYSIS_QUEUE_SIZE = 5000;
+
         final Map<Path, JavaSourceFileModel> sourcePathToFileModel = new TreeMap<>();
 
         public void perform(final GraphRewrite event, EvaluationContext context)
@@ -149,7 +151,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     final int totalToProcess = allSourceFiles.size();
                     final AtomicInteger numberProcessed = new AtomicInteger(0);
 
-                    final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(1000);
+                    final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
                     final Set<Path> failedPaths = Sets.getConcurrentSet();
                     BatchASTListener listener = new BatchASTListener()
                     {
@@ -158,7 +160,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         {
                             try
                             {
-                                processedPaths.put(new ImmutablePair<Path, List<ClassReference>>(filePath, references));
+                                processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references)));
                             }
                             catch (InterruptedException e)
                             {
@@ -181,6 +183,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                     while (!future.isDone() || !processedPaths.isEmpty())
                     {
+                        LOG.info("Queue size: " + processedPaths.size() + " / " + ANALYSIS_QUEUE_SIZE);
                         Pair<Path, List<ClassReference>> pair = processedPaths.poll(250, TimeUnit.MILLISECONDS);
                         processReferences(event.getGraphContext(), pair.getKey(), pair.getValue());
                         if (numberProcessed.get() % LOG_INTERVAL == 0)
@@ -273,6 +276,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     results.add(reference);
                 }
             }
+            LOG.info("Filtered " + references.size() + " to " + results.size());
             return results;
         }
 

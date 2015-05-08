@@ -114,7 +114,7 @@ public final class TypeInterestFactory
         if (lookupCount % 100000L == 0)
         {
             long hitPercentage = Math.round(((double) hitCount / (double) lookupCount) * 100);
-            LOG.info("There have been " + lookupCount + " lookups with " + hitCount
+            LOG.fine("There have been " + lookupCount + " lookups with " + hitCount
                         + " hits, for a hit percentage of: " + hitPercentage);
         }
         return cachedResult;
@@ -155,7 +155,8 @@ public final class TypeInterestFactory
                 if (shouldAdd)
                 {
                     /*
-                     * For now, surround with .* to ensure that regexes will match some of the messier references that the type visitor report.
+                     * For now, surround with .* to ensure that regexes will match some of the messier references that
+                     * the type visitor report.
                      */
                     result.put(entryRegex, Pattern.compile(".*" + entryRegex + ".*"));
                 }
@@ -199,7 +200,7 @@ public final class TypeInterestFactory
         if (totalPrescans.get() % 25000 == 0)
         {
             int perc = (int) (((double) totalPrescanHits.get() / (double) totalPrescans.get()) * 100);
-            LOG.info("Prescan hit ratio " + totalPrescanHits.get() + " / " + totalPrescans.get() + "; " + perc + "%");
+            LOG.fine("Prescan hit ratio " + totalPrescanHits.get() + " / " + totalPrescans.get() + "; " + perc + "%");
         }
 
         if (!foundPotentialMatch)
