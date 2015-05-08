@@ -134,7 +134,7 @@
 			<#assign lineNumber = hintLine.lineNumber>
 			
 			<#compress>
-			$("<a name='${hintLine.hashCode()?c}'></a><#t>
+			$("<a name='${hintLine.asVertex().getId()?c}'></a><#t>
 				<div class='inline-source-comment green'><#t>
 					<#if hintLine.hint?has_content>
 						<div class='inline-comment'><#t>
