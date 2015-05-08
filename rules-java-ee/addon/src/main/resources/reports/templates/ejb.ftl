@@ -41,7 +41,7 @@
     	<td>
     		<@renderLinksToClass mdb.ejbClass.qualifiedName/>
     	</td>
-    	<td>${mdb.destination!""}</td>
+    	<td><#if mdb.destination??>${mdb.destination.jndiLocation}</#if></td>
 	</tr>
 </#macro>
 
@@ -51,12 +51,15 @@
         <td>
             <@fileSourceLink ejb.ejbDeploymentDescriptor!"" ejb.beanName!""/>
         </td>
+        <td>${ejb.sessionType!""}</td>
         <td>
             <#if ejb.ejbClass??>
                 <@renderLinksToClass ejb.ejbClass.qualifiedName/>
             </#if>
         </td>
-        <td>${ejb.sessionType!""}</td>
+        <td>
+        	<#if ejb.jndiReference??>${ejb.jndiReference.jndiLocation}</#if>
+        </td>
     </tr>
 </#macro>
 
@@ -139,7 +142,7 @@
 			        </div>
 					<table class="table table-striped table-bordered" id="mdbTable">
 						<tr>
-							<th>MDB Name</th><th>Class</th><th>Queue</th>
+							<th>MDB Name</th><th>Class</th><th>JMS Destination</th>
 						</tr>
 						<#list reportModel.relatedResources.mdb.list.iterator() as mdb>
 							<@mdbRenderer mdb />
@@ -155,7 +158,7 @@
 			        </div>
 					<table class="table table-striped table-bordered" id="statelessTable">
 						<tr>
-							<th>Bean Name</th><th>Class</th><th>Type</th>
+							<th>Bean Name</th><th>Type</th><th>Class</th><th>JNDI Location</th>
 						</tr>
 						<#list reportModel.relatedResources.stateless.list.iterator() as statelessBean>
 							<@ejbRenderer statelessBean/>
@@ -171,7 +174,7 @@
 			        </div>
 			        <table class="table table-striped table-bordered" id="statefulTable">
 			            <tr>
-			              <th>Bean Name</th><th>Class</th><th>Type</th>
+			              <th>Bean Name</th><th>Type</th><th>Class</th><th>JNDI Location</th>
 			            </tr>
 						<#list reportModel.relatedResources.stateful.list.iterator() as statefulBean>
 			            	<@ejbRenderer statefulBean/>
