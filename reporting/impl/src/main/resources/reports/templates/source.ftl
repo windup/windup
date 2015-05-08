@@ -36,7 +36,7 @@
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>Source Report<span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.sourceFileModel.prettyPath}</small></h1>
+				<h1>Source Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.sourceFileModel.prettyPath}</small></h1>
 			</div>
 		</div>
 		
@@ -134,7 +134,7 @@
 			<#assign lineNumber = hintLine.lineNumber>
 			
 			<#compress>
-			$("<a name='${hintLine.hashCode()?c}'></a><#t>
+			$("<a name='${hintLine.asVertex().getId()?c}'></a><#t>
 				<div class='inline-source-comment green'><#t>
 					<#if hintLine.hint?has_content>
 						<div class='inline-comment'><#t>

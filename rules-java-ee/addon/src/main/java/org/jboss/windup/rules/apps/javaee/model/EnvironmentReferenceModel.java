@@ -1,7 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
@@ -34,6 +37,7 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
     /**
      * The reference's name
      */
+    @Indexed
     @Property(NAME)
     public String getName();
 
@@ -54,4 +58,12 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
      */
     @Property(REFERENCE_TYPE)
     public void setReferenceType(String referenceType);
+    
+    
+    @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
+    public JNDIResourceModel getJNDIReference();
+    
+    @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
+    public void setJNDIReference(JNDIResourceModel jndiReference);
+
 }

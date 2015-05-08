@@ -3,13 +3,12 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 
+import freemarker.core.CollectionAndSequence;
 import freemarker.ext.beans.BeanModel;
-import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
 

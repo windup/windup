@@ -30,6 +30,7 @@ import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvid
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
+import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -182,7 +183,12 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         EjbMessageDrivenModel messageDrivenBean = messageDrivenService.create();
         messageDrivenBean.setBeanName(ejbName);
         messageDrivenBean.setEjbClass(ejbClass);
-        messageDrivenBean.setDestination(destination);
+        
+        if(StringUtils.isNotBlank(destination)) {
+            JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
+            messageDrivenBean.setDestination(jmsDestinationService.createUnique(destination));
+        }
+        
     }
 
     private String getDestinationFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel)
