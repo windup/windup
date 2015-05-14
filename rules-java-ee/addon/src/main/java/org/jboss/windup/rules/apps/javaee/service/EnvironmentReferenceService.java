@@ -1,5 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
+import java.util.logging.Logger;
+
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -16,6 +18,8 @@ import com.tinkerpop.blueprints.GraphQuery;
  */
 public class EnvironmentReferenceService extends GraphService<EnvironmentReferenceModel>
 {
+    private static final Logger LOG = Logger.getLogger(EnvironmentReferenceService.class.getSimpleName());
+    
     protected JNDIResourceService jndiResourceService;
     
     public EnvironmentReferenceService(GraphContext context)
@@ -33,6 +37,7 @@ public class EnvironmentReferenceService extends GraphService<EnvironmentReferen
     
     public void associateEnvironmentToJndi(GraphRewrite event, JNDIResourceModel resource, EnvironmentReferenceModel ref)
     {
+        LOG.info("Associating JNDI: "+resource+" to Environmental Ref: "+ref.getName()+", "+ref.getReferenceId()+", "+ref.getReferenceType());
         //hook up the JNDI resource to the environment reference
         if(ref.getJNDIReference() == null) {
             ref.setJNDIReference(resource);

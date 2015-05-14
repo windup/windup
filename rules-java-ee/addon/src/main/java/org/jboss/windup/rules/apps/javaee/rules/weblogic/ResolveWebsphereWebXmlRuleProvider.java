@@ -71,11 +71,15 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
             String resourceId = $(resourceRef).child("bindingResourceRef").attr("href");
             resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
             
-            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
             
-            //now, look up the resource
-            for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId)) {
-                envRefService.associateEnvironmentToJndi(event, resource, ref);
+            
+            if(StringUtils.isNotBlank(jndiLocation)) {
+                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+                LOG.info("JNDI: "+jndiLocation+" Resource: "+resourceId);
+                //now, look up the resource
+                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId)) {
+                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                }
             }
             
         }

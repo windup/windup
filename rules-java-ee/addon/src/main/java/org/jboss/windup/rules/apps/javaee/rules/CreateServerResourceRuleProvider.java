@@ -1,7 +1,9 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -26,6 +28,7 @@ import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsConnectionFactoryModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.rules.apps.javaee.service.DataSourceService;
+import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.rules.apps.javaee.service.JmsConnectionFactoryService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
 import org.jboss.windup.util.Logging;
@@ -97,31 +100,39 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         DataSourceService datasourceService = new DataSourceService(context);
-        JmsDestinationService jmsService = new JmsDestinationService(context);
-        JmsConnectionFactoryService jmsConnectionFactoryService = new JmsConnectionFactoryService(context);
+        JNDIResourceService jndiResourceService = new JNDIResourceService(context);
         GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
 
         WindupVertexListModel datasourceList = listService.create();
         WindupVertexListModel jmsList = listService.create();
         WindupVertexListModel jmsConnectionFactoryList = listService.create();
+        WindupVertexListModel otherJndiList = listService.create();
         
-        for (DataSourceModel datasourceConfig : datasourceService.findAll())
-        {
-            datasourceList.addItem(datasourceConfig);
-        }
-        for (JmsDestinationModel jmsDestination : jmsService.findAll())
-        {
-            jmsList.addItem(jmsDestination);
-        }
-        for (JmsConnectionFactoryModel jmsConnectionFactory: jmsConnectionFactoryService.findAll())
-        {
-            jmsConnectionFactoryList.addItem(jmsConnectionFactory);
+        
+        for(JNDIResourceModel jndi : jndiResourceService.findAll()) {
+            if(jndi instanceof DataSourceModel)
+            {
+                datasourceList.addItem((DataSourceModel)jndi);
+            }
+            else if(jndi instanceof JmsDestinationModel)
+            {
+                jmsList.addItem((JmsDestinationModel)jndi);
+            }
+            else if(jndi instanceof JmsConnectionFactoryModel)
+            {
+                jmsConnectionFactoryList.addItem((JmsConnectionFactoryModel)jndi);
+            }
+            else 
+            {
+                otherJndiList.addItem(jndi);
+            }
         }
         
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(2);
         additionalData.put("datasources", datasourceList);
         additionalData.put("jmsDestinations", jmsList);
         additionalData.put("jmsConnectionFactories", jmsConnectionFactoryList);
+        additionalData.put("otherResources", otherJndiList);
         applicationReportModel.setRelatedResource(additionalData);
 
         // Set the filename for the report

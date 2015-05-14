@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -14,6 +15,7 @@ import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
+import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverWebXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
@@ -69,11 +71,14 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String resourceName = $(resourceRef).child("res-ref-name").text();
             
-            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-            
-            //now, look up the resource
-            for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
-                envRefService.associateEnvironmentToJndi(event, resource, ref);
+            if(StringUtils.isNotBlank(jndiLocation)) {
+                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+                
+                LOG.info("JNDI: "+jndiLocation+" Resource: "+resourceName);
+                //now, look up the resource by name, and associate the type which is resolved by DiscoverWebXmlRuleProvider
+                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
+                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                }
             }
             
         }

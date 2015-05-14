@@ -114,6 +114,24 @@
 			    	</div>
 			</#if>
 			
+			<#if reportModel.relatedResources.otherResources.list.iterator()?has_content>
+					<div class="panel panel-primary">
+			            <div class="panel-heading">
+			                <h3 class="panel-title">Other JNDI Entries</h3>
+			            </div>
+			            <table class="table table-striped table-bordered">
+			        	<tr>
+			        		<th>JNDI Location</th>
+			        	</tr>
+			    		<#list reportModel.relatedResources.otherResources.list.iterator() as other>
+			    			<tr>
+								<td>${other.jndiLocation}</td>
+			    			</tr>
+					    </#list>
+			    		</table>
+			    	</div>
+			</#if>
+			
 	    </div> <!-- /container -->
 	</div><!--/row-->
 	

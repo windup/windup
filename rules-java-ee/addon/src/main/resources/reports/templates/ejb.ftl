@@ -41,7 +41,7 @@
     	<td>
     		<@renderLinksToClass mdb.ejbClass.qualifiedName/>
     	</td>
-    	<td>${mdb.destination!""}</td>
+    	<td><#if mdb.destination??>${mdb.destination.jndiLocation}</#if></td>
 	</tr>
 </#macro>
 
@@ -139,7 +139,7 @@
 			        </div>
 					<table class="table table-striped table-bordered" id="mdbTable">
 						<tr>
-							<th>MDB Name</th><th>Class</th><th>Queue</th>
+							<th>MDB Name</th><th>Class</th><th>JMS Destination</th>
 						</tr>
 						<#list reportModel.relatedResources.mdb.list.iterator() as mdb>
 							<@mdbRenderer mdb />

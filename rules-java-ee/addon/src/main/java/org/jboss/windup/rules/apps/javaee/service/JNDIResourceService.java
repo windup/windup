@@ -38,23 +38,26 @@ public class JNDIResourceService extends GraphService<JNDIResourceModel>
     }
     
     public void associateTypeJndiResource(JNDIResourceModel resource, String type) {
-      //now, type the resource
+        if(type == null || resource == null) {
+            return;
+        }
+        
         if(StringUtils.equals(type, "javax.sql.DataSource") && !(resource instanceof DataSourceModel)) {
             DataSourceModel ds = GraphService.addTypeToModel(this.getGraphContext(), resource, DataSourceModel.class);
         }
-        if(StringUtils.equals(type, "javax.jms.Queue") && !(resource instanceof JmsDestinationModel)) {
+        else if(StringUtils.equals(type, "javax.jms.Queue") && !(resource instanceof JmsDestinationModel)) {
             JmsDestinationModel jms = GraphService.addTypeToModel(this.getGraphContext(), resource, JmsDestinationModel.class);
             jms.setDestinationType(JmsDestinationType.QUEUE);
         }
-        if(StringUtils.equals(type, "javax.jms.QueueConnectionFactory") && !(resource instanceof JmsConnectionFactoryModel)) {
+        else if(StringUtils.equals(type, "javax.jms.QueueConnectionFactory") && !(resource instanceof JmsConnectionFactoryModel)) {
             JmsConnectionFactoryModel jms = GraphService.addTypeToModel(this.getGraphContext(), resource, JmsConnectionFactoryModel.class);
             jms.setConnectionFactoryType(JmsDestinationType.QUEUE);
         }
-        if(StringUtils.equals(type, "javax.jms.Topic") && !(resource instanceof JmsDestinationModel)) {
+        else if(StringUtils.equals(type, "javax.jms.Topic") && !(resource instanceof JmsDestinationModel)) {
             JmsDestinationModel jms = GraphService.addTypeToModel(this.getGraphContext(), resource, JmsDestinationModel.class);
             jms.setDestinationType(JmsDestinationType.TOPIC);
         }
-        if(StringUtils.equals(type, "javax.jms.TopicConnectionFactory") && !(resource instanceof JmsConnectionFactoryModel)) {
+        else if(StringUtils.equals(type, "javax.jms.TopicConnectionFactory") && !(resource instanceof JmsConnectionFactoryModel)) {
             JmsConnectionFactoryModel jms = GraphService.addTypeToModel(this.getGraphContext(), resource, JmsConnectionFactoryModel.class);
             jms.setConnectionFactoryType(JmsDestinationType.TOPIC);
         }
