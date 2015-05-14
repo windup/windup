@@ -78,8 +78,8 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
 
 
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public JNDIResourceModel getJNDIReference();
+    public JNDIResourceModel getJndiReference();
     
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public void setJNDIReference(JNDIResourceModel jndiReference);
+    public void setJndiReference(JNDIResourceModel jndiReference);
 }

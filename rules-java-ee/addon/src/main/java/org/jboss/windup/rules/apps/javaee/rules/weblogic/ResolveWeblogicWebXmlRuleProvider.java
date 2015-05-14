@@ -15,6 +15,7 @@ import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
+import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverWebXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
@@ -26,18 +27,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Discovers Websphere Web XML files and parses the related metadata
+ * Discovers Weblogic Web XML files and parses the related metadata
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebsphereWebXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWeblogicWebXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWebsphereWebXmlRuleProvider()
+    public ResolveWeblogicWebXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWebsphereWebXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWeblogicWebXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverWebXmlRuleProvider.class));
     }
@@ -45,13 +46,13 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
     @Override
     public String toStringPerform()
     {
-        return "Discover IBM Websphere Web Binding Files";
+        return "Discover Weblogic Web Files";
     }
 
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.FILE_NAME, "ibm-web-bnd.xmi");
+        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "weblogic-web-app");
     }
 
     @Override
@@ -65,19 +66,17 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Websphere Web XML", TechnologyTagLevel.IMPORTANT);
-        for (Element resourceRef : $(doc).find("resRefBindings").get()) {
-            String jndiLocation = $(resourceRef).attr("jndiName");
-            String resourceId = $(resourceRef).child("bindingResourceRef").attr("href");
-            resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
-            
-            
+        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Weblogic Web XML", TechnologyTagLevel.IMPORTANT);
+        for (Element resourceRef : $(doc).find("resource-description").get()) {
+            String jndiLocation = $(resourceRef).child("jndi-name").text();
+            String resourceName = $(resourceRef).child("res-ref-name").text();
             
             if(StringUtils.isNotBlank(jndiLocation)) {
                 JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI: "+jndiLocation+" Resource: "+resourceId);
-                //now, look up the resource
-                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId)) {
+                
+                LOG.info("JNDI: "+jndiLocation+" Resource: "+resourceName);
+                //now, look up the resource by name, and associate the type which is resolved by DiscoverWebXmlRuleProvider
+                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
                     envRefService.associateEnvironmentToJndi(event, resource, ref);
                 }
             }
@@ -86,5 +85,6 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
 
     }
 
+    
 
 }
