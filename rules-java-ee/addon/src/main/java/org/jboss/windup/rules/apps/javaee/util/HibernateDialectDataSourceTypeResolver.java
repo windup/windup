@@ -2,6 +2,12 @@ package org.jboss.windup.rules.apps.javaee.util;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * Resolves a Hibernate Dialect to a Database Type.
+ * 
+ * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
+ *
+ */
 public class HibernateDialectDataSourceTypeResolver
 {
     public static String resolveDataSourceTypeFromDialect(String dialect) {

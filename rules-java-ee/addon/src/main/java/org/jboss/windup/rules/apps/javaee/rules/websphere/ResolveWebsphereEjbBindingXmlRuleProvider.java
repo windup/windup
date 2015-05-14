@@ -10,6 +10,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -36,13 +37,13 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWebsphereEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebsphereEjbXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebsphereEjbBindingXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWebsphereEjbXmlRuleProvider()
+    public ResolveWebsphereEjbBindingXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWebsphereEjbXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWebsphereEjbBindingXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverEjbConfigurationXmlRuleProvider.class));
     }
@@ -56,7 +57,8 @@ public class ResolveWebsphereEjbXmlRuleProvider extends IteratingRuleProvider<Xm
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarBinding");
+        
+        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-ejb-jar-bnd.xmi").withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarBinding");
     }
 
     @Override
