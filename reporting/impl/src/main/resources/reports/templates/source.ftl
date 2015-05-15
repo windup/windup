@@ -36,7 +36,7 @@
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>Source Report<span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.sourceFileModel.prettyPath}</small></h1>
+				<h1>Source Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.sourceFileModel.prettyPath}</small></h1>
 			</div>
 		</div>
 		
