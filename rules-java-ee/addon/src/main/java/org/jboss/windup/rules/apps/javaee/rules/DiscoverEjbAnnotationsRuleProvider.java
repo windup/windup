@@ -118,7 +118,8 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        String sessionType = javaTypeReference.getResolvedSourceSnippit().substring(javaTypeReference.getResolvedSourceSnippit().lastIndexOf(".") + 1);
+        String sessionType = javaTypeReference.getResolvedSourceSnippit()
+                    .substring(javaTypeReference.getResolvedSourceSnippit().lastIndexOf(".") + 1);
 
         Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();
@@ -183,12 +184,13 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         EjbMessageDrivenModel messageDrivenBean = messageDrivenService.create();
         messageDrivenBean.setBeanName(ejbName);
         messageDrivenBean.setEjbClass(ejbClass);
-        
-        if(StringUtils.isNotBlank(destination)) {
+
+        if (StringUtils.isNotBlank(destination))
+        {
             JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
             messageDrivenBean.setDestination(jmsDestinationService.createUnique(destination));
         }
-        
+
     }
 
     private String getDestinationFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel)

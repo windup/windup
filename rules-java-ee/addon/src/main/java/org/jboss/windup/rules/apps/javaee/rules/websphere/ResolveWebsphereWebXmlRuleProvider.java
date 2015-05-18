@@ -62,29 +62,28 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
-        
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Websphere Web XML", TechnologyTagLevel.IMPORTANT);
-        for (Element resourceRef : $(doc).find("resRefBindings").get()) {
+        for (Element resourceRef : $(doc).find("resRefBindings").get())
+        {
             String jndiLocation = $(resourceRef).attr("jndiName");
             String resourceId = $(resourceRef).child("bindingResourceRef").attr("href");
             resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
-            
-            
-            
-            if(StringUtils.isNotBlank(jndiLocation)) {
+
+            if (StringUtils.isNotBlank(jndiLocation))
+            {
                 JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI: "+jndiLocation+" Resource: "+resourceId);
-                //now, look up the resource
-                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId)) {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceId);
+                // now, look up the resource
+                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
+                {
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
-            
+
         }
 
     }
-
 
 }

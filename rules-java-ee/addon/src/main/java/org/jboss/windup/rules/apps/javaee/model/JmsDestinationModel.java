@@ -5,6 +5,9 @@ import org.jboss.windup.graph.Indexed;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * Represents a JMS Message destination.
+ */
 @TypeValue(JmsDestinationModel.TYPE)
 public interface JmsDestinationModel extends JNDIResourceModel
 {
@@ -25,10 +28,16 @@ public interface JmsDestinationModel extends JNDIResourceModel
     @Property(DESTINATION_TYPE)
     public void setDestinationType(JmsDestinationType type);
 
+    /**
+     * Contains the name of the destination.
+     */
     @Indexed
     @Property(NAME)
     public void getDestinationName(String destinationName);
-    
+
+    /**
+     * Contains the name of the destination.
+     */
     @Property(NAME)
     public void setDestinationName(String destinationName);
 }

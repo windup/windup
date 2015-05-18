@@ -42,7 +42,8 @@ public class ResolveWebsphereWsBindingXmlRuleProvider extends IteratingRuleProvi
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-webservicesclient-bnd.xmi").withProperty(XmlFileModel.ROOT_TAG_NAME, "ClientBinding");
+        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-webservicesclient-bnd.xmi")
+                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "ClientBinding");
     }
 
     @Override
@@ -50,12 +51,10 @@ public class ResolveWebsphereWsBindingXmlRuleProvider extends IteratingRuleProvi
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         classificationService.attachClassification(payload, "Websphere WS Binding", "Websphere Webservice Binding XML Descriptor.");
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere WS Binding", TechnologyTagLevel.IMPORTANT);
 
     }
-
-    
 
 }

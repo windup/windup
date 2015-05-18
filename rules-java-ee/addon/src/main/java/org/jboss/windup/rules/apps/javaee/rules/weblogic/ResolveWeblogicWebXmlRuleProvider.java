@@ -15,7 +15,6 @@ import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
-import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverWebXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
@@ -63,28 +62,28 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
-        
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Weblogic Web XML", TechnologyTagLevel.IMPORTANT);
-        for (Element resourceRef : $(doc).find("resource-description").get()) {
+        for (Element resourceRef : $(doc).find("resource-description").get())
+        {
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String resourceName = $(resourceRef).child("res-ref-name").text();
-            
-            if(StringUtils.isNotBlank(jndiLocation)) {
+
+            if (StringUtils.isNotBlank(jndiLocation))
+            {
                 JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                
-                LOG.info("JNDI: "+jndiLocation+" Resource: "+resourceName);
-                //now, look up the resource by name, and associate the type which is resolved by DiscoverWebXmlRuleProvider
-                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+
+                LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceName);
+                // now, look up the resource by name, and associate the type which is resolved by DiscoverWebXmlRuleProvider
+                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
+                {
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
-            
+
         }
 
     }
-
-    
 
 }

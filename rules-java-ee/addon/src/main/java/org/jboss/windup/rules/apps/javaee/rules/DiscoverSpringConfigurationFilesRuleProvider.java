@@ -93,7 +93,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
         SpringConfigurationFileModel springConfigurationModel = springConfigurationFileService
                     .addTypeToModel(payload);
 
-        //create bean models
+        // create bean models
         List<Element> beans = $(element).children("bean").get();
         for (Element bean : beans)
         {
@@ -122,48 +122,50 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
             springBeanRef.setJavaClass(classReference);
 
             springConfigurationModel.addSpringBeanReference(springBeanRef);
-            
-            
-            //find out if the class is a JndiObjectFactoryBean, extract the JNDI & type the JNDI resource, when expectedType property is provided.
+
+            // find out if the class is a JndiObjectFactoryBean, extract the JNDI & type the JNDI resource, when expectedType property is provided.
             /*
-             *      <bean id="beanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-             *          <property name="jndiName" value="jdbc/ExampleSpringBeanDataSource"/>
-             *          <property name="expectedType" value="javax.sql.DataSource"/>
-             *      </bean> 
+             * <bean id="beanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> <property name="jndiName"
+             * value="jdbc/ExampleSpringBeanDataSource"/> <property name="expectedType" value="javax.sql.DataSource"/> </bean>
              */
-            if(StringUtils.isNotBlank(clz) && StringUtils.equals("org.springframework.jndi.JndiObjectFactoryBean", clz)) {
-                String expectedType = $(bean).children("property").filter(attr("name","expectedType")).first().attr("value");
-                String jndiName = $(bean).children("property").filter(attr("name","jndiName")).first().attr("value");
-                
-                LOG.info("Found JNDI in Bean Spring: "+jndiName);
-                if(StringUtils.isNotBlank(jndiName)) {
+            if (StringUtils.isNotBlank(clz) && StringUtils.equals("org.springframework.jndi.JndiObjectFactoryBean", clz))
+            {
+                String expectedType = $(bean).children("property").filter(attr("name", "expectedType")).first().attr("value");
+                String jndiName = $(bean).children("property").filter(attr("name", "jndiName")).first().attr("value");
+
+                LOG.info("Found JNDI in Bean Spring: " + jndiName);
+                if (StringUtils.isNotBlank(jndiName))
+                {
                     JNDIResourceModel jndiResource = jndiResourceService.createUnique(jndiName);
-                    if(StringUtils.isNotBlank(expectedType)) {
-                        LOG.info(" -- Type: "+expectedType);
+                    if (StringUtils.isNotBlank(expectedType))
+                    {
+                        LOG.info(" -- Type: " + expectedType);
                         jndiResourceService.associateTypeJndiResource(jndiResource, expectedType);
                     }
                 }
             }
         }
-        
-        
-        //extract JNDI references & type the JNDI resource, when expected-type is provided.
+
+        // extract JNDI references & type the JNDI resource, when expected-type is provided.
         /*
          * <jee:jndi-lookup id="jeeDataSource" jndi-name="jdbc/ExampleSpringJNDIDataSource" expected-type="javax.sql.DataSource" />
          */
         List<Element> jndis = $(element).children("jndi-lookup").get();
-        if(jndis.size() > 0) {
+        if (jndis.size() > 0)
+        {
             for (Element jndi : jndis)
             {
                 String jndiName = $(jndi).attr("jndi-name");
                 String expectedType = $(jndi).attr("expected-type");
-                
-                LOG.info("Found JNDI in JEE Spring: "+jndiName);
-                
-                if(StringUtils.isNotBlank(jndiName)) {
+
+                LOG.info("Found JNDI in JEE Spring: " + jndiName);
+
+                if (StringUtils.isNotBlank(jndiName))
+                {
                     JNDIResourceModel jndiResource = jndiResourceService.createUnique(jndiName);
-                    if(StringUtils.isNotBlank(expectedType)) {
-                        LOG.info(" -- Type: "+expectedType);
+                    if (StringUtils.isNotBlank(expectedType))
+                    {
+                        LOG.info(" -- Type: " + expectedType);
                         jndiResourceService.associateTypeJndiResource(jndiResource, expectedType);
                     }
                 }

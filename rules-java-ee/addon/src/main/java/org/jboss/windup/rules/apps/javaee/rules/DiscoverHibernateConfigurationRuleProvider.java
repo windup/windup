@@ -40,8 +40,7 @@ import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata
- * into the graph.
+ * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata into the graph.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
@@ -49,7 +48,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 public class DiscoverHibernateConfigurationRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
     private static final Logger LOG = Logging.get(DiscoverHibernateConfigurationRuleProvider.class);
-    
+
     private static final String TECH_TAG = "Hibernate Cfg";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
@@ -135,24 +134,26 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
                 sessionFactoryProperties.put(propKey, propValue);
             }
             sessionFactoryModel.setSessionFactoryProperties(sessionFactoryProperties);
-            
-            
-            //create the datasource references.
-            if(sessionFactoryProperties.containsKey("hibernate.connection.datasource")) {
+
+            // create the datasource references.
+            if (sessionFactoryProperties.containsKey("hibernate.connection.datasource"))
+            {
                 final String dataSourceJndiName = sessionFactoryProperties.get("hibernate.connection.datasource");
                 String dataSourceName = dataSourceJndiName;
-                if(StringUtils.contains(dataSourceName, "/")) {
+                if (StringUtils.contains(dataSourceName, "/"))
+                {
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
-                
+
                 DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
-                
-                if(sessionFactoryProperties.containsKey("hibernate.dialect")) {
+
+                if (sessionFactoryProperties.containsKey("hibernate.dialect"))
+                {
                     String dialect = sessionFactoryProperties.get("hibernate.dialect");
                     dataSource.setDatabaseTypeName(HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect));
                 }
             }
-            
+
         }
     }
 
@@ -183,5 +184,5 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
         return null;
     }
-    
+
 }

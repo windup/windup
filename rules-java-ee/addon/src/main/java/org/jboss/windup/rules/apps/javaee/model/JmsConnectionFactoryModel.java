@@ -3,6 +3,9 @@ package org.jboss.windup.rules.apps.javaee.model;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * Represents a JMS Connection Factory that is defined or referenced by the application.
+ */
 @TypeValue(JmsConnectionFactoryModel.TYPE)
 public interface JmsConnectionFactoryModel extends JNDIResourceModel
 {
