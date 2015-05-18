@@ -11,27 +11,28 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(NamespaceMetaModel.TYPE)
 public interface NamespaceMetaModel extends WindupVertexFrame
 {
-
+    public static final String SCHEMA_LOCATION = "schemaLocation";
+    public static final String NAMESPACE_URI = "namespaceURI";
     public static final String TYPE = "NamespaceMeta";
 
-    @Adjacency(label = "namespace", direction = Direction.IN)
+    @Adjacency(label = XmlFileModel.NAMESPACE, direction = Direction.IN)
     public void addXmlResource(XmlFileModel facet);
 
-    @Adjacency(label = "namespace", direction = Direction.IN)
+    @Adjacency(label = XmlFileModel.NAMESPACE, direction = Direction.IN)
     public Iterable<XmlFileModel> getXmlResources();
 
-    @Property("namespaceURI")
+    @Property(NAMESPACE_URI)
     public String getURI();
 
     @Indexed
-    @Property("namespaceURI")
+    @Property(NAMESPACE_URI)
     public void setURI(String uri);
 
     @Indexed
-    @Property("schemaLocation")
+    @Property(SCHEMA_LOCATION)
     public String getSchemaLocation();
 
-    @Property("schemaLocation")
+    @Property(SCHEMA_LOCATION)
     public void setSchemaLocation(String schemaLocation);
 
 }

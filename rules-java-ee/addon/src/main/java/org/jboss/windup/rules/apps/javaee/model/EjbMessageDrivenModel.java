@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.javaee.model;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -20,14 +19,14 @@ public interface EjbMessageDrivenModel extends EjbBeanBaseModel
     /**
      * Contains the destination address, typically a JMS queue or topic
      */
-    @Property(DESTINATION)
-    String getDestination();
+    @Adjacency(label = DESTINATION, direction = Direction.IN)
+    JmsDestinationModel getDestination();
 
     /**
      * Contains the destination address, typically a JMS queue or topic
      */
-    @Property(DESTINATION)
-    void setDestination(String destination);
+    @Adjacency(label = DESTINATION, direction = Direction.IN)
+    void setDestination(JmsDestinationModel destination);
 
     /**
      * References the Deployment Descriptor containing EJB.
