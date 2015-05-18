@@ -30,11 +30,17 @@ public class ClassReference
         this.line= line;
     }
 
+    /**
+     * Contains the raw text represented by this reference (class names are not resolved).
+     */
     public String getLine()
     {
         return line;
     }
 
+    /**
+     * Contains the raw text represented by this reference (class names are not resolved).
+     */
     public void setLine(String line)
     {
         this.line = line;

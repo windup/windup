@@ -306,142 +306,147 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
 
     private boolean evaluate(final GraphRewrite event, final EvaluationContext context, final XmlFileEvaluationStrategy evaluationStrategy)
     {
-        ExecutionStatistics.get().begin("XmlFile.evaluate");
-        // list will cache all the created xpath matches for this given condition running
-        final List<WindupVertexFrame> resultLocations = new ArrayList<WindupVertexFrame>();
-        final GraphContext graphContext = event.getGraphContext();
-        GraphService<XmlFileModel> xmlResourceService = new GraphService<XmlFileModel>(graphContext,
-                    XmlFileModel.class);
-        Iterable<? extends WindupVertexFrame> allXmls;
-        if (getInputVariablesName() == null || getInputVariablesName().equals(""))
+        try
         {
-            allXmls = xmlResourceService.findAll();
-        }
-        else
-        {
-            allXmls = Variables.instance(event).findVariable(getInputVariablesName());
-        }
-        Set<String> xmlCache = new HashSet<String>();
-        for (WindupVertexFrame iterated : allXmls)
-        {
-            final XmlFileModel xml;
-            if (iterated instanceof FileReferenceModel)
+            ExecutionStatistics.get().begin("XmlFile.evaluate");
+            // list will cache all the created xpath matches for this given condition running
+            final List<WindupVertexFrame> resultLocations = new ArrayList<>();
+            final GraphContext graphContext = event.getGraphContext();
+            GraphService<XmlFileModel> xmlResourceService = new GraphService<>(graphContext, XmlFileModel.class);
+            Iterable<? extends WindupVertexFrame> allXmls;
+            if (getInputVariablesName() == null || getInputVariablesName().equals(""))
             {
-                xml = (XmlFileModel) ((FileReferenceModel) iterated).getFile();
-            }
-            else if (iterated instanceof XmlFileModel)
-            {
-                xml = (XmlFileModel) iterated;
+                allXmls = xmlResourceService.findAll();
             }
             else
             {
-                throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString()
+                allXmls = Variables.instance(event).findVariable(getInputVariablesName());
+            }
+            Set<String> xmlCache = new HashSet<>();
+            for (WindupVertexFrame iterated : allXmls)
+            {
+                final XmlFileModel xml;
+                if (iterated instanceof FileReferenceModel)
+                {
+                    xml = (XmlFileModel) ((FileReferenceModel) iterated).getFile();
+                }
+                else if (iterated instanceof XmlFileModel)
+                {
+                    xml = (XmlFileModel) iterated;
+                }
+                else
+                {
+                    throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString()
                             + ")");
-            }
+                }
 
-            // in case of taking a result of other XmlFile condition as input, multiple FileReferenceModels may reference the same XmlFileModel.
-            if (xmlCache.contains(xml.getFilePath()))
-            {
-                continue;
-            }
-            else
-            {
-                xmlCache.add(xml.getFilePath());
-            }
-
-            if (fileNamePattern != null)
-            {
-                final ParameterStore store = DefaultParameterStore.getInstance(context);
-                Pattern compiledPattern = fileNamePattern.getCompiledPattern(store);
-                String pattern = compiledPattern.pattern();
-                String fileName = xml.getFileName();
-                if (!fileName.matches(pattern))
+                // in case of taking a result of other XmlFile condition as input, multiple FileReferenceModels may reference the same XmlFileModel.
+                if (xmlCache.contains(xml.getFilePath()))
                 {
                     continue;
                 }
-            }
-            if (publicId != null && !publicId.equals(""))
-            {
-                DoctypeMetaModel doctype = xml.getDoctype();
-                if (doctype == null || doctype.getPublicId() == null
-                            || !doctype.getPublicId().matches(publicId))
+                else
                 {
-                    continue;
-                }
-                else if (xpathString == null)
-                {
-                    evaluationStrategy.modelMatched();
-                    // if the xpath is not set and therefore we have the result already
-                    if (fileNamePattern != null)
-                    {
-                        if (!fileNamePattern.parse(xml.getFileName()).submit(event, context))
-                        {
-                            evaluationStrategy.modelSubmissionRejected();
-                            continue;
-                        }
-                    }
-                    evaluationStrategy.modelSubmitted(xml);
-                    resultLocations.add(xml);
+                    xmlCache.add(xml.getFilePath());
                 }
 
-            }
-            if (xpathString != null)
-            {
-                String xpathStringWithParameterFunctions = XmlFileXPathTransformer.transformXPath(this.xpathString);
-                LOG.fine("XmlFile compiled: " + this.xpathString + " to " + xpathStringWithParameterFunctions);
-
-                XmlFileService xmlFileService = new XmlFileService(graphContext);
-                Document document = xmlFileService.loadDocumentQuiet(xml);
-                if (document != null)
+                if (fileNamePattern != null)
                 {
                     final ParameterStore store = DefaultParameterStore.getInstance(context);
-
-                    final XmlFileParameterMatchCache paramMatchCache = new XmlFileParameterMatchCache();
-                    this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "startFrame", new XmlFileStartFrameXPathFunction(paramMatchCache));
-                    this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "evaluate", new XmlFileEvaluateXPathFunction(evaluationStrategy));
-                    this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "matches", new XmlFileMatchesXPathFunction(context, store,
-                                paramMatchCache, event));
-                    this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "persist", new XmlFilePersistXPathFunction(event, context, xml,
-                                evaluationStrategy, store, paramMatchCache, resultLocations));
-
-                    if (compiledXPath == null)
+                    Pattern compiledPattern = fileNamePattern.getCompiledPattern(store);
+                    String pattern = compiledPattern.pattern();
+                    String fileName = xml.getFileName();
+                    if (!fileName.matches(pattern))
                     {
-                        NamespaceMapContext nsContext = new NamespaceMapContext(namespaces);
-                        this.xpathEngine.setNamespaceContext(nsContext);
-                        try
+                        continue;
+                    }
+                }
+                if (publicId != null && !publicId.equals(""))
+                {
+                    DoctypeMetaModel doctype = xml.getDoctype();
+                    if (doctype == null || doctype.getPublicId() == null
+                                || !doctype.getPublicId().matches(publicId))
+                    {
+                        continue;
+                    }
+                    else if (xpathString == null)
+                    {
+                        evaluationStrategy.modelMatched();
+                        // if the xpath is not set and therefore we have the result already
+                        if (fileNamePattern != null)
                         {
-                            this.compiledXPath = xpathEngine.compile(xpathStringWithParameterFunctions);
-                        }
-                        catch (Exception e)
-                        {
-                            String message = e.getMessage();
-
-                            // brutal hack to try to get a reasonable error message (ugly, but it seems to work)
-                            if (message == null && e.getCause() != null && e.getCause().getMessage() != null)
+                            if (!fileNamePattern.parse(xml.getFileName()).submit(event, context))
                             {
-                                message = e.getCause().getMessage();
+                                evaluationStrategy.modelSubmissionRejected();
+                                continue;
                             }
-                            LOG.severe("Condition: " + this + " failed to run, as the following xpath was uncompilable: " + xpathString
-                                        + " (compiled contents: " + xpathStringWithParameterFunctions + ") due to: "
-                                        + message);
-                            return false;
                         }
+                        evaluationStrategy.modelSubmitted(xml);
+                        resultLocations.add(xml);
                     }
 
-                    /**
-                     * This actually does the work.
-                     */
-                    XmlUtil.xpathNodeList(document, compiledXPath);
-                    evaluationStrategy.modelSubmissionRejected();
+                }
+                if (xpathString != null)
+                {
+                    String xpathStringWithParameterFunctions = XmlFileXPathTransformer.transformXPath(this.xpathString);
+                    LOG.fine("XmlFile compiled: " + this.xpathString + " to " + xpathStringWithParameterFunctions);
+
+                    XmlFileService xmlFileService = new XmlFileService(graphContext);
+                    Document document = xmlFileService.loadDocumentQuiet(xml);
+                    if (document != null)
+                    {
+                        final ParameterStore store = DefaultParameterStore.getInstance(context);
+
+                        final XmlFileParameterMatchCache paramMatchCache = new XmlFileParameterMatchCache();
+                        this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "startFrame",
+                                    new XmlFileStartFrameXPathFunction(paramMatchCache));
+                        this.xmlFileFunctionResolver
+                                    .registerFunction(WINDUP_NS_URI, "evaluate", new XmlFileEvaluateXPathFunction(evaluationStrategy));
+                        this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "matches", new XmlFileMatchesXPathFunction(context, store,
+                                paramMatchCache, event));
+                        this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "persist", new XmlFilePersistXPathFunction(event, context, xml,
+                                evaluationStrategy, store, paramMatchCache, resultLocations));
+
+                        if (compiledXPath == null)
+                        {
+                            NamespaceMapContext nsContext = new NamespaceMapContext(namespaces);
+                            this.xpathEngine.setNamespaceContext(nsContext);
+                            try
+                            {
+                                this.compiledXPath = xpathEngine.compile(xpathStringWithParameterFunctions);
+                            }
+                            catch (Exception e)
+                            {
+                                String message = e.getMessage();
+
+                                // brutal hack to try to get a reasonable error message (ugly, but it seems to work)
+                                if (message == null && e.getCause() != null && e.getCause().getMessage() != null)
+                                {
+                                    message = e.getCause().getMessage();
+                                }
+                                LOG.severe("Condition: " + this + " failed to run, as the following xpath was uncompilable: " + xpathString
+                                        + " (compiled contents: " + xpathStringWithParameterFunctions + ") due to: "
+                                        + message);
+                                return false;
+                            }
+                        }
+
+                        /**
+                         * This actually does the work.
+                         */
+                        XmlUtil.xpathNodeList(document, compiledXPath);
+                        evaluationStrategy.modelSubmissionRejected();
+                    }
                 }
             }
+            Variables.instance(event).setVariable(getOutputVariablesName(), resultLocations);
+
+            return !resultLocations.isEmpty();
         }
-        Variables.instance(event).setVariable(getOutputVariablesName(), resultLocations);
-
-        // reject the last one... this is because we essentially always end up with a blank frame at the end (yes, it's a hack)
-
-        ExecutionStatistics.get().end("XmlFile.evaluate");
-        return !resultLocations.isEmpty();
+        finally
+        {
+            ExecutionStatistics.get().end("XmlFile.evaluate");
+        }
     }
 
     public XmlFileNamespace namespace(String prefix, String url)
@@ -537,7 +542,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                 int columnNumber = (int) node.getUserData(
                             LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
 
-                GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<XmlTypeReferenceModel>(
+                GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<>(
                             event.getGraphContext(),
                             XmlTypeReferenceModel.class);
                 XmlTypeReferenceModel fileLocation = fileLocationService.create();
@@ -548,7 +553,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                 fileLocation.setLength(node.toString().length());
                 fileLocation.setFile(xml);
                 fileLocation.setXpath(xpathString);
-                GraphService<NamespaceMetaModel> metaModelService = new GraphService<NamespaceMetaModel>(
+                GraphService<NamespaceMetaModel> metaModelService = new GraphService<>(
                             event.getGraphContext(),
                             NamespaceMetaModel.class);
                 for (Map.Entry<String, String> namespace : namespaces.entrySet())

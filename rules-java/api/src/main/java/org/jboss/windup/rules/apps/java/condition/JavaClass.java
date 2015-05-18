@@ -35,6 +35,7 @@ import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -45,8 +46,10 @@ import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
 
+import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
@@ -167,90 +170,127 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         return result;
     }
 
+    private String titanify(Pattern pattern)
+    {
+        return pattern.pattern().replace("\\Q", "\"").replace("\\E", "\"").replace("?:", "");
+    }
+
     private boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy evaluationStrategy)
     {
-        QueryBuilderFrom query;
-        if (!StringUtils.isBlank(getInputVariablesName()))
+        try
         {
-            query = Query.from(getInputVariablesName());
-        }
-        else
-        {
-            query = Query.fromType(JavaTypeReferenceModel.class);
-        }
+            ExecutionStatistics.get().begin("JavaClass.evaluate");
 
-        final ParameterStore store = DefaultParameterStore.getInstance(context);
-        final Pattern compiledPattern = referencePattern.getCompiledPattern(store);
+            final ParameterStore store = DefaultParameterStore.getInstance(context);
+            final Pattern compiledPattern = referencePattern.getCompiledPattern(store);
 
-        query.withProperty(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX,
-                    compiledPattern.pattern());
-        if(lineMatchPattern !=null) {
-            final Pattern compiledLineMatchPattern = lineMatchPattern.getCompiledPattern(store);
-            query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX,
-                        compiledLineMatchPattern.pattern());
-        }
-        String uuid = UUID.randomUUID().toString();
-        query.as(uuid);
+            /*
+             * Only set in the case of a query with no "from" variable.
+             */
+            String initialQueryID = null;
 
-        if (typeFilterPattern != null)
-        {
-            Pattern compiledTypeFilterPattern = typeFilterPattern.getCompiledPattern(store);
-            query.piped(new TypeFilterCriterion(compiledTypeFilterPattern));
-        }
-        if (!locations.isEmpty())
-            query.withProperty(JavaTypeReferenceModel.REFERENCE_TYPE, locations);
+            QueryBuilderFrom query;
 
-        List<WindupVertexFrame> allFrameResults = new ArrayList<>();
-        if (query.evaluate(event, context))
-        {
-            Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariable(uuid);
-            for (WindupVertexFrame frame : frames)
+            if (!StringUtils.isBlank(getInputVariablesName()))
             {
-                FileModel fileModel = ((FileReferenceModel) frame).getFile();
-                Iterable<JavaClassModel> javaClasses = null;
-                if (fileModel instanceof JavaSourceFileModel)
-                    javaClasses = ((JavaSourceFileModel) fileModel).getJavaClasses();
-                else if (fileModel instanceof JavaClassFileModel)
-                    javaClasses = Arrays.asList(((JavaClassFileModel) fileModel).getJavaClass());
+                query = Query.from(getInputVariablesName());
 
-                for (JavaClassModel javaClassModel : javaClasses)
+                query.withProperty(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, titanify(compiledPattern));
+            }
+            else
+            {
+                initialQueryID = "iqi." + UUID.randomUUID().toString();
+
+                GremlinPipeline<Vertex, Vertex> resolvedTextSearch = new GremlinPipeline<>(event.getGraphContext().getGraph());
+                resolvedTextSearch.V();
+                resolvedTextSearch.has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, titanify(compiledPattern));
+                // resolvedTextSearch.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, JavaTypeReferenceModel.TYPE);
+
+                if (!resolvedTextSearch.iterator().hasNext())
+                    return false;
+
+                Variables.instance(event).setVariable(
+                            initialQueryID,
+                            new FramedVertexIterable<>(event.getGraphContext().getFramed(), resolvedTextSearch,
+                                        JavaTypeReferenceModel.class));
+                query = Query.from(initialQueryID);
+            }
+
+            if (lineMatchPattern != null)
+            {
+                final Pattern compiledLineMatchPattern = lineMatchPattern.getCompiledPattern(store);
+                query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, compiledLineMatchPattern.pattern());
+            }
+            String uuid = UUID.randomUUID().toString();
+            query.as(uuid);
+
+            if (typeFilterPattern != null)
+            {
+                Pattern compiledTypeFilterPattern = typeFilterPattern.getCompiledPattern(store);
+                query.piped(new TypeFilterCriterion(compiledTypeFilterPattern));
+            }
+            if (!locations.isEmpty())
+                query.withProperty(JavaTypeReferenceModel.REFERENCE_TYPE, locations);
+
+            List<WindupVertexFrame> allFrameResults = new ArrayList<>();
+            if (query.evaluate(event, context))
+            {
+                Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariable(uuid);
+                for (WindupVertexFrame frame : frames)
                 {
-                    if (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
-                                .getQualifiedName()).matches())
+                    FileModel fileModel = ((FileReferenceModel) frame).getFile();
+                    Iterable<JavaClassModel> javaClasses = null;
+                    if (fileModel instanceof JavaSourceFileModel)
+                        javaClasses = ((JavaSourceFileModel) fileModel).getJavaClasses();
+                    else if (fileModel instanceof JavaClassFileModel)
+                        javaClasses = Arrays.asList(((JavaClassFileModel) fileModel).getJavaClass());
+
+                    for (JavaClassModel javaClassModel : javaClasses)
                     {
-                        JavaTypeReferenceModel model = (JavaTypeReferenceModel) frame;
-                        ParameterizedPatternResult referenceResult = referencePattern.parse(model
-                                    .getResolvedSourceSnippit());
-                        if (referenceResult.matches())
+                        if (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
+                                    .getQualifiedName()).matches())
                         {
-                            evaluationStrategy.modelMatched();
-                            if (referenceResult.submit(event, context)
-                                        && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
-                                                    .getQualifiedName()).submit(event, context)))
+                            JavaTypeReferenceModel model = (JavaTypeReferenceModel) frame;
+                            ParameterizedPatternResult referenceResult = referencePattern.parse(model
+                                        .getResolvedSourceSnippit());
+                            if (referenceResult.matches())
                             {
-                                allFrameResults.add(model);
-                                evaluationStrategy.modelSubmitted(model);
-                            }
-                            else
-                            {
-                                evaluationStrategy.modelSubmissionRejected();
+                                evaluationStrategy.modelMatched();
+                                if (referenceResult.submit(event, context)
+                                            && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
+                                                        .getQualifiedName()).submit(event, context)))
+                                {
+                                    allFrameResults.add(model);
+                                    evaluationStrategy.modelSubmitted(model);
+                                }
+                                else
+                                {
+                                    evaluationStrategy.modelSubmissionRejected();
+                                }
                             }
                         }
                     }
                 }
+                Variables.instance(event).removeVariable(uuid);
+                if (initialQueryID != null)
+                    Variables.instance(event).removeVariable(initialQueryID);
+
+                try
+                {
+                    Variables.instance(event).setVariable(getVarname(), allFrameResults);
+                }
+                catch (Exception e)
+                {
+                    throw new WindupException("Failed to set result variable \"" + getVarname() + "\" due to: " + e.getMessage(), e);
+                }
+                return !allFrameResults.isEmpty();
             }
-            Variables.instance(event).removeVariable(uuid);
-            try
-            {
-                Variables.instance(event).setVariable(getVarname(), allFrameResults);
-            }
-            catch (Exception e)
-            {
-                throw new WindupException("Failed to set result variable \"" + getVarname() + "\" due to: " + e.getMessage(), e);
-            }
-            return !allFrameResults.isEmpty();
+            return false;
         }
-        return false;
+        finally
+        {
+            ExecutionStatistics.get().end("JavaClass.evaluate");
+        }
     }
 
     private final class TypeFilterCriterion implements QueryGremlinCriterion
@@ -359,5 +399,5 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     {
         return typeFilterPattern;
     }
-    
+
 }

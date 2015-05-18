@@ -89,6 +89,21 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                                 "http://www.apache.org/licenses/LICENSE-2.0",
                                 "Apache License 2.0");
                 }
+                else if (content.matches("Apache License\n.*Version 2\\.0, January 2004"))
+                {
+                    tagLicense(licenseService, technologyTagService, license,
+                                "Apache License 2.0",
+                                "http://www.apache.org/licenses/LICENSE-2.0",
+                                "Apache License 2.0");
+                }
+                else if (StringUtils.containsIgnoreCase(content,
+                            "Apache Software License, Version 1.1"))
+                {
+                    tagLicense(licenseService, technologyTagService, license,
+                                "Apache License 1.1",
+                                "http://www.apache.org/licenses/LICENSE-1.1",
+                                "Apache License 1.1");
+                }
                 else if (StringUtils.containsIgnoreCase(content,
                             "GNU General Public License"))
                 {
