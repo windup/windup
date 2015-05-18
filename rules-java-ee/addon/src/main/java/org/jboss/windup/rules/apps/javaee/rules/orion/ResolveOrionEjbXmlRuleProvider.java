@@ -89,6 +89,22 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
             }
         }
         
+        for (Element ejbRef : $(doc).find("session-deployment").get()) {
+            String ejbName = $(ejbRef).attr("name");
+            
+            if(StringUtils.isNotBlank(ejbName)) {
+                LOG.info("Looking up name: "+ejbName);
+                for(EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName)) {
+                    String destination = $(ejbRef).attr("location");
+
+                    if(StringUtils.isNotBlank(destination)) {
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(destination);
+                        ejb.setJndiReference(jndiRef);
+                    }
+                }
+            }
+        }
+        
         //bind the EJB beans to JNDI.
         for (Element messageDrivenRef : $(doc).find("message-driven-deployment").get()) {
             //register the EJB to the JNDI location, if it exists.

@@ -2,8 +2,6 @@ package org.jboss.windup.rules.apps.javaee.rules.jboss;
 
 import static org.joox.JOOX.$;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;

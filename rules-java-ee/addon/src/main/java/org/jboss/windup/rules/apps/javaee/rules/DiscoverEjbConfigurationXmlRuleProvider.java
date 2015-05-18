@@ -417,6 +417,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         
         for (Element e : $(element).find("resource-env-ref").get())
         {
+            String id = $(e).attr("id");
             String type = $(e).child("resource-env-ref-type").text();
             String name = $(e).child("resource-env-ref-name").text();
 
@@ -427,6 +428,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             if (ref == null)
             {
                 ref = environmentReferenceService.create();
+                ref.setReferenceId(id);
                 ref.setName(name);
                 ref.setReferenceType(type);
             }
@@ -434,6 +436,26 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             resources.add(ref);
         }
         
+        for (Element e : $(element).find("message-destination-ref").get())
+        {
+            String id = $(e).attr("id");
+            String type = $(e).child("message-destination-type").text();
+            String name = $(e).child("message-destination-ref-name").text();
+
+            type = StringUtils.trim(type);
+            name = StringUtils.trim(name);
+
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+            if (ref == null)
+            {
+                ref = environmentReferenceService.create();
+                ref.setReferenceId(id);
+                ref.setName(name);
+                ref.setReferenceType(type);
+            }
+            LOG.info("Reference: "+name+", Type: "+type);
+            resources.add(ref);
+        }
         
         return resources;
     }
