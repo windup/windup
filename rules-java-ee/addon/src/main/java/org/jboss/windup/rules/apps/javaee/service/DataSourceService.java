@@ -16,16 +16,15 @@ public class DataSourceService extends GraphService<DataSourceModel>
     {
         super(context, DataSourceModel.class);
     }
-    
 
     /**
-     * Create unique; if existing 
-     * convert an existing {@link DataSourceModel} if one exists.
+     * Create unique; if existing convert an existing {@link DataSourceModel} if one exists.
      */
     public synchronized DataSourceModel createUnique(String dataSourceName, String jndiName)
     {
         DataSourceModel dataSource = getUniqueByProperty(DataSourceModel.JNDI_LOCATION, jndiName);
-        if(dataSource == null) {
+        if (dataSource == null)
+        {
             dataSource = super.create();
             dataSource.setName(dataSourceName);
             dataSource.setJndiLocation(jndiName);

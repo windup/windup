@@ -11,9 +11,7 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
-import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
@@ -70,52 +68,59 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
-        
+
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         classificationService.attachClassification(payload, "Weblogic EJB XML", "Weblogic Enterprise Java Bean XML Descriptor.");
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Weblogic EJB XML", TechnologyTagLevel.IMPORTANT);
-        
+
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
-        
-        for (Element resourceRef : $(doc).find("resource-description").get()) {
+        for (Element resourceRef : $(doc).find("resource-description").get())
+        {
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String resourceName = $(resourceRef).child("res-ref-name").text();
-            
-            if(StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName)) {
+
+            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
+            {
                 JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI Name: "+jndiLocation+" to Resource: "+resourceName);
-                //now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
+                // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
+                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
+                {
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
         }
-        
-        //bind the EJB beans to JNDI.
-        for (Element resourceRef : $(doc).find("weblogic-enterprise-bean").get()) {
-            
-            //register the EJB to the JNDI location, if it exists.
+
+        // bind the EJB beans to JNDI.
+        for (Element resourceRef : $(doc).find("weblogic-enterprise-bean").get())
+        {
+
+            // register the EJB to the JNDI location, if it exists.
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String ejbName = $(resourceRef).child("ejb-name").text();
-            
-            if(StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName)) {
-                //look up the EJB by the name, and associate to JNDI.
-                for(EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName)) {
-                    LOG.info("Registering EJB: "+ejbName+" to JNDI: "+jndiLocation);
+
+            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
+            {
+                // look up the EJB by the name, and associate to JNDI.
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
+                {
+                    LOG.info("Registering EJB: " + ejbName + " to JNDI: " + jndiLocation);
                     JNDIResourceModel jndiRef = jndiResourceService.createUnique(jndiLocation);
                     sessionBean.setJndiReference(jndiRef);
                 }
             }
-            
-            
-            //extract the JNDI location of any message driven beans.
-            for (Element messageDrivenDescriptor : $(resourceRef).find("message-driven-descriptor").get()) {
-                for(EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName)) {
+
+            // extract the JNDI location of any message driven beans.
+            for (Element messageDrivenDescriptor : $(resourceRef).find("message-driven-descriptor").get())
+            {
+                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                {
                     String destination = $(messageDrivenDescriptor).child("destination-jndi-name").text();
-                    if(StringUtils.isNotBlank(destination)) {
+                    if (StringUtils.isNotBlank(destination))
+                    {
                         JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
                         mdb.setDestination(jndiRef);
                     }
@@ -124,7 +129,5 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         }
 
     }
-
-    
 
 }

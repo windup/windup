@@ -21,43 +21,52 @@ public class JNDIResourceService extends GraphService<JNDIResourceModel>
     {
         super(context, JNDIResourceModel.class);
     }
-    
 
     /**
-     * Create unique; if existing 
-     * convert an existing {@link DataSourceModel} if one exists.
+     * Create unique; if existing convert an existing {@link DataSourceModel} if one exists.
      */
     public synchronized JNDIResourceModel createUnique(String jndiName)
     {
         JNDIResourceModel dataSource = getUniqueByProperty(DataSourceModel.JNDI_LOCATION, jndiName);
-        if(dataSource == null) {
+        if (dataSource == null)
+        {
             dataSource = super.create();
             dataSource.setJndiLocation(jndiName);
         }
         return dataSource;
     }
-    
-    public void associateTypeJndiResource(JNDIResourceModel resource, String type) {
-        if(type == null || resource == null) {
+
+    /**
+     * Associate a type with the given resource model.
+     */
+    public void associateTypeJndiResource(JNDIResourceModel resource, String type)
+    {
+        if (type == null || resource == null)
+        {
             return;
         }
-        
-        if(StringUtils.equals(type, "javax.sql.DataSource") && !(resource instanceof DataSourceModel)) {
+
+        if (StringUtils.equals(type, "javax.sql.DataSource") && !(resource instanceof DataSourceModel))
+        {
             DataSourceModel ds = GraphService.addTypeToModel(this.getGraphContext(), resource, DataSourceModel.class);
         }
-        else if(StringUtils.equals(type, "javax.jms.Queue") && !(resource instanceof JmsDestinationModel)) {
+        else if (StringUtils.equals(type, "javax.jms.Queue") && !(resource instanceof JmsDestinationModel))
+        {
             JmsDestinationModel jms = GraphService.addTypeToModel(this.getGraphContext(), resource, JmsDestinationModel.class);
             jms.setDestinationType(JmsDestinationType.QUEUE);
         }
-        else if(StringUtils.equals(type, "javax.jms.QueueConnectionFactory") && !(resource instanceof JmsConnectionFactoryModel)) {
+        else if (StringUtils.equals(type, "javax.jms.QueueConnectionFactory") && !(resource instanceof JmsConnectionFactoryModel))
+        {
             JmsConnectionFactoryModel jms = GraphService.addTypeToModel(this.getGraphContext(), resource, JmsConnectionFactoryModel.class);
             jms.setConnectionFactoryType(JmsDestinationType.QUEUE);
         }
-        else if(StringUtils.equals(type, "javax.jms.Topic") && !(resource instanceof JmsDestinationModel)) {
+        else if (StringUtils.equals(type, "javax.jms.Topic") && !(resource instanceof JmsDestinationModel))
+        {
             JmsDestinationModel jms = GraphService.addTypeToModel(this.getGraphContext(), resource, JmsDestinationModel.class);
             jms.setDestinationType(JmsDestinationType.TOPIC);
         }
-        else if(StringUtils.equals(type, "javax.jms.TopicConnectionFactory") && !(resource instanceof JmsConnectionFactoryModel)) {
+        else if (StringUtils.equals(type, "javax.jms.TopicConnectionFactory") && !(resource instanceof JmsConnectionFactoryModel))
+        {
             JmsConnectionFactoryModel jms = GraphService.addTypeToModel(this.getGraphContext(), resource, JmsConnectionFactoryModel.class);
             jms.setConnectionFactoryType(JmsDestinationType.TOPIC);
         }

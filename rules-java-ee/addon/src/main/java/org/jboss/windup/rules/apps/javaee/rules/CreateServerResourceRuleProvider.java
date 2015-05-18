@@ -1,9 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -29,8 +27,6 @@ import org.jboss.windup.rules.apps.javaee.model.JmsConnectionFactoryModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.rules.apps.javaee.service.DataSourceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
-import org.jboss.windup.rules.apps.javaee.service.JmsConnectionFactoryService;
-import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -45,7 +41,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateServerResourceRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(CreateServerResourceRuleProvider.class);
-    
+
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/server.ftl";
 
     public CreateServerResourceRuleProvider()
@@ -107,27 +103,27 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
         WindupVertexListModel jmsList = listService.create();
         WindupVertexListModel jmsConnectionFactoryList = listService.create();
         WindupVertexListModel otherJndiList = listService.create();
-        
-        
-        for(JNDIResourceModel jndi : jndiResourceService.findAll()) {
-            if(jndi instanceof DataSourceModel)
+
+        for (JNDIResourceModel jndi : jndiResourceService.findAll())
+        {
+            if (jndi instanceof DataSourceModel)
             {
-                datasourceList.addItem((DataSourceModel)jndi);
+                datasourceList.addItem(jndi);
             }
-            else if(jndi instanceof JmsDestinationModel)
+            else if (jndi instanceof JmsDestinationModel)
             {
-                jmsList.addItem((JmsDestinationModel)jndi);
+                jmsList.addItem(jndi);
             }
-            else if(jndi instanceof JmsConnectionFactoryModel)
+            else if (jndi instanceof JmsConnectionFactoryModel)
             {
-                jmsConnectionFactoryList.addItem((JmsConnectionFactoryModel)jndi);
+                jmsConnectionFactoryList.addItem(jndi);
             }
-            else 
+            else
             {
                 otherJndiList.addItem(jndi);
             }
         }
-        
+
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(2);
         additionalData.put("datasources", datasourceList);
         additionalData.put("jmsDestinations", jmsList);

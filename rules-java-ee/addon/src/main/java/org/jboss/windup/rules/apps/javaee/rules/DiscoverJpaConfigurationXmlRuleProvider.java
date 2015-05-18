@@ -45,7 +45,7 @@ import org.w3c.dom.Element;
 public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvider<NamespaceMetaModel>
 {
     private static final Logger LOG = Logging.get(DiscoverJpaConfigurationXmlRuleProvider.class);
-    
+
     private static final String TECH_TAG = "JPA XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
@@ -69,8 +69,10 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     public void perform(GraphRewrite event, EvaluationContext context, NamespaceMetaModel payload)
     {
-        for(XmlFileModel xml : payload.getXmlResources()) {
-            if(StringUtils.equals(xml.getRootTagName(), "persistence")) {
+        for (XmlFileModel xml : payload.getXmlResources())
+        {
+            if (StringUtils.equals(xml.getRootTagName(), "persistence"))
+            {
                 Document doc = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(xml);
                 if (doc == null)
                 {
@@ -89,7 +91,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
         JPAConfigurationFileService jpaConfigurationFileService = new JPAConfigurationFileService(graphContext);
         JPAPersistenceUnitService jpaPersistenceUnitService = new JPAPersistenceUnitService(graphContext);
         JPAEntityService jpaEntityService = new JPAEntityService(graphContext);
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(graphContext);
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
@@ -98,7 +100,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
         {
             technologyTag.setVersion(version);
         }
-        
+
         // check the root XML node.
         JPAConfigurationFileModel jpaConfigurationModel = jpaConfigurationFileService.addTypeToModel(xmlFileModel);
         if (StringUtils.isNotBlank(version))
@@ -111,40 +113,44 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
             JPAPersistenceUnitModel persistenceUnitModel = jpaPersistenceUnitService.create();
             String persistenceUnitName = $(element).attr("name");
             persistenceUnitModel.setName(persistenceUnitName);
-            
+
             jpaConfigurationModel.addPersistenceUnit(persistenceUnitModel);
-            
-            if($(element).find("jta-data-source").isNotEmpty()) {
+
+            if ($(element).find("jta-data-source").isNotEmpty())
+            {
                 final String dataSourceJndiName = $(element).find("jta-data-source").text();
                 String dataSourceName = dataSourceJndiName;
-                if(StringUtils.contains(dataSourceName, "/")) {
+                if (StringUtils.contains(dataSourceName, "/"))
+                {
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
-                
-                DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
-                persistenceUnitModel.addDataSource(dataSource);
-            }
-            
-            if($(element).find("non-jta-data-source").isNotEmpty()) {
-                final String dataSourceJndiName = $(element).find("non-jta-data-source").text();
-                String dataSourceName = dataSourceJndiName;
-                if(StringUtils.contains(dataSourceName, "/")) {
-                    dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
-                }
-                
+
                 DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
                 persistenceUnitModel.addDataSource(dataSource);
             }
 
-            for (Element clz : $(element).find("class").get()) {
+            if ($(element).find("non-jta-data-source").isNotEmpty())
+            {
+                final String dataSourceJndiName = $(element).find("non-jta-data-source").text();
+                String dataSourceName = dataSourceJndiName;
+                if (StringUtils.contains(dataSourceName, "/"))
+                {
+                    dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
+                }
+
+                DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
+                persistenceUnitModel.addDataSource(dataSource);
+            }
+
+            for (Element clz : $(element).find("class").get())
+            {
                 String clzName = $(clz).text();
                 JavaClassModel javaClz = javaClassService.getOrCreatePhantom(clzName);
 
                 JPAEntityModel entityModel = jpaEntityService.create();
                 entityModel.setJavaClass(javaClz);
             }
-            
-            
+
             Map<String, String> persistenceUnitProperties = new HashMap<>();
             for (Element propElement : $(element).find("property"))
             {
@@ -152,14 +158,16 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 String propValue = $(propElement).attr("value");
                 persistenceUnitProperties.put(propKey, propValue);
             }
-            
-            if(persistenceUnitProperties.containsKey("hibernate.dialect")) {
+
+            if (persistenceUnitProperties.containsKey("hibernate.dialect"))
+            {
                 String dialect = persistenceUnitProperties.get("hibernate.dialect");
-                for(DataSourceModel datasource : persistenceUnitModel.getDataSources()) {
+                for (DataSourceModel datasource : persistenceUnitModel.getDataSources())
+                {
                     datasource.setDatabaseTypeName(HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect));
                 }
             }
-            
+
             persistenceUnitModel.setProperties(persistenceUnitProperties);
         }
     }

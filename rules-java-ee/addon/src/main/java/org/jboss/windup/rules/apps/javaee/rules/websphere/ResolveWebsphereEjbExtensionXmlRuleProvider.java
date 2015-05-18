@@ -13,7 +13,6 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -43,21 +42,18 @@ public class ResolveWebsphereEjbExtensionXmlRuleProvider extends IteratingRulePr
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-ejb-jar-ext.xmi").withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarExtension");
+        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-ejb-jar-ext.xmi")
+                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarExtension");
     }
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
-        XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
-        
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         classificationService.attachClassification(payload, "Websphere EJB Ext", "Websphere Enterprise Java Bean Extension XML Descriptor.");
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere EJB Ext", TechnologyTagLevel.IMPORTANT);
     }
-
-    
 
 }

@@ -5,6 +5,9 @@ import org.jboss.windup.graph.Indexed;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * Represents a data source within the application.
+ */
 @TypeValue(DataSourceModel.TYPE)
 public interface DataSourceModel extends JNDIResourceModel
 {

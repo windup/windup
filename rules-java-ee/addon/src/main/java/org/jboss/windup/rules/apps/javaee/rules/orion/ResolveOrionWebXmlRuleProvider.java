@@ -62,35 +62,38 @@ public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
-        
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Orion Web XML", TechnologyTagLevel.IMPORTANT);
-        for (Element orionWeb : $(doc).child("orion-web-app")) {
+        for (Element orionWeb : $(doc).child("orion-web-app"))
+        {
             String majorVersion = $(orionWeb).attr("schema-major-version");
             String minorVersion = $(orionWeb).attr("schema-minor-version");
-            
-            if(StringUtils.isNotBlank(majorVersion)) {
+
+            if (StringUtils.isNotBlank(majorVersion))
+            {
                 String version = majorVersion;
-                if(StringUtils.isNotBlank(minorVersion)) {
-                    version = version+"."+minorVersion;
+                if (StringUtils.isNotBlank(minorVersion))
+                {
+                    version = version + "." + minorVersion;
                 }
                 technologyTag.setVersion(version);
             }
         }
-            
-        
-        for (Element resourceRef : $(doc).find("resource-ref-mapping").get()) {
+
+        for (Element resourceRef : $(doc).find("resource-ref-mapping").get())
+        {
             String jndiLocation = $(resourceRef).attr("location");
             String resourceName = $(resourceRef).attr("name");
-            
+
             JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-            
-            //now, look up the resource
-            for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
-                envRefService.associateEnvironmentToJndi(event, resource, ref);
+
+            // now, look up the resource
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
+            {
+                envRefService.associateEnvironmentToJndi(resource, ref);
             }
-            
+
         }
 
     }
