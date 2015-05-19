@@ -13,7 +13,7 @@ public class ValidationResult
      */
     public static final ValidationResult SUCCESS = new ValidationResult(Level.SUCCESS, null);
 
-    public static enum Level { ERROR, WARNING, SUCCESS };
+    public static enum Level { ERROR, PROMPT_TO_CONTINUE, WARNING, SUCCESS };
 
     private final Level level;
     private final String message;
