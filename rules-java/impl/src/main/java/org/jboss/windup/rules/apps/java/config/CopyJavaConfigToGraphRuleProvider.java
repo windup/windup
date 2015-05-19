@@ -12,6 +12,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIContextProvider;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.furnace.util.Visitor;
@@ -38,7 +40,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
 {
-    @Inject private UIOutput uiOutput;
+    @Inject private UIContextProvider uIContextProvider;
 
 
     public CopyJavaConfigToGraphRuleProvider()
@@ -86,14 +88,21 @@ public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
 
             private void warnIfScanPackagesTooGeneral(List<String> includeJavaPackages)
             {
-                Set<String> tooGeneral = new HashSet(Arrays.asList("com org net".split(" ")));
-                for (String pkg : includeJavaPackages)
+                if (includeJavaPackages != null)
                 {
-                    if (tooGeneral.contains(pkg))
-                        continue;
-                    return;
+                    Set<String> tooGeneral = new HashSet(Arrays.asList("com org net".split(" ")));
+                    for (String pkg : includeJavaPackages)
+                    {
+                        if (tooGeneral.contains(pkg))
+                            continue;
+                        return;
+                    }
                 }
 
+                if (uIContextProvider == null || uIContextProvider.getUIContext() == null) // In a test
+                    return;
+
+                UIOutput uiOutput = uIContextProvider.getUIContext().getProvider().getOutput();
                 uiOutput.warn(uiOutput.err(), "No packages were set in --" + ScanPackagesOption.NAME
                     + ". This will cause all .jar files to be decompiled and can possibly take a long time. "
                     + "Check the Windup User Guide for performance tips.");
