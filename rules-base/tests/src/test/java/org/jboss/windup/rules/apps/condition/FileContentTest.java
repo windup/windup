@@ -63,17 +63,17 @@ public class FileContentTest
     public static ForgeArchive getDeployment()
     {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addAsResource("xml/FileContentXmlExample.windup.xml")
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-xml"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addAsResource("xml/FileContentXmlExample.windup.xml")
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-xml"),
+                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
 
         return archive;
     }
@@ -128,6 +128,7 @@ public class FileContentTest
             boolean foundFile2Line3 = false;
             boolean foundFile2Line4 = false;
             boolean foundFile3Needle = false;
+
             for (int i = 0; i < provider.rule1ResultStrings.size(); i++)
             {
                 FileLocationModel location = provider.rule1ResultModels.get(i);
