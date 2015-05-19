@@ -4,6 +4,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
+import org.jboss.windup.rules.apps.javaee.model.JmsDestinationType;
 
 /**
  * Contains methods for querying, updating, and deleting {@link JmsDestinationModel}
@@ -25,8 +26,16 @@ public class JmsDestinationService extends GraphService<JmsDestinationModel>
     }
 
     /**
-     * Creates a new instance with the given name, or converts an existing instance at this location if one already exists.
+     * Creates a new instance with the given name, or converts an existing instance at this location if one already exists
      */
+    public JmsDestinationModel createUnique(String jndiName, JmsDestinationType destinationType)
+    {
+        JmsDestinationModel model = createUnique(jndiName);
+        model.setDestinationType(destinationType);
+
+        return model;
+    }
+
     public JmsDestinationModel createUnique(String jndiName)
     {
         JmsDestinationModel model = null;
