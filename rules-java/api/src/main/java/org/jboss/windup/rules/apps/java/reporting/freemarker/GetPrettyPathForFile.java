@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -43,6 +44,9 @@ public class GetPrettyPathForFile implements WindupFreeMarkerMethod
             {
                 JavaClassFileModel jcfm = (JavaClassFileModel) fileModel;
                 return jcfm.getJavaClass().getQualifiedName();
+            }
+            else if (fileModel instanceof ReportResourceFileModel) {
+                return "resources/"+fileModel.getPrettyPath();
             }
             else if (fileModel instanceof JavaSourceFileModel)
             {
