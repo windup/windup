@@ -148,10 +148,12 @@ public class WindupCommand implements UICommand
         {
             Object value = getValueForInput(entry.getValue());
             ValidationResult result = entry.getKey().validate(value);
-            if (!result.isSuccess())
-            {
+
+            if (result.getLevel().equals(ValidationResult.Level.ERROR))
                 context.addValidationError(entry.getValue(), result.getMessage());
-            }
+
+            if (result.getLevel().equals(ValidationResult.Level.WARNING))
+                context.addValidationWarning(entry.getValue(), result.getMessage());
         }
 
     }
